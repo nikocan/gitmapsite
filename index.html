@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gitmapsite — GitHub Açık Kaynak Proje Haritası</title>
+<title>Gitmapsite — Uygulama Dünyası</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
@@ -86,8 +86,21 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="1.1.0";
+const VERSION="2.0.0";
 const CHANGELOG=[
+ {v:"2.0.0",date:"2026-11-25",items:[
+  "Uygulama Dünyası: 15 kategoride (randevu, restoran, e-ticaret, CRM, fatura, stok, eğitim, otel/emlak, klinik, proje, İK, AI asistanı, kurumsal site, portfolyo, SaaS) hazır uygulama vitrini",
+  "Lisans kontrolü: her uygulamada 'Satışa uygun / Kaynak paylaşımı / Lisans belirsiz' etiketi, varsayılan olarak sadece ticari satışa uygun kodlar listelenir",
+  "Uygulamamı Oluştur sihirbazı: uygulama → marka (canlı önizleme) → özellikler ve AI eklentileri → alan adı ve barındırma → mobil (indirme başına fiyat hesabı) → teklif özeti",
+  "Paketler ve Fiyatlar sayfası: Hızlı Site, İş Uygulaması, Gelişmiş Platform + mobil, bakım, barındırma, AI ek hizmetleri",
+  "Yapay Zekâ Destekleri: 6 AI eklentisi, hangi işe hangi model, Hostinger AI Router, maliyet ve KVKK notları",
+  "Müşteri / Yönetici görünümü: müşteriler vitrini görür; yönetici siparişleri, gelir planını ve GitHub radarını yönetir",
+  "Siparişler: 8 aşamalı teslimat takibi, tahsilat ve aylık tekrarlayan gelir özeti, tek tıkla Claude geliştirme komutu, WhatsApp'tan müşteriye ulaşma",
+  "Talepler WhatsApp'a: Ayarlar'a numara girilirse müşteri talebi size hazır mesaj olarak gelir",
+  "İş Planı & Araştırma: Hostinger ortaklığı, App Store kuralları, lisanslar, rakipler, ödeme altyapısı, riskler, yol haritası ve kaynaklar",
+  "Gelir hesaplayıcı: satış adetleri ve maliyetlerle aylık net gelir tahmini",
+  "Ayarlar: paket fiyatlarını düzenleme, Hostinger referans bağlantısı, WhatsApp numarası"
+ ]},
  {v:"1.1.0",date:"2026-11-25",items:[
   "Canlı adres: nikocan.github.io/gitmapsite (GitHub Pages, her güncelleme otomatik yayına girer)",
   "Trend projeler: son 30 günde açılıp en çok yıldız alan projeler tek tıkla",
@@ -345,7 +358,7 @@ ${notes?"5":"4"}) Hedef: ${prof.target}. Derle (${prof.cmd||"derleme yok"}), can
  </div>`;
 }
 
-function Detail({repo,close,sec,setSec,saved,toggleSave,builds,addBuild,toast,present}){
+function Detail({repo,close,sec,setSec,saved,toggleSave,builds,addBuild,toast,present,onWant}){
  const [tab,setTab]=useState("genel");const [busy,setBusy]=useState(false);const [shots,setShots]=useState(null);const [langs,setLangs]=useState(null);const [shotBusy,setShotBusy]=useState(false);
  const c=categorize(repo);
  useEffect(()=>{gh(`/repos/${repo.full_name}/languages`).then(setLangs).catch(()=>{})},[repo.full_name]);
@@ -354,9 +367,9 @@ function Detail({repo,close,sec,setSec,saved,toggleSave,builds,addBuild,toast,pr
  useEffect(()=>{if(tab==="ekran"&&!shots)loadShots()},[tab]);
  const lt=langs?Object.values(langs).reduce((a,b)=>a+b,0):0;const COL=["#4f8cff","#7c5cff","#22c55e","#f59e0b","#ef4444","#06b6d4","#ec4899"];
  return html`<div class="drawer" onClick=${close}><div class="dw" onClick=${e=>e.stopPropagation()}>
-  <div class="dh"><div style=${{display:"flex",gap:10,alignItems:"center"}}><div style=${{flex:1,minWidth:0}}><div style=${{fontWeight:800,fontSize:18,wordBreak:"break-word"}}>${repo.full_name}</div><div class="meta"><span class="tag">${c.ic} ${c.name}</span><span>★ ${fmt(repo.stargazers_count)}</span><span>⑂ ${fmt(repo.forks_count)}</span><${Grade} g=${sec&&sec.grade}/></div></div>
-   <button class="btn g s" onClick=${()=>toggleSave(repo)}>${saved?"★ Listemde":"☆ Listeme ekle"}</button><button class="btn g s" onClick=${()=>present([repo])}>▶ Sunum</button><button class="btn g s" onClick=${close}>✕</button></div>
-   <div class="tabs">${[["genel","Genel"],["guvenlik","Güvenlik"],["ekran","Ekranlar"],["yap","🚀 Bu projeyi yap"]].map(([k,l])=>html`<button class=${"tab"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}</div></div>
+  <div class="dh"><div style=${{display:"flex",gap:10,alignItems:"center"}}><div style=${{flex:1,minWidth:0}}><div style=${{fontWeight:800,fontSize:18,wordBreak:"break-word"}}>${repo.full_name}</div><div class="meta"><span class="tag">${c.ic} ${c.name}</span><span>★ ${fmt(repo.stargazers_count)}</span><span>⑂ ${fmt(repo.forks_count)}</span><span class=${"grade "+licInfo(repo).cls} title=${licInfo(repo).tip}>${licInfo(repo).txt}</span><${Grade} g=${sec&&sec.grade}/></div></div>
+   ${onWant?html`<button class="btn s" disabled=${!licInfo(repo).ok&&!licInfo(repo).warn} onClick=${()=>onWant(repo)}>Bunu istiyorum →</button>`:html`<button class="btn g s" onClick=${()=>toggleSave(repo)}>${saved?"★ Listemde":"☆ Listeme ekle"}</button>`}<button class="btn g s" onClick=${()=>present([repo])}>▶ Sunum</button><button class="btn g s" onClick=${close}>✕</button></div>
+   <div class="tabs">${[["genel","Genel"],["guvenlik","Güvenlik"],["ekran","Ekranlar"],...(onWant?[]:[["yap","🚀 Bu projeyi yap"]])].map(([k,l])=>html`<button class=${"tab"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}</div></div>
   <div class="db">
    ${tab==="genel"&&html`<div>
     <img src=${og(repo.full_name)} style=${{width:"100%",borderRadius:12,border:"1px solid var(--line)"}}/>
@@ -444,36 +457,355 @@ function Updates(){
   ${CHANGELOG.map(c=>html`<div class="box"><div style=${{display:"flex",gap:10,alignItems:"center"}}><span class="tag" style=${{fontSize:13}}>v${c.v}</span><span style=${{color:"var(--mut)"}}>${new Date(c.date).toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})}</span></div><ul style=${{lineHeight:1.8}}>${c.items.map(x=>html`<li>${x}</li>`)}</ul></div>`)}</div>`;
 }
 
+/* ================= v2.0 — UYGULAMA DÜNYASI ================= */
+const SAFE_LIC=["MIT","Apache-2.0","BSD-3-Clause","BSD-2-Clause","ISC","0BSD","Unlicense","Zlib"];
+const COPYLEFT=["GPL-2.0","GPL-3.0","AGPL-3.0","LGPL-2.1","LGPL-3.0","MPL-2.0","EUPL-1.2","OSL-3.0"];
+function licInfo(r){const id=r.license&&r.license.spdx_id;
+ if(!id||id==="NOASSERTION")return{ok:false,cls:"gD",txt:"⛔ Lisans belirsiz",tip:"Lisans yok/özel: ticari kullanım için sahibinden izin gerekir"};
+ if(SAFE_LIC.includes(id))return{ok:true,cls:"gA",txt:"✅ Satışa uygun · "+id,tip:"Kapalı kaynak ticari kullanım serbest; telif bildirimi korunmalı"};
+ if(COPYLEFT.includes(id))return{ok:false,warn:true,cls:"gC",txt:"⚠️ Kaynak paylaşımı · "+id,tip:id.startsWith("AGPL")?"Değiştirilmiş hâli internette sunulursa kaynak kodu kullanıcılarla paylaşılmalı":"Dağıtılırsa kaynak kodu aynı lisansla paylaşılmalı"};
+ return{ok:false,cls:"gN",txt:"🔍 İncelenmeli · "+id,tip:"Lisans metni manuel kontrol edilmeli"};
+}
+const STORE_CATS=[
+ {id:"randevu",ic:"📅",name:"Randevu & Rezervasyon",desc:"Kuaför, klinik, danışman, spor salonu randevu sistemleri",topics:["appointment-booking","booking-system"],tier:"is"},
+ {id:"restoran",ic:"🍽️",name:"Restoran & Kafe",desc:"QR menü, sipariş, adisyon, paket servis",topics:["restaurant-management","pos-system"],tier:"is"},
+ {id:"eticaret",ic:"🛒",name:"E-Ticaret Mağazası",desc:"Ürün kataloğu, sepet, ödeme, kargo",topics:["ecommerce-platform"],tier:"platform"},
+ {id:"crm",ic:"📇",name:"CRM & Müşteri Takibi",desc:"Müşteri, teklif, satış hunisi, destek talepleri",topics:["crm","helpdesk"],tier:"is"},
+ {id:"fatura",ic:"🧾",name:"Fatura & Ön Muhasebe",desc:"Fatura kesme, gelir-gider, cari hesap",topics:["invoice","accounting"],tier:"is"},
+ {id:"stok",ic:"📦",name:"Stok & Depo",desc:"Ürün stok, depo, sayım, tedarik",topics:["inventory-management"],tier:"is"},
+ {id:"egitim",ic:"🎓",name:"Eğitim & Okul",desc:"Online kurs, öğrenci yönetimi, sınav",topics:["lms","school-management"],tier:"platform"},
+ {id:"otel",ic:"🏨",name:"Otel & Emlak",desc:"Oda rezervasyonu, emlak ilan sitesi",topics:["hotel-management","real-estate"],tier:"is"},
+ {id:"saglik",ic:"🏥",name:"Klinik & Sağlık",desc:"Hasta kaydı, muayene, randevu",topics:["clinic-management","hospital-management"],tier:"is"},
+ {id:"proje",ic:"✅",name:"Proje & Görev",desc:"Kanban, görev takibi, ekip yönetimi",topics:["project-management"],tier:"is"},
+ {id:"ik",ic:"👥",name:"İK & Personel",desc:"İzin, personel, bordro takibi",topics:["hrms"],tier:"is"},
+ {id:"ai",ic:"🤖",name:"Yapay Zeka Asistanı",desc:"Sohbet botu, müşteri asistanı, AI arayüzleri",topics:["ai-chatbot"],tier:"is"},
+ {id:"kurumsal",ic:"🏢",name:"Kurumsal Site & Blog",desc:"Firma sitesi, blog, içerik yönetimi",topics:["headless-cms","landing-page-template"],tier:"site"},
+ {id:"portfolyo",ic:"🎨",name:"Portfolyo & Kişisel Site",desc:"CV, portfolyo, kişisel marka sitesi",topics:["portfolio-template"],tier:"site"},
+ {id:"saas",ic:"🚀",name:"SaaS Başlangıç Kiti",desc:"Üyelik, abonelik ve ödeme altyapılı SaaS iskeleti",topics:["saas-boilerplate"],tier:"platform"}
+];
+const DEFAULT_PRICES={site:2490,is:7490,platform:19900,mobil:12900,bakim:690,ai:390,hosting:249,domain:0,kurulumAI:0};
+const TIERS={site:{name:"Hızlı Site",gun:"1–3 gün",ic:"⚡"},is:{name:"İş Uygulaması",gun:"5–10 gün",ic:"💼"},platform:{name:"Gelişmiş Platform",gun:"2–4 hafta",ic:"🏗️"}};
+const AI_ADDONS=[
+ {id:"asistan",ic:"💬",name:"Müşteri asistanı",desc:"Sitenizde 7/24 soru yanıtlayan, işletmenizi tanıyan sohbet botu",mult:1},
+ {id:"icerik",ic:"✍️",name:"İçerik üretici",desc:"Ürün açıklaması, blog, sosyal medya metni tek tıkla",mult:1},
+ {id:"arama",ic:"🔎",name:"Akıllı arama & öneri",desc:"Müşteriye doğal dille arama ve kişisel ürün önerisi",mult:1},
+ {id:"belge",ic:"📄",name:"Belge & fatura okuma",desc:"Fatura/form fotoğrafından bilgileri otomatik çıkarır",mult:1.5},
+ {id:"gorsel",ic:"🖼️",name:"Görsel üretimi",desc:"Ürün/kampanya görselleri yapay zekâ ile",mult:1.5},
+ {id:"whatsapp",ic:"📱",name:"WhatsApp asistanı",desc:"WhatsApp Business üzerinden otomatik yanıt (Meta onayı gerekir)",mult:2}
+];
+const ORDER_ST=["Yeni talep","Teklif gönderildi","Ödeme alındı","Geliştiriliyor","Test","Web'de yayında","Mağazaya gönderildi","Mağazada"];
+const getPrices=()=>Object.assign({},DEFAULT_PRICES,LS.get("prices",{})||{});
+const tl=n=>new Intl.NumberFormat("tr-TR").format(Math.round(n))+" ₺";
+function tierOf(r,cat){if(cat)return cat.tier;const t=(r.topics||[]).join(" ");if(/portfolio|landing|blog|static-site/.test(t))return"site";if(/ecommerce|erp|lms|marketplace|multivendor/.test(t))return"platform";return"is"}
+
+async function loadCategory(cat,force){
+ const key="cat_"+cat.id;const c=LS.get(key,null);
+ if(c&&!force&&Date.now()-c.t<864e5)return c.items;
+ let items=[];const seen=new Set();
+ for(const tp of cat.topics){const j=await gh(`/search/repositories?q=${encodeURIComponent("topic:"+tp+" stars:>=20 archived:false")}&sort=stars&order=desc&per_page=40`);
+  for(const r of j.items){if(!seen.has(r.full_name)){seen.add(r.full_name);items.push(r)}}}
+ items.sort((a,b)=>b.stargazers_count-a.stargazers_count);
+ const slim=items.map(r=>({id:r.id,full_name:r.full_name,name:r.name,html_url:r.html_url,description:r.description,topics:r.topics,language:r.language,stargazers_count:r.stargazers_count,forks_count:r.forks_count,open_issues_count:r.open_issues_count,license:r.license,pushed_at:r.pushed_at,homepage:r.homepage,default_branch:r.default_branch,archived:r.archived,owner:{login:r.owner&&r.owner.login}}));
+ LS.set(key,{t:Date.now(),items:slim});return slim;
+}
+
+function StoreCard({r,cat,onPick,onDetail,sec}){
+ const li=licInfo(r);const P=getPrices();const tr=tierOf(r,cat);
+ return html`<div class="card" style=${{cursor:"default"}}>
+  <img loading="lazy" src=${og(r.full_name)} alt="" style=${{cursor:"pointer"}} onClick=${()=>onDetail(r)}/>
+  <div class="cb">
+   <div class="ct">${r.name}</div>
+   <div class="cd">${r.description||"Açıklama yok"}</div>
+   <div class="meta"><span class=${"grade "+li.cls} title=${li.tip}>${li.txt}</span>${r.homepage&&/^https?:/.test(r.homepage)?html`<a href=${r.homepage} target="_blank" class="tag">▶ Canlı demo</a>`:""}</div>
+   <div class="meta"><span>${TIERS[tr].ic} ${TIERS[tr].name}</span><span>★ ${fmt(r.stargazers_count)}</span>${r.language&&html`<span>● ${r.language}</span>`}<span>${ago(r.pushed_at)}</span></div>
+   <div style=${{display:"flex",alignItems:"center",gap:8,marginTop:4}}><div><div style=${{fontSize:11,color:"var(--mut)"}}>Başlangıç fiyatı</div><b style=${{fontSize:17}}>${tl(P[tr])}</b></div><span style=${{flex:1}}></span>
+    <button class="btn g s" onClick=${()=>onDetail(r)}>İncele</button><button class="btn s" disabled=${!li.ok&&!li.warn} title=${li.ok||li.warn?"":"Lisans belirsiz: ticari kullanım için uygun değil"} onClick=${()=>onPick(r,cat)}>Bunu istiyorum</button></div>
+  </div></div>`;
+}
+
+function StoreHome({openCat,goWizard}){
+ return html`<div>
+  <div style=${{background:"linear-gradient(135deg,#132046,#1e1550)",border:"1px solid #2a3556",borderRadius:16,padding:"34px 32px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+   <div style=${{fontSize:13,letterSpacing:".12em",color:"var(--acc)",fontWeight:700}}>UYGULAMA DÜNYASI</div>
+   <h1 style=${{fontSize:32,margin:"8px 0 10px",lineHeight:1.2}}>İşletmenize uygulama, günler içinde yayında</h1>
+   <p style=${{color:"#c8d2e8",fontSize:16,maxWidth:640,lineHeight:1.6,margin:0}}>Binlerce hazır açık kaynak uygulamadan birini seçin. Lisansını ve güvenliğini biz kontrol ederiz, markanıza göre özelleştiririz, alan adı ve sunucuyla yayına alırız. İsterseniz App Store ve Google Play'e kadar götürürüz. Teknik bilgi gerekmez.</p>
+   <div style=${{display:"flex",gap:10,marginTop:20,flexWrap:"wrap"}}><button class="btn" style=${{padding:"12px 20px",fontSize:15}} onClick=${()=>goWizard(null)}>✨ Uygulamamı oluştur</button><a class="btn g" style=${{padding:"12px 20px",fontSize:15}} href="#paketler">Paketler ve fiyatlar</a></div>
+  </div>
+  <div class="stat">${[["1","Seç","Hazır uygulamalardan birini seçin ya da fikrinizi anlatın"],["2","Özelleştir","İsim, logo, renk, özellikler ve yapay zekâ eklentileri"],["3","Yayınla","Alan adı + Hostinger sunucusu + SSL, biz kuruyoruz"],["4","Mağazaya","İsterseniz Android ve iOS uygulaması olarak yayın"]].map(([n,t,d])=>html`<div class="st"><b style=${{color:"var(--acc)"}}>${n}. ${t}</b><span>${d}</span></div>`)}</div>
+  <h2>Kategoriler</h2>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))"}}>${STORE_CATS.map(c=>html`<div class="card" style=${{padding:16,gap:6}} onClick=${()=>openCat(c)}><div style=${{fontSize:30}}>${c.ic}</div><b style=${{fontSize:15}}>${c.name}</b><span style=${{color:"var(--mut)",fontSize:12.5,lineHeight:1.45}}>${c.desc}</span><span class="tag" style=${{alignSelf:"flex-start",marginTop:4}}>${TIERS[c.tier].ic} ${TIERS[c.tier].name}</span></div>`)}</div>
+  <div class="box" style=${{marginTop:20,display:"flex",gap:20,flexWrap:"wrap",color:"var(--mut)",fontSize:13}}><span>🛡️ Her uygulama güvenlik testinden geçer</span><span>⚖️ Lisans kontrolü: sadece satışa uygun kodlar</span><span>🌐 Alan adı + SSL + Hostinger sunucusu</span><span>📱 Android & iOS yayın desteği</span><span>🤖 Yapay zekâ eklentileri</span></div>
+ </div>`;
+}
+
+function StoreCat({cat,back,onPick,onDetail,secs,toast}){
+ const [items,setItems]=useState(null);const [onlySafe,setOnlySafe]=useState(true);const [onlyDemo,setOnlyDemo]=useState(false);const [q,setQ]=useState("");
+ const load=f=>{setItems(null);loadCategory(cat,f).then(setItems).catch(e=>{toast(e.message);setItems([])})};
+ useEffect(()=>load(false),[cat.id]);
+ let list=items||[];if(onlySafe)list=list.filter(r=>licInfo(r).ok);if(onlyDemo)list=list.filter(r=>r.homepage&&/^https?:/.test(r.homepage));if(q)list=list.filter(r=>((r.name||"")+" "+(r.description||"")).toLowerCase().includes(q.toLowerCase()));
+ return html`<div><button class="btn g s" onClick=${back}>← Tüm kategoriler</button>
+  <h1 style=${{marginTop:14}}>${cat.ic} ${cat.name}</h1><p class="sub">${cat.desc} · ${TIERS[cat.tier].name} paketinden başlar, hazırlık ${TIERS[cat.tier].gun}</p>
+  <div class="bar"><input class="in" style=${{flex:1}} placeholder="Bu kategoride ara…" value=${q} onInput=${e=>setQ(e.target.value)}/>
+   <label class="chip ${onlySafe?"on":""}" style=${{display:"flex",alignItems:"center",gap:6}}><input type="checkbox" checked=${onlySafe} onChange=${e=>setOnlySafe(e.target.checked)}/> Sadece satışa uygun lisans</label>
+   <label class="chip ${onlyDemo?"on":""}" style=${{display:"flex",alignItems:"center",gap:6}}><input type="checkbox" checked=${onlyDemo} onChange=${e=>setOnlyDemo(e.target.checked)}/> Canlı demosu olanlar</label>
+   <button class="btn g s" onClick=${()=>load(true)}>↻ Yenile</button></div>
+  ${items===null?html`<div class="empty">Uygulamalar yükleniyor…</div>`:!list.length?html`<div class="empty">Bu filtrelerle uygulama bulunamadı. Filtreleri gevşetin.</div>`:
+  html`<p class="sub">${list.length} uygulama${onlySafe?" (satışa uygun lisanslı)":""}</p><div class="grid">${list.map(r=>html`<${StoreCard} key=${r.full_name} r=${r} cat=${cat} onPick=${onPick} onDetail=${onDetail} sec=${secs[r.full_name]}/>`)}</div>`}
+ </div>`;
+}
+
+function Packages({goWizard}){
+ const P=getPrices();
+ const rows=[["site","Tek sayfa / kurumsal site, portfolyo, blog",["Hazır tasarım + markanıza uyarlama","Alan adı bağlama + SSL","Mobil uyumlu","İletişim formu, harita, WhatsApp butonu"]],["is","Randevu, CRM, stok, fatura, restoran gibi iş uygulamaları",["Hızlı Site paketindeki her şey","Kullanıcı girişi ve yönetim paneli","Türkçeleştirme ve logo/renk","Veritabanı kurulumu ve yedekleme","Güvenlik testi + bağımlılık güncellemesi"]],["platform","E-ticaret, eğitim platformu, SaaS, çok kullanıcılı sistemler",["İş Uygulaması paketindeki her şey","Ödeme altyapısı (PayTR / iyzico)","Özel geliştirmeler (2 hafta dahil)","Performans ve ölçeklendirme ayarları"]]];
+ return html`<div><h1>Paketler ve Fiyatlar</h1><p class="sub">Tek seferlik kurulum ücreti + isteğe bağlı aylık hizmetler. Fiyatlara KDV dahil değildir.</p>
+  <div class="grid">${rows.map(([k,d,f],i)=>html`<div class="box" style=${{display:"flex",flexDirection:"column",gap:8,margin:0,borderColor:i===1?"var(--acc)":"var(--line)"}}>
+   ${i===1?html`<span class="tag" style=${{alignSelf:"flex-start",background:"var(--acc)",color:"#fff",border:0}}>En çok tercih edilen</span>`:""}
+   <div style=${{fontSize:28}}>${TIERS[k].ic}</div><b style=${{fontSize:18}}>${TIERS[k].name}</b><span style=${{color:"var(--mut)"}}>${d}</span>
+   <div><span style=${{fontSize:28,fontWeight:800}}>${tl(P[k])}</span><span style=${{color:"var(--mut)"}}> tek sefer</span></div><span style=${{color:"var(--mut)",fontSize:12}}>Teslim: ${TIERS[k].gun}</span>
+   <ul style=${{paddingLeft:18,lineHeight:1.8,margin:"6px 0",flex:1}}>${f.map(x=>html`<li>${x}</li>`)}</ul>
+   <button class=${"btn"+(i===1?"":" g")} onClick=${()=>goWizard(null,k)}>Bu paketle başla</button></div>`)}</div>
+  <h2>Ek hizmetler</h2>
+  <table><tbody>
+   <tr><td>📱 <b>Mobil uygulama</b> (Android + iOS paketleme ve mağaza başvurusu)</td><td><b>${tl(P.mobil)}</b> tek sefer</td></tr>
+   <tr><td>🛠️ <b>Bakım ve güncelleme</b> (güvenlik yamaları, yedek, küçük değişiklikler)</td><td><b>${tl(P.bakim)}</b> / ay</td></tr>
+   <tr><td>🌐 <b>Barındırma</b> (Hostinger sunucusu, biz yönetiriz)</td><td><b>${tl(P.hosting)}</b> / ay</td></tr>
+   <tr><td>🤖 <b>Yapay zekâ eklentisi</b> (her eklenti, temel kullanım dahil)</td><td><b>${tl(P.ai)}</b> / ay'dan</td></tr>
+  </tbody></table>
+  <div class="box" style=${{marginTop:14,fontSize:13,color:"var(--mut)",lineHeight:1.7}}><b style=${{color:"var(--txt)"}}>Mağaza ücretleri hakkında:</b> Apple Developer Program yıllık 99 $, Google Play tek seferlik 25 $'dır ve hesaplar <b>sizin adınıza</b> açılır (Apple kuralı 4.2.6 gereği şablon tabanlı uygulamalar içerik sahibinin kendi hesabından gönderilmelidir). Uygulamanızı mağazada ücretli satarsanız ilk 1 milyon $ gelirde mağaza komisyonu genellikle %15'tir.</div>
+ </div>`;
+}
+
+function AiGuide(){
+ return html`<div><h1>Yapay Zekâ Destekleri</h1><p class="sub">Uygulamanıza eklenebilecek yapay zekâ özellikleri ve hangi işte hangi modelin kullanılacağı.</p>
+  <div class="grid">${AI_ADDONS.map(a=>html`<div class="box" style=${{margin:0}}><div style=${{fontSize:26}}>${a.ic}</div><b>${a.name}</b><p style=${{color:"var(--mut)",fontSize:13,lineHeight:1.5}}>${a.desc}</p><b>${tl(getPrices().ai*a.mult)}</b><span style=${{color:"var(--mut)"}}> / ay'dan</span></div>`)}</div>
+  <h2>Hangi işe hangi model?</h2>
+  <table><thead><tr><th>İş</th><th>Model sınıfı</th><th>Neden</th></tr></thead><tbody>
+   <tr><td>SSS yanıtlama, sınıflandırma, kısa metin</td><td>Küçük/hızlı modeller (Claude Haiku, GPT mini sınıfı, Gemini Flash)</td><td>En ucuz ve en hızlı; günlük binlerce mesajda maliyet düşük kalır</td></tr>
+   <tr><td>Ürün açıklaması, blog, e-posta</td><td>Orta sınıf (Claude Sonnet, GPT standart)</td><td>Türkçe yazım kalitesi ve marka tonu için dengeli</td></tr>
+   <tr><td>Belge okuma, uzun rapor, karmaşık analiz</td><td>Güçlü modeller (Claude Opus sınıfı)</td><td>Az ama kritik işlerde doğruluk öncelikli</td></tr>
+   <tr><td>Görsel üretimi</td><td>Görsel modelleri</td><td>Kampanya ve ürün görselleri</td></tr>
+  </tbody></table>
+  <div class="box" style=${{marginTop:14,lineHeight:1.7}}><b>Altyapı önerisi: Hostinger AI Router</b><br/>Tek API anahtarıyla Anthropic, OpenAI ve diğer sağlayıcıların modellerine erişim, kredi bazlı ödeme ve model kapalıysa otomatik yedek modele geçiş. OpenAI ve Anthropic API formatlarını desteklediği için uygulamada sadece adres değişir. Böylece hosting, alan adı ve yapay zekâ tek faturada toplanır.</div>
+  <div class="box" style=${{lineHeight:1.7}}><b>Maliyet kontrolü</b><ul style=${{margin:"6px 0",paddingLeft:18}}><li>Her müşteriye aylık kullanım limiti ve limit aşımında uyarı</li><li>Sık tekrar eden istemlerde önbellek (cache) kullanımı</li><li>Basit işi küçük modele, zor işi büyük modele yönlendirme</li></ul>
+  <b>KVKK ve mağaza kuralları</b><ul style=${{margin:"6px 0",paddingLeft:18}}><li>Kullanıcı verisinin yapay zekâ sağlayıcısına gönderildiği gizlilik politikasında açıkça yazılmalı</li><li>Mobil uygulamalarda üçüncü taraf yapay zekâya veri paylaşımı kullanıcıya bildirilmeli; aksi hâlde mağaza reddi riski var</li></ul></div>
+ </div>`;
+}
+
+function Wizard({pick,setPick,orders,setOrders,toast,go}){
+ const P=getPrices();const S=LS.get("settings",{})||{};
+ const [step,setStep]=useState(0);
+ const [f,setF]=useState(()=>Object.assign({tier:pick&&pick.tier||"is",idea:"",brand:"",slogan:"",color:"#4f8cff",sector:"",domain:"",hosting:"biz",mobile:"yok",paid:false,price:"",ai:[],bakim:true,name:"",phone:"",email:"",note:""},pick&&pick.tier?{tier:pick.tier}:{}));
+ const u=(k,v)=>setF(o=>({...o,[k]:v}));
+ const repo=pick&&pick.repo;
+ const total=P[f.tier]+(f.mobile!=="yok"?P.mobil:0);
+ const monthly=(f.bakim?P.bakim:0)+(f.hosting==="biz"?P.hosting:0)+f.ai.reduce((a,id)=>a+P.ai*AI_ADDONS.find(x=>x.id===id).mult,0);
+ const steps=["Uygulama","Marka","Özellikler & AI","Yayın","Mobil","Özet"];
+ const can=[()=>repo||f.idea.trim().length>10,()=>f.brand.trim(),()=>true,()=>true,()=>true,()=>f.name.trim()&&(f.phone.trim()||f.email.trim())];
+ function submit(){
+  const o={id:"GM-"+Date.now().toString(36).toUpperCase(),created:new Date().toISOString(),status:ORDER_ST[0],repo:repo?{full_name:repo.full_name,html_url:repo.html_url,license:repo.license&&repo.license.spdx_id,language:repo.language}:null,...f,total,monthly};
+  setOrders([o,...orders]);
+  const txt=orderText(o);
+  if(S.whatsapp){const num=S.whatsapp.replace(/\D/g,"");window.open(`https://wa.me/${num}?text=${encodeURIComponent(txt)}`,"_blank")}
+  toast("Talebiniz alındı: "+o.id);setPick(null);go("siparislerim");
+ }
+ const Opt=({k,v,t,d})=>html`<div class="box" style=${{margin:0,cursor:"pointer",borderColor:f[k]===v?"var(--acc)":"var(--line)",background:f[k]===v?"#17244a":"var(--card)"}} onClick=${()=>u(k,v)}><b>${t}</b><div style=${{color:"var(--mut)",fontSize:12.5,marginTop:4,lineHeight:1.5}}>${d}</div></div>`;
+ return html`<div><h1>✨ Uygulamamı Oluştur</h1><p class="sub">Birkaç adımda ihtiyacınızı anlatın; teklifinizi ve yol haritanızı hazırlayalım.</p>
+  <div class="chips">${steps.map((s,i)=>html`<span class=${"chip"+(i===step?" on":"")} onClick=${()=>{if(i<step||steps.slice(0,i).every((_,j)=>can[j]()))setStep(i)}}>${i+1}. ${s}</span>`)}</div>
+  <div class="box" style=${{padding:20}}>
+  ${step===0&&html`<div>${repo?html`<div style=${{display:"flex",gap:14,alignItems:"center",flexWrap:"wrap"}}><img src=${og(repo.full_name)} style=${{width:220,borderRadius:10,border:"1px solid var(--line)"}}/><div style=${{flex:1,minWidth:200}}><div style=${{color:"var(--mut)",fontSize:12}}>Seçtiğiniz hazır uygulama</div><b style=${{fontSize:18}}>${repo.name}</b><p style=${{color:"var(--mut)"}}>${repo.description||""}</p><span class=${"grade "+licInfo(repo).cls}>${licInfo(repo).txt}</span> <button class="btn g s" onClick=${()=>setPick(null)}>Seçimi kaldır</button></div></div>`
+    :html`<p>Hazır bir uygulama seçmediniz. Fikrinizi anlatın, size en uygun hazır kodu biz bulalım ya da sıfırdan yapalım.</p><div style=${{display:"flex",gap:8}}><a class="btn g" href="#dunya">🌍 Uygulama Dünyası'ndan seç</a></div>`}
+    <h2>Ne yapmak istiyorsunuz?</h2><textarea class="in" style=${{width:"100%",minHeight:90}} placeholder="ör. Kuaför salonum için müşterilerin online randevu alabileceği, SMS hatırlatması olan bir uygulama istiyorum…" value=${f.idea} onInput=${e=>u("idea",e.target.value)}></textarea>
+    <h2>Paket</h2><div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))"}}>${Object.keys(TIERS).map(k=>html`<${Opt} k="tier" v=${k} t=${TIERS[k].ic+" "+TIERS[k].name+" · "+tl(P[k])} d=${"Teslim "+TIERS[k].gun}/>`)}</div></div>`}
+  ${step===1&&html`<div style=${{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+    <label>Uygulama / marka adı *<input class="in" style=${{width:"100%",marginTop:4}} value=${f.brand} onInput=${e=>u("brand",e.target.value)} placeholder="ör. Salon Elif"/></label>
+    <label>Sektör<input class="in" style=${{width:"100%",marginTop:4}} value=${f.sector} onInput=${e=>u("sector",e.target.value)} placeholder="ör. Güzellik salonu"/></label>
+    <label>Slogan<input class="in" style=${{width:"100%",marginTop:4}} value=${f.slogan} onInput=${e=>u("slogan",e.target.value)} placeholder="ör. Güzelliğiniz bir tık uzakta"/></label>
+    <label>Ana renk<div style=${{display:"flex",gap:8,marginTop:4}}><input type="color" value=${f.color} onInput=${e=>u("color",e.target.value)} style=${{width:50,height:38,border:0,background:"none"}}/><input class="in" style=${{flex:1}} value=${f.color} onInput=${e=>u("color",e.target.value)}/></div></label>
+    <div style=${{gridColumn:"1/-1"}}><div style=${{color:"var(--mut)",fontSize:12,marginBottom:6}}>Önizleme</div><div style=${{borderRadius:12,overflow:"hidden",border:"1px solid var(--line)",maxWidth:420}}><div style=${{background:f.color,padding:"14px 16px",color:"#fff",fontWeight:800,fontSize:18}}>${f.brand||"Markanız"}</div><div style=${{background:"#fff",color:"#222",padding:16}}><div style=${{fontSize:15}}>${f.slogan||"Sloganınız burada görünecek"}</div><div style=${{marginTop:12,display:"inline-block",background:f.color,color:"#fff",borderRadius:8,padding:"8px 14px",fontWeight:600}}>Hemen başla</div></div></div></div></div>`}
+  ${step===2&&html`<div><h2 style=${{marginTop:0}}>Yapay zekâ eklentileri</h2><div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))"}}>${AI_ADDONS.map(a=>{const on=f.ai.includes(a.id);return html`<div class="box" style=${{margin:0,cursor:"pointer",borderColor:on?"var(--acc)":"var(--line)",background:on?"#17244a":"var(--card)"}} onClick=${()=>u("ai",on?f.ai.filter(x=>x!==a.id):[...f.ai,a.id])}><b>${on?"☑":"☐"} ${a.ic} ${a.name}</b><div style=${{color:"var(--mut)",fontSize:12.5,margin:"4px 0"}}>${a.desc}</div><b style=${{fontSize:13}}>${tl(P.ai*a.mult)}/ay</b></div>`})}</div>
+    <h2>Ek istekler</h2><textarea class="in" style=${{width:"100%",minHeight:70}} placeholder="ör. SMS hatırlatma, Instagram bağlantısı, çoklu şube…" value=${f.note} onInput=${e=>u("note",e.target.value)}></textarea>
+    <label style=${{display:"flex",gap:8,alignItems:"center",marginTop:12}}><input type="checkbox" checked=${f.bakim} onChange=${e=>u("bakim",e.target.checked)}/> Bakım ve güncelleme hizmeti (${tl(P.bakim)}/ay) — güvenlik yamaları, yedek, küçük değişiklikler</label></div>`}
+  ${step===3&&html`<div><h2 style=${{marginTop:0}}>Alan adı</h2><div style=${{display:"flex",gap:8,flexWrap:"wrap"}}><input class="in" style=${{flex:1,minWidth:200}} placeholder="ör. salonelif.com" value=${f.domain} onInput=${e=>u("domain",e.target.value.toLowerCase().replace(/\s/g,""))}/>
+     <a class="btn g" target="_blank" href=${S.hostingerRef||"https://www.hostinger.com/domain-name-search"}>Hostinger'da müsaitliği sorgula ↗</a></div>
+    <div class="chips" style=${{marginTop:8}}>${f.brand&&[".com",".com.tr",".net",".app"].map(t=>{const base=f.brand.toLowerCase().replace(/ı/g,"i").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ş/g,"s").replace(/ö/g,"o").replace(/ç/g,"c").replace(/[^a-z0-9]/g,"");return html`<span class="chip" onClick=${()=>u("domain",base+t)}>${base+t}</span>`})}</div>
+    <p style=${{color:"var(--mut)",fontSize:12}}>.com.tr alan adları için şirket/şahıs belgesi istenebilir. Alan adı ücreti uzantıya göre değişir, teklifte ayrıca belirtilir.</p>
+    <h2>Barındırma (sunucu)</h2><div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))"}}>
+     <${Opt} k="hosting" v="biz" t=${"🌐 Biz yönetelim · "+tl(P.hosting)+"/ay"} d="Hostinger altyapısında kurulum, SSL, yedekleme ve izleme bizden. Hiçbir şeyle uğraşmazsınız."/>
+     <${Opt} k="hosting" v="kendi" t="🔑 Kendi Hostinger hesabım" d="Hesap sizin adınıza açılır, kurulumu biz yaparız. Barındırma ücretini doğrudan Hostinger'a ödersiniz."/></div></div>`}
+  ${step===4&&html`<div><h2 style=${{marginTop:0}}>Mobil uygulama</h2><div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))"}}>
+     <${Opt} k="mobile" v="yok" t="🌐 Sadece web" d="Telefonda tarayıcıdan açılır, ana ekrana eklenebilir. Ek ücret yok."/>
+     <${Opt} k="mobile" v="android" t=${"🤖 Web + Android · +"+tl(P.mobil)} d="Google Play'de yayın. Google hesabı (25 $, tek sefer) sizin adınıza açılır."/>
+     <${Opt} k="mobile" v="ikisi" t=${"📱 Web + Android + iOS · +"+tl(P.mobil)} d="App Store ve Google Play. Apple hesabı (99 $/yıl) sizin adınıza açılır."/></div>
+    ${f.mobile!=="yok"&&html`<div class="box" style=${{marginTop:12}}><label style=${{display:"flex",gap:8,alignItems:"center"}}><input type="checkbox" checked=${f.paid} onChange=${e=>u("paid",e.target.checked)}/> Uygulamamı mağazada ücretli (indirme başına) satmak istiyorum</label>
+     ${f.paid&&html`<div style=${{display:"flex",gap:10,alignItems:"center",marginTop:10,flexWrap:"wrap"}}>İndirme fiyatı <input class="in" type="number" min="0" style=${{width:110}} value=${f.price} onInput=${e=>u("price",e.target.value)}/> ₺ → mağaza komisyonu (%15) sonrası size kalan: <b>${tl((+f.price||0)*0.85)}</b> / indirme</div>`}
+     <p style=${{color:"var(--mut)",fontSize:12,lineHeight:1.6}}>Apple ve Google, kopya/şablon uygulamaları reddedebilir. Uygulamanın işletmenize özgü içerik ve işlevle hazırlanması ve sizin geliştirici hesabınızdan gönderilmesi gerekir. Bu hazırlığı biz yapıyoruz.</p></div>`}</div>`}
+  ${step===5&&html`<div style=${{display:"grid",gridTemplateColumns:"minmax(0,1fr) minmax(0,1fr)",gap:18}}>
+    <div><h2 style=${{marginTop:0}}>İletişim bilgileriniz</h2>
+     <label>Ad soyad *<input class="in" style=${{width:"100%",margin:"4px 0 10px"}} value=${f.name} onInput=${e=>u("name",e.target.value)}/></label>
+     <label>Telefon<input class="in" style=${{width:"100%",margin:"4px 0 10px"}} value=${f.phone} onInput=${e=>u("phone",e.target.value)} placeholder="05xx xxx xx xx"/></label>
+     <label>E-posta<input class="in" style=${{width:"100%",margin:"4px 0 10px"}} value=${f.email} onInput=${e=>u("email",e.target.value)}/></label>
+     <p style=${{color:"var(--mut)",fontSize:12}}>* Telefon veya e-postadan en az biri gerekli. Bilgileriniz sadece teklif için kullanılır.</p></div>
+    <div><h2 style=${{marginTop:0}}>Teklif özeti</h2><table><tbody>
+     <tr><td>${TIERS[f.tier].ic} ${TIERS[f.tier].name}${repo?" — "+repo.name:""}</td><td>${tl(P[f.tier])}</td></tr>
+     ${f.mobile!=="yok"&&html`<tr><td>📱 Mobil (${f.mobile==="ikisi"?"Android + iOS":"Android"})</td><td>${tl(P.mobil)}</td></tr>`}
+     <tr><td><b>Tek seferlik toplam</b></td><td><b>${tl(total)}</b></td></tr>
+     ${f.hosting==="biz"&&html`<tr><td>🌐 Barındırma</td><td>${tl(P.hosting)}/ay</td></tr>`}
+     ${f.bakim&&html`<tr><td>🛠️ Bakım</td><td>${tl(P.bakim)}/ay</td></tr>`}
+     ${f.ai.map(id=>{const a=AI_ADDONS.find(x=>x.id===id);return html`<tr><td>${a.ic} ${a.name}</td><td>${tl(P.ai*a.mult)}/ay</td></tr>`})}
+     <tr><td><b>Aylık toplam</b></td><td><b>${tl(monthly)}</b></td></tr></tbody></table>
+     <p style=${{color:"var(--mut)",fontSize:12,lineHeight:1.6}}>Fiyatlara KDV, alan adı ve mağaza hesap ücretleri dahil değildir. Kesin teklif, ihtiyaç görüşmesinden sonra gönderilir.</p></div></div>`}
+  <div style=${{display:"flex",gap:8,marginTop:18}}>${step>0&&html`<button class="btn g" onClick=${()=>setStep(step-1)}>← Geri</button>`}<span style=${{flex:1}}></span>
+   ${step<5?html`<button class="btn" disabled=${!can[step]()} onClick=${()=>setStep(step+1)}>Devam →</button>`:html`<button class="btn" disabled=${!can[5]()} onClick=${submit}>📨 Teklif talebini gönder</button>`}</div>
+  </div></div>`;
+}
+function orderText(o){return `Gitmapsite teklif talebi ${o.id}
+Müşteri: ${o.name} | ${o.phone||""} ${o.email||""}
+Uygulama: ${o.repo?o.repo.full_name+" ("+o.repo.html_url+")":"Hazır uygulama seçilmedi"}
+İstek: ${o.idea}
+Marka: ${o.brand} | Sektör: ${o.sector||"-"} | Renk: ${o.color}
+Paket: ${TIERS[o.tier].name} | Mobil: ${o.mobile}${o.paid?" (ücretli: "+o.price+" ₺)":""}
+Alan adı: ${o.domain||"-"} | Barındırma: ${o.hosting==="biz"?"Biz yönetelim":"Kendi Hostinger hesabı"}
+AI: ${o.ai.length?o.ai.map(id=>AI_ADDONS.find(a=>a.id===id).name).join(", "):"-"} | Bakım: ${o.bakim?"Evet":"Hayır"}
+Not: ${o.note||"-"}
+Tek sefer: ${tl(o.total)} | Aylık: ${tl(o.monthly)}`}
+
+function MyOrders({orders}){
+ return html`<div><h1>Taleplerim</h1><p class="sub">Gönderdiğiniz uygulama taleplerinin durumu.</p>
+  ${!orders.length?html`<div class="empty">Henüz talep yok. <a href="#olustur">Uygulamanızı oluşturun →</a></div>`:orders.map(o=>{const i=ORDER_ST.indexOf(o.status);return html`<div class="box"><div style=${{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}><b>${o.brand}</b><span class="tag">${o.id}</span><span style=${{color:"var(--mut)",fontSize:12}}>${new Date(o.created).toLocaleDateString("tr-TR")}</span><span style=${{flex:1}}></span><b>${tl(o.total)}</b></div>
+   <div style=${{display:"flex",gap:4,margin:"12px 0 6px"}}>${ORDER_ST.map((s,j)=>html`<div title=${s} style=${{flex:1,height:6,borderRadius:3,background:j<=i?"var(--acc)":"#1d2740"}}></div>`)}</div>
+   <div style=${{fontSize:13}}>Durum: <b>${o.status}</b>${o.live?html` · <a href=${o.live} target="_blank">${o.live}</a>`:""}</div></div>`})}</div>`;
+}
+
+function AdminOrders({orders,setOrders,toast}){
+ const [open,setOpen]=useState(null);
+ const upd=(id,p)=>setOrders(orders.map(o=>o.id===id?{...o,...p}:o));
+ const sum=orders.filter(o=>ORDER_ST.indexOf(o.status)>=2);const rev=sum.reduce((a,o)=>a+o.total,0);const mrr=sum.reduce((a,o)=>a+o.monthly,0);
+ async function cmd(o){const t=`Gitmapsite siparişi ${o.id} — "${o.brand}" uygulamasını yap:
+1) ${o.repo?o.repo.html_url+" deposunu klonla":"Bu ihtiyaca uygun MIT/Apache lisanslı hazır projeyi bul: "+o.idea}.
+2) Güvenlik testinden geçir, bağımlılıkları güncelle, Türkçeleştir.
+3) Marka: ${o.brand}, slogan "${o.slogan||""}", ana renk ${o.color}, sektör ${o.sector||"-"}.
+4) Müşteri isteği: ${o.idea}${o.note?" | Ek: "+o.note:""}
+5) AI eklentileri: ${o.ai.length?o.ai.map(id=>AI_ADDONS.find(a=>a.id===id).name).join(", ")+" (Hostinger AI Router ile)":"yok"}.
+6) Yayın: ${o.domain||"geçici alt alan adı"} · Hostinger ${o.hosting==="biz"?"(bizim ajans hesabımız)":"(müşterinin hesabı)"} · SSL.
+7) Mobil: ${o.mobile==="yok"?"yok":o.mobile==="ikisi"?"Capacitor ile Android + iOS derlemesi":"Capacitor ile Android derlemesi"}.
+Bitince canlı URL'yi ver ve sipariş durumunu güncelle.`;try{await navigator.clipboard.writeText(t);toast("Claude komutu kopyalandı")}catch(e){toast("Kopyalanamadı")}}
+ return html`<div><h1>Siparişler</h1><p class="sub">Müşteri talepleri ve teslimat süreci.</p>
+  <div class="stat"><div class="st"><b>${orders.length}</b><span>Toplam talep</span></div><div class="st"><b>${orders.filter(o=>o.status===ORDER_ST[0]).length}</b><span>Yeni (yanıt bekliyor)</span></div><div class="st"><b>${tl(rev)}</b><span>Tahsil edilen kurulum</span></div><div class="st"><b>${tl(mrr)}</b><span>Aylık tekrarlayan gelir</span></div></div>
+  ${!orders.length?html`<div class="empty">Henüz sipariş yok. Müşteri görünümündeki "Uygulamamı Oluştur" sihirbazından gelen talepler burada listelenir.</div>`:
+  html`<table><thead><tr><th>Sipariş</th><th>Müşteri</th><th>Paket</th><th>Tutar</th><th>Durum</th><th></th></tr></thead><tbody>${orders.map(o=>html`<tr>
+   <td><b>${o.brand}</b><div style=${{color:"var(--mut)",fontSize:11}}>${o.id} · ${new Date(o.created).toLocaleDateString("tr-TR")}</div></td>
+   <td>${o.name}<div style=${{color:"var(--mut)",fontSize:11}}>${o.phone} ${o.email}</div></td>
+   <td>${TIERS[o.tier].name}${o.mobile!=="yok"?" + 📱":""}${o.ai.length?" + 🤖"+o.ai.length:""}</td>
+   <td>${tl(o.total)}<div style=${{color:"var(--mut)",fontSize:11}}>${tl(o.monthly)}/ay</div></td>
+   <td><select class="in" value=${o.status} onChange=${e=>upd(o.id,{status:e.target.value})}>${ORDER_ST.map(s=>html`<option>${s}</option>`)}</select></td>
+   <td style=${{whiteSpace:"nowrap"}}><button class="btn g s" onClick=${()=>setOpen(open===o.id?null:o.id)}>Detay</button> <button class="btn s" onClick=${()=>cmd(o)}>Claude komutu</button></td></tr>
+   ${open===o.id&&html`<tr><td colspan="6"><pre class="cmd">${orderText(o)}</pre><div style=${{display:"flex",gap:8,alignItems:"center"}}>Canlı URL: <input class="in" style=${{flex:1}} value=${o.live||""} onInput=${e=>upd(o.id,{live:e.target.value})} placeholder="https://…"/>${o.phone&&html`<a class="btn g s" target="_blank" href=${"https://wa.me/"+(o.phone.replace(/\D/g,"").replace(/^0/,"90"))}>WhatsApp'tan yaz ↗</a>`}<button class="btn g s" onClick=${()=>{setOrders(orders.filter(x=>x.id!==o.id))}}>Sil</button></div></td></tr>`}`)}</tbody></table>`}</div>`;
+}
+
+const SOURCES=[
+ ["Hostinger Partner Programı","https://www.hostinger.com/partner-program"],["Partner Programı şartları","https://www.hostinger.com/support/hostinger-partner-program/"],["Ajans ortaklarına tekrarlayan komisyon","https://www.hostinger.com/changelog/recurring-commissions-now-available-for-agency-partners"],["Hostinger API","https://developers.hostinger.com/"],["Hostinger AI Router","https://www.hostinger.com/ai-router"],
+ ["Apple 4.2.6 tartışması (Apple Forum)","https://developer.apple.com/forums/thread/840982"],["Apple 4.3 spam reddi örneği","https://developer.apple.com/forums/thread/822686"],["Apple düşük kaliteli uygulama kuralı (Haziran 2026)","https://macrumors.com/2026/06/09/app-store-guidelines-low-quality-apps/"],["Google Play ücretleri","https://support.google.com/googleplay/android-developer/answer/112622?hl=en"],
+ ["Capacitor ile web→mobil","https://capawesome.io/blog/11-steps-to-get-your-web-app-on-the-app-store/"],["AGPL yükümlülükleri (FOSSA)","https://fossa.com/blog/open-source-software-licenses-101-agpl-license/"],["PayTR / iyzico karşılaştırma","https://quasa.io/tr/media/iyzico-mu-paytr-mi-dusuk-oran-paranin-hesaba-gecisini-geciktirebilir"],["Lovable fiyatları","https://allaboutcookies.org/lovable-pricing"],["Base44 fiyatları","https://allaboutcookies.org/base44-pricing"]
+];
+function Strategy(){
+ const P=getPrices();
+ const [c,setC]=useState(LS.get("calc",{site:6,is:4,platform:1,mobil:2,bakim:20,hosting:15,ai:8,ref:10,refAvg:600,payFee:2.19,aiCost:35,hostCost:90,devCost:0})||{});
+ const s=(k,v)=>{const n={...c,[k]:+v||0};setC(n);LS.set("calc",n)};
+ const setup=c.site*P.site+c.is*P.is+c.platform*P.platform+c.mobil*P.mobil;
+ const recur=c.bakim*P.bakim+c.hosting*P.hosting+c.ai*P.ai;
+ const ref=c.ref*c.refAvg;
+ const gross=setup+recur+ref;
+ const cost=(setup+recur)*c.payFee/100+c.ai*P.ai*c.aiCost/100+c.hosting*c.hostCost+c.devCost;
+ const net=gross-cost;
+ const N=(k,l,suf)=>html`<label style=${{display:"flex",alignItems:"center",gap:8,margin:"4px 0"}}><span style=${{flex:1,fontSize:13}}>${l}</span><input class="in" type="number" min="0" style=${{width:90}} value=${c[k]} onInput=${e=>s(k,e.target.value)}/>${suf?html`<span style=${{width:34,color:"var(--mut)",fontSize:12}}>${suf}</span>`:html`<span style=${{width:34}}></span>`}</label>`;
+ const ROAD=[["Faz 1 · Bugün (v2.0)","Uygulama Dünyası vitrini, lisans filtresi, teklif sihirbazı, sipariş takibi, WhatsApp'a talep iletimi","Tamamlandı"],["Faz 2 · Altyapı","Supabase ile kullanıcı hesabı ve ortak sipariş veritabanı, PayTR ödeme, Hostinger API ile alan adı sorgulama ve site kurulumu (API anahtarı sunucuda)","Sıradaki"],["Faz 3 · Otomatik üretim","GitHub fork → özelleştirme → otomatik derleme → Hostinger'a yayın hattı; Capacitor ile Android/iOS paketleme","Planlandı"],["Faz 4 · Pazar yeri","Geliştiricilerin özelleştirdiği uygulamaları satabildiği vitrin (satış başına komisyon), müşteri paneli, AI kullanım faturası","Planlandı"]];
+ return html`<div><h1>İş Planı & Araştırma</h1><p class="sub">Sistemin nasıl kurulacağı, gelir kalemleri, riskler ve yol haritası. Kasım 2026 araştırması.</p>
+  <h2>💰 Gelir hesaplayıcı (aylık)</h2>
+  <div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14}}>
+   <div class="box" style=${{margin:0}}><b>Satış adetleri</b>${N("site","⚡ Hızlı Site satışı")}${N("is","💼 İş Uygulaması satışı")}${N("platform","🏗️ Gelişmiş Platform satışı")}${N("mobil","📱 Mobil paket satışı")}${N("bakim","🛠️ Aktif bakım abonesi")}${N("hosting","🌐 Bizde barındırılan site")}${N("ai","🤖 Aktif AI eklentisi")}${N("ref","🔗 Hostinger referans satışı")}${N("refAvg","   Ortalama referans komisyonu","₺")}</div>
+   <div class="box" style=${{margin:0}}><b>Maliyetler</b>${N("payFee","Ödeme komisyonu (PayTR)","%")}${N("aiCost","AI eklentisi model maliyeti","%")}${N("hostCost","Site başı hosting maliyeti","₺")}${N("devCost","Sabit gider (yazılımcı, reklam vb.)","₺")}
+    <table style=${{marginTop:10}}><tbody><tr><td>Kurulum gelirleri</td><td>${tl(setup)}</td></tr><tr><td>Tekrarlayan gelir</td><td>${tl(recur)}</td></tr><tr><td>Hostinger komisyonu</td><td>${tl(ref)}</td></tr><tr><td><b>Brüt</b></td><td><b>${tl(gross)}</b></td></tr><tr><td>Maliyetler</td><td>−${tl(cost)}</td></tr><tr><td><b style=${{color:"var(--ok)"}}>Net (vergi öncesi)</b></td><td><b style=${{color:"var(--ok)",fontSize:18}}>${tl(net)}</b></td></tr><tr><td>Yıllık tekrarlayan gelir</td><td>${tl(recur*12)}</td></tr></tbody></table></div></div>
+  <p style=${{color:"var(--mut)",fontSize:12}}>Fiyatlar Ayarlar'daki paket fiyatlarından gelir. Hesaplayıcı tahmindir; vergi, iade ve kur farkı dahil değildir.</p>
+  <h2>🧭 Temel bulgular</h2>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))"}}>
+   <div class="box" style=${{margin:0,lineHeight:1.65}}><b>🌐 Hostinger ortaklığı</b><ul style=${{paddingLeft:18,margin:"6px 0"}}><li><b>Ajans Partner Programı:</b> yeni referanslarda %20, yenileme/çapraz satışta %10 tekrarlayan komisyon; Ajans Hosting'de %20 indirim, partner rozeti, ajans dizininde listelenme</li><li><b>Şart:</b> Hostinger'da en az 10 site barındırmak ve kurumsal e-posta</li><li><b>Affiliate programı:</b> tek seferlik, daha yüksek oranlı komisyon (üçüncü taraf kaynaklara göre %40–60)</li><li><b>Hostinger API:</b> alan adı sorgulama, DNS, hosting, VPS uç noktaları; otomatik kurulum için temel</li></ul></div>
+   <div class="box" style=${{margin:0,lineHeight:1.65}}><b>📱 App Store & Google Play</b><ul style=${{paddingLeft:18,margin:"6px 0"}}><li><b>Apple 4.2.6:</b> şablon/üretici servislerle yapılan uygulamalar içerik sahibinin kendi geliştirici hesabından gönderilmeli → her müşteri kendi hesabını açar, biz ekibine eklenip hazırlarız</li><li><b>Apple 4.3:</b> aynı kodun yeniden paketlenmiş kopyaları spam sayılıyor; Haziran 2026'da düşük emekli uygulamalara karşı kural sıkılaştı → her uygulama gerçekten özelleştirilmeli</li><li><b>Ücretler:</b> Apple 99 $/yıl, Google 25 $ tek sefer; satış komisyonu küçük işletmeler için genelde %15</li><li><b>Teknik yol:</b> Capacitor ile web uygulamasından Android/iOS derlemesi</li></ul></div>
+   <div class="box" style=${{margin:0,lineHeight:1.65}}><b>⚖️ Açık kaynak lisansları</b><ul style=${{paddingLeft:18,margin:"6px 0"}}><li><b>MIT / Apache / BSD:</b> kapalı kaynak ticari satış serbest, telif bildirimi korunur → vitrinin ana kaynağı</li><li><b>AGPL:</b> değiştirilip internetten sunulursa kaynak kodu kullanıcılara açılmalı → müşteriye açıkça söylenmeli</li><li><b>Lisanssız / BSL / Commons Clause:</b> ticari kullanım yasak veya kısıtlı → vitrinde satılmaz</li></ul></div>
+   <div class="box" style=${{margin:0,lineHeight:1.65}}><b>🏁 Rakipler ve konum</b><ul style=${{paddingLeft:18,margin:"6px 0"}}><li>Lovable, Base44, Bolt gibi AI üreticiler aylık 20–25 $'dan başlıyor, ama kullanıcının kendisinin uğraşmasını bekliyor</li><li><b>Farkımız:</b> Türkçe, anahtar teslim hizmet; hazır ve test edilmiş kod; alan adı, sunucu ve mağazaya kadar teslim; yerel ödeme</li></ul></div>
+   <div class="box" style=${{margin:0,lineHeight:1.65}}><b>💳 Ödeme altyapısı</b><ul style=${{paddingLeft:18,margin:"6px 0"}}><li><b>PayTR:</b> %2,19'dan başlayan komisyon, 7 gün valör (işletmeye özel oran)</li><li><b>iyzico:</b> %4,29 + işlem başına 0,25 TL (aylık 20.000 TL üzeri satış için yayımlanan tarife); abonelik ve pazar yeri araçları güçlü</li><li>Öneri: PayTR ile başla, pazar yeri aşamasında iyzico ekle</li></ul></div>
+   <div class="box" style=${{margin:0,lineHeight:1.65}}><b>⚠️ Riskler</b><ul style=${{paddingLeft:18,margin:"6px 0"}}><li><b>İndirme başına gelir paylaşımı:</b> uygulama müşterinin hesabında olduğu için mağaza ödemesi müşteriye gider; bizim payımız ancak sözleşmeyle alınır → sabit ücret + aylık hizmet modeli daha güvenli</li><li>Hostinger partner rozeti onaydan önce kullanılmamalı</li><li>Yapay zekâ maliyeti kontrolsüz büyüyebilir → kullanım limiti şart</li><li>Kişisel veri: KVKK aydınlatma metni ve veri işleme sözleşmesi gerekir</li></ul></div>
+  </div>
+  <h2>🗺️ Yol haritası</h2>
+  ${ROAD.map(([t,d,st])=>html`<div class="row"><span class=${"dot "+(st==="Tamamlandı"?"d-ok":st==="Sıradaki"?"d-warn":"d-info")}>${st==="Tamamlandı"?"✓":st==="Sıradaki"?"→":"·"}</span><div><b>${t}</b> <span class="tag">${st}</span><div style=${{color:"var(--mut)"}}>${d}</div></div></div>`)}
+  <h2>📚 Kaynaklar</h2><div style=${{columns:"2 280px",fontSize:13,lineHeight:1.9}}>${SOURCES.map(([t,u])=>html`<div><a href=${u} target="_blank">${t} ↗</a></div>`)}</div>
+ </div>`;
+}
+
+function Settings2({toast}){
+ const [t,setT]=useState(LS.get("token",""));const [S,setS]=useState(LS.get("settings",{})||{});const [P,setP]=useState(getPrices());
+ const saveS=()=>{LS.set("settings",S);toast("Kaydedildi")};const saveP=()=>{LS.set("prices",P);toast("Fiyatlar güncellendi")};
+ const PL={site:"⚡ Hızlı Site",is:"💼 İş Uygulaması",platform:"🏗️ Gelişmiş Platform",mobil:"📱 Mobil paket",bakim:"🛠️ Bakım (aylık)",hosting:"🌐 Barındırma (aylık)",ai:"🤖 AI eklentisi (aylık)"};
+ return html`<div><h1>Ayarlar</h1>
+  <div class="box"><b>İşletme ayarları</b>
+   <label style=${{display:"block",marginTop:10}}>Talepleri alacağınız WhatsApp numarası<input class="in" style=${{width:"100%",marginTop:4}} placeholder="905xxxxxxxxx" value=${S.whatsapp||""} onInput=${e=>setS({...S,whatsapp:e.target.value})}/></label>
+   <p style=${{color:"var(--mut)",fontSize:12}}>Dolu olursa, müşteri talep gönderdiğinde özet WhatsApp'ta size hazır mesaj olarak açılır.</p>
+   <label style=${{display:"block",marginTop:6}}>Hostinger referans / partner bağlantınız<input class="in" style=${{width:"100%",marginTop:4}} placeholder="https://hostinger.com?REFERRALCODE=…" value=${S.hostingerRef||""} onInput=${e=>setS({...S,hostingerRef:e.target.value})}/></label>
+   <p style=${{color:"var(--mut)",fontSize:12}}>Sihirbazdaki "Hostinger'da sorgula" butonu bu bağlantıyı kullanır; komisyon size yazılır.</p>
+   <button class="btn" onClick=${saveS}>Kaydet</button></div>
+  <div class="box"><b>Paket fiyatları (₺)</b><div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))",gap:10,marginTop:10}}>${Object.keys(PL).map(k=>html`<label>${PL[k]}<input class="in" type="number" style=${{width:"100%",marginTop:4}} value=${P[k]} onInput=${e=>setP({...P,[k]:+e.target.value||0})}/></label>`)}</div>
+   <div style=${{display:"flex",gap:8,marginTop:10}}><button class="btn" onClick=${saveP}>Fiyatları kaydet</button><button class="btn g" onClick=${()=>{setP({...DEFAULT_PRICES});LS.set("prices",{});toast("Varsayılan fiyatlar")}}>Varsayılana dön</button></div></div>
+  <div class="box"><b>GitHub token (isteğe bağlı)</b><p style=${{color:"var(--mut)",fontSize:12}}>Saatlik limit 60 → 5000. Sadece bu tarayıcıda saklanır, yetki gerekmez.</p>
+   <div style=${{display:"flex",gap:8}}><input class="in" type="password" style=${{flex:1}} value=${t} onInput=${e=>setT(e.target.value)} placeholder="github_pat_…"/><button class="btn" onClick=${()=>{LS.set("token",t.trim());toast("Kaydedildi")}}>Kaydet</button></div></div>
+  <div class="box"><b>Veri</b><p style=${{color:"var(--mut)",fontSize:12}}>Şu an tüm veriler (siparişler dahil) bu tarayıcıda saklanır. Faz 2'de ortak veritabanına taşınacak.</p><button class="btn g" onClick=${()=>{["saved","secs","builds","q","orders"].forEach(k=>LS.set(k,null));location.reload()}}>Tüm verileri sıfırla</button></div></div>`;
+}
+
 /* ================= UYGULAMA ================= */
 function App(){
- const VIEWS=["kesfet","kategori","liste","kuyruk","guncel","ayar"];
- const [view,setViewS]=useState(VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"kesfet");
- const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION)};
- useEffect(()=>{const h=()=>{const v=location.hash.slice(1);if(VIEWS.includes(v))setViewS(v)};window.addEventListener("hashchange",h);return()=>window.removeEventListener("hashchange",h)},[]);
- const isNew=LS.get("seenVer","")!==VERSION&&view!=="guncel";const [results,setResults]=useState([]);const [cur,setCur]=useState(null);
+ const CUST=["dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const hv=()=>{const v=location.hash.slice(1);return ALL.includes(v)?v:"dunya"};
+ const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":(LS.get("mode","musteri")||"musteri"));
+ const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
+ useEffect(()=>{const h=()=>{const v=location.hash.slice(1);if(ALL.includes(v)){setViewS(v);if(ADMIN.includes(v))setMode("admin");if(CUST.includes(v))setMode("musteri")}};window.addEventListener("hashchange",h);return()=>window.removeEventListener("hashchange",h)},[]);
+ const isNew=LS.get("seenVer","")!==VERSION&&view!=="guncel";
+ const [results,setResults]=useState([]);const [cur,setCur]=useState(null);
  const [saved,setSaved]=useState(LS.get("saved",{})||{});const [secs,setSecs]=useState(LS.get("secs",{})||{});const [builds,setBuildsS]=useState(LS.get("builds",[])||[]);
+ const [orders,setOrdersS]=useState(LS.get("orders",[])||[]);const [pick,setPick]=useState(null);const [storeCat,setStoreCat]=useState(null);
  const [deck,setDeck]=useState(null);const [msg,setMsg]=useState("");const [rate,setRate]=useState(RATE);const [busyAll,setBusyAll]=useState(false);
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
  const toast=m=>{setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3200)};
  const toggleSave=r=>{const n={...saved};if(n[r.full_name])delete n[r.full_name];else n[r.full_name]=r;setSaved(n);LS.set("saved",n)};
  const setSec=(k,v)=>setSecs(s=>{const n={...s,[k]:v};LS.set("secs",n);return n});
  const setBuilds=b=>{setBuildsS(b);LS.set("builds",b)};
+ const setOrders=o=>{setOrdersS(o);LS.set("orders",o)};
  const addBuild=(r,notes,prof)=>setBuilds([{full:r.full_name,url:r.html_url,notes,fw:prof.fw,target:prof.target,status:"Bekliyor",created:new Date().toISOString()},...builds.filter(b=>b.full!==r.full_name)]);
  async function runAll(arr){setBusyAll(true);for(const r of arr){try{setSec(r.full_name,await securityScan(r))}catch(e){toast(e.message);break}}setBusyAll(false);toast("Toplu test tamamlandı")}
- const NAV=[["kesfet","🔎","Keşfet"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0],["ayar","⚙️","Ayarlar"]];
+ const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
+ const switchMode=m=>{setMode(m);LS.set("mode",m);setView(m==="admin"?"siparisler":"dunya")};
+ const newOrders=orders.filter(o=>o.status===ORDER_ST[0]).length;
+ const NAVC=[["dunya","🌍","Uygulama Dünyası"],["olustur","✨","Uygulamamı Oluştur"],["paketler","💳","Paketler & Fiyatlar"],["ai-destek","🤖","Yapay Zekâ Destekleri"],["siparislerim","📦","Taleplerim",orders.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0]];
+ const NAVA=[["siparisler","📥","Siparişler",newOrders],["plan","💰","İş Planı & Gelir"],["kesfet","🔎","GitHub Radar"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0],["ayar","⚙️","Ayarlar"]];
+ const NAV=mode==="admin"?NAVA:NAVC;
  return html`<div class="app">
   <aside class="side noprint"><div class="logo"><i>🗺️</i>Gitmapsite</div>
-   ${NAV.map(([k,ic,l,b])=>html`<button class=${"nav"+(view===k?" on":"")} onClick=${()=>setView(k)}>${ic} ${l}${b?html`<b>${b}</b>`:""}</button>`)}
-   <div style=${{marginTop:"auto",color:"var(--mut)",fontSize:11,padding:"8px 12px"}}>GitHub limiti: ${rate.rem}/${rate.lim}<br/>v${VERSION}</div></aside>
+   <div style=${{display:"flex",background:"#0d1320",borderRadius:9,padding:3,marginBottom:10,border:"1px solid var(--line)"}}>${[["musteri","Müşteri"],["admin","Yönetici"]].map(([k,l])=>html`<button class="nav" style=${{justifyContent:"center",padding:"7px 6px",fontSize:12.5,background:mode===k?"#1d2a45":"none",color:mode===k?"#fff":"var(--mut)"}} onClick=${()=>switchMode(k)}>${l}</button>`)}</div>
+   ${NAV.map(([k,ic,l,b])=>html`<button class=${"nav"+(view===k?" on":"")} onClick=${()=>{if(k==="dunya")setStoreCat(null);setView(k)}}>${ic} ${l}${b?html`<b>${b}</b>`:""}</button>`)}
+   <div style=${{marginTop:"auto",color:"var(--mut)",fontSize:11,padding:"8px 12px"}}>${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim}<br/>`:""}v${VERSION}</div></aside>
   <main class="main">
+   ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>goWizard(r,null,c)} onDetail=${setCur} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
+   ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView}/>`}
+   ${view==="paketler"&&html`<${Packages} goWizard=${goWizard}/>`}
+   ${view==="ai-destek"&&html`<${AiGuide}/>`}
+   ${view==="siparislerim"&&html`<${MyOrders} orders=${orders}/>`}
+   ${view==="siparisler"&&html`<${AdminOrders} orders=${orders} setOrders=${setOrders} toast=${toast}/>`}
+   ${view==="plan"&&html`<${Strategy}/>`}
    ${view==="kesfet"&&html`<${Discover} results=${results} setResults=${setResults} open=${setCur} saved=${saved} toggleSave=${toggleSave} secs=${secs} toast=${toast}/>`}
    ${view==="kategori"&&html`<${Categories} results=${results} saved=${saved} open=${setCur}/>`}
    ${view==="liste"&&html`<${SavedView} saved=${saved} open=${setCur} toggleSave=${toggleSave} secs=${secs} present=${setDeck} runAll=${runAll} busyAll=${busyAll} toast=${toast}/>`}
    ${view==="kuyruk"&&html`<${Builds} builds=${builds} setBuilds=${setBuilds} open=${setCur} saved=${saved}/>`}
    ${view==="guncel"&&html`<${Updates}/>`}
-   ${view==="ayar"&&html`<${Settings} toast=${toast}/>`}
+   ${view==="ayar"&&html`<${Settings2} toast=${toast}/>`}
   </main>
-  ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} close=${()=>setCur(null)} sec=${secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}}/>`}
+  ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} close=${()=>setCur(null)} sec=${secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}} onWant=${mode==="musteri"?(r=>{setCur(null);goWizard(r)}):null}/>`}
   ${deck&&html`<${Deck} repos=${deck} secs=${secs} close=${()=>setDeck(null)}/>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
  </div>`;
