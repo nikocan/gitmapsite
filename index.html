@@ -86,8 +86,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="1.0.0";
+const VERSION="1.1.0";
 const CHANGELOG=[
+ {v:"1.1.0",date:"2026-11-25",items:[
+  "Canlı adres: nikocan.github.io/gitmapsite (GitHub Pages, her güncelleme otomatik yayına girer)",
+  "Trend projeler: son 30 günde açılıp en çok yıldız alan projeler tek tıkla",
+  "Proje karşılaştırma: Listem'den 2–4 proje seçip yıldız, lisans, güvenlik notu, dil, bakım durumunu yan yana görün",
+  "Dışa aktarma: Listem'i CSV veya JSON olarak panoya kopyalayın",
+  "Paylaşılabilir sekmeler: adres çubuğu sekmeyi hatırlar (#kesfet, #liste, #kuyruk…)",
+  "Yeni sürüm bildirimi: Güncellemeler sekmesinde 'YENİ' etiketi"
+ ]},
  {v:"1.0.0",date:"2026-11-21",items:[
   "İlk sürüm yayında: GitHub genelinde açık kaynak proje keşfi (arama, dil, yıldız, kullanıcı/kurum filtresi)",
   "18 iş koluna otomatik kategorizasyon (konu etiketleri + açıklama + isim analizi)",
@@ -247,15 +255,15 @@ function Discover({results,setResults,open,saved,toggleSave,secs,toast}){
  const [q,setQ]=useState(LS.get("q",""));const [lang,setLang]=useState("");const [stars,setStars]=useState("100");
  const [owner,setOwner]=useState("");const [sector,setSector]=useState("");const [sort,setSort]=useState("stars");
  const [page,setPage]=useState(1);const [loading,setLoading]=useState(false);const [total,setTotal]=useState(0);const [catF,setCatF]=useState("");
- async function run(p=1){
+ async function run(p=1,trend=false){
   setLoading(true);
   try{
-   const parts=[];if(q.trim())parts.push(q.trim());
+   const parts=[];if(trend){const d=new Date(Date.now()-30*864e5).toISOString().slice(0,10);parts.push("created:>="+d)}if(q.trim())parts.push(q.trim());
    if(sector){const s=SECTORS.find(x=>x.id===sector);parts.push(s.kw.slice(0,3).join(" OR "))}
-   if(lang)parts.push("language:"+lang);if(stars)parts.push("stars:>="+stars);if(owner.trim())parts.push((owner.includes("org:")?"":"user:")+owner.trim());
+   if(lang)parts.push("language:"+lang);if(stars&&!trend)parts.push("stars:>="+stars);if(trend)parts.push("stars:>=20");if(owner.trim())parts.push((owner.includes("org:")?"":"user:")+owner.trim());
    parts.push("is:public","archived:false");
    const qs=encodeURIComponent(parts.filter(Boolean).join(" "));
-   const j=await gh(`/search/repositories?q=${qs}&sort=${sort}&order=desc&per_page=30&page=${p}`);
+   const j=await gh(`/search/repositories?q=${qs}&sort=${trend?"stars":sort}&order=desc&per_page=30&page=${p}`);
    setTotal(j.total_count);setPage(p);setResults(p===1?j.items:[...results,...j.items]);LS.set("q",q);
    if(!j.items.length)toast("Sonuç bulunamadı");
   }catch(e){toast(e.message)}setLoading(false);
@@ -271,7 +279,7 @@ function Discover({results,setResults,open,saved,toggleSave,secs,toast}){
    <select class="in" value=${stars} onChange=${e=>setStars(e.target.value)}><option value="">Yıldız: hepsi</option><option value="10">★ 10+</option><option value="100">★ 100+</option><option value="1000">★ 1k+</option><option value="10000">★ 10k+</option></select>
    <input class="in" style=${{flex:"1 1 140px"}} placeholder="Kullanıcı / org (ops.)" value=${owner} onInput=${e=>setOwner(e.target.value)} />
    <select class="in" value=${sort} onChange=${e=>setSort(e.target.value)}><option value="stars">En çok yıldız</option><option value="updated">Son güncellenen</option><option value="forks">En çok fork</option></select>
-   <button class="btn" disabled=${loading}>${loading?"Aranıyor…":"Ara"}</button>
+   <button class="btn" disabled=${loading}>${loading?"Aranıyor…":"Ara"}</button><button type="button" class="btn g" disabled=${loading} onClick=${()=>run(1,true)}>🔥 Trend (30 gün)</button>
   </form>
   ${results.length>0&&html`<div class="chips"><span class=${"chip"+(catF===""?" on":"")} onClick=${()=>setCatF("")}>Tümü (${results.length})</span>${cats.map(c=>html`<span class=${"chip"+(catF===c.id?" on":"")} onClick=${()=>setCatF(c.id)}>${c.ic} ${c.name} (${c.n})</span>`)}</div>
    <p class="sub">${fmt(total)} eşleşen depo · ${results.length} yüklendi</p>`}
@@ -354,7 +362,7 @@ function Detail({repo,close,sec,setSec,saved,toggleSave,builds,addBuild,toast,pr
     <img src=${og(repo.full_name)} style=${{width:"100%",borderRadius:12,border:"1px solid var(--line)"}}/>
     <p style=${{fontSize:15,lineHeight:1.6}}>${repo.description||"Açıklama yok."}</p>
     <div class="chips">${(repo.topics||[]).map(t=>html`<span class="tag">#${t}</span>`)}</div>
-    <div class="stat"><div class="st"><b>${fmt(repo.stargazers_count)}</b><span>Yıldız</span></div><div class="st"><b>${fmt(repo.forks_count)}</b><span>Fork</span></div><div class="st"><b>${fmt(repo.open_issues_count)}</b><span>Açık konu</span></div><div class="st"><b>${repo.license?repo.license.spdx_id:"—"}</b><span>Lisans</span></div><div class="st"><b style=${{fontSize:15}}>${ago(repo.pushed_at)}</b><span>Son güncelleme</span></div></div>
+    <div class="stat"><div class="st"><b>${fmt(repo.stargazers_count)}</b><span>Yıldız</span></div><div class="st"><b>${fmt(repo.forks_count)}</b><span>Fork</span></div><div class="st"><b>${fmt(repo.open_issues_count)}</b><span>Açık konu</span></div><div class="st"><b>${!repo.license?"—":repo.license.spdx_id==="NOASSERTION"?"Özel":repo.license.spdx_id}</b><span>Lisans</span></div><div class="st"><b style=${{fontSize:15}}>${ago(repo.pushed_at)}</b><span>Son güncelleme</span></div></div>
     ${langs&&lt>0&&html`<div class="box"><b>Teknolojiler</b><div class="lang">${Object.entries(langs).slice(0,7).map(([k,v],i)=>html`<div style=${{width:(v/lt*100)+"%",background:COL[i]}}></div>`)}</div><div class="meta">${Object.entries(langs).slice(0,7).map(([k,v],i)=>html`<span><span style=${{color:COL[i]}}>●</span> ${k} ${(v/lt*100).toFixed(1)}%</span>`)}</div></div>`}
     <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}><a class="btn g" href=${repo.html_url} target="_blank">GitHub'da aç ↗</a>${repo.homepage&&html`<a class="btn g" href=${repo.homepage} target="_blank">Canlı demo ↗</a>`}</div>
    </div>`}
@@ -393,12 +401,26 @@ function Deck({repos,secs,close}){
 }
 
 /* ================= LİSTEM / KUYRUK / AYARLAR / GÜNCELLEMELER ================= */
-function SavedView({saved,open,toggleSave,secs,present,runAll,busyAll}){
- const arr=Object.values(saved);
+function Compare({repos,secs,close}){
+ const rows=[["İş kolu",r=>{const c=categorize(r);return c.ic+" "+c.name}],["Yıldız",r=>fmt(r.stargazers_count)],["Fork",r=>fmt(r.forks_count)],["Açık konu",r=>fmt(r.open_issues_count)],["Dil",r=>r.language||"—"],["Lisans",r=>!r.license?"Yok":r.license.spdx_id==="NOASSERTION"?"Özel / belirsiz":r.license.spdx_id],["Son güncelleme",r=>ago(r.pushed_at)],["Arşiv",r=>r.archived?"Evet":"Hayır"],["Güvenlik notu",r=>secs[r.full_name]?html`<span class=${"grade g"+secs[r.full_name].grade}>${secs[r.full_name].grade} · ${secs[r.full_name].score}</span>`:"Test edilmedi"],["Zafiyetli paket",r=>secs[r.full_name]?String(secs[r.full_name].vulns.length):"—"],["Yapı",r=>deployProfile(r,secs[r.full_name]&&secs[r.full_name].pkg).fw]];
+ const best=[...repos].sort((a,b)=>((secs[b.full_name]||{}).score||0)-((secs[a.full_name]||{}).score||0)||b.stargazers_count-a.stargazers_count)[0];
+ return html`<div class="box" style=${{overflowX:"auto"}}><div style=${{display:"flex",alignItems:"center",marginBottom:8}}><b>Karşılaştırma</b><span style=${{flex:1}}></span><button class="btn g s" onClick=${close}>Kapat</button></div>
+  <table><thead><tr><th></th>${repos.map(r=>html`<th style=${{color:"var(--txt)"}}>${r.full_name}${best===r?html` <span class="tag">⭐ öneri</span>`:""}</th>`)}</tr></thead>
+  <tbody>${rows.map(([l,f])=>html`<tr><td style=${{color:"var(--mut)"}}>${l}</td>${repos.map(r=>html`<td>${f(r)}</td>`)}</tr>`)}</tbody></table>
+  <p style=${{color:"var(--mut)",fontSize:12}}>Öneri: önce güvenlik puanı, eşitse yıldız sayısı esas alınır.</p></div>`;
+}
+function SavedView({saved,open,toggleSave,secs,present,runAll,busyAll,toast}){
+ const arr=Object.values(saved);const [sel,setSel]=useState([]);const [cmp,setCmp]=useState(false);
+ const togSel=f=>setSel(s=>s.includes(f)?s.filter(x=>x!==f):s.length>=4?s:[...s,f]);
+ async function exp(kind){const rows=arr.map(r=>({proje:r.full_name,url:r.html_url,is_kolu:categorize(r).name,yildiz:r.stargazers_count,dil:r.language||"",lisans:r.license?r.license.spdx_id:"",son_guncelleme:r.pushed_at,guvenlik_notu:secs[r.full_name]?secs[r.full_name].grade:"",guvenlik_puani:secs[r.full_name]?secs[r.full_name].score:""}));
+  const txt=kind==="json"?JSON.stringify(rows,null,2):[Object.keys(rows[0]).join(","),...rows.map(o=>Object.values(o).map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(","))].join("\n");
+  try{await navigator.clipboard.writeText(txt);toast(kind.toUpperCase()+" panoya kopyalandı")}catch(e){toast("Kopyalanamadı")}}
  return html`<div><h1>Listem</h1><p class="sub">Beğendiğiniz projeler. Toplu güvenlik testi ve toplu sunum buradan.</p>
   ${!arr.length?html`<div class="empty">Henüz proje eklemediniz. Kartlardaki ☆ ile ekleyin.</div>`:html`
-  <div class="bar"><button class="btn" onClick=${()=>present(arr)}>▶ Toplu sunum (${arr.length})</button><button class="btn g" disabled=${busyAll} onClick=${()=>runAll(arr)}>${busyAll?"Test ediliyor…":"🛡️ Hepsini güvenlik testinden geçir"}</button></div>
-  <div class="grid">${arr.map(r=>html`<${Card} key=${r.full_name} r=${r} onOpen=${open} saved=${true} onSave=${toggleSave} sec=${secs[r.full_name]}/>`)}</div>`}</div>`;
+  <div class="bar"><button class="btn" onClick=${()=>present(arr)}>▶ Toplu sunum (${arr.length})</button><button class="btn g" disabled=${sel.length<2} onClick=${()=>setCmp(true)}>⚖️ Karşılaştır (${sel.length}/4)</button><button class="btn g" onClick=${()=>exp("csv")}>CSV kopyala</button><button class="btn g" onClick=${()=>exp("json")}>JSON kopyala</button><button class="btn g" disabled=${busyAll} onClick=${()=>runAll(arr)}>${busyAll?"Test ediliyor…":"🛡️ Hepsini güvenlik testinden geçir"}</button></div>
+  ${cmp&&sel.length>=2&&html`<${Compare} repos=${arr.filter(r=>sel.includes(r.full_name))} secs=${secs} close=${()=>setCmp(false)}/>`}
+  <p class="sub" style=${{margin:"0 0 8px"}}>Karşılaştırmak için kartların altındaki kutucuğu işaretleyin.</p>
+  <div class="grid">${arr.map(r=>html`<div key=${r.full_name}><${Card} r=${r} onOpen=${open} saved=${true} onSave=${toggleSave} sec=${secs[r.full_name]}/><label style=${{display:"flex",gap:6,alignItems:"center",padding:"6px 4px",color:"var(--mut)",fontSize:12,cursor:"pointer"}}><input type="checkbox" checked=${sel.includes(r.full_name)} onChange=${()=>togSel(r.full_name)}/> Karşılaştırmaya ekle</label></div>`)}</div>`}</div>`;
 }
 function Builds({builds,setBuilds,open,saved}){
  const ST=["Bekliyor","Geliştiriliyor","Test","Canlıda"];
@@ -424,7 +446,11 @@ function Updates(){
 
 /* ================= UYGULAMA ================= */
 function App(){
- const [view,setView]=useState("kesfet");const [results,setResults]=useState([]);const [cur,setCur]=useState(null);
+ const VIEWS=["kesfet","kategori","liste","kuyruk","guncel","ayar"];
+ const [view,setViewS]=useState(VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"kesfet");
+ const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION)};
+ useEffect(()=>{const h=()=>{const v=location.hash.slice(1);if(VIEWS.includes(v))setViewS(v)};window.addEventListener("hashchange",h);return()=>window.removeEventListener("hashchange",h)},[]);
+ const isNew=LS.get("seenVer","")!==VERSION&&view!=="guncel";const [results,setResults]=useState([]);const [cur,setCur]=useState(null);
  const [saved,setSaved]=useState(LS.get("saved",{})||{});const [secs,setSecs]=useState(LS.get("secs",{})||{});const [builds,setBuildsS]=useState(LS.get("builds",[])||[]);
  const [deck,setDeck]=useState(null);const [msg,setMsg]=useState("");const [rate,setRate]=useState(RATE);const [busyAll,setBusyAll]=useState(false);
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
@@ -434,7 +460,7 @@ function App(){
  const setBuilds=b=>{setBuildsS(b);LS.set("builds",b)};
  const addBuild=(r,notes,prof)=>setBuilds([{full:r.full_name,url:r.html_url,notes,fw:prof.fw,target:prof.target,status:"Bekliyor",created:new Date().toISOString()},...builds.filter(b=>b.full!==r.full_name)]);
  async function runAll(arr){setBusyAll(true);for(const r of arr){try{setSec(r.full_name,await securityScan(r))}catch(e){toast(e.message);break}}setBusyAll(false);toast("Toplu test tamamlandı")}
- const NAV=[["kesfet","🔎","Keşfet"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler"],["ayar","⚙️","Ayarlar"]];
+ const NAV=[["kesfet","🔎","Keşfet"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0],["ayar","⚙️","Ayarlar"]];
  return html`<div class="app">
   <aside class="side noprint"><div class="logo"><i>🗺️</i>Gitmapsite</div>
    ${NAV.map(([k,ic,l,b])=>html`<button class=${"nav"+(view===k?" on":"")} onClick=${()=>setView(k)}>${ic} ${l}${b?html`<b>${b}</b>`:""}</button>`)}
@@ -442,7 +468,7 @@ function App(){
   <main class="main">
    ${view==="kesfet"&&html`<${Discover} results=${results} setResults=${setResults} open=${setCur} saved=${saved} toggleSave=${toggleSave} secs=${secs} toast=${toast}/>`}
    ${view==="kategori"&&html`<${Categories} results=${results} saved=${saved} open=${setCur}/>`}
-   ${view==="liste"&&html`<${SavedView} saved=${saved} open=${setCur} toggleSave=${toggleSave} secs=${secs} present=${setDeck} runAll=${runAll} busyAll=${busyAll}/>`}
+   ${view==="liste"&&html`<${SavedView} saved=${saved} open=${setCur} toggleSave=${toggleSave} secs=${secs} present=${setDeck} runAll=${runAll} busyAll=${busyAll} toast=${toast}/>`}
    ${view==="kuyruk"&&html`<${Builds} builds=${builds} setBuilds=${setBuilds} open=${setCur} saved=${saved}/>`}
    ${view==="guncel"&&html`<${Updates}/>`}
    ${view==="ayar"&&html`<${Settings} toast=${toast}/>`}
