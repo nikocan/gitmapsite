@@ -86,8 +86,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="2.0.0";
+const VERSION="2.0.1";
 const CHANGELOG=[
+ {v:"2.0.1",date:"2026-11-25",items:[
+  "Yeni adres: https://gitmapp.com — Hostinger VPS üzerinde, SSL'li (Let's Encrypt), http → https yönlendirmeli",
+  "Otomatik yayın: GitHub'a yüklenen her sürüm en geç 5 dakika içinde gitmapp.com'a gelir",
+  "Aynı VPS'teki diğer sitelere dokunulmadan ayrı site ayarıyla kuruldu"
+ ]},
  {v:"2.0.0",date:"2026-11-25",items:[
   "Uygulama Dünyası: 15 kategoride (randevu, restoran, e-ticaret, CRM, fatura, stok, eğitim, otel/emlak, klinik, proje, İK, AI asistanı, kurumsal site, portfolyo, SaaS) hazır uygulama vitrini",
   "Lisans kontrolü: her uygulamada 'Satışa uygun / Kaynak paylaşımı / Lisans belirsiz' etiketi, varsayılan olarak sadece ticari satışa uygun kodlar listelenir",
@@ -718,7 +723,7 @@ function Strategy(){
  const cost=(setup+recur)*c.payFee/100+c.ai*P.ai*c.aiCost/100+c.hosting*c.hostCost+c.devCost;
  const net=gross-cost;
  const N=(k,l,suf)=>html`<label style=${{display:"flex",alignItems:"center",gap:8,margin:"4px 0"}}><span style=${{flex:1,fontSize:13}}>${l}</span><input class="in" type="number" min="0" style=${{width:90}} value=${c[k]} onInput=${e=>s(k,e.target.value)}/>${suf?html`<span style=${{width:34,color:"var(--mut)",fontSize:12}}>${suf}</span>`:html`<span style=${{width:34}}></span>`}</label>`;
- const ROAD=[["Faz 1 · Bugün (v2.0)","Uygulama Dünyası vitrini, lisans filtresi, teklif sihirbazı, sipariş takibi, WhatsApp'a talep iletimi","Tamamlandı"],["Faz 2 · Altyapı","Supabase ile kullanıcı hesabı ve ortak sipariş veritabanı, PayTR ödeme, Hostinger API ile alan adı sorgulama ve site kurulumu (API anahtarı sunucuda)","Sıradaki"],["Faz 3 · Otomatik üretim","GitHub fork → özelleştirme → otomatik derleme → Hostinger'a yayın hattı; Capacitor ile Android/iOS paketleme","Planlandı"],["Faz 4 · Pazar yeri","Geliştiricilerin özelleştirdiği uygulamaları satabildiği vitrin (satış başına komisyon), müşteri paneli, AI kullanım faturası","Planlandı"]];
+ const ROAD=[["Faz 1 · Bugün (v2.0)","Uygulama Dünyası vitrini, lisans filtresi, teklif sihirbazı, sipariş takibi, WhatsApp'a talep iletimi; gitmapp.com (Hostinger VPS) üzerinde yayında","Tamamlandı"],["Faz 2 · Altyapı","Supabase ile kullanıcı hesabı ve ortak sipariş veritabanı, PayTR ödeme, Hostinger API ile alan adı sorgulama ve site kurulumu (API anahtarı sunucuda)","Sıradaki"],["Faz 3 · Otomatik üretim","GitHub fork → özelleştirme → otomatik derleme → Hostinger'a yayın hattı; Capacitor ile Android/iOS paketleme","Planlandı"],["Faz 4 · Pazar yeri","Geliştiricilerin özelleştirdiği uygulamaları satabildiği vitrin (satış başına komisyon), müşteri paneli, AI kullanım faturası","Planlandı"]];
  return html`<div><h1>İş Planı & Araştırma</h1><p class="sub">Sistemin nasıl kurulacağı, gelir kalemleri, riskler ve yol haritası. Kasım 2026 araştırması.</p>
   <h2>💰 Gelir hesaplayıcı (aylık)</h2>
   <div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14}}>
