@@ -81,13 +81,23 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 8px;border-bottom:1p
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <script>
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="2.0.1";
+const VERSION="2.1.0";
 const CHANGELOG=[
+ {v:"2.1.0",date:"2026-11-25",items:[
+  "Ortak veritabanı altyapısı (Supabase): siparişler artık tek merkezde, her cihazdan görülebilir",
+  "Yönetici girişi: e-posta + şifre; yönetici yetkisi veritabanı kuralıyla korunur",
+  "Talep Radarı: müşterilerin baktığı kategoriler, aradığı kelimeler ve ilgi gösterdiği uygulamalar (1/7/30/90 gün)",
+  "Sipariş sorgulama: müşteri, sipariş numarası + telefon/e-posta ile durumunu her cihazdan görebilir",
+  "Güvenlik: satır bazlı erişim kuralları — müşteri sadece kendi siparişini görür, sipariş durumu sadece yönetici tarafından değiştirilir",
+  "Veritabanı bağlı değilken uygulama eskisi gibi yerel modda çalışmaya devam eder"
+ ]},
  {v:"2.0.1",date:"2026-11-25",items:[
   "Yeni adres: https://gitmapp.com — Hostinger VPS üzerinde, SSL'li (Let's Encrypt), http → https yönlendirmeli",
   "Otomatik yayın: GitHub'a yüklenen her sürüm en geç 5 dakika içinde gitmapp.com'a gelir",
@@ -282,7 +292,7 @@ function Discover({results,setResults,open,saved,toggleSave,secs,toast}){
    parts.push("is:public","archived:false");
    const qs=encodeURIComponent(parts.filter(Boolean).join(" "));
    const j=await gh(`/search/repositories?q=${qs}&sort=${trend?"stars":sort}&order=desc&per_page=30&page=${p}`);
-   setTotal(j.total_count);setPage(p);setResults(p===1?j.items:[...results,...j.items]);LS.set("q",q);
+   setTotal(j.total_count);setPage(p);if(p===1&&q.trim())track("radar_search",{query:q.trim()});setResults(p===1?j.items:[...results,...j.items]);LS.set("q",q);
    if(!j.items.length)toast("Sonuç bulunamadı");
   }catch(e){toast(e.message)}setLoading(false);
  }
@@ -546,7 +556,8 @@ function StoreHome({openCat,goWizard}){
 function StoreCat({cat,back,onPick,onDetail,secs,toast}){
  const [items,setItems]=useState(null);const [onlySafe,setOnlySafe]=useState(true);const [onlyDemo,setOnlyDemo]=useState(false);const [q,setQ]=useState("");
  const load=f=>{setItems(null);loadCategory(cat,f).then(setItems).catch(e=>{toast(e.message);setItems([])})};
- useEffect(()=>load(false),[cat.id]);
+ useEffect(()=>{load(false);track("category_view",{category:cat.id})},[cat.id]);
+ useEffect(()=>{if(q.trim().length<3)return;const t=setTimeout(()=>track("search",{query:q.trim(),category:cat.id}),1500);return()=>clearTimeout(t)},[q]);
  let list=items||[];if(onlySafe)list=list.filter(r=>licInfo(r).ok);if(onlyDemo)list=list.filter(r=>r.homepage&&/^https?:/.test(r.homepage));if(q)list=list.filter(r=>((r.name||"")+" "+(r.description||"")).toLowerCase().includes(q.toLowerCase()));
  return html`<div><button class="btn g s" onClick=${back}>← Tüm kategoriler</button>
   <h1 style=${{marginTop:14}}>${cat.ic} ${cat.name}</h1><p class="sub">${cat.desc} · ${TIERS[cat.tier].name} paketinden başlar, hazırlık ${TIERS[cat.tier].gun}</p>
@@ -596,7 +607,7 @@ function AiGuide(){
  </div>`;
 }
 
-function Wizard({pick,setPick,orders,setOrders,toast,go}){
+function Wizard({pick,setPick,orders,setOrders,toast,go,uid}){
  const P=getPrices();const S=LS.get("settings",{})||{};
  const [step,setStep]=useState(0);
  const [f,setF]=useState(()=>Object.assign({tier:pick&&pick.tier||"is",idea:"",brand:"",slogan:"",color:"#4f8cff",sector:"",domain:"",hosting:"biz",mobile:"yok",paid:false,price:"",ai:[],bakim:true,name:"",phone:"",email:"",note:""},pick&&pick.tier?{tier:pick.tier}:{}));
@@ -606,8 +617,12 @@ function Wizard({pick,setPick,orders,setOrders,toast,go}){
  const monthly=(f.bakim?P.bakim:0)+(f.hosting==="biz"?P.hosting:0)+f.ai.reduce((a,id)=>a+P.ai*AI_ADDONS.find(x=>x.id===id).mult,0);
  const steps=["Uygulama","Marka","Özellikler & AI","Yayın","Mobil","Özet"];
  const can=[()=>repo||f.idea.trim().length>10,()=>f.brand.trim(),()=>true,()=>true,()=>true,()=>f.name.trim()&&(f.phone.trim()||f.email.trim())];
- function submit(){
+ const [sending,setSending]=useState(false);
+ async function submit(){
   const o={id:"GM-"+Date.now().toString(36).toUpperCase(),created:new Date().toISOString(),status:ORDER_ST[0],repo:repo?{full_name:repo.full_name,html_url:repo.html_url,license:repo.license&&repo.license.spdx_id,language:repo.language}:null,...f,total,monthly};
+  if(sb){setSending(true);const {error}=await sb.from("orders").insert(toRow(o,uid));setSending(false);
+   if(error){toast("Talep kaydedilemedi: "+error.message);return}o.db=true}
+  track("wizard_submit",{category:pick&&pick.cat||null,repo:repo?repo.full_name:null,meta:{tier:o.tier,mobile:o.mobile,ai:o.ai}});
   setOrders([o,...orders]);
   const txt=orderText(o);
   if(S.whatsapp){const num=S.whatsapp.replace(/\D/g,"");window.open(`https://wa.me/${num}?text=${encodeURIComponent(txt)}`,"_blank")}
@@ -660,7 +675,7 @@ function Wizard({pick,setPick,orders,setOrders,toast,go}){
      <tr><td><b>Aylık toplam</b></td><td><b>${tl(monthly)}</b></td></tr></tbody></table>
      <p style=${{color:"var(--mut)",fontSize:12,lineHeight:1.6}}>Fiyatlara KDV, alan adı ve mağaza hesap ücretleri dahil değildir. Kesin teklif, ihtiyaç görüşmesinden sonra gönderilir.</p></div></div>`}
   <div style=${{display:"flex",gap:8,marginTop:18}}>${step>0&&html`<button class="btn g" onClick=${()=>setStep(step-1)}>← Geri</button>`}<span style=${{flex:1}}></span>
-   ${step<5?html`<button class="btn" disabled=${!can[step]()} onClick=${()=>setStep(step+1)}>Devam →</button>`:html`<button class="btn" disabled=${!can[5]()} onClick=${submit}>📨 Teklif talebini gönder</button>`}</div>
+   ${step<5?html`<button class="btn" disabled=${!can[step]()} onClick=${()=>setStep(step+1)}>Devam →</button>`:html`<button class="btn" disabled=${!can[5]()||sending} onClick=${submit}>${sending?"Gönderiliyor…":"📨 Teklif talebini gönder"}</button>`}</div>
   </div></div>`;
 }
 function orderText(o){return `Gitmapsite teklif talebi ${o.id}
@@ -674,8 +689,8 @@ AI: ${o.ai.length?o.ai.map(id=>AI_ADDONS.find(a=>a.id===id).name).join(", "):"-"
 Not: ${o.note||"-"}
 Tek sefer: ${tl(o.total)} | Aylık: ${tl(o.monthly)}`}
 
-function MyOrders({orders}){
- return html`<div><h1>Taleplerim</h1><p class="sub">Gönderdiğiniz uygulama taleplerinin durumu.</p>
+function MyOrders({orders,toast}){
+ return html`<div><h1>Taleplerim</h1><p class="sub">Gönderdiğiniz uygulama taleplerinin durumu.</p>${sb&&html`<${OrderLookup} toast=${toast}/>`}
   ${!orders.length?html`<div class="empty">Henüz talep yok. <a href="#olustur">Uygulamanızı oluşturun →</a></div>`:orders.map(o=>{const i=ORDER_ST.indexOf(o.status);return html`<div class="box"><div style=${{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}><b>${o.brand}</b><span class="tag">${o.id}</span><span style=${{color:"var(--mut)",fontSize:12}}>${new Date(o.created).toLocaleDateString("tr-TR")}</span><span style=${{flex:1}}></span><b>${tl(o.total)}</b></div>
    <div style=${{display:"flex",gap:4,margin:"12px 0 6px"}}>${ORDER_ST.map((s,j)=>html`<div title=${s} style=${{flex:1,height:6,borderRadius:3,background:j<=i?"var(--acc)":"#1d2740"}}></div>`)}</div>
    <div style=${{fontSize:13}}>Durum: <b>${o.status}</b>${o.live?html` · <a href=${o.live} target="_blank">${o.live}</a>`:""}</div></div>`})}</div>`;
@@ -764,9 +779,58 @@ function Settings2({toast}){
   <div class="box"><b>Veri</b><p style=${{color:"var(--mut)",fontSize:12}}>Şu an tüm veriler (siparişler dahil) bu tarayıcıda saklanır. Faz 2'de ortak veritabanına taşınacak.</p><button class="btn g" onClick=${()=>{["saved","secs","builds","q","orders"].forEach(k=>LS.set(k,null));location.reload()}}>Tüm verileri sıfırla</button></div></div>`;
 }
 
+/* ================= v2.1 — VERİTABANI (Supabase) ================= */
+const CFG=window.GMS_CONFIG||{};
+const sb=(CFG.supabaseUrl&&CFG.supabaseKey&&window.supabase)?window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey):null;
+const SID=(()=>{let s=LS.get("sid","");if(!s){s=Math.random().toString(36).slice(2,12)+Date.now().toString(36);LS.set("sid",s)}return s})();
+function track(type,o){if(!sb)return;o=o||{};try{sb.from("events").insert({session_id:SID,type,query:o.query?String(o.query).slice(0,200):null,category:o.category||null,repo:o.repo||null,meta:o.meta||null}).then(()=>{},()=>{})}catch(e){}}
+const fromRow=r=>({id:r.id,created:r.created_at,status:r.status,name:r.customer_name,phone:r.phone||"",email:r.email||"",brand:r.brand,slogan:r.slogan||"",sector:r.sector||"",color:r.color||"#4f8cff",idea:r.idea||"",note:r.note||"",tier:r.tier,mobile:r.mobile,paid:r.paid,price:r.price||"",domain:r.domain||"",hosting:r.hosting,ai:r.ai||[],bakim:r.bakim,repo:r.repo,total:+r.total,monthly:+r.monthly,live:r.live_url||"",db:true});
+const toRow=(o,uid)=>({id:o.id,user_id:uid||null,customer_name:o.name.trim(),phone:o.phone.trim()||null,email:o.email.trim()||null,brand:o.brand.trim(),slogan:o.slogan||null,sector:o.sector||null,color:/^#[0-9a-fA-F]{6}$/.test(o.color)?o.color:null,idea:o.idea||null,note:o.note||null,tier:o.tier,mobile:o.mobile,paid:!!o.paid,price:o.paid&&o.price?+o.price:null,domain:o.domain||null,hosting:o.hosting,ai:o.ai,bakim:!!o.bakim,repo:o.repo,total:o.total,monthly:o.monthly});
+
+function useAuth(){
+ const [session,setSession]=useState(null);const [profile,setProfile]=useState(null);
+ useEffect(()=>{if(!sb)return;sb.auth.getSession().then(({data})=>setSession(data.session));const {data:l}=sb.auth.onAuthStateChange((_e,s)=>setSession(s));return()=>l.subscription.unsubscribe()},[]);
+ useEffect(()=>{if(!sb||!session){setProfile(null);return}sb.from("profiles").select("*").eq("id",session.user.id).maybeSingle().then(({data})=>setProfile(data||null))},[session&&session.user.id]);
+ return {session,profile,isAdmin:!!(profile&&profile.role==="admin")};
+}
+
+function Login({toast}){
+ const [email,setEmail]=useState("");const [pw,setPw]=useState("");const [busy,setBusy]=useState(false);const [mode,setMode]=useState("giris");
+ async function go(e){e.preventDefault();setBusy(true);
+  const r=mode==="giris"?await sb.auth.signInWithPassword({email,password:pw}):await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin}});
+  setBusy(false);if(r.error)toast(r.error.message==="Invalid login credentials"?"E-posta veya şifre hatalı":r.error.message);else if(mode==="kayit")toast("Doğrulama e-postası gönderildi, e-postanızdaki bağlantıya tıklayın");}
+ return html`<div style=${{maxWidth:420,margin:"40px auto"}}><div class="box" style=${{padding:24}}>
+  <h1>${mode==="giris"?"Yönetici girişi":"Hesap oluştur"}</h1><p class="sub">Siparişleri ve talep radarını görmek için giriş yapın.</p>
+  <form onSubmit=${go} style=${{display:"flex",flexDirection:"column",gap:10}}>
+   <input class="in" type="email" required placeholder="E-posta" value=${email} onInput=${e=>setEmail(e.target.value)}/>
+   <input class="in" type="password" required minLength="8" placeholder="Şifre (en az 8 karakter)" value=${pw} onInput=${e=>setPw(e.target.value)}/>
+   <button class="btn" disabled=${busy}>${busy?"Bekleyin…":mode==="giris"?"Giriş yap":"Hesap oluştur"}</button></form>
+  <p style=${{color:"var(--mut)",fontSize:12.5,marginTop:12}}>${mode==="giris"?html`Hesabınız yok mu? <a href="#" onClick=${e=>{e.preventDefault();setMode("kayit")}}>Hesap oluşturun</a>`:html`Hesabınız var mı? <a href="#" onClick=${e=>{e.preventDefault();setMode("giris")}}>Giriş yapın</a>`}</p></div></div>`;
+}
+
+function OrderLookup({toast}){
+ const [id,setId]=useState("");const [c,setC]=useState("");const [res,setRes]=useState(null);
+ async function go(e){e.preventDefault();const {data,error}=await sb.rpc("order_status",{p_id:id.trim().toUpperCase(),p_contact:c.trim()});if(error){toast(error.message);return}setRes(data&&data[0]||false)}
+ return html`<div class="box"><b>Sipariş sorgula</b><p style=${{color:"var(--mut)",fontSize:12}}>Başka bir cihazdan talep verdiyseniz sipariş numarası ve telefon/e-posta ile durumunu görebilirsiniz.</p>
+  <form onSubmit=${go} style=${{display:"flex",gap:8,flexWrap:"wrap"}}><input class="in" required placeholder="GM-…" value=${id} onInput=${e=>setId(e.target.value)}/><input class="in" required placeholder="Telefon veya e-posta" value=${c} onInput=${e=>setC(e.target.value)} style=${{flex:1}}/><button class="btn">Sorgula</button></form>
+  ${res===false&&html`<p style=${{color:"var(--warn)"}}>Bu bilgilerle eşleşen sipariş bulunamadı.</p>`}
+  ${res&&html`<div style=${{marginTop:10}}><b>${res.brand}</b> · ${res.id} · Durum: <b>${res.status}</b>${res.live_url?html` · <a href=${res.live_url} target="_blank">${res.live_url}</a>`:""}</div>`}</div>`;
+}
+
+function Radar({toast}){
+ const [days,setDays]=useState(7);const [rows,setRows]=useState(null);
+ useEffect(()=>{setRows(null);sb.rpc("demand_radar",{p_days:days}).then(({data,error})=>{if(error){toast(error.message);setRows([])}else setRows(data||[])})},[days]);
+ const g=k=>(rows||[]).filter(r=>r.kind===k);
+ const catName=id=>{const c=STORE_CATS.find(x=>x.id===id);return c?c.ic+" "+c.name:id};
+ const T=(title,list,fmtL)=>html`<div class="box" style=${{margin:0}}><b>${title}</b>${!list.length?html`<p style=${{color:"var(--mut)",fontSize:13}}>Henüz veri yok.</p>`:html`<table><tbody>${list.slice(0,15).map(r=>html`<tr><td>${fmtL?fmtL(r.label):r.label}</td><td style=${{width:60,textAlign:"right"}}><b>${r.hits}</b></td></tr>`)}</tbody></table>`}</div>`;
+ return html`<div><h1>📡 Talep Radarı</h1><p class="sub">Müşterilerin vitrinde ne aradığı, hangi kategorilere ve uygulamalara baktığı. Üretim Ajanı hangi uygulamaları hazırlayacağına buradan karar verecek.</p>
+  <div class="chips">${[1,7,30,90].map(d=>html`<span class=${"chip"+(days===d?" on":"")} onClick=${()=>setDays(d)}>Son ${d} gün</span>`)}</div>
+  ${rows===null?html`<div class="empty">Yükleniyor…</div>`:html`<div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${T("En çok bakılan kategoriler",g("kategori"),catName)}${T("En çok aranan kelimeler",g("arama"))}${T("En çok ilgi gören uygulamalar",g("uygulama"))}</div>`}</div>`;
+}
+
 /* ================= UYGULAMA ================= */
 function App(){
- const CUST=["dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const CUST=["dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1);return ALL.includes(v)?v:"dunya"};
  const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":(LS.get("mode","musteri")||"musteri"));
  const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
@@ -784,24 +848,35 @@ function App(){
  const setOrders=o=>{setOrdersS(o);LS.set("orders",o)};
  const addBuild=(r,notes,prof)=>setBuilds([{full:r.full_name,url:r.html_url,notes,fw:prof.fw,target:prof.target,status:"Bekliyor",created:new Date().toISOString()},...builds.filter(b=>b.full!==r.full_name)]);
  async function runAll(arr){setBusyAll(true);for(const r of arr){try{setSec(r.full_name,await securityScan(r))}catch(e){toast(e.message);break}}setBusyAll(false);toast("Toplu test tamamlandı")}
- const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
+ const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,cat:cat&&cat.id,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
+ const auth=useAuth();const uid=auth.session&&auth.session.user.id;
+ const [dbOrders,setDbOrders]=useState(null);
+ const loadDb=()=>sb.from("orders").select("*").order("created_at",{ascending:false}).limit(500).then(({data,error})=>{if(error)toast(error.message);else setDbOrders((data||[]).map(fromRow))});
+ useEffect(()=>{if(sb&&auth.isAdmin)loadDb();else setDbOrders(null)},[auth.isAdmin]);
+ async function setOrdersDb(next){const prev=dbOrders||[];setDbOrders(next);
+  for(const p of prev){const n=next.find(x=>x.id===p.id);
+   if(!n){const {error}=await sb.from("orders").delete().eq("id",p.id);if(error)toast(error.message)}
+   else if(n.status!==p.status||(n.live||"")!==(p.live||"")){const {error}=await sb.from("orders").update({status:n.status,live_url:n.live||null}).eq("id",p.id);if(error)toast(error.message)}}}
+ const adminOrders=sb?(dbOrders||[]):orders;const setAdminOrders=sb?setOrdersDb:setOrders;
+ const needLogin=mode==="admin"&&sb&&!auth.isAdmin&&ADMIN.includes(view);
  const switchMode=m=>{setMode(m);LS.set("mode",m);setView(m==="admin"?"siparisler":"dunya")};
- const newOrders=orders.filter(o=>o.status===ORDER_ST[0]).length;
+ const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
  const NAVC=[["dunya","🌍","Uygulama Dünyası"],["olustur","✨","Uygulamamı Oluştur"],["paketler","💳","Paketler & Fiyatlar"],["ai-destek","🤖","Yapay Zekâ Destekleri"],["siparislerim","📦","Taleplerim",orders.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0]];
- const NAVA=[["siparisler","📥","Siparişler",newOrders],["plan","💰","İş Planı & Gelir"],["kesfet","🔎","GitHub Radar"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0],["ayar","⚙️","Ayarlar"]];
+ const NAVA=[["siparisler","📥","Siparişler",newOrders],...(sb?[["radar","📡","Talep Radarı"]]:[]),["plan","💰","İş Planı & Gelir"],["kesfet","🔎","GitHub Radar"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0],["ayar","⚙️","Ayarlar"]];
  const NAV=mode==="admin"?NAVA:NAVC;
  return html`<div class="app">
   <aside class="side noprint"><div class="logo"><i>🗺️</i>Gitmapsite</div>
    <div style=${{display:"flex",background:"#0d1320",borderRadius:9,padding:3,marginBottom:10,border:"1px solid var(--line)"}}>${[["musteri","Müşteri"],["admin","Yönetici"]].map(([k,l])=>html`<button class="nav" style=${{justifyContent:"center",padding:"7px 6px",fontSize:12.5,background:mode===k?"#1d2a45":"none",color:mode===k?"#fff":"var(--mut)"}} onClick=${()=>switchMode(k)}>${l}</button>`)}</div>
    ${NAV.map(([k,ic,l,b])=>html`<button class=${"nav"+(view===k?" on":"")} onClick=${()=>{if(k==="dunya")setStoreCat(null);setView(k)}}>${ic} ${l}${b?html`<b>${b}</b>`:""}</button>`)}
-   <div style=${{marginTop:"auto",color:"var(--mut)",fontSize:11,padding:"8px 12px"}}>${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim}<br/>`:""}v${VERSION}</div></aside>
+   <div style=${{marginTop:"auto",color:"var(--mut)",fontSize:11,padding:"8px 12px"}}>${mode==="admin"&&auth.session?html`<div style=${{marginBottom:6}}>👤 ${auth.session.user.email}${auth.isAdmin?" (yönetici)":""}<br/><a href="#" onClick=${e=>{e.preventDefault();sb.auth.signOut()}}>Çıkış yap</a></div>`:""}${mode==="admin"?html`${sb?"🟢 Veritabanı bağlı":"⚪ Yerel mod (veritabanı yok)"}<br/>GitHub limiti: ${rate.rem}/${rate.lim}<br/>`:""}v${VERSION}</div></aside>
   <main class="main">
-   ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>goWizard(r,null,c)} onDetail=${setCur} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
-   ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView}/>`}
+   ${needLogin?html`<${Login} toast=${toast}/>`:html`<div>
+   ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>{track("app_want",{repo:r.full_name,category:c&&c.id});goWizard(r,null,c)}} onDetail=${r=>{track("app_view",{repo:r.full_name,category:storeCat&&storeCat.id});setCur(r)}} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
+   ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView} uid=${uid}/>`}
    ${view==="paketler"&&html`<${Packages} goWizard=${goWizard}/>`}
    ${view==="ai-destek"&&html`<${AiGuide}/>`}
-   ${view==="siparislerim"&&html`<${MyOrders} orders=${orders}/>`}
-   ${view==="siparisler"&&html`<${AdminOrders} orders=${orders} setOrders=${setOrders} toast=${toast}/>`}
+   ${view==="siparislerim"&&html`<${MyOrders} orders=${orders} toast=${toast}/>`}
+   ${view==="siparisler"&&html`<${AdminOrders} orders=${adminOrders} setOrders=${setAdminOrders} toast=${toast}/>`}
    ${view==="plan"&&html`<${Strategy}/>`}
    ${view==="kesfet"&&html`<${Discover} results=${results} setResults=${setResults} open=${setCur} saved=${saved} toggleSave=${toggleSave} secs=${secs} toast=${toast}/>`}
    ${view==="kategori"&&html`<${Categories} results=${results} saved=${saved} open=${setCur}/>`}
@@ -809,6 +884,8 @@ function App(){
    ${view==="kuyruk"&&html`<${Builds} builds=${builds} setBuilds=${setBuilds} open=${setCur} saved=${saved}/>`}
    ${view==="guncel"&&html`<${Updates}/>`}
    ${view==="ayar"&&html`<${Settings2} toast=${toast}/>`}
+   ${view==="radar"&&sb&&html`<${Radar} toast=${toast}/>`}
+   </div>`}
   </main>
   ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} close=${()=>setCur(null)} sec=${secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}} onWant=${mode==="musteri"?(r=>{setCur(null);goWizard(r)}):null}/>`}
   ${deck&&html`<${Deck} repos=${deck} secs=${secs} close=${()=>setDeck(null)}/>`}
