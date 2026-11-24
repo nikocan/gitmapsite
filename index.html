@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gitmapsite — GitHub Açık Kaynak Proje Haritası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#0b0f17;--bg2:#111827;--card:#151c2b;--line:#243049;--txt:#e6ebf5;--mut:#8b97ad;--acc:#4f8cff;--acc2:#7c5cff;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif;font-size:14px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:flex;min-height:100vh}
+.side{width:230px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;padding:4px 8px 18px}
+.logo i{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-style:normal}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--mut);border:0;background:none;text-align:left;width:100%}
+.nav:hover{background:#1a2336;color:var(--txt)}.nav.on{background:#1d2a45;color:#fff}
+.nav b{margin-left:auto;background:var(--acc);color:#fff;border-radius:20px;padding:0 7px;font-size:11px}
+.main{flex:1;min-width:0;padding:24px 28px 60px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:22px 0 10px}.sub{color:var(--mut);margin:0 0 18px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:16px}
+.in{background:#0d1320;border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-width:0}
+.in:focus{outline:none;border-color:var(--acc)}
+.btn{background:var(--acc);border:0;border-radius:8px;padding:9px 14px;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn:hover{filter:brightness(1.1)}.btn.g{background:#1d2740;border:1px solid var(--line)}.btn.s{padding:6px 10px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{border:1px solid var(--line);background:#121a2a;border-radius:20px;padding:5px 11px;cursor:pointer;font-size:12px;color:var(--mut)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--acc);transform:translateY(-2px)}
+.card img{width:100%;aspect-ratio:2/1;object-fit:cover;background:#0d1320;display:block}
+.cb{padding:12px 14px;display:flex;flex-direction:column;gap:7px;flex:1}
+.ct{font-weight:700;font-size:15px;word-break:break-word}.cd{color:var(--mut);font-size:12.5px;line-height:1.45;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:10px;color:var(--mut);font-size:12px;align-items:center}
+.tag{display:inline-block;background:#1b2540;border:1px solid #2b3a5e;color:#b9c8ec;border-radius:6px;padding:2px 7px;font-size:11px}
+.grade{font-weight:800;border-radius:6px;padding:2px 8px;font-size:12px}
+.gA{background:#14532d;color:#86efac}.gB{background:#1e3a2a;color:#bef264}.gC{background:#422006;color:#fcd34d}.gD{background:#450a0a;color:#fca5a5}.gN{background:#1f2937;color:#9ca3af}
+.empty{text-align:center;color:var(--mut);padding:60px 20px;border:1px dashed var(--line);border-radius:12px}
+.stat{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}.st b{display:block;font-size:22px}.st span{color:var(--mut);font-size:12px}
+.drawer{position:fixed;inset:0;background:rgba(3,6,12,.7);display:flex;justify-content:flex-end;z-index:50}
+.dw{width:min(900px,100%);background:var(--bg2);height:100%;overflow:auto;border-left:1px solid var(--line)}
+.dh{position:sticky;top:0;background:var(--bg2);border-bottom:1px solid var(--line);padding:16px 20px;z-index:2}
+.tabs{display:flex;gap:4px;margin-top:12px;flex-wrap:wrap}.tab{padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--mut);background:none;border:0}.tab.on{background:#1d2a45;color:#fff}
+.db{padding:20px}
+.row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #1c2538}
+.dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;flex-shrink:0;font-weight:700}
+.d-ok{background:#14532d;color:#86efac}.d-warn{background:#422006;color:#fcd34d}.d-bad{background:#450a0a;color:#fca5a5}.d-info{background:#1e293b;color:#93c5fd}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.gal figure{margin:0;background:#0d1320;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.gal img{width:100%;display:block;max-height:260px;object-fit:contain;background:#fff1}
+.gal figcaption{font-size:11px;color:var(--mut);padding:6px 8px}
+.lang{height:10px;border-radius:6px;overflow:hidden;display:flex;background:#0d1320;margin:8px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.step{display:flex;gap:12px;margin-bottom:14px}.step .n{width:28px;height:28px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-weight:700;flex-shrink:0}
+pre.cmd{background:#0a0e16;border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;font-size:12px;color:#c9d6ff}
+table{width:100%;border-collapse:collapse}td,th{padding:9px 8px;border-bottom:1px solid #1c2538;text-align:left;font-size:13px}th{color:var(--mut);font-weight:500}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1d2a45;border:1px solid var(--acc);padding:10px 16px;border-radius:10px;z-index:99}
+/* Sunum */
+.deck{position:fixed;inset:0;background:#05070c;z-index:80;display:flex;flex-direction:column}
+.deckbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.stage{flex:1;display:grid;place-items:center;padding:20px;overflow:auto}
+.slide{width:min(1100px,100%);aspect-ratio:16/9;background:linear-gradient(135deg,#0f1729,#141b30 60%,#1a1340);border:1px solid #2a3556;border-radius:16px;padding:48px 56px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.slide:after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,#4f8cff33,transparent 70%)}
+.slide h2{font-size:34px;margin:0 0 10px}.slide h3{font-size:14px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin:0 0 14px}
+.slide p{font-size:18px;line-height:1.55;color:#c8d2e8}
+.slide .foot{margin-top:auto;display:flex;justify-content:space-between;color:var(--mut);font-size:12px}
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;flex:1;min-height:0}
+.sgrid img{width:100%;height:100%;object-fit:cover;border-radius:10px;border:1px solid #2a3556;background:#0d1320}
+.big{font-size:84px;font-weight:800;line-height:1}
+@media print{.side,.deckbar,.noprint{display:none!important}.deck{position:static}.stage{display:block;padding:0}.slide{page-break-after:always;margin:0 auto 10px;border-radius:0}body{background:#05070c}}
+@media(max-width:820px){.app{flex-direction:column}.side{width:100%;height:auto;position:static;flex-direction:row;overflow:auto;padding:8px}.logo{padding:4px 8px}.nav{width:auto;white-space:nowrap}.main{padding:16px}.slide{padding:22px}.slide h2{font-size:22px}.slide p{font-size:14px}.big{font-size:48px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useEffect,useMemo,useCallback,useRef}=React;
+const html=htm.bind(React.createElement);
+
+/* ================= SÜRÜM / GÜNCELLEMELER ================= */
+const VERSION="1.0.0";
+const CHANGELOG=[
+ {v:"1.0.0",date:"2026-11-21",items:[
+  "İlk sürüm yayında: GitHub genelinde açık kaynak proje keşfi (arama, dil, yıldız, kullanıcı/kurum filtresi)",
+  "18 iş koluna otomatik kategorizasyon (konu etiketleri + açıklama + isim analizi)",
+  "Güvenlik testi: OSV.dev bağımlılık zafiyet taraması (npm, PyPI), OpenSSF Scorecard, lisans, bakım, SECURITY.md, açıkta .env kontrolü — A/B/C/D notu",
+  "Ekranlar: README görsellerinden arayüz ekran görüntüleri + canlı site ekran görüntüsü + kapak görseli",
+  "Sunum modu: proje başına 6 slayt, listemden toplu sunum, PDF olarak yazdır",
+  "Yapım kuyruğu: 'Bu projeyi yap' → fork, Netlify/Vercel/Render tek tık canlıya alma, Claude'a hazır geliştirme komutu, durum takibi",
+  "İsteğe bağlı GitHub token desteği (saatlik limit 60 → 5000)",
+  "Uygulama içi Güncellemeler sekmesi"
+ ]}
+];
+
+/* ================= İŞ KOLLARI ================= */
+const SECTORS=[
+ {id:"saglik",name:"Sağlık",ic:"🏥",kw:["health","medical","hospital","clinic","patient","ehr","emr","fhir","pharmacy","doctor","telemedicine","dicom","hl7","eczane","saglik"]},
+ {id:"finans",name:"Finans & Muhasebe",ic:"💰",kw:["finance","accounting","invoice","bank","payment","fintech","crypto","trading","ledger","budget","expense","wallet","stock","tax","erp-accounting"]},
+ {id:"eticaret",name:"E-Ticaret",ic:"🛒",kw:["ecommerce","e-commerce","shop","store","cart","marketplace","checkout","shopify","woocommerce","product","retail","pos","b2b"]},
+ {id:"crm",name:"CRM & ERP",ic:"📇",kw:["crm","erp","customer","sales","lead","pipeline","inventory","odoo","business","invoice-management","helpdesk","ticket"]},
+ {id:"egitim",name:"Eğitim",ic:"🎓",kw:["education","learning","lms","course","school","student","teacher","quiz","edtech","moodle","exam","university"]},
+ {id:"tarim",name:"Tarım & Gıda",ic:"🌾",kw:["agriculture","farm","farming","crop","agri","food","restaurant","recipe","menu","livestock","tarim"]},
+ {id:"lojistik",name:"Lojistik & Ulaşım",ic:"🚚",kw:["logistics","shipping","delivery","fleet","transport","tracking","warehouse","supply-chain","route","vehicle","gps","obd"]},
+ {id:"gayrimenkul",name:"Gayrimenkul & İnşaat",ic:"🏠",kw:["real-estate","realestate","property","rental","booking-property","construction","architecture","building","hotel"]},
+ {id:"turizm",name:"Turizm & Rezervasyon",ic:"✈️",kw:["travel","booking","reservation","tourism","hotel","flight","trip","event","ticketing","calendar","appointment"]},
+ {id:"ik",name:"İnsan Kaynakları",ic:"👥",kw:["hr","hrm","recruitment","hiring","job","payroll","employee","attendance","ats","resume"]},
+ {id:"hukuk",name:"Hukuk & Kamu",ic:"⚖️",kw:["legal","law","government","govtech","civic","election","contract","compliance","gdpr","kvkk"]},
+ {id:"medya",name:"Medya & İçerik",ic:"🎬",kw:["cms","blog","media","video","streaming","music","podcast","news","publishing","wordpress","headless-cms","social-media"]},
+ {id:"sosyal",name:"Sosyal & İletişim",ic:"💬",kw:["chat","messaging","social","forum","community","email","newsletter","notification","slack","discord","whatsapp"]},
+ {id:"yz",name:"Yapay Zeka & Veri",ic:"🤖",kw:["ai","llm","machine-learning","ml","deep-learning","gpt","chatbot","nlp","agent","rag","openai","analytics","data","dashboard","bi"]},
+ {id:"guvenlik",name:"Siber Güvenlik",ic:"🛡️",kw:["security","pentest","vulnerability","auth","authentication","encryption","firewall","siem","password","oauth","iam"]},
+ {id:"iot",name:"IoT & Akıllı Ev",ic:"📡",kw:["iot","smart-home","home-automation","arduino","raspberry","esp32","sensor","mqtt","embedded","automotive"]},
+ {id:"oyun",name:"Oyun",ic:"🎮",kw:["game","gaming","unity","godot","phaser","gamedev","multiplayer","rpg","shooter","engine"]},
+ {id:"dev",name:"Geliştirici Araçları",ic:"🛠️",kw:["devtools","cli","framework","library","sdk","api","testing","devops","ci","docker","kubernetes","monitoring","template","boilerplate","starter","admin","ui","component"]}
+];
+const OTHER={id:"diger",name:"Diğer",ic:"📦"};
+function categorize(r){
+ const txt=((r.name||"")+" "+(r.description||"")+" "+(r.topics||[]).join(" ")).toLowerCase();
+ const topics=(r.topics||[]).map(t=>t.toLowerCase());
+ let best=null,bs=0;
+ for(const s of SECTORS){let sc=0;for(const k of s.kw){if((r.name||"").toLowerCase().split(/[-_.]/).includes(k))sc+=2;if(topics.includes(k))sc+=3;else if(new RegExp("(^|[^a-z])"+k.replace(/[-]/g,"[- ]?")+"([^a-z]|$)").test(txt))sc+=1;}
+  if(sc>bs){bs=sc;best=s;}}
+ return best||OTHER;
+}
+
+/* ================= GITHUB ================= */
+const LS={get(k,d){try{const v=localStorage.getItem("gms_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("gms_"+k,JSON.stringify(v))}catch(e){}}};
+let RATE={rem:"?",lim:"?"};
+async function gh(path){
+ const tok=LS.get("token","");
+ const r=await fetch("https://api.github.com"+path,{headers:Object.assign({Accept:"application/vnd.github+json"},tok?{Authorization:"Bearer "+tok}:{})});
+ RATE={rem:r.headers.get("x-ratelimit-remaining")||"?",lim:r.headers.get("x-ratelimit-limit")||"?"};
+ window.dispatchEvent(new Event("rate"));
+ if(!r.ok){let m="GitHub hatası "+r.status;if(r.status===403||r.status===429)m="GitHub istek limiti doldu. Ayarlar'dan token ekleyin veya biraz bekleyin.";if(r.status===422)m="Geçersiz arama sorgusu.";throw new Error(m)}
+ return r.json();
+}
+async function raw(o,n,br,p){try{const r=await fetch(`https://raw.githubusercontent.com/${o}/${n}/${br}/${p}`);if(!r.ok)return null;return await r.text()}catch(e){return null}}
+const og=(full)=>`https://opengraph.githubassets.com/1/${full}`;
+const shot=(url)=>`https://image.thum.io/get/width/1280/crop/800/noanimate/${url}`;
+const fmt=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1)+"k":String(n);
+const ago=d=>{const days=Math.floor((Date.now()-new Date(d))/864e5);if(days<1)return"bugün";if(days<30)return days+" gün önce";if(days<365)return Math.floor(days/30)+" ay önce";return Math.floor(days/365)+" yıl önce"};
+
+/* ================= GÜVENLİK TESTİ ================= */
+async function securityScan(repo){
+ const [o,n]=repo.full_name.split("/");const br=repo.default_branch||"main";
+ const checks=[];let score=100;
+ const add=(lvl,title,detail,pen=0)=>{checks.push({lvl,title,detail});score-=pen};
+ // Lisans
+ if(repo.license&&repo.license.spdx_id&&repo.license.spdx_id!=="NOASSERTION")add("ok","Lisans",repo.license.name+" — ticari kullanım koşullarını kontrol edin");
+ else add("bad","Lisans yok","Lisanssız kodun yeniden kullanımı hukuken risklidir",20);
+ if(repo.license&&/GPL/.test(repo.license.spdx_id||""))add("warn","Copyleft lisans",repo.license.spdx_id+": türetilmiş işin kaynağını açmanız gerekebilir",3);
+ // Bakım
+ const days=(Date.now()-new Date(repo.pushed_at))/864e5;
+ if(repo.archived)add("bad","Arşivlenmiş","Proje artık geliştirilmiyor; güvenlik yamaları gelmez",20);
+ if(days>365)add("bad","Bakım","Son güncelleme "+ago(repo.pushed_at),12);else if(days>120)add("warn","Bakım","Son güncelleme "+ago(repo.pushed_at),5);else add("ok","Bakım","Aktif — son güncelleme "+ago(repo.pushed_at));
+ // Topluluk
+ if(repo.stargazers_count<50)add("warn","Topluluk güveni","Düşük yıldız sayısı ("+repo.stargazers_count+")",5);else add("ok","Topluluk güveni",fmt(repo.stargazers_count)+" yıldız, "+fmt(repo.forks_count)+" fork");
+ // Dosyalar
+ const [sec1,sec2,env,dep1,dep2,pkg,req,lock]=await Promise.all([raw(o,n,br,"SECURITY.md"),raw(o,n,br,".github/SECURITY.md"),raw(o,n,br,".env"),raw(o,n,br,".github/dependabot.yml"),raw(o,n,br,".github/renovate.json"),raw(o,n,br,"package.json"),raw(o,n,br,"requirements.txt"),raw(o,n,br,"package-lock.json").then(t=>t?true:false)]);
+ if(sec1||sec2)add("ok","Güvenlik politikası","SECURITY.md mevcut");else add("warn","Güvenlik politikası","SECURITY.md yok — zafiyet bildirme süreci tanımsız",4);
+ if(env){const leak=/(KEY|SECRET|TOKEN|PASSWORD)\s*=\s*\S{6,}/i.test(env);add("bad",".env dosyası repoda",leak?"Gizli anahtar sızıntısı olabilir — anahtarları değiştirin":".env dosyası commitlenmiş",leak?25:10)}
+ else add("ok","Gizli dosya","Kök dizinde .env bulunamadı");
+ if(dep1||dep2)add("ok","Otomatik bağımlılık güncellemesi","Dependabot/Renovate yapılandırılmış");else add("info","Otomatik bağımlılık güncellemesi","Dependabot/Renovate bulunamadı");
+ // OSV bağımlılık taraması
+ const queries=[];let pk=null;
+ const subs=await Promise.all(["frontend","backend","client","server","web","app","api"].map(d=>raw(o,n,br,d+"/package.json")));
+ const pkgs=[pkg,...subs].filter(Boolean);const seenQ=new Set();
+ for(const t of pkgs){try{const p=JSON.parse(t);if(!pk)pk=p;else{pk={...pk,dependencies:Object.assign({},pk.dependencies,p.dependencies),devDependencies:Object.assign({},pk.devDependencies,p.devDependencies)}}
+  const all=Object.assign({},p.dependencies||{},p.devDependencies||{});for(const[k,v]of Object.entries(all)){const ver=String(v).replace(/^[\^~>=<\s]+/,"").split(" ")[0];if(/^\d+\.\d+/.test(ver)&&!seenQ.has(k)){seenQ.add(k);queries.push({package:{name:k,ecosystem:"npm"},version:ver})}}}catch(e){}}
+ if(req){for(const line of req.split("\n")){const m=line.trim().match(/^([A-Za-z0-9_.\-]+)\s*==\s*([0-9][^\s;#]*)/);if(m)queries.push({package:{name:m[1],ecosystem:"PyPI"},version:m[2]})}}
+ let vulns=[];let osvOk=null;
+ if(queries.length){try{const r=await fetch("https://api.osv.dev/v1/querybatch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({queries:queries.slice(0,300)})});const j=await r.json();osvOk=true;
+   (j.results||[]).forEach((res,i)=>{if(res.vulns&&res.vulns.length)vulns.push({pkg:queries[i].package.name,ver:queries[i].version,eco:queries[i].package.ecosystem,ids:res.vulns.map(v=>v.id)})});
+  }catch(e){osvOk=false}}
+ if(!queries.length)add("info","Bağımlılık taraması","Sabit sürümlü package.json / requirements.txt bulunamadı");
+ else if(osvOk===false)add("info","Bağımlılık taraması","OSV.dev servisine ulaşılamadı");
+ else if(vulns.length){const tot=vulns.reduce((a,v)=>a+v.ids.length,0);add("bad","Bilinen zafiyetler (OSV)",`${queries.length} paketten ${vulns.length} tanesinde ${tot} kayıtlı zafiyet`,Math.min(30,6+vulns.length*3))}
+ else add("ok","Bilinen zafiyetler (OSV)",queries.length+" bağımlılık tarandı, kayıtlı zafiyet yok");
+ if(pkg&&!lock&&queries.length)add("warn","Kilit dosyası","package-lock.json yok — tekrarlanabilir kurulum zayıf",3);
+ // OpenSSF Scorecard
+ let scorecard=null;
+ try{const r=await fetch(`https://api.securityscorecards.dev/projects/github.com/${o}/${n}`);if(r.ok){scorecard=await r.json();const s=scorecard.score;add(s>=7?"ok":s>=4?"warn":"bad","OpenSSF Scorecard",s.toFixed(1)+" / 10",s>=7?0:s>=4?5:12)}else add("info","OpenSSF Scorecard","Bu proje için skor kaydı yok")}catch(e){add("info","OpenSSF Scorecard","Servise ulaşılamadı")}
+ score=Math.max(0,Math.min(100,Math.round(score)));
+ const grade=score>=85?"A":score>=70?"B":score>=50?"C":"D";
+ return {score,grade,checks,vulns,scorecard,pkg:pk,date:new Date().toISOString()};
+}
+
+/* ================= EKRAN GÖRÜNTÜLERİ ================= */
+async function getScreens(repo){
+ const [o,n]=repo.full_name.split("/");const br=repo.default_branch||"main";
+ let md=null;for(const f of["README.md","readme.md","Readme.md","README.MD","docs/README.md"]){md=await raw(o,n,br,f);if(md)break}
+ const out=[];
+ if(repo.homepage&&/^https?:\/\//.test(repo.homepage))out.push({src:shot(repo.homepage),cap:"Canlı site — "+repo.homepage,live:true});
+ if(md){const re=/!\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)|<img[^>]+src=["']([^"']+)["']/gi;let m;const seen=new Set();
+  while((m=re.exec(md))){let u=m[1]||m[2];if(!u)continue;
+   if(/shields\.io|badge|badgen|travis-ci|codecov|circleci|github\.com\/.*\/workflows|img\.shields|coveralls|gitter|discord\.com\/api|opencollective|buymeacoffee|ko-fi|sponsor|\.svg(\?|$)|star-history|contrib\.rocks|readme-typing|komarev|vercel\.com\/button|deploy\/button|netlify\.com\/img/i.test(u))continue;
+   if(u.startsWith("//"))u="https:"+u;
+   else if(!/^https?:/i.test(u)){u=u.replace(/^\.?\//,"");u=`https://raw.githubusercontent.com/${o}/${n}/${br}/${u}`}
+   u=u.replace(/github\.com\/([^/]+)\/([^/]+)\/blob\//,"raw.githubusercontent.com/$1/$2/");
+   if(seen.has(u))continue;seen.add(u);out.push({src:u,cap:"README görseli"});if(out.length>=14)break}}
+ out.push({src:og(repo.full_name),cap:"Proje kartı (GitHub)"});
+ return out;
+}
+
+/* ================= DAĞITIM PROFİLİ ================= */
+function deployProfile(repo,pkg){
+ const d=Object.assign({},pkg&&pkg.dependencies||{},pkg&&pkg.devDependencies||{});const s=pkg&&pkg.scripts||{};
+ let fw="Statik / Bilinmiyor",cmd="",dir="";
+ if(d.next){fw="Next.js";cmd="npm run build";dir=".next"}
+ else if(d.nuxt){fw="Nuxt";cmd="npm run build";dir=".output/public"}
+ else if(d["@sveltejs/kit"]){fw="SvelteKit";cmd="npm run build";dir="build"}
+ else if(d.astro){fw="Astro";cmd="npm run build";dir="dist"}
+ else if(d.vite){fw="Vite";cmd="npm run build";dir="dist"}
+ else if(d["react-scripts"]){fw="Create React App";cmd="npm run build";dir="build"}
+ else if(d.express||d.fastify||d.koa||d["@nestjs/core"]){fw="Node.js sunucu";cmd=s.start?"npm start":"node index.js";dir="—"}
+ else if(repo.language==="Python"){fw="Python";cmd="pip install -r requirements.txt";dir="—"}
+ else if(repo.language==="PHP"){fw="PHP";cmd="composer install";dir="public"}
+ const serverSide=/Node.js sunucu|Python|PHP/.test(fw);
+ return {fw,cmd,dir,target:serverSide?"Render / Hostinger VPS (sunucu tarafı)":"Netlify (statik/SSR)"};
+}
+
+/* ================= BİLEŞENLER ================= */
+function Grade({g}){return html`<span class=${"grade g"+(g||"N")}>${g?("Güvenlik "+g):"Test edilmedi"}</span>`}
+
+function Card({r,onOpen,saved,onSave,sec}){
+ const c=categorize(r);
+ return html`<div class="card" onClick=${()=>onOpen(r)}>
+  <img loading="lazy" src=${og(r.full_name)} alt="" />
+  <div class="cb">
+   <div style=${{display:"flex",justifyContent:"space-between",gap:8}}><div class="ct">${r.full_name}</div>
+    <button class="btn g s" title="Listeme ekle" onClick=${e=>{e.stopPropagation();onSave(r)}}>${saved?"★":"☆"}</button></div>
+   <div class="cd">${r.description||"Açıklama yok"}</div>
+   <div class="meta"><span class="tag">${c.ic} ${c.name}</span>${r.language&&html`<span>● ${r.language}</span>`}<span>★ ${fmt(r.stargazers_count)}</span><span>${ago(r.pushed_at)}</span></div>
+   <div><${Grade} g=${sec&&sec.grade}/></div>
+  </div></div>`;
+}
+
+function Discover({results,setResults,open,saved,toggleSave,secs,toast}){
+ const [q,setQ]=useState(LS.get("q",""));const [lang,setLang]=useState("");const [stars,setStars]=useState("100");
+ const [owner,setOwner]=useState("");const [sector,setSector]=useState("");const [sort,setSort]=useState("stars");
+ const [page,setPage]=useState(1);const [loading,setLoading]=useState(false);const [total,setTotal]=useState(0);const [catF,setCatF]=useState("");
+ async function run(p=1){
+  setLoading(true);
+  try{
+   const parts=[];if(q.trim())parts.push(q.trim());
+   if(sector){const s=SECTORS.find(x=>x.id===sector);parts.push(s.kw.slice(0,3).join(" OR "))}
+   if(lang)parts.push("language:"+lang);if(stars)parts.push("stars:>="+stars);if(owner.trim())parts.push((owner.includes("org:")?"":"user:")+owner.trim());
+   parts.push("is:public","archived:false");
+   const qs=encodeURIComponent(parts.filter(Boolean).join(" "));
+   const j=await gh(`/search/repositories?q=${qs}&sort=${sort}&order=desc&per_page=30&page=${p}`);
+   setTotal(j.total_count);setPage(p);setResults(p===1?j.items:[...results,...j.items]);LS.set("q",q);
+   if(!j.items.length)toast("Sonuç bulunamadı");
+  }catch(e){toast(e.message)}setLoading(false);
+ }
+ const cats=useMemo(()=>{const m={};results.forEach(r=>{const c=categorize(r);m[c.id]=m[c.id]||{...c,n:0};m[c.id].n++});return Object.values(m).sort((a,b)=>b.n-a.n)},[results]);
+ const shown=catF?results.filter(r=>categorize(r).id===catF):results;
+ return html`<div>
+  <h1>Keşfet</h1><p class="sub">GitHub'daki tüm açık (public) projelerde arayın; sonuçlar iş kollarına göre otomatik ayrılır.</p>
+  <form class="bar" onSubmit=${e=>{e.preventDefault();run(1)}}>
+   <input class="in" style=${{flex:"2 1 220px"}} placeholder="Ne arıyorsunuz? ör. crm, eczane, stok takibi, booking…" value=${q} onInput=${e=>setQ(e.target.value)} />
+   <select class="in" value=${sector} onChange=${e=>setSector(e.target.value)}><option value="">Tüm iş kolları</option>${SECTORS.map(s=>html`<option value=${s.id}>${s.ic} ${s.name}</option>`)}</select>
+   <select class="in" value=${lang} onChange=${e=>setLang(e.target.value)}><option value="">Tüm diller</option>${["TypeScript","JavaScript","Python","PHP","Go","Java","C#","Ruby","Rust","Dart","Kotlin","Swift","Vue"].map(l=>html`<option>${l}</option>`)}</select>
+   <select class="in" value=${stars} onChange=${e=>setStars(e.target.value)}><option value="">Yıldız: hepsi</option><option value="10">★ 10+</option><option value="100">★ 100+</option><option value="1000">★ 1k+</option><option value="10000">★ 10k+</option></select>
+   <input class="in" style=${{flex:"1 1 140px"}} placeholder="Kullanıcı / org (ops.)" value=${owner} onInput=${e=>setOwner(e.target.value)} />
+   <select class="in" value=${sort} onChange=${e=>setSort(e.target.value)}><option value="stars">En çok yıldız</option><option value="updated">Son güncellenen</option><option value="forks">En çok fork</option></select>
+   <button class="btn" disabled=${loading}>${loading?"Aranıyor…":"Ara"}</button>
+  </form>
+  ${results.length>0&&html`<div class="chips"><span class=${"chip"+(catF===""?" on":"")} onClick=${()=>setCatF("")}>Tümü (${results.length})</span>${cats.map(c=>html`<span class=${"chip"+(catF===c.id?" on":"")} onClick=${()=>setCatF(c.id)}>${c.ic} ${c.name} (${c.n})</span>`)}</div>
+   <p class="sub">${fmt(total)} eşleşen depo · ${results.length} yüklendi</p>`}
+  ${results.length===0?html`<div class="empty"><div style=${{fontSize:40}}>🗺️</div><p>Bir arama yapın ya da hızlı başlayın:</p>
+   <div class="chips" style=${{justifyContent:"center"}}>${["crm","eczane pharmacy","inventory","booking","lms","ecommerce","hospital","invoice","farm"].map(x=>html`<span class="chip" onClick=${()=>{setQ(x)}}>${x}</span>`)}</div></div>`
+  :html`<div class="grid">${shown.map(r=>html`<${Card} key=${r.id} r=${r} onOpen=${open} saved=${!!saved[r.full_name]} onSave=${toggleSave} sec=${secs[r.full_name]}/>`)}</div>
+   ${results.length<Math.min(total,1000)&&html`<div style=${{textAlign:"center",marginTop:18}}><button class="btn g" disabled=${loading} onClick=${()=>run(page+1)}>${loading?"Yükleniyor…":"Daha fazla yükle"}</button></div>`}`}
+ </div>`;
+}
+
+function Categories({results,saved,open}){
+ const pool=[...results];Object.values(saved).forEach(s=>{if(!pool.find(r=>r.full_name===s.full_name))pool.push(s)});
+ const groups={};pool.forEach(r=>{const c=categorize(r);(groups[c.id]=groups[c.id]||{...c,items:[]}).items.push(r)});
+ const arr=Object.values(groups).sort((a,b)=>b.items.length-a.items.length);const max=Math.max(1,...arr.map(a=>a.items.length));
+ return html`<div><h1>İş Kolları</h1><p class="sub">Yüklenen ve listenizdeki projelerin sektörel dağılımı.</p>
+  ${!arr.length?html`<div class="empty">Önce Keşfet'ten arama yapın.</div>`:html`
+  <div class="box">${arr.map(g=>html`<div style=${{display:"flex",alignItems:"center",gap:10,margin:"6px 0"}}><span style=${{width:190}}>${g.ic} ${g.name}</span><div style=${{flex:1,background:"#0d1320",borderRadius:6,height:14}}><div style=${{width:(g.items.length/max*100)+"%",height:"100%",borderRadius:6,background:"linear-gradient(90deg,#4f8cff,#7c5cff)"}}></div></div><b style=${{width:30,textAlign:"right"}}>${g.items.length}</b></div>`)}</div>
+  ${arr.map(g=>html`<h2>${g.ic} ${g.name} <span style=${{color:"var(--mut)",fontWeight:400}}>· ${g.items.length}</span></h2>
+   <table><tbody>${g.items.slice(0,10).map(r=>html`<tr style=${{cursor:"pointer"}} onClick=${()=>open(r)}><td><b>${r.full_name}</b><div style=${{color:"var(--mut)",fontSize:12}}>${(r.description||"").slice(0,110)}</div></td><td>${r.language||"—"}</td><td>★ ${fmt(r.stargazers_count)}</td></tr>`)}</tbody></table>`)}`}
+ </div>`;
+}
+
+function SecurityTab({repo,sec,runSec,busy}){
+ if(!sec)return html`<div class="empty"><p>Bu proje henüz güvenlik testinden geçmedi.</p><button class="btn" disabled=${busy} onClick=${runSec}>${busy?"Test ediliyor…":"🛡️ Güvenlik testini başlat"}</button></div>`;
+ const ic={ok:"✓",warn:"!",bad:"✕",info:"i"};
+ return html`<div>
+  <div style=${{display:"flex",gap:16,alignItems:"center",marginBottom:12}}><div class=${"grade g"+sec.grade} style=${{fontSize:34,padding:"10px 20px"}}>${sec.grade}</div><div><b style=${{fontSize:20}}>${sec.score}/100</b><div style=${{color:"var(--mut)"}}>Test: ${new Date(sec.date).toLocaleString("tr-TR")}</div></div><button class="btn g s" style=${{marginLeft:"auto"}} disabled=${busy} onClick=${runSec}>Yeniden test et</button></div>
+  ${sec.checks.map(c=>html`<div class="row"><span class=${"dot d-"+c.lvl}>${ic[c.lvl]}</span><div><b>${c.title}</b><div style=${{color:"var(--mut)"}}>${c.detail}</div></div></div>`)}
+  ${sec.vulns.length>0&&html`<h2>Zafiyetli bağımlılıklar</h2><table><thead><tr><th>Paket</th><th>Sürüm</th><th>Kayıtlar</th></tr></thead><tbody>${sec.vulns.map(v=>html`<tr><td>${v.pkg} <span class="tag">${v.eco}</span></td><td>${v.ver}</td><td>${v.ids.slice(0,4).map(id=>html`<a href=${"https://osv.dev/vulnerability/"+id} target="_blank" style=${{marginRight:6}}>${id}</a>`)}${v.ids.length>4?" +"+(v.ids.length-4):""}</td></tr>`)}</tbody></table>`}
+  ${sec.scorecard&&sec.scorecard.checks&&html`<h2>OpenSSF Scorecard detayları</h2><table><tbody>${sec.scorecard.checks.map(c=>html`<tr><td>${c.name}</td><td style=${{width:60}}><b>${c.score<0?"—":c.score}</b>/10</td><td style=${{color:"var(--mut)",fontSize:12}}>${c.reason}</td></tr>`)}</tbody></table>`}
+  <p style=${{color:"var(--mut)",fontSize:12,marginTop:14}}>Not: Bu otomatik ön taramadır (statik kontroller + açık zafiyet veritabanları). Canlıya almadan önce kod incelemesi ve bağımlılık güncellemesi önerilir.</p>
+ </div>`;
+}
+
+function Screens({shots,load,busy}){
+ if(!shots)return html`<div class="empty"><button class="btn" disabled=${busy} onClick=${load}>${busy?"Toplanıyor…":"📸 Arayüz ekranlarını topla"}</button></div>`;
+ return html`<div class="gal">${shots.map(s=>html`<figure><a href=${s.src} target="_blank"><img loading="lazy" src=${s.src} onError=${e=>{e.target.closest("figure").style.display="none"}}/></a><figcaption>${s.cap}</figcaption></figure>`)}</div>`;
+}
+
+function BuildTab({repo,sec,builds,addBuild,toast}){
+ const [notes,setNotes]=useState("");const url=repo.html_url;
+ const prof=deployProfile(repo,sec&&sec.pkg);
+ const cmd=`Gitmapsite görevi — "${repo.full_name}" projesini yap:
+1) ${url} deposunu klonla, ${prof.fw} yapısını incele.
+2) Güvenlik bulgularını düzelt${sec?` (mevcut not: ${sec.grade}, ${sec.score}/100${sec.vulns.length?`, ${sec.vulns.length} zafiyetli paket`:""})`:""}; bağımlılıkları güncelle.
+3) Türkçeleştir, koyu tema kurumsal arayüz uygula.${notes?`\n4) Ek geliştirmeler: ${notes}`:""}
+${notes?"5":"4"}) Hedef: ${prof.target}. Derle (${prof.cmd||"derleme yok"}), canlıya al, canlı URL'yi bana ver.`;
+ const q=builds.find(b=>b.full===repo.full_name);
+ async function copy(){try{await navigator.clipboard.writeText(cmd);toast("Komut kopyalandı — Claude sohbetine yapıştırın")}catch(e){toast("Kopyalanamadı, metni seçip kopyalayın")}}
+ return html`<div>
+  <div class="box"><b>Tespit edilen yapı:</b> ${prof.fw} · <b>Derleme:</b> ${prof.cmd||"—"} · <b>Çıktı:</b> ${prof.dir||"—"} · <b>Önerilen sunucu:</b> ${prof.target}
+   ${sec?"":html`<div style=${{color:"var(--warn)",marginTop:6}}>⚠ Canlıya almadan önce Güvenlik sekmesinden testi çalıştırın.</div>`}
+   ${sec&&sec.grade==="D"?html`<div style=${{color:"var(--bad)",marginTop:6}}>⚠ Güvenlik notu D — düzeltmeden canlıya almayın.</div>`:""}</div>
+  <div class="step"><div class="n">1</div><div style=${{flex:1}}><b>Kendi hesabınıza kopyalayın (fork)</b><div style=${{margin:"6px 0"}}><a class="btn g s" href=${url+"/fork"} target="_blank">GitHub'da Fork et ↗</a></div></div></div>
+  <div class="step"><div class="n">2</div><div style=${{flex:1}}><b>Geliştirme talebi</b><textarea class="in" style=${{width:"100%",minHeight:70,marginTop:6}} placeholder="ör. Türkçe arayüz, logo değişimi, Supabase veritabanı, ödeme modülü ekle…" value=${notes} onInput=${e=>setNotes(e.target.value)}></textarea>
+   <pre class="cmd">${cmd}</pre><button class="btn s" onClick=${copy}>Claude komutunu kopyala</button>
+   <div style=${{color:"var(--mut)",fontSize:12,marginTop:6}}>Bu komutu Claude'a gönderdiğinizde proje klonlanır, geliştirilir ve sunucuya alınıp canlıya çıkar.</div></div></div>
+  <div class="step"><div class="n">3</div><div style=${{flex:1}}><b>Tek tıkla canlıya al (geliştirmesiz, olduğu gibi)</b><div style=${{display:"flex",gap:8,flexWrap:"wrap",marginTop:6}}>
+   <a class="btn g s" target="_blank" href=${"https://app.netlify.com/start/deploy?repository="+url}>Netlify ↗</a>
+   <a class="btn g s" target="_blank" href=${"https://vercel.com/new/clone?repository-url="+encodeURIComponent(url)}>Vercel ↗</a>
+   <a class="btn g s" target="_blank" href=${"https://render.com/deploy?repo="+url}>Render ↗</a></div></div></div>
+  <div class="step"><div class="n">4</div><div style=${{flex:1}}><b>Yapım kuyruğuna ekle ve takip et</b><div style=${{marginTop:6}}>${q?html`<span class="tag">Kuyrukta: ${q.status}</span>`:html`<button class="btn s" onClick=${()=>{addBuild(repo,notes,prof);toast("Yapım kuyruğuna eklendi")}}>➕ Kuyruğa ekle</button>`}</div></div></div>
+ </div>`;
+}
+
+function Detail({repo,close,sec,setSec,saved,toggleSave,builds,addBuild,toast,present}){
+ const [tab,setTab]=useState("genel");const [busy,setBusy]=useState(false);const [shots,setShots]=useState(null);const [langs,setLangs]=useState(null);const [shotBusy,setShotBusy]=useState(false);
+ const c=categorize(repo);
+ useEffect(()=>{gh(`/repos/${repo.full_name}/languages`).then(setLangs).catch(()=>{})},[repo.full_name]);
+ async function runSec(){setBusy(true);try{setSec(repo.full_name,await securityScan(repo))}catch(e){toast(e.message)}setBusy(false)}
+ async function loadShots(){setShotBusy(true);try{setShots(await getScreens(repo))}catch(e){toast(e.message)}setShotBusy(false)}
+ useEffect(()=>{if(tab==="ekran"&&!shots)loadShots()},[tab]);
+ const lt=langs?Object.values(langs).reduce((a,b)=>a+b,0):0;const COL=["#4f8cff","#7c5cff","#22c55e","#f59e0b","#ef4444","#06b6d4","#ec4899"];
+ return html`<div class="drawer" onClick=${close}><div class="dw" onClick=${e=>e.stopPropagation()}>
+  <div class="dh"><div style=${{display:"flex",gap:10,alignItems:"center"}}><div style=${{flex:1,minWidth:0}}><div style=${{fontWeight:800,fontSize:18,wordBreak:"break-word"}}>${repo.full_name}</div><div class="meta"><span class="tag">${c.ic} ${c.name}</span><span>★ ${fmt(repo.stargazers_count)}</span><span>⑂ ${fmt(repo.forks_count)}</span><${Grade} g=${sec&&sec.grade}/></div></div>
+   <button class="btn g s" onClick=${()=>toggleSave(repo)}>${saved?"★ Listemde":"☆ Listeme ekle"}</button><button class="btn g s" onClick=${()=>present([repo])}>▶ Sunum</button><button class="btn g s" onClick=${close}>✕</button></div>
+   <div class="tabs">${[["genel","Genel"],["guvenlik","Güvenlik"],["ekran","Ekranlar"],["yap","🚀 Bu projeyi yap"]].map(([k,l])=>html`<button class=${"tab"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}</div></div>
+  <div class="db">
+   ${tab==="genel"&&html`<div>
+    <img src=${og(repo.full_name)} style=${{width:"100%",borderRadius:12,border:"1px solid var(--line)"}}/>
+    <p style=${{fontSize:15,lineHeight:1.6}}>${repo.description||"Açıklama yok."}</p>
+    <div class="chips">${(repo.topics||[]).map(t=>html`<span class="tag">#${t}</span>`)}</div>
+    <div class="stat"><div class="st"><b>${fmt(repo.stargazers_count)}</b><span>Yıldız</span></div><div class="st"><b>${fmt(repo.forks_count)}</b><span>Fork</span></div><div class="st"><b>${fmt(repo.open_issues_count)}</b><span>Açık konu</span></div><div class="st"><b>${repo.license?repo.license.spdx_id:"—"}</b><span>Lisans</span></div><div class="st"><b style=${{fontSize:15}}>${ago(repo.pushed_at)}</b><span>Son güncelleme</span></div></div>
+    ${langs&&lt>0&&html`<div class="box"><b>Teknolojiler</b><div class="lang">${Object.entries(langs).slice(0,7).map(([k,v],i)=>html`<div style=${{width:(v/lt*100)+"%",background:COL[i]}}></div>`)}</div><div class="meta">${Object.entries(langs).slice(0,7).map(([k,v],i)=>html`<span><span style=${{color:COL[i]}}>●</span> ${k} ${(v/lt*100).toFixed(1)}%</span>`)}</div></div>`}
+    <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}><a class="btn g" href=${repo.html_url} target="_blank">GitHub'da aç ↗</a>${repo.homepage&&html`<a class="btn g" href=${repo.homepage} target="_blank">Canlı demo ↗</a>`}</div>
+   </div>`}
+   ${tab==="guvenlik"&&html`<${SecurityTab} repo=${repo} sec=${sec} runSec=${runSec} busy=${busy}/>`}
+   ${tab==="ekran"&&html`<${Screens} shots=${shots} load=${loadShots} busy=${shotBusy}/>`}
+   ${tab==="yap"&&html`<${BuildTab} repo=${repo} sec=${sec} builds=${builds} addBuild=${addBuild} toast=${toast}/>`}
+  </div></div></div>`;
+}
+
+/* ================= SUNUM ================= */
+function useDeckData(repos,secs){
+ const [data,setData]=useState({});
+ useEffect(()=>{let alive=true;(async()=>{for(const r of repos){if(!alive)return;try{const [sh,lg]=await Promise.all([getScreens(r),gh(`/repos/${r.full_name}/languages`).catch(()=>({}))]);if(alive)setData(d=>({...d,[r.full_name]:{shots:sh,langs:lg}}))}catch(e){}}})();return()=>{alive=false}},[repos.map(r=>r.full_name).join()]);
+ return data;
+}
+function Deck({repos,secs,close}){
+ const data=useDeckData(repos,secs);const [i,setI]=useState(0);
+ const slides=[];
+ if(repos.length>1){slides.push({k:"cover",render:()=>html`<div class="slide"><h3>Gitmapsite · Proje Portföyü</h3><h2 style=${{fontSize:46}}>${repos.length} açık kaynak proje</h2><p>İş kollarına göre seçilmiş, güvenlik testinden geçirilmiş ve canlıya alınmaya hazır proje sunumu.</p><div class="chips" style=${{marginTop:20}}>${repos.map(r=>html`<span class="tag" style=${{fontSize:14}}>${categorize(r).ic} ${r.full_name}</span>`)}</div><div class="foot"><span>Gitmapsite</span><span>${new Date().toLocaleDateString("tr-TR")}</span></div></div>`})}
+ repos.forEach(r=>{const c=categorize(r);const s=secs[r.full_name];const d=data[r.full_name]||{};const shots=(d.shots||[]).filter(x=>!/opengraph/.test(x.src));const lg=d.langs||{};const lt=Object.values(lg).reduce((a,b)=>a+b,0);const prof=deployProfile(r,s&&s.pkg);
+  const F=html`<div class="foot"><span>${r.full_name}</span><span>Gitmapsite</span></div>`;
+  slides.push({render:()=>html`<div class="slide"><h3>${c.ic} ${c.name}</h3><h2 style=${{fontSize:44}}>${r.name}</h2><p>${r.description||""}</p><div style=${{display:"flex",gap:40,marginTop:20}}><div><div class="big">${fmt(r.stargazers_count)}</div><span style=${{color:"var(--mut)"}}>yıldız</span></div><div><div class="big">${fmt(r.forks_count)}</div><span style=${{color:"var(--mut)"}}>fork</span></div><div><div class="big">${s?s.grade:"—"}</div><span style=${{color:"var(--mut)"}}>güvenlik</span></div></div>${F}</div>`});
+  slides.push({render:()=>html`<div class="slide"><h3>Ne yapar?</h3><h2>Ürün özeti</h2><p>${r.description||"Açıklama girilmemiş."}</p><div class="chips">${(r.topics||[]).slice(0,12).map(t=>html`<span class="tag" style=${{fontSize:13}}>#${t}</span>`)}</div><p style=${{fontSize:15}}>Lisans: <b>${r.license?r.license.name:"Yok"}</b> · Son güncelleme: <b>${ago(r.pushed_at)}</b> · Açık konu: <b>${r.open_issues_count}</b></p>${F}</div>`});
+  slides.push({render:()=>html`<div class="slide"><h3>Arayüz</h3><h2>Ekran görüntüleri</h2>${shots.length?html`<div class="sgrid">${shots.slice(0,4).map(x=>html`<img src=${x.src} onError=${e=>{e.target.style.visibility="hidden"}}/>`)}</div>`:html`<div class="sgrid" style=${{gridTemplateColumns:"1fr"}}><img src=${og(r.full_name)}/></div>`}${F}</div>`});
+  slides.push({render:()=>html`<div class="slide"><h3>Teknoloji</h3><h2>Yığın ve yapı</h2><p>Altyapı: <b>${prof.fw}</b></p>${lt>0&&html`<div class="lang" style=${{height:22}}>${Object.entries(lg).slice(0,6).map(([k,v],j)=>html`<div style=${{width:(v/lt*100)+"%",background:["#4f8cff","#7c5cff","#22c55e","#f59e0b","#ef4444","#06b6d4"][j]}}></div>`)}</div><div style=${{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,fontSize:18,marginTop:10}}>${Object.entries(lg).slice(0,6).map(([k,v])=>html`<div><b>${k}</b> <span style=${{color:"var(--mut)"}}>${(v/lt*100).toFixed(1)}%</span></div>`)}</div>`}${F}</div>`});
+  slides.push({render:()=>html`<div class="slide"><h3>Güvenlik</h3><h2>Güvenlik raporu ${s?html`<span class=${"grade g"+s.grade} style=${{fontSize:26,marginLeft:10}}>${s.grade} · ${s.score}/100</span>`:""}</h2>${s?html`<div style=${{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px 24px",fontSize:15}}>${s.checks.slice(0,10).map(c=>html`<div><span style=${{color:c.lvl==="ok"?"#86efac":c.lvl==="bad"?"#fca5a5":c.lvl==="warn"?"#fcd34d":"#93c5fd"}}>●</span> <b>${c.title}</b> — <span style=${{color:"#aab6cf"}}>${c.detail}</span></div>`)}</div>`:html`<p>Bu proje için güvenlik testi henüz çalıştırılmadı. Detay panelindeki Güvenlik sekmesinden başlatın.</p>`}${F}</div>`});
+  slides.push({render:()=>html`<div class="slide"><h3>Canlıya alma planı</h3><h2>Nasıl yaparız?</h2><p style=${{fontSize:17}}>1. Fork & klonlama → 2. Güvenlik düzeltmeleri ve bağımlılık güncellemesi → 3. Türkçeleştirme, marka ve özel geliştirmeler → 4. Derleme: <b>${prof.cmd||"—"}</b> → 5. Yayın: <b>${prof.target}</b> → 6. Alan adı + SSL</p>${F}</div>`});
+ });
+ useEffect(()=>{const h=e=>{if(e.key==="ArrowRight")setI(x=>Math.min(slides.length-1,x+1));if(e.key==="ArrowLeft")setI(x=>Math.max(0,x-1));if(e.key==="Escape")close()};window.addEventListener("keydown",h);return()=>window.removeEventListener("keydown",h)},[slides.length]);
+ const [all,setAll]=useState(false);
+ return html`<div class="deck"><div class="deckbar"><b>Sunum</b><span style=${{color:"var(--mut)"}}>${i+1} / ${slides.length}</span><span style=${{flex:1}}></span>
+  <button class="btn g s" onClick=${()=>setI(Math.max(0,i-1))}>◀</button><button class="btn g s" onClick=${()=>setI(Math.min(slides.length-1,i+1))}>▶</button>
+  <button class="btn g s" onClick=${()=>setAll(!all)}>${all?"Tek slayt":"Tümünü göster"}</button>
+  <button class="btn s" onClick=${()=>{setAll(true);setTimeout(()=>window.print(),400)}}>PDF olarak kaydet</button><button class="btn g s" onClick=${close}>✕</button></div>
+  <div class="stage">${all?html`<div style=${{display:"flex",flexDirection:"column",gap:20,alignItems:"center",width:"100%"}}>${slides.map(s=>s.render())}</div>`:slides[i]&&slides[i].render()}</div></div>`;
+}
+
+/* ================= LİSTEM / KUYRUK / AYARLAR / GÜNCELLEMELER ================= */
+function SavedView({saved,open,toggleSave,secs,present,runAll,busyAll}){
+ const arr=Object.values(saved);
+ return html`<div><h1>Listem</h1><p class="sub">Beğendiğiniz projeler. Toplu güvenlik testi ve toplu sunum buradan.</p>
+  ${!arr.length?html`<div class="empty">Henüz proje eklemediniz. Kartlardaki ☆ ile ekleyin.</div>`:html`
+  <div class="bar"><button class="btn" onClick=${()=>present(arr)}>▶ Toplu sunum (${arr.length})</button><button class="btn g" disabled=${busyAll} onClick=${()=>runAll(arr)}>${busyAll?"Test ediliyor…":"🛡️ Hepsini güvenlik testinden geçir"}</button></div>
+  <div class="grid">${arr.map(r=>html`<${Card} key=${r.full_name} r=${r} onOpen=${open} saved=${true} onSave=${toggleSave} sec=${secs[r.full_name]}/>`)}</div>`}</div>`;
+}
+function Builds({builds,setBuilds,open,saved}){
+ const ST=["Bekliyor","Geliştiriliyor","Test","Canlıda"];
+ const upd=(full,patch)=>setBuilds(builds.map(b=>b.full===full?{...b,...patch,updated:new Date().toISOString()}:b));
+ return html`<div><h1>Yapım Kuyruğu</h1><p class="sub">"Bu projeyi yap" dediğiniz projelerin geliştirme ve canlıya alma takibi.</p>
+  ${!builds.length?html`<div class="empty">Kuyruk boş. Bir projenin "🚀 Bu projeyi yap" sekmesinden ekleyin.</div>`:html`<table><thead><tr><th>Proje</th><th>Yapı / Hedef</th><th>Durum</th><th>Canlı URL</th><th></th></tr></thead><tbody>
+  ${builds.map(b=>html`<tr><td><b>${b.full}</b><div style=${{color:"var(--mut)",fontSize:12}}>${b.notes||"Ek geliştirme notu yok"}</div><div style=${{color:"var(--mut)",fontSize:11}}>Eklendi: ${new Date(b.created).toLocaleDateString("tr-TR")}</div></td><td>${b.fw}<div style=${{color:"var(--mut)",fontSize:12}}>${b.target}</div></td>
+   <td><select class="in" value=${b.status} onChange=${e=>upd(b.full,{status:e.target.value})}>${ST.map(s=>html`<option>${s}</option>`)}</select></td>
+   <td>${b.live?html`<a href=${b.live} target="_blank">${b.live.replace(/^https?:\/\//,"")}</a>`:html`<input class="in" style=${{width:170}} placeholder="https://…" onKeyDown=${e=>{if(e.key==="Enter")upd(b.full,{live:e.target.value,status:"Canlıda"})}}/>`}</td>
+   <td><button class="btn g s" onClick=${()=>setBuilds(builds.filter(x=>x.full!==b.full))}>Sil</button></td></tr>`)}</tbody></table>`}</div>`;
+}
+function Settings({toast}){
+ const [t,setT]=useState(LS.get("token",""));
+ return html`<div><h1>Ayarlar</h1><p class="sub">GitHub token isteğe bağlıdır; eklenirse saatlik limit 60'tan 5000'e çıkar. Token yalnızca bu tarayıcıda saklanır.</p>
+  <div class="box"><b>GitHub Personal Access Token</b><p style=${{color:"var(--mut)",fontSize:12}}>github.com → Settings → Developer settings → Fine-grained token. Yetki gerekmez (yalnızca public okuma).</p>
+  <div style=${{display:"flex",gap:8}}><input class="in" type="password" style=${{flex:1}} value=${t} onInput=${e=>setT(e.target.value)} placeholder="github_pat_…"/><button class="btn" onClick=${()=>{LS.set("token",t.trim());toast("Kaydedildi")}}>Kaydet</button><button class="btn g" onClick=${()=>{LS.set("token","");setT("");toast("Silindi")}}>Sil</button></div></div>
+  <div class="box"><b>Veri</b><p style=${{color:"var(--mut)",fontSize:12}}>Listem, güvenlik sonuçları ve yapım kuyruğu bu tarayıcıda saklanır.</p><button class="btn g" onClick=${()=>{["saved","secs","builds","q"].forEach(k=>LS.set(k,null));location.reload()}}>Tüm verileri sıfırla</button></div></div>`;
+}
+function Updates(){
+ return html`<div><h1>Güncellemeler</h1><p class="sub">Gitmapsite'a eklenen her özellik burada sürüm sürüm listelenir. Mevcut sürüm: <b>v${VERSION}</b></p>
+  ${CHANGELOG.map(c=>html`<div class="box"><div style=${{display:"flex",gap:10,alignItems:"center"}}><span class="tag" style=${{fontSize:13}}>v${c.v}</span><span style=${{color:"var(--mut)"}}>${new Date(c.date).toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})}</span></div><ul style=${{lineHeight:1.8}}>${c.items.map(x=>html`<li>${x}</li>`)}</ul></div>`)}</div>`;
+}
+
+/* ================= UYGULAMA ================= */
+function App(){
+ const [view,setView]=useState("kesfet");const [results,setResults]=useState([]);const [cur,setCur]=useState(null);
+ const [saved,setSaved]=useState(LS.get("saved",{})||{});const [secs,setSecs]=useState(LS.get("secs",{})||{});const [builds,setBuildsS]=useState(LS.get("builds",[])||[]);
+ const [deck,setDeck]=useState(null);const [msg,setMsg]=useState("");const [rate,setRate]=useState(RATE);const [busyAll,setBusyAll]=useState(false);
+ useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
+ const toast=m=>{setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3200)};
+ const toggleSave=r=>{const n={...saved};if(n[r.full_name])delete n[r.full_name];else n[r.full_name]=r;setSaved(n);LS.set("saved",n)};
+ const setSec=(k,v)=>setSecs(s=>{const n={...s,[k]:v};LS.set("secs",n);return n});
+ const setBuilds=b=>{setBuildsS(b);LS.set("builds",b)};
+ const addBuild=(r,notes,prof)=>setBuilds([{full:r.full_name,url:r.html_url,notes,fw:prof.fw,target:prof.target,status:"Bekliyor",created:new Date().toISOString()},...builds.filter(b=>b.full!==r.full_name)]);
+ async function runAll(arr){setBusyAll(true);for(const r of arr){try{setSec(r.full_name,await securityScan(r))}catch(e){toast(e.message);break}}setBusyAll(false);toast("Toplu test tamamlandı")}
+ const NAV=[["kesfet","🔎","Keşfet"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler"],["ayar","⚙️","Ayarlar"]];
+ return html`<div class="app">
+  <aside class="side noprint"><div class="logo"><i>🗺️</i>Gitmapsite</div>
+   ${NAV.map(([k,ic,l,b])=>html`<button class=${"nav"+(view===k?" on":"")} onClick=${()=>setView(k)}>${ic} ${l}${b?html`<b>${b}</b>`:""}</button>`)}
+   <div style=${{marginTop:"auto",color:"var(--mut)",fontSize:11,padding:"8px 12px"}}>GitHub limiti: ${rate.rem}/${rate.lim}<br/>v${VERSION}</div></aside>
+  <main class="main">
+   ${view==="kesfet"&&html`<${Discover} results=${results} setResults=${setResults} open=${setCur} saved=${saved} toggleSave=${toggleSave} secs=${secs} toast=${toast}/>`}
+   ${view==="kategori"&&html`<${Categories} results=${results} saved=${saved} open=${setCur}/>`}
+   ${view==="liste"&&html`<${SavedView} saved=${saved} open=${setCur} toggleSave=${toggleSave} secs=${secs} present=${setDeck} runAll=${runAll} busyAll=${busyAll}/>`}
+   ${view==="kuyruk"&&html`<${Builds} builds=${builds} setBuilds=${setBuilds} open=${setCur} saved=${saved}/>`}
+   ${view==="guncel"&&html`<${Updates}/>`}
+   ${view==="ayar"&&html`<${Settings} toast=${toast}/>`}
+  </main>
+  ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} close=${()=>setCur(null)} sec=${secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}}/>`}
+  ${deck&&html`<${Deck} repos=${deck} secs=${secs} close=${()=>setDeck(null)}/>`}
+  ${msg&&html`<div class="toast">${msg}</div>`}
+ </div>`;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+</script>
+</body>
+</html>
