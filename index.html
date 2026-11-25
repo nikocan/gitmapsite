@@ -1351,8 +1351,10 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.13.0";
+const VERSION="5.13.1";
 const CHANGELOG=[
+ {v:"5.13.1",date:"2026-11-25",items:[
+  "🎙️ Mikrofonla yazarken cümlenin tekrar tekrar eklenip uzaması düzeltildi (Stüdyo ve ana sayfa). Konuşurken yazı kutusunda söylediğin anlık olarak görünüyor ve tek kez yazılıyor"]},
  {v:"5.13.0",date:"2026-11-25",items:[
   "✏️ Büyük uygulamalarda düzenleme artık tüm dosyayı yeniden yazdırmıyor: yapay zekâ yalnızca değişen parçaları gönderiyor, Gitmapp bunları mevcut koda yerleştiriyor. Düzenlemeler çok daha hızlı ve uzun dosyalarda yanıtın yarıda kesilip uygulamanın bozulması önleniyor",
   "🧩 Değişiklik koda yerleştirilemezse uygulama bozulmuyor, kredi düşmüyor ve ne olduğu Türkçe yazıyor",
@@ -3697,8 +3699,11 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
    }
  }window.addEventListener("message",receive);return ()=>window.removeEventListener("message",receive)},[st.html,veMode,busy]);
  function mic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesle yazmayı desteklemiyor (Chrome ya da Safari dene).");return}
-  if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang="tr-TR";r.interimResults=false;r.continuous=false;recRef.current=r;
-  r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ");setInput(v=>(v?v+" ":"")+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
+  if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;
+  // Safari ve bazı Chrome sürümleri aynı cümleyi her güncellemede baştan (büyüyerek) gönderir; eklemek yerine
+  // dinleme başladığındaki metnin üstüne güncel dökümü yazıyoruz, böylece cümle tekrar etmez
+  const base=input.trim()?input.replace(/\s+$/,"")+" ":"";
+  r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ").replace(/\s+/g," ").trim();setInput(base+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
  function openTab(){const w=window.open("","_blank");if(!w){toast("Açılır pencere engellendi");return}w.opener=null;w.document.title=st.title||"Önizleme";w.document.body.style.margin="0";const f=w.document.createElement("iframe");f.setAttribute("sandbox","allow-scripts allow-forms allow-modals allow-popups");f.style.cssText="border:0;width:100vw;height:100vh;display:block";f.srcdoc=resolve(st.html);w.document.body.appendChild(f)}
  function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setInput("");setTodo(null);setAtts([]);setSt(blank);setVersions([]);setSure(false);setPlan(null)}
  // Asistan köprüsü: yan paneldeki asistanın istediği adımları imleçle yapar
@@ -4515,7 +4520,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
  },[modeOpen]);
  const setM=m=>{setMode(m);LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode:m});setModeOpen(false)};
  const submit=e=>{e&&e.preventDefault();const p=v.trim();if(!p)return;LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode,kind});startTemplate({prompt:p,kind})};
- const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.onresult=e=>setV(x=>(x?x+" ":"")+[...e.results].map(y=>y[0].transcript).join(" "));r.onend=()=>setListening(false);setListening(true);r.start()};
+ const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.interimResults=true;const base=v.trim()?v.replace(/\s+$/,"")+" ":"";r.onresult=e=>setV(base+[...e.results].map(y=>y[0].transcript).join(" ").replace(/\s+/g," ").trim());r.onend=()=>setListening(false);setListening(true);r.start()};
  const first=auth.user&&auth.user.name?auth.user.name.split(" ")[0]:"";
  return html`<div class="home">
   <section class="home-hero"><div class="siri"><i></i><i></i><i></i><i></i><i></i></div>
