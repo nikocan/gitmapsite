@@ -311,6 +311,12 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .dg-side{display:flex;flex-direction:column;gap:2px;position:sticky;top:0;align-self:start}
 .dg-sec{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:12px;border:0;background:none;color:#d1d1c9;cursor:pointer;text-align:left;font-size:13.5px}.dg-sec:hover{background:rgba(255,255,255,.05)}.dg-sec.on{background:rgba(228,255,61,.16);color:#fff}
 .dg-sec>span:not(.tile){flex:1}.dg-sec em{font-style:normal;font-size:10px;color:#e4ff3d}
+.gallery-nav{align-self:start;position:sticky;top:0;min-width:0;background:#181a1b;color:#f6f6ef;padding:14px;border-radius:16px;z-index:1}.gallery-nav label{display:grid;gap:7px;font-weight:650}.gallery-nav input,.gallery-nav select{font:inherit;width:100%;box-sizing:border-box;background:#252729;color:inherit;border:1px solid #64666a;border-radius:9px;padding:10px}.gallery-nav .dg-sec{width:100%;min-height:40px;justify-content:space-between}.gallery-nav small{font-variant-numeric:tabular-nums;color:#bbbdbb}.gallery-groups{max-height:55vh;overflow-y:auto;overscroll-behavior:contain}.gallery-groups h3{font-size:12px;color:#b9bab5;margin:16px 8px 4px}.gallery-nav .gallery-mobile{display:none}.gallery-nav :focus-visible{outline:2px solid #e4ff3d;outline-offset:-2px}
+@media(max-width:820px){.gallery-nav{position:static}.gallery-desktop{display:none}.gallery-nav .gallery-mobile{display:grid}}
+.photo-screen{box-sizing:border-box;display:flex;flex-direction:column;gap:.55em;padding:.85em;overflow:hidden;background:var(--bg);color:var(--tx);border-radius:1.65em;border:2px solid #7777;box-shadow:0 8px 18px #0003}
+.photo-screen.landscape{border-radius:.8em}.photo-screen small{font-size:.76em}.photo-screen strong{font-size:1.5em;line-height:1.05}.photo-screen>span{align-self:flex-start;border-radius:var(--r);padding:.35em .65em;background:var(--tx);color:var(--bg);font-size:.85em}
+.photo-layout{display:grid;flex:1;min-height:0;gap:3px;border-radius:var(--r);overflow:hidden}.photo-layout img{width:100%;height:100%;min-height:0;min-width:0;object-fit:cover}.layout-0 img:not(:first-child),.layout-1 img:last-child{display:none}.layout-1{grid-template-columns:1fr 1fr}.layout-2{grid-template:1fr 1fr / 3fr 2fr}.layout-2 img:first-child{grid-row:span 2}.layout-3{grid-template:2fr 1fr / 1fr 1fr}.layout-3 img:first-child{grid-column:span 2}.layout-4{grid-template-rows:repeat(3,minmax(0,1fr))}
+.dg-links{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}.dg-links a{color:inherit;text-decoration:underline}.dg-page{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:12px}
 .dg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .dg-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;color:inherit;text-align:left;animation:slidein .45s cubic-bezier(.2,.8,.2,1) both;transition:transform .25s,border-color .25s,box-shadow .25s}
 .dg-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16);box-shadow:0 18px 40px -22px rgba(228,255,61,.7)}.dg-card.on{border-color:#e4ff3d;box-shadow:0 0 0 3px rgba(228,255,61,.2)}
@@ -2203,7 +2209,7 @@ const THEMES=[
  {id:"neon",name:"Neon Arcade",tag:"Oyun, gece",font:"Space Grotesk",r:10,p:{bg:"#05010f",sf:"#120a2a",pr:"#00f5d4",ac:"#f72585",tx:"#e0e7ff"},style:"Neon oyun: çok koyu zemin, camgöbeği ve pembe neon parıltılar (box-shadow glow), piksel/arcade hissi, skor ve can göstergeleri belirgin."},
  {id:"cocuk",name:"Neşeli Renkler",tag:"Eğlenceli, çocuk dostu",font:"Nunito",r:26,p:{bg:"#fef9c3",sf:"#ffffff",pr:"#f97316",ac:"#8b5cf6",tx:"#1e293b"},style:"Çocuk dostu: sarı zemin, turuncu ve mor, çok yuvarlak köşeler, büyük düğmeler, emoji ve çizimler, oyunsu animasyonlar."},
 ];
-const themeById=id=>THEMES.find(t=>t.id===id)||THEMES[0];
+const themeById=id=>designIndex.get(id)||THEMES[0];
 // Sektörler: anahtar kelimeler + önerilen temalar
 const DSECTORS=[
  {id:"guzellik",l:"Güzellik & Bakım",ic:"sparkles",g:"#ec4899,#f472b6",k:/kuaf|berber|güzellik|guzellik|salon|spa|tırnak|nail|makyaj|cilt|estetik/,th:["lux","pastel","cam"]},
@@ -2218,7 +2224,50 @@ const DSECTORS=[
  {id:"etkinlik",l:"Etkinlik & Düğün",ic:"star",g:"#f43f5e,#f59e0b",k:/düğün|dugun|davet|nişan|etkinlik|konser|doğum günü|parti|lcv/,th:["lux","pastel","cam"]},
  {id:"emlak",l:"Emlak & Mimarlık",ic:"layers",g:"#64748b,#0ea5e9",k:/emlak|mimar|inşaat|daire|otel|turizm|tatil|villa|ofisim için proje/,th:["lux","minimal","doga"]},
  {id:"teknoloji",l:"Teknoloji & Sosyal",ic:"chat",g:"#06b6d4,#3b82f6",k:/sohbet|sosyal|blog|haber|yazılım|startup|topluluk|forum|podcast/,th:["cam","material","neobank"]},
+ {id:"seyahat",l:"Seyahat & Rotalar",ic:"globe",g:"#166534,#0891b2",k:/seyahat|rota|gezi|kamp alanı/,th:["doga","lux","minimal"]},
+ {id:"fotograf",l:"Fotoğraf & Portfolyo",ic:"layers",g:"#475569,#a855f7",k:/fotoğraf|portfolyo|sergi/,th:["minimal","lux","cam"]},
+ {id:"bahce",l:"Bahçe & Bitkiler",ic:"sparkles",g:"#047857,#84cc16",k:/bahçe|bitki|çiçek|peyzaj/,th:["doga","pastel","material"]},
+ {id:"verimlilik",l:"Verimlilik",ic:"check",g:"#16a34a,#0d9488",k:/odak|verimlilik|alışkanlık/,th:["material","minimal","pastel"]},
+ {id:"sosyal",l:"Sosyal & Topluluk",ic:"chat",g:"#0284c7,#9333ea",k:/arkadaş|mesajlaşma|takipçi/,th:["pop","cam","pastel"]},
+ {id:"araclar",l:"Araçlar",ic:"wrench",g:"#475569,#0284c7",k:/hesaplayıcı|dönüştürücü|ölçüm/,th:["minimal","neobank","material"]},
+ {id:"diger",l:"Kişisel & Diğer",ic:"sparkles",g:"#be185d,#ea580c",k:/kişisel|hobi/,th:["doga","lux","pastel"]},
 ];
+// Five sector-specific screens, five compositions and twelve visual themes.
+const sectorBoards={
+ verimlilik:["typewriter coffee camera","Bugün|Odak seansı|Görevler|Alışkanlıklar|Haftalık özet"],
+ sosyal:["agenda-img-4 man-in-hat coffee","Akış|Gruplar|Buluşmalar|Arkadaşlar|Mesajlar"],
+ araclar:["camera typewriter coins","Araç kutusu|Ölçümler|Dönüşümler|Kısayollar|Geçmiş"],
+ diger:["coral-square category-cactus flower-meadow-square","Defterim|İlham|Takvim|Koleksiyon|Günlük"],
+ guzellik:["agenda-img-4 man-in-hat flower-meadow-square","Bakım ritüeli|Stil defteri|Seanslar|Bakım ekibi|Randevum"],
+ yemek:["coffee category-anthuriums category-sunflowers","Günün menüsü|Kahve barı|Tadım rotası|Mutfaktan|Masam"],
+ saglik:["nurse microaneurysms typewriter","Klinikler|Uzmanlar|Randevular|Sağlık günlüğü|Kontroller"],
+ spor:["woman-splashing-water dallas-creek-square marshland-birds-square","Antrenman|Parkurlar|Haftalık program|Takımım|İlerleme"],
+ finans:["coins typewriter parthenon-square","Cüzdanım|Portföy|Bütçe|Hareketler|Hedefler"],
+ is:["typewriter link-in-bio-background parthenon-square","Projeler|Ekip|İş takvimi|Müşteriler|Raporlar"],
+ egitim:["astronaut typewriter camera","Dersler|Atölyeler|Programım|Eğitmenler|Kitaplık"],
+ eticaret:["man-in-hat agenda-img-4 coffee","Koleksiyon|Yeni sezon|Seçkiler|Favoriler|Sepetim"],
+ oyun:["astronaut coral-square ruins-image","Görevler|Dünyalar|Turnuvalar|Oyuncular|Başarılar"],
+ etkinlik:["flower-meadow-square parthenon-square coffee","Program|Mekânlar|Konuklar|Davetiyeler|Biletlerim"],
+ emlak:["parthenon-square ruins-image dallas-creek-square","Portföy|Mahalleler|Ziyaretler|Mimarlar|Kaydettiklerim"],
+ teknoloji:["astronaut camera typewriter","Keşfet|Ürünler|Buluşmalar|Topluluk|Kütüphane"],
+ seyahat:["dallas-creek-square ruins-image marshland-birds-square","Rotalar|Duraklar|Seyahat planı|Rehberler|Gezi günlüğü"],
+ fotograf:["camera man-in-hat link-in-bio-background","Sergiler|Portreler|Çekim planı|Sanatçılar|Albümler"],
+ bahce:["category-cactus category-sunflowers category-anthuriums","Bitkilerim|Türler|Bakım takvimi|Seralar|Bahçe günlüğü"]
+};
+const compositions=["Kapak","Diptik","Mozaik","Panorama","Fotoğraf dizisi"];
+const designIndex=new Map(THEMES.map(t=>[t.id,t]));
+const designBoards=[];
+for(let n=0;n<300;n++)for(const [sectorNumber,sector] of DSECTORS.entries()){
+ const variant=(n*37+sectorNumber*13)%300;
+ const screen=Math.floor(variant/60),layout=Math.floor(variant/12)%5,color=variant%12;
+ const [images,labels]=sectorBoards[sector.id], photos=images.split(" "), title=labels.split("|")[screen];
+ const preferred=[...sector.th,...THEMES.map(t=>t.id).filter(id=>!sector.th.includes(id))];
+ const base=designIndex.get(preferred[(color+screen+layout)%preferred.length]);
+ const id=[sector.id,screen,layout,base.id].join("-");
+ const design={...base,id,sector:sector.id,layout,title,photos:photos.map((_,i)=>photos[(i+screen+color)%photos.length]),
+ name:title+" · "+base.name,tag:compositions[layout],style:base.style+" "+sector.l+" için "+title+" ekranı. Fotoğraf kompozisyonu: "+compositions[layout]+"."};
+ designBoards.push(design);designIndex.set(id,design);
+}
 const DEFAULT_TH=["material","cam","minimal"];
 const KIND_SECTOR={game:"oyun"};
 function detectSector(text,kind){const t=String(text||"").toLocaleLowerCase("tr");let best=null,score=0;
@@ -2229,8 +2278,16 @@ const suggestThemes=sec=>(sectorById(sec)?.th||DEFAULT_TH).map(themeById);
 const designPayload=t=>t&&({id:t.id,name:t.name,font:t.font,radius:t.r,palette:t.p,style:t.style});
 
 // Tema önizlemesi (telefon ya da tarayıcı çerçevesi)
+const photoExamples=new Map(THEMES.map(base=>[base.id,designBoards.find(t=>t.id.endsWith("-"+base.id))]));
 function ThemeMock({t,kind="app",w=128}){
+ t=photoExamples.get(t.id)||t;
  const st={"--bg":t.bgCss||t.p.bg,"--sf":t.sfCss||t.p.sf,"--pr":t.p.pr,"--ac":t.p.ac,"--tx":t.p.tx,"--r":Math.min(t.r,18)*(w/128)+"px",fontFamily:"'"+t.font+"',system-ui,sans-serif",fontSize:w/128*10+"px"};
+ if(t.photos){
+  return html`<div class=${"photo-screen "+(kind==="site"?"landscape":"")} style=${{...st,width:kind==="site"?w*1.7:w,height:kind==="site"?w*1.2:w*1.78}}>
+   <small>${sectorById(t.sector).l}</small><strong>${t.title}</strong>
+   <div class=${"photo-layout layout-"+t.layout}>${t.photos.map(photo=>html`<img key=${photo} loading="lazy" alt="" src=${"brand/gallery/"+photo+".webp"}/>`)}</div>
+   <span>${kind==="game"?"Başlat":kind==="site"?"Keşfet":"Görüntüle"} →</span></div>`;
+ }
  const pop=t.id==="pop";const neon=t.id==="neon";const glass=t.id==="cam";
  const card={background:"var(--sf)",borderRadius:"var(--r)",border:pop?"1.5px solid #111":glass?"1px solid rgba(255,255,255,.3)":"1px solid rgba(0,0,0,.05)",boxShadow:pop?"2px 2px 0 #111":neon?"0 0 10px rgba(0,245,212,.25)":"0 2px 6px rgba(0,0,0,.06)",backdropFilter:glass?"blur(6px)":"none"};
  if(kind==="site")return html`<div class="tm tm-site" style=${{...st,width:w*1.7,height:w*1.2}}>
@@ -2261,25 +2318,50 @@ function ThemeExample({kind}){
 }
 
 // Tasarım galerisi
+const galleryGroups=[
+ ["Yaşam & deneyim",["yemek","guzellik","saglik","spor","seyahat","etkinlik","bahce"]],
+ ["İş & hizmetler",["is","finans","eticaret","emlak","verimlilik","araclar"]],
+ ["Kültür & dijital",["egitim","fotograf","teknoloji","sosyal","oyun","diger"]]
+];
+const searchSector=value=>value.toLocaleLowerCase("tr").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replaceAll("ı","i");
+function GalleryCategories({selected,choose}){
+ const [query,setQuery]=useState("");
+ const groups=galleryGroups.map(([label,ids])=>[label,ids.map(sectorById).filter(s=>searchSector(s.l).includes(searchSector(query.trim())))]);
+ const button=(id,label,count)=>html`<button key=${id} type="button" class=${"dg-sec"+(selected===id?" on":"")} aria-pressed=${selected===id} onClick=${()=>choose(id)}><span>${label}</span><small>${count.toLocaleString("tr-TR")}</small></button>`;
+ return html`<nav class="gallery-nav" aria-label="Tasarım kategorileri">
+  <label class="gallery-mobile">Kategori<select value=${selected} onChange=${e=>choose(e.target.value)}><option value="hepsi">Tüm tasarımlar</option>${galleryGroups.map(([label,ids])=>html`<optgroup key=${label} label=${label}>${ids.map(id=>html`<option key=${id} value=${id}>${sectorById(id).l}</option>`)}</optgroup>`)}</select></label>
+  <div class="gallery-desktop"><label>Kategoriler<input type="search" placeholder="Kategori ara" value=${query} onChange=${e=>setQuery(e.target.value)}/></label>
+  ${button("hepsi","Tüm tasarımlar",designIndex.size)}
+  <div class="gallery-groups">${groups.map(([label,sectors])=>sectors.length>0&&html`<section key=${label}><h3>${label}</h3>${sectors.map(s=>button(s.id,s.l,300))}</section>`)}
+  ${groups.every(([,items])=>!items.length)&&html`<p role="status">Kategori bulunamadı.</p><button onClick=${()=>setQuery("")}>Aramayı temizle</button>`}</div></div>
+ </nav>`;
+}
 function DesignGallery({kind,sel,sector,onPick,close}){
  const [sec,setSec]=useState(sector||"hepsi");const [k,setK]=useState(kind||"app");const [hov,setHov]=useState(null);
- const rec=sec!=="hepsi"?suggestThemes(sec).map(t=>t.id):[];
- const list=sec==="hepsi"?THEMES:[...rec.map(themeById),...THEMES.filter(t=>!rec.includes(t.id))];
- return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="dg glass" onClick=${e=>e.stopPropagation()}>
+ const [page,setPage]=useState(0);
+ const list=useMemo(()=>sec==="hepsi"?[...designBoards,...THEMES]:designBoards.filter(t=>t.sector===sec),[sec]);
+ const rec=useMemo(()=>{
+  const sector=sectorById(sec);
+  return sector?sector.th.map((base,i)=>list.find(t=>t.layout===i&&t.id.endsWith("-"+base))?.id):[];
+ },[list,sec]);
+ const panel=useRef(null);
+ const resetScroll=()=>panel.current?.scrollTo({top:0});
+ const chooseSector=id=>{setSec(id);setPage(0);resetScroll()};
+ const changePage=value=>{setPage(value);resetScroll()};
+ const category=sectorById(sec)?.l||"mobile app";
+ return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="dg glass" ref=${panel} onClick=${e=>e.stopPropagation()}>
   <div class="dg-h"><div><div class="eyebrow">Tasarım stüdyosu</div><h2>Sektörüne uygun tasarımı seç</h2></div><span style=${{flex:1}}></span>
    <div class="seg">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([x,ic,l])=>html`<button key=${x} class=${k===x?"on":""} onClick=${()=>setK(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <button class="ib" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button></div>
-  <${ThemeExample} kind=${k}/>
+  <div class="dg-links"><b>${list.length.toLocaleString("tr-TR")} tasarım</b><a href=${"https://www.figma.com/community/search?query="+encodeURIComponent(category+" UI")} target="_blank" rel="noopener noreferrer">Figma Community ↗</a><a href="https://www.awwwards.com/websites/sites_of_the_day/" target="_blank" rel="noopener noreferrer">Awwwards seçkisi ↗</a><a href=${"https://www.pinterest.com/search/pins/?q="+encodeURIComponent(category+" mobile UI design")} target="_blank" rel="noopener noreferrer">Pinterest panoları ↗</a></div>
   <div class="dg-b">
-   <div class="dg-side">
-    <button class=${"dg-sec"+(sec==="hepsi"?" on":"")} onClick=${()=>setSec("hepsi")}><${Tile} n="grid" g="#475569,#64748b" s=${26}/><span>Tüm tasarımlar</span></button>
-    ${DSECTORS.map(s=>html`<button key=${s.id} class=${"dg-sec"+(sec===s.id?" on":"")} onClick=${()=>setSec(s.id)}><${Tile} n=${s.ic} g=${s.g} s=${26}/><span>${s.l}</span>${sector===s.id?html`<em>algılandı</em>`:""}</button>`)}
-   </div>
-   <div class="dg-grid" key=${sec+k}>${list.map((t,i)=>html`<button key=${t.id} class=${"dg-card"+(sel===t.id?" on":"")} style=${{animationDelay:Math.min(i,8)*45+"ms"}} onMouseEnter=${()=>setHov(t.id)} onMouseLeave=${()=>setHov(null)} onClick=${()=>onPick(t.id,sec!=="hepsi"?sec:null)}>
+   <${GalleryCategories} selected=${sec} choose=${chooseSector}/>
+   <div class="dg-grid" key=${sec+k+page}>${list.slice(page*24,(page+1)*24).map((t,i)=>html`<button key=${t.id} class=${"dg-card"+(sel===t.id?" on":"")} style=${{animationDelay:Math.min(i,8)*45+"ms"}} onMouseEnter=${()=>setHov(t.id)} onMouseLeave=${()=>setHov(null)} onClick=${()=>onPick(t.id,t.sector||null)}>
      ${rec.includes(t.id)&&html`<span class="dg-badge"><${Icon} n="star" s=${11}/> ${rec.indexOf(t.id)===0?"En uygun":"Önerilen"}</span>`}
      ${sel===t.id&&html`<span class="dg-check"><${Icon} n="check" s=${13} w=${2.6}/></span>`}
      <div class=${"dg-stage"+(hov===t.id?" hov":"")} style=${{background:"radial-gradient(circle at 50% 120%,"+t.p.pr+"55,transparent 65%),#0b1019"}}><${ThemeMock} t=${t} kind=${k} w=${k==="site"?104:112}/></div>
-     <div class="dg-meta"><b>${t.name}</b><${Swatches} t=${t}/></div><span class="dg-tag">${t.tag} · ${t.font}</span></button>`)}</div>
+     <div class="dg-meta"><b>${t.name}</b><${Swatches} t=${t}/></div><span class="dg-tag">${t.tag} · ${t.font}</span></button>`)}
+   <nav class="dg-page" aria-label="Tasarım sayfaları"><button disabled=${page===0} onClick=${()=>changePage(page-1)}>Önceki</button><span>${page+1} / ${Math.ceil(list.length/24)}</span><button disabled=${(page+1)*24>=list.length} onClick=${()=>changePage(page+1)}>Sonraki</button></nav></div>
   </div></div></div>`;
 }
 
@@ -2909,7 +2991,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  actRef.current=async a=>{const g=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
   if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
   if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,mode:a.deger}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
-  if(a.t==="tema"){if(!THEMES.some(t=>t.id===a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
+  if(a.t==="tema"){if(!designIndex.has(a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
   if(a.t==="ayar"){const n={...runRef.current};if(a.sicaklik!=null&&a.sicaklik!==""&&isFinite(+a.sicaklik))n.temperature=Math.max(0,Math.min(1.5,+a.sicaklik));if(["kisa","dengeli","ayrintili"].includes(a.detay))n.detail=a.detay;if(typeof a.talimat==="string")n.instructions=a.talimat.slice(0,1500);return g('.pill[title="Çalıştırma ayarları"]',()=>{setRunSet(n);runRef.current=n;toast("Çalıştırma ayarları güncellendi")})}
   if(a.t==="prompt"){const m=String(a.metin||"").trim().slice(0,4000);if(!m)return;return g(".gta",async()=>{await typeInto(m);inputRef.current=m},{after:200})}
   if(a.t==="yap"){const m=String(a.metin||inputRef.current||"").trim();if(!m)throw new Error("İstem kutusu boş");return g(".gsend",()=>gen(m))}
@@ -3138,7 +3220,13 @@ async function ghostRun(steps){
 }
 
 // ---------- Keşfet (App Store düzeni) ----------
-function AppRow({a,onOpen,btn,onBtn,sub}){return html`<div class="arow" onClick=${onOpen}><${AppIcon2} emoji=${a.emoji} color=${a.color} size=${68}/><div class="arow-b"><div class="arow-t">${a.title}</div><div class="arow-s">${sub||catName(a.category)}</div><div class="arow-a"><button class="getbtn" onClick=${e=>{e.stopPropagation();onBtn()}}>${btn}</button>${a.price?html`<span class="iap">Ücretli</span>`:a.downloads?html`<span class="iap">${fmt(a.downloads)} indirme</span>`:""}</div></div></div>`}
+function AppPhoto({a,size}){
+ const board=sectorBoards[a.category]||sectorBoards.diger;
+ const photos=board[0].split(" ");
+ const index=Array.from(a.slug||a.title||"").reduce((sum,c)=>sum+c.codePointAt(0),0)%photos.length;
+ return html`<img loading="lazy" alt="" width=${size} height=${size} style=${{objectFit:"cover",borderRadius:"22%",flexShrink:0}} src=${"brand/gallery/"+photos[index]+".webp"}/>`;
+}
+function AppRow({a,onOpen,btn,onBtn,sub}){return html`<div class="arow" onClick=${onOpen}><${AppPhoto} a=${a} size=${68}/><div class="arow-b"><div class="arow-t">${a.title}</div><div class="arow-s">${sub||catName(a.category)}</div><div class="arow-a"><button class="getbtn" onClick=${e=>{e.stopPropagation();onBtn()}}>${btn}</button>${a.price?html`<span class="iap">Ücretli</span>`:a.downloads?html`<span class="iap">${fmt(a.downloads)} indirme</span>`:""}</div></div></div>`}
 function Shelf({title,more,children,scroll}){const ref=useRef(null);const mv=d=>ref.current&&ref.current.scrollBy({left:d*ref.current.clientWidth*.9,behavior:"smooth"});
  return html`<section class="shelf"><div class="shelf-h"><h3>${title}</h3>${scroll&&html`<span class="shelf-n"><button class="navarr" onClick=${()=>mv(-1)}><${Icon} n="chevLeft" s=${18}/></button><button class="navarr" onClick=${()=>mv(1)}><${Icon} n="chevRight" s=${18}/></button></span>`}${more&&html`<a class="seeall" href="#" onClick=${e=>{e.preventDefault();more()}}>Tümünü Gör</a>`}</div><div ref=${ref} class=${scroll?"shelf-x":"shelf-g"}>${children}</div></section>`}
 function EdCard({eyebrow,title,text,icon,grad,onClick,emojis}){return html`<div class="edcard" onClick=${onClick}><div class="ed-t"><div class="eyebrow">${eyebrow}</div><h4>${title}</h4><p>${text}</p></div><div class="ed-art" style=${{background:"radial-gradient(circle at 30% 25%,#ffffff33,transparent 45%),linear-gradient(145deg,"+grad+")"}}><${Icon} n=${icon} s=${64} c="#fff" w=${1.4}/>${(emojis||[]).map((e,i)=>html`<span class="ed-chip" style=${{["--i"]:i}}>${symbolIcon(e,18)}</span>`)}</div></div>`}
@@ -3243,7 +3331,7 @@ function AppDetail({slug,go,auth,openAuth,openInStudio,toast,startTemplate}){
   <div class="adp-top">
    <div class="adp-l">
     <div class="adp-hero">
-     <${AppIcon2} emoji=${a.emoji} color=${a.color} size=${128}/>
+     <${AppPhoto} a=${a} size=${128}/>
      <div class="adp-ht"><h1>${a.title}</h1><a class="adp-dev" href="#" onClick=${e=>{e.preventDefault();dev.length&&document.getElementById("adp-dev").scrollIntoView({behavior:"smooth"})}}>${a.author}</a><div class="adp-sub">${catName(a.category)} · ${kindL}${a.price?" · Ücretli":""}</div></div>
     </div>
     ${a.description&&html`<p class="adp-pitch">${a.description}</p>`}
@@ -3913,7 +4001,7 @@ function cpParse(text){text=String(text||"");const m=text.match(/<eylem>([\s\S]*
  const body=text.replace(/<eylem>[\s\S]*?(<\/eylem>|$)/gi,"").replace(/```(?:json)?\s*\[\s*\{"t"[\s\S]*?```/g,"").trim();
  if(m&&m[2]){try{const j=JSON.parse(m[1].trim());acts=(Array.isArray(j)?j:[j]).filter(a=>a&&typeof a==="object"&&typeof a.t==="string").slice(0,6)}catch(e){}}
  return {body,acts}}
-function cpLabel(a){const th=a.deger&&THEMES.find(t=>t.id===a.deger);const K={app:"Uygulama",site:"Web sitesi",game:"Oyun"},M={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
+function cpLabel(a){const th=a.deger&&designIndex.get(a.deger);const K={app:"Uygulama",site:"Web sitesi",game:"Oyun"},M={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
  switch(a.t){case "git":return ["arrowRight",(CP_VIEWS[a.view]||a.view)+" sayfasını aç"];case "tur":return [KIND_ICON[a.deger]||"apps","Proje türü: "+(K[a.deger]||a.deger)];case "mod":return ["list","Mod: "+(M[a.deger]||a.deger)];
   case "tema":return ["palette","Tasarım: "+(th?th.name:a.deger)];case "ayar":return ["sliders","Çalıştırma ayarları",[a.sicaklik!=null?"yaratıcılık "+a.sicaklik:"",a.detay?"ayrıntı: "+a.detay:"",a.talimat?"talimat eklendi":""].filter(Boolean).join(" · ")];
   case "prompt":return ["edit","İstem kutusuna yaz",String(a.metin||"")];case "yap":return ["play","Geliştirmeye başla","kredi kullanır"];case "kontrol":return ["shield","Kontrol et ve düzelt","kredi kullanır"];
