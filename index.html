@@ -1226,6 +1226,41 @@ button.adp-mini{color:inherit;text-align:left}
  .studio-start .skp-art svg{width:36px;height:36px}
  .studio-start .sketch-upload{grid-column:2;justify-self:start}
 }
+
+.ws .ws-msgs{gap:20px!important;padding:18px!important;min-height:0;overscroll-behavior:contain}
+.studio-user-message,.studio-response,.studio-plan,.studio-activity{min-width:0}
+.studio-user-message{padding-inline-start:12px;border-inline-start:2px solid var(--sep)}
+.studio-user-label{display:block;color:var(--label2);font-size:12px;margin-bottom:4px;font-weight:650}
+.studio-message-text{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);line-height:1.6;font-size:14px}
+.studio-response>.studio-message-text{margin-top:5px}
+.studio-response>.studio-message-text:only-child{margin-top:0}
+.studio-error{color:#fca5a5}
+.studio-activity-line{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:13px;color:var(--ink)}
+.studio-activity-icon{display:inline-flex;align-self:center;color:#7ee2a8}
+.studio-activity-icon.issue{color:#e3b341}
+.studio-activity-line time{font-size:12px;color:var(--label2);font-variant-numeric:tabular-nums}
+.studio-activity-note,.studio-activity-details,.studio-activity-retry{margin:4px 0 0 23px}
+.studio-activity-note,.studio-activity-details{font-size:12.5px;line-height:1.5;color:var(--label2)}
+.studio-activity-details summary{width:fit-content;cursor:pointer;padding:4px 4px 4px 0}
+.studio-activity-details ol{list-style:none;margin:3px 0 8px;padding:0 0 0 10px;border-inline-start:1px solid var(--sep)}
+.studio-activity-details li{padding:2px 0}
+.studio-activity-details small{font-variant-numeric:tabular-nums}
+.studio-plan header,.studio-plan-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.studio-plan h2{font-size:15px;margin:0 auto 0 0}
+.studio-plan>.studio-message-text,.studio-plan textarea,.studio-plan-actions{margin-top:8px}
+.studio-plan textarea{width:100%;resize:vertical}
+.ws .todo{border:0;background:none;animation:none}
+.ws .todo-h,.ws .todo-b,.ws .todo-f{padding-inline:0;border:0;background:none}
+.ws .todo-r span{color:var(--label2)}
+.ws .todo-b{margin:0;list-style:none}
+.studio-activity h3{margin:0 0 5px;font-size:13px;color:var(--label2)}
+.ws .todo-i{border:0;border-radius:0}
+.studio-preview-jump{display:none}
+@media(max-width:820px){
+ .ws .studio-stage{order:0;scroll-margin-top:60px}
+ .ws .ws-msgs{min-height:120px;max-height:42dvh;padding:14px!important}
+ .studio-preview-jump{display:inline-flex;align-items:center;gap:5px;margin-top:6px}
+}
 </style>
 </head>
 <body>
@@ -1239,8 +1274,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.11.1";
+const VERSION="5.11.2";
 const CHANGELOG=[
+ {v:"5.11.2",date:"2026-11-25",items:[
+  "Geliştir'de istemler ve yanıtlar sade sohbet akışında görünür. Üretim ilerlerken kısa durum satırları, ayrıntılar açıldığında ise alınan yanıt ve önizleme adımları gösterilir.",
+  "Plan okuma ve düzenleme ayrıldı. Ajan yarıda kaldığında kalan adımlardan devam edebilirsin.",
+  "Telefonda sohbet önce görünür. Önizleme düğmesi çalışma alanına gider."]},
  {v:"5.11.1",date:"2026-11-25",items:[
   "Stüdyo'da proje türü ve istem alanı öne çıktı. Üretim ayarları klavyeyle açılıp kapanır ve yazdığın istem sayfa değiştirince korunur.",
   "Keşfet'te kategori ve arama üstte. Uygulama ayrıntısından dönünce arama, kategori ve sıralama korunur.",
@@ -2437,59 +2476,69 @@ function Typewriter({text,speed=12,onDone}){
 }
 
 // Akışlı API çağrısı (sunucu olayları)
-async function apiStream(path,body,onDelta,signal){
+async function apiStream(path,body,onDelta,signal,onPhase){
  const t=TOK.get();const r=await fetch(API+path,{method:"POST",signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
  if(!r.ok){let j={};try{j=await r.json()}catch(e){}const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}
  const rd=r.body.getReader();const dec=new TextDecoder();let buf="",final=null;
  while(true){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
   while((i=buf.indexOf("\n\n"))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);const line=chunk.split("\n").find(l=>l.startsWith("data:"));if(!line)continue;let ev;try{ev=JSON.parse(line.slice(5))}catch(e){continue}
-   if(ev.t==="delta")onDelta(ev.d);else if(ev.t==="done")final=ev;else if(ev.t==="error"){const e=new Error(ev.error);e.status=ev.status;throw e}}}
+   if(ev.t==="delta")onDelta(ev.d);else if(ev.t==="phase")onPhase?.(ev.phase);else if(ev.t==="done")final=ev;else if(ev.t==="error"){const e=new Error(ev.error);e.status=ev.status;throw e}}}
  if(!final)throw new Error("Bağlantı kesildi, lütfen tekrar deneyin.");crEvent(final);return final;
 }
-// Akan koddan gerçek ilerleme adımları
-const BUILD_STEPS=[
- {k:"start",l:"İstek modele iletildi",run:"Modelin yanıtı bekleniyor",test:()=>true},
- {k:"think",l:"Fikir analiz edildi",run:"Fikri analiz ediyor",test:(t)=>t.length>0},
- {k:"head",l:"Sayfa iskeleti kuruldu",run:"Sayfa iskeletini kuruyor",test:(t)=>/<head/i.test(t)},
- {k:"style",l:"Tema ve stiller yazıldı",run:"Tema ve stilleri yazıyor",test:(t)=>/<body/i.test(t)},
- {k:"ui",l:"Arayüz bileşenleri oluşturuldu",run:"Arayüz bileşenlerini oluşturuyor",test:(t)=>/<script(?![^>]*src)/i.test(t.slice(t.search(/<body/i)>0?t.search(/<body/i):t.length))},
- {k:"logic",l:"Etkileşim ve mantık kodlandı",run:"Etkileşim ve mantığı kodluyor",test:(t)=>/<\/script>\s*<\/body>|<\/html>/i.test(t)},
- {k:"done",l:"Önizleme hazırlandı",run:"Önizlemeyi hazırlıyor",test:()=>false},
-];
-const REVIEW_STEPS=[{k:"start",l:"Kod incelemeye alındı",run:"Modelin yanıtı bekleniyor",test:()=>true},{k:"read",l:"Hatalar ve eksikler tarandı",run:"Hataları ve eksikleri tarıyor",test:(t)=>t.length>0},{k:"fix",l:"Düzeltmeler uygulandı",run:"Düzeltmeleri uyguluyor",test:(t)=>/<body/i.test(t)},{k:"logic",l:"Mantık yeniden doğrulandı",run:"Mantığı yeniden doğruluyor",test:(t)=>/<\/html>/i.test(t)},{k:"done",l:"Düzeltilmiş sürüm hazır",run:"Sürümü hazırlıyor",test:()=>false}];
-function stepsFrom(defs,text,finished){let reached=0;defs.forEach((d,i)=>{if(d.test(text))reached=i});return defs.map((d,i)=>({l:d.l,run:d.run,state:finished?"done":i<reached?"done":i===reached?"run":"wait"}));}
-// Yarıda kalan bir akışın adımları: biten bitmiş kalır, çalışan "kesildi" olur, bekleyenler gizlenir
-const stepsCut=steps=>(steps||[]).map(x=>x.state==="run"?{...x,state:"cut"}:x);
-// Akışın gerçek durumu: düşünüyor / yazıyor / yanıt bekliyor / bitti / durduruldu / yarıda kaldı / hata
-function logPhase(log){if(log.running){if(log.think==null)return "think";const last=log.last||log.start;return Date.now()-last>7000?"stall":"write"}
- return log.stopped?"stopped":log.cut?"cut":log.error?"error":"done"}
-
 function clTopic(t,kind){t=String(t||"").replace(/\s+/g," ").trim();if(kind==="review")return "Kod kontrolü değerlendiriliyor";t=t.replace(/^Yapılacaklar listesindeki /,"");const sh=t.length>46?t.slice(0,44).replace(/\s\S*$/,"")+"…":t;return sh?"“"+sh+"” isteği değerlendiriliyor":"İstek değerlendiriliyor"}
-function clThoughts(kind,text,has,theme,imgs,pk){const K={app:"uygulama",site:"web sitesi",game:"oyun"}[pk]||"uygulama";
- if(kind==="review")return ["Mevcut kod baştan sona okunuyor.","Çalışmayan düğmeler, eksik doğrulamalar ve mobil görünüm sorunları aranıyor.","Bulunan her sorun düzeltilip yeniden doğrulanacak."];
- const o=[];if(imgs&&imgs.length)o.push("Eklenen "+imgs.length+" görselin yerleşimi, renkleri ve metinleri inceleniyor.");
- o.push(has?"Mevcut "+K+" korunarak yalnızca istenen kısım değiştirilecek.":"Bu "+K+" için ekranlar, veri yapısı ve etkileşimler planlanıyor.");
- if(theme&&!has)o.push("Tasarım dili: "+theme+".");o.push("Kod tek dosya halinde yazılıp önizlemeye aktarılacak.");return o}
-const clTime=s=>s>=60?Math.floor(s/60)+"d "+(s%60)+"sn":s+"sn";
+const clTime=s=>s>=60?Math.floor(s/60)+" dk "+(s%60)+" sn":s+" sn";
 function ClSpark({s=18}){return html`<span class="clspark" style=${{width:s,height:s}} aria-hidden="true"><svg viewBox="0 0 24 24" width=${s} height=${s}>${[0,45,90,135,180,225,270,315].map((a,i)=>html`<rect key=${a} class=${"r"+(i%4)} x="10.9" y="1.5" width="2.2" height="9" rx="1.1" transform=${"rotate("+a+" 12 12)"}/>`)}</svg></span>`}
-function WorkLog({log,open,toggle,retry}){
- const ph=logPhase(log);const running=log.running;const [tOpen,setTOpen]=useState(false);const thinking=ph==="think";
- const el=running&&log.start?Math.floor((Date.now()-log.start)/1000):(log.secs||0);
- const tt=thinking?log.ttl||"İstek değerlendiriliyor":(log.ttl||"İstek değerlendirildi").replace(/değerlendiriliyor$/,"değerlendirildi");
- const steps=log.steps.filter(x=>x.state!=="wait");const cur=log.steps.find(x=>x.state==="run");
- const idle=ph==="stall"?Math.floor((Date.now()-(log.last||log.start))/1000):0;
- const head=ph==="write"?html`<${ClSpark} s=${19}/><span class="cl-cur">${cur&&cur.run||log.title}</span><span class="cl-time">${clTime(el)}</span>`
-  :ph==="stall"?html`<span class="cl-ico wait"><${Icon} n="clock" s=${15}/></span><span class="cl-cur">Model yanıtı bekleniyor</span><span class="cl-time">${idle} sn sessiz · ${clTime(el)}</span>`
-  :ph==="stopped"?html`<span class="cl-ico stop"><${Icon} n="stop" s=${13}/></span><span>Durdurdun · ${clTime(log.secs||0)} · kredi harcanmadı</span>`
-  :ph==="cut"?html`<span class="cl-ico cut"><${Icon} n="plug" s=${15}/></span><span>Yarıda kaldı · bağlantı koptu ya da sayfa yenilendi · kredi harcanmadı</span>`
-  :ph==="error"?html`<span class="cl-ico err"><${Icon} n="alert" s=${15}/></span><span>Durdu: ${log.error&&log.error!=="hata"?log.error:"bir hata oluştu"}</span>`
-  :html`<span class="cl-ico ok"><${Icon} n="check" s=${15} w=${2.4}/></span><span>${log.done||"Tamamlandı"}</span>`;
- return html`<div class=${"cl ph-"+ph}>
-  ${log.thoughts&&html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${()=>setTOpen(!tOpen)}>${thinking?html`<${ClSpark} s=${17}/><span class="shimmer">${tt}</span>`:html`<span>${tt}</span>`}<${Icon} n=${tOpen||thinking?"chevUp":"chevDown"} s=${15}/></button>
-   ${(tOpen||thinking)&&html`<div class="cl-think"><div class="cl-tt">${thinking?"Düşünüyor… "+el+" sn":log.think!=null?log.think+" sn düşündü":"Düşünme yarıda kaldı"}</div>${log.thoughts.map((t,i)=>html`<p key=${i}>${t}</p>`)}</div>`}</div>`}
-  ${!thinking&&html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${toggle}>${head}<${Icon} n=${open?"chevUp":"chevDown"} s=${15}/></button>
-   ${open&&steps.length>0&&html`<div class="cl-card">${steps.map((x,i)=>html`<div class=${"cl-it "+x.state} key=${i}>${x.state==="run"?html`<${ClSpark} s=${14}/><span class=${ph==="stall"?"":"shimmer"}>${x.run||x.l}…</span>`:x.state==="cut"?html`<${Icon} n="x" s=${13}/><span>${x.l} — yarıda kaldı</span>`:html`<${Icon} n="check" s=${13} w=${2.4}/><span>${x.l}</span>`}</div>`)}${log.kb&&html`<div class="cl-it meta"><span>${log.kb} KB${log.model?" · "+shortModel(log.model):""}${!running?" · "+clTime(log.secs||0):""}</span></div>`}</div>`}
-   ${(ph==="stopped"||ph==="cut"||ph==="error")&&retry&&html`<div class="cl-retry"><button type="button" class="btn s" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button><span>Aynı istek baştan çalışır; kredi yalnızca bittiğinde düşer.</span></div>`}</div>`}
+
+const STUDIO_ACTIVITY={
+ build:{waiting:"Uygulama üretiliyor",done:"Önizleme hazır",sending:"Üretim isteği gönderildi"},
+ update:{waiting:"Değişiklik hazırlanıyor",done:"Önizleme güncellendi",sending:"Mevcut index.html ile değişiklik isteği gönderildi"},
+ review:{waiting:"Kod kontrolü sürüyor",done:"Kod kontrolü tamamlandı",sending:"Mevcut index.html kontrol için gönderildi"},
+ plan:{waiting:"Yapım planı hazırlanıyor",done:"Yapım planı hazır",sending:"Planlama isteği gönderildi"},
+ agent:{waiting:"Yapılacaklar listesi hazırlanıyor",done:"Yapılacaklar listesi hazır",sending:"Adım listesi isteği gönderildi"}
+};
+const STUDIO_EVENTS={
+ connected:"Model isteği kabul etti",
+ receiving:"Yanıt parçaları alınmaya başladı",
+ structure:"HTML yapısı yanıtta göründü",
+ styles:"Stil kodu yanıtta göründü",
+ scripts:"JavaScript kodu yanıtta göründü",
+ processing:"Sunucu yanıtı işliyor",
+ preview:"index.html önizlemeye aktarıldı",
+ unchanged:"index.html aynı kaldı",
+ plan:"Plan düzenleme ve onaya açıldı",
+ agent:"Adımlar onaya açıldı"
+};
+function studioStatus(log,lastAt){
+ if(log.stopped)return "İşlem durduruldu";
+ if(log.cut)return "İşlem yarıda kaldı";
+ if(log.error)return "İşlem tamamlanamadı";
+ const kind=STUDIO_ACTIVITY[log.kind];
+ if(!log.running)return log.kind==="update"&&log.events?.includes("unchanged")?"Değişiklik oluşmadı":kind?.done||"İşlem tamamlandı";
+ if(log.phase==="processing")return "Yanıt işleniyor";
+ if(Date.now()-(lastAt||log.last||log.start)>7000)return "Modelden yanıt bekleniyor";
+ return kind?.waiting||"İşlem sürüyor";
+}
+function WorkLog({log,lastAt,retry,onToggle}){
+ const status=studioStatus(log,lastAt);
+ const kind=STUDIO_ACTIVITY[log.kind];
+ const failed=log.error||log.cut||log.stopped;
+ const elapsed=log.running?Math.max(0,Math.floor((Date.now()-log.start)/1000)):log.secs||0;
+ const facts=[...(kind?[kind.sending]:[]),...(log.images?[log.images+" görsel eklendi"]:[]),...(log.events||[]).map(key=>STUDIO_EVENTS[key]).filter(Boolean)];
+ const meta=[log.model&&shortModel(log.model),log.kb&&log.kb+" KB",log.spent?log.spent+" kredi":""].filter(Boolean);
+ return html`<div class="studio-activity">
+  ${log.task&&html`<h3>${log.task}</h3>`}
+  <div class="studio-activity-line">
+   <span class=${"studio-activity-icon"+(failed?" issue":"")}>${log.running?html`<${ClSpark} s=${16}/>`:html`<${Icon} n=${failed?log.stopped?"stop":"alert":"check"} s=${15}/>`}</span>
+   <span class="studio-activity-status" role="status">${status}</span>
+   <time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time>
+  </div>
+  ${log.running&&html`<p class="studio-activity-note" aria-live="polite">${STUDIO_EVENTS[log.events?.at(-1)]||kind?.sending}</p>`}
+  ${(facts.length>0||meta.length>0)&&html`<details class="studio-activity-details" onToggle=${e=>{if(e.currentTarget.open)onToggle()}}>
+   <summary>İşlem ayrıntıları</summary>
+   ${facts.length>0&&html`<ol>${facts.map((fact,i)=>html`<li key=${i}>${fact}</li>`)}</ol>`}
+   ${meta.length>0&&html`<small>${meta.join(" · ")}</small>`}
+  </details>`}
+  ${failed&&retry&&html`<button type="button" class="btn g s studio-activity-retry" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button>`}
  </div>`;
 }
 
@@ -2806,11 +2855,22 @@ function SketchScene({onStart,compact}){
 
 // ---- Ajan modu: yapılacaklar listesi (Claude Code gibi) ----
 function TodoCard({todo,busy,onStart,onStop,onCancel}){
- const done=todo.items.filter(t=>t.state==="done").length;const est=todo.items.length*(todo.per||0);
- return html`<div class="todo"><div class="todo-h"><${Icon} n="list" s=${16} c="#c4b5fd"/><b>Yapılacaklar</b><span class="todo-c">${done}/${todo.items.length}</span><span style=${{flex:1}}></span>${todo.running?html`<button class="chip" onClick=${onStop}><${Icon} n="stop" s=${11}/> Bu adımdan sonra dur</button>`:""}</div>
-  <div class="todo-b">${done>0&&html`<details><summary>${done} adım tamamlandı</summary>${todo.items.filter(t=>t.state==="done").map((t,i)=>html`<div key=${i} class="todo-r done">✓ ${t.title}</div>`)}</details>`}${todo.items.filter(t=>t.state!=="done").map((t,i)=>html`<div key=${i} class=${"todo-r "+t.state}><span class="todo-i">${t.state==="done"?html`<${Icon} n="check" s=${12} w=${2.6}/>`:t.state==="run"?html`<${Spark} s=${14}/>`:t.state==="err"?html`<${Icon} n="x" s=${12}/>`:""}</span><div><b>${t.title}</b>${t.state==="run"||todo.awaiting?html`<span>${t.detail}</span>`:""}</div></div>`)}</div>
-  ${todo.awaiting&&html`<div class="todo-f"><span>Her adım ayrı bir üretimdir${est?" · tahmini "+est+" kredi":""}. Onaylıyor musun?</span><div style=${{display:"flex",gap:6}}><button class="btn s" disabled=${busy} onClick=${onStart}><${Icon} n="play" s=${13}/> Başlat</button><button class="btn g s" onClick=${onCancel}>Vazgeç</button></div></div>`}
- </div>`;
+ const completed=todo.items.filter(item=>item.state==="done").length;
+ const remaining=todo.items.length-completed;
+ const estimate=remaining*(todo.per||0);
+ const action=todo.awaiting?"Başlat":todo.items.some(item=>item.state==="err")?"Başarısız adımdan devam et":"Devam et";
+ return html`<section class="todo" aria-label="Yapılacaklar">
+  <header class="todo-h"><b>Yapılacaklar</b><span class="todo-c">${completed}/${todo.items.length}</span><span style=${{flex:1}}></span>
+   ${todo.running&&html`<button type="button" class="btn g s" onClick=${onStop}>Bu adımdan sonra dur</button>`}</header>
+  <ol class="todo-b">
+   ${todo.items.map((item,i)=>html`<li class=${"todo-r "+item.state} key=${i}>
+    <span class="todo-i" aria-hidden="true">${item.state==="done"?html`<${Icon} n="check" s=${14}/>`:item.state==="run"?html`<${ClSpark} s=${14}/>`:item.state==="err"?html`<${Icon} n="alert" s=${14}/>`:i+1}</span>
+    <div><b>${item.title}</b>${(todo.awaiting||item.state==="run")&&item.detail&&html`<span>${item.detail}</span>`}</div>
+   </li>`)}
+  </ol>
+  ${!todo.running&&remaining>0&&html`<div class="todo-f">${estimate>0&&html`<span>Tahmini ${estimate} kredi</span>`}
+   <div class="studio-plan-actions"><button type="button" class="btn s" disabled=${busy} onClick=${onStart}>${action}</button><button type="button" class="btn g s" disabled=${busy} onClick=${onCancel}>Vazgeç</button></div></div>`}
+ </section>`;
 }
 
 // ---- Eğik çizgi komutları ----
@@ -3217,11 +3277,11 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  useEffect(()=>{if(resumeVersions){setGitOpen("github");clearResumeVersions()}},[resumeVersions]);
  const [saved,setSaved]=useState(null),[saveFailed,setSaveFailed]=useState(false),[localOk,setLocalOk]=useState(true);
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
- const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running?{...m.log,running:false,cut:true,steps:stepsCut(m.log.steps),secs:m.log.secs||0}:m.log):undefined}))}});
+ const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running?{...m.log,running:false,cut:true,secs:m.log.secs||0}:m.log):undefined}))}});
  const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput","")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
- const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatEnd=useRef(null);
+ const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
- const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [openLog,setOpenLog]=useState({});
+ const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput",input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
  const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector(input||(firstUser&&firstUser.content)||"",prefs.kind);
@@ -3230,8 +3290,15 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  useEffect(()=>{setLocalOk(LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))}));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
  useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
- useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},120);return()=>clearInterval(i)},[busy]);
- useEffect(()=>{chatEnd.current&&chatEnd.current.scrollIntoView({behavior:"smooth",block:"end"})},[st.msgs.length,busy,plan]);
+ useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},500);return()=>clearInterval(i)},[busy]);
+ useEffect(()=>{
+  const chat=chatRef.current;
+  if(chat&&followChat.current)chat.scrollTop=chat.scrollHeight;
+ },[st.msgs,busy,plan,todo,editPlan]);
+ function chatScrolled(e){
+  const chat=e.currentTarget;
+  followChat.current=chat.scrollHeight-chat.clientHeight-chat.scrollTop<44;
+ }
  useEffect(()=>{codeEnd.current&&codeEnd.current.scrollIntoView({block:"end"})},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
  const md=(models&&models.data)||{platform:[],byok:[]};
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
@@ -3241,29 +3308,71 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
- // Akışlı çalıştırma: sohbete bir iş günlüğü kartı ekler, adımları akan koda göre ilerletir
- async function runStream(kind,userText,path,body,onDone,imgs){
-  const id=Date.now()+Math.random();const add=[...(userText?[{role:"user",content:userText,imgs:imgs&&imgs.length?imgs:undefined}]:[]),{role:"assistant",id,retry:{kind,text:kind==="review"?"":(body.prompt&&!body.plan?String(body.prompt):""),shown:userText||""},log:{running:true,start:Date.now(),last:Date.now(),title:kind==="review"?"Kodu inceliyor":imgs&&imgs.length?"Görselleri inceleyip kodu yazıyor":st.html?"Değişikliği uyguluyor":"Kodu yazıyor",ttl:clTopic(userText||body.prompt,kind),thoughts:clThoughts(kind,userText||body.prompt,!!st.html,effRef.current&&effRef.current.name,imgs,prefsRef.current.kind),steps:stepsFrom(kind==="review"?REVIEW_STEPS:BUILD_STEPS,"",false),model:curModel}}];let result=null;
-  setSt(s=>({...s,msgs:[...s.msgs,...add]}));setOpenLog(o=>({...o,[id]:true}));setBusy(true);const start=Date.now();setT0(start);liveRef.current="";setLive("");
-  const defs=kind==="review"?REVIEW_STEPS:BUILD_STEPS;let lastUpd=0;
-  const upd=(patch)=>setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,...patch(m)}:m)}));
+ async function runActivity(kind,userText,execute,onDone,{imgs,images=imgs?.length||0,retry,legacyRetry,finalEvent,task}={}){
+  if(abortRef.current)return null;
+  const id=Date.now()+Math.random();
+  const start=Date.now(),controller=new AbortController();
+  abortRef.current=controller;
+  lastRetry.current={id,run:retry};
+  followChat.current=true;
+  const log={kind,running:true,start,last:start,events:[],images,model:curModel,task};
+  streamClock.current={id,last:start};
+  const request=userText?[{role:"user",content:userText,imgs}]:[];
+  setSt(s=>({...s,msgs:[...s.msgs,...request,{role:"assistant",id,log,retry:legacyRetry}]}));
+  setBusy(true);setT0(start);liveRef.current="";setLive("");
+  const finish=(patch,content,err)=>setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log,...patch,running:false,secs:Math.floor((Date.now()-start)/1000)},content,err}:m)}));
+  const record=(key)=>{
+   log.last=Date.now();streamClock.current.last=log.last;
+   if(log.events.includes(key))return;
+   log.events=[...log.events,key];
+   if(key==="processing")log.phase=key;
+   setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log,secs:Math.floor((Date.now()-start)/1000)}}:m)}));
+  };
+  const onDelta=chunk=>{
+   if(!chunk)return;
+   liveRef.current+=chunk;
+   record("receiving");
+   const response=liveRef.current;
+   if(!log.events.includes("structure")&&/<(?:html|head|body|main|section)[\s>]/i.test(response))record("structure");
+   if(!log.events.includes("styles")&&/<style[\s>]/i.test(response))record("styles");
+   if(!log.events.includes("scripts")&&/<script[\s>]/i.test(response))record("scripts");
+  };
   try{
-   const ac=new AbortController();abortRef.current=ac;
-   let first=0;const j=await apiStream(path,body,d=>{if(!first){first=Date.now();upd(m=>({log:{...m.log,think:Math.max(1,Math.round((first-start)/1000)),last:first}}))}liveRef.current+=d;const now=Date.now();if(now-lastUpd>250){lastUpd=now;const t=liveRef.current;upd(m=>({log:{...m.log,last:now,steps:stepsFrom(defs,t,false),kb:(t.length/1024).toFixed(1),secs:Math.floor((now-start)/1000)}}))}},ac.signal);
-   spent(j);result=j;const sec=Math.floor((Date.now()-start)/1000);
-   const summary=onDone(j);upd(m=>({content:summary,anim:true,log:{...m.log,running:false,steps:stepsFrom(defs,"",true),secs:sec,kb:(j.html.length/1024).toFixed(1),model:j.model||m.log.model,done:(kind==="review"?"Kodu inceledi, düzeltmeleri uyguladı":defs.length-1+" adım çalıştırdı, önizlemeyi güncelledi")+(j.spent?" · "+j.spent+" kredi":j.provider&&j.provider!=="gitmapp"?" · kendi anahtarınız":"")}}));
-   setOpenLog(o=>({...o,[id]:false}));
-  }catch(e){const secs=Math.floor((Date.now()-start)/1000);
-   if(e&&e.name==="AbortError"){upd(m=>({content:"",log:{...m.log,running:false,stopped:true,steps:stepsCut(m.log.steps),secs}}));setOpenLog(o=>({...o,[id]:false}))}
-   else{const msg=String(e&&e.message||"Bilinmeyen hata");upd(m=>({content:msg,err:true,log:{...m.log,running:false,error:msg.length>90?msg.slice(0,88)+"…":msg,steps:stepsCut(m.log.steps),secs}}));failAuth(e)}}
-  abortRef.current=null;setBusy(false);setLive("");return result;
+   const result=await execute(controller.signal,onDelta,phase=>{
+    if(phase==="connected"||phase==="processing")record(phase);
+   });
+   const message=onDone(result);
+   spent(result);
+   const endEvent=typeof finalEvent==="function"?finalEvent(result):finalEvent;
+   if(endEvent)log.events=[...log.events,endEvent];
+   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent},message);
+   return result;
+  }catch(error){
+   if(error.name==="AbortError")finish({stopped:true});
+   else{
+    const message=error.message||"Bilinmeyen hata";
+    finish({error:true},message,true);
+    failAuth(error);
+   }
+   return null;
+  }finally{
+   abortRef.current=null;streamClock.current=null;setBusy(false);setLive("");
+  }
+ }
+ function runStream(kind,userText,path,body,onDone,im={},retry,task){
+  const mode=kind==="review"?"review":body.html?"update":"build";
+  const legacyRetry=task?undefined:{kind,text:kind==="review"||body.plan?"":String(body.prompt||""),shown:userText||""};
+  return runActivity(mode,userText,(signal,onDelta,onPhase)=>apiStream(path,body,onDelta,signal,onPhase),onDone,{
+   imgs:im.thumbs,images:im.send?.length||0,retry,legacyRetry,task,
+   finalEvent:result=>result.html===body.html?"unchanged":"preview"
+  });
  }
  useEffect(()=>{dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:busy||!!todo?.running}}))},[busy,todo?.running]);
  useEffect(()=>()=>{stopRef.current=true;abortRef.current?.abort();dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:false}}))},[]);
  function stopGen(){stopRef.current=true;const a=abortRef.current;if(a){try{a.abort()}catch(e){}}}
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
- function retryMsg(m){if(busy)return;const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
+ function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
  async function gen(text){if(busy||todo?.running)return;if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
@@ -3276,18 +3385,10 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   if(prefs.mode==="ajan")return agent(text);
   if(prefs.mode==="planli"&&!st.html)return requestPlan(text,takeImages());
   await build(text,null,text,false,takeImages())}
- async function requestPlan(text,im,retrying=false){
-  if(!retrying)setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text,imgs:im.thumbs}]}));
-  const request=new AbortController();abortRef.current=request;
-  setBusy(true);setT0(Date.now());
-  try{
-   const j=await api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},request.signal);
-   spent(j);setPlan({prompt:text,text:j.plan,im});
-   setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",anim:true,content:"Plan hazır. Düzenleyebilir veya onaylayıp üretime geçebilirsin."}]}));
-  }catch(e){
-   if(e.name==="AbortError")toast("Planlama durduruldu");
-   else{setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",content:e.message,err:true}]}));failAuth(e)}
-  }finally{abortRef.current=null;setBusy(false)}
+ function requestPlan(text,im,retrying=false){
+  return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},signal),result=>{
+   setEditPlan(false);setPlan({prompt:text,text:result.plan,im});
+  },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>requestPlan(text,im,true),finalEvent:"plan"});
  }
  // Ekli görselleri gönderilecek biçime çevir; içerik görsellerini {{IMG_n}} olarak sakla
  function takeImages(){if(!atts.length)return {send:undefined,thumbs:undefined,assets:{},custom:null};let k=Object.keys(st.assets||{}).length;const assets={};
@@ -3295,7 +3396,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   const sty=atts.find(a=>a.role==="style");const out={send,thumbs:atts.map(a=>a.thumb),assets,custom:sty?themeFromPalette(sty.pal):null};setAtts([]);return out}
  async function build(text,planText,shown,withDesign,im,base){const prev=base!==undefined?base:st.html;im=im||{};
   if(im.assets&&Object.keys(im.assets).length)setSt(s=>({...s,assets:{...(s.assets||{}),...im.assets}}));if(im.custom)setSt(s=>({...s,custom:im.custom}));
-  const j=await runStream("build",shown,"/api/ai/generate",{prompt:text,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im.thumbs);
+  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
   return j?j.html:null}
  async function approvePlan(){
   const p=plan;if(!p||busy||!p.text.trim())return;
@@ -3303,16 +3404,15 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   if(!await build(p.prompt,p.text,"Planı onayladım, yap.",false,{...p.im,thumbs:undefined}))setPlan(p);
  }
  // Ajan modu: yapılacaklar listesi → onay → adım adım üretim
- async function agent(text){const im=takeImages();const request=new AbortController();abortRef.current=request;setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text,imgs:im.thumbs}]}));setBusy(true);setT0(Date.now());
-  try{const j=await api("POST","/api/ai/todos",{prompt:text,has_html:!!st.html,...aiBody(),images:im.send},request.signal);spent(j);
-   setTodo({prompt:text,im,per:j.per,awaiting:true,running:false,items:j.todos.map(t=>({...t,state:"wait"}))});
-   setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",anim:true,content:"İşi "+j.todos.length+" adıma böldüm. Listeyi inceleyip onaylarsan sırayla yapacağım; istediğin an durdurabilirsin."}]}))}
-  catch(e){if(e.name==="AbortError")toast("Adım listesi hazırlama durduruldu");else{setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",content:e.message,err:true}]}));failAuth(e)}}
-  finally{abortRef.current=null;setBusy(false)}}
- async function runTodos(){const t=todo;if(!t)return;stopRef.current=false;let items=t.items.map(x=>({...x}));const put=()=>setTodo(o=>o&&{...o,items:items.map(x=>({...x}))});
+ function agent(text,im=takeImages(),retrying=false){
+  return runActivity("agent",retrying?"":text,signal=>api("POST","/api/ai/todos",{prompt:text,has_html:!!st.html,...aiBody(),images:im.send},signal),result=>{
+   setTodo({prompt:text,im,per:result.per,awaiting:true,running:false,items:result.todos.map(t=>({...t,state:"wait"}))});
+  },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>agent(text,im,true),finalEvent:"agent"});
+ }
+ async function runTodos(){const t=todo;if(!t||t.running||abortRef.current)return;stopRef.current=false;let items=t.items.map(x=>({...x}));const put=()=>setTodo(o=>o&&{...o,items:items.map(x=>({...x}))});
   setTodo(o=>({...o,awaiting:false,running:true}));let html=st.html;const all=items.map((x,i)=>(i+1)+". "+x.title).join("\n");
-  for(let i=0;i<items.length;i++){if(stopRef.current)break;items[i].state="run";put();
-   const first=!html;const prompt=first?t.prompt+"\n\nTüm yapılacaklar:\n"+all+"\n\nŞimdi SADECE 1. adımı yap: "+items[i].detail:"Yapılacaklar listesindeki "+(i+1)+". adımı uygula: "+items[i].detail+"\n(Önceki adımları bozma.)";
+  for(let i=0;i<items.length;i++){if(stopRef.current)break;if(items[i].state==="done")continue;items[i].state="run";put();
+   const first=!html;const prompt=first?t.prompt+"\n\nTüm yapılacaklar:\n"+all+"\n\nŞimdi yalnız şu adımı yap: "+items[i].detail:"Yapılacaklar listesindeki "+(i+1)+". adımı uygula: "+items[i].detail+"\n(Önceki adımları bozma.)";
    const r=await build(prompt,null,"Adım "+(i+1)+": "+items[i].title,false,i===0&&t.im?{...t.im,thumbs:undefined}:null,html||"");
    if(!r){items[i].state=stopRef.current?"wait":"err";put();break}html=r;items[i].state="done";put()}
   setTodo(o=>o&&{...o,running:false});toast(items.some(x=>x.state==="err")?"Bir adım başarısız oldu":items.every(x=>x.state==="done")?"Ajan tamamlandı":"Ajan durduruldu")}
@@ -3373,7 +3473,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  function openTab(){const w=window.open("","_blank");if(!w){toast("Açılır pencere engellendi");return}w.opener=null;w.document.title=st.title||"Önizleme";w.document.body.style.margin="0";const f=w.document.createElement("iframe");f.setAttribute("sandbox","allow-scripts allow-forms allow-modals allow-popups");f.style.cssText="border:0;width:100vw;height:100vh;display:block";f.srcdoc=resolve(st.html);w.document.body.appendChild(f)}
  function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setInput("");setTodo(null);setAtts([]);setSt(blank);setVersions([]);setSure(false);setPlan(null)}
  // Asistan köprüsü: yan paneldeki asistanın istediği adımları imleçle yapar
- const [bannerOff,setBannerOff]=useState(false);const [plusOpen,setPlusOpen]=useState(false);useEffect(()=>{if(!plusOpen)return;const h=e=>{if(!e.target.closest(".plusw"))setPlusOpen(false)};const k=e=>{if(e.key==="Escape")setPlusOpen(false)};setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{document.removeEventListener("click",h);removeEventListener("keydown",k)}},[plusOpen]);
+ const [plusOpen,setPlusOpen]=useState(false);useEffect(()=>{if(!plusOpen)return;const h=e=>{if(!e.target.closest(".plusw"))setPlusOpen(false)};const k=e=>{if(e.key==="Escape")setPlusOpen(false)};setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{document.removeEventListener("click",h);removeEventListener("keydown",k)}},[plusOpen]);
  useEffect(()=>{const k=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="u"){e.preventDefault();fileRef.current&&fileRef.current.click()}};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  const inputRef=useRef("");inputRef.current=input;const actRef=useRef(null);
  window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy||!!todo?.running,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
@@ -3410,7 +3510,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
    ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
    ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onClick=${()=>{setInput(k+" ");document.querySelector(".gta")?.focus()}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
-   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Yanıtla":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
+   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Ne değiştirmek istersin?":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
      ${plusOpen&&html`<div class="amenu plusm" role="menu">
@@ -3426,14 +3526,22 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new Event("gm:cp"))}}><${Icon} n="headphones" s=${18}/><span>Asistanla konuş</span><kbd>⌘J</kbd></button>
      </div>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
-    <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> Çalışıyor · durdurmak için ■</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
+    <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> İşlem sürüyor</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
     ${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
- const planCard=()=>plan&&html`<div class="gcard" style=${{padding:14}}><div style=${{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><${Icon} n="compass" s=${16} c="#e4ff3d"/><b>Yapım planı</b><span style=${{color:"var(--mut)",fontSize:12}}>düzenleyebilirsiniz</span></div>
-  <textarea class="in mono" aria-label="Yapım planı" style=${{width:"100%",minHeight:180,fontSize:12.5,lineHeight:1.6}} value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>
-  <div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><button class="btn s" disabled=${busy||!plan.text.trim()} onClick=${approvePlan}><${Icon} n="check" s=${14}/> Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>requestPlan(plan.prompt,plan.im,true)}><${Icon} n="refresh" s=${14}/> Yeniden planla</button><button class="btn g s" disabled=${busy} onClick=${()=>setPlan(null)}>Vazgeç</button></div></div>`;
- const msgEl=(m,i)=>m.role==="user"?html`<div class=${"mu"+((m.content||"").length>260?" long":"")} key=${i} onClick=${e=>{if((m.content||"").length>260)e.currentTarget.classList.toggle("open")}}>${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=""/>`)}</div>`}${m.content}</div>`:html`<div class="ma" key=${m.id||i}>
-   ${m.log&&html`<${WorkLog} log=${m.log} open=${!!openLog[m.id]} toggle=${()=>setOpenLog(o=>({...o,[m.id]:!o[m.id]}))} retry=${!busy&&m.retry&&(m.retry.text||m.retry.kind==="review")&&m===st.msgs.filter(x=>x.log).slice(-1)[0]?()=>retryMsg(m):null}/>`}
-   ${m.content&&html`<div class=${"ma-t"+(m.err?" err":"")}>${!m.log&&html`<span class="ma-ic"><${Spark} s=${15} on=${false}/></span>`}<div style=${{whiteSpace:"pre-wrap"}}>${m.anim?html`<${Typewriter} text=${m.content}/>`:m.content}</div></div>`}</div>`;
+ const planCard=()=>plan&&html`<section class="studio-plan" aria-label="Yapım planı">
+  <header><h2>Yapım planı</h2><button type="button" class="btn g s" aria-pressed=${editPlan} disabled=${busy} onClick=${()=>{followChat.current=false;setEditPlan(!editPlan)}}>${editPlan?"Düzenlemeyi bitir":"Planı düzenle"}</button></header>
+  ${editPlan?html`<textarea class="in" aria-label="Yapım planı" rows="6" maxlength="6000" value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>`:html`<div class="studio-message-text">${plan.text}</div>`}
+  <div class="studio-plan-actions"><button class="btn s" disabled=${busy||!plan.text.trim()} onClick=${approvePlan}>Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>requestPlan(plan.prompt,plan.im,true)}>Yeniden planla</button><button class="btn g s" disabled=${busy} onClick=${()=>setPlan(null)}>Vazgeç</button></div>
+ </section>`;
+ const latestWork=st.msgs.findLast(m=>m.log);
+ const msgEl=(m,i)=>m.role==="user"?html`<article class="studio-user-message" aria-label="Sen" key=${"user-"+i}>
+  <span class="studio-user-label">Sen</span>
+  ${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=${"Eklenen görsel "+(j+1)}/>`)}</div>`}
+  <div class="studio-message-text">${m.content}</div>
+ </article>`:html`<article class="studio-response" key=${m.id||i}>
+  ${m.log&&html`<${WorkLog} log=${m.log} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} onToggle=${()=>{followChat.current=false}} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
+  ${m.content&&html`<div class=${"studio-message-text"+(m.err?" studio-error":"")} role=${m.err?"alert":undefined}>${m.content}</div>`}
+ </article>`;
 
  const hasWork=st.html||busy||plan||st.msgs.length;
  if(!hasWork)return html`<div class="hero studio-start">${pickerEl()}${galEl()}${runEl()}
@@ -3453,8 +3561,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
 
  const synced=saved&&saved.userId===auth.user?.id&&saved.prefs===prefs&&["appId","html","title","emoji","color","msgs","assets"].every(k=>saved[k]===st[k]);
  const saveLabel=saving?"Kaydediliyor…":saveFailed?"Hesaba kaydedilemedi":synced?"Hesaba kaydedildi":localOk?"Yerel taslak":"Cihaza kaydedilemedi";
- const activeStep=todo?.items.findIndex(t=>t.state==="run")??-1;
- const progress=activeStep>=0?`${activeStep+1}/${todo.items.length} · ${todo.items[activeStep].title}`:st.msgs.at(-1)?.log?.title||"İstek işleniyor";
+
  const openDesign=()=>{setCode(false);setVeMode(null);setPicked(null);setDesignOpen(true)};
  function workOnBranch(gitContext,value){
   if(value===undefined){setSt(s=>({...s,gitContext}));return}
@@ -3486,17 +3593,17 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
    <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
   <div class="ws-grid studio-grid">
    <div class="ws-chat">
-    <div class="ws-ctrl">${controls(true)}</div>
-    <div class="ws-msgs">${st.msgs.map(msgEl)}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}<div ref=${chatEnd}></div></div>
-    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${!bannerOff&&(auth.user?(auth.user.credits??0)<=10:true)&&html`<div class="cl-banner"><span>${auth.user?((auth.user.credits??0)<(curInfo?curInfo.credits:3)?"Kredin bu işlem için yetersiz · Hesabım'dan kredi yükleyebilir ya da kendi anahtarını bağlayabilirsin":"Kredin azalıyor · Kalan "+(auth.user.credits??0)+" kredi"+(curInfo?", bu işlem "+curInfo.credits+" kredi":"")):"Hesapsız 3 deneme hakkın var · Ücretsiz hesapla hoş geldin kredisi alırsın"}</span><button type="button" title="Kapat" onClick=${()=>setBannerOff(true)}><${Icon} n="x" s=${16}/></button></div>`}${prompt(false)}
+    <div class="ws-ctrl">${controls(true)}<button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
+    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map(msgEl)}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
+    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${prompt(false)}
      <div class="cl-foot"><span>Gitmapp yapay zekâ kullanır ve hata yapabilir.</span><span style=${{flex:1}}></span><button type="button" onClick=${()=>setPicker(true)} title="Dil modeli">${curModel?shortModel(curModel):"Model"}</button><button type="button" class="m" title="Mod: Hızlı / Planlı / Ajan" onClick=${()=>setPrefs(p=>({...p,mode:p.mode==="hizli"?"planli":p.mode==="planli"?"ajan":"hizli"}))}>${({hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"})[prefs.mode]||"Hızlı"}</button><button type="button" class="m" title="Tür" onClick=${()=>setPrefs(p=>({...p,kind:p.kind==="app"?"site":p.kind==="site"?"game":"app"}))}>${({app:"Uygulama",site:"Site",game:"Oyun"})[prefs.kind]}</button></div>
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${st.html&&html`<button type="button" class="chip gm forme-chip" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${12}/> Benim için yap</button>`}${st.html&&html`<button type="button" class="chip on" disabled=${busy} onClick=${review}><${Icon} n="shield" s=${12}/> Kontrol et ve düzelt</button>`}${st.html&&html`<button class="chip" onClick=${()=>{setCode(false);setStage(stage==="phone"?"desktop":"phone")}}>${stage==="phone"?"Masaüstünde kontrol et":"Telefonda kontrol et"}</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
-   <section class="studio-stage"><div class="stage-tabs" aria-label="Çalışma görünümü">
+   <section class="studio-stage" ref=${stageRef} tabindex="-1" aria-label="Önizleme ve kod"><div class="stage-tabs" aria-label="Çalışma görünümü">
     <button aria-pressed=${!code&&!designOpen} onClick=${()=>setCode(false)}>Önizleme</button>
     <button aria-label="Tasarımı düzenle" title=${busy?"Üretim tamamlandığında düzenleyebilirsiniz":"Tasarımı düzenle"} disabled=${busy||todo?.running||!st.html} onClick=${openDesign}>Tasarım</button>
     <button aria-pressed=${code&&!designOpen} onClick=${()=>{setCode(true);setPicked(null);setVeMode(null)}}>Kod</button>
-    </div>${busy&&html`<div class="stage-progress"><span role="status">${progress}</span><small>${secs} sn</small></div>`}
+    </div>
    <div class="ws-prev">
     ${code&&busy&&live?html`<div class="livecode"><div class="lc-h"><${Spark} s=${15}/><span class="shimmer">Kod yazılıyor</span><span style=${{marginLeft:"auto",color:"#767671"}}>${(live.length/1024).toFixed(1)} KB · ${secs} sn</span></div><pre class="lc-b mono">${live.slice(-6000)}<span class="caret"></span><span ref=${codeEnd}></span></pre></div>`
     :code&&st.html?html`<div style=${{width:"100%",display:"flex",flexDirection:"column"}}><div style=${{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}><${Icon} n="file" s=${14} c="#767671"/><span style=${{color:"var(--mut)",fontSize:12}}>index.html · ${(st.html.length/1024).toFixed(1)} KB</span><span style=${{flex:1}}></span><button class="ib" title="Kopyala" onClick=${async()=>{try{await navigator.clipboard.writeText(st.html);toast("Kod kopyalandı")}catch(e){toast("Kopyalanamadı")}}}><${Icon} n="copy" s=${15}/></button></div><pre class="lc-b mono" style=${{flex:1,margin:0}}>${st.html}</pre></div>`

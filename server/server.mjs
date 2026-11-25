@@ -237,8 +237,9 @@ function visionErr(r, t, messages) {
   const hasImg = messages.some((m) => Array.isArray(m.content));
   if (!r.ok && hasImg && r.status >= 400 && r.status < 500 && /image|vision|multimodal|content type|image_url/i.test(t)) throw new HttpErr(400, "Seçili model görsel okuyamıyor. Görsel destekli bir model (ör. Claude Sonnet ya da GPT) seçip tekrar deneyin.");
 }
-async function chatWith(rt, messages, maxTokens = 12000) {
-  const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens }, AbortSignal.timeout(240000));
+async function chatWith(rt, messages, maxTokens = 12000, signal) {
+  const timeout = AbortSignal.timeout(240000);
+  const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens }, signal ? AbortSignal.any([timeout, signal]) : timeout);
   const t = await r.text(); visionErr(r, t, messages);
   need(r.ok, r.status === 429 ? 429 : r.status >= 400 && r.status < 500 ? 400 : 502, aiErr(rt, r.status, t));
   const j = JSON.parse(t);
@@ -262,14 +263,20 @@ async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) 
     return { text, model: rt.model, usage };
   };
 }
+function responseSignal(res) {
+  const controller = new AbortController();
+  if (res.destroyed) controller.abort();
+  else res.once("close", () => { if (!res.writableEnded) controller.abort(); });
+  return controller.signal;
+}
 async function aiStream({ res, cors }, rt, messages, finish) {
-  const ac = new AbortController(); res.on("close", () => { if (!res.writableEnded) ac.abort(); });
-  const start = await streamChatWith(rt, messages, (d) => ev({ t: "delta", d }), ac.signal);
+  const signal = responseSignal(res);
+  const start = await streamChatWith(rt, messages, (d) => ev({ t: "delta", d }), signal);
   res.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no", Connection: "keep-alive", ...cors });
-  function ev(o) { if (!res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); }
-  res.write(": ok\n\n"); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
-  try { const out = await start(); ev({ t: "done", ...finish(out) }); }
-  catch (e) { if (!ac.signal.aborted) { if (!(e instanceof HttpErr)) console.error(new Date().toISOString(), "stream", e); ev({ t: "error", error: e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.", status: e.code || 500 }); } }
+  function ev(o) { if (!res.destroyed && !res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); }
+  ev({ t: "phase", phase: "connected" }); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
+  try { const out = await start(); if (!signal.aborted && !res.destroyed) { ev({ t: "phase", phase: "processing" }); ev({ t: "done", ...finish(out) }); } }
+  catch (e) { if (!signal.aborted) { if (!(e instanceof HttpErr)) console.error(new Date().toISOString(), "stream", e); ev({ t: "error", error: e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.", status: e.code || 500 }); } }
   finally { clearInterval(hb); res.end(); }
   return null;
 }
@@ -504,7 +511,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.11.1" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.11.2" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -624,10 +631,12 @@ route("POST", "/api/ai/design", async ({ body, user, req }) => {
   need(Object.keys(values).length, 502, "Model uygulanabilir bir özellik önermedi");
   return { values, credits: charge(user, rt, "design", usage), spent: rt.credits };
 });
-route("POST", "/api/ai/plan", async ({ body, user, req }) => {
+route("POST", "/api/ai/plan", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` + (designRule(body.design) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design) : "") }, { role: "user", content: withImages(prompt, img) }], 1500);
+  const signal = responseSignal(res);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` + (designRule(body.design) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design) : "") }, { role: "user", content: withImages(prompt, img) }], 1500, signal);
+  if (signal.aborted || res.destroyed) return null;
   const credits = charge(user, rt, "plan", usage);
   return { plan: text.trim(), spent: rt.credits, credits };
 });
@@ -641,10 +650,12 @@ route("POST", "/api/ai/review", async (ctx) => {
   return fin(await chatWith(rt, messages));
 });
 // Ajan modu: işi Claude Code gibi yapılacaklar listesine böler
-route("POST", "/api/ai/todos", async ({ body, user, req }) => {
+route("POST", "/api/ai/todos", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind); const cur = !!body.has_html;
   const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen bir yazılım ajanısın. Kullanıcının isteğini tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} için ${cur ? "mevcut dosya üzerinde yapılacak" : "sıfırdan yapılacak"} 3-6 adımlık bir YAPILACAKLAR LİSTESİNE böl. İlk adım ${cur ? "en önemli değişiklik" : "çalışan temel iskelet ve ana ekran"} olsun; sonraki her adım öncekine tek bir anlamlı özellik eklesin. SADECE JSON döndür: [{"baslik":"kısa Türkçe başlık (en fazla 8 kelime)","detay":"modelin uygulayacağı net talimat (1-2 cümle)"}]` }, { role: "user", content: withImages(prompt, img) }], 1200);
+  const signal = responseSignal(res);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen bir yazılım ajanısın. Kullanıcının isteğini tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} için ${cur ? "mevcut dosya üzerinde yapılacak" : "sıfırdan yapılacak"} 3-6 adımlık bir YAPILACAKLAR LİSTESİNE böl. İlk adım ${cur ? "en önemli değişiklik" : "çalışan temel iskelet ve ana ekran"} olsun; sonraki her adım öncekine tek bir anlamlı özellik eklesin. SADECE JSON döndür: [{"baslik":"kısa Türkçe başlık (en fazla 8 kelime)","detay":"modelin uygulayacağı net talimat (1-2 cümle)"}]` }, { role: "user", content: withImages(prompt, img) }], 1200, signal);
+  if (signal.aborted || res.destroyed) return null;
   let todos = [];
   try { const m = text.match(/\[[\s\S]*\]/); todos = JSON.parse(m ? m[0] : text); } catch { todos = text.split("\n").map((l) => l.replace(/^[\s\-*\d.)]+/, "").trim()).filter((l) => l.length > 3).map((l) => ({ baslik: l.slice(0, 60), detay: l })); }
   todos = (Array.isArray(todos) ? todos : []).slice(0, 6).map((t) => ({ title: String(t.baslik || t.title || "").slice(0, 80), detail: String(t.detay || t.detail || t.baslik || "").slice(0, 400) })).filter((t) => t.title);
@@ -1268,6 +1279,7 @@ const server = http.createServer(async (req, res) => {
     const out = await r.fn({ req, res, url, params, body, cors, user });
     if (out !== null && out !== undefined) send(200, out);
   } catch (e) {
+    if (res.destroyed) return;
     if (e instanceof HttpErr) send(e.code, { error: e.message });
     else { console.error(new Date().toISOString(), req.method, url.pathname, e); send(e.name === "TimeoutError" ? 504 : 500, { error: e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Sunucu hatası" }); }
   }
