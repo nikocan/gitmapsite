@@ -1354,6 +1354,9 @@ button.adp-mini{color:inherit;text-align:left}
 .cx-kv div{display:flex;gap:8px}.cx-kv b{font-weight:500;color:#8fb8ff;min-width:62px}
 .cx-prompt{margin-top:6px;padding-top:8px;border-top:1px dashed #3a3937;color:#ecebe6;font-family:inherit}
 @media(max-width:640px){.cx-card{margin-left:0}}
+/* v5.15 — Yeni sürüm bandı, önceki oturum etiketi */
+.upd-bar{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:#1f1f1e;border:1px solid rgba(228,255,61,.4);box-shadow:0 18px 50px -14px rgba(0,0,0,.8);color:#ecebe6;font-size:14px;animation:fadeIn .25s}.upd-bar>svg{color:#e4ff3d}
+.cx-old{font-style:normal;font-size:12px;color:#8a8882;padding:2px 8px;border-radius:99px;border:1px solid #3a3937}
 </style>
 </head>
 <body>
@@ -1367,8 +1370,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.14.1";
+const VERSION="5.15.0";
 const CHANGELOG=[
+ {v:"5.15.0",date:"2026-11-25",items:[
+  "🔄 Eski sayfa sorunu giderildi: uygulama her açılışta en güncel sürümü sunucudan kontrol ediyor, tarayıcı önbellekteki eski kopyayı göstermiyor",
+  "🆕 Yeni sürüm yayınlandığında üstte “Yeni sürüm hazır · Yenile” bandı çıkıyor. Sekmeye dönünce ve 5 dakikada bir kontrol ediliyor",
+  "🕘 Stüdyo'da önceki oturumdan kalan hatalı işlem kartları artık “önceki oturum · saat” etiketiyle gösteriliyor, yeni bir hata sanılmıyor",
+  "🧪 Tüm sayfalar (kullanıcı ve yönetici; masaüstü, tablet, telefon) otomatik taramadan geçti: JS hatası, kırık görsel, boş ekran ve taşma bulunmadı"]},
  {v:"5.14.1",date:"2026-11-25",items:[
   "🩺 Yönetim › Yapay zekâ bağlantı testi, AI Router bakiyesi bittiğinde (402) “anahtarı değiştirin” yerine doğru teşhisi ve yapılacak adımı gösteriyor"]},
  {v:"5.14.0",date:"2026-11-25",items:[
@@ -2640,6 +2648,7 @@ function studioStatus(log,lastAt){
  return kind?.waiting||"İşlem sürüyor";
 }
 // v5.14 — Claude Code tarzı işlem kartı: her adım açılır, içinde "İstek" ve "Yanıt" blokları
+const PAGE_T0=Date.now();
 const CX_KIND={app:"Uygulama",site:"Web sitesi",game:"Oyun"},MODE_TR={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
 function ClIO({label,children,mono=true}){return html`<div class="cx-io"><small>${label}</small><div class=${mono?"cx-pre":"cx-txt"}>${children}</div></div>`}
 function ClStepRow({title,state,children,open0=false,live}){const [o,setO]=useState(open0);const has=!!children;
@@ -2666,7 +2675,7 @@ function WorkLog({log,lastAt,retry,onToggle,live}){
   ${log.task&&html`<h3>${log.task}</h3>`}
   <button type="button" class="cx-head" aria-expanded=${isOpen} onClick=${()=>{setOpen(!isOpen);if(!isOpen)onToggle&&onToggle()}}>
    <span class=${"cx-hic"+(failed?" issue":log.running?"":" ok")}>${log.running?html`<${ClSpark} s=${17}/>`:html`<${Icon} n=${failed?log.stopped?"stop":"alert":"check"} s=${15} w=${2.4}/>`}</span>
-   <span class="cx-status" role="status">${status}</span><time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time><${Icon} n=${isOpen?"chevDown":"chevRight"} s=${15}/></button>
+   <span class="cx-status" role="status">${status}</span>${!log.running&&log.start<PAGE_T0-60000&&failed&&html`<em class="cx-old" title=${new Date(log.start).toLocaleString("tr-TR")}>önceki oturum · ${new Date(log.start).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</em>`}<time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time><${Icon} n=${isOpen?"chevDown":"chevRight"} s=${15}/></button>
   ${isOpen&&html`<div class="cx-card">${steps}</div>`}
   ${failed&&retry&&html`<button type="button" class="btn g s studio-activity-retry" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button>`}
  </div>`;
@@ -5134,6 +5143,13 @@ function App(){
    .catch(()=>{if(current){API_ON=false;setApiOn(false);setHealthError(true)}}).finally(()=>clearTimeout(timer));
   return ()=>{current=false;clearTimeout(timer);controller.abort()};
  },[attempt]);
+ // v5.15 — Sunucuda daha yeni bir sürüm varsa (önbellekte eski sayfa kaldıysa) bunu fark et ve yenilemeyi öner
+ const [newBuild,setNewBuild]=useState(null);
+ useEffect(()=>{if(!apiOn)return;const cmp=(a,b)=>{const x=String(a).split(".").map(Number),y=String(b).split(".").map(Number);for(let i=0;i<3;i++){if((x[i]||0)!==(y[i]||0))return (x[i]||0)-(y[i]||0)}return 0};
+  const check=()=>api("GET","/api/health").then(j=>{if(j&&j.build&&/^\d+\.\d+\.\d+$/.test(j.build)&&cmp(j.build,VERSION)>0)setNewBuild(j.build)}).catch(()=>{});
+  if(health.build&&cmp(health.build,VERSION)>0)setNewBuild(health.build);
+  const v=()=>{if(document.visibilityState==="visible")check()};const t=setInterval(check,5*60000);addEventListener("focus",check);document.addEventListener("visibilitychange",v);
+  return()=>{clearInterval(t);removeEventListener("focus",check);document.removeEventListener("visibilitychange",v)}},[apiOn,health.build]);
  const config=useRemoteData(apiOn?"/api/settings":null);
  useEffect(()=>{if(config.data){siteSettings=config.data;setSettingsVersion(v=>v+1)}},[config.data]);
  const auth=useAuth(apiOn);
@@ -5317,6 +5333,7 @@ function App(){
   <${SquirrelGuide} run=${cpRun} toast=${toast}/>
   ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
   ${gh&&html`<${GhImport} key=${gh.n} url=${gh.url} auto=${gh.auto} close=${()=>setGh(null)} auth=${auth} openAuth=${openAuth} toast=${toast} models=${models} go=${navGo} onStudio=${o=>{setIncoming(o);setView("studio")}}/>`}
+  ${newBuild&&html`<div class="upd-bar" role="status"><${Icon} n="download" s=${15}/><span>Yeni sürüm hazır: <b>v${newBuild}</b> (şu an v${VERSION})</span><button class="btn s" onClick=${()=>{try{navigator.serviceWorker&&navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()))}catch(e){}location.reload()}}>Yenile</button><button class="ib" aria-label="Kapat" onClick=${()=>setNewBuild(null)}><${Icon} n="x" s=${14}/></button></div>`}
   ${stOpen&&html`<${SettingsPanel} tab0=${stOpen} auth=${auth} toast=${toast} go=${navGo} health=${health} close=${()=>setStOpen(null)}/>`}
   ${crOpen&&auth.user&&html`<${CreditPanel} auth=${auth} close=${()=>setCrOpen(false)} go=${navGo} flash=${crFlash}/>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
