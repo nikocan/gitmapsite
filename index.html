@@ -1338,6 +1338,21 @@ button.adp-mini{color:inherit;text-align:left}
 .tm-site.sm{padding:0;gap:0}.sm-nav{display:flex;align-items:center;gap:1em;padding:.6em 1em;font-size:.8em}.sm-nav b{flex:1;display:flex;align-items:center;gap:.4em}.sm-nav span{opacity:.6}.sm-nav em{font-style:normal;color:#fff;padding:.3em .9em;border-radius:99px}
 .sm-site{flex:1;display:grid;grid-template-columns:1.2fr 1fr;gap:.7em;padding:0 1em 1em;align-content:start}.sm-site>.sm-hero{grid-row:span 3;min-height:100%}
 @media(max-width:820px){.pk-grid{grid-template-columns:1fr}.pk-bar{gap:10px}.pk-note{width:100%}}
+/* v5.14 — Claude Code tarzı işlem kartı */
+.cx-head{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;padding:4px 0;color:#d6d4ce;font:inherit;font-size:15px;cursor:pointer;text-align:left}
+.cx-head time{font-size:14px;color:#8a8882;font-variant-numeric:tabular-nums}.cx-head>svg{color:#8a8882}.cx-head:hover .cx-status{color:#fff}
+.cx-hic{display:inline-grid;place-items:center;width:20px;color:#d97757}.cx-hic.ok{color:#7ee2a8}.cx-hic.issue{color:#e3b341}
+.cx-card{margin:8px 0 2px 28px;border:1px solid #3a3937;border-radius:14px;overflow:hidden;background:#1f1f1e}
+.cx-step+.cx-step{border-top:1px solid #33332f}
+.cx-row{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;padding:11px 14px;color:#a3a19a;font:inherit;font-size:14px;text-align:left;cursor:pointer}.cx-row:disabled{cursor:default}.cx-row:not(:disabled):hover{color:#ecebe6}
+.cx-row>svg{margin-left:2px;color:#7c7a74}.cx-ic{display:inline-grid;place-items:center;width:16px;flex:none;color:#7ee2a8}.cx-step.run .cx-ic{color:#d97757}.cx-step.err .cx-ic{color:#e3b341}.cx-step.run .cx-row{color:#ecebe6}
+.cx-body{padding:0 12px 12px;display:grid;gap:8px}
+.cx-io{background:#262624;border-radius:10px;padding:10px 12px;display:grid;gap:6px;min-width:0}.cx-io>small{font-size:12.5px;color:#8a8882}
+.cx-pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#d6d4ce;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto}
+.cx-pre code{font:inherit;color:#b5d88a}.cx-txt p{margin:0 0 6px;font-size:14px;line-height:1.55;color:#ecebe6}.cx-meta{font-size:12px;color:#8a8882;font-variant-numeric:tabular-nums}
+.cx-kv div{display:flex;gap:8px}.cx-kv b{font-weight:500;color:#8fb8ff;min-width:62px}
+.cx-prompt{margin-top:6px;padding-top:8px;border-top:1px dashed #3a3937;color:#ecebe6;font-family:inherit}
+@media(max-width:640px){.cx-card{margin-left:0}}
 </style>
 </head>
 <body>
@@ -1351,8 +1366,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.13.1";
+const VERSION="5.14.0";
 const CHANGELOG=[
+ {v:"5.14.0",date:"2026-11-25",items:[
+  "🧾 Stüdyo'daki işlem kartı Claude Code tarzında: başlıkta çalışan yıldız, durum ve süre; altında çerçeveli adım listesi. Her adım açılıyor",
+  "📤 “İstek” bloğu: tür, mod, model, tasarım, mevcut dosyanın boyutu ve nasıl düzenleneceği (tamamı mı, yalnızca değişen parçalar mı), görsel sayısı ve gönderdiğin istek",
+  "📥 “Yanıt” bloğu: kod yazılırken modelin gönderdiği metin canlı akıyor; bitince son kısmı, özet, boyut, değiştirilen parça sayısı ve harcanan kredi görünüyor",
+  "⚠️ Hata ya da durdurmada son adım nedeniyle birlikte gösteriliyor; iş bitince kart kendiliğinden kapanıyor, istediğinde açılıyor"]},
  {v:"5.13.1",date:"2026-11-25",items:[
   "🎙️ Mikrofonla yazarken cümlenin tekrar tekrar eklenip uzaması düzeltildi (Stüdyo ve ana sayfa). Konuşurken yazı kutusunda söylediğin anlık olarak görünüyor ve tek kez yazılıyor"]},
  {v:"5.13.0",date:"2026-11-25",items:[
@@ -2616,26 +2636,35 @@ function studioStatus(log,lastAt){
  if(Date.now()-(lastAt||log.last||log.start)>7000)return "Modelden yanıt bekleniyor";
  return kind?.waiting||"İşlem sürüyor";
 }
-function WorkLog({log,lastAt,retry,onToggle}){
+// v5.14 — Claude Code tarzı işlem kartı: her adım açılır, içinde "İstek" ve "Yanıt" blokları
+const CX_KIND={app:"Uygulama",site:"Web sitesi",game:"Oyun"},MODE_TR={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
+function ClIO({label,children,mono=true}){return html`<div class="cx-io"><small>${label}</small><div class=${mono?"cx-pre":"cx-txt"}>${children}</div></div>`}
+function ClStepRow({title,state,children,open0=false,live}){const [o,setO]=useState(open0);const has=!!children;
+ return html`<div class=${"cx-step "+(state||"")}><button type="button" class="cx-row" disabled=${!has} aria-expanded=${has?o:undefined} onClick=${()=>has&&setO(!o)}><span class="cx-ic">${state==="run"?html`<${ClSpark} s=${13}/>`:state==="err"?html`<${Icon} n="alert" s=${13}/>`:html`<${Icon} n="check" s=${13} w=${2.4}/>`}</span><span class=${state==="run"&&!live?"shimmer":""}>${title}</span>${has&&html`<${Icon} n=${o?"chevDown":"chevRight"} s=${14}/>`}</button>${o&&has&&html`<div class="cx-body">${children}</div>`}</div>`}
+function WorkLog({log,lastAt,retry,onToggle,live}){
  const status=studioStatus(log,lastAt);
  const kind=STUDIO_ACTIVITY[log.kind];
  const failed=log.error||log.cut||log.stopped;
+ const [open,setOpen]=useState(null);const isOpen=open==null?!!log.running:open;
  const elapsed=log.running?Math.max(0,Math.floor((Date.now()-log.start)/1000)):log.secs||0;
- const facts=[...(kind?[kind.sending]:[]),...(log.images?[log.images+" görsel eklendi"]:[]),...(log.events||[]).map(key=>STUDIO_EVENTS[key]).filter(Boolean)];
- const meta=[log.model&&shortModel(log.model),log.kb&&log.kb+" KB",log.spent?log.spent+" kredi":""].filter(Boolean);
- return html`<div class="studio-activity">
+ const rq=log.req||{};const ev=log.events||[];const tail=(log.running?live:log.res?.tail)||"";
+ const reqLines=[["tür",CX_KIND[rq.tur]||rq.tur],["mod",MODE_TR[rq.mod]||rq.mod],["model",log.model&&shortModel(log.model)],["tasarım",rq.design],["dosya",rq.size?"index.html ("+rq.size+" KB) — "+(Number(rq.size)>=9?"yalnızca değişen parçalar istendi":"tamamı yeniden yazılacak"):""],["görsel",log.images?log.images+" adet":""]].filter(x=>x[1]);
+ const meta=[log.kb&&log.kb+" KB",log.res?.patched?log.res.patched+" parça değiştirildi":"",log.model&&shortModel(log.model),log.spent?log.spent+" kredi":"",clTime(log.secs||0)].filter(Boolean);
+ const steps=[];
+ steps.push(html`<${ClStepRow} key="req" title=${kind?.sending||"İstek gönderildi"} state="ok"><${ClIO} label="İstek"><div class="cx-kv">${reqLines.map(([k,v])=>html`<div key=${k}><b>${k}</b> ${v}</div>`)}</div>${rq.text&&html`<div class="cx-prompt">${rq.text}</div>`}<//><//>`);
+ if(ev.includes("connected"))steps.push(html`<${ClStepRow} key="con" title=${STUDIO_EVENTS.connected} state="ok"/>`);
+ if(ev.includes("receiving")||log.running&&ev.includes("connected")){const writing=log.running&&!ev.includes("processing");
+  const parts=["structure","styles","scripts"].filter(k=>ev.includes(k)).map(k=>({structure:"HTML yapısı",styles:"stiller",scripts:"JavaScript"})[k]);
+  steps.push(html`<${ClStepRow} key="rcv" title=${writing?(log.req?.size&&Number(log.req.size)>=9?"Değişen parçaları yazıyor":"Kodu yazıyor")+(parts.length?" · "+parts.join(", "):""):"Yanıt alındı"+(parts.length?" · "+parts.join(", "):"")} state=${writing?"run":"ok"} live=${writing}>${tail&&html`<${ClIO} label=${writing?"Yanıt (canlı)":"Yanıt (son kısım)"}><code>${tail.slice(-700)}</code>${writing&&html`<span class="caret"></span>`}<//>`}<//>`)}
+ if(ev.includes("processing")&&log.running)steps.push(html`<${ClStepRow} key="proc" title=${STUDIO_EVENTS.processing} state="run"/>`);
+ if(!log.running&&!failed)steps.push(html`<${ClStepRow} key="done" title=${ev.includes("unchanged")?STUDIO_EVENTS.unchanged:ev.includes("plan")?STUDIO_EVENTS.plan:ev.includes("agent")?STUDIO_EVENTS.agent:STUDIO_EVENTS.preview} state="ok" open0=${false}>${(log.res?.summary||meta.length)&&html`<${ClIO} label="Sonuç" mono=${false}>${log.res?.summary&&html`<p>${log.res.summary}</p>`}<small class="cx-meta">${meta.join(" · ")}</small><//>`}<//>`);
+ if(failed)steps.push(html`<${ClStepRow} key="err" title=${log.stopped?"Durdurdun · kredi harcanmadı":log.cut?"Yarıda kaldı · kredi harcanmadı":"Hata"} state="err">${log.res?.error&&html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`}<//>`);
+ return html`<div class="studio-activity cx">
   ${log.task&&html`<h3>${log.task}</h3>`}
-  <div class="studio-activity-line">
-   <span class=${"studio-activity-icon"+(failed?" issue":"")}>${log.running?html`<${ClSpark} s=${16}/>`:html`<${Icon} n=${failed?log.stopped?"stop":"alert":"check"} s=${15}/>`}</span>
-   <span class="studio-activity-status" role="status">${status}</span>
-   <time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time>
-  </div>
-  ${log.running&&html`<p class="studio-activity-note" aria-live="polite">${STUDIO_EVENTS[log.events?.at(-1)]||kind?.sending}</p>`}
-  ${(facts.length>0||meta.length>0)&&html`<details class="studio-activity-details" onToggle=${e=>{if(e.currentTarget.open)onToggle()}}>
-   <summary>İşlem ayrıntıları</summary>
-   ${facts.length>0&&html`<ol>${facts.map((fact,i)=>html`<li key=${i}>${fact}</li>`)}</ol>`}
-   ${meta.length>0&&html`<small>${meta.join(" · ")}</small>`}
-  </details>`}
+  <button type="button" class="cx-head" aria-expanded=${isOpen} onClick=${()=>{setOpen(!isOpen);if(!isOpen)onToggle&&onToggle()}}>
+   <span class=${"cx-hic"+(failed?" issue":log.running?"":" ok")}>${log.running?html`<${ClSpark} s=${17}/>`:html`<${Icon} n=${failed?log.stopped?"stop":"alert":"check"} s=${15} w=${2.4}/>`}</span>
+   <span class="cx-status" role="status">${status}</span><time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time><${Icon} n=${isOpen?"chevDown":"chevRight"} s=${15}/></button>
+  ${isOpen&&html`<div class="cx-card">${steps}</div>`}
   ${failed&&retry&&html`<button type="button" class="btn g s studio-activity-retry" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button>`}
  </div>`;
 }
@@ -3539,14 +3568,14 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
- async function runActivity(kind,userText,execute,onDone,{imgs,images=imgs?.length||0,retry,legacyRetry,finalEvent,task}={}){
+ async function runActivity(kind,userText,execute,onDone,{imgs,images=imgs?.length||0,retry,legacyRetry,finalEvent,task,req}={}){
   if(abortRef.current)return null;
   const id=Date.now()+Math.random();
   const start=Date.now(),controller=new AbortController();
   abortRef.current=controller;
   lastRetry.current={id,run:retry};
   followChat.current=true;
-  const log={kind,running:true,start,last:start,events:[],images,model:curModel,task};
+  const log={kind,running:true,start,last:start,events:[],images,model:curModel,task,req:{text:String(req?.text??userText??"").slice(0,1500),size:req?.size||0,design:req?.design||"",tur:prefs.kind,mod:prefs.mode}};
   streamClock.current={id,last:start};
   const request=userText?[{role:"user",content:userText,imgs}]:[];
   setSt(s=>({...s,msgs:[...s.msgs,...request,{role:"assistant",id,log,retry:legacyRetry}]}));
@@ -3576,13 +3605,13 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
    spent(result);
    const endEvent=typeof finalEvent==="function"?finalEvent(result):finalEvent;
    if(endEvent)log.events=[...log.events,endEvent];
-   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent},message);
+   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
    return result;
   }catch(error){
    if(error.name==="AbortError")finish({stopped:true});
    else{
     const message=error.message||"Bilinmeyen hata";
-    finish({error:true},message,true);
+    finish({error:true,res:{error:String(message).slice(0,400),tail:liveRef.current.slice(-500)}},message,true);
     failAuth(error);
    }
    return null;
@@ -3594,7 +3623,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   const mode=kind==="review"?"review":body.html?"update":"build";
   const legacyRetry=task?undefined:{kind,text:kind==="review"||body.plan?"":String(body.prompt||""),shown:userText||""};
   return runActivity(mode,userText,(signal,onDelta,onPhase)=>apiStream(path,body,onDelta,signal,onPhase),onDone,{
-   imgs:im.thumbs,images:im.send?.length||0,retry,legacyRetry,task,
+   imgs:im.thumbs,images:im.send?.length||0,retry,legacyRetry,task,req:{text:String(body.prompt||userText||""),size:body.html?(new Blob([body.html]).size/1024).toFixed(1):0,design:body.design?.name||""},
    finalEvent:result=>result.html===body.html?"unchanged":"preview"
   });
  }
@@ -3773,7 +3802,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   ${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=${"Eklenen görsel "+(j+1)}/>`)}</div>`}
   <div class="studio-message-text">${m.content}</div>
  </article>`:html`<article class="studio-response" key=${m.id||i}>
-  ${m.log&&html`<${WorkLog} log=${m.log} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} onToggle=${()=>{followChat.current=false}} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
+  ${m.log&&html`<${WorkLog} log=${m.log} live=${streamClock.current?.id===m.id?liveRef.current:""} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} onToggle=${()=>{followChat.current=false}} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
   ${m.content&&html`<div class=${"studio-message-text"+(m.err?" studio-error":"")} role=${m.err?"alert":undefined}>${m.content}</div>`}
  </article>`;
 
