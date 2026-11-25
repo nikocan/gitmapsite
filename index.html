@@ -1105,6 +1105,23 @@ mark.sq-hl{background:linear-gradient(transparent 55%,rgba(228,255,61,.38) 55%);
 @keyframes sq-wave{0%,100%{opacity:.55;filter:drop-shadow(0 0 0 rgba(228,255,61,0))}50%{opacity:1;filter:drop-shadow(0 0 10px rgba(167,139,250,.55))}}
 @media(prefers-reduced-motion:reduce){.gmk *,.gmk>svg,.sqg,.sqg-ring,.sq-ripple,.sq-perch,.sqg-alert{animation:none!important}}
 @media(max-width:640px){.sqg-bg{padding:10px}.sqg{border-radius:22px;padding:14px}.sqg-hero{flex-direction:column;align-items:center}.sqg-bub{margin-bottom:0;border-radius:18px}}
+/* v5.10 — Akış durumları ve prompt motoru */
+.cl-ico{display:inline-grid;place-items:center;width:19px;height:19px;flex:none}.cl-ico.ok{color:#7ee2a8}.cl-ico.err{color:#e5534b}.cl-ico.cut{color:#e3b341}.cl-ico.wait{color:#e3b341;animation:clwait 1.6s ease-in-out infinite}.cl-ico.stop{color:#a3a19a}
+@keyframes clwait{50%{opacity:.45}}
+.cl-it.done svg{color:#7ee2a8}.cl-it.cut{color:#8a8882}.cl-it.cut svg{color:#e3b341}.cl-it.run .clspark{flex:none}
+.cl.ph-stall .cl-it.run .clspark svg{animation-play-state:paused;opacity:.5}
+.cl-retry{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 2px 2px}.cl-retry span{font-size:12.5px;color:#7c7a74}
+.pe-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:500;white-space:nowrap;max-width:min(52vw,380px);overflow:hidden;text-overflow:ellipsis;background:#262624;color:#a3a19a;border:1px solid #33332f;transition:background .2s,color .2s}
+.pe-chip.build,.pe-chip.edit,.pe-chip.pick{color:#e4ff3d;border-color:rgba(228,255,61,.25);background:rgba(228,255,61,.07)}
+.pe-chip.chat,.pe-chip.approve{color:#7ee2a8;border-color:rgba(126,226,168,.25);background:rgba(126,226,168,.07)}
+.pe-chip.short{color:#e3b341;border-color:rgba(227,179,65,.28);background:rgba(227,179,65,.07)}
+.pe-chip.run{color:#d6d4ce}
+.pe-chip.typing i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:petype 1s ease-in-out infinite}.pe-chip.typing i:nth-child(2){animation-delay:.15s}.pe-chip.typing i:nth-child(3){animation-delay:.3s}
+@keyframes petype{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+.gsend.stop{position:relative;background:#f4f4ef!important;color:#101211!important;opacity:1!important;cursor:pointer}
+.gstop-ring{position:absolute;inset:-3px;border-radius:50%;border:2px solid transparent;border-top-color:#d97757;animation:spin 1s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.gstop-ring,.pe-chip.typing i,.cl-ico.wait{animation:none}}
 </style>
 </head>
 <body>
@@ -1118,8 +1135,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.9.2";
+const VERSION="5.10.0";
 const CHANGELOG=[
+ {v:"5.10.0",date:"2026-11-25",items:[
+  "🛑 Kod yazılırken gönder düğmesi Durdur'a dönüşüyor (Esc de durdurur). Durdurunca “Durdurdun · kredi harcanmadı” yazıyor",
+  "🧭 Akış artık gerçek durumu gösteriyor: düşünüyor, o an hangi adımı yazıyorsa onu (“Tema ve stilleri yazıyor”), model 7 saniyeden uzun sessiz kalırsa “Model yanıtı bekleniyor”",
+  "🔌 Sayfa yenilenir ya da bağlantı koparsa yarım iş artık “Tamamlandı” görünmüyor: “Yarıda kaldı · kredi harcanmadı” ve tek tıkla “Yeniden dene”. Hatalarda gerçek hata mesajı yazıyor",
+  "✅ Biten adımlarda yeşil tik, yarıda kalan adımda uyarı işareti; tıklanamayan oklar kaldırıldı",
+  "💬 “tamam”, “teşekkürler”, “merhaba” gibi kısa mesajlar artık kodlamayı başlatmıyor; kredi harcamadan kısa bir yanıt veriliyor. Bekleyen bir plan varsa “tamam” onu onaylıyor",
+  "🔎 Prompt motoru: yazarken “Okuyor…”, durunca gönderince ne olacağını söylüyor (yeni uygulama yazılacak · 3 kredi, mevcut uygulama güncellenecek, sohbet · kredi harcanmaz, kısa istek uyarısı)",
+  "⚠️ Kod yazılırken sayfayı kapatmaya çalışırsan tarayıcı uyarıyor"]},
  {v:"5.9.2",date:"2026-11-25",items:[
   "🟡 Logo GitHub işareti gibi sadeleşti: limon sarısı bir dairenin içinde gözlüklü, kravatlı ajan sincap; menüde yanında kalın, sıkı “gitmapp” yazısı",
   "🐿️ Trençkotlu ve şemsiyeli sincap kaldırıldı; rehber Fındık artık logodaki gözlüklü ajan sincabın kendisi. Dinlerken başını eğer, düşünürken hafifçe zıplar, konuşurken kıpırdar, yazı alanına uçup bekler",
@@ -2212,8 +2237,8 @@ function Typewriter({text,speed=12,onDone}){
 }
 
 // Akışlı API çağrısı (sunucu olayları)
-async function apiStream(path,body,onDelta){
- const t=TOK.get();const r=await fetch(API+path,{method:"POST",headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
+async function apiStream(path,body,onDelta,signal){
+ const t=TOK.get();const r=await fetch(API+path,{method:"POST",signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
  if(!r.ok){let j={};try{j=await r.json()}catch(e){}const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}
  const rd=r.body.getReader();const dec=new TextDecoder();let buf="",final=null;
  while(true){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
@@ -2223,16 +2248,21 @@ async function apiStream(path,body,onDelta){
 }
 // Akan koddan gerçek ilerleme adımları
 const BUILD_STEPS=[
- {k:"start",l:"İstek modele iletildi",test:()=>true},
- {k:"think",l:"Fikir analiz edildi",test:(t)=>t.length>0},
- {k:"head",l:"Sayfa iskeleti kuruldu",test:(t)=>/<head/i.test(t)},
- {k:"style",l:"Tema ve stiller yazıldı",test:(t)=>/<body/i.test(t)},
- {k:"ui",l:"Arayüz bileşenleri oluşturuldu",test:(t)=>/<script(?![^>]*src)/i.test(t.slice(t.search(/<body/i)>0?t.search(/<body/i):t.length))},
- {k:"logic",l:"Etkileşim ve mantık kodlandı",test:(t)=>/<\/script>\s*<\/body>|<\/html>/i.test(t)},
- {k:"done",l:"Önizleme hazırlandı",test:()=>false},
+ {k:"start",l:"İstek modele iletildi",run:"Modelin yanıtı bekleniyor",test:()=>true},
+ {k:"think",l:"Fikir analiz edildi",run:"Fikri analiz ediyor",test:(t)=>t.length>0},
+ {k:"head",l:"Sayfa iskeleti kuruldu",run:"Sayfa iskeletini kuruyor",test:(t)=>/<head/i.test(t)},
+ {k:"style",l:"Tema ve stiller yazıldı",run:"Tema ve stilleri yazıyor",test:(t)=>/<body/i.test(t)},
+ {k:"ui",l:"Arayüz bileşenleri oluşturuldu",run:"Arayüz bileşenlerini oluşturuyor",test:(t)=>/<script(?![^>]*src)/i.test(t.slice(t.search(/<body/i)>0?t.search(/<body/i):t.length))},
+ {k:"logic",l:"Etkileşim ve mantık kodlandı",run:"Etkileşim ve mantığı kodluyor",test:(t)=>/<\/script>\s*<\/body>|<\/html>/i.test(t)},
+ {k:"done",l:"Önizleme hazırlandı",run:"Önizlemeyi hazırlıyor",test:()=>false},
 ];
-const REVIEW_STEPS=[{k:"start",l:"Kod incelemeye alındı",test:()=>true},{k:"read",l:"Hatalar ve eksikler tarandı",test:(t)=>t.length>0},{k:"fix",l:"Düzeltmeler uygulanıyor",test:(t)=>/<body/i.test(t)},{k:"logic",l:"Mantık yeniden doğrulandı",test:(t)=>/<\/html>/i.test(t)},{k:"done",l:"Düzeltilmiş sürüm hazır",test:()=>false}];
-function stepsFrom(defs,text,finished){let reached=0;defs.forEach((d,i)=>{if(d.test(text))reached=i});return defs.map((d,i)=>({l:d.l,state:finished?"done":i<reached?"done":i===reached?"run":"wait"}));}
+const REVIEW_STEPS=[{k:"start",l:"Kod incelemeye alındı",run:"Modelin yanıtı bekleniyor",test:()=>true},{k:"read",l:"Hatalar ve eksikler tarandı",run:"Hataları ve eksikleri tarıyor",test:(t)=>t.length>0},{k:"fix",l:"Düzeltmeler uygulandı",run:"Düzeltmeleri uyguluyor",test:(t)=>/<body/i.test(t)},{k:"logic",l:"Mantık yeniden doğrulandı",run:"Mantığı yeniden doğruluyor",test:(t)=>/<\/html>/i.test(t)},{k:"done",l:"Düzeltilmiş sürüm hazır",run:"Sürümü hazırlıyor",test:()=>false}];
+function stepsFrom(defs,text,finished){let reached=0;defs.forEach((d,i)=>{if(d.test(text))reached=i});return defs.map((d,i)=>({l:d.l,run:d.run,state:finished?"done":i<reached?"done":i===reached?"run":"wait"}));}
+// Yarıda kalan bir akışın adımları: biten bitmiş kalır, çalışan "kesildi" olur, bekleyenler gizlenir
+const stepsCut=steps=>(steps||[]).map(x=>x.state==="run"?{...x,state:"cut"}:x);
+// Akışın gerçek durumu: düşünüyor / yazıyor / yanıt bekliyor / bitti / durduruldu / yarıda kaldı / hata
+function logPhase(log){if(log.running){if(log.think==null)return "think";const last=log.last||log.start;return Date.now()-last>7000?"stall":"write"}
+ return log.stopped?"stopped":log.cut?"cut":log.error?"error":"done"}
 
 function clTopic(t,kind){t=String(t||"").replace(/\s+/g," ").trim();if(kind==="review")return "Kod kontrolü değerlendiriliyor";t=t.replace(/^Yapılacaklar listesindeki /,"");const sh=t.length>46?t.slice(0,44).replace(/\s\S*$/,"")+"…":t;return sh?"“"+sh+"” isteği değerlendiriliyor":"İstek değerlendiriliyor"}
 function clThoughts(kind,text,has,theme,imgs,pk){const K={app:"uygulama",site:"web sitesi",game:"oyun"}[pk]||"uygulama";
@@ -2242,18 +2272,53 @@ function clThoughts(kind,text,has,theme,imgs,pk){const K={app:"uygulama",site:"w
  if(theme&&!has)o.push("Tasarım dili: "+theme+".");o.push("Kod tek dosya halinde yazılıp önizlemeye aktarılacak.");return o}
 const clTime=s=>s>=60?Math.floor(s/60)+"d "+(s%60)+"sn":s+"sn";
 function ClSpark({s=18}){return html`<span class="clspark" style=${{width:s,height:s}} aria-hidden="true"><svg viewBox="0 0 24 24" width=${s} height=${s}>${[0,45,90,135,180,225,270,315].map((a,i)=>html`<rect key=${a} class=${"r"+(i%4)} x="10.9" y="1.5" width="2.2" height="9" rx="1.1" transform=${"rotate("+a+" 12 12)"}/>`)}</svg></span>`}
-function WorkLog({log,open,toggle}){
- const running=log.running;const [tOpen,setTOpen]=useState(false);const thinking=running&&log.think==null;
+function WorkLog({log,open,toggle,retry}){
+ const ph=logPhase(log);const running=log.running;const [tOpen,setTOpen]=useState(false);const thinking=ph==="think";
  const el=running&&log.start?Math.floor((Date.now()-log.start)/1000):(log.secs||0);
  const tt=thinking?log.ttl||"İstek değerlendiriliyor":(log.ttl||"İstek değerlendirildi").replace(/değerlendiriliyor$/,"değerlendirildi");
- const steps=log.steps.filter(x=>x.state!=="wait");
- return html`<div class="cl">
-  ${log.thoughts&&html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${()=>setTOpen(!tOpen)}>${thinking?html`<span class="shimmer">${tt}</span>`:html`<span>${tt}</span>`}<${Icon} n=${tOpen||thinking?"chevUp":"chevDown"} s=${15}/></button>
-   ${(tOpen||thinking)&&html`<div class="cl-think"><div class="cl-tt">${thinking?"Düşünüyor… "+el+" sn":log.think+" sn düşündü"}</div>${log.thoughts.map((t,i)=>html`<p key=${i}>${t}</p>`)}</div>`}</div>`}
-  ${!thinking&&html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${toggle}>${running?html`<${ClSpark} s=${19}/><span class="cl-cur">${log.title}</span><span class="cl-time">${clTime(el)}</span>`:log.error?html`<${Icon} n="alert" s=${15} c="#e5534b"/><span>Durdu: ${log.error}</span>`:html`<span>${log.done||"Tamamlandı"}</span>`}<${Icon} n=${open?"chevUp":running?"chevDown":"chevRight"} s=${15}/></button>
-   ${open&&steps.length>0&&html`<div class="cl-card">${steps.map((x,i)=>html`<div class=${"cl-it "+x.state} key=${i}>${x.state==="run"?html`<span class="shimmer">${x.l}…</span>`:html`<span>${x.l}</span>`}${x.state==="done"&&html`<${Icon} n="chevRight" s=${14}/>`}</div>`)}${log.kb&&html`<div class="cl-it meta"><span>${log.kb} KB${log.model?" · "+shortModel(log.model):""}${!running?" · "+clTime(log.secs||0):""}</span></div>`}</div>`}</div>`}
+ const steps=log.steps.filter(x=>x.state!=="wait");const cur=log.steps.find(x=>x.state==="run");
+ const idle=ph==="stall"?Math.floor((Date.now()-(log.last||log.start))/1000):0;
+ const head=ph==="write"?html`<${ClSpark} s=${19}/><span class="cl-cur">${cur&&cur.run||log.title}</span><span class="cl-time">${clTime(el)}</span>`
+  :ph==="stall"?html`<span class="cl-ico wait"><${Icon} n="clock" s=${15}/></span><span class="cl-cur">Model yanıtı bekleniyor</span><span class="cl-time">${idle} sn sessiz · ${clTime(el)}</span>`
+  :ph==="stopped"?html`<span class="cl-ico stop"><${Icon} n="stop" s=${13}/></span><span>Durdurdun · ${clTime(log.secs||0)} · kredi harcanmadı</span>`
+  :ph==="cut"?html`<span class="cl-ico cut"><${Icon} n="plug" s=${15}/></span><span>Yarıda kaldı · bağlantı koptu ya da sayfa yenilendi · kredi harcanmadı</span>`
+  :ph==="error"?html`<span class="cl-ico err"><${Icon} n="alert" s=${15}/></span><span>Durdu: ${log.error&&log.error!=="hata"?log.error:"bir hata oluştu"}</span>`
+  :html`<span class="cl-ico ok"><${Icon} n="check" s=${15} w=${2.4}/></span><span>${log.done||"Tamamlandı"}</span>`;
+ return html`<div class=${"cl ph-"+ph}>
+  ${log.thoughts&&html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${()=>setTOpen(!tOpen)}>${thinking?html`<${ClSpark} s=${17}/><span class="shimmer">${tt}</span>`:html`<span>${tt}</span>`}<${Icon} n=${tOpen||thinking?"chevUp":"chevDown"} s=${15}/></button>
+   ${(tOpen||thinking)&&html`<div class="cl-think"><div class="cl-tt">${thinking?"Düşünüyor… "+el+" sn":log.think!=null?log.think+" sn düşündü":"Düşünme yarıda kaldı"}</div>${log.thoughts.map((t,i)=>html`<p key=${i}>${t}</p>`)}</div>`}</div>`}
+  ${!thinking&&html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${toggle}>${head}<${Icon} n=${open?"chevUp":"chevDown"} s=${15}/></button>
+   ${open&&steps.length>0&&html`<div class="cl-card">${steps.map((x,i)=>html`<div class=${"cl-it "+x.state} key=${i}>${x.state==="run"?html`<${ClSpark} s=${14}/><span class=${ph==="stall"?"":"shimmer"}>${x.run||x.l}…</span>`:x.state==="cut"?html`<${Icon} n="x" s=${13}/><span>${x.l} — yarıda kaldı</span>`:html`<${Icon} n="check" s=${13} w=${2.4}/><span>${x.l}</span>`}</div>`)}${log.kb&&html`<div class="cl-it meta"><span>${log.kb} KB${log.model?" · "+shortModel(log.model):""}${!running?" · "+clTime(log.secs||0):""}</span></div>`}</div>`}
+   ${(ph==="stopped"||ph==="cut"||ph==="error")&&retry&&html`<div class="cl-retry"><button type="button" class="btn s" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button><span>Aynı istek baştan çalışır; kredi yalnızca bittiğinde düşer.</span></div>`}</div>`}
  </div>`;
 }
+
+// ---------- v5.10 — Prompt motoru: göndermeden önce ne olacağını söyler ----------
+const ACK_W=new Set("tamam tamamdır tmm tm ok okey okay olur peki anladım anladim evet aynen güzel guzel süper super harika mükemmel tşk tşkler teşekkür teşekkürler teşekkürü ederim sağol sağolun sağ ol eyvallah eyv iyi çok cok 👍 👌 🙏 ✅ 😊 🙂".split(" "));
+const GREET=/^(merhaba|selam(lar)?|hey|hi|hello|günaydın|iyi (akşamlar|günler|geceler)|nasılsın)[\s!.?]*$/iu;
+function promptIntent(text,ctx){const t=String(text||"").trim();ctx=ctx||{};if(!t)return {k:"idle"};
+ if(t.startsWith("/"))return {k:"cmd",ic:"slash",l:"Komut çalıştırılacak"};
+ const words=t.toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);
+ const ack=words.length<=4&&words.every(w=>ACK_W.has(w));
+ if(ack&&(ctx.plan||ctx.todo))return {k:"approve",ic:"check",l:ctx.plan?"Onay · plan uygulanacak":"Onay · yapılacaklar başlatılacak"};
+ if(ack||GREET.test(t))return {k:"chat",ic:"chat",l:"Sohbet · kod yazılmaz, kredi harcanmaz"};
+ if(/github\.com\/[\w.-]+\/[\w.-]+/i.test(t))return {k:"github",ic:"github",l:"GitHub'dan içe aktarılacak"};
+ if(ctx.picked)return {k:"pick",ic:"pointer",l:"Seçili öğe değiştirilecek"};
+ const K={app:"uygulama",site:"web sitesi",game:"oyun"}[ctx.kind]||"uygulama";
+ if(ctx.mode==="ajan")return {k:"agent",ic:"list",l:"Yapılacaklar listesi çıkarılacak"};
+ if(ctx.mode==="planli"&&!ctx.html)return {k:"plan",ic:"compass",l:"Önce yapım planı çıkarılacak"};
+ if(!ctx.html&&t.length<14)return {k:"short",ic:"alert",l:"Biraz daha anlat · kısa istek zayıf sonuç verir"};
+ return ctx.html?{k:"edit",ic:"edit",l:"Mevcut "+K+" güncellenecek"}:{k:"build",ic:"sparkles",l:"Yeni "+K+" yazılacak"}}
+function chatReply(text,hasHtml){const t=String(text).toLocaleLowerCase("tr");
+ if(/teşekkür|tşk|sağ ?ol|eyv/.test(t))return "Rica ederim! Başka bir şey istersen yazman yeterli. Örneğin “renkleri daha canlı yap” ya da “giriş ekranı ekle”.";
+ if(GREET.test(String(text).trim()))return "Merhaba! Ne yapmak istediğini bir iki cümleyle anlat, hemen başlayayım. Örneğin “pilates stüdyom için ders programı ve rezervasyon”.";
+ return hasHtml?"Tamam 👍 Uygulama önizlemede hazır. Değiştirmek istediğin bir şey varsa yaz, yalnızca onu güncelleyeyim. Beğendiysen sağ üstteki Yayınla ile canlıya alabilirsin."
+  :"Tamam 👍 Ne yapmak istediğini bir iki cümleyle anlat, hemen başlayayım. Örneğin “kafem için menü ve QR sipariş”."}
+function PromptEngine({text,ctx}){const [typing,setTyping]=useState(false);
+ useEffect(()=>{setTyping(true);const t=setTimeout(()=>setTyping(false),650);return()=>clearTimeout(t)},[text]);
+ if(typing)return html`<span class="pe-chip typing" aria-live="polite"><i></i><i></i><i></i> Okuyor</span>`;
+ const it=promptIntent(text,ctx);if(it.k==="idle")return null;const paid=["build","edit","pick"].includes(it.k)&&ctx.credits;
+ return html`<span class=${"pe-chip "+it.k} aria-live="polite" title="Gönderince olacak olan"><${Icon} n=${it.ic} s=${12}/> ${it.l}${paid?" · "+ctx.credits+" kredi":""}</span>`}
 
 const KIND_ICON={app:"phone",site:"globe",game:"gamepad"};
 const TPL_GRAD=["#4f8cff,#9b6bff","#ff7a59,#ffb347","#22c55e,#14b8a6","#a855f7,#ec4899","#06b6d4,#3b82f6","#f59e0b,#ef4444","#64748b,#94a3b8","#10b981,#84cc16","#22c55e,#16a34a","#f43f5e,#fb923c","#eab308,#f97316","#0ea5e9,#6366f1"];
@@ -2941,10 +3006,10 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  useEffect(()=>{if(resumeVersions){setGitOpen("github");clearResumeVersions()}},[resumeVersions]);
  const [saved,setSaved]=useState(null),[saveFailed,setSaveFailed]=useState(false),[localOk,setLocalOk]=useState(true);
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
- const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?{...m.log,running:false}:undefined}))}});
+ const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running?{...m.log,running:false,cut:true,steps:stepsCut(m.log.steps),secs:m.log.secs||0}:m.log):undefined}))}});
  const [versions,setVersions]=useState([]);const [input,setInput]=useState("");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatEnd=useRef(null);
- const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
+ const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [openLog,setOpenLog]=useState({});
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{if(!runOpen)return;const h=()=>setRunOpen(false);const k=e=>{if(e.key==="Escape")setRunOpen(false)};const tm=setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{clearTimeout(tm);document.removeEventListener("click",h);removeEventListener("keydown",k)}},[runOpen]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
@@ -2967,22 +3032,32 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
  // Akışlı çalıştırma: sohbete bir iş günlüğü kartı ekler, adımları akan koda göre ilerletir
  async function runStream(kind,userText,path,body,onDone,imgs){
-  const id=Date.now()+Math.random();const add=[...(userText?[{role:"user",content:userText,imgs:imgs&&imgs.length?imgs:undefined}]:[]),{role:"assistant",id,log:{running:true,start:Date.now(),title:kind==="review"?"Kodu inceliyor":imgs&&imgs.length?"Görselleri inceleyip kodu yazıyor":st.html?"Değişikliği uyguluyor":"Kodu yazıyor",ttl:clTopic(userText||body.prompt,kind),thoughts:clThoughts(kind,userText||body.prompt,!!st.html,effRef.current&&effRef.current.name,imgs,prefsRef.current.kind),steps:stepsFrom(kind==="review"?REVIEW_STEPS:BUILD_STEPS,"",false),model:curModel}}];let result=null;
+  const id=Date.now()+Math.random();const add=[...(userText?[{role:"user",content:userText,imgs:imgs&&imgs.length?imgs:undefined}]:[]),{role:"assistant",id,retry:{kind,text:kind==="review"?"":(body.prompt&&!body.plan?String(body.prompt):""),shown:userText||""},log:{running:true,start:Date.now(),last:Date.now(),title:kind==="review"?"Kodu inceliyor":imgs&&imgs.length?"Görselleri inceleyip kodu yazıyor":st.html?"Değişikliği uyguluyor":"Kodu yazıyor",ttl:clTopic(userText||body.prompt,kind),thoughts:clThoughts(kind,userText||body.prompt,!!st.html,effRef.current&&effRef.current.name,imgs,prefsRef.current.kind),steps:stepsFrom(kind==="review"?REVIEW_STEPS:BUILD_STEPS,"",false),model:curModel}}];let result=null;
   setSt(s=>({...s,msgs:[...s.msgs,...add]}));setOpenLog(o=>({...o,[id]:true}));setBusy(true);const start=Date.now();setT0(start);liveRef.current="";setLive("");
   const defs=kind==="review"?REVIEW_STEPS:BUILD_STEPS;let lastUpd=0;
   const upd=(patch)=>setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,...patch(m)}:m)}));
   try{
-   let first=0;const j=await apiStream(path,body,d=>{if(!first){first=Date.now();upd(m=>({log:{...m.log,think:Math.max(1,Math.round((first-start)/1000))}}))}liveRef.current+=d;const now=Date.now();if(now-lastUpd>250){lastUpd=now;const t=liveRef.current;upd(m=>({log:{...m.log,steps:stepsFrom(defs,t,false),kb:(t.length/1024).toFixed(1),secs:Math.floor((now-start)/1000)}}))}});
+   const ac=new AbortController();abortRef.current=ac;
+   let first=0;const j=await apiStream(path,body,d=>{if(!first){first=Date.now();upd(m=>({log:{...m.log,think:Math.max(1,Math.round((first-start)/1000)),last:first}}))}liveRef.current+=d;const now=Date.now();if(now-lastUpd>250){lastUpd=now;const t=liveRef.current;upd(m=>({log:{...m.log,last:now,steps:stepsFrom(defs,t,false),kb:(t.length/1024).toFixed(1),secs:Math.floor((now-start)/1000)}}))}},ac.signal);
    spent(j);result=j;const sec=Math.floor((Date.now()-start)/1000);
    const summary=onDone(j);upd(m=>({content:summary,anim:true,log:{...m.log,running:false,steps:stepsFrom(defs,"",true),secs:sec,kb:(j.html.length/1024).toFixed(1),model:j.model||m.log.model,done:(kind==="review"?"Kodu inceledi, düzeltmeleri uyguladı":defs.length-1+" adım çalıştırdı, önizlemeyi güncelledi")+(j.spent?" · "+j.spent+" kredi":j.provider&&j.provider!=="gitmapp"?" · kendi anahtarınız":"")}}));
    setOpenLog(o=>({...o,[id]:false}));
-  }catch(e){upd(m=>({content:e.message,err:true,log:{...m.log,running:false,error:"hata",secs:Math.floor((Date.now()-start)/1000)}}));failAuth(e)}
-  setBusy(false);setLive("");return result;
+  }catch(e){const secs=Math.floor((Date.now()-start)/1000);
+   if(e&&e.name==="AbortError"){upd(m=>({content:"",log:{...m.log,running:false,stopped:true,steps:stepsCut(m.log.steps),secs}}));setOpenLog(o=>({...o,[id]:false}))}
+   else{const msg=String(e&&e.message||"Bilinmeyen hata");upd(m=>({content:msg,err:true,log:{...m.log,running:false,error:msg.length>90?msg.slice(0,88)+"…":msg,steps:stepsCut(m.log.steps),secs}}));failAuth(e)}}
+  abortRef.current=null;setBusy(false);setLive("");return result;
  }
+ function stopGen(){stopRef.current=true;const a=abortRef.current;if(a){try{a.abort()}catch(e){}}}
+ useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
+ useEffect(()=>{if(!busy)return;const h=e=>{e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
+ function retryMsg(m){if(busy)return;const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
  async function gen(text){if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text||busy)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
+  {const it=promptIntent(text,{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting)});
+   if(it.k==="approve"){setInput("");if(plan)return approvePlan();if(todo&&todo.awaiting){setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text}]}));return runTodos()}}
+   if(it.k==="chat"){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
   if(!API_ON){toast("Stüdyo sunucusu şu an kurulum aşamasında, birazdan tekrar deneyin.");return}
   setInput("");track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode,images:atts.length}});
   if(prefs.mode==="ajan")return agent(text);
@@ -3119,13 +3194,13 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new Event("gm:cp"))}}><${Icon} n="headphones" s=${18}/><span>Asistanla konuş</span><kbd>⌘J</kbd></button>
      </div>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
-    <span class="gnote">${busy?"":auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
-    <button class="gsend" disabled=${busy||!input.trim()&&!atts.length} title="Gönder (Enter)">${busy?html`<${Spark} s=${16}/>`:html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button></div></div></form>`;
+    <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> Çalışıyor · durdurmak için ■</span>`:input.trim()?html`<${PromptEngine} text=${input} ctx=${{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
+    ${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} title="Gönder (Enter)">${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
  const planCard=()=>plan&&html`<div class="gcard" style=${{padding:14}}><div style=${{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><${Icon} n="compass" s=${16} c="#e4ff3d"/><b>Yapım planı</b><span style=${{color:"var(--mut)",fontSize:12}}>düzenleyebilirsiniz</span></div>
   <textarea class="in mono" style=${{width:"100%",minHeight:180,fontSize:12.5,lineHeight:1.6}} value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>
   <div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><button class="btn s" disabled=${busy} onClick=${approvePlan}><${Icon} n="check" s=${14}/> Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>{const p=plan.prompt;setPlan(null);gen(p)}}><${Icon} n="refresh" s=${14}/> Yeniden planla</button><button class="btn g s" onClick=${()=>setPlan(null)}>Vazgeç</button></div></div>`;
  const msgEl=(m,i)=>m.role==="user"?html`<div class=${"mu"+((m.content||"").length>260?" long":"")} key=${i} onClick=${e=>{if((m.content||"").length>260)e.currentTarget.classList.toggle("open")}}>${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=""/>`)}</div>`}${m.content}</div>`:html`<div class="ma" key=${m.id||i}>
-   ${m.log&&html`<${WorkLog} log=${m.log} open=${!!openLog[m.id]} toggle=${()=>setOpenLog(o=>({...o,[m.id]:!o[m.id]}))}/>`}
+   ${m.log&&html`<${WorkLog} log=${m.log} open=${!!openLog[m.id]} toggle=${()=>setOpenLog(o=>({...o,[m.id]:!o[m.id]}))} retry=${!busy&&m.retry&&(m.retry.text||m.retry.kind==="review")&&m===st.msgs.filter(x=>x.log).slice(-1)[0]?()=>retryMsg(m):null}/>`}
    ${m.content&&html`<div class=${"ma-t"+(m.err?" err":"")}>${!m.log&&html`<span class="ma-ic"><${Spark} s=${15} on=${false}/></span>`}<div style=${{whiteSpace:"pre-wrap"}}>${m.anim?html`<${Typewriter} text=${m.content}/>`:m.content}</div></div>`}</div>`;
 
  const hasWork=st.html||busy||plan||st.msgs.length;
