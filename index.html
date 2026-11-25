@@ -1159,6 +1159,73 @@ select.st-in{appearance:auto}
 .nav.rec{position:relative}.nav.rec .rec-pin{margin-left:auto;opacity:0;border:0;background:none;color:#8a8882;padding:2px;border-radius:6px;cursor:pointer;display:grid;place-items:center}.nav.rec:hover .rec-pin,.nav.rec .rec-pin.on{opacity:1}.nav.rec .rec-pin.on{color:#e4ff3d}
 .nav-dot{width:8px;height:8px;border-radius:50%;background:#4f8cff;margin-left:auto;box-shadow:0 0 0 0 rgba(79,140,255,.6);animation:navdot 1.6s ease-out infinite;flex:none}@keyframes navdot{to{box-shadow:0 0 0 8px rgba(79,140,255,0)}}
 @media(max-width:640px){.st-bg{padding:0;align-items:end}.st{border-radius:24px 24px 0 0;max-height:94dvh}.st-row{flex-direction:column;align-items:stretch;gap:10px}.st-c{justify-content:flex-start}.st-in{width:100%}.st-packs,.st-stats{grid-template-columns:1fr 1fr 1fr}.st-bars>div{grid-template-columns:90px 1fr 34px}.st-log>div{grid-template-columns:1fr 1fr 44px}.st-log>div span:nth-child(2){display:none}}
+
+.hero.studio-start{margin:clamp(12px,3vh,30px) auto 40px}
+.studio-start .hero-greet{margin:0;font-weight:500;letter-spacing:-.5px}
+.studio-start .hero-sub{margin-top:8px}
+.wsw-t{font-size:12px;line-height:1.35}
+.studio-start .start-type{display:flex;justify-content:center;margin:16px 0 12px}
+.studio-start .ctrls{justify-content:flex-start}
+.studio-start .dstrip-hint{color:var(--label2)}
+.start-options{margin:10px 0 12px}
+.start-options .forme{margin-left:auto}
+.studio-start .gta::placeholder,.studio-start .gnote,.rp-hint{color:var(--label2)}
+.studio-start .gsend{flex-shrink:0}
+.studio-start .dstrip{margin-top:12px}
+.skpromo .sketch-upload{flex:none;min-height:38px}
+dialog.ui-dialog{padding:0;border:0;background:transparent;color:var(--ink);width:min(var(--dialog-width),calc(100% - 24px));max-width:none;max-height:calc(100dvh - 24px);overflow:auto}
+.ui-dialog::backdrop{background:rgba(0,0,0,.64)}
+.ui-dialog .runpanel{position:static;width:100%;background:#19191b!important;box-shadow:none;animation:none}
+.ui-dialog .dg,.ui-dialog .mp,.ui-dialog .st{width:100%;max-height:calc(100dvh - 24px)}
+.ui-dialog .publish-panel{margin:0;padding:clamp(12px,3vw,22px)}
+.publish-visibility{display:flex;align-items:center;gap:6px;margin-top:10px;color:var(--label2)}
+.st-profile-status{padding:8px 0;color:var(--txt)}
+.st-profile-status[role="alert"]{color:#fca5a5}
+.rp-h h2{font-size:16px;margin:0;flex:1}
+.rp-range input{min-width:0}
+.store-nav{margin-bottom:16px;padding:12px 14px;border:1px solid var(--sep);border-radius:16px;background:var(--fill1)}
+.store-nav h1{font-size:23px;margin:0}
+.hb-txt h2{font-size:clamp(26px,4vw,44px);line-height:1.1;margin:8px 0 10px;color:#fff}
+.store-nav form{display:flex;gap:8px;margin:12px 0}
+.store-nav input{flex:1;min-width:0;width:100%}
+.store-categories{display:flex;flex-wrap:wrap;gap:6px}
+.store-categories button,.tp-secs button{font:inherit;min-height:34px}
+.store-categories button{cursor:pointer;color:var(--label2)}
+.store-categories .on,.tp-secs .on{border-color:#d1d1c9;color:var(--ink);background:var(--fill2)}
+.ex-filter{flex-wrap:wrap}
+.arow-title{border:0;background:none;color:inherit;cursor:pointer;text-align:left;padding:0}
+.arow-title:hover{text-decoration:underline}
+button.adp-mini{color:inherit;text-align:left}
+.tpl-empty{grid-column:1/-1;text-align:center;padding:26px 12px}
+.conn-sec h3 button{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;color:inherit;cursor:pointer;text-align:left}
+.navs{min-height:0;overflow:auto;padding:2px;overscroll-behavior:contain}
+.side-foot{flex-shrink:0}
+.rec-open{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:0;padding:0;background:none;color:inherit;text-align:left;cursor:pointer}
+.rec-open>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav.rec:focus-within .rec-pin{opacity:1}
+.nav-compact .rec-open>span:last-child,.nav-compact .rec-pin{display:none}
+.ws-ctrl .ctrls{flex-wrap:wrap;overflow:visible}
+.ws-ctrl .ctrls .seg{max-width:100%}
+.ws-ctrl .ctrls .pill{max-width:100%}
+.ws-ctrl .ctrls .pill span{overflow:hidden;text-overflow:ellipsis}
+.skp-art{pointer-events:none}
+.skpromo{cursor:default}
+.sheet-close{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:650}
+@media(max-width:820px){
+ .studio-start .hero-greet{font-size:clamp(25px,6.8vw,34px)}
+ .start-options .forme{margin-left:0}
+ .ui-dialog .dg-side{position:static}
+ .store-nav{padding:10px}
+}
+@media(max-width:480px){
+ .studio-start .ctrls{gap:5px}
+ .studio-start .seg button,.studio-start .pill{padding-inline:7px}
+ .studio-start .tpl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .studio-start .skpromo{display:grid;grid-template-columns:44px minmax(0,1fr);gap:6px 10px}
+ .studio-start .skp-art{width:44px;height:44px;grid-row:span 2}
+ .studio-start .skp-art svg{width:36px;height:36px}
+ .studio-start .sketch-upload{grid-column:2;justify-self:start}
+}
 </style>
 </head>
 <body>
@@ -1172,8 +1239,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.11.0";
+const VERSION="5.11.1";
 const CHANGELOG=[
+ {v:"5.11.1",date:"2026-11-25",items:[
+  "Stüdyo'da proje türü ve istem alanı öne çıktı. Üretim ayarları klavyeyle açılıp kapanır ve yazdığın istem sayfa değiştirince korunur.",
+  "Keşfet'te kategori ve arama üstte. Uygulama ayrıntısından dönünce arama, kategori ve sıralama korunur.",
+  "Mobil menü, şablon filtreleri ve tasarım galerisi klavyeyle daha kolay kullanılır.",
+  "Boş profil talimatıyla kaydetme ve yayın adresi yazarken odağın kaybolması düzeltildi. Yayınlamadan önce uygulamanı Keşfet'te listeleyip listelemeyeceğini seçebilirsin."]},
  {v:"5.11.0",date:"2026-11-25",items:[
   "⚙️ Yeni Ayarlar penceresi (⌘, ya da sol üstteki ⋯): Genel, Profil, Gizlilik, Faturalandırma, Kullanım, Yetenekler ve Bağlantılar sekmeleri; her ayarın altında ne işe yaradığı yazıyor",
   "🙋 Profil: fotoğraf yükleme, ad soyad, “Gitmapp sana nasıl hitap etsin?”, “İşini en iyi hangisi tanımlıyor?” ve “Yapay zekâ için talimatlar”. Talimatlar her üretime, kod kontrolüne, Asistan'a ve Fındık'a ekleniyor",
@@ -2237,13 +2309,12 @@ function UserAvatar({u,s=34}){const ini=((u.name||u.email||"?").split(/[\s@]/).f
  return u.avatar?html`<img class="avatar img" src=${u.avatar} alt="" width=${s} height=${s} style=${{width:s,height:s}}/>`:html`<span class="avatar" style=${{width:s,height:s,fontSize:Math.round(s*.38)}}>${ini}</span>`}
 function SettingsPanel({tab0,auth,toast,go,close,health}){
  const gs=useGS();const [tab,setTab]=useState(tab0||"genel");const u=auth.user;
- const [f,setF]=useState(()=>u?{name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""}:null);const [saving,setSaving]=useState(false);const [use,setUse]=useState(null);const fileRef=useRef(null);
+ const [f,setF]=useState(()=>u?{name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""}:null);const [saving,setSaving]=useState(false);const [use,setUse]=useState(null);const fileRef=useRef(null);const [profileStatus,setProfileStatus]=useState(null);
  useEffect(()=>{if(u)setF({name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""})},[u&&u.id]);
- useEffect(()=>{const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  useEffect(()=>{if(tab==="kullanim"&&u&&!use)api("GET","/api/me/usage").then(j=>{setUse(j);auth.patch({credits:j.credits})}).catch(e=>toast(e.message))},[tab]);
  const dirty=u&&f&&(f.name!==(u.name||"")||f.nickname!==(u.nickname||"")||f.role!==(u.role||"")||f.instructions!==(u.instructions||""));
- async function saveProfile(extra){setSaving(true);try{const j=await api("PATCH","/api/me/profile",extra||f);auth.patch(j.user);toast(extra&&"avatar" in extra?(extra.avatar?"Profil fotoğrafı güncellendi ✓":"Profil fotoğrafı kaldırıldı"):"Profil kaydedildi ✓")}catch(e){toast(e.message)}setSaving(false)}
- async function pickPhoto(e){const fl=e.target.files&&e.target.files[0];e.target.value="";if(!fl)return;try{const d=await shrinkImage(fl);await saveProfile({avatar:d})}catch(x){toast(x.message)}}
+ async function saveProfile(extra){setSaving(true);setProfileStatus(null);try{const j=await api("PATCH","/api/me/profile",extra||f);auth.patch(j.user);setProfileStatus({text:extra&&"avatar" in extra?(extra.avatar?"Profil fotoğrafı güncellendi":"Profil fotoğrafı kaldırıldı"):"Profil kaydedildi"})}catch(e){setProfileStatus({text:e.message,error:true})}finally{setSaving(false)}}
+ async function pickPhoto(e){const fl=e.target.files&&e.target.files[0];e.target.value="";if(!fl)return;try{const d=await shrinkImage(fl);await saveProfile({avatar:d})}catch(x){setProfileStatus({text:x.message,error:true})}}
  async function buy(c,p){if(!u)return;try{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:u.name||u.email,email:u.email,brand:"Kredi paketi",tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:c+" kredi satın alma talebi ("+p+" ₺)",type:"kredi",total:p,monthly:0});toast("Talebin alındı ("+id+"). Ödeme bağlantısı e-postana gelecek.")}catch(e){toast(e.message)}}
  function exportData(){const d={dışaAktarım:new Date().toISOString(),profil:u?{ad:u.name,eposta:u.email,hitap:u.nickname,isAlani:u.role,talimatlar:u.instructions,uyelik:u.created}:null,ayarlar:GS,taslak:LS.get("studio",null)};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:"application/json"}));a.download="gitmapp-verilerim.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
@@ -2256,9 +2327,9 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
    <${StRow} t="Dil" d="Arayüz ve yapay zekâ yanıtları Türkçe. İstersen Profil > Talimatlar'a “yanıtları İngilizce ver” yazabilirsin."><span class="st-val">Türkçe</span><//>`;
   case "profil":if(!u)return needLogin;return html`
    <${StRow} t="Profil fotoğrafı" d="PNG, JPEG ya da WebP, en fazla 10 MB. Kare olarak kırpılır."><div class="st-ph"><${UserAvatar} u=${u} s=${52}/><button class="btn g s" disabled=${saving} onClick=${()=>fileRef.current.click()}>Yükle</button>${u.avatar&&html`<button class="btn g s" disabled=${saving} onClick=${()=>saveProfile({avatar:""})}>Kaldır</button>`}<input ref=${fileRef} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange=${pickPhoto}/></div><//>
-   <${StRow} t="Ad soyad" d="Yayınladığın uygulamalarda geliştirici adı olarak görünür."><input class="st-in" value=${f.name} maxlength="80" onInput=${e=>setF({...f,name:e.target.value})}/><//>
-   <${StRow} t="Gitmapp sana nasıl hitap etsin?" d="Ana sayfadaki selamlama, Asistan ve Fındık bu adı kullanır."><input class="st-in" value=${f.nickname} maxlength="40" placeholder=${(u.name||"").split(" ")[0]||"Adın"} onInput=${e=>setF({...f,nickname:e.target.value})}/><//>
-   <${StRow} t="İşini en iyi hangisi tanımlıyor?" d="Üretilen uygulamalardaki örnek veriler, metinler ve öneriler bu alana göre seçilir."><select class="st-in" value=${f.role} onChange=${e=>setF({...f,role:e.target.value})}><option value="">Seçilmedi</option>${PROFILE_ROLES.map(r=>html`<option key=${r} value=${r}>${r}</option>`)}</select><//>
+   <${StRow} t="Ad soyad" d="Yayınladığın uygulamalarda geliştirici adı olarak görünür."><input class="st-in" aria-label="Ad soyad" value=${f.name} maxlength="80" onInput=${e=>setF({...f,name:e.target.value})}/><//>
+   <${StRow} t="Gitmapp sana nasıl hitap etsin?" d="Ana sayfadaki selamlama, Asistan ve Fındık bu adı kullanır."><input class="st-in" aria-label="Hitap adı" value=${f.nickname} maxlength="40" placeholder=${(u.name||"").split(" ")[0]||"Adın"} onInput=${e=>setF({...f,nickname:e.target.value})}/><//>
+   <${StRow} t="İşini en iyi hangisi tanımlıyor?" d="Üretilen uygulamalardaki örnek veriler, metinler ve öneriler bu alana göre seçilir."><select class="st-in" aria-label="İş alanı" value=${f.role} onChange=${e=>setF({...f,role:e.target.value})}><option value="">Seçilmedi</option>${PROFILE_ROLES.map(r=>html`<option key=${r} value=${r}>${r}</option>`)}</select><//>
    <${StRow} t="Yapay zekâ için talimatlar" d="Her üretimde, kod kontrolünde, Asistan'da ve Fındık'ta dikkate alınır. Kalıcı isteklerini yaz: marka rengin, dil tonu, olmazsa olmazların. Güvenlik kurallarını değiştiremez." col=${true}><textarea class="st-in st-ta" rows="5" maxlength="1500" placeholder="Örnek: Markamın rengi lacivert ve turuncu. Metinler samimi ve kısa olsun. Her uygulamada WhatsApp ile iletişim düğmesi bulunsun. Fiyatlar TL ile gösterilsin." value=${f.instructions} onInput=${e=>setF({...f,instructions:e.target.value})}></textarea><div class="st-cnt">${f.instructions.length}/1500</div><//>
    <${StRow} t="E-posta" d=${"Üyelik: "+(u.created?new Date(u.created.replace(" ","T")+"Z").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"}):"—")}><span class="st-val">${u.email}</span><//>
    <div class="st-save">${dirty?html`<span>Kaydedilmemiş değişiklikler var</span><button class="btn g s" onClick=${()=>setF({name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""})}>Vazgeç</button><button class="btn s" disabled=${saving||!f.name.trim()} onClick=${()=>saveProfile()}>Kaydet</button>`:html`<span class="ok"><${Icon} n="check" s=${13}/> Profil güncel</span><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>{auth.logout();toast("Çıkış yapıldı");close()}}><${Icon} n="logout" s=${14}/> Çıkış yap</button>`}</div>`;
@@ -2287,10 +2358,15 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
    <${StRow} t="Kendi yapay zekâ anahtarların" d="OpenAI, Anthropic ve diğer sağlayıcıların anahtarını bağlarsan üretimlerde Gitmapp kredisi düşmez. Anahtarlar şifreli saklanır, bir daha gösterilmez."><button class="btn g s" onClick=${()=>{close();go("hesabim")}}><${Icon} n="key" s=${14}/> Anahtarları yönet</button><//>
    <${StRow} t="Uygulama bağlantıları" d="Ödeme, WhatsApp, harita, bulut kayıt gibi uygulamalarına eklenebilen hizmetler."><button class="btn g s" onClick=${()=>{close();go("baglantilar")}}><${Icon} n="plug" s=${14}/> Bağlantılar</button><//>`;
  }};
- return html`<div class="st-bg" onClick=${e=>{if(e.target===e.currentTarget)close()}}><div class="st" role="dialog" aria-modal="true" aria-label="Ayarlar">
+ return html`<${UiDialog} label="Ayarlar" width="760px" close=${close}><div class="st">
   <header><button class="ib st-x" onClick=${close} aria-label="Kapat"><${Icon} n="x" s=${18}/></button><h2>Ayarlar</h2></header>
-  <nav class="st-tabs" role="tablist">${ST_TABS.map(([k,l])=>html`<button key=${k} role="tab" aria-selected=${tab===k} class=${tab===k?"on":""} onClick=${()=>setTab(k)}>${l}</button>`)}</nav>
-  <div class="st-body"><p class="st-intro">${ST_INTRO[tab]}</p>${body()}</div></div></div>`;
+  <div class="st-tabs" role="tablist" aria-label="Ayarlar bölümleri" onKeyDown=${e=>{
+   const i=ST_TABS.findIndex(([key])=>key===tab);
+   const next={ArrowLeft:(i-1+ST_TABS.length)%ST_TABS.length,ArrowRight:(i+1)%ST_TABS.length,Home:0,End:ST_TABS.length-1}[e.key];
+   if(next===undefined)return;
+   e.preventDefault();setTab(ST_TABS[next][0]);e.currentTarget.children[next].focus();
+  }}>${ST_TABS.map(([k,l])=>html`<button key=${k} id=${"settings-"+k} role="tab" aria-controls="settings-body" tabindex=${tab===k?0:-1} aria-selected=${tab===k} class=${tab===k?"on":""} onClick=${()=>setTab(k)}>${l}</button>`)}</div>
+  <div id="settings-body" class="st-body" role="tabpanel" aria-labelledby=${"settings-"+tab}><p class="st-intro">${ST_INTRO[tab]}</p>${body()}${tab==="profil"&&profileStatus&&html`<p class="st-profile-status" role=${profileStatus.error?"alert":"status"}>${profileStatus.text}</p>`}</div></div></${UiDialog}>`;
 }
 
 function track(type,o){if(!API_ON||!GS.analytics)return;o=o||{};api("POST","/api/events",{session_id:SID,type,query:o.query?String(o.query).slice(0,200):null,category:o.category||null,repo:o.repo||null,meta:o.meta||null}).catch(()=>{})}
@@ -2584,6 +2660,16 @@ function ThemeExample({kind}){
  </div>`;
 }
 
+function UiDialog({label,width,close,children}){
+ const ref=useRef(null);
+ useEffect(()=>{
+  const dialog=ref.current,trigger=document.activeElement;
+  dialog.showModal();
+  return ()=>{dialog.close();if(trigger?.isConnected)trigger.focus({preventScroll:true})};
+ },[]);
+ return ReactDOM.createPortal(html`<dialog class="ui-dialog" ref=${ref} aria-label=${label} style=${{"--dialog-width":width}} onCancel=${e=>{e.preventDefault();close()}} onClick=${e=>{if(e.target===e.currentTarget)close()}}>${children}</dialog>`,document.body);
+}
+
 // Tasarım galerisi
 const galleryGroups=[
  ["Yaşam & deneyim",["yemek","guzellik","saglik","spor","seyahat","etkinlik","bahce"]],
@@ -2619,20 +2705,21 @@ function DesignGallery({kind,sel,sector,onPick,close}){
  const chooseSector=id=>{setSec(id);setPage(0);resetScroll()};
  const changePage=value=>{setPage(value);resetScroll()};
  const category=sectorById(sec)?.l||"mobile app";
- return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="dg glass" ref=${panel} onClick=${e=>e.stopPropagation()}>
+ return html`<${UiDialog} label="Tasarım galerisi" width="1180px" close=${close}><div class="dg glass" ref=${panel}>
   <div class="dg-h"><div><div class="eyebrow">Tasarım stüdyosu</div><h2>Sektörüne uygun tasarımı seç</h2></div><span style=${{flex:1}}></span>
-   <div class="seg">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([x,ic,l])=>html`<button key=${x} class=${k===x?"on":""} onClick=${()=>setK(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
-   <button class="ib" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button></div>
+   <div class="seg">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([x,ic,l])=>html`<button key=${x} aria-pressed=${k===x} class=${k===x?"on":""} onClick=${()=>setK(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   <button class="ib" onClick=${close} aria-label="Galeriyi kapat" title="Kapat"><${Icon} n="x" s=${16}/></button></div>
   <div class="dg-links"><b>${total.toLocaleString("tr-TR")} tasarım</b><a href=${"https://www.figma.com/community/search?query="+encodeURIComponent(category+" UI")} target="_blank" rel="noopener noreferrer">Figma Community ↗</a><a href="https://www.awwwards.com/websites/sites_of_the_day/" target="_blank" rel="noopener noreferrer">Awwwards seçkisi ↗</a><a href=${"https://www.pinterest.com/search/pins/?q="+encodeURIComponent(category+" mobile UI design")} target="_blank" rel="noopener noreferrer">Pinterest panoları ↗</a></div>
   <div class="dg-b">
    <${GalleryCategories} selected=${sec} choose=${chooseSector}/>
-   <div class="dg-grid" key=${sec+k+page}>${list.map((t,i)=>html`<button key=${t.id} class=${"dg-card"+(sel===t.id?" on":"")} style=${{animationDelay:Math.min(i,8)*45+"ms"}} onClick=${()=>onPick(t.id,t.sector||null)}>
+   <div class="dg-grid">
+   <nav class="dg-page" aria-label="Tasarım sayfaları"><button disabled=${page===0} onClick=${()=>changePage(page-1)}>Önceki</button><span role="status">${page+1} / ${Math.ceil(total/24)}</span><button disabled=${(page+1)*24>=total} onClick=${()=>changePage(page+1)}>Sonraki</button></nav>
+    ${list.map((t,i)=>html`<button key=${t.id} aria-pressed=${sel===t.id} class=${"dg-card"+(sel===t.id?" on":"")} style=${{animationDelay:Math.min(i,8)*45+"ms"}} onClick=${()=>onPick(t.id,t.sector||null)}>
      ${rec.includes(t.id)&&html`<span class="dg-badge"><${Icon} n="star" s=${11}/> ${rec.indexOf(t.id)===0?"En uygun":"Önerilen"}</span>`}
      ${sel===t.id&&html`<span class="dg-check"><${Icon} n="check" s=${13} w=${2.6}/></span>`}
      <div class="dg-stage" style=${{background:"radial-gradient(circle at 50% 120%,"+t.p.pr+"55,transparent 65%),#0b1019"}}><${ThemeMock} t=${t} kind=${k} w=${k==="site"?104:112}/></div>
-     <div class="dg-meta"><b>${t.name}</b><${Swatches} t=${t}/></div><span class="dg-tag">${t.tag} · ${t.font}</span></button>`)}
-   <nav class="dg-page" aria-label="Tasarım sayfaları"><button disabled=${page===0} onClick=${()=>changePage(page-1)}>Önceki</button><span>${page+1} / ${Math.ceil(total/24)}</span><button disabled=${(page+1)*24>=total} onClick=${()=>changePage(page+1)}>Sonraki</button></nav></div>
-  </div></div></div>`;
+     <div class="dg-meta"><b>${t.name}</b><${Swatches} t=${t}/></div><span class="dg-tag">${t.tag} · ${t.font}</span></button>`)}</div>
+  </div></div></${UiDialog}>`;
 }
 
 // Stüdyo içi tasarım şeridi (otomatik öneri + seçim)
@@ -2643,10 +2730,10 @@ function DesignStrip({kind,sector,autoSector,theme,setTheme,openGallery,compact,
    ${sec?html`<span class="sec-chip" key=${sec.id}><${Tile} n=${sec.ic} g=${sec.g} s=${18}/>${sec.l}${autoSector?html`<em>otomatik</em>`:""}</span>`:html`<span class="dstrip-hint">Fikrini yazınca sektörüne uygun tasarımlar önerilir</span>`}
    <span style=${{flex:1}}></span><button type="button" class="seeall-b" onClick=${openGallery}>Tüm tasarımlar <${Icon} n="chevRight" s=${14}/></button></div>
   <div class="dstrip-row" key=${sector||"none"}>
-   <button type="button" class=${"dopt"+(theme==="auto"?" on":"")} onClick=${()=>setTheme("auto")}><span class="dopt-auto"><${Icon} n="wand" s=${18}/></span><span class="dopt-t"><b>Otomatik</b><span>${eff.name}</span></span></button>
-   ${custom&&html`<button type="button" class=${"dopt"+(theme==="gorsel"?" on":"")} onClick=${()=>setTheme("gorsel")}><${ThemeMock} t=${custom} kind=${kind} w=${compact?30:38}/><span class="dopt-t"><b>Görselden</b><${Swatches} t=${custom} s=${9}/></span></button>`}
-   ${sug.map((t,i)=>html`<button type="button" key=${t.id} style=${{animationDelay:i*70+"ms"}} class=${"dopt"+(theme===t.id?" on":"")} onClick=${()=>setTheme(t.id)}><${ThemeMock} t=${t} kind=${kind} w=${compact?30:38}/><span class="dopt-t"><b>${t.name}</b><${Swatches} t=${t} s=${9}/></span></button>`)}
-   ${theme!=="auto"&&theme!=="gorsel"&&!sug.find(t=>t.id===theme)&&html`<button type="button" class="dopt on"><${ThemeMock} t=${eff} kind=${kind} w=${compact?30:38}/><span class="dopt-t"><b>${eff.name}</b><${Swatches} t=${eff} s=${9}/></span></button>`}
+   <button type="button" class=${"dopt"+(theme==="auto"?" on":"")} aria-pressed=${theme==="auto"} onClick=${()=>setTheme("auto")}><span class="dopt-auto"><${Icon} n="wand" s=${18}/></span><span class="dopt-t"><b>Otomatik</b><span>${sug[0].name}</span></span></button>
+   ${custom&&html`<button type="button" class=${"dopt"+(theme==="gorsel"?" on":"")} aria-pressed=${theme==="gorsel"} onClick=${()=>setTheme("gorsel")}><${ThemeMock} t=${custom} kind=${kind} w=${compact?30:38}/><span class="dopt-t"><b>Görselden</b><${Swatches} t=${custom} s=${9}/></span></button>`}
+   ${sug.map((t,i)=>html`<button type="button" key=${t.id} style=${{animationDelay:i*70+"ms"}} class=${"dopt"+(theme===t.id?" on":"")} aria-pressed=${theme===t.id} onClick=${()=>setTheme(t.id)}><${ThemeMock} t=${t} kind=${kind} w=${compact?30:38}/><span class="dopt-t"><b>${t.name}</b><${Swatches} t=${t} s=${9}/></span></button>`)}
+   ${theme!=="auto"&&theme!=="gorsel"&&!sug.find(t=>t.id===theme)&&html`<button type="button" class="dopt on" aria-pressed="true" onClick=${openGallery}><${ThemeMock} t=${eff} kind=${kind} w=${compact?30:38}/><span class="dopt-t"><b>${eff.name}</b><${Swatches} t=${eff} s=${9}/></span></button>`}
   </div></div>`;
 }
 
@@ -3123,7 +3210,7 @@ function VersionPanel({appId,content,active,initialSource,auth,health,close,save
  ${error&&html`<p class="vc-error" role="alert">${error}</p>`}${notice&&html`<p role="status">${notice}</p>`}</div></dialog>`,document.body);
 }
 
-function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
+function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
  const [gitOpen,setGitOpen]=useState(false);
@@ -3131,18 +3218,18 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const [saved,setSaved]=useState(null),[saveFailed,setSaveFailed]=useState(false),[localOk,setLocalOk]=useState(true);
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
  const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running?{...m.log,running:false,cut:true,steps:stepsCut(m.log.steps),secs:m.log.secs||0}:m.log):undefined}))}});
- const [versions,setVersions]=useState([]);const [input,setInput]=useState("");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
+ const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput","")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatEnd=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [openLog,setOpenLog]=useState({});
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
- useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{if(!runOpen)return;const h=()=>setRunOpen(false);const k=e=>{if(e.key==="Escape")setRunOpen(false)};const tm=setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{clearTimeout(tm);document.removeEventListener("click",h);removeEventListener("keydown",k)}},[runOpen]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
+ useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput",input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
  const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector(input||(firstUser&&firstUser.content)||"",prefs.kind);
  const sector=prefs.sector!=="auto"?prefs.sector:autoSec;const styleAtt=atts.find(a=>a.role==="style");const customTheme=styleAtt?themeFromPalette(styleAtt.pal):(st.custom||null);const effTheme=prefs.theme==="gorsel"&&customTheme?customTheme:prefs.theme==="auto"||prefs.theme==="gorsel"?suggestThemes(sector)[0]:themeById(prefs.theme);const effRef=useRef(effTheme);effRef.current=effTheme;
  const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector}));if(st.html)setPendTheme(id)};
  useEffect(()=>{setLocalOk(LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))}));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
- useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
+ useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},120);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{chatEnd.current&&chatEnd.current.scrollIntoView({behavior:"smooth",block:"end"})},[st.msgs.length,busy,plan]);
  useEffect(()=>{codeEnd.current&&codeEnd.current.scrollIntoView({block:"end"})},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
@@ -3171,47 +3258,64 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
    else{const msg=String(e&&e.message||"Bilinmeyen hata");upd(m=>({content:msg,err:true,log:{...m.log,running:false,error:msg.length>90?msg.slice(0,88)+"…":msg,steps:stepsCut(m.log.steps),secs}}));failAuth(e)}}
   abortRef.current=null;setBusy(false);setLive("");return result;
  }
- useEffect(()=>{dispatchEvent(new CustomEvent("gm:busy",{detail:{busy}}))},[busy]);
+ useEffect(()=>{dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:busy||!!todo?.running}}))},[busy,todo?.running]);
+ useEffect(()=>()=>{stopRef.current=true;abortRef.current?.abort();dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:false}}))},[]);
  function stopGen(){stopRef.current=true;const a=abortRef.current;if(a){try{a.abort()}catch(e){}}}
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy)return;const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
- async function gen(text){if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+ async function gen(text){if(busy||todo?.running)return;if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
-  text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text||busy)return;
+  text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
   {const it=promptIntent(text,{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting)});
    if(it.k==="approve"){setInput("");if(plan)return approvePlan();if(todo&&todo.awaiting){setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text}]}));return runTodos()}}
-   if(it.k==="chat"){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
-  if(!API_ON){toast("Stüdyo sunucusu şu an kurulum aşamasında, birazdan tekrar deneyin.");return}
+   if(it.k==="chat"&&!atts.length){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
+  if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}
   setInput("");track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode,images:atts.length}});
   if(prefs.mode==="ajan")return agent(text);
-  if(prefs.mode==="planli"&&!st.html){const im=takeImages();const msgs=[...st.msgs,{role:"user",content:text,imgs:im.thumbs}];setSt(s=>({...s,msgs}));setBusy(true);setT0(Date.now());
-   try{const j=await api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(effRef.current),images:im.send});spent(j);setPlan({prompt:text,text:j.plan,im});setSt(s=>({...s,msgs:[...msgs,{role:"assistant",anim:true,content:"Yapım planını hazırladım. İnceleyin, isterseniz düzenleyin; onayladığınızda bu plana göre yapacağım."}]}))}
-   catch(e){setSt(s=>({...s,msgs:[...msgs,{role:"assistant",content:e.message,err:true}]}));failAuth(e)}setBusy(false);return}
+  if(prefs.mode==="planli"&&!st.html)return requestPlan(text,takeImages());
   await build(text,null,text,false,takeImages())}
+ async function requestPlan(text,im,retrying=false){
+  if(!retrying)setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text,imgs:im.thumbs}]}));
+  const request=new AbortController();abortRef.current=request;
+  setBusy(true);setT0(Date.now());
+  try{
+   const j=await api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},request.signal);
+   spent(j);setPlan({prompt:text,text:j.plan,im});
+   setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",anim:true,content:"Plan hazır. Düzenleyebilir veya onaylayıp üretime geçebilirsin."}]}));
+  }catch(e){
+   if(e.name==="AbortError")toast("Planlama durduruldu");
+   else{setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",content:e.message,err:true}]}));failAuth(e)}
+  }finally{abortRef.current=null;setBusy(false)}
+ }
  // Ekli görselleri gönderilecek biçime çevir; içerik görsellerini {{IMG_n}} olarak sakla
  function takeImages(){if(!atts.length)return {send:undefined,thumbs:undefined,assets:{},custom:null};let k=Object.keys(st.assets||{}).length;const assets={};
   const send=atts.map(a=>{const n=a.role==="content"?++k:0;if(n)assets["IMG_"+n]=a.small;return {role:a.role,data:a.role==="content"?a.small:a.full,n:n||undefined}});
   const sty=atts.find(a=>a.role==="style");const out={send,thumbs:atts.map(a=>a.thumb),assets,custom:sty?themeFromPalette(sty.pal):null};setAtts([]);return out}
  async function build(text,planText,shown,withDesign,im,base){const prev=base!==undefined?base:st.html;im=im||{};
   if(im.assets&&Object.keys(im.assets).length)setSt(s=>({...s,assets:{...(s.assets||{}),...im.assets}}));if(im.custom)setSt(s=>({...s,custom:im.custom}));
-  const j=await runStream("build",shown,"/api/ai/generate",{prompt:text,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(effRef.current):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im.thumbs);
+  const j=await runStream("build",shown,"/api/ai/generate",{prompt:text,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im.thumbs);
   return j?j.html:null}
- async function approvePlan(){const p=plan;setPlan(null);await build(p.prompt,p.text,"Planı onayladım, yap.",false,p.im?{...p.im,thumbs:undefined}:null)}
+ async function approvePlan(){
+  const p=plan;if(!p||busy||!p.text.trim())return;
+  setPlan(null);
+  if(!await build(p.prompt,p.text,"Planı onayladım, yap.",false,{...p.im,thumbs:undefined}))setPlan(p);
+ }
  // Ajan modu: yapılacaklar listesi → onay → adım adım üretim
- async function agent(text){const im=takeImages();setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text,imgs:im.thumbs}]}));setBusy(true);setT0(Date.now());
-  try{const j=await api("POST","/api/ai/todos",{prompt:text,has_html:!!st.html,...aiBody(),images:im.send});spent(j);
+ async function agent(text){const im=takeImages();const request=new AbortController();abortRef.current=request;setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text,imgs:im.thumbs}]}));setBusy(true);setT0(Date.now());
+  try{const j=await api("POST","/api/ai/todos",{prompt:text,has_html:!!st.html,...aiBody(),images:im.send},request.signal);spent(j);
    setTodo({prompt:text,im,per:j.per,awaiting:true,running:false,items:j.todos.map(t=>({...t,state:"wait"}))});
    setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",anim:true,content:"İşi "+j.todos.length+" adıma böldüm. Listeyi inceleyip onaylarsan sırayla yapacağım; istediğin an durdurabilirsin."}]}))}
-  catch(e){setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",content:e.message,err:true}]}));failAuth(e)}setBusy(false)}
+  catch(e){if(e.name==="AbortError")toast("Adım listesi hazırlama durduruldu");else{setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",content:e.message,err:true}]}));failAuth(e)}}
+  finally{abortRef.current=null;setBusy(false)}}
  async function runTodos(){const t=todo;if(!t)return;stopRef.current=false;let items=t.items.map(x=>({...x}));const put=()=>setTodo(o=>o&&{...o,items:items.map(x=>({...x}))});
   setTodo(o=>({...o,awaiting:false,running:true}));let html=st.html;const all=items.map((x,i)=>(i+1)+". "+x.title).join("\n");
   for(let i=0;i<items.length;i++){if(stopRef.current)break;items[i].state="run";put();
    const first=!html;const prompt=first?t.prompt+"\n\nTüm yapılacaklar:\n"+all+"\n\nŞimdi SADECE 1. adımı yap: "+items[i].detail:"Yapılacaklar listesindeki "+(i+1)+". adımı uygula: "+items[i].detail+"\n(Önceki adımları bozma.)";
    const r=await build(prompt,null,"Adım "+(i+1)+": "+items[i].title,false,i===0&&t.im?{...t.im,thumbs:undefined}:null,html||"");
-   if(!r){items[i].state="err";put();break}html=r;items[i].state="done";put()}
-  setTodo(o=>o&&{...o,running:false});toast(stopRef.current?"Ajan durduruldu":"Ajan tamamlandı")}
+   if(!r){items[i].state=stopRef.current?"wait":"err";put();break}html=r;items[i].state="done";put()}
+  setTodo(o=>o&&{...o,running:false});toast(items.some(x=>x.state==="err")?"Bir adım başarısız oldu":items.every(x=>x.state==="done")?"Ajan tamamlandı":"Ajan durduruldu")}
  // Eğik çizgi komutları
  function slash(cmd){const [c,...rest]=cmd.trim().split(/\s+/);const arg=rest.join(" ");
   const say=t=>setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",anim:true,content:t}]}));
@@ -3219,7 +3323,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   if(c==="/plan"){setPrefs(p=>({...p,mode:"planli"}));if(arg){prefsRef.current={...prefsRef.current,mode:"planli"};setTimeout(()=>gen(arg),0)}return}
   if(c==="/github"){dispatchEvent(new CustomEvent("gm:gh",{detail:{url:arg||"",auto:false}}));return}if(c==="/devral"){if(!ghFind(arg)){say("Kullanım: /devral github.com/kullanici/depo");return}dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(arg),auto:true}}));return}if(c==="/kontrol")return review();if(c==="/geri")return undo();if(c==="/kaydet")return save();if(c==="/yayinla")return publish();
   if(c==="/gorsel")return fileRef.current&&fileRef.current.click();if(c==="/tasarim")return setGallery(true);if(c==="/model")return setPicker(true);if(c==="/ayarlar")return setTimeout(()=>setRunOpen(true),0);
-  if(c==="/yeni"){if(st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışma silinsin mi?"))return;setSt(blank);setVersions([]);setPlan(null);setTodo(null);return}
+  if(c==="/yeni"){if(st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışma silinsin mi?"))return;setInput("");setAtts([]);setSt(blank);setVersions([]);setPlan(null);setTodo(null);return}
   say("Komutlar:\n"+SLASH.map(([k,,d])=>k+" — "+d).join("\n"))}
  async function addFiles(files,role){const list=[...(files||[])].slice(0,3-atts.length);if(!list.length){toast("En fazla 3 görsel ekleyebilirsin");return}
   for(const f of list){try{const a=await prepImage(f);if(role)a.role=role;setAtts(x=>[...x,a].slice(0,3));if(a.role==="style")setPrefs(p=>({...p,theme:"gorsel"}))}catch(e){toast(e.message)}}}
@@ -3245,7 +3349,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   return await ghostRun([{el:'.seg [data-k="'+k+'"]',fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.tpl[data-i="'+i+'"]',slow:true,fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",fn:()=>typeInto(t[2]),after:250},{el:".gsend",fn:()=>gen(t[2])}]);}
  useEffect(()=>{if(!seed)return;const sd=seed;clearSeed&&clearSeed();
   if((sd.prompt||sd.kind||sd.sketch)&&st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışmanız var. Yeni projeye geçilsin mi?"))return;
-  if(sd.prompt||sd.kind||sd.sketch){setSt(blank);setTodo(null);setVersions([]);setPlan(null)}
+  if(sd.prompt||sd.kind||sd.sketch){setSt(blank);setTodo(null);setVersions([]);setPlan(null);setInput("");setAtts([])}
   if(sd.kind)setPrefs(p=>({...p,kind:sd.kind}));if(sd.theme)setPrefs(p=>({...p,theme:sd.theme,sector:sd.sector||p.sector}));if(sd.emoji)setSt(x=>({...x,emoji:sd.emoji}));
   setTimeout(()=>{if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)doForMe(sd.kind);else if(sd.prompt)ghostRun([{el:".gta",fn:()=>typeInto(sd.prompt),after:250},{el:".gsend",fn:()=>gen(sd.prompt)}]);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
  async function applyTheme(){const t=themeById(pendTheme);setPendTheme(null);if(!st.html||busy)return;await build("Uygulamanın görsel tasarımını baştan “"+t.name+"” tasarım diline göre yeniden düzenle. Tüm içerik, veriler ve özellikler aynen kalsın; sadece renkler, yazı tipi, köşeler, boşluklar ve bileşen stilleri değişsin.",null,"“"+t.name+"” tasarımını uygula",true)}
@@ -3267,12 +3371,12 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang="tr-TR";r.interimResults=false;r.continuous=false;recRef.current=r;
   r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ");setInput(v=>(v?v+" ":"")+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
  function openTab(){const w=window.open("","_blank");if(!w){toast("Açılır pencere engellendi");return}w.opener=null;w.document.title=st.title||"Önizleme";w.document.body.style.margin="0";const f=w.document.createElement("iframe");f.setAttribute("sandbox","allow-scripts allow-forms allow-modals allow-popups");f.style.cssText="border:0;width:100vw;height:100vh;display:block";f.srcdoc=resolve(st.html);w.document.body.appendChild(f)}
- function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setTodo(null);setAtts([]);setSt(blank);setVersions([]);setSure(false);setPlan(null)}
+ function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setInput("");setTodo(null);setAtts([]);setSt(blank);setVersions([]);setSure(false);setPlan(null)}
  // Asistan köprüsü: yan paneldeki asistanın istediği adımları imleçle yapar
  const [bannerOff,setBannerOff]=useState(false);const [plusOpen,setPlusOpen]=useState(false);useEffect(()=>{if(!plusOpen)return;const h=e=>{if(!e.target.closest(".plusw"))setPlusOpen(false)};const k=e=>{if(e.key==="Escape")setPlusOpen(false)};setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{document.removeEventListener("click",h);removeEventListener("keydown",k)}},[plusOpen]);
  useEffect(()=>{const k=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="u"){e.preventDefault();fileRef.current&&fileRef.current.click()}};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  const inputRef=useRef("");inputRef.current=input;const actRef=useRef(null);
- window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
+ window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy||!!todo?.running,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
  actRef.current=async a=>{const g=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
   if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
   if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,mode:a.deger}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
@@ -3287,24 +3391,27 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   if(a.t==="yeni"){setTodo(null);setAtts([]);setSt(blank);setVersions([]);setPlan(null);setInput("");return}};
  useEffect(()=>{const h=e=>{const {a,done}=e.detail||{};if(!a)return;Promise.resolve().then(()=>actRef.current&&actRef.current(a)).then(()=>done&&done(),er=>{toast(er.message||"Adım yapılamadı");done&&done()})};addEventListener("gm:act",h);return()=>{removeEventListener("gm:act",h);window.__gmStudio={acik:false}}},[]);
  const send=e=>{e.preventDefault();gen()};
- const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();gen()}};
- const seg=(items,val,set)=>html`<div class="seg">${items.map(([k,ic,l,tip])=>html`<button type="button" data-k=${k} title=${tip||""} class=${val===k?"on":""} onClick=${()=>set(k)}><${Icon} n=${ic} s=${15}/>${l&&html`<span>${l}</span>`}</button>`)}</div>`;
- const controls=()=>html`<div class="ctrls">
-  ${seg(KINDS.map(([k,,l])=>[k,KIND_ICON[k],l]),prefs.kind,k=>setPrefs(p=>({...p,kind:k})))}
+ const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();gen()}};
+ const seg=(items,val,set,label)=>html`<div class="seg" role="group" aria-label=${label}>${items.map(([k,ic,l,tip])=>html`<button type="button" data-k=${k} aria-label=${l||tip} aria-pressed=${val===k} title=${tip||""} class=${val===k?"on":""} onClick=${()=>set(k)}><${Icon} n=${ic} s=${15}/>${l&&html`<span>${l}</span>`}</button>`)}</div>`;
+ const typeSwitch=()=>seg(KINDS.map(([k,,l])=>[k,KIND_ICON[k],l]),prefs.kind,k=>setPrefs(p=>({...p,kind:k})),"Proje türü");
+ const controls=(workspace=false)=>html`<div class="ctrls" role="group" aria-label="Üretim seçenekleri">
+  ${workspace&&typeSwitch()}
   <button type="button" class="pill" onClick=${()=>setPicker(true)} title="Dil modeli seç">${curInfo?html`<${FamLogo} f=${curInfo.family} s=${20}/>`:html`<${Icon} n="cpu" s=${15}/>`}<span>${curModel?shortModel(curModel):"Model seç"}</span>${curInfo?html`<span class="pill-m">${curInfo.credits}<${Icon} n="gem" s=${12}/></span>`:prefs.provider!=="gitmapp"?html`<span class="pill-m">kendi anahtar</span>`:""}<${Icon} n="chevDown" s=${13} c="#767671"/></button>
-  <button type="button" class="pill" onClick=${()=>setGallery(true)} title="Tasarım teması"><${Swatches} t=${effTheme} s=${10}/><span>${effTheme.name}</span><${Icon} n="chevDown" s=${13} c="#767671"/></button>
-  <span style=${{position:"relative"}}><button type="button" class=${"pill"+(runOpen?" on":"")+((runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli")?" mod":"")} onClick=${()=>setRunOpen(!runOpen)} title="Çalıştırma ayarları"><${Icon} n="sliders" s=${15}/><span>Ayarlar</span></button>${runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`}</span>
-  ${seg([["hizli","zap","Hızlı","Doğrudan yap"],["planli","compass","Planlı","Önce plan yazılır, onaylarsınız, sonra yapılır"],["ajan","list","Ajan","Claude Code gibi: işi yapılacaklar listesine böler, onayınla adım adım yapar"]],prefs.mode,k=>setPrefs(p=>({...p,mode:k})))}
-  ${auth.user?html`<button type="button" class="pill pill-cr" title="Kredilerim (canlı)" onClick=${()=>dispatchEvent(new Event("gm:cr"))}><${Icon} n="gem" s=${14}/><span><${CountUp} v=${auth.user.credits??0}/></span></button>`:""}</div>`;
+  ${workspace&&html`<button type="button" class="pill" onClick=${()=>setGallery(true)} title="Tasarım teması"><${Swatches} t=${effTheme} s=${10}/><span>${effTheme.name}</span><${Icon} n="chevDown" s=${13}/></button>`}
+  ${seg([["hizli","zap","Hızlı","Doğrudan üret"],["planli","compass","Planlı","Üretimden önce planı onayla"],["ajan","list","Ajan","Adımları onayla ve sırayla uygula"]],prefs.mode,k=>setPrefs(p=>({...p,mode:k})),"Üretim modu")}
+  <button type="button" class=${"pill"+((runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli")?" mod":"")} aria-haspopup="dialog" aria-expanded=${runOpen} onClick=${()=>setRunOpen(true)} title="Çalıştırma ayarları"><${Icon} n="sliders" s=${15}/><span>Ayarlar</span></button>
+  ${auth.user?html`<button type="button" class="pill pill-cr" title="Kredilerim (canlı)" onClick=${()=>dispatchEvent(new Event("gm:cr"))}><${Icon} n="gem" s=${14}/><span><${CountUp} v=${auth.user.credits??0}/></span></button>`:""} ${!workspace&&html`<button type="button" class="forme" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button>`}
+ </div>`;
+ const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`;
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} close=${()=>setGallery(false)}/>`;
  const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
  const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
    ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
-   ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onMouseDown=${e=>{e.preventDefault();setInput(k+" ")}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
+   ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onClick=${()=>{setInput(k+" ");document.querySelector(".gta")?.focus()}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
-   <${GhostTA} className="gta" rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Yanıtla":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
-   <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
+   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Yanıtla":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
+   <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
      ${plusOpen&&html`<div class="amenu plusm" role="menu">
       <button type="button" role="menuitem" disabled=${atts.length>=3} onClick=${()=>{setPlusOpen(false);fileRef.current.click()}}><${Icon} n="paperclip" s=${18}/><span>Görsel ya da çizim ekle</span><kbd>⌘U</kbd></button>
@@ -3320,26 +3427,26 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
      </div>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
     <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> Çalışıyor · durdurmak için ■</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
-    ${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} title="Gönder (Enter)">${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
+    ${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
  const planCard=()=>plan&&html`<div class="gcard" style=${{padding:14}}><div style=${{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><${Icon} n="compass" s=${16} c="#e4ff3d"/><b>Yapım planı</b><span style=${{color:"var(--mut)",fontSize:12}}>düzenleyebilirsiniz</span></div>
-  <textarea class="in mono" style=${{width:"100%",minHeight:180,fontSize:12.5,lineHeight:1.6}} value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>
-  <div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><button class="btn s" disabled=${busy} onClick=${approvePlan}><${Icon} n="check" s=${14}/> Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>{const p=plan.prompt;setPlan(null);gen(p)}}><${Icon} n="refresh" s=${14}/> Yeniden planla</button><button class="btn g s" onClick=${()=>setPlan(null)}>Vazgeç</button></div></div>`;
+  <textarea class="in mono" aria-label="Yapım planı" style=${{width:"100%",minHeight:180,fontSize:12.5,lineHeight:1.6}} value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>
+  <div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><button class="btn s" disabled=${busy||!plan.text.trim()} onClick=${approvePlan}><${Icon} n="check" s=${14}/> Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>requestPlan(plan.prompt,plan.im,true)}><${Icon} n="refresh" s=${14}/> Yeniden planla</button><button class="btn g s" disabled=${busy} onClick=${()=>setPlan(null)}>Vazgeç</button></div></div>`;
  const msgEl=(m,i)=>m.role==="user"?html`<div class=${"mu"+((m.content||"").length>260?" long":"")} key=${i} onClick=${e=>{if((m.content||"").length>260)e.currentTarget.classList.toggle("open")}}>${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=""/>`)}</div>`}${m.content}</div>`:html`<div class="ma" key=${m.id||i}>
    ${m.log&&html`<${WorkLog} log=${m.log} open=${!!openLog[m.id]} toggle=${()=>setOpenLog(o=>({...o,[m.id]:!o[m.id]}))} retry=${!busy&&m.retry&&(m.retry.text||m.retry.kind==="review")&&m===st.msgs.filter(x=>x.log).slice(-1)[0]?()=>retryMsg(m):null}/>`}
    ${m.content&&html`<div class=${"ma-t"+(m.err?" err":"")}>${!m.log&&html`<span class="ma-ic"><${Spark} s=${15} on=${false}/></span>`}<div style=${{whiteSpace:"pre-wrap"}}>${m.anim?html`<${Typewriter} text=${m.content}/>`:m.content}</div></div>`}</div>`;
 
  const hasWork=st.html||busy||plan||st.msgs.length;
- if(!hasWork)return html`<div class="hero">${pickerEl()}${galEl()}
-  <div class="hero-greet"><span class="grad-text">Merhaba${auth.user&&(auth.user.nickname||auth.user.name)?" "+(auth.user.nickname||auth.user.name.split(" ")[0]):""}</span>, bugün ne yapalım?</div>
-  <p class="hero-sub">Uygulama, web sitesi ya da oyun. Anlat, seçtiğin yapay zekâ modeli dakikalar içinde yapsın; beğenince tek tıkla yayınla.</p>
-  <div style=${{display:"flex",justifyContent:"center",margin:"18px 0 14px"}}>${controls()}</div>
-  <div class="forme-wrap"><button type="button" class="forme" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button><span>İmleç bir fikir seçer, yazar ve başlatır</span><button type="button" class="forme" onClick=${()=>dispatchEvent(new Event("gm:cp"))}><${Icon} n="headphones" s=${15}/> Asistanla konuş</button></div>
+ if(!hasWork)return html`<div class="hero studio-start">${pickerEl()}${galEl()}${runEl()}
+  <h1 class="hero-greet"><span class="grad-text">Merhaba${auth.user&&(auth.user.nickname||auth.user.name)?" "+(auth.user.nickname||auth.user.name.split(" ")[0]):""}</span>, bugün ne yapalım?</h1>
+  <p class="hero-sub">Bir proje türü seç ve ne yapmak istediğini yaz.</p>
+  <div class="start-type">${typeSwitch()}</div>
   ${prompt(true)}
+  <div class="start-options">${controls()}</div>
   <${DesignStrip} custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>
-  ${!API_ON&&html`<div class="gcard" style=${{marginTop:14,padding:12,color:"var(--warn)",fontSize:13}}><${Icon} n="cog" s=${14}/> Stüdyo sunucusu bağlanıyor…</div>`}
-  <div class="skpromo" onClick=${()=>{roleRef.current="layout";fileRef.current.click()}}><div class="skp-art"><svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="#5b616c" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="34" height="50" rx="5" fill="#fbfaf6"/><path d="M11 14h24M11 20l10 10M21 20L11 30M11 36h24M11 42h16"/><rect x="30" y="22" width="28" height="38" rx="6" fill="#151514" stroke="#e4ff3d"/><rect x="34" y="28" width="20" height="8" rx="2" fill="#e4ff3d" stroke="none"/><path d="M34 42h20M34 48h14" stroke="#e4ff3d"/></svg></div><div style=${{flex:1}}><b>Çizimden uygulama</b><span>Kağıda çizdiğin ekranın fotoğrafını ekle; menüler, kategoriler, görsel alanları ve renkler tanınsın.</span></div><span class="hb-btn ghost sm"><${Icon} n="camera" s=${15}/> Çizim yükle</span></div>
+  ${!API_ON&&html`<div class="gcard" role="status" style=${{marginTop:12,padding:10,color:"var(--label2)"}}>${healthError?html`Stüdyo sunucusuna ulaşılamadı. <button class="btn g s" onClick=${retry}>Tekrar dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
+  <div class="skpromo"><div class="skp-art"><svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="#5b616c" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="34" height="50" rx="5" fill="#fbfaf6"/><path d="M11 14h24M11 20l10 10M21 20L11 30M11 36h24M11 42h16"/><rect x="30" y="22" width="28" height="38" rx="6" fill="#151514" stroke="#e4ff3d"/><rect x="34" y="28" width="20" height="8" rx="2" fill="#e4ff3d" stroke="none"/><path d="M34 42h20M34 48h14" stroke="#e4ff3d"/></svg></div><div style=${{flex:1}}><b>Çizimden uygulama</b><span>Çiziminin fotoğrafını yükle, yerleşimi uygulamaya dönüştür.</span></div><button type="button" class="hb-btn ghost sm sketch-upload" disabled=${atts.length>=3} onClick=${()=>{roleRef.current="layout";fileRef.current.click()}}><${Icon} n="camera" s=${15}/> Çizim yükle</button></div>
   <div class="tpl-h">Bir fikirle başla</div>
-  <div class="tpl-grid">${TEMPLATES.map(([ic,t,p,k],i)=>html`<button type="button" class="tpl" data-i=${i} key=${t} onClick=${()=>{setSt(s=>({...s,emoji:ic}));setPrefs(x=>({...x,kind:k||"app"}));setInput(p)}}>
+  <div class="tpl-grid">${TEMPLATES.map(([ic,t,p,k],i)=>html`<button type="button" class="tpl" data-i=${i} key=${t} onClick=${()=>{setSt(s=>({...s,emoji:ic}));setPrefs(x=>({...x,kind:k||"app"}));setInput(p);document.querySelector(".gta")?.focus()}}>
    <span class="tpl-ic"><${AppIcon2} emoji=${ic} color=${APP_COLORS[i%9]} size=${34}/></span><span class="tpl-t">${t}</span><span class="tpl-d">${p.slice(0,64)}…</span><span class="tpl-k"><${Icon} n=${KIND_ICON[k||"app"]} s=${12}/></span></button>`)}</div>
   <div class="steps4">${[["sparkles","Anlat","Fikrini Türkçe yaz"],["eye","Gör","Canlı önizlemede çalışır"],["wand","Düzelt","Sohbetle değişiklik iste"],["rocket","Yayınla","Kendi adresinle canlıya al"]].map(([ic,t,d],i)=>html`<div class="st4"><${Icon} n=${ic} s=${18} c="#e4ff3d"/><div><b>${t}</b><span>${d}</span></div></div>`)}</div>
  </div>`;
@@ -3360,7 +3467,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
  const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${resolve(st.html)+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}
+ return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
    <input class="in ws-title" value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
@@ -3379,7 +3486,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
    <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
   <div class="ws-grid studio-grid">
    <div class="ws-chat">
-    <div class="ws-ctrl">${controls()}</div>
+    <div class="ws-ctrl">${controls(true)}</div>
     <div class="ws-msgs">${st.msgs.map(msgEl)}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}<div ref=${chatEnd}></div></div>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${!bannerOff&&(auth.user?(auth.user.credits??0)<=10:true)&&html`<div class="cl-banner"><span>${auth.user?((auth.user.credits??0)<(curInfo?curInfo.credits:3)?"Kredin bu işlem için yetersiz · Hesabım'dan kredi yükleyebilir ya da kendi anahtarını bağlayabilirsin":"Kredin azalıyor · Kalan "+(auth.user.credits??0)+" kredi"+(curInfo?", bu işlem "+curInfo.credits+" kredi":"")):"Hesapsız 3 deneme hakkın var · Ücretsiz hesapla hoş geldin kredisi alırsın"}</span><button type="button" title="Kapat" onClick=${()=>setBannerOff(true)}><${Icon} n="x" s=${16}/></button></div>`}${prompt(false)}
      <div class="cl-foot"><span>Gitmapp yapay zekâ kullanır ve hata yapabilir.</span><span style=${{flex:1}}></span><button type="button" onClick=${()=>setPicker(true)} title="Dil modeli">${curModel?shortModel(curModel):"Model"}</button><button type="button" class="m" title="Mod: Hızlı / Planlı / Ajan" onClick=${()=>setPrefs(p=>({...p,mode:p.mode==="hizli"?"planli":p.mode==="planli"?"ajan":"hizli"}))}>${({hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"})[prefs.mode]||"Hızlı"}</button><button type="button" class="m" title="Tür" onClick=${()=>setPrefs(p=>({...p,kind:p.kind==="app"?"site":p.kind==="site"?"game":"app"}))}>${({app:"Uygulama",site:"Site",game:"Oyun"})[prefs.kind]}</button></div>
@@ -3411,51 +3518,55 @@ function Assistant({context}){
   <form onSubmit=${send} style=${{display:"flex",gap:6}}><input class="in" style=${{flex:1}} placeholder="Sorunu yaz…" value=${t} onInput=${e=>setT(e.target.value)}/><button class="btn" disabled=${busy}>➤</button></form></div>`;
 }
 
+const PublishStep=({n,done,title,children,sub})=>html`<div class="box" style=${{margin:"0 0 10px",borderColor:done?"#14532d":"var(--line)"}}><div style=${{display:"flex",gap:10,alignItems:"center"}}><span class=${"dot "+(done?"d-ok":"d-info")} style=${{width:26,height:26}}>${done?"✓":n}</span><div><b>${iconLabel(title)}</b>${sub&&html`<div style=${{color:"var(--mut)",fontSize:12}}>${sub}</div>`}</div></div><div style=${{marginTop:10}}>${children}</div></div>`;
+
 function PublishPanel({app,auth,health,toast,close,onChange}){
  const S=getBusiness();
  const [a,setA]=useState(app);const [slug,setSlug]=useState(app.slug||slugify2(app.title));const [busy,setBusy]=useState("");
  const [gh,setGh]=useState(app.github_repo?{repo:app.github_repo,pages_url:app.pages_url}:null);
  const [dom,setDom]=useState(slugify2(app.title).replace(/-/g,""));const [domRes,setDomRes]=useState(null);
+ const [listedOnPublish,setListedOnPublish]=useState(!!GS.listed);
+ const [notice,setNotice]=useState(null);
  const [cat,setCat]=useState(app.category||"diger");const [desc,setDesc]=useState(app.description||"");const [price,setPrice]=useState(app.price||0);
  const upd=x=>{setA(x);onChange&&onChange(x)};
- async function run(k,fn){setBusy(k);try{await fn()}catch(e){toast(e.message)}setBusy("")}
- const pub=()=>run("pub",async()=>{const j=await api("POST","/api/apps/"+a.id+"/publish",{slug,listed:a.status==="published"||a.published_at?a.listed:!!GS.listed,price:a.price});upd({...a,...j.app});toast("Yayında! 🎉")});
+ async function run(k,fn){if(busy)return;setBusy(k);setNotice(null);try{await fn()}catch(e){setNotice({text:e.message,error:true})}finally{setBusy("")}}
+ const pub=()=>run("pub",async()=>{const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed:a.status==="published"||a.published_at?a.listed:listedOnPublish,price:a.price});upd({...a,...j.app});setNotice({text:"Uygulama yayında"})});
  const toGh=()=>run("gh",async()=>{const j=await api("POST","/api/apps/"+a.id+"/github");setGh(j);toast("GitHub'a kaydedildi")});
  const linkGh=()=>run("ghl",async()=>{const j=await api("POST","/api/auth/link");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)});
  const chk=()=>run("dom",async()=>{const j=await api("GET","/api/domain/check?name="+encodeURIComponent(dom));setDomRes(j.results)});
  const askDomain=d=>run("ask",async()=>{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:auth.user.name||auth.user.email,email:auth.user.email,brand:a.title,domain:d,tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:"Alan adı alımı ve bağlama: "+d+" → "+(a.url||"(henüz yayınlanmadı)"),type:"alan-adi",total:0,monthly:0});toast("Talebiniz alındı ("+id+"). Ekibimiz size ulaşacak.")});
- const toStore=listed=>run("store",async()=>{await api("PUT","/api/apps/"+a.id,{category:cat,description:desc});const j=await api("POST","/api/apps/"+a.id+"/publish",{slug,listed,price:+price||0});upd({...a,...j.app,category:cat,description:desc});toast(listed?"Mağazada listelendi 🛍️":"Mağazadan kaldırıldı")});
- const Step=({n,done,title,children,sub})=>html`<div class="box" style=${{margin:"0 0 10px",borderColor:done?"#14532d":"var(--line)"}}><div style=${{display:"flex",gap:10,alignItems:"center"}}><span class=${"dot "+(done?"d-ok":"d-info")} style=${{width:26,height:26}}>${done?"✓":n}</span><div><b>${iconLabel(title)}</b>${sub&&html`<div style=${{color:"var(--mut)",fontSize:12}}>${sub}</div>`}</div></div><div style=${{marginTop:10}}>${children}</div></div>`;
- return html`<${Modal} close=${close} w=${1000}>
-  <div style=${{display:"flex",gap:12,alignItems:"center",marginBottom:14}}><${AppIcon} emoji=${a.emoji} color=${a.color} size=${48}/><div><h2 style=${{margin:0,fontSize:20}}>${a.title}</h2><span style=${{color:"var(--mut)",fontSize:13}}>Yayın merkezi · adımları sırayla izleyin, hepsi isteğe bağlı</span></div></div>
+ const toStore=listed=>run("store",async()=>{await api("PUT","/api/apps/"+a.id,{category:cat,description:desc});const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed,price:+price||0});upd({...a,...j.app,category:cat,description:desc});setNotice({text:listed?"Uygulama Keşfet’te listelendi":"Uygulama Keşfet’ten kaldırıldı"})});
+ return html`<${UiDialog} label="Yayın merkezi" width="1000px" close=${close}><div class="box publish-panel">
+  <div style=${{display:"flex",gap:12,alignItems:"center",marginBottom:14}}><${AppIcon} emoji=${a.emoji} color=${a.color} size=${48}/><div><h2 style=${{margin:0,fontSize:20}}>${a.title}</h2><span style=${{color:"var(--mut)",fontSize:13}}>Yayın merkezi</span></div><button type="button" class="ib" style=${{marginLeft:"auto"}} aria-label="Yayın merkezini kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  ${notice&&html`<p class="st-profile-status" role=${notice.error?"alert":"status"}>${notice.text}</p>`}
   <div style=${{display:"grid",gridTemplateColumns:"minmax(0,1.6fr) minmax(260px,1fr)",gap:14}} class="studio-grid">
   <div>
-   <${Step} n="1" done=${!!a.url} title="⚡ Hemen yayınla (ücretsiz)" sub="Birkaç saniyede herkesin açabileceği bir adres">
+   <${PublishStep} n="1" done=${!!a.url} title="⚡ Hemen yayınla (ücretsiz)" sub="Birkaç saniyede herkesin açabileceği bir adres">
     ${a.url?html`<div style=${{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}><a href=${a.url} target="_blank" style=${{fontWeight:700}}>${a.url.replace("https://","")}</a><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){}}}>Kopyala</button><button class="btn g s" disabled=${busy==="pub"} onClick=${pub}>Son hâli yayınla</button></div>
      <p style=${{color:"var(--mut)",fontSize:12.5,lineHeight:1.6,margin:"8px 0 0"}}><${Icon} n="phone" s=${16}/> <b>Telefona indirmek için:</b> adresi telefonda açın → iPhone'da Paylaş ⬆️, Android'de ⋮ menüsü → <b>"Ana Ekrana Ekle"</b>. Uygulama simgesiyle telefona yüklenir.</p>`
-    :html`<div style=${{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}><span style=${{color:"var(--mut)"}}>app.gitmapp.com/</span><input class="in" style=${{flex:"1 1 140px"}} value=${slug} onInput=${e=>setSlug(slugify2(e.target.value))}/><button class="btn" disabled=${busy==="pub"} onClick=${pub}>${busy==="pub"?"…":"Yayınla"}</button></div>`}
-   </${Step}>
-   <${Step} n="2" done=${!!gh} title="🐙 Kendi GitHub hesabına kaydet" sub="Kodun sahibi siz olursunuz; ücretsiz GitHub Pages adresi de açılır">
+    :html`<div style=${{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}><span style=${{color:"var(--mut)"}}>app.gitmapp.com/</span><input class="in" style=${{flex:"1 1 140px"}} aria-label="Yayın adresi" value=${slug} onInput=${e=>setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,40))}/><button class="btn" disabled=${busy==="pub"} onClick=${pub}>${busy==="pub"?"…":"Yayınla"}</button></div><label class="publish-visibility"><input type="checkbox" checked=${listedOnPublish} onChange=${e=>setListedOnPublish(e.target.checked)}/> Keşfet’te listele</label>`}
+   </${PublishStep}>
+   <${PublishStep} n="2" done=${!!gh} title="🐙 Kendi GitHub hesabına kaydet" sub="Kodun sahibi siz olursunuz; ücretsiz GitHub Pages adresi de açılır">
     ${gh?html`<div style=${{fontSize:13,lineHeight:1.8}}>Depo: <a href=${gh.repo} target="_blank">${gh.repo.replace("https://github.com/","")}</a>${gh.pages_url&&html`<br/>Yedek adres: <a href=${gh.pages_url} target="_blank">${gh.pages_url}</a> <span style=${{color:"var(--mut)"}}>(ilk açılış 1–2 dk sürebilir)</span>`}${gh.pages_note&&html`<br/><span style=${{color:"var(--warn)"}}>${gh.pages_note}</span>`}<br/><button class="btn g s" disabled=${busy==="gh"} onClick=${toGh}>Son hâli GitHub'a gönder</button></div>`
     :auth.user&&auth.user.github?html`<button class="btn" disabled=${busy==="gh"} onClick=${toGh}>${busy==="gh"?"Kaydediliyor…":"GitHub'a kaydet (@"+auth.user.github+")"}</button>`
     :health.github?html`<p style=${{color:"var(--mut)",fontSize:12.5,margin:"0 0 8px"}}>GitHub hesabınız yoksa bağlantı ekranında ücretsiz açabilirsiniz.</p><button class="btn" disabled=${busy==="ghl"} onClick=${linkGh}><${Icon} n="code" s=${16}/> GitHub ile bağlan</button>`
     :html`<span style=${{color:"var(--mut)",fontSize:13}}>GitHub bağlantısı yakında açılacak.</span>`}
-   </${Step}>
-   <${Step} n="3" title="🌐 Kendi alan adın (örn. salonelif.com)" sub="Uygulaman markanın adresinde açılsın">
+   </${PublishStep}>
+   <${PublishStep} n="3" title="🌐 Kendi alan adın (örn. salonelif.com)" sub="Uygulaman markanın adresinde açılsın">
     <div style=${{display:"flex",gap:6,flexWrap:"wrap"}}><input class="in" style=${{flex:"1 1 160px"}} value=${dom} onInput=${e=>setDom(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,""))} placeholder="markaniz"/>${health.domain?html`<button class="btn g" disabled=${busy==="dom"} onClick=${chk}>${busy==="dom"?"…":"Sorgula"}</button>`:""}</div>
     ${domRes&&html`<table style=${{marginTop:8}}><tbody>${domRes.map(d=>html`<tr><td>${d.available?"✅":"❌"} <b>${d.domain}</b>${d.premium?" (premium)":""}</td><td style=${{textAlign:"right",whiteSpace:"nowrap"}}>${d.available?html`<a class="btn g s" target="_blank" href=${S.hostingerRef||"https://www.hostinger.com/domain-name-search"}>Kendim alayım</a> <button class="btn s" disabled=${busy==="ask"} onClick=${()=>askDomain(d.domain)}>Benim adıma alın</button>`:html`<span style=${{color:"var(--mut)",fontSize:12}}>alınmış</span>`}</td></tr>`)}</tbody></table>`}
     ${!health.domain&&html`<div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><a class="btn g s" target="_blank" href=${S.hostingerRef||"https://www.hostinger.com/domain-name-search"}>Hostinger'da sorgula, kendim alayım</a><button class="btn s" disabled=${!dom||busy==="ask"} onClick=${()=>askDomain(dom+".com")}>${dom||"…"}.com'u benim adıma alın</button></div>`}
     <p style=${{color:"var(--mut)",fontSize:12,lineHeight:1.6,margin:"8px 0 0"}}><b>Kendim alayım:</b> Hostinger'da kendi adınıza alırsınız, bağlama adımlarında asistan yardım eder. <b>Benim adıma alın:</b> alan adını sizin bilgilerinizle biz alır ve uygulamanıza bağlarız (ücret teklifte bildirilir).</p>
-   </${Step}>
-   <${Step} n="4" done=${a.listed} title="🛍️ Gitmapp Mağazası'na koy" sub="Başkaları uygulamanı bulsun, indirsin, kopyalayıp özelleştirsin">
-    <div style=${{display:"grid",gridTemplateColumns:"1fr 120px",gap:8}}><select class="in" value=${cat} onChange=${e=>setCat(e.target.value)}>${STORE_CATS2.map(([k,ic,l])=>html`<option value=${k}>${l}</option>`)}</select><label style=${{display:"flex",alignItems:"center",gap:4}}><input class="in" type="number" min="0" style=${{width:"100%"}} value=${price} onInput=${e=>setPrice(e.target.value)}/>₺</label></div>
+   </${PublishStep}>
+   <${PublishStep} n="4" done=${a.listed} title="🛍️ Gitmapp Mağazası'na koy" sub="Başkaları uygulamanı bulsun, indirsin, kopyalayıp özelleştirsin">
+    <div style=${{display:"grid",gridTemplateColumns:"1fr 120px",gap:8}}><select class="in" aria-label="Mağaza kategorisi" value=${cat} onChange=${e=>setCat(e.target.value)}>${STORE_CATS2.map(([k,ic,l])=>html`<option value=${k}>${l}</option>`)}</select><label style=${{display:"flex",alignItems:"center",gap:4}}><input class="in" type="number" aria-label="Fiyat (₺)" min="0" style=${{width:"100%"}} value=${price} onInput=${e=>setPrice(e.target.value)}/>₺</label></div>
     <textarea class="in" style=${{width:"100%",marginTop:8,minHeight:60}} maxLength="400" placeholder="Uygulamanı bir iki cümleyle anlat…" value=${desc} onInput=${e=>setDesc(e.target.value)}></textarea>
     <p style=${{color:"var(--mut)",fontSize:12,margin:"4px 0 8px"}}>0 ₺ = ücretsiz. Ücretli satışta ödeme altyapısı yakında açılacak; o zamana kadar fiyat bilgisi gösterilir.</p>
     <div style=${{display:"flex",gap:8}}><button class="btn" disabled=${busy==="store"} onClick=${()=>toStore(true)}>${a.listed?"Bilgileri güncelle":"Mağazaya koy"}</button>${a.listed&&html`<button class="btn g" disabled=${busy==="store"} onClick=${()=>toStore(false)}>Mağazadan kaldır</button>`}</div>
-   </${Step}>
+   </${PublishStep}>
   </div>
   <div class="box" style=${{margin:0,minHeight:360}}><${Assistant} context=${{uygulama:a.title,yayinda:!!a.url,adres:a.url,github:!!gh,magazada:!!a.listed}}/></div>
- </div></${Modal}>`;
+ </div></div></${UiDialog}>`;
 }
 
 /* ================= v3.3 — APP STORE TARZI KEŞFET, CAM KENAR ÇUBUĞU, HAYALET İMLEÇ ================= */
@@ -3512,7 +3623,7 @@ function AppPhoto({a,size}){
  const index=Array.from(a.slug||a.title||"").reduce((sum,c)=>sum+c.codePointAt(0),0)%photos.length;
  return html`<img loading="lazy" alt="" width=${size} height=${size} style=${{objectFit:"cover",borderRadius:"22%",flexShrink:0}} src=${"brand/gallery/"+photos[index]+".webp"}/>`;
 }
-function AppRow({a,onOpen,btn,onBtn,sub}){return html`<div class="arow" onClick=${onOpen}><${AppPhoto} a=${a} size=${68}/><div class="arow-b"><div class="arow-t">${a.title}</div><div class="arow-s">${sub||catName(a.category)}</div><div class="arow-a"><button class="getbtn" onClick=${e=>{e.stopPropagation();onBtn()}}>${btn}</button>${a.price?html`<span class="iap">Ücretli</span>`:a.downloads?html`<span class="iap">${fmt(a.downloads)} indirme</span>`:""}</div></div></div>`}
+function AppRow({a,onOpen,btn,onBtn,sub}){return html`<div class="arow" onClick=${onOpen}><${AppPhoto} a=${a} size=${68}/><div class="arow-b"><button type="button" class="arow-t arow-title" onClick=${e=>{e.stopPropagation();onOpen()}}>${a.title}</button><div class="arow-s">${sub||catName(a.category)}</div><div class="arow-a"><button class="getbtn" onClick=${e=>{e.stopPropagation();onBtn()}}>${btn}</button>${a.price?html`<span class="iap">Ücretli</span>`:a.downloads?html`<span class="iap">${fmt(a.downloads)} indirme</span>`:""}</div></div></div>`}
 function Shelf({title,more,children,scroll}){const ref=useRef(null);const mv=d=>ref.current&&ref.current.scrollBy({left:d*ref.current.clientWidth*.9,behavior:"smooth"});
  return html`<section class="shelf"><div class="shelf-h"><h3>${title}</h3>${scroll&&html`<span class="shelf-n"><button class="navarr" onClick=${()=>mv(-1)}><${Icon} n="chevLeft" s=${18}/></button><button class="navarr" onClick=${()=>mv(1)}><${Icon} n="chevRight" s=${18}/></button></span>`}${more&&html`<a class="seeall" href="#" onClick=${e=>{e.preventDefault();more()}}>Tümünü Gör</a>`}</div><div ref=${ref} class=${scroll?"shelf-x":"shelf-g"}>${children}</div></section>`}
 function EdCard({eyebrow,title,text,icon,grad,onClick,emojis}){return html`<div class="edcard" onClick=${onClick}><div class="ed-t"><div class="eyebrow">${eyebrow}</div><h4>${title}</h4><p>${text}</p></div><div class="ed-art" style=${{background:"radial-gradient(circle at 30% 25%,#ffffff33,transparent 45%),linear-gradient(145deg,"+grad+")"}}><${Icon} n=${icon} s=${64} c="#fff" w=${1.4}/>${(emojis||[]).map((e,i)=>html`<span class="ed-chip" style=${{["--i"]:i}}>${symbolIcon(e,18)}</span>`)}</div></div>`}
@@ -3524,48 +3635,69 @@ function BrandFilm({close}){
   <div><header><h2 id="film-title" lang="en">Small idea. Big appetite.</h2><button class="ib" aria-label="Filmi kapat" onClick=${close}><${Icon} n="x" s=${18}/></button></header>
   <video controls playsInline preload="metadata" poster="./brand/film/poster.jpg" aria-label="Gitmapp İngilizce tanıtım filmi"><source src="./brand/film/gitmapp.mp4" type="video/mp4"/><track kind="captions" src="./brand/film/captions-en.vtt" srcLang="en" label="English"/><a href="./brand/film/gitmapp.mp4">Filmi indir</a></video></div></dialog>`,document.body);
 }
-function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn,onTpl}){
+function storeRoute(hash){
+ const [page,search]=hash.slice(1).split("?",2);
+ const params=new URLSearchParams(page==="magaza"?search:"");
+ const cat=params.get("cat")||"";
+ return {cat:STORE_CATS2.some(([id])=>id===cat)?cat:"",q:(params.get("q")||"").trim().slice(0,60),sort:params.get("sort")==="yeni"?"yeni":"pop",full:params.get("tum") === "1"};
+}
+function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl}){
+ const {cat,q,sort,full}=filters;
+ const [draft,setDraft]=useState(q);
  const [film,setFilm]=useState(false);
  const [tdemo,setTdemo]=useState(null);
- const [apps,setApps]=useState(null);const [fresh,setFresh]=useState([]);const [cat,setCat]=useState(cat0||"");const [q,setQ]=useState(q0||"");const [sort,setSort]=useState("pop");const [sel,setSel]=useState(null);const [all,setAll]=useState(false);const [full,setFull]=useState(false);
- useEffect(()=>{setQ(q0||"")},[q0]);useEffect(()=>{setCat(cat0||"")},[cat0]);
- useEffect(()=>{if(!API_ON){setApps([]);return}const t=setTimeout(()=>{api("GET","/api/store?"+new URLSearchParams({cat,q,sort:sort==="yeni"?"yeni":""})).then(j=>setApps(j.apps)).catch(e=>{toast(e.message);setApps([])});if(q.trim().length>2)track("search",{query:q.trim(),category:"magaza"})},q?400:0);return()=>clearTimeout(t)},[cat,q,sort,apiOn]);
- useEffect(()=>{if(API_ON)api("GET","/api/store?sort=yeni").then(j=>setFresh(j.apps)).catch(()=>{})},[apiOn]);
+ const [result,setResult]=useState(null);const [fresh,setFresh]=useState([]);const [all,setAll]=useState(false);const [request,reload]=useState(0);
+ const query=new URLSearchParams({cat,q,sort:sort==="yeni"?"yeni":""}).toString();
+ const current=result?.query===query?result:null;
+ const apps=current?.apps||null;
+ useEffect(()=>{setDraft(q)},[q]);
+ useEffect(()=>{
+  if(!apiOn)return;
+  const controller=new AbortController();
+  api("GET","/api/store?"+query,undefined,controller.signal).then(j=>{
+   if(!controller.signal.aborted)setResult({query,apps:j.apps});
+  }).catch(e=>{if(!controller.signal.aborted)setResult({query,error:e.message})});
+  if(q.length>2)track("search",{query:q,category:"magaza"});
+  return ()=>controller.abort();
+ },[query,apiOn,request]);
+ useEffect(()=>{if(apiOn)api("GET","/api/store?sort=yeni").then(j=>setFresh(j.apps)).catch(()=>{})},[apiOn]);
  useEffect(()=>track("store_view",{category:cat||null}),[cat]);
  const open=a=>go("app/"+a.slug);
- const get=async a=>{try{await api("POST","/api/store/"+a.slug+"/download")}catch(e){}window.open(a.url,"_blank")};
- const remix=async a=>{if(!auth.user){openAuth("Uygulamayı kopyalayıp kendinize göre değiştirmek için ücretsiz hesap oluşturun.");return}try{const j=await api("POST","/api/store/"+a.slug+"/remix");openInStudio(j.app);toast("Kopyalandı, Geliştir'de açıldı")}catch(e){toast(e.message)}};
- const list=apps||[];const games=list.filter(a=>a.category==="oyun");const pick=list[0];
+ const get=a=>{window.open(a.url,"_blank","noopener");api("POST","/api/store/"+a.slug+"/download").catch(()=>{})};
+ const list=apps||[];
+ const games=list.filter(a=>a.category==="oyun").slice(0,6);
+ const popular=list.filter(a=>a.category!=="oyun").slice(0,6);
+ const shown=new Set([...games,...popular].map(a=>a.slug));
+ const recent=fresh.filter(a=>!shown.has(a.slug)).slice(0,6);
+ const pick=list[0];
  const tplRows=(k)=>TEMPLATES.filter(t=>(t[3]||"app")===k);
  const tplRow=([ic,t,p,k],i)=>html`<${AppRow} key=${t} a=${{title:t,emoji:ic,color:"#"+["4f8cff","ff7a59","22c55e","a855f7","06b6d4","f59e0b","64748b","10b981","16a34a","f43f5e","eab308","0ea5e9"][i%12]}} sub=${k==="game"?"Oyun şablonu":k==="site"?"Web sitesi şablonu":"Uygulama şablonu"} btn="YAP" onBtn=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})} onOpen=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})}/>`;
- const filtered=cat||q.trim()||full;
- const detail=sel&&html`<${Modal} close=${()=>setSel(null)} w=${860}><div class="det-h"><${AppIcon2} emoji=${sel.emoji} color=${sel.color} size=${112}/><div style=${{flex:1,minWidth:220}}><h2 style=${{margin:0,fontSize:26}}>${sel.title}</h2><div style=${{color:"var(--mut)",margin:"2px 0 12px"}}>${sel.author} · ${catName(sel.category)}</div>
-    <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>${sel.price?html`<button class="getbtn big" disabled title="Ödeme altyapısı yakında">${sel.price} ₺</button>`:html`<button class="getbtn big solid" onClick=${()=>get(sel)}>AL</button>`}<button class="getbtn big" onClick=${()=>remix(sel)} disabled=${!!sel.price}><${Icon} n="wand" s=${15}/> Kopyala ve geliştir</button></div></div></div>
-   <div class="det-stats"><div><b>${fmt(sel.downloads)}</b><span>İndirme</span></div><div><b>${fmt(sel.opens)}</b><span>Açılma</span></div><div><b>${catName(sel.category)}</b><span>Kategori</span></div><div><b>${sel.price?sel.price+" ₺":"Ücretsiz"}</b><span>Fiyat</span></div></div>
-   ${sel.description&&html`<p style=${{lineHeight:1.65,color:"#d1d1c9"}}>${sel.description}</p>`}
-   <div class="stage-bg" style=${{padding:16,borderRadius:18}}><iframe title="Önizleme" src=${sel.url} sandbox="allow-scripts allow-forms allow-modals allow-same-origin" class="frame-m" style=${{width:390,maxWidth:"100%",height:640}}></iframe></div>
-   <p style=${{color:"var(--mut)",fontSize:12.5,textAlign:"center"}}>Telefona indirmek için uygulamayı telefonda açın → <b>Ana Ekrana Ekle</b></p></${Modal}>`;
+ const filtered=cat||q||full;
+ const filtersBar=html`<section class="store-nav" aria-labelledby="store-heading"><h1 id="store-heading">Keşfet</h1>
+  <form role="search" onSubmit=${e=>{e.preventDefault();onFilters({...filters,q:draft.trim()})}}>
+   <input type="search" class="in" aria-label="Uygulama ara" placeholder="Uygulama veya oyun ara" maxlength="60" value=${draft} onInput=${e=>setDraft(e.target.value)}/>
+   <button class="btn" type="submit"><${Icon} n="search" s=${15}/> Ara</button>
+   ${q&&html`<button type="button" class="btn g" aria-label="Aramayı temizle" onClick=${()=>onFilters({...filters,q:"",sort:cat||full?sort:"pop"})}><${Icon} n="x" s=${16}/></button>`}
+  </form>
+  <div class="store-categories" role="group" aria-label="Kategoriler">
+   ${[["","","Tüm kategoriler"],...STORE_CATS2].map(([k,,l])=>html`<button type="button" key=${k} class=${"chip"+(cat===k?" on":"")} aria-pressed=${cat===k} onClick=${()=>onFilters({...filters,cat:k,sort:k||q?sort:"pop",full:false})}>${l}</button>`)}
+  </div></section>`;
 
- if(filtered)return html`<div class="explore">
-  <div class="ex-filter"><button class="ib" onClick=${()=>{setCat("");setQ("");setFull(false);go("magaza")}} title="Keşfet'e dön"><${Icon} n="chevLeft" s=${18}/></button>
-   <h2 style=${{margin:0,flex:1,fontSize:24,display:"flex",alignItems:"center",gap:10}}>${cat?html`<${Tile} n=${CAT_META[cat][0]} g=${CAT_META[cat][1]} s=${34}/> ${catName(cat)}`:q.trim()?"“"+q+"” için sonuçlar":"Tüm uygulamalar"}</h2>
-   <div class="seg">${[["pop","star","Popüler"],["yeni","zap","Yeni"]].map(([k,ic,l])=>html`<button class=${sort===k?"on":""} onClick=${()=>setSort(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div></div>
-  ${apps===null?html`<div class="shelf-g">${[1,2,3,4].map(i=>html`<div class="arow sk" key=${i}><div class="appic sk-b" style=${{width:68,height:68}}></div><div class="arow-b"><div class="sk-b" style=${{height:14,width:"60%"}}></div></div></div>`)}</div>`
-  :!list.length?html`<div class="ex-empty"><${Tile} n=${cat?CAT_META[cat][0]:"search"} g=${cat?CAT_META[cat][1]:undefined} s=${56}/><h3>Burada henüz uygulama yok</h3><p>İlk uygulamayı sen yap; yayınladığında burada görünsün.</p><button class="btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${15}/> Geliştir</button></div>`
+ if(filtered)return html`<div class="explore">${filtersBar}
+  <div class="ex-filter">
+   <h2 style=${{margin:0,flex:1,fontSize:21}}>${q?"“"+q+"” için sonuçlar":cat?catName(cat):"Tüm uygulamalar"}</h2>
+   <div class="seg" role="group" aria-label="Sıralama">${[["pop","star","Popüler"],["yeni","zap","Yeni"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${sort===k} class=${sort===k?"on":""} onClick=${()=>onFilters({...filters,sort:k})}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div></div>
+  ${healthError||current?.error?html`<div class="ex-empty" role="status"><h3>Uygulamalar yüklenemedi</h3><button class="btn" onClick=${()=>{setResult(null);if(healthError)retry();else reload(n=>n+1)}}>Tekrar dene</button></div>`
+  :apps===null?html`<div class="shelf-g">${[1,2,3,4].map(i=>html`<div class="arow sk" key=${i}><div class="appic sk-b" style=${{width:68,height:68}}></div><div class="arow-b"><div class="sk-b" style=${{height:14,width:"60%"}}></div></div></div>`)}</div>`
+  :!list.length?html`<div class="ex-empty" role="status"><${Icon} n="search" s=${32}/><h3>${q?"Aramana uygun uygulama bulunamadı":"Bu kategoride henüz uygulama yok"}</h3><button class="btn g" onClick=${()=>onFilters({cat:"",q:"",sort:"pop",full:false})}>Keşfet’e dön</button></div>`
   :html`<div class="shelf-g">${list.map(a=>html`<${AppRow} key=${a.id||a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</div>`}
-  ${detail}</div>`;
+  </div>`;
 
  const floatIcons=(list.length>=5?list.slice(0,5).map(a=>[a.emoji,a.color]):[["🎮","#5e5ce6"],["💇","#ff375f"],["🍽️","#ff9f0a"],["💰","#30d158"],["✅","#0a84ff"]]);
- return html`<div class="explore">
-  <div class="hero-banner">
-   ${film&&html`<${BrandFilm} close=${()=>setFilm(false)}/>`}
-   <div class="hb-mark"><${BrandMark} s=${380}/></div>
-   <div class="hb-txt"><div class="eyebrow light">Gitmapp Stüdyo</div><h1>Fikrini anlat,<br/>dakikalar içinde yayında olsun.</h1><p>Uygulama, web sitesi ya da oyun. Seçtiğin yapay zekâ modeli yazar, sen tek tıkla kendi adınla yayınlarsın.</p>
-    <div style=${{display:"flex",gap:10,flexWrap:"wrap"}}><button class="hb-btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${17}/> Geliştirmeye başla</button><button class="hb-btn ghost" onClick=${()=>startTemplate({auto:true})}><${Icon} n="cursor" s=${16}/> Benim için yap</button><button class="hb-btn ghost" aria-haspopup="dialog" onClick=${()=>setFilm(true)}><${Icon} n="play" s=${16}/> Tanıtım filmini izle</button></div></div>
-   <div class="hb-art">${floatIcons.map(([e,c],i)=>html`<span class="hb-ic" key=${i} style=${{["--i"]:i}}><${AppIcon2} emoji=${e} color=${c} size=${104}/></span>`)}</div>
-  </div>
-
-  <section class="shelf"><${SketchScene} onStart=${role=>startTemplate({sketch:role})}/></section>
+ return html`<div class="explore">${filtersBar}
+  ${popular.length>0&&html`<${Shelf} title="Popüler uygulamalar" more=${()=>onFilters({...filters,sort:"pop",full:true})}>${popular.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
+  ${games.length>0&&html`<${Shelf} title="Oyunlar" more=${()=>onFilters({...filters,cat:"oyun",full:false})}>${games.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
+  ${recent.length>0&&html`<${Shelf} title="Yeni çıkanlar">${recent.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
   <${Shelf} title="Öne çıkanlar" scroll=${true}>
    ${pick&&html`<${EdCard} eyebrow="Sevdiğimiz uygulamalar" title=${pick.title} text=${(pick.description||"Gitmapp topluluğunun en çok açtığı uygulama.").slice(0,90)} icon="star" grad=${pick.color+",#a3e635"} emojis=${[pick.emoji]} onClick=${()=>open(pick)}/>`}
    <${EdCard} eyebrow="Haydi başlayalım" title="Kendi oyununu yap" text="Bir cümleyle anlat; yapay zekâ oynanabilir bir oyun yazsın." icon="gamepad" grad="#8b5cf6,#ec4899" emojis=${["🚀","⭐","👾"]} onClick=${()=>startTemplate({kind:"game"})}/>
@@ -3579,15 +3711,20 @@ function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn,
    <div class="sc-h"><${Tile} n=${sc.ic} g=${sc.g} s=${34}/><div><b>${sc.l}</b><span>${sc.th.map(id=>themeById(id).name).join(" · ")}</span></div></div>
    <div class="sc-mocks">${sc.th.map((id,i)=>html`<div class="sc-m" key=${id} style=${{["--i"]:i}}><${ThemeMock} t=${themeById(id)} kind=${sc.id==="oyun"?"game":"app"} w=${84}/></div>`)}</div>
    <div class="sc-f"><span>Bu tasarımla başla</span><${Icon} n="chevRight" s=${16}/></div></div>`)}</${Shelf}>
-  ${list.length>0&&html`<${Shelf} title="Popüler uygulamalar" more=${()=>{setSort("pop");setFull(true)}}>${list.filter(a=>a.category!=="oyun").slice(0,6).map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
-  ${games.length>0&&html`<${Shelf} title="Oyunlar" more=${()=>setCat("oyun")}>${games.slice(0,6).map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
-  ${fresh.length>0&&html`<${Shelf} title="Yeni çıkanlar">${fresh.slice(0,6).map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
 
   <${Shelf} title="Fikirlerini uygulamaya dönüştür" more=${()=>setAll(!all)}>${(all?tplRows("app"):tplRows("app").slice(0,4)).map(x=>tplRow(x,TEMPLATES.indexOf(x)))}</${Shelf}>
   <${Shelf} title="Bir oyun ya da site yap">${[...tplRows("game"),...tplRows("site")].map(x=>tplRow(x,TEMPLATES.indexOf(x)))}</${Shelf}>
 
-  <section class="shelf"><div class="shelf-h"><h3>Kategoriler</h3></div><div class="cat-grid">${STORE_CATS2.map(([k,,l])=>html`<button class="catc" key=${k} onClick=${()=>setCat(k)}><${Tile} n=${CAT_META[k][0]} g=${CAT_META[k][1]} s=${40}/><span>${l}</span><${Icon} n="chevRight" s=${16} c="#60605d"/></button>`)}</div></section>
-  ${detail}
+  <div class="hero-banner">
+   ${film&&html`<${BrandFilm} close=${()=>setFilm(false)}/>`}
+   <div class="hb-mark"><${BrandMark} s=${380}/></div>
+   <div class="hb-txt"><div class="eyebrow light">Gitmapp Stüdyo</div><h2>Kendi uygulamanı oluştur</h2><p>Uygulama, web sitesi ya da oyun. Seçtiğin yapay zekâ modeli yazar, sen tek tıkla kendi adınla yayınlarsın.</p>
+    <div style=${{display:"flex",gap:10,flexWrap:"wrap"}}><button class="hb-btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${17}/> Geliştirmeye başla</button><button class="hb-btn ghost" aria-haspopup="dialog" onClick=${()=>setFilm(true)}><${Icon} n="play" s=${16}/> Tanıtım filmini izle</button></div></div>
+   <div class="hb-art">${floatIcons.map(([e,c],i)=>html`<span class="hb-ic" key=${i} style=${{["--i"]:i}}><${AppIcon2} emoji=${e} color=${c} size=${104}/></span>`)}</div>
+  </div>
+
+  <section class="shelf"><${SketchScene} onStart=${role=>startTemplate({sketch:role})}/></section>
+
  </div>`;
 }
 
@@ -3595,25 +3732,26 @@ function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn,
 
 
 // Uygulama ayrıntı sayfası — Google Play / App Store karışımı
-function AppDetail({slug,go,auth,openAuth,openInStudio,toast,startTemplate}){
+function AppDetail({slug,go,backToStore,auth,openAuth,openInStudio,toast,apiOn,healthError,retry}){
  const [a,setA]=useState(null);const [err,setErr]=useState("");const [sim,setSim]=useState([]);const [dev,setDev]=useState([]);const [live,setLive]=useState(null);
  const [wish,setWish]=useState(()=>!!(LS.get("wish",{})||{})[slug]);const [more,setMore]=useState(false);const [sup,setSup]=useState(false);const shots=useRef(null);
- useEffect(()=>{setA(null);setErr("");if(!API_ON)return;api("GET","/api/store/"+encodeURIComponent(slug)).then(j=>{setA(j.app);track("store_open",{repo:"app:"+slug});
+ useEffect(()=>{setA(null);setErr("");if(!apiOn)return;api("GET","/api/store/"+encodeURIComponent(slug)).then(j=>{setA(j.app);track("store_open",{repo:"app:"+slug});
    api("GET","/api/store?cat="+j.app.category).then(x=>setSim(x.apps.filter(y=>y.slug!==slug).slice(0,5))).catch(()=>{});
-   api("GET","/api/store").then(x=>setDev(x.apps.filter(y=>y.author===j.app.author&&y.slug!==slug).slice(0,4))).catch(()=>{})}).catch(e=>setErr(e.message));window.scrollTo(0,0)},[slug,API_ON]);
- const get=async()=>{try{await api("POST","/api/store/"+a.slug+"/download")}catch(e){}window.open(a.url,"_blank","noopener")};
+   api("GET","/api/store").then(x=>setDev(x.apps.filter(y=>y.author===j.app.author&&y.slug!==slug).slice(0,4))).catch(()=>{})}).catch(e=>setErr(e.message));window.scrollTo(0,0)},[slug,apiOn]);
+ const get=()=>{window.open(a.url,"_blank","noopener");api("POST","/api/store/"+a.slug+"/download").catch(()=>{})};
  const remix=async()=>{if(!auth.user){openAuth("Uygulamayı kopyalayıp kendinize göre geliştirmek için ücretsiz hesap oluşturun.");return}try{const j=await api("POST","/api/store/"+a.slug+"/remix");openInStudio(j.app);toast("Kopyalandı, Geliştir'de açıldı")}catch(e){toast(e.message)}};
  const share=async()=>{const u=location.origin+location.pathname+"#app/"+a.slug;try{if(navigator.share){await navigator.share({title:a.title,text:a.description||a.title,url:u});return}await navigator.clipboard.writeText(u);toast("Bağlantı kopyalandı")}catch(e){}};
  const toggleWish=()=>{const w=LS.get("wish",{})||{};if(w[slug])delete w[slug];else w[slug]={title:a.title,emoji:a.emoji,color:a.color};LS.set("wish",w);setWish(!!w[slug]);toast(w[slug]?"İstek listesine eklendi":"İstek listesinden çıkarıldı")};
  const mv=d=>shots.current&&shots.current.scrollBy({left:d*shots.current.clientWidth*.8,behavior:"smooth"});
- if(err)return html`<div class="ex-empty"><${Tile} n="search" s=${56}/><h3>Uygulama bulunamadı</h3><p>${err}</p><button class="btn" onClick=${()=>go("magaza")}>Keşfet'e dön</button></div>`;
+ if(healthError)return html`<div class="ex-empty" role="status"><h3>Uygulama yüklenemedi</h3><button class="btn" onClick=${retry}>Tekrar dene</button><button class="btn g" onClick=${backToStore}>Keşfet’e dön</button></div>`;
+ if(err)return html`<div class="ex-empty"><${Tile} n="search" s=${56}/><h3>Uygulama bulunamadı</h3><p>${err}</p><button class="btn" onClick=${backToStore}>Keşfet'e dön</button></div>`;
  if(!a)return html`<div class="adp"><div class="adp-hero"><div class="appic sk-b" style=${{width:128,height:128,borderRadius:30}}></div><div style=${{flex:1}}><div class="sk-b" style=${{height:30,width:"50%",marginBottom:12}}></div><div class="sk-b" style=${{height:16,width:"30%"}}></div></div></div></div>`;
  const m=a.meta||{};const th=m.theme?themeById(m.theme):null;const kindL={app:"Uygulama",site:"Web sitesi",game:"Oyun"}[m.kind]||"Uygulama";
  const date=s=>s?new Date(s.replace(" ","T")+"Z").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"}):"—";
  const desc=a.description||"Bu "+kindL.toLowerCase()+" Gitmapp Geliştir ile yapay zekâ desteğiyle hazırlandı.";
- const Row=({x})=>html`<div class="adp-mini" onClick=${()=>go("app/"+x.slug)}><${AppIcon2} emoji=${x.emoji} color=${x.color} size=${56}/><div><b>${x.title}</b><span>${catName(x.category)}</span><span class="adp-dl"><${Icon} n="download" s=${11}/> ${fmt(x.downloads||0)}</span></div></div>`;
+ const Row=({x})=>html`<button type="button" class="adp-mini" onClick=${()=>go("app/"+x.slug)}><${AppIcon2} emoji=${x.emoji} color=${x.color} size=${56}/><div><b>${x.title}</b><span>${catName(x.category)}</span><span class="adp-dl"><${Icon} n="download" s=${11}/> ${fmt(x.downloads||0)}</span></div></button>`;
  return html`<div class="adp">
-  <button class="adp-back" onClick=${()=>history.length>1?history.back():go("magaza")}><${Icon} n="chevLeft" s=${18}/> Keşfet</button>
+  <button class="adp-back" onClick=${backToStore}><${Icon} n="chevLeft" s=${18}/> Keşfet</button>
   <div class="adp-top">
    <div class="adp-l">
     <div class="adp-hero">
@@ -3679,18 +3817,18 @@ function AppDetail({slug,go,auth,openAuth,openInStudio,toast,startTemplate}){
 // Çalıştırma ayarları (AI Studio benzeri)
 function RunSettings({v,set,close}){
  const t=v.temperature;
- return html`<div class="runpanel glass" onClick=${e=>e.stopPropagation()}>
-  <div class="rp-h"><${Icon} n="sliders" s=${16}/><b>Çalıştırma ayarları</b><span style=${{flex:1}}></span><button class="ib sm" onClick=${close}><${Icon} n="x" s=${14}/></button></div>
-  <label class="rp-l"><span><${Icon} n="thermo" s=${14}/> Yaratıcılık</span><em>${t==null?"Model varsayılanı":t.toFixed(1)}</em></label>
-  <div class="rp-range"><input type="range" min="0" max="1.5" step="0.1" value=${t==null?1:t} onInput=${e=>set({...v,temperature:+e.target.value})}/><button class="chip" onClick=${()=>set({...v,temperature:null})}>Varsayılan</button></div>
+ return html`<${UiDialog} label="Çalıştırma ayarları" width="400px" close=${close}><div class="runpanel glass">
+  <div class="rp-h"><${Icon} n="sliders" s=${16}/><h2>Çalıştırma ayarları</h2><button class="ib sm" aria-label="Ayarları kapat" onClick=${close}><${Icon} n="x" s=${14}/></button></div>
+  <label class="rp-l" for="run-temperature"><span><${Icon} n="thermo" s=${14}/> Yaratıcılık</span><em>${t==null?"Model varsayılanı":t.toFixed(1)}</em></label>
+  <div class="rp-range"><input id="run-temperature" type="range" min="0" max="1.5" step="0.1" value=${t==null?1:t} onInput=${e=>set({...v,temperature:+e.target.value})}/><button class="chip" onClick=${()=>set({...v,temperature:null})}>Varsayılan</button></div>
   <div class="rp-hint">Düşük: tutarlı ve sade · Yüksek: daha özgün ve sürprizli</div>
-  <label class="rp-l"><span><${Icon} n="brain" s=${14}/> Ayrıntı düzeyi</span></label>
-  <div class="seg" style=${{width:"100%"}}>${[["kisa","Kısa"],["dengeli","Dengeli"],["ayrintili","Ayrıntılı"]].map(([k,l])=>html`<button key=${k} style=${{flex:1,justifyContent:"center"}} class=${(v.detail||"dengeli")===k?"on":""} onClick=${()=>set({...v,detail:k})}>${l}</button>`)}</div>
+  <div class="rp-l"><span><${Icon} n="brain" s=${14}/> Ayrıntı düzeyi</span></div>
+  <div class="seg" role="group" aria-label="Ayrıntı düzeyi" style=${{width:"100%"}}>${[["kisa","Kısa"],["dengeli","Dengeli"],["ayrintili","Ayrıntılı"]].map(([k,l])=>html`<button key=${k} style=${{flex:1,justifyContent:"center"}} aria-pressed=${(v.detail||"dengeli")===k} class=${(v.detail||"dengeli")===k?"on":""} onClick=${()=>set({...v,detail:k})}>${l}</button>`)}</div>
   <div class="rp-hint">Ayrıntılı: daha uzun ve kapsamlı kod (daha uzun sürer)</div>
-  <label class="rp-l"><span><${Icon} n="file" s=${14}/> Sistem talimatları</span><em>${(v.instructions||"").length}/1000</em></label>
-  <textarea class="in" rows="4" maxlength="1000" placeholder="Örn: Tüm metinler resmi dille olsun, logo yerine “Eczabirlik” yazısı kullan, sayfalar sekmeli olsun…" value=${v.instructions||""} onInput=${e=>set({...v,instructions:e.target.value})}></textarea>
+  <label class="rp-l" for="run-instructions"><span><${Icon} n="file" s=${14}/> Sistem talimatları</span><em>${(v.instructions||"").length}/1500</em></label>
+  <textarea id="run-instructions" class="in" rows="3" maxlength="1500" placeholder="Örn: Tüm metinler resmi dille olsun, logo yerine “Eczabirlik” yazısı kullan, sayfalar sekmeli olsun…" value=${v.instructions||""} onInput=${e=>set({...v,instructions:e.target.value})}></textarea>
   <div class="rp-hint">Her üretimde modele ek kural olarak iletilir.</div>
- </div>`;
+ </div></${UiDialog}>`;
 }
 
 // Yönetici: yapay zekâ bağlantı testi
@@ -3754,9 +3892,9 @@ function TemplatesPage({onUse,toast}){
   <div class="tp-hero"><div><div class="eyebrow light">Hazır şablonlar · canlı demo</div><h1>Sıfırdan başlama.<br/>Çalışan bir şablonla başla.</h1><p>CRM, ön muhasebe, stok, sigorta, klinik, emlak ve restoran… Her şablon gerçekten çalışır: kayıt ekle, ara, sürükle, yazdır. Beğendiğini seç, Geliştir'de yapay zekâyla kendi işine göre değiştir.</p>
    <div class="tp-stats"><div><b>${TEMPLATE_LIB.length}</b><span>Çalışan şablon</span></div><div><b>${secs.length}</b><span>Sektör</span></div><div><b>₺0</b><span>Ücretsiz</span></div></div></div>
    <div class="tp-stack">${TEMPLATE_LIB.slice(0,3).map((t,i)=>html`<div class="tp-sc" key=${t.id} style=${{["--i"]:i}}><${TplThumb} t=${t} w=${300}/></div>`)}</div></div>
-  <div class="tp-filter"><div class="seg">${[["","grid","Tümü"],["panel","apps","Yönetim panelleri"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
-   <div class="tp-secs">${["",...secs].map(s=>html`<span key=${s} class=${"chip"+(sec===s?" on":"")} onClick=${()=>setSec(s)}>${s||"Tüm sektörler"}</span>`)}</div></div>
-  <div class="tp-grid">${list.map((t,i)=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}</div>
+  <div class="tp-filter"><div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Yönetim panelleri"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   <div class="tp-secs" role="group" aria-label="Şablon sektörü">${["",...secs].map(s=>html`<button type="button" key=${s} aria-pressed=${sec===s} class=${"chip"+(sec===s?" on":"")} onClick=${()=>setSec(s)}>${s||"Tüm sektörler"}</button>`)}</div></div>
+  <div class="tp-grid">${list.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}${!list.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSec("")}}>Filtreleri temizle</button></div>`}</div>
   <section class="tp-how"><h3>Şablonla nasıl çalışılır?</h3><div class="tp-steps">${[["play","Canlı dene","Demoda kayıt ekle, sürükle, yazdır; telefon ve tablette nasıl göründüğüne bak."],["hammer","Kullan","Şablon Geliştir'e yüklenir. “Logomuzu koy, alanlara TC no ekle” gibi isteklerle değiştir."],["image","Kendi görsellerini ekle","Ürün, ilan ya da menü fotoğraflarını sürükle; içerik görseli olarak yerleşsin."],["rocket","Yayınla","Kendi adresinle tek tıkla canlıya al, istersen mağazada sat."]].map(([ic,t,d],i)=>html`<div key=${i}><${Tile} n=${ic} g=${["#e4ff3d,#a3e635","#f97316,#ec4899","#22c55e,#14b8a6","#a855f7,#ec4899"][i]} s=${36}/><b>${t}</b><span>${d}</span></div>`)}</div>
    <p class="tp-note">Şablonlar Gitmapp tarafından özgün olarak tasarlandı; görseller kod ile çizildi, yazı tipleri Google Fonts'tan ücretsiz lisanslıdır. İçlerindeki firma, kişi ve ilanlar kurgusaldır.</p></section>
   ${demo&&html`<${TplDemo} t=${demo} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
@@ -3796,9 +3934,9 @@ const connState=()=>LS.get("conns",{})||{};
 const ConnIcon=({c,s=44})=>BRANDS[c.id]?html`<${BrandLogo} b=${c.id} s=${s}/>`:html`<span class="cicon" style=${{width:s,height:s,borderRadius:s*.28,["--t"]:c.tone}}><${Icon} n=${c.ic} s=${s*.48} c="currentColor" w=${1.6}/></span>`;
 function ConnectorsPage({toast}){
  const [st,setSt]=useState(connState);const [tab,setTab]=useState("home");const [q,setQ]=useState("");const [sel,setSel]=useState(null);const [add,setAdd]=useState(false);const [custom,setCustom]=useState(null);
- const save=n=>{setSt(n);LS.set("conns",n)};const on=c=>!!(st[c.id]&&st[c.id].on);const enabled=CONN.filter(on).length+Object.keys(st).filter(k=>k.startsWith("custom:")&&st[k].on).length;
+ const save=n=>{setSt(n);LS.set("conns",n)};const on=c=>!!(st[c.id]&&st[c.id].on);const enabled=CONN.filter(on).length+Object.entries(st).filter(([k,v])=>/^(custom|mcp):/.test(k)&&v.on).length;
  const list=CONN.filter(c=>(!q||(c.n+c.d).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr")))&&(tab==="home"||tab==="all"||(tab==="on"?on(c):c.cat.includes(tab))));
- const customs=Object.entries(st).filter(([k])=>k.startsWith("custom:")||k.startsWith("mcp:"));
+ const customs=Object.entries(st).filter(([k,v])=>/^(custom|mcp):/.test(k)&&(tab==="all"||tab==="on"&&v.on)&&(!q||((v.name||"")+" "+(v.url||"")).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
  const card=c=>html`<button class="ccard" key=${c.id} onClick=${()=>setSel(c)}><span style=${{position:"relative"}}><${ConnIcon} c=${c}/>${on(c)&&html`<i class="con-dot"></i>`}</span><div><b>${c.n}${c.gm?html` <em class="gm-tag">Gitmapp</em>`:""}${c.soon?html` <em class="soon-tag">Yakında</em>`:""}</b><span>${c.d}</span></div></button>`;
  return html`<div class="conn">
   <aside class="conn-side">
@@ -3810,9 +3948,9 @@ function ConnectorsPage({toast}){
     <button class="btn g" style=${{width:"100%"}} onClick=${()=>setAdd(!add)}><${Icon} n="plus" s=${15}/> Özel ekle</button></div>
   </aside>
   <div class="conn-main">
-   <div class="conn-top"><${Icon} n="plug" s=${17}/><span class="crumb">Bağlantılar${tab!=="home"?html` <i>/</i> ${tab==="all"?"Tümü":tab==="on"?"Etkin":(CONN_CATS.find(x=>x[0]===tab)||[])[2]}`:""}</span><span style=${{flex:1}}></span><label class="conn-q"><${Icon} n="search" s=${15}/><input placeholder="Uygulamana bir şey bağla… (ör. WhatsApp, harita, ödeme)" value=${q} onInput=${e=>{setQ(e.target.value);if(tab==="home"&&e.target.value)setTab("all")}}/></label></div>
+   <div class="conn-top"><${Icon} n="plug" s=${17}/><span class="crumb">Bağlantılar${tab!=="home"?html` <i>/</i> ${tab==="all"?"Tümü":tab==="on"?"Etkin":(CONN_CATS.find(x=>x[0]===tab)||[])[2]}`:""}</span><span style=${{flex:1}}></span><label class="conn-q"><${Icon} n="search" s=${15}/><input type="search" aria-label="Bağlantı ara" placeholder="Uygulamana bir şey bağla… (ör. WhatsApp, harita, ödeme)" value=${q} onInput=${e=>{setQ(e.target.value);if(tab==="home"&&e.target.value)setTab("all")}}/></label></div>
    ${tab==="home"&&!q&&html`<div class="conn-hero"><div><h2>Uygulamana bir beyin ver</h2><p>Bulut kayıt, ödeme, WhatsApp, harita ve analitik… Etkinleştirdiğin servisleri yapay zekâ yeni uygulamalarına kendisi ekler. Anahtar ezberlemek yok.</p><button class="btn" onClick=${()=>setSel(CONN[0])}><${Icon} n="db" s=${15}/> Gitmapp Bulut Kayıt'ı keşfet</button></div><div class="conn-art"><${BrandMark} s=${120}/><span class="ca-ring"></span><span class="ca-ring r2"></span>${["chat","mapPin","cardPay","chart","db","send"].map((ic,i)=>html`<span key=${i} class="ca-orb" style=${{["--i"]:i}}><${Icon} n=${ic} s=${18} c="currentColor"/></span>`)}</div></div>`}
-   ${tab==="home"&&!q?html`${CONN_CATS.map(([k,,l])=>html`<section key=${k} class="conn-sec"><h3 onClick=${()=>setTab(k)}>${l} <${Icon} n="chevRight" s=${16}/></h3><div class="cgrid">${CONN.filter(c=>c.cat[0]===k).slice(0,6).map(card)}</div></section>`)}`
+   ${tab==="home"&&!q?html`${CONN_CATS.map(([k,,l])=>html`<section key=${k} class="conn-sec"><h3><button type="button" onClick=${()=>setTab(k)}>${l} <${Icon} n="chevRight" s=${16}/></button></h3><div class="cgrid">${CONN.filter(c=>c.cat[0]===k).slice(0,6).map(card)}</div></section>`)}`
    :html`<div class="cgrid" style=${{marginTop:18}}>${list.map(card)}${tab==="on"||tab==="all"?customs.map(([k,v])=>html`<button class="ccard" key=${k} onClick=${()=>setCustom({edit:k,...v})}><span style=${{position:"relative"}}><span class="cicon" style=${{width:44,height:44,borderRadius:12}}><${Icon} n=${k.startsWith("mcp:")?"server":"plug"} s=${21}/></span>${v.on&&html`<i class="con-dot"></i>`}</span><div><b>${v.name} <em class="soon-tag" style=${{background:"#232323",color:"#c4c4bd"}}>${k.startsWith("mcp:")?"MCP":"Özel"}</em></b><span>${v.url}</span></div></button>`):""}${!list.length&&!customs.length?html`<div class="empty" style=${{gridColumn:"1/-1"}}>Sonuç yok</div>`:""}</div>`}
   </div>
   ${sel&&html`<${ConnSheet} c=${sel} v=${st[sel.id]||{}} close=${()=>setSel(null)} onSave=${v=>{save({...st,[sel.id]:v});toast(v.on?sel.n+" etkinleştirildi":sel.n+" kapatıldı");setSel(null)}}/>`}
@@ -3889,8 +4027,8 @@ function ActionCenter({auth,go,toast,orders}){
 // Otomasyonlar (dürüst: altyapı hazırlanıyor, tarifler görünür)
 function Automations({toast}){const [w,setW]=useState(()=>LS.get("autoWish",[])||[]);
  const R=[["calendar","Her sabah 09:00","Bugünkü randevuları WhatsApp'tan bana özetle"],["table","Yeni kayıt geldiğinde","Satırı Google E-Tablolar'a ekle ve e-posta at"],["chart","Her pazartesi","Geçen haftanın ziyaret ve indirme raporunu gönder"],["db","Her gece","Uygulama verilerinin yedeğini al"],["bell","Poliçe/abonelik bitmeden 30 gün önce","Müşteriye hatırlatma mesajı gönder"],["sparkles","Yeni yorum geldiğinde","Yapay zekâ ile kibar bir yanıt taslağı hazırla"]];
- return html`<div class="explore" style=${{maxWidth:980}}><div class="ac-h"><span class="eyebrow">Yakında</span><h1>Otomasyonlar</h1><p class="sub">Uygulamalarının senin yerine düzenli işler yapmasını sağla. Zamanlayıcı ve tetikleyici altyapısı hazırlanıyor; istediğin tarifleri işaretle, açıldığında ilk sen kullan.</p></div>
-  <div class="cgrid">${R.map(([ic,t,d],i)=>html`<div class="ccard" key=${i} style=${{cursor:"default"}}><${Tile} n=${ic} s=${44}/><div style=${{flex:1}}><b>${t}</b><span>${d}</span></div><button class=${"chip"+(w.includes(i)?" on":"")} onClick=${()=>{const n=w.includes(i)?w.filter(x=>x!==i):[...w,i];setW(n);LS.set("autoWish",n);if(!w.includes(i))toast("Açıldığında haber vereceğiz")}}>${w.includes(i)?"İşaretlendi":"İstiyorum"}</button></div>`)}</div></div>`}
+ return html`<div class="explore" style=${{maxWidth:980}}><div class="ac-h"><span class="eyebrow">Yakında</span><h1>Otomasyonlar</h1><p class="sub">Uygulamalarının senin yerine düzenli işler yapmasını sağla. Zamanlayıcı ve tetikleyici altyapısı hazırlanıyor; ilgilendiğin tarifleri bu cihazda işaretleyebilirsin.</p></div>
+  <div class="cgrid">${R.map(([ic,t,d],i)=>html`<div class="ccard" key=${i} style=${{cursor:"default"}}><${Tile} n=${ic} s=${44}/><div style=${{flex:1}}><b>${t}</b><span>${d}</span></div><button class=${"chip"+(w.includes(i)?" on":"")} aria-pressed=${w.includes(i)} onClick=${()=>{const n=w.includes(i)?w.filter(x=>x!==i):[...w,i];setW(n);LS.set("autoWish",n);toast(w.includes(i)?"İşaret kaldırıldı":"Bu cihazda işaretlendi")}}>${w.includes(i)?"İşaretlendi":"İstiyorum"}</button></div>`)}</div></div>`}
 
 // Komut paleti (Ara · Ctrl/⌘+K)
 function CommandPalette({close,go,openInStudio,onTpl,auth}){
@@ -4033,6 +4171,13 @@ function HomePage(props){const {auth,startTemplate,go}=props;
  const [v,setV]=useState("");const [ph,setPh]=useState("");const [chip,setChip]=useState(null);const [kind,setKind]=useState("app");const [modeOpen,setModeOpen]=useState(false);const [listening,setListening]=useState(false);
  const prefs=LS.get("studioPrefs",{})||{};const [mode,setMode]=useState(prefs.mode||"hizli");const conns=activeIntegrations().length;
  useEffect(()=>{let i=0,c=0,del=false,t;const tick=()=>{const w=HOME_PH[i%HOME_PH.length];if(!del){c++;setPh(w.slice(0,c));if(c>=w.length){del=true;t=setTimeout(tick,1600);return}}else{c--;setPh(w.slice(0,c));if(c<=0){del=false;i++}}t=setTimeout(tick,del?28:55)};tick();return()=>clearTimeout(t)},[]);
+ useEffect(()=>{
+  if(!modeOpen)return;
+  const outside=e=>{if(!e.target.closest(".hbm,.hbm-l"))setModeOpen(false)};
+  const escape=e=>{if(e.key==="Escape"){setModeOpen(false);document.querySelector(".hbm")?.focus()}};
+  document.addEventListener("pointerdown",outside);window.addEventListener("keydown",escape);
+  return ()=>{document.removeEventListener("pointerdown",outside);window.removeEventListener("keydown",escape)};
+ },[modeOpen]);
  const setM=m=>{setMode(m);LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode:m});setModeOpen(false)};
  const submit=e=>{e&&e.preventDefault();const p=v.trim();if(!p)return;LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode,kind});startTemplate({prompt:p,kind})};
  const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.onresult=e=>setV(x=>(x?x+" ":"")+[...e.results].map(y=>y[0].transcript).join(" "));r.onend=()=>setListening(false);setListening(true);r.start()};
@@ -4042,17 +4187,17 @@ function HomePage(props){const {auth,startTemplate,go}=props;
    <button class="home-pill" onClick=${()=>go("baglantilar")}><span class="hp-ic">${["sparkles","bolt","db"].map(n=>html`<i key=${n}><${Icon} n=${n} s=${13} c="#0a0a0a" w=${2}/></i>`)}</span>Uygulamalarına yapay zekâ ve servis ekle <${Icon} n="arrowRight" s=${16}/></button>
    <h1 class="home-h">${first?html`Yapmaya hazır mısın, <span class="hl">${first}</span>?`:html`Fikrini yaz, <span class="hl">gitmapp</span> yapsın.`}</h1>
    <div class=${"gbox hg"+(v.trim()?" typing":"")}><form class="home-box" onSubmit=${submit}>
-    <${GhostTA} className="hta" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+(chip?CHIP_PH[chip]:ph)+" yapmasını iste"}/>
+    <${GhostTA} className="hta" aria-label="Yeni proje fikri" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+(chip?CHIP_PH[chip]:ph)+" yapmasını iste"}/>
     <div class="hb-row"><div class="hb-group">
      <button type="button" class="hbi" title="Çizim ya da görsel ekle" onClick=${()=>startTemplate({sketch:"layout",kind})}><${Icon} n="plus" s=${18}/></button>
      <button type="button" class="hbw" onClick=${()=>go("baglantilar")}><${Icon} n="grid" s=${15}/> Çalışma alanı${conns?html`<em>${conns}</em>`:""}</button>
      <div class="seg mini">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([k,ic,l])=>html`<button type="button" key=${k} class=${kind===k?"on":""} onClick=${()=>setKind(k)}><${Icon} n=${ic} s=${13}/>${l}</button>`)}</div>
      </div><div class="hb-group hb-actions">
-     <span style=${{position:"relative"}}><button type="button" class="hbm" onClick=${()=>setModeOpen(!modeOpen)}>${{hizli:"Yap",planli:"Planla",ajan:"Ajan"}[mode]} <${Icon} n="chevDown" s=${14}/></button>
-      ${modeOpen&&html`<div class="hbm-l glass" onMouseLeave=${()=>setModeOpen(false)}>${[["hizli","zap","Yap","Hemen yazmaya başlar"],["planli","compass","Planla","Önce plan çıkarır, onayınla yapar"],["ajan","list","Ajan","İşi adımlara böler, adım adım yapar"]].map(([k,ic,t,d])=>html`<button type="button" key=${k} class=${mode===k?"on":""} onClick=${()=>setM(k)}><${Icon} n=${ic} s=${16}/><div><b>${t}</b><span>${d}</span></div>${mode===k?html`<${Icon} n="check" s=${15}/>`:""}</button>`)}</div>`}</span>
+     <span style=${{position:"relative"}}><button type="button" class="hbm" aria-expanded=${modeOpen} aria-controls="home-production-modes" onClick=${()=>setModeOpen(!modeOpen)}>${{hizli:"Yap",planli:"Planla",ajan:"Ajan"}[mode]} <${Icon} n="chevDown" s=${14}/></button>
+      ${modeOpen&&html`<div class="hbm-l glass" id="home-production-modes">${[["hizli","zap","Yap","Hemen yazmaya başlar"],["planli","compass","Planla","Önce plan çıkarır, onayınla yapar"],["ajan","list","Ajan","İşi adımlara böler, adım adım yapar"]].map(([k,ic,t,d])=>html`<button type="button" key=${k} class=${mode===k?"on":""} onClick=${()=>setM(k)}><${Icon} n=${ic} s=${16}/><div><b>${t}</b><span>${d}</span></div>${mode===k?html`<${Icon} n="check" s=${15}/>`:""}</button>`)}</div>`}</span>
      <button type="button" class=${"hbi"+(listening?" rec":"")} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${17}/></button>
      <button type="button" class="hbe" disabled=${v.trim().length<6} title="İstemi yapay zekâ için ayrıntılandır (kredi harcamaz)" onClick=${()=>setV(enhancePrompt(v,kind))}><${Icon} n="wand" s=${16}/><span>İyileştir</span></button>
-     <button class="hbs" disabled=${!v.trim()} title="Başlat (Enter)"><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
+     <button class="hbs" disabled=${!v.trim()} aria-label="Başlat" title=${GS.sendKey==="mod"?"Başlat (Ctrl/⌘+Enter)":"Başlat (Enter)"}><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
     </div></div></form></div>
    ${v.trim().length>4&&html`<div class="qadd" key="qa">${QUICK_ADD[kind].map(([ic,l,t],i)=>html`<button key=${l} style=${{animationDelay:i*40+"ms"}} onClick=${()=>setV(addTo(v,t))}><${Icon} n=${ic} s=${14}/>+ ${l}</button>`)}</div>`}
    <div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class=${"hc"+(chip===l?" on":"")} onClick=${()=>{if(chip===l){setChip(null);return}setChip(l);setKind(k);const t=document.querySelector("textarea.hta");t&&t.focus()}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>
@@ -4200,8 +4345,8 @@ function ModelPicker({models,sel,setSel,close,auth,toast,go}){
  const groups={};list.forEach(m=>{(groups[m.family]=groups[m.family]||[]).push(m)});
  const pick=m=>{setSel({provider:tab,model:m.id});close()};
  const PB={anthropic:"claude",gemini:"gemini",deepseek:"deepseek",openrouter:"openrouter"};
- return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="mp" onClick=${e=>e.stopPropagation()}>
-  <div class="mp-h"><span class="mp-hi"><${Icon} n="cpu" s=${20}/></span><div style=${{flex:1}}><h2>Dil modeli seç</h2><p>Gitmapp kredisiyle hazır modelleri kullan ya da kendi API anahtarınla çalış (kendi anahtarında Gitmapp kredisi düşmez).</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+ return html`<${UiDialog} label="Dil modeli seç" width="980px" close=${close}><div class="mp">
+  <div class="mp-h"><span class="mp-hi"><${Icon} n="cpu" s=${20}/></span><div style=${{flex:1}}><h2>Dil modeli seç</h2><p>Gitmapp kredisiyle hazır modelleri kullan ya da kendi API anahtarınla çalış (kendi anahtarında Gitmapp kredisi düşmez).</p></div><button class="ib" aria-label="Model seçiciyi kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
   <div class="mp-tabs"><button class=${tab==="gitmapp"?"on":""} onClick=${()=>setTab("gitmapp")}><${Icon} n="gem" s=${15}/> Gitmapp kredisi</button>${conn.map(b=>html`<button key=${b.provider} class=${tab===b.provider?"on":""} onClick=${()=>setTab(b.provider)}>${PB[b.provider]?html`<${BrandLogo} b=${PB[b.provider]} s=${18} tile=${false}/>`:html`<${Icon} n="key" s=${15}/>`} ${b.label}</button>`)}<button onClick=${()=>{close();go("hesabim")}}><${Icon} n="plus" s=${15}/> Kendi anahtarımı bağla</button></div>
   ${tab==="gitmapp"&&html`<div class="mp-tiers">${Object.entries(TIER_INFO).map(([k,t])=>html`<div key=${k} class="mp-tier" style=${{["--tc"]:t.c}}><span class="mp-ti"><${Icon} n=${TIER_IC[k]} s=${16} w=${2}/></span><div><b>${t.l} <em>${(d.tiers||{})[k]||"?"} kredi</em></b><span>${t.d}</span></div></div>`)}</div>`}
   <div class="mp-body">${loading?html`<div class="empty">Modeller yükleniyor…</div>`:!list.length?html`<div class="empty">${tab==="gitmapp"?(d.error||"Model listesi alınamadı."):"Bu anahtarla model bulunamadı."}</div>`:
@@ -4209,7 +4354,7 @@ function ModelPicker({models,sel,setSel,close,auth,toast,go}){
    <div class="mp-fh"><${FamLogo} f=${f} s=${44}/><div style=${{flex:1,minWidth:0}}><b>${F.n} <span>· ${F.by}</span></b><p>${F.best}</p><div class="mp-sk">${(FAM_SKILLS[f]||[]).map(x=>html`<span key=${x}>${x}</span>`)}</div></div></div>
    <div class="mp-grid">${ms.map(m=>{const on=sel.provider===tab&&sel.model===m.id;return html`<button key=${m.id} class=${"mp-m"+(on?" on":"")} onClick=${()=>pick(m)}><div class="mp-mt"><b>${shortModel(m.id)}</b>${d.default===m.id&&tab==="gitmapp"?html`<span class="mp-rec"><${Icon} n="star" s=${11} w=${2.2}/> Önerilen</span>`:""}</div><div class="mp-mm"><${TierBadge} t=${m.tier}/>${tab==="gitmapp"?html`<span class="mp-cr"><${Icon} n="gem" s=${12}/> ${m.credits} kredi</span>`:html`<span class="mp-cr">kendi anahtarın</span>`}${on?html`<span class="mp-ok"><${Icon} n="check" s=${14} w=${2.4}/></span>`:""}</div></button>`})}</div></section>`})}</div>
   <div class="mp-f"><${Icon} n="help" s=${14}/> Hangi modelin neye iyi geldiğini ayrıntılı görmek için <a href="#modeller" onClick=${close}>Dil Modelleri</a> sayfasına bak.</div>
- </div></div>`;
+ </div></${UiDialog}>`;
 }
 
 function ModelsPage({models,go}){
@@ -4604,9 +4749,10 @@ function App(){
  const installButton=()=>!installed&&html`<button class="btn g" onClick=${installApp}><${Icon} n="download" s=${15}/> Uygulamayı yükle</button>`;
 
  const CUST=["ana","magaza","studio","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","kullanicilar","yonetim-projeler","siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
- const hv=()=>{const v=location.hash.slice(1);if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
+ const hv=()=>{const v=location.hash.slice(1).split("?")[0];if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(()=>LS.get("compactStudio",false));const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
- const setView=v=>{if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
+ const canLeaveStudio=v=>view!=="studio"||v==="studio"||!window.__gmStudio?.calisiyor||confirm("Üretim sürüyor. Sayfadan ayrılmak istiyor musun?");
+ const setView=v=>{if(!canLeaveStudio(v))return;if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
  const [health,setHealth]=useState({}),[apiOn,setApiOn]=useState(false),[healthError,setHealthError]=useState(false),[attempt,retry]=useState(0);
  const [,setSettingsVersion]=useState(0);
  const [msg,setMsg]=useState("");const toast=m=>{window.__gmToast=toast;window.__gmLastToast={m:String(m||""),t:Date.now()};setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
@@ -4621,14 +4767,15 @@ function App(){
  const auth=useAuth(apiOn);
  const models=useModels(apiOn,auth.user&&auth.user.id);
  const [resumeVersions,setResumeVersions]=useState(false);
- useEffect(()=>{const h=()=>{const v=location.hash.slice(1);
+ useEffect(()=>{const h=()=>{const v=location.hash.slice(1).split("?")[0];
+   if(v==="magaza")setSq(storeRoute(location.hash));
    if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v==="github-dallar"){auth.refresh();setResumeVersions(true);setView("studio");return}
    if(v==="github-baglandi"){auth.refresh();toast("GitHub hesabınız bağlandı 🐙");setView("uygulamalarim");return}
    if(v==="auth-hata"||v==="auth-eposta-yok"){toast(v==="auth-hata"?"Giriş tamamlanamadı, tekrar deneyin":"Hesabınızda doğrulanmış e-posta bulunamadı");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v.startsWith("app/")){setAppSlug(decodeURIComponent(v.slice(4)));setViewS("detay");setMode("musteri");return}
    if(v==="admin"){setView("yonetim");return}
-   if(ALL.includes(v)){setViewS(v);if(ADMIN.includes(v))setMode("admin");if(CUST.includes(v))setMode("musteri")}};
+   if(!v||ALL.includes(v)){setViewS(v||"ana");if(ADMIN.includes(v))setMode("admin");if(!v||CUST.includes(v))setMode("musteri")}};
   h();window.addEventListener("hashchange",h);return()=>window.removeEventListener("hashchange",h)},[apiOn]);
  const isNew=LS.get("seenVer","")!==VERSION&&view!=="guncel";
  const [results,setResults]=useState([]);const [cur,setCur]=useState(null);
@@ -4640,8 +4787,28 @@ function App(){
   addEventListener("gm:settings-open",o);addEventListener("gm:busy",b);addEventListener("keydown",k);return()=>{removeEventListener("gm:settings-open",o);removeEventListener("gm:busy",b);removeEventListener("keydown",k)}},[]);
  useEffect(()=>{if(auth.user)gsFromUser(auth.user)},[auth.user&&auth.user.id]);
  const togglePin=id=>{const p=GS.pins||[];gsSet({pins:p.includes(id)?p.filter(x=>x!==id):[id,...p].slice(0,30)})};
- const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
+ const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState(()=>storeRoute(location.hash));const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
+ useEffect(()=>{
+  if(!wsMenu&&!more&&!sMenu)return;
+  const outside=e=>{if(wsMenu&&!e.target.closest(".wsw,.wsw-m"))setWsMenu(false);if(sMenu&&!e.target.closest(".side-more"))setSMenu(false)};
+  const escape=e=>{
+   if(e.key!=="Escape")return;
+   if(wsMenu){setWsMenu(false);document.querySelector(".wsw")?.focus()}
+   if(sMenu){setSMenu(false);document.querySelector(".side-more>.ib")?.focus()}
+   if(more){setMore(false);document.querySelector(".bnav-more")?.focus()}
+  };
+  document.addEventListener("pointerdown",outside);window.addEventListener("keydown",escape);
+  return ()=>{document.removeEventListener("pointerdown",outside);window.removeEventListener("keydown",escape)};
+ },[wsMenu,more,sMenu]);
+ useEffect(()=>{
+  if(!more)return;
+  document.querySelector(".sheet-close button")?.focus({preventScroll:true});
+  const desktop=matchMedia("(min-width:821px)");
+  const resize=()=>{if(desktop.matches)setMore(false)};
+  desktop.addEventListener("change",resize);
+  return ()=>desktop.removeEventListener("change",resize);
+ },[more]);
  const openAuth=reason=>{LS.set("afterAuth",view);setAuthModal(reason||"")};
  const toggleSave=r=>{const n={...saved};if(n[r.full_name])delete n[r.full_name];else n[r.full_name]=r;setSaved(n);LS.set("saved",n)};
  const setSec=(k,v)=>setSecs(s=>{const n={...s,[k]:v};LS.set("secs",n);return n});
@@ -4664,20 +4831,39 @@ function App(){
  const [projectStatus,setProjectStatus]=useState("");
  const overview=useRemoteData(isAdm&&mode==="admin"?"/api/admin/overview":null,auth.user?.id);
  const needLogin=adminPage&&(!apiOn||auth.phase!=="ready"||!isAdm);
- const switchMode=m=>{setMode(m);setView(m==="admin"?"yonetim":"ana")};
+ const switchMode=m=>setView(m==="admin"?"yonetim":"ana");
  const useTemplate=async t=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!h.includes("Gitmapp hazır şablonu")||!/<script>window\.(APP|SITE)=/.test(h))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
    setIncoming({openDesign:t.openDesign===true,html:h,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,appId:null,msgs:[{role:"assistant",content:"“"+t.name+"” şablonu hazır. Önizlemedeki okla bir öğe seçebilir veya Tasarım sekmesinde düzenleyebilirsin."}]});setView("studio")}catch(e){toast(e.message)}};
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
- const goStore=(o)=>{setSq({q:"",cat:"",...o,n:Date.now()});setView("magaza")};
-
- const NAVC=[["ana","Yeni"],["$ara","Ara",0,"⌘K"],["studio","Geliştir"],["$asistan","Asistan",0,"⌘J"],["magaza","Keşfet"],["uygulamalarim","Projeler"],["sablonlar","Şablonlar"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],"$recent","$more",...(moreOpen?[["oyunlar","Oyna"],["kategoriler","Kategoriler"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]]:[]),"",["guncel","Güncellemeler",isNew?"YENİ":0]];
+ const goStore=(o={},fromBack=false)=>{
+  if(!canLeaveStudio("magaza"))return;
+  const params=new URLSearchParams();
+  if(o.cat)params.set("cat",o.cat);
+  if(o.q)params.set("q",o.q);
+  if(o.sort==="yeni")params.set("sort",o.sort);
+  if(o.full)params.set("tum","1");
+  const hash="#magaza"+(params.size?"?"+params:"");
+  if(location.hash!==hash)history[fromBack?"replaceState":"pushState"](null,"",hash);
+  setSq(storeRoute(hash));setViewS("magaza");setMode("musteri");
+  if(view!=="magaza"||fromBack)window.scrollTo(0,0);
+ };
+ const backToStore=()=>{
+  const origin=history.state?.storeOrigin;
+  if(origin?.startsWith("#magaza")&&history.state?.storeSteps)history.go(-history.state.storeSteps);
+  else goStore({},true);
+ };
+ const NAVC=[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],"$recent",
+  "Katalog",["magaza","Keşfet"],["sablonlar","Şablonlar"],["$ara","Ara",0,"⌘K"],
+  "Araçlar",["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],"$more",
+  "",["guncel","Güncellemeler",isNew?"YENİ":0]];
+ const MORE_NAV=[["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],["oyunlar","Oyunlar"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]];
  const NAVA=[["yonetim","Yönetim merkezi"],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
- const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
- const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":k==="magaza"?view==="magaza"&&sq.cat!=="oyun":view===k;
+ const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){const storeOrigin=view==="magaza"?location.hash:history.state?.storeOrigin;setAppSlug(k.slice(4));setViewS("detay");history.pushState({storeOrigin,storeSteps:storeOrigin?(view==="magaza"?1:(history.state?.storeSteps||0)+1):0},"","#"+k);window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
+ const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":view===k;
  const TITLES={yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
- const navList=(cls)=>NAV.map((it,i)=>it==="$recent"?(myApps.length>0&&(()=>{const pins=gs.pins||[];const pinned=pins.map(id=>myApps.find(a=>a.id===id)).filter(Boolean);const rest=myApps.filter(a=>!pins.includes(a.id)).slice(0,5);
-   const row=(a,on)=>html`<div key=${a.id} role="button" tabindex="0" class="nav rec" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span><button type="button" class=${"rec-pin"+(on?" on":"")} title=${on?"Sabitlemeyi kaldır":"Sabitle"} aria-label=${on?"Sabitlemeyi kaldır":"Sabitle"} onClick=${e=>{e.stopPropagation();togglePin(a.id)}}><${Icon} n="pin" s=${13}/></button></div>`;
-   return html`<div key="rec">${pinned.length>0&&html`<div class="nav-sec">Sabitlenmiş</div>${pinned.map(a=>row(a,true))}`}${rest.length>0&&html`<div class="nav-sec">Projeler</div>${rest.map(a=>row(a,false))}`}</div>`})()):it==="$more"?html`<button key="more" class="nav more" onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} data-v=${it[0]} class=${"nav "+cls+(navOn(it[0])||it[0]==="$asistan"&&cp?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[0]==="studio"&&stBusy&&view!=="studio"?html`<span class="nav-dot" title="Kod yazılıyor; açmak için tıkla"></span>`:it[0]==="$beceri"&&skillsOn().length?html`<b>${skillsOn().length}</b>`:it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
+ const navList=(mobile=false,items=NAV)=>items.map((it,i)=>it==="$recent"?(myApps.length>0&&(()=>{const pins=gs.pins||[];const pinned=pins.map(id=>myApps.find(a=>a.id===id)).filter(Boolean);const rest=myApps.filter(a=>!pins.includes(a.id)).slice(0,5);
+   const row=(a,on)=>html`<div key=${a.id} class="nav rec"><button type="button" class="rec-open" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button><button type="button" class=${"rec-pin"+(on?" on":"")} title=${on?"Sabitlemeyi kaldır":"Sabitle"} aria-label=${a.title+(on?" sabitlemesini kaldır":" projesini sabitle")} aria-pressed=${on} onClick=${e=>{e.stopPropagation();togglePin(a.id)}}><${Icon} n="pin" s=${13}/></button></div>`;
+   return html`<div key="rec">${pinned.length>0&&html`<div class="nav-sec">Sabitlenmiş</div>${pinned.map(a=>row(a,true))}`}${rest.length>0&&html`<div class="nav-sec">Son projeler</div>${rest.map(a=>row(a,false))}`}</div>`})()):it==="$more"?html`<div key="more"><button class="nav more" aria-expanded=${moreOpen} aria-controls=${mobile?"mobile-more-links":"side-more-links"} onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button><div id=${mobile?"mobile-more-links":"side-more-links"} hidden=${!moreOpen}>${moreOpen&&navList(mobile,MORE_NAV)}</div></div>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} data-v=${it[0]} class=${"nav"+(navOn(it[0])||it[0]==="$asistan"&&cp?" on":"")} aria-current=${navOn(it[0])&&it[0]!=="oyunlar"?"page":undefined} aria-label=${it[1]} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[0]==="studio"&&stBusy&&view!=="studio"?html`<span class="nav-dot" title="Kod yazılıyor"></span>`:it[0]==="$beceri"&&skillsOn().length?html`<b>${skillsOn().length}</b>`:it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
  const initials=u=>((u.name||u.email||"?").split(/[\s@]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("")||"?").toUpperCase();
  const NAV=mode==="admin"&&isAdm?NAVA:NAVC;
  // Asistanın eylemlerini uygula
@@ -4694,25 +4880,25 @@ function App(){
  const cpCtx=()=>({sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
   <aside class="side glass noprint">${view==="studio"&&html`<button class="ib studio-nav-switch" aria-label=${compact?"Menüyü genişlet":"Menüyü daralt"} title=${compact?"Menüyü genişlet":"Menüyü daralt"} onClick=${()=>{setCompact(!compact);LS.set("compactStudio",!compact)}}><${Icon} n="menu" s=${16}/></button>`}<div class="side-top"><div class="logo"><${BrandMark} s=${32} label="Gitmapp"/><${Wordmark} s=${21}/></div>
-    <div class="side-more"><button class="ib" aria-label="Diğer seçenekler" aria-expanded=${sMenu} title="Ayarlar ve diğer" onClick=${()=>setSMenu(!sMenu)}><${Icon} n="more" s=${18}/></button>
-     ${sMenu&&html`<div class="smenu" role="menu" onMouseLeave=${()=>setSMenu(false)}>
-      <button role="menuitem" onClick=${()=>{setSMenu(false);openSettings("genel")}}><${Icon} n="cog" s=${16}/> Ayarlar<kbd>⌘,</kbd></button>
-      ${auth.user&&html`<button role="menuitem" onClick=${()=>{setSMenu(false);openSettings("profil")}}><${Icon} n="user" s=${16}/> Profil ve talimatlar</button>`}
-      ${auth.user&&html`<button role="menuitem" onClick=${()=>{setSMenu(false);openSettings("kullanim")}}><${Icon} n="chart" s=${16}/> Kullanım</button>`}
-      <button role="menuitem" onClick=${()=>{setSMenu(false);openSettings("yetenekler")}}><${Icon} n="sparkles" s=${16}/> Yetenekler</button>
-      <hr/><button role="menuitem" onClick=${()=>{setSMenu(false);navGo("guncel")}}><${Icon} n="download" s=${16}/> Güncellemeler<kbd>v${VERSION}</kbd></button>
-      <button role="menuitem" onClick=${()=>{setSMenu(false);sincap("manual")}}><${BrandMark} s=${16}/> Fındık'a sor</button>
-      ${auth.user&&html`<hr/><button role="menuitem" onClick=${()=>{setSMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${16}/> Çıkış yap</button>`}
+    <div class="side-more"><button class="ib" aria-label="Diğer seçenekler" aria-expanded=${sMenu} aria-controls="side-options" title="Ayarlar ve diğer" onClick=${()=>setSMenu(!sMenu)}><${Icon} n="more" s=${18}/></button>
+     ${sMenu&&html`<div class="smenu" id="side-options">
+      <button onClick=${()=>{setSMenu(false);openSettings("genel")}}><${Icon} n="cog" s=${16}/> Ayarlar<kbd>⌘,</kbd></button>
+      ${auth.user&&html`<button onClick=${()=>{setSMenu(false);openSettings("profil")}}><${Icon} n="user" s=${16}/> Profil ve talimatlar</button>`}
+      ${auth.user&&html`<button onClick=${()=>{setSMenu(false);openSettings("kullanim")}}><${Icon} n="chart" s=${16}/> Kullanım</button>`}
+      <button onClick=${()=>{setSMenu(false);openSettings("yetenekler")}}><${Icon} n="sparkles" s=${16}/> Yetenekler</button>
+      <hr/><button onClick=${()=>{setSMenu(false);navGo("guncel")}}><${Icon} n="download" s=${16}/> Güncellemeler<kbd>v${VERSION}</kbd></button>
+      <button onClick=${()=>{setSMenu(false);sincap("manual")}}><${BrandMark} s=${16}/> Fındık'a sor</button>
+      ${auth.user&&html`<hr/><button onClick=${()=>{setSMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${16}/> Çıkış yap</button>`}
      </div>`}</div></div>
-   <div style=${{position:"relative"}}><button class="wsw" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?(isAdm?"Yönetici görünümü":"Yönetici girişi"):"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
-    ${wsMenu&&html`<div class="wsw-m glass" onMouseLeave=${()=>setWsMenu(false)}><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
-   <nav class="navs">${navList("")}</nav>
+   <div style=${{position:"relative"}}><button class="wsw" aria-expanded=${wsMenu} aria-controls="workspace-options" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?(isAdm?"Yönetici görünümü":"Yönetici girişi"):"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
+    ${wsMenu&&html`<div class="wsw-m glass" id="workspace-options"><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
+   <nav class="navs" aria-label="Ana menü">${navList()}</nav>
    <div class="side-foot">${installButton()}
     ${mode==="musteri"&&html`<button class="refc" onClick=${async()=>{if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",u)}}}><div><b>Gitmapp'i paylaş</b><span>Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi</span></div><span class="refc-i"><${Icon} n="gift" s=${20}/></span></button>`}
     ${apiOn?(auth.user?html`<div class="me" onClick=${()=>openSettings("profil")} title="Profil ve ayarlar"><${UserAvatar} u=${auth.user} s=${34}/><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><span class="me-cr" title="Kredilerim: canlı harcama" onClick=${e=>{e.stopPropagation();setCrOpen(true)}}><${Icon} n="gem" s=${11}/> <${CountUp} v=${auth.user.credits??0}/> kredi</span>${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
-  <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${NavIcon} k=${k} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
-  ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div><button class="sheet-st" onClick=${()=>{setMore(false);openSettings("genel")}}><${UserAvatar} u=${auth.user||{name:"Misafir"}} s=${30}/><span><b>${auth.user?(auth.user.nickname||auth.user.name||auth.user.email):"Misafir"}</b><small>Ayarlar, profil ve kullanım</small></span><${Icon} n="chevRight" s=${16}/></button>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></div></div>`}
+  <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} aria-current=${navOn(k)?"page":undefined} onClick=${()=>navGo(k)}><span class="bn-ic"><${NavIcon} k=${k} s=${21}/></span><span>${l}</span></button>`)}<button class=${"bnav-more"+(more?" on":"")} aria-expanded=${more} aria-controls="mobile-navigation" onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
+  ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><nav class="sheet glass" id="mobile-navigation" aria-label="Mobil menü" onClick=${e=>e.stopPropagation()}><div class="sheet-close"><span>Menü</span><button class="ib sm" aria-label="Menüyü kapat" onClick=${()=>{setMore(false);document.querySelector(".bnav-more")?.focus()}}><${Icon} n="x" s=${15}/></button></div><button class="sheet-st" onClick=${()=>{setMore(false);openSettings("genel")}}><${UserAvatar} u=${auth.user||{name:"Misafir"}} s=${30}/><span><b>${auth.user?(auth.user.nickname||auth.user.name||auth.user.email):"Misafir"}</b><small>Ayarlar, profil ve kullanım</small></span><${Icon} n="chevRight" s=${16}/></button>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList(true)}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></nav></div>`}
   <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span>${auth.user&&html`<button class="crchip" style=${{marginLeft:"auto"}} onClick=${()=>setCrOpen(true)}><${Icon} n="gem" s=${12}/><${CountUp} v=${auth.user.credits??0}/></button>`}</div>`}
    ${needLogin?html`<section class="box adm-gate">
     ${healthError||auth.phase==="error"?html`<h1>Yönetici girişi</h1><p role="alert">Oturum sunucusuna ulaşılamadı.</p><button class="btn" onClick=${()=>apiOn?auth.refresh():retry(x=>x+1)}>Tekrar dene</button>`:
@@ -4722,16 +4908,16 @@ function App(){
     <button class="btn g" onClick=${()=>switchMode("musteri")}>Kullanıcı alanına dön</button></section>`:html`<div key=${adminPage?auth.user?.id:"public"}>
    ${view==="yonetim"&&html`<${AdminHome} request=${overview} go=${(page,status)=>{setProjectStatus(status);setView(page)}}/>`}
    ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
-   ${view==="studio"&&html`<${Studio} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
+   ${view==="studio"&&html`<${Studio} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
    ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
    ${view==="otomasyon"&&html`<${Automations} toast=${toast}/>`}
    ${view==="sablonlar"&&html`<${TemplatesPage} onUse=${useTemplate} toast=${toast}/>`}
-   ${view==="detay"&&html`<${AppDetail} key=${appSlug} slug=${appSlug} go=${navGo} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio} toast=${toast} startTemplate=${startTemplate}/>`}
+   ${view==="detay"&&html`<${AppDetail} key=${appSlug} slug=${appSlug} go=${navGo} backToStore=${backToStore} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio} toast=${toast} apiOn=${apiOn} healthError=${healthError} retry=${()=>retry(x=>x+1)}/>`}
    ${view==="modeller"&&html`<${ModelsPage} models=${models} go=${setView}/>`}
    ${view==="hesabim"&&html`<${Account} auth=${auth} health=${health} toast=${toast} models=${models} go=${setView}/>`}
-   ${view==="magaza"&&html`<${Store} onTpl=${useTemplate} apiOn=${apiOn} go=${navGo} q0=${sq.q} cat0=${sq.cat} key=${sq.n} startTemplate=${startTemplate} toast=${toast} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio}/>`}
+   ${view==="magaza"&&html`<${Store} onTpl=${useTemplate} apiOn=${apiOn} healthError=${healthError} retry=${()=>retry(x=>x+1)} go=${navGo} filters=${sq} onFilters=${goStore} startTemplate=${startTemplate}/>`}
    ${view==="uygulamalarim"&&html`<${ProjectsPage} go=${navGo} onTpl=${useTemplate} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
    ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>{track("app_want",{repo:r.full_name,category:c&&c.id});goWizard(r,null,c)}} onDetail=${r=>{track("app_view",{repo:r.full_name,category:storeCat&&storeCat.id});setCur(r)}} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
    ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView}/>`}

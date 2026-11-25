@@ -93,3 +93,22 @@ test("manager directories, credit ledger, order data and shared settings stay co
   const settings=await request("GET","settings");
   assert.deepEqual(settings,{status:200,business,prices});
 });
+
+test("optional profile fields can be saved and cleared", async t => {
+  const {request,member}=await fixture(t);
+  const save=body=>request("PATCH","me/profile",body,member.token);
+
+  const updated=await save({nickname:"Mete",instructions:""});
+  assert.equal(updated.status,200);
+  assert.equal(updated.user.nickname,"Mete");
+  assert.equal(updated.user.instructions,"");
+
+  const instructions=await save({nickname:"",instructions:"  Kısa yanıtlar yaz.  "});
+  assert.equal(instructions.status,200);
+  assert.equal(instructions.user.nickname,"");
+  assert.equal(instructions.user.instructions,"Kısa yanıtlar yaz.");
+
+  const cleared=await save({instructions:""});
+  assert.equal(cleared.status,200);
+  assert.equal(cleared.user.instructions,"");
+});

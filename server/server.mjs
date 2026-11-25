@@ -504,7 +504,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.11.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.11.1" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -526,9 +526,9 @@ route("PATCH", "/api/me/profile", ({ user, body }) => {
   need(user, 401, "Giriş yapın");
   const set = {};
   if (body.name !== undefined) { const v = String(body.name || "").trim(); need(v.length >= 1 && v.length <= 80, 400, "Ad soyad 1-80 karakter olmalı"); set.name = v; }
-  if (body.nickname !== undefined) set.nickname = str(body.nickname, 40, "Hitap").trim();
+  if (body.nickname !== undefined) set.nickname = (str(body.nickname, 40, "Hitap") || "").trim();
   if (body.role !== undefined) { const v = String(body.role || "").trim(); need(!v || PROFILE_ROLES.includes(v), 400, "İş alanı listede yok"); set.role = v; }
-  if (body.instructions !== undefined) set.instructions = str(body.instructions, 1500, "Talimatlar").trim();
+  if (body.instructions !== undefined) set.instructions = (str(body.instructions, 1500, "Talimatlar") || "").trim();
   if (body.avatar !== undefined) { const v = String(body.avatar || ""); need(!v || (/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v) && v.length <= 120000), 400, "Profil fotoğrafı geçersiz ya da çok büyük"); set.avatar = v; }
   if (body.prefs !== undefined) {
     need(body.prefs && typeof body.prefs === "object" && !Array.isArray(body.prefs), 400, "Tercihler geçersiz");
