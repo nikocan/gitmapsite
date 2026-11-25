@@ -419,7 +419,7 @@ const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, sl
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
-route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "4.4.1" }));
+route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "4.5.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -483,6 +483,35 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
+});
+// Return a bounded property patch. The editor owns the target and applies it after review.
+const designChoices = {
+  textAlign: ["left", "center", "right"], fontFamily: ["system-ui", "Georgia", "monospace"],
+  flexDirection: ["row", "column"], justifyContent: ["flex-start", "center", "space-between", "flex-end"],
+  icon: ["★", "→", "✓", "◆", "✦", "●"]
+};
+route("POST", "/api/ai/design", async ({ body, user, req }) => {
+  const prompt = str(body.prompt, 2000, "İstek", true);
+  const target = { tag: str(body.tag, 60, "Öğe", true), label: str(body.label, 120, "Etiket"), current: JSON.stringify(body.current ?? {}).slice(0, 1800) };
+  const skill = str(body.skill, 120, "Beceri");
+  const rt = await resolveRoute(user, body, req, "plan");
+  const instructions = String(body.settings?.instructions || "").slice(0, 2500);
+  const system = "Seçilen arayüz öğesinin tasarımını iyileştir. Yalnız değişen özellikleri tek bir JSON nesnesinde döndür. " +
+    "color, backgroundColor: #RRGGBB. padding, gap, borderRadius: 0-96 arasında tamsayı piksel. fontSize: 1-96. " +
+    (body.leaf === true ? "text: en çok 500 karakter düz metin. " : "") + "Diğer seçenekler: " + JSON.stringify(designChoices);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: system }, { role: "user", content: JSON.stringify({ target, prompt, skill, instructions }) }], 700);
+  let raw;
+  try { raw = JSON.parse(text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "")); } catch {}
+  need(raw && typeof raw === "object" && !Array.isArray(raw), 502, "Tasarım önerisi okunamadı");
+  const values = {};
+  for (const [k, v] of Object.entries(raw)) {
+    if (["color", "backgroundColor"].includes(k) && typeof v === "string" && /^#[a-f0-9]{6}$/i.test(v)) values[k] = v;
+    if (["padding", "gap", "fontSize", "borderRadius"].includes(k) && Number.isInteger(v) && v >= (k === "fontSize" ? 1 : 0) && v <= 96) values[k] = v;
+    if (Object.hasOwn(designChoices, k) && designChoices[k].includes(v)) values[k] = v;
+    if (k === "text" && body.leaf === true && typeof v === "string" && v.length <= 500) values.text = v;
+  }
+  need(Object.keys(values).length, 502, "Model uygulanabilir bir özellik önermedi");
+  return { values, credits: charge(user, rt, "design", usage), spent: rt.credits };
 });
 route("POST", "/api/ai/plan", async ({ body, user, req }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
