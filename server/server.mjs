@@ -57,6 +57,9 @@ CREATE TABLE IF NOT EXISTS credit_log(id INTEGER PRIMARY KEY AUTOINCREMENT, user
 `);
 try { db.exec("ALTER TABLE users ADD COLUMN credits INTEGER DEFAULT " + (+(E.SIGNUP_CREDITS || 25))); } catch { }
 try { db.exec("ALTER TABLE apps ADD COLUMN meta TEXT DEFAULT '{}'"); } catch { }
+try { db.exec("ALTER TABLE users ADD COLUMN ref_by TEXT"); } catch { }
+try { db.exec("ALTER TABLE users ADD COLUMN ref_paid INTEGER DEFAULT 0"); } catch { }
+db.exec("CREATE TABLE IF NOT EXISTS app_data(slug TEXT NOT NULL, k TEXT NOT NULL, v TEXT, updated TEXT DEFAULT (datetime('now')), PRIMARY KEY(slug,k))");
 const q = (sql) => db.prepare(sql);
 const now = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 const rid = (n = 12) => crypto.randomBytes(n * 2).toString("base64url").replace(/[-_]/g, "").slice(0, n);
@@ -283,6 +286,40 @@ function imageParts(body) {
   return out;
 }
 const withImages = (text, img) => img.parts.length ? [{ type: "text", text }, ...img.parts] : text;
+// Bağlantılar (konnektörler): istemcinin etkinleştirdiği servisler için güvenli kurallar
+const clean = (v, n = 200) => String(v ?? "").replace(/[<>`"\\]/g, "").trim().slice(0, n);
+const httpsUrl = (v) => /^https:\/\/[^\s<>"']{4,300}$/.test(v || "") ? v : "";
+const CONN_RULES = {
+  whatsapp: (c) => c.phone && `WhatsApp: sağ altta sabit yeşil bir WhatsApp düğmesi ve sipariş/iletişim noktalarında https://wa.me/${clean(c.phone).replace(/\D/g, "")}?text=... bağlantıları kullan (mesajı encodeURIComponent ile hazırla).`,
+  telegram: (c) => c.user && `Telegram: iletişim alanına https://t.me/${clean(c.user).replace(/^@/, "")} bağlantılı bir Telegram düğmesi ekle.`,
+  email: (c) => c.email && `E-posta: iletişim bağlantılarında mailto:${clean(c.email)} kullan.`,
+  form: (c) => httpsUrl(c.url) && `Form gönderimi: iletişim/başvuru formlarını fetch ile ${httpsUrl(c.url)} adresine POST (FormData) olarak gönder, başarılı olunca teşekkür mesajı göster, hata olursa kullanıcıyı bilgilendir.`,
+  maps: (c) => c.address && `Harita: “${clean(c.address)}” adresi için <iframe src="https://www.google.com/maps?q=${encodeURIComponent(clean(c.address))}&output=embed" loading="lazy"> ile harita göster ve “Yol tarifi al” düğmesi ekle (https://www.google.com/maps/dir/?api=1&destination=...).`,
+  calendar: () => `Takvim: randevu/etkinlik gösterilen yerlere Google Takvim'e ekle bağlantısı koy (https://calendar.google.com/calendar/render?action=TEMPLATE&text=...&dates=YYYYMMDDTHHMMSS/YYYYMMDDTHHMMSS&details=...).`,
+  calendly: (c) => httpsUrl(c.url) && `Randevu: ${httpsUrl(c.url)} adresini randevu al düğmesine bağla ve uygun bir bölümde iframe ile göm.`,
+  payment: (c) => httpsUrl(c.url) && `Ödeme: “${clean(c.provider || "Ödeme", 40)}” ödeme bağlantısı ${httpsUrl(c.url)}. Satın al/öde düğmeleri bu bağlantıyı yeni sekmede açsın; kart bilgisi asla uygulamada toplanmasın.`,
+  sheets: (c) => httpsUrl(c.url) && `Google E-Tablolar: kayıt ekleme/gönderme işlemlerinde verileri JSON olarak ${httpsUrl(c.url)} adresine (Apps Script web uygulaması) fetch ile POST et (mode:"no-cors" kullan) ve yerelde de sakla; “E-Tabloya gönder” düğmesi ekle.`,
+  supabase: (c) => httpsUrl(c.url) && c.anon && `Supabase: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> ile createClient("${httpsUrl(c.url)}","${clean(c.anon, 400)}") kullan; verileri ${clean(c.table || "kayitlar", 40)} tablosunda tut (okuma/ekleme/güncelleme/silme). Hata olursa localStorage'a düş ve kullanıcıya bildir.`,
+  firebase: (c) => c.config && `Firebase: Firebase JS SDK (gstatic CDN, modüler v10) ile şu yapılandırmayı kullan: ${clean(c.config, 600)}; verileri Firestore'da tut.`,
+  gmdb: () => `Gitmapp Bulut Kayıt: verileri herkesle paylaşılan bulutta saklamak için window.GitmappDB (async get(anahtar), set(anahtar, değer), keys()) kullan. Bu nesne yalnızca yayındaki uygulamada vardır; yoksa (önizleme) localStorage'a düş. Kişisel/gizli bilgi saklama.`,
+  analytics: (c) => /^G-[A-Z0-9]{4,15}$/.test(c.id || "") && `Google Analytics 4: <head> içine gtag.js ile ${c.id} ölçüm kimliğini ekle.`,
+  searchconsole: (c) => c.code && `Google Search Console: <head> içine <meta name="google-site-verification" content="${clean(c.code, 100)}"> ekle; anlamlı title ve meta description yaz.`,
+  pixel: (c) => /^\d{6,20}$/.test(c.id || "") && `Meta Pixel: <head> içine ${c.id} kimlikli standart Meta Pixel kodunu ekle; form gönderiminde Lead olayı tetikle.`,
+  instagram: (c) => c.user && `Instagram: üst menü ve alt bilgide https://instagram.com/${clean(c.user).replace(/^@/, "")} bağlantısı ve “Bizi takip et” bölümü ekle.`,
+  youtube: (c) => httpsUrl(c.url) && `YouTube: ${httpsUrl(c.url)} videosunu/kanalını uygun bir bölümde youtube-nocookie gömme (iframe) ile göster.`,
+  livechat: (c) => /^[a-f0-9]{24}\/[a-z0-9]{5,12}$/i.test(c.id || "") && `Canlı destek: Tawk.to sohbet kodunu https://embed.tawk.to/${c.id} ile ekle.`,
+  github: () => `GitHub: alt bilgiye kaynak kodu bağlantısı için yer bırak.`,
+};
+function connRules(list) {
+  if (!Array.isArray(list)) return "";
+  const out = [];
+  for (const it of list.slice(0, 16)) {
+    if (!it || typeof it !== "object") continue; const c = it.cfg && typeof it.cfg === "object" ? it.cfg : {};
+    if (it.id === "custom") { const u = httpsUrl(c.url); if (u) out.push(`Özel API “${clean(c.name || "API", 40)}” (${u}): ${clean(c.desc, 300)}. Gerektiğinde fetch ile çağır, hata durumlarını ele al; uygulamaya gizli anahtar yazma.`); continue; }
+    const f = CONN_RULES[it.id]; const r = f && f(c); if (r) out.push(r);
+  }
+  return out.length ? "\n- Kullanıcının bağladığı servisler (uygun yerlerde kullan):\n  • " + out.join("\n  • ") : "";
+}
 const kindOf = (k) => (KIND_RULES[k] ? k : "app");
 function extractHtml(text) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
@@ -321,15 +358,37 @@ function serveApp(req, res, url) {
     res.writeHead(200, { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=3600" });
     return res.end(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="${color}"/><text x="50%" y="54%" font-size="300" text-anchor="middle" dominant-baseline="middle">${esc(a.emoji || "✨")}</text></svg>`);
   }
+  if (parts[1] === "_data") return appData(req, res, a, parts.slice(2).join("/"));
   if (parts.length > 1) { res.writeHead(404); return res.end(); }
   q("UPDATE apps SET opens=opens+1 WHERE id=?").run(a.id);
   const inject = `<link rel="manifest" href="/${slug}/manifest.webmanifest"><link rel="icon" href="/${slug}/icon.svg"><meta name="theme-color" content="${color}"><meta name="apple-mobile-web-app-capable" content="yes">`;
+  const dbLib = `<script>window.GitmappDB={async get(k){const r=await fetch("/${slug}/_data/"+encodeURIComponent(k));if(r.status===404)return null;if(!r.ok)throw new Error("Okunamadı");return (await r.json()).value},async set(k,v){const r=await fetch("/${slug}/_data/"+encodeURIComponent(k),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({value:v})});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||"Kaydedilemedi");return true},async keys(){const r=await fetch("/${slug}/_data/");return (await r.json()).keys}};</script>`;
   const badge = `<a href="${CFG.site}/#magaza" target="_blank" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:#0b0f17;color:#fff;font:600 11px/1 system-ui,sans-serif;padding:7px 10px;border-radius:999px;text-decoration:none;opacity:.85">⚡ Gitmapp ile yapıldı</a>`;
   let html = a.html;
-  html = /<\/head>/i.test(html) ? html.replace(/<\/head>/i, inject + "</head>") : inject + html;
+  html = /<\/head>/i.test(html) ? html.replace(/<\/head>/i, inject + dbLib + "</head>") : inject + dbLib + html;
   html = /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, badge + "</body>") : html + badge;
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", "Cache-Control": "no-cache" });
   res.end(html);
+}
+
+// Gitmapp Bulut Kayıt: yayındaki uygulamalar için herkese açık anahtar-değer deposu (gizli bilgi için değildir)
+async function appData(req, res, a, key) {
+  const out = (code, obj) => { res.writeHead(code, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" }); res.end(JSON.stringify(obj)); };
+  try {
+    if (!key) { if (req.method !== "GET") return out(405, { error: "Yöntem desteklenmiyor" }); return out(200, { keys: q("SELECT k, updated FROM app_data WHERE slug=? ORDER BY updated DESC LIMIT 200").all(a.slug) }); }
+    if (!/^[\w.\-:]{1,64}$/.test(key)) return out(400, { error: "Geçersiz anahtar" });
+    if (req.method === "GET") { const r = q("SELECT v, updated FROM app_data WHERE slug=? AND k=?").get(a.slug, key); return r ? out(200, { value: JSON.parse(r.v), updated: r.updated }) : out(404, { error: "Yok" }); }
+    if (req.method === "PUT") {
+      useAi("d:" + clientIp(req), 3000, false);
+      const body = await readBody(req); const v = JSON.stringify(body.value ?? null);
+      if (v.length > 65536) return out(413, { error: "Değer en fazla 64 KB olabilir" });
+      const n = q("SELECT COUNT(*) n FROM app_data WHERE slug=?").get(a.slug).n; const ex = q("SELECT 1 FROM app_data WHERE slug=? AND k=?").get(a.slug, key);
+      if (!ex && n >= 200) return out(409, { error: "Bu uygulama en fazla 200 anahtar saklayabilir" });
+      q("INSERT INTO app_data(slug,k,v,updated) VALUES(?,?,?,datetime('now')) ON CONFLICT(slug,k) DO UPDATE SET v=excluded.v, updated=excluded.updated").run(a.slug, key, v);
+      return out(200, { ok: true });
+    }
+    return out(405, { error: "Yöntem desteklenmiyor" });
+  } catch (e) { return out(e instanceof HttpErr ? e.code : 500, { error: e instanceof HttpErr ? e.message : "Sunucu hatası" }); }
 }
 
 // ---------- API ----------
@@ -349,7 +408,7 @@ route("POST", "/api/auth/register", ({ body }) => {
   const email = str(body.email, 200, "E-posta", true).trim().toLowerCase(); const pw = str(body.password, 200, "Şifre", true);
   need(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 400, "Geçerli bir e-posta girin"); need(pw.length >= 8, 400, "Şifre en az 8 karakter olmalı");
   need(!q("SELECT 1 FROM users WHERE email=?").get(email), 409, "Bu e-posta ile zaten hesap var, giriş yapın");
-  const id = rid(); q("INSERT INTO users(id,email,name,pass) VALUES(?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw)); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, +(E.SIGNUP_CREDITS || 25), "Hoş geldin kredisi");
+  const id = rid(); const ref = /^[A-Za-z0-9]{12}$/.test(body.ref || "") && q("SELECT 1 FROM users WHERE id=?").get(body.ref) ? body.ref : null; q("INSERT INTO users(id,email,name,pass,ref_by) VALUES(?,?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw), ref); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, +(E.SIGNUP_CREDITS || 25), "Hoş geldin kredisi");
   const u = q("SELECT * FROM users WHERE id=?").get(id); return { token: sign({ uid: id }), user: pubUser(u) };
 });
 route("POST", "/api/auth/login", ({ body }) => {
@@ -400,7 +459,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
   const img = imageParts(body);
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + runOpts(rt, body) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations) + runOpts(rt, body) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
@@ -500,6 +559,9 @@ route("POST", "/api/apps/:id/publish", ({ user, body, params }) => {
   if (!slug) { const base = slugify(body.slug || a.title); slug = base; let i = 2; while (q("SELECT 1 FROM apps WHERE slug=?").get(slug)) slug = base + "-" + i++; }
   const listed = body.listed ? 1 : 0; const price = Math.max(0, Math.min(100000, Math.round(+body.price || 0)));
   q("UPDATE apps SET slug=?, status='published', listed=?, price=?, published_at=COALESCE(published_at,?), updated=? WHERE id=?").run(slug, listed, price, now(), now(), a.id);
+  // Davet ödülü: davet edilen kişi ilk uygulamasını yayınlayınca davet edene kredi
+  const me = q("SELECT ref_by, ref_paid FROM users WHERE id=?").get(user.id);
+  if (me && me.ref_by && !me.ref_paid) { const bonus = +(E.REF_CREDITS || 50); q("UPDATE users SET ref_paid=1 WHERE id=?").run(user.id); q("UPDATE users SET credits=credits+? WHERE id=?").run(bonus, me.ref_by); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(me.ref_by, bonus, "Davet ödülü"); }
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id)) };
 });
 route("POST", "/api/apps/:id/unpublish", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("UPDATE apps SET status='draft', listed=0 WHERE id=?").run(a.id); return { ok: true }; });
