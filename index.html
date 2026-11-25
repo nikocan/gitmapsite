@@ -1045,6 +1045,57 @@ a{color:#64a8ff}.btn,a.btn{text-decoration:none}
 .cp-all{background:none!important;border:1px solid #3a3937!important;color:#d6d4ce!important;font-weight:500!important}
 .cp-st{font-variant-numeric:tabular-nums;color:#7c7a74!important}
 .cp-box{background:#303030!important;border:1px solid #3d3d3b!important;border-radius:20px!important}
+/* v5.9 — Ajan sincap rehber */
+@keyframes fadeIn{from{opacity:0}}
+.ags{display:block;overflow:visible}.ags *{transform-box:view-box}
+.ags .ag-canopy{transform-origin:104px 44px}.ags .ag-head{transform-origin:66px 76px}.ags .ag-tail{transform-origin:50px 126px}.ags .ag-umb{transform-origin:128px 95px}
+.ags .ag-eye{transform-box:fill-box;transform-origin:center;animation:ag-blink 4.2s infinite}
+.ags.pop{animation:ag-pop .7s cubic-bezier(.2,1.5,.35,1) both}
+.ags.twirl .ag-canopy{animation:ag-spin .9s cubic-bezier(.45,0,.2,1) infinite}
+.ags.think .ag-canopy{animation:ag-spin 1.6s linear infinite}
+.ags.listen .ag-head{animation:ag-tilt 1.8s ease-in-out infinite}.ags.listen .ag-canopy{animation:ag-spin 3.2s linear infinite}
+.ags.wait .ag-tail{animation:ag-sway 2.6s ease-in-out infinite}.ags.wait .ag-canopy{animation:ag-spin .9s cubic-bezier(.45,0,.2,1) .4s 1}
+.ags.nod .ag-head{animation:ag-nod .9s ease-in-out infinite}
+@keyframes ag-spin{to{transform:rotate(360deg)}}
+@keyframes ag-pop{0%{transform:scale(.2) translateY(40px);opacity:0}60%{opacity:1}100%{transform:none}}
+@keyframes ag-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes ag-tilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-7deg)}}
+@keyframes ag-sway{0%,100%{transform:rotate(0)}50%{transform:rotate(-5deg)}}
+@keyframes ag-nod{0%,100%{transform:rotate(0)}40%{transform:rotate(5deg) translateY(1px)}}
+.sqg-bg{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 100%,rgba(0,0,0,.55),rgba(0,0,0,.25) 60%,transparent);animation:fadeIn .25s}
+.sqg{position:relative;width:min(560px,100%);max-height:calc(100dvh - 40px);overflow:auto;border:1px solid #3a3937;border-radius:26px;background:#1f1f1e;box-shadow:0 30px 80px -20px rgba(0,0,0,.85);padding:18px 20px 20px;animation:sqg-up .45s cubic-bezier(.2,1.2,.4,1)}
+@keyframes sqg-up{from{transform:translateY(40px);opacity:0}}
+.sqg-x{position:absolute;top:10px;right:10px;z-index:2}
+.sqg-hero{display:flex;align-items:flex-end;gap:12px}.sqg-sq{flex:none}
+.sqg-bub{position:relative;flex:1;min-width:0;margin-bottom:22px;padding:12px 15px;border-radius:18px 18px 18px 4px;background:#2b2b29;border:1px solid #3a3937;color:#e8e6e3}
+.sqg-bub p{margin:0;font-family:"Source Serif 4",Georgia,serif;font-size:16px;line-height:1.55}.sqg-bub b{font-family:Inter,system-ui,sans-serif;font-weight:600}
+.sqg-alert{display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;padding:2px 9px;border-radius:99px;background:rgba(217,119,87,.15);color:#f0a283;font-size:12px;font-weight:600;animation:sqg-shake .5s .5s}
+@keyframes sqg-shake{20%,60%{transform:translateX(-3px)}40%,80%{transform:translateX(3px)}}
+.sqg-int{display:block;margin-top:6px;font-family:Inter,system-ui,sans-serif;font-size:13.5px;color:#a3a19a}
+.sqg-acts{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:8px 0 2px}.sqg-acts>b{font-size:17px}.sqg-acts>small{color:#a3a19a;font-size:13px}
+.sqg-mic{position:relative;width:96px;height:96px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#101211;background:#e4ff3d;box-shadow:0 12px 34px -8px rgba(228,255,61,.45);transition:transform .15s}.sqg-mic:hover{transform:scale(1.04)}
+.sqg-ring{position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(228,255,61,.45);animation:sqg-ring 1.8s ease-out infinite;pointer-events:none}
+@keyframes sqg-ring{from{transform:scale(.85);opacity:1}to{transform:scale(1.35);opacity:0}}
+.sqg-mic.sm{width:44px;height:44px;box-shadow:none}.sqg-mic.sm .sqg-ring{inset:-5px;animation-play-state:paused;opacity:0}.sqg-mic.sm.on{background:#f4f4ef}.sqg-mic.sm.on .sqg-ring{animation-play-state:running;opacity:1}
+.sqg-type{margin-top:10px;display:inline-flex;align-items:center;gap:7px;border:1px solid #3a3937;background:#262624;color:#e8e6e3;border-radius:99px;padding:9px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.sqg-type:hover{border-color:#55534f}
+.sqg-hint{font-size:12px!important;color:#7c7a74!important}
+.sqg-talk{display:flex;flex-direction:column;gap:10px}
+.sqg-live{display:flex;align-items:center;gap:12px;padding:6px 12px 6px 6px;border:1px solid #3a3937;border-radius:99px;background:#262624}.sqg-st{font-size:14px;color:#d6d4ce}
+.sqg-card{border:1px solid #3a3937;border-radius:16px;padding:12px 14px;background:#232322}.sqg-ct{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#a3a19a;margin-bottom:8px;letter-spacing:.01em}
+.sqg-card ul{margin:0;padding-inline-start:1.2em;display:grid;gap:4px;font-size:14.5px;color:#e8e6e3}.sqg-card.cmd p{margin:0 0 10px;font-family:"Source Serif 4",Georgia,serif;font-size:15.5px;line-height:1.55;color:#e8e6e3}
+.sqg-card.cmd{border-color:rgba(228,255,61,.28);animation:sqg-glow 2.4s ease-in-out 1}@keyframes sqg-glow{40%{box-shadow:0 0 0 4px rgba(228,255,61,.12)}}
+.sqg-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.sqg-tags span{padding:3px 10px;border-radius:99px;background:rgba(228,255,61,.12);color:#e4ff3d;font-size:12.5px;font-weight:600}
+.sqg-cb{display:flex;gap:8px;flex-wrap:wrap}
+mark.sq-hl{background:linear-gradient(transparent 55%,rgba(228,255,61,.38) 55%);color:inherit;padding:0 1px;border-radius:2px}
+.sqg-in{display:flex;align-items:center;gap:8px;border:1px solid #3a3937;border-radius:99px;padding:5px 5px 5px 14px;background:#262624}.sqg-in input{flex:1;min-width:0;border:0;outline:0;background:none;color:#e8e6e3;font:inherit;font-size:14px}
+.sq-flyer{position:fixed;left:0;top:0;z-index:95;pointer-events:none;width:120px;height:120px;transform-origin:0 0}.sq-flyer svg{width:120px;height:120px}
+.sq-perch{position:fixed;z-index:70;width:66px;height:66px;animation:sq-land .45s cubic-bezier(.2,1.6,.4,1)}@keyframes sq-land{0%{transform:translateY(-10px) scale(.95)}100%{transform:none}}
+.sq-perch.r .sq-pb{left:72px;right:auto;border-radius:14px 14px 14px 4px}.sq-pb{position:absolute;right:72px;top:8px;white-space:nowrap;max-width:min(60vw,420px);overflow:hidden;text-overflow:ellipsis;padding:7px 12px;border-radius:14px 14px 4px 14px;background:#2b2b29;border:1px solid #3a3937;color:#e8e6e3;font-size:13.5px;box-shadow:0 10px 30px -10px rgba(0,0,0,.7)}
+.sq-px{position:absolute;right:-6px;top:-6px;width:20px;height:20px;border-radius:50%;border:1px solid #3a3937;background:#1f1f1e;color:#a3a19a;display:grid;place-items:center;cursor:pointer;z-index:2;opacity:0;transition:opacity .2s}.sq-perch:hover .sq-px{opacity:1}
+.sq-ripple{position:fixed;z-index:60;pointer-events:none;border-radius:26px;border:1.5px solid transparent;background:linear-gradient(#0000,#0000) padding-box,conic-gradient(from var(--a),rgba(228,255,61,.9),rgba(34,211,238,.6),rgba(167,139,250,.7),rgba(244,114,182,.6),rgba(228,255,61,.9)) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);animation:gspin 4s linear infinite,sq-wave 2.4s ease-in-out infinite}
+@keyframes sq-wave{0%,100%{opacity:.55;filter:drop-shadow(0 0 0 rgba(228,255,61,0))}50%{opacity:1;filter:drop-shadow(0 0 10px rgba(167,139,250,.55))}}
+@media(prefers-reduced-motion:reduce){.ags *,.ags,.sqg,.sqg-ring,.sq-ripple,.sq-perch,.sqg-alert{animation:none!important}}
+@media(max-width:640px){.sqg-bg{padding:10px}.sqg{border-radius:22px;padding:14px}.sqg-hero{flex-direction:column;align-items:center}.sqg-bub{margin-bottom:0;border-radius:18px}}
 </style>
 </head>
 <body>
@@ -1058,8 +1109,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.8.0";
+const VERSION="5.9.0";
 const CHANGELOG=[
+ {v:"5.9.0",date:"2026-11-25",items:[
+  "🐿️ Yeni rehber Ajan Fındık: trençkotlu, fötr şapkalı dişi sincap. Elindeki şemsiye küçük bir “g” harfi (kubbe g'nin gövdesi, kancalı sap g'nin kuyruğu); konuşurken şemsiyesini çevirir, dinlerken başını eğer, göz kırpar",
+  "⚠️ “Benim için yap” hiçbir şey başlatamazsa (iş sürüyor, kredi yetmedi, adım bulunamadı) Fındık ekrana zıplar ve ne olduğunu söyler",
+  "🎙️ Büyük mikrofon düğmesiyle konuşarak anlat: Fındık “Seni dinliyorum” der, sohbetle fikrini netleştirir, yanıtlarını sesli okur ve önemli kelimeleri vurgular",
+  "📝 Konuştukça canlı “Özet” kartı ve hazır “Örnek komut” çıkar; “Bununla başlat” ile türü, komutu ayarlayıp üretimi başlatır, “Yazı alanına koy” ile komutu yazar",
+  "✍️ Yazarak devam etmek istersen (ya da klavyede yazmaya başlarsan) Fındık süzülerek yazı alanının köşesine uçar, alanın çevresinde yumuşak bir renk dalgası döner ve “Seni bekliyorum” der; yazdıkça önemli kelimeleri not alır, üretim başlayınca çekilir"]},
  {v:"5.8.0",date:"2026-11-25",items:[
   "💬 Asistan paneli de Claude sohbet dilini kullanıyor: istek gelince “… isteği değerlendiriliyor” satırı ve canlı sayaçlı “Düşünüyor… N sn” kutusu çıkıyor",
   "💭 Her yanıtın üstünde “N sn düşündü” satırı var; basınca ne düşündüğü açılıyor",
@@ -2871,11 +2928,15 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  async function publish(){const a=await save();if(a)openPublish(a)}
  function undo(){if(!versions.length)return;const v=versions[versions.length-1];setVersions(versions.slice(0,-1));setSt(s=>({...s,html:v,msgs:[...s.msgs,{role:"assistant",content:"Önceki sürüme dönüldü.",anim:true}]}))}
  const typeInto=text=>new Promise(res=>{let i=0;const step=Math.max(1,Math.ceil(text.length/55));const t=setInterval(()=>{i+=step;setInput(text.slice(0,i));if(i>=text.length){clearInterval(t);res()}},24)});
- async function doForMe(kind){if(busy)return;const k=kind||prefsRef.current.kind;
-  if(st.html){const chips=[...document.querySelectorAll(".sugg .chip:not(.gm)")];const el=chips[Math.floor(Math.random()*chips.length)];if(el)await ghostRun([{el,slow:true,fn:()=>el.click()}]);return}
-  if(input.trim()){await ghostRun([{el:".gsend",slow:true,fn:()=>gen()}]);return}
-  const opts=TEMPLATES.map((t,i)=>[t,i]).filter(([t])=>(t[3]||"app")===k);const [t,i]=opts[Math.floor(Math.random()*opts.length)];
-  await ghostRun([{el:'.seg [data-k="'+k+'"]',fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.tpl[data-i="'+i+'"]',slow:true,fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",fn:()=>typeInto(t[2]),after:250},{el:".gsend",fn:()=>gen(t[2])}]);}
+ async function doForMe(kind){if(busy){sincap("busy");return}let ran=0;try{ran=await doForMe0(kind)}catch(e){sincap("nostart",e.message?"Hmm, bir şey ters gitti: "+e.message+". Birlikte tekrar deneyelim mi? Ne yapmak istediğini bana anlat.":"");return}
+  // hiçbir adım çalışmadıysa ya da üretim hiç başlamadıysa sincap devreye girer
+  const t0=Date.now();setTimeout(()=>{const g=window.__gmStudio||{};if(ran&&(g.calisiyor||g.acikUygulama))return;const lt=window.__gmLastToast;
+   sincap("nostart",/hesabim/.test(location.hash)?"Kredin yetmediği için başlayamadım. Hesabım'dan kredi ekleyebilirsin; bu arada fikrini konuşarak netleştirelim, komutu ben hazır edeyim.":lt&&lt.t>=t0&&lt.m?"Hmm, hiçbir şey başlamadı: “"+lt.m.replace(/[.!]+$/,"")+"”. Merak etme, birlikte çözelim. Ne yapmak istediğini bana anlatır mısın?":"")},ran?1800:0)}
+ async function doForMe0(kind){const k=kind||prefsRef.current.kind;
+  if(st.html){const chips=[...document.querySelectorAll(".sugg .chip:not(.gm)")];const el=chips[Math.floor(Math.random()*chips.length)];return el?await ghostRun([{el,slow:true,fn:()=>el.click()}]):0}
+  if(input.trim()){return await ghostRun([{el:".gsend",slow:true,fn:()=>gen()}])}
+  const opts=TEMPLATES.map((t,i)=>[t,i]).filter(([t])=>(t[3]||"app")===k);if(!opts.length)return 0;const [t,i]=opts[Math.floor(Math.random()*opts.length)];
+  return await ghostRun([{el:'.seg [data-k="'+k+'"]',fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.tpl[data-i="'+i+'"]',slow:true,fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",fn:()=>typeInto(t[2]),after:250},{el:".gsend",fn:()=>gen(t[2])}]);}
  useEffect(()=>{if(!seed)return;const sd=seed;clearSeed&&clearSeed();
   if((sd.prompt||sd.kind||sd.sketch)&&st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışmanız var. Yeni projeye geçilsin mi?"))return;
   if(sd.prompt||sd.kind||sd.sketch){setSt(blank);setTodo(null);setVersions([]);setPlan(null)}
@@ -3128,13 +3189,13 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 async function ghostRun(steps){
  let c=document.getElementById("ghost");
  if(!c){c=document.createElement("div");c.id="ghost";c.innerHTML='<svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 3l7 18 2.5-7.5L21 11z" fill="#fff" stroke="#0f0f0e" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="gh-ring"></span><span class="gh-tag">Gitmapp</span>';document.body.appendChild(c);c.style.transform="translate("+(innerWidth*.6)+"px,"+(innerHeight*.8)+"px)"}
- c.classList.add("on");await wait(60);
- for(const st of steps){const el=typeof st.el==="string"?document.querySelector(st.el):st.el;if(!el)continue;
+ c.classList.add("on");await wait(60);let ran=0;
+ for(const st of steps){const el=typeof st.el==="string"?document.querySelector(st.el):st.el;if(!el)continue;ran++;
   el.scrollIntoView({block:"center",behavior:"smooth"});await wait(380);const r=el.getBoundingClientRect();
   c.style.transform="translate("+(r.left+Math.min(r.width*.5,r.width-14))+"px,"+(r.top+r.height*.55)+"px)";await wait(st.slow?950:720);
   c.classList.add("click");el.classList.add("gh-hit");await wait(200);c.classList.remove("click");setTimeout(()=>el.classList.remove("gh-hit"),500);
   if(st.fn)await st.fn(el);await wait(st.after||120)}
- await wait(400);c.classList.remove("on");
+ await wait(400);c.classList.remove("on");return ran;
 }
 
 // ---------- Keşfet (App Store düzeni) ----------
@@ -4138,6 +4199,95 @@ function CreditPanel({auth,close,go,flash}){const [d,setD]=useState(null);const 
   <small class="crp-n">Asistan, önizleme ve GitHub içe aktarma ücretsizdir. Geliştirme, kontrol, plan, tasarım önerisi ve yapay zekâ dönüşümü kredi kullanır.</small>
  </div></div>`}
 
+// ---------- v5.9 — Ajan sincap rehber: "Benim için yap" boşa düşünce devreye girer ----------
+const sincap=(reason,msg)=>dispatchEvent(new CustomEvent("gm:sincap",{detail:{reason,msg}}));
+const AG_WEDGES=(()=>{const cx=104,cy=44,r=24,o=[];for(let i=0;i<8;i++){const a0=i*Math.PI/4-Math.PI/2,a1=a0+Math.PI/4;o.push("M"+cx+" "+cy+"L"+(cx+r*Math.cos(a0)).toFixed(2)+" "+(cy+r*Math.sin(a0)).toFixed(2)+"A"+r+" "+r+" 0 0 1 "+(cx+r*Math.cos(a1)).toFixed(2)+" "+(cy+r*Math.sin(a1)).toFixed(2)+"Z")}return o})();
+// Trençkotlu, fötr şapkalı dişi sincap; elindeki şemsiye küçük bir "g": kubbe = g'nin gövdesi, sap ve kanca = g'nin kuyruğu
+function AgentSquirrel({s=120,mode=""}){return html`<svg class=${"ags "+mode} width=${s} height=${s} viewBox="0 0 160 160" role="img" aria-label="Ajan sincap Fındık">
+ <g class="ag-tail"><path d="M52 130C18 130 8 98 20 76C28 60 20 46 28 35C36 26 54 29 53 44C52 56 41 63 45 79C49 93 65 97 67 112Z" fill="#c2773a"/><path d="M47 118C30 112 25 96 31 82C36 70 31 58 36 48" stroke="#e0a065" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/></g>
+ <g class="ag-umb"><path class="ag-stem" d="M128 44V112a20 20 0 0 1-20 20h-3a8 8 0 0 1-8-7" fill="none" stroke="#101211" stroke-width="7" stroke-linecap="round"/>
+  <g class="ag-canopy">${AG_WEDGES.map((d,i)=>html`<path key=${i} d=${d} fill=${i%2?"#c9e21c":"#e4ff3d"}/>`)}<circle cx="104" cy="44" r="24" fill="none" stroke="#101211" stroke-width="5"/><circle cx="104" cy="44" r="3.4" fill="#101211"/></g></g>
+ <g class="ag-body"><ellipse cx="54" cy="141" rx="9" ry="4.6" fill="#8f4f22"/><ellipse cx="78" cy="141" rx="9" ry="4.6" fill="#8f4f22"/>
+  <path d="M46 84Q65 74 84 84L92 136Q66 144 40 136Z" fill="#24272b"/><path d="M57 82L66 104L62 82ZM75 82L66 104L71 82Z" fill="#3a3f45"/>
+  <rect x="43.5" y="108" width="46" height="7" rx="3.5" fill="#e4ff3d"/><rect x="62" y="106.5" width="9" height="10" rx="2" fill="none" stroke="#101211" stroke-width="2"/>
+  <path d="M82 90L124 95" stroke="#24272b" stroke-width="11" stroke-linecap="round"/><circle cx="128" cy="95" r="6.5" fill="#c2773a"/>
+  <path d="M54 79Q66 85 79 79L80 84Q66 91 53 84Z" fill="#ff7a59"/><path d="M73 84L80 98L71 93Z" fill="#ff7a59"/></g>
+ <g class="ag-head"><path d="M47 47L41 31L56 40Z" fill="#c2773a"/><ellipse cx="66" cy="58" rx="22" ry="20" fill="#c2773a"/><ellipse cx="77" cy="66" rx="11" ry="8" fill="#f3d9b1"/>
+  <ellipse cx="85.5" cy="61.5" rx="3.3" ry="2.7" fill="#101211"/><path d="M78 70.5q3 2.2 6.4 0" stroke="#101211" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="68.5" cy="65" r="3.2" fill="#ff8f8f" opacity=".55"/>
+  <g class="ag-eye"><ellipse cx="73" cy="54" rx="3.3" ry="4.1" fill="#101211"/><circle cx="74.2" cy="52.6" r="1.1" fill="#fff"/><path d="M71 49.6l-1-2.6M73.6 49.3l.4-2.8M76 50.2l1.4-2.3" stroke="#101211" stroke-width="1.3" stroke-linecap="round"/></g>
+  <g class="ag-eye"><ellipse cx="60" cy="55" rx="2.6" ry="3.4" fill="#101211"/><path d="M58.4 51.4l-1.2-2.2M60.4 51.1l0-2.5" stroke="#101211" stroke-width="1.2" stroke-linecap="round"/></g>
+  <path d="M48 39Q50 24 66 23Q82 24 84 39Z" fill="#101211"/><rect x="48.6" y="34" width="34.8" height="4" fill="#e4ff3d"/><ellipse cx="66" cy="39.5" rx="25" ry="5" fill="#101211"/></g>
+</svg>`}
+const SQ_WORDS=/\b(randevu|rezervasyon|sipariş|ödeme|menü|stok|müşteri|personel|takvim|hatırlatma|sms|bildirim|giriş|üyelik|harita|konum|rapor|panel|grafik|fatura|sepet|kampanya|blog|galeri|portföy|iletişim|form|oyun|skor|liste|arama|yorum|abonelik|kurs|ders|e-ticaret|mağaza|kafe|restoran|kuaför|klinik|okul|spor|emlak|otel)\w*/giu;
+const sqWords=t=>[...new Set((String(t||"").match(SQ_WORDS)||[]).map(w=>w.toLocaleLowerCase("tr")))].slice(0,6);
+function SqHL({text,words}){const ws=(words||[]).filter(w=>w&&w.length>1).map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));if(!ws.length)return text;
+ const re=new RegExp("("+ws.join("|")+")","giu");return String(text).split(re).map((p,i)=>i%2?html`<mark class="sq-hl" key=${i}>${p}</mark>`:p)}
+const SQ_MSG={nostart:"Hmm, hiçbir şey başlamadı! Merak etme, birlikte çözelim. Ne yapmak istediğini bana anlatır mısın?",busy:"Şu an bir iş sürüyor. Bitmesini beklerken sıradaki fikrini bana anlatabilirsin.",manual:"Merhaba, ben Fındık! Fikrini anlat, birlikte netleştirip hazır komutu yazayım."};
+function SquirrelGuide({run,toast}){
+ const [open,setOpen]=useState(null);const [phase,setPhase]=useState("alert");const [msgs,setMsgs]=useState([]);const [res,setRes]=useState(null);
+ const [listen,setListen]=useState(false);const [interim,setInterim]=useState("");const [busy,setBusy]=useState(false);const [talking,setTalking]=useState(false);const [txt,setTxt]=useState("");
+ const [perch,setPerch]=useState(null);const [note,setNote]=useState("");const flyRef=useRef(null);const recRef=useRef(null);const R=useRef({});Object.assign(R.current,{msgs,phase,open,busy});
+ useEffect(()=>{const h=e=>{const d=e.detail||{};setOpen({reason:d.reason||"manual",msg:d.msg||"",n:Date.now()});setPhase("alert");setPerch(null);setRes(null);setMsgs([]);setTxt("")};addEventListener("gm:sincap",h);return()=>removeEventListener("gm:sincap",h)},[]);
+ useEffect(()=>{if(!open)return;const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[open]);
+ const close=()=>{stopL();try{speechSynthesis.cancel()}catch(e){}setOpen(null);setPerch(null);setPhase("alert")};
+ function say(t){return new Promise(r=>{const s=window.speechSynthesis;if(!s||!t){r();return}s.cancel();const u=new SpeechSynthesisUtterance(cpSpeakText(t));u.lang="tr-TR";const v=(s.getVoices()||[]).find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;u.rate=1.05;setTalking(true);let done=false;const fin=()=>{if(done)return;done=true;setTalking(false);r()};u.onend=u.onerror=fin;setTimeout(fin,Math.max(2500,t.length*85));s.speak(u)})}
+ function stopL(){const r=recRef.current;recRef.current=null;try{r&&r.abort()}catch(e){}setListen(false);setInterim("")}
+ function startL(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; aşağıya yazabilirsin.");return}
+  try{speechSynthesis.cancel()}catch(e){}stopL();const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;let fin="";
+  r.onresult=e=>{let it="";fin="";for(const x of e.results){if(x.isFinal)fin+=x[0].transcript;else it+=x[0].transcript}setInterim((fin+" "+it).trim())};
+  r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")toast("Mikrofon izni verilmedi; adres çubuğundaki kilitten izin verebilirsin.")};
+  r.onend=()=>{if(recRef.current!==r)return;recRef.current=null;setListen(false);setInterim("");if(fin.trim())ask(fin.trim(),true)};setListen(true);try{r.start()}catch(e){setListen(false)}}
+ async function talk(){setPhase("talk");await say("Seni dinliyorum.");startL()}
+ async function ask(t,voice){if(!t||R.current.busy)return;if(!voice)stopL();const next=[...R.current.msgs,{role:"user",content:t}];setMsgs(next);setBusy(true);setTxt("");
+  try{const kind=(window.__gmStudio||{}).tur||"app";const j=await api("POST","/api/ai/rehber",{messages:next.map(m=>({role:m.role,content:m.content})),kind});
+   setMsgs([...next,{role:"assistant",content:j.reply}]);setRes(j);setBusy(false);if(voice){await say(j.reply);if(R.current.open&&R.current.phase==="talk"&&!j.reply.includes("Komut hazır"))startL()}}
+  catch(e){setBusy(false);setMsgs([...next,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}])}}
+ const target=()=>document.querySelector(".ws-in .gbox")||document.querySelector(".gbox");
+ const perchAt=r=>r.right+300<innerWidth?{x:r.right-24,y:r.top-34,side:"r"}:{x:r.right-70,y:r.top-58,side:"l"};
+ async function fly(){stopL();try{speechSynthesis.cancel()}catch(e){}
+  if(!target()){location.hash="#studio";await wait(700)}const g=target();if(!g){toast("Yazı alanı bulunamadı");return}
+  g.scrollIntoView({block:"center",behavior:"smooth"});await wait(260);
+  const el=flyRef.current;const from=el?el.getBoundingClientRect():{left:innerWidth/2-60,top:innerHeight/2-60,width:120};const r=g.getBoundingClientRect();
+  const to=perchAt(r);const inner=el?el.innerHTML:"";setPhase("fly");
+  const fx=from.left,fy=from.top,ks=[];for(let i=0;i<=14;i++){const t=i/14,e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;const x=fx+(to.x-fx)*e,y=fy+(to.y-fy)*e-Math.sin(Math.PI*t)*140;ks.push({transform:"translate("+x+"px,"+y+"px) scale("+(1-(1-.55)*e)+") rotate("+(Math.sin(Math.PI*t)*-14)+"deg)"})}
+  const f=document.createElement("div");f.className="sq-flyer";f.innerHTML=inner;document.body.appendChild(f);
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;const an=f.animate(ks,{duration:reduce?1:950,easing:"linear",fill:"forwards"});
+  await an.finished.catch(()=>{});f.remove();setPerch({n:Date.now()});setPhase("perch");setNote("");
+  const ta=g.querySelector("textarea");if(ta){ta.focus({preventScroll:true})}}
+ // yazarak devam: uyarı açıkken klavyeye basınca yazı alanına uçar
+ useEffect(()=>{if(!open||phase!=="alert")return;const k=e=>{if(e.metaKey||e.ctrlKey||e.altKey||e.key.length!==1)return;const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;fly()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[open,phase]);
+ // tünemişken: yazı alanını izle, anahtar kelimeleri not al, üretim başlayınca çekil
+ const [pos,setPos]=useState(null);
+ useEffect(()=>{if(!perch)return;let tm;const upd=()=>{const g=target();if(!g){setPos(null);return}const r=g.getBoundingClientRect();setPos({l:r.left,t:r.top,w:r.width,h:r.height,...perchAt(r)});
+   const ta=g.querySelector("textarea");const v=ta?ta.value:"";const ws=sqWords(v);setNote(v.trim()?(ws.length?"Not aldım: "+ws.join(" · "):"Harika, devam et…"):"");if((window.__gmStudio||{}).calisiyor){close()}};
+  upd();const i=setInterval(upd,350);addEventListener("resize",upd);addEventListener("scroll",upd,true);return()=>{clearInterval(i);removeEventListener("resize",upd);removeEventListener("scroll",upd,true);clearTimeout(tm)}},[perch]);
+ async function useCmd(start){if(!res||!res.komut)return;const steps=[{t:"tur",deger:res.tur||"app"},{t:"prompt",metin:res.komut}];if(start)steps.push({t:"yap"});
+  setPhase("fly");stopL();try{speechSynthesis.cancel()}catch(e){}
+  try{if(!start){await fly()}for(const a of steps)await run(a);if(start)close()}catch(e){toast(e.message||"Yapılamadı")}}
+ if(!open)return null;
+ if(phase==="perch"&&pos)return html`<div class="sq-ripple" style=${{left:pos.l-4,top:pos.t-4,width:pos.w+8,height:pos.h+8}} aria-hidden="true"></div>
+  <div class=${"sq-perch "+pos.side} style=${{left:pos.x,top:pos.y}}><div class="sq-pb">${note?html`<${SqHL} text=${note} words=${sqWords(note)}/>`:"Seni bekliyorum ✍️"}</div><button class="sq-px" title="Fındık'ı gönder" onClick=${close}><${Icon} n="x" s=${11}/></button><${AgentSquirrel} s=${66} mode=${note?"wait nod":"wait"}/></div>`;
+ if(phase==="perch"||phase==="fly")return null;
+ const lastA=[...msgs].reverse().find(m=>m.role==="assistant");const words=(res&&res.vurgu)||[];
+ return html`<div class="sqg-bg" onClick=${e=>{if(e.target===e.currentTarget)close()}}><div class=${"sqg "+phase} role="dialog" aria-label="Ajan sincap Fındık">
+  <button class="ib sqg-x" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button>
+  <div class="sqg-hero"><div class="sqg-sq" ref=${flyRef}><${AgentSquirrel} s=${phase==="talk"?104:132} mode=${"pop "+(listen?"listen":busy?"think":talking?"twirl":"wait")}/></div>
+   <div class="sqg-bub">${phase==="alert"&&html`<span class="sqg-alert"><${Icon} n="alert" s=${13}/> ${open.reason==="busy"?"Biraz bekle":"Uyarı"}</span>`}
+    <p>${phase==="alert"?(open.msg||SQ_MSG[open.reason]||SQ_MSG.nostart):listen?html`<b>Seni dinliyorum…</b>${interim&&html`<span class="sqg-int">${interim}</span>`}`:busy?html`<span class="shimmer">Düşünüyorum…</span>`:lastA?html`<${SqHL} text=${lastA.content} words=${words}/>`:"Hazırım."}</p></div></div>
+  ${phase==="alert"&&html`<div class="sqg-acts"><button class="sqg-mic" onClick=${talk}><span class="sqg-ring"></span><${Icon} n="mic" s=${30}/></button>
+   <b>Konuşarak anlat</b><small>Mikrofona dokun, fikrini anlat; ben dinleyip özetleyeyim.</small>
+   <button class="sqg-type" onClick=${fly}><${Icon} n="edit" s=${15}/> Yazarak devam et</button><small class="sqg-hint">ya da klavyede yazmaya başla</small></div>`}
+  ${phase==="talk"&&html`<div class="sqg-talk">
+   <div class="sqg-live"><button class=${"sqg-mic sm"+(listen?" on":"")} onClick=${()=>listen?stopL():startL()} title=${listen?"Dinlemeyi durdur":"Konuş"}><span class="sqg-ring"></span><${Icon} n=${listen?"stop":"mic"} s=${listen?16:20}/></button>
+    <span class="cp-wave">${listen&&html`<i></i><i></i><i></i><i></i><i></i>`}</span><span class="sqg-st">${listen?"Seni dinliyorum":busy?"Düşünüyorum":talking?"Anlatıyorum":"Konuşmak için dokun"}</span></div>
+   ${res&&res.ozet&&res.ozet.length>0&&html`<div class="sqg-card"><div class="sqg-ct"><${Icon} n="list" s=${13}/> Özet</div><ul>${res.ozet.map((o,i)=>html`<li key=${i}><${SqHL} text=${o} words=${words}/></li>`)}</ul>${words.length>0&&html`<div class="sqg-tags">${words.map(w=>html`<span key=${w}>${w}</span>`)}</div>`}</div>`}
+   ${res&&res.komut&&html`<div class="sqg-card cmd"><div class="sqg-ct"><${Icon} n="wand" s=${13}/> Örnek komut hazır</div><p><${SqHL} text=${res.komut} words=${words}/></p>
+    <div class="sqg-cb"><button class="btn s" onClick=${()=>useCmd(true)}><${Icon} n="play" s=${14}/> Bununla başlat</button><button class="btn g s" onClick=${()=>useCmd(false)}><${Icon} n="edit" s=${14}/> Yazı alanına koy</button></div></div>`}
+   <form class="sqg-in" onSubmit=${e=>{e.preventDefault();ask(txt.trim(),false)}}><input value=${txt} placeholder="ya da buraya yaz…" onInput=${e=>setTxt(e.target.value)}/><button class="cp-send" disabled=${busy||!txt.trim()}><${Icon} n="arrowUp" s=${15} w=${2.3}/></button></form>
+  </div>`}
+ </div></div>`;
+}
+
 function App(){
  const installPrompt=useRef(null);
  const [installed,setInstalled]=useState(()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true);
@@ -4161,7 +4311,7 @@ function App(){
  const setView=v=>{if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
  const [health,setHealth]=useState({}),[apiOn,setApiOn]=useState(false),[healthError,setHealthError]=useState(false),[attempt,retry]=useState(0);
  const [,setSettingsVersion]=useState(0);
- const [msg,setMsg]=useState("");const toast=m=>{setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
+ const [msg,setMsg]=useState("");const toast=m=>{window.__gmLastToast={m:String(m||""),t:Date.now()};setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
  useEffect(()=>{
   let current=true;setHealthError(false);const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),10000);
   api("GET","/api/health",undefined,controller.signal).then(j=>{if(!j.ok)throw new Error();if(current){API_ON=true;setHealth(j);setApiOn(true)}})
@@ -4290,6 +4440,7 @@ function App(){
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
   ${skills&&html`<${SkillsModal} close=${()=>setSkills(false)} toast=${toast}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
+  <${SquirrelGuide} run=${cpRun} toast=${toast}/>
   ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
   ${gh&&html`<${GhImport} key=${gh.n} url=${gh.url} auto=${gh.auto} close=${()=>setGh(null)} auth=${auth} openAuth=${openAuth} toast=${toast} models=${models} go=${navGo} onStudio=${o=>{setIncoming(o);setView("studio")}}/>`}
   ${crOpen&&auth.user&&html`<${CreditPanel} auth=${auth} close=${()=>setCrOpen(false)} go=${navGo} flash=${crFlash}/>`}
