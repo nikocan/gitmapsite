@@ -227,6 +227,19 @@ const KIND_RULES = {
   site: "Bir WEB SİTESİ yap: etkileyici bir giriş bölümü (hero), hizmetler/özellikler, referanslar, SSS, iletişim formu ve alt bilgi olsun; SEO için anlamlı başlıklar ve meta açıklaması ekle.",
   game: "Bir OYUN yap: <canvas> veya DOM ile akıcı oynanış (requestAnimationFrame), klavye + dokunmatik kontroller, başlat/duraklat/yeniden başla, skor ve en yüksek skor (localStorage), artan zorluk ve ses kapatma düğmesi olsun. Telif hakkı olan karakter, isim veya görsel kullanma; tüm görseller kodla çizilsin.",
 };
+// Tasarım dili (istemciden gelen tema) — yalnızca güvenli alanlar kabul edilir
+const HEX = /^#[0-9a-fA-F]{6}$/;
+function designRule(d) {
+  if (!d || typeof d !== "object" || !d.palette || typeof d.palette !== "object") return "";
+  const p = d.palette; const keys = { bg: "arka plan", sf: "kart/yüzey", pr: "ana renk", ac: "vurgu rengi", tx: "metin" };
+  const cols = Object.entries(keys).filter(([k]) => HEX.test(p[k] || "")).map(([k, l]) => l + " " + p[k]);
+  if (cols.length < 3) return "";
+  const name = String(d.name || "").replace(/[^\p{L}\p{N} &'-]/gu, "").slice(0, 40);
+  const font = /^[A-Za-z ]{2,30}$/.test(d.font || "") ? d.font : "Inter";
+  const radius = Math.max(0, Math.min(40, Math.round(+d.radius || 12)));
+  const style = String(d.style || "").replace(/[<>`]/g, "").slice(0, 400);
+  return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}`;
+}
 const kindOf = (k) => (KIND_RULES[k] ? k : "app");
 function extractHtml(text) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
@@ -340,7 +353,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: "İstenen değişiklik: " + prompt });
   else messages.push({ role: "user", content: "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : "") });
   const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
@@ -350,7 +363,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
 route("POST", "/api/ai/plan", async ({ body, user, req }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "plan");
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` }, { role: "user", content: prompt }], 1500);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` + (designRule(body.design) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design) : "") }, { role: "user", content: prompt }], 1500);
   const credits = charge(user, rt, "plan", usage);
   return { plan: text.trim(), spent: rt.credits, credits };
 });
