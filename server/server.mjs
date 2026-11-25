@@ -468,7 +468,7 @@ const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, sl
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
-route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "5.1.0" }));
+route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "5.3.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -896,6 +896,27 @@ route("POST", "/api/github/import", async ({ body, user, req }) => {
     out = await bundleSite(repoSource(user, { ...x, entry }), entry); out.report.source = x.repo.full + "@" + x.repo.sha + "/" + posix(x.repo.base, entry);
   }
   return { html: out.html, title: out.title || x.repo.name, report: out.report, repo: x.repo, kind: x.kind, mode };
+});
+// Yapay zekâ prototipi: depo hangi dilde olursa olsun README + dosya yapısı + arayüz dosyalarından tıklanabilir prototip (kredi kullanır)
+route("POST", "/api/github/prototype", async (ctx) => {
+  const { body, user, req } = ctx;
+  const x = await ghInspect(user, str(body.url, 400, "Adres", true));
+  const rt = await resolveRoute(user, body, req, "build"); rt.maxTokens = 16000;
+  const src = repoSource(user, { ...x, entry: x.entry || "index.html" });
+  const files = x._files.filter((f) => !/(^|\/)(node_modules|vendor|dist|build|out|\.git|\.github|coverage|test|tests|__tests__|migrations|locale|locales|i18n)\//i.test(f.p) && !/(^|\/)\.env/.test(f.p));
+  const tree = files.map((f) => f.p).filter((p) => !/\.(png|jpe?g|gif|svg|ico|woff2?|ttf|eot|map|lock|min\.js|min\.css)$/i.test(p)).slice(0, 320).join("\n");
+  const parts = []; let total = 0;
+  const add = async (p, max) => { if (total > 80000) return; const r = await src.load(p, max); if (!r || !r.buf) return; const t = r.buf.toString("utf8").slice(0, max); total += t.length; parts.push(`--- ${p} ---\n${t}`); };
+  const readme = files.find((f) => /^readme(\.[a-z]+)?$/i.test(f.p)) || files.find((f) => /(^|\/)readme\.md$/i.test(f.p));
+  if (readme) await add(readme.p, 9000);
+  for (const m of ["package.json", "composer.json", "requirements.txt", "pyproject.toml", "Gemfile", "go.mod"]) if (files.some((f) => f.p === m)) await add(m, 3000);
+  const ui = files.filter((f) => f.s < 40000 && /\.(html?|blade\.php|php|vue|jsx|tsx|svelte|erb|twig|hbs|ejs|py|cshtml|razor)$/i.test(f.p) && /(view|template|page|component|screen|layout|route|controller|model|resources|app\/|src\/|admin|dashboard)/i.test(f.p))
+    .sort((a, b) => { const w = (p) => /(layout|dashboard|index|home|app)\b/i.test(p) ? 0 : /(route|model)/i.test(p) ? 1 : 2; return w(a.p) - w(b.p) || a.s - b.s; });
+  for (const f of ui) { if (total > 80000 || parts.length >= 34) break; await add(f.p, 12000); }
+  const messages = [{ role: "system", content: GEN_SYSTEM + `\n- GÖREV: Bir GitHub projesinin (${x.framework || x.repo.lang || "bilinmeyen yapı"}) README'si, dosya yapısı ve arayüz dosyaları veriliyor. Projeyi ÇALIŞTIRMADAN anla ve ana ekranlarını SİMÜLE eden, tıklanabilir, TEK DOSYALIK bir PROTOTİP yap. Kurallar: Projenin gerçek modüllerini, menülerini, tablolarını, formlarını ve iş akışlarını (ör. sipariş → onay → sevkiyat) README ve kaynaklardan çıkar; uydurma modül ekleme. Kenar menüsü ya da sekmelerle 4-7 ekran arasında hash yönlendirme ile geçilsin; her ekranda gerçekçi Türkçe örnek veriler, durum rozetleri, arama ve filtre çalışsın; formlar localStorage'a kaydetsin. Arayüz tamamen Türkçe, modern ve sade olsun. En üstte ince bir şerit: “Prototip · ${x.repo.full} yapısından üretildi”. ÖZET yorumunda tespit ettiğin modülleri ve ekranları madde madde yaz.` + runOpts(rt, body) }, { role: "user", content: `Depo: ${x.repo.full} (${x.repo.ref})\nAçıklama: ${x.repo.description || "-"}\n\nDOSYA YAPISI:\n${tree}\n\n${parts.join("\n\n")}` }];
+  const fin = ({ text, model, usage }) => { const o = extractHtml(text); const credits = charge(user, rt, "prototype", usage); return { ...o, model, provider: rt.provider, spent: rt.credits, credits, repo: x.repo }; };
+  if (body.stream === true) return aiStream(ctx, rt, messages, fin);
+  return fin(await chatWith(rt, messages, 16000));
 });
 // Derleme isteyen projeler: kaynak kodu yapay zekâyla tek dosyalık uygulamaya çevir (kredi kullanır)
 route("POST", "/api/github/convert", async (ctx) => {
