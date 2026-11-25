@@ -1029,6 +1029,22 @@ a{color:#64a8ff}.btn,a.btn{text-decoration:none}
 .cl-foot{display:flex;align-items:center;gap:4px;margin:8px 4px 2px;font-size:12.5px;color:#8a8882}.cl-foot>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .cl-foot button{border:0;background:none;color:#d6d4ce;font:inherit;font-size:13.5px;padding:3px 6px;border-radius:8px;cursor:pointer;white-space:nowrap}.cl-foot button.m{color:#a3a19a}.cl-foot button:hover{background:#2a2a28}
 @media(max-width:1300px){.cl-foot>span:first-child{display:none}}
+/* v5.8 — Asistan paneli Claude sohbet dili */
+.cp-msgs{gap:16px!important}
+.cp-u{background:#303030!important;border:0!important;border-radius:18px!important;padding:9px 14px!important;font-size:14.5px!important;color:#ececec}.cp-u svg{color:#d97757!important}
+.cp-t{font-family:"Source Serif 4","Tiempos Text",Georgia,serif;font-size:15.5px!important;line-height:1.62!important;color:#e8e6e3!important}.cp-t.err{font-family:inherit;font-size:13px!important}
+.cp .cl-row{font-size:14px}.cp .cl-think{font-size:14px;margin-top:8px;padding:10px 14px}.cp .cl-think .cl-tt{margin-bottom:8px}
+.cp-ht small .clspark{vertical-align:-2px;margin-right:2px}
+.cp-acts{border:0!important;background:none!important;border-radius:0!important;overflow:visible!important}
+.cp-acts .cp-ah{border:0!important;padding:2px 0!important;font-size:14px!important;letter-spacing:0!important;font-weight:400!important;color:#a3a19a!important}
+.cp-acts .cl-card{margin:8px 0 0 0}
+.cp-a{border-top:1px solid #3a3937!important;padding:10px 12px!important;background:none!important}.cp-a:first-child{border-top:0!important}
+.cp-ai{background:none!important;width:18px!important;height:18px!important;color:#8a8882!important}.cp-a.done .cp-ai{color:#8a8882!important}
+.cp-at b{font-weight:500!important;color:#d6d4ce;font-size:13.5px!important}.cp-a.done .cp-at b,.cp-a.skip .cp-at b{color:#a3a19a}.cp-at small{color:#7c7a74!important}
+.cp-a.ask{background:rgba(217,119,87,.06)!important}.cp-ok.pulse{background:#f4f4ef!important;animation:clok 1.4s ease-in-out infinite!important}@keyframes clok{50%{box-shadow:0 0 0 4px rgba(217,119,87,.35)}}
+.cp-all{background:none!important;border:1px solid #3a3937!important;color:#d6d4ce!important;font-weight:500!important}
+.cp-st{font-variant-numeric:tabular-nums;color:#7c7a74!important}
+.cp-box{background:#303030!important;border:1px solid #3d3d3b!important;border-radius:20px!important}
 </style>
 </head>
 <body>
@@ -1042,8 +1058,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.7.0";
+const VERSION="5.8.0";
 const CHANGELOG=[
+ {v:"5.8.0",date:"2026-11-25",items:[
+  "💬 Asistan paneli de Claude sohbet dilini kullanıyor: istek gelince “… isteği değerlendiriliyor” satırı ve canlı sayaçlı “Düşünüyor… N sn” kutusu çıkıyor",
+  "💭 Her yanıtın üstünde “N sn düşündü” satırı var; basınca ne düşündüğü açılıyor",
+  "✳️ Oto pilot adımları çerçeveli bir kartta: çalışan adımda turuncu dönen yıldız ve geçen süre, onay beklerken “Onayın değerlendiriliyor”, bitince “N adım uyguladı · süre” özeti",
+  "⏱️ Adımların her birinin yanında ne kadar sürdüğü yazıyor",
+  "🎨 Panelde mesaj balonları koyu gri, yanıtlar serif yazıyla; başlıktaki durum yazısının yanında da çalışırken yıldız dönüyor"]},
  {v:"5.7.0",date:"2026-11-25",items:["Kuyruğunda küçük g taşıyan sincap Gitmapp’ın yeni simgesi oldu. Gezinme ve yayın için 12 ikon çizildi.","Keşfet sayfasından İngilizce tanıtım filmini izleyebilirsiniz."]},
  {v:"5.6.0",date:"2026-11-25",items:[
   "💬 Stüdyo sohbeti Claude'un konuşma diline geçti: her istekte önce “… isteği değerlendiriliyor” düşünme bloğu açılır, model yanıt vermeye başlayınca kapanıp “N sn düşündü” olarak kalır (içinde planlanan adımlar)",
@@ -3923,7 +3945,9 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
  const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
  const [auto,setAuto]=useState(()=>LS.get("cpAuto",false)===true);const [speakOn,setSpeakOn]=useState(()=>LS.get("cpSpeak",true)!==false);
  const [voice,setVoice]=useState(false);const [listen,setListen]=useState(false);const [interim,setInterim]=useState("");const [talking,setTalking]=useState(false);const [asking,setAsking]=useState(null);
+ const [run0,setRun0]=useState(null);const [,setTick]=useState(0);const stepT=useRef({});const [openTh,setOpenTh]=useState({});
  const R=useRef({});Object.assign(R.current,{msgs,auto,speakOn,voice,busy,run,ctx,talking});
+ useEffect(()=>{if(!busy&&!msgs.some(m=>m.st&&m.st.includes("run")))return;const i=setInterval(()=>setTick(x=>x+1),500);return()=>clearInterval(i)},[busy,msgs]);
  const endRef=useRef(null);const recRef=useRef(null);const waitRef=useRef(null);const emptyRef=useRef(0);const taRef=useRef(null);
  useEffect(()=>{LS.set("cpMsgs",msgs.slice(-40))},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
  useEffect(()=>{const list=endRef.current?.parentElement;if(list)list.scrollTop=list.scrollHeight},[msgs.length,live,busy,asking,interim]);
@@ -3957,7 +3981,7 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
  const relisten=()=>{if(R.current.voice&&!waitRef.current)setTimeout(()=>{if(R.current.voice&&!R.current.busy&&!R.current.talking&&!recRef.current)startListen()},250)};
  // --- eylemler ---
  const setAct=(mi,ai,s)=>setMsgs(ms=>ms.map((m,i)=>i===mi&&m.st?{...m,st:m.st.map((x,j)=>j===ai?s:x)}:m));
- async function exec(mi,ai){const a=R.current.msgs[mi].acts[ai];setAct(mi,ai,"run");try{await R.current.run(a)}catch(e){toast(e.message||"Adım yapılamadı")}setAct(mi,ai,"done");await wait(220)}
+ async function exec(mi,ai){const a=R.current.msgs[mi].acts[ai];stepT.current[mi+"-"+ai]=Date.now();setAct(mi,ai,"run");try{await R.current.run(a)}catch(e){toast(e.message||"Adım yapılamadı")}const k=mi+"-"+ai;stepT.current[k]=Math.max(1,Math.round((Date.now()-stepT.current[k])/1000));setMsgs(ms=>ms.map((m,i)=>i===mi&&m.st?{...m,st:m.st.map((x,j)=>j===ai?"done":x),secs:(m.secs||0)+stepT.current[k]}:m));await wait(220)}
  async function runActs(mi,all){const m=R.current.msgs[mi];if(!m||!m.acts)return;
   for(let ai=0;ai<m.acts.length;ai++){const cur=R.current.msgs[mi].st[ai];if(cur==="done"||cur==="skip")continue;const a=m.acts[ai];
    if(CP_CONFIRM[a.t]&&!all){setAct(mi,ai,"ask");setAsking(mi+"-"+ai);await wait(140);const b=document.querySelector('.cp-ok[data-k="'+mi+"-"+ai+'"]');if(b)ghostPoint(b);
@@ -3970,22 +3994,30 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
  // --- gönder ---
  async function send(text,fromVoice){text=String(text!=null?text:t).trim();if(!text||R.current.busy)return;if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
   if(waitRef.current){waitRef.current.r(false)}stopSpeak();setT("");
-  const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";
-  try{const j=await apiStream("/api/ai/copilot",{messages:next.filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice},d=>{acc+=d;setLive(acc)});
-   const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined};
-   const all=[...R.current.msgs,msg];const mi=all.length-1;setMsgs(all);R.current.msgs=all;setLive("");setBusy(false);R.current.busy=false;
+  const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";const t0=Date.now();let first=0;const ttl=clTopic(text);setRun0({t0,ttl,think:null});const thk=()=>Math.max(1,Math.round(((first||Date.now())-t0)/1000));
+  try{const j=await apiStream("/api/ai/copilot",{messages:next.filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice},d=>{if(!first){first=Date.now();setRun0(r=>r&&{...r,think:thk()})}acc+=d;setLive(acc)});
+   const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined,think:thk(),ttl};
+   const all=[...R.current.msgs,msg];const mi=all.length-1;setMsgs(all);R.current.msgs=all;setLive("");setRun0(null);setBusy(false);R.current.busy=false;
    const sp=(R.current.speakOn||R.current.voice)?say(msg.content):Promise.resolve();
    if(p.acts.length&&R.current.auto){await sp;await runActs(mi,false)}else{await sp;relisten()}
-  }catch(e){setLive("");setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
+  }catch(e){setLive("");setRun0(null);setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
  const key=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}};
  const lastA=[...msgs].reverse().find(m=>m.role==="assistant"&&!m.err);
  const status=busy?"Düşünüyor…":talking?"Konuşuyor…":listen?"Dinliyor…":asking?"Onay bekliyor":auto?"Oto pilot açık":"Ücretsiz · sesli ya da yazılı";
  const orb=html`<span class=${"cp-orb"+(listen?" listen":talking?" talk":busy?" think":"")}><i></i></span>`;
- const actCard=(m,mi)=>{const pend=m.st.some(x=>x==="wait");return html`<div class="cp-acts"><div class="cp-ah"><${Icon} n="pilot" s=${13}/><span>${auto?"Oto pilot adımları":"Önerilen adımlar"}</span><span style=${{flex:1}}></span>${pend&&!asking&&html`<button class="cp-all" onClick=${()=>runActs(mi,true)}>Hepsini uygula</button>`}</div>
-  ${m.acts.map((a,ai)=>{const [ic,l,d]=cpLabel(a);const s=m.st[ai];const k=mi+"-"+ai;return html`<div key=${ai} class=${"cp-a "+s}><span class="cp-ai">${s==="done"?html`<${Icon} n="check" s=${13} w=${2.4}/>`:s==="run"?html`<${Spark} s=${13}/>`:html`<${Icon} n=${ic} s=${13}/>`}</span><div class="cp-at"><b>${l}</b>${d&&html`<small class=${a.t==="prompt"?"cp-pr":""}>${d}</small>`}</div>
-   ${s==="wait"||s==="ask"?html`<span class="cp-ab">${s==="ask"&&html`<button class="cp-skip" onClick=${()=>skipAct(mi,ai)}>Atla</button>`}<button class=${"cp-ok"+(s==="ask"?" pulse":"")} data-k=${k} onClick=${()=>okAct(mi,ai)}>${s==="ask"?"Onayla":"Uygula"}</button></span>`:s==="skip"?html`<span class="cp-st">atlandı</span>`:""}</div>`})}</div>`};
+ const actCard=(m,mi)=>{const st=m.st,n=m.acts.length,ri=st.indexOf("run"),ai0=st.indexOf("ask"),nd=st.filter(x=>x==="done").length,pend=st.some(x=>x==="wait");
+  const el=ri>=0&&stepT.current[mi+"-"+ri]>1e9?Math.floor((Date.now()-stepT.current[mi+"-"+ri])/1000):0;
+  const head=ri>=0?html`<${ClSpark} s=${17}/><span class="cl-cur">${cpLabel(m.acts[ri])[1]}</span><span class="cl-time">${clTime(el)}</span>`
+   :ai0>=0?html`<${ClSpark} s=${17}/><span class="cl-cur shimmer">Onayın değerlendiriliyor</span><span class="cl-time">${ai0+1}/${n}</span>`
+   :!pend?html`<span>${nd?nd+" adım uyguladı"+(st.includes("skip")?", "+st.filter(x=>x==="skip").length+" adım atlandı":"")+(m.secs?" · "+clTime(m.secs):""):"Adımlar atlandı"}</span>`
+   :html`<span>${auto?"Oto pilot":"Önerilen"} · ${n} adım${nd?" · "+nd+" tamam":""}</span>`;
+  return html`<div class="cp-acts"><div class="cl-row cp-ah">${head}<span style=${{flex:1}}></span>${pend&&!asking&&ri<0&&html`<button class="cp-all" onClick=${()=>runActs(mi,true)}>Hepsini uygula</button>`}</div>
+  <div class="cl-card">${m.acts.map((a,ai)=>{const [ic,l,d]=cpLabel(a);const s=st[ai];const k=mi+"-"+ai;return html`<div key=${ai} class=${"cp-a "+s}><span class="cp-ai">${s==="done"?html`<${Icon} n="check" s=${14} w=${2.2}/>`:s==="run"?html`<${ClSpark} s=${14}/>`:s==="skip"?html`<${Icon} n="x" s=${13}/>`:html`<${Icon} n=${ic} s=${14}/>`}</span><div class="cp-at"><b class=${s==="run"?"shimmer":""}>${l}</b>${d&&html`<small class=${a.t==="prompt"?"cp-pr":""}>${d}</small>`}</div>
+   ${s==="wait"||s==="ask"?html`<span class="cp-ab">${s==="ask"&&html`<button class="cp-skip" onClick=${()=>skipAct(mi,ai)}>Atla</button>`}<button class=${"cp-ok"+(s==="ask"?" pulse":"")} data-k=${k} onClick=${()=>okAct(mi,ai)}>${s==="ask"?"Onayla":"Uygula"}</button></span>`:s==="skip"?html`<span class="cp-st">atlandı</span>`:s==="done"&&typeof stepT.current[k]==="number"&&stepT.current[k]<1e9?html`<span class="cp-st">${clTime(stepT.current[k])}</span>`:""}</div>`})}</div></div>`};
+ const thinkRow=(m,mi)=>m.think?html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${()=>setOpenTh(o=>({...o,[mi]:!o[mi]}))}><span>${m.think} sn düşündü</span><${Icon} n=${openTh[mi]?"chevUp":"chevRight"} s=${14}/></button>
+  ${openTh[mi]&&html`<div class="cl-think"><div class="cl-tt">${(m.ttl||"İstek değerlendiriliyor").replace(/değerlendiriliyor$/,"değerlendirildi")}</div><p>Ekran bağlamı ve önceki konuşma okundu.</p><p>${m.acts?m.acts.length+" adımlık bir plan hazırlandı"+(auto?"; oto pilot onay gereken adımlarda duracak.":"; adımlar onayınla uygulanacak."):"Yanıt hazırlandı."}</p></div>`}</div>`:"";
  return html`<aside class="cp glass" role="complementary" aria-label="Gitmapp Asistan">
-  <div class="cp-h">${orb}<div class="cp-ht"><b>Asistan</b><small>${status}</small></div><div class="cp-tools">
+  <div class="cp-h">${orb}<div class="cp-ht"><b>Asistan</b><small>${busy&&html`<${ClSpark} s=${11}/> `}${status}</small></div><div class="cp-tools">
    <div class="cp-seg" title="Oto pilot: asistan ekranları açar ve ayarları kendisi yapar; sen yalnızca onaylarsın"><button aria-pressed=${!auto} class=${!auto?"on":""} onClick=${()=>setAuto(false)}>Sohbet</button><button aria-pressed=${auto} class=${auto?"on":""} onClick=${()=>{setAuto(true);toast("Oto pilot açık: ekranları ben yönetirim, sen yalnızca onaylarsın")}}><${Icon} n="pilot" s=${11}/> Oto</button></div>
    <button class="ib sm" title=${speakOn?"Yanıtları sesli okuma: açık":"Yanıtları sesli okuma: kapalı"} onClick=${()=>{if(speakOn)stopSpeak();setSpeakOn(!speakOn)}}><${Icon} n=${speakOn?"volume":"volumeX"} s=${15}/></button>
    ${msgs.length>0&&html`<button class="ib sm" title="Sohbeti temizle" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);setMsgs([])}}><${Icon} n="trash" s=${14}/></button>`}
@@ -3994,8 +4026,8 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
    ${!msgs.length&&html`<div class="cp-hello"><div class="cp-big">${orb}</div><h3>Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}, ne yapalım?</h3><p>Fikrini anlat, birlikte netleştirelim. Hazır olunca istemi ben yazar, geliştirmeyi başlatırım. <b>Oto</b> modda ekranları ve ayarları ben yönetirim; sen yalnızca onaylarsın.</p>
     <button class="cp-voicebtn" onClick=${toggleVoice}><${Icon} n="headphones" s=${17}/> Sesli konuşmaya başla</button>
     <div class="cp-start">${CP_START.map(([ic,l,q])=>html`<button key=${l} onClick=${()=>send(q)}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}</div></div>`}
-   ${msgs.map((m,mi)=>m.role==="user"?html`<div class="cp-u" key=${mi}>${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}><div class=${"cp-t"+(m.err?" err":"")}>${m.err?m.content:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
-   ${busy&&html`<div class="cp-m"><div class="cp-t">${cpParse(live).body?html`<${CopilotReply} text=${cpParse(live).body}/>`:html`<span class="shimmer">Düşünüyorum…</span>`}${live&&html`<span class="caret"></span>`}</div></div>`}
+   ${msgs.map((m,mi)=>m.role==="user"?html`<div class="cp-u" key=${mi}>${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}>${!m.err&&thinkRow(m,mi)}<div class=${"cp-t"+(m.err?" err":"")}>${m.err?m.content:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
+   ${busy&&html`<div class="cp-m">${run0&&run0.think==null?html`<div class="cl-sec"><div class="cl-row"><${ClSpark} s=${17}/><span class="shimmer">${run0.ttl}</span></div><div class="cl-think"><div class="cl-tt">Düşünüyor… ${Math.floor((Date.now()-run0.t0)/1000)} sn</div><p>Ekran bağlamı ve önceki konuşma okunuyor.</p></div></div>`:html`${run0&&html`<div class="cl-row"><span>${run0.think} sn düşündü</span></div>`}<div class="cp-t">${cpParse(live).body?html`<${CopilotReply} text=${cpParse(live).body}/>`:html`<span class="shimmer">Yanıt yazılıyor…</span>`}<span class="caret"></span></div>`}</div>`}
    ${msgs.length>=2&&!busy&&lastA&&!(lastA.acts||[]).some(a=>a.t==="prompt")&&html`<div class="cp-sug"><button onClick=${()=>send("Konuştuklarımızı ayrıntılı bir geliştirme istemine dönüştür, istem kutusuna yaz ve uygun tür, tema ve modu ayarla.")}><${Icon} n="wand" s=${13}/> Prompta dönüştür</button><button onClick=${()=>send("Bunu geliştirmeye başla.")}><${Icon} n="play" s=${13}/> Geliştirmeye başla</button></div>`}
    <div ref=${endRef}></div></div>
   <div class="cp-in">
