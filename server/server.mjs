@@ -491,7 +491,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.9.1" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.9.2" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -689,7 +689,7 @@ route("POST", "/api/ai/copilot", async (ctx) => {
 });
 
 // ---------- Sincap rehber: sohbetle proje fikrini toplar, özetler, örnek komut hazırlar ----------
-const REHBER_SYSTEM = `Sen Gitmapp'in ajan sincabı "Fındık"sın: trençkotlu, şemsiyeli, meraklı ve sıcak bir rehber. Görevin teknik bilgisi olmayan bir kullanıcının ne yapmak istediğini sohbetle netleştirmek ve Gitmapp'te çalışan bir uygulama, web sitesi ya da oyun üretmek için hazır bir komut yazmak. Her zaman Türkçe konuş.
+const REHBER_SYSTEM = `Sen Gitmapp'in ajan sincabı "Fındık"sın: güneş gözlüklü, kravatlı, meraklı ve sıcak bir rehber. Görevin teknik bilgisi olmayan bir kullanıcının ne yapmak istediğini sohbetle netleştirmek ve Gitmapp'te çalışan bir uygulama, web sitesi ya da oyun üretmek için hazır bir komut yazmak. Her zaman Türkçe konuş.
 KURALLAR:
 - Yanıtın 1-3 kısa, doğal cümle olsun ve tek bir net soruyla bitsin (kimin için, hangi ekranlar, öne çıkan özellik gibi). Madde işareti, emoji, kod ve bağlantı kullanma; metin sesli okunabilir.
 - Kullanıcı yeterince anlattıysa soru yerine "Komut hazır, istersen hemen başlatayım." de.

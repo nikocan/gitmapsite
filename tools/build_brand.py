@@ -27,8 +27,14 @@ def icon(color, inset=False, backdrop=""):
 # Keep the existing light/dark download URLs usable with the current identity.
 (brand / "lockup-light.svg").write_text(icon(ink))
 (brand / "lockup-dark.svg").write_text(icon(paper))
-background = '<rect width="96" height="96" rx="22" fill="#e4ff3d"/>\n'
-(brand / "app-icon.svg").write_text(icon(ink, inset=True, backdrop=background))
+# GitHub işareti gibi: tek renkli daire içinde siluet. Arayüzdeki BrandMark ile aynı oranlar.
+circle = '<circle cx="48" cy="48" r="48" fill="#e4ff3d"/>\n'
+badge = (f'<svg xmlns="{ns}" viewBox="{viewbox}">\n  <title>Gitmapp</title>\n{circle}'
+         f'<g transform="translate(16.6 17.5) scale(.64)" fill="{ink}">{shape}</g>\n</svg>\n')
+(brand / "mark.svg").write_text(badge)
+(brand / "app-icon.svg").write_text(badge)
+if "--svg-only" in __import__("sys").argv:
+    raise SystemExit
 with tempfile.TemporaryDirectory() as directory:
     source = Path(directory) / "app-icon.svg"
     source.write_text(icon(ink, inset=True, backdrop='<rect width="96" height="96" fill="#e4ff3d"/>\n'))
