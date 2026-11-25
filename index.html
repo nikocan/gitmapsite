@@ -1351,8 +1351,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.12.2";
+const VERSION="5.13.0";
 const CHANGELOG=[
+ {v:"5.13.0",date:"2026-11-25",items:[
+  "✏️ Büyük uygulamalarda düzenleme artık tüm dosyayı yeniden yazdırmıyor: yapay zekâ yalnızca değişen parçaları gönderiyor, Gitmapp bunları mevcut koda yerleştiriyor. Düzenlemeler çok daha hızlı ve uzun dosyalarda yanıtın yarıda kesilip uygulamanın bozulması önleniyor",
+  "🧩 Değişiklik koda yerleştirilemezse uygulama bozulmuyor, kredi düşmüyor ve ne olduğu Türkçe yazıyor",
+  "🖼️ Tasarım sahnesi ve önizleme boş kalmıyor: verisini tarayıcıda saklayan uygulamalar güvenli önizleme alanında hata verip boş ekran gösteriyordu; önizlemeye geçici bir depo eklendi (kaydedilen ve yayınlanan koda eklenmez)",
+  "🧹 Mesaj kutusunun altında tekrar eden model, hız ve tür düğmeleri kaldırıldı; bu ayarlar yalnızca üstteki araç çubuğunda"]},
  {v:"5.12.2",date:"2026-11-25",items:[
   "🧭 Keşfet'te uygulamaların yanındaki alakasız fotoğraflar kaldırıldı; her uygulama kendi simgesi ve kategori rengiyle görünüyor"]},
  {v:"5.12.1",date:"2026-11-25",items:[
@@ -1783,7 +1788,7 @@ function ProtoTab({repo,toast}){const K="proto:"+repo.full_name;const [html_,set
   :html`<div class="proto-bar"><span>${busy?html`<span class="shimmer">Proje inceleniyor ve prototip yazılıyor… ${(live.length/1024).toFixed(1)} KB</span>`:"Prototip hazır"}</span><span style=${{flex:1}}></span>
     <div class="seg">${[["phone","phone"],["desktop","monitor"]].map(([k,ic])=>html`<button key=${k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${14}/></button>`)}</div>
     ${!busy&&html`<button class="btn g s" onClick=${make}><${Icon} n="refresh" s=${14}/> Yeniden</button><button class="btn s" onClick=${toStudio}><${Icon} n="hammer" s=${14}/> Geliştir'de aç</button>`}</div>
-   <div class=${"proto-fr "+dev}>${busy?html`<pre class="lc-b mono">${live.slice(-4000)}<span class="caret"></span></pre>`:html`<iframe title="Prototip" sandbox="allow-scripts allow-forms allow-modals" srcdoc=${html_}></iframe>`}</div>
+   <div class=${"proto-fr "+dev}>${busy?html`<pre class="lc-b mono">${live.slice(-4000)}<span class="caret"></span></pre>`:html`<iframe title="Prototip" sandbox="allow-scripts allow-forms allow-modals" srcdoc=${withStoreShim(html_)}></iframe>`}</div>
    ${sum&&!busy&&html`<details class="bt-cmd" open><summary>Tespit edilen modüller</summary><div style=${{whiteSpace:"pre-wrap",fontSize:13,color:"var(--label2)"}}>${sum}</div></details>`}`}
  </div>`}
 function Card({r,onOpen,saved,onSave,sec}){
@@ -3247,6 +3252,10 @@ function readDesign(source) {
  if(match) {try {const rules=JSON.parse(match[1]);if(Array.isArray(rules)&&rules.every(r=>validTarget(r?.path)&&r.values&&typeof r.values==="object"&&Object.values(r.values).every(v=>typeof v==="string"||typeof v==="number"))) return {base:source.replace(designMarker,""),rules}} catch {}}
  return {base:source,rules:[]};
 }
+// Önizleme çerçeveleri güvenlik için ayrı (opak) kökende çalışır; orada localStorage erişimi hata fırlatır ve
+// veriyi localStorage'da tutan uygulamalar boş ekran gösterir. Yalnızca önizlemede bellek içi bir depo eklenir.
+const STORE_SHIM='<script data-gm-shim>(function(){function mk(){var d={};return{getItem:function(k){return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null},setItem:function(k,v){d[k]=String(v)},removeItem:function(k){delete d[k]},clear:function(){d={}},key:function(i){return Object.keys(d)[i]||null},get length(){return Object.keys(d).length}}}["localStorage","sessionStorage"].forEach(function(n){try{window[n].getItem("_")}catch(e){try{Object.defineProperty(window,n,{value:mk(),configurable:true})}catch(_){}}})})();<\/script>';
+function withStoreShim(h){if(!h||h.includes("data-gm-shim"))return h;const m=/<head[^>]*>/i.exec(h);if(m)return h.slice(0,m.index+m[0].length)+STORE_SHIM+h.slice(m.index+m[0].length);const d=/<!DOCTYPE[^>]*>/i.exec(h);return d?h.slice(0,d.index+d[0].length)+STORE_SHIM+h.slice(d.index+d[0].length):STORE_SHIM+h}
 function designDocument(base,rules,editing=false) {
  if(!editing&&!rules.length) return base;
  const data=JSON.stringify(rules).replace(/</g,"\\u003c");
@@ -3271,7 +3280,7 @@ function validTarget(path){
 function DesignScene({project,resolve,save,close,aiBody,spent,failAuth}) {
  const [initial]=useState(()=>readDesign(project.html));
  const [rules,setRules]=useState(initial.rules), [history,setHistory]=useState([]);
- const [src]=useState(()=>designDocument(resolve(initial.base),initial.rules,true));
+ const [src]=useState(()=>withStoreShim(designDocument(resolve(initial.base),initial.rules,true)));
  const [target,setTarget]=useState(null),[delta,setDelta]=useState({}),[selecting,setSelecting]=useState(true);
  const [device,setDevice]=useState("auto"),[prompt,setPrompt]=useState(""),[asking,setAsking]=useState(false),[figma,setFigma]=useState(false);
  const [feedback,setFeedback]=useState(""),[skill,setSkill]=useState("Görsel hiyerarşi");
@@ -3508,6 +3517,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  const startPanel=d=>{pickTheme(d.id,null);const app=PK_APPS.find(a=>a.id===d.app);setInput(app.id==="giris"?"“"+d.name+"” şablonuyla giriş, kayıt ve şifre sıfırlama ekranları olan bir hesap sayfası yap.":"“"+d.name+"” şablonuyla "+app.l+" yönetim paneli yap. Menüde "+app.nav.join(", ")+" olsun; her sayfayı gerçekçi Türkçe örnek verilerle doldur, açık/koyu tema geçişi ekle.");setTimeout(()=>{const t=document.querySelector(".gta");t&&t.focus()},120)};
  useEffect(()=>{setLocalOk(LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))}));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
+ const preview=h=>withStoreShim(resolve(h));
  useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},500);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{
@@ -3792,7 +3802,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   setSt(s=>({...s,gitContext:null}));
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
- const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${resolve(st.html)+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
+ const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${preview(st.html)+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
  return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -3815,7 +3825,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
     <div class="ws-ctrl">${controls(true)}<button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
     <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map(msgEl)}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${prompt(false)}
-     <div class="cl-foot"><span>Gitmapp yapay zekâ kullanır ve hata yapabilir.</span><span style=${{flex:1}}></span><button type="button" onClick=${()=>setPicker(true)} title="Dil modeli">${curModel?shortModel(curModel):"Model"}</button><button type="button" class="m" title="Mod: Hızlı / Planlı / Ajan" onClick=${()=>setPrefs(p=>({...p,mode:p.mode==="hizli"?"planli":p.mode==="planli"?"ajan":"hizli"}))}>${({hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"})[prefs.mode]||"Hızlı"}</button><button type="button" class="m" title="Tür" onClick=${()=>setPrefs(p=>({...p,kind:p.kind==="app"?"site":p.kind==="site"?"game":"app"}))}>${({app:"Uygulama",site:"Site",game:"Oyun"})[prefs.kind]}</button></div>
+     
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${st.html&&html`<button type="button" class="chip gm forme-chip" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${12}/> Benim için yap</button>`}${st.html&&html`<button type="button" class="chip on" disabled=${busy} onClick=${review}><${Icon} n="shield" s=${12}/> Kontrol et ve düzelt</button>`}${st.html&&html`<button class="chip" onClick=${()=>{setCode(false);setStage(stage==="phone"?"desktop":"phone")}}>${stage==="phone"?"Masaüstünde kontrol et":"Telefonda kontrol et"}</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
    <section class="studio-stage" ref=${stageRef} tabindex="-1" aria-label="Önizleme ve kod"><div class="stage-tabs" aria-label="Çalışma görünümü">
@@ -4948,7 +4958,7 @@ function GhImport({url,auto,close,auth,openAuth,toast,onStudio,models,go}){
    <div class="ghi-prev">
     <div class="ghi-pbar"><span>${busy==="import"?html`<span class="shimmer">Site birleştiriliyor…</span>`:busy==="convert"?html`<span class="shimmer">Yapay zekâ dönüştürüyor… ${(conv.length/1024).toFixed(1)} KB</span>`:res?"Canlı önizleme":"Önizleme"}</span><span style=${{flex:1}}></span>
      <div class="seg">${[["phone","phone"],["desktop","monitor"]].map(([k,ic])=>html`<button key=${k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${14}/></button>`)}</div></div>
-    <div class=${"ghi-frame "+dev}>${res?html`<iframe title="GitHub önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${res.html}></iframe>`:busy==="convert"?html`<pre class="lc-b mono">${conv.slice(-5000)}<span class="caret"></span></pre>`:busy?html`<div class="prev-empty"><${Spark} s=${30}/></div>`:errBox||html`<div class="prev-empty"><${Icon} n="github" s=${30} c="#4a5470"/><span style=${{marginTop:10}}>Kaynak seçince önizleme burada açılır</span></div>`}</div>
+    <div class=${"ghi-frame "+dev}>${res?html`<iframe title="GitHub önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${withStoreShim(res.html)}></iframe>`:busy==="convert"?html`<pre class="lc-b mono">${conv.slice(-5000)}<span class="caret"></span></pre>`:busy?html`<div class="prev-empty"><${Spark} s=${30}/></div>`:errBox||html`<div class="prev-empty"><${Icon} n="github" s=${30} c="#4a5470"/><span style=${{marginTop:10}}>Kaynak seçince önizleme burada açılır</span></div>`}</div>
     ${res&&err&&errBox}
    </div></div>
   <div class="ghi-f">

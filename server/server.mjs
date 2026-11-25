@@ -380,6 +380,48 @@ function connRules(list) {
   return out.length ? "\n- Kullanıcının bağladığı servisler (uygun yerlerde kullan):\n  • " + out.join("\n  • ") : "";
 }
 const kindOf = (k) => (KIND_RULES[k] ? k : "app");
+// v5.13 — Büyük dosyalarda düzenleme: modele tüm dosyayı yeniden yazdırmak yerine yalnızca değişen parçaları istenir.
+// Hem daha hızlı hem de uzun dosyalarda yanıtın yarıda kesilip uygulamanın bozulması önlenir.
+const PATCH_MIN = 9000;
+const PATCH_RULE = `
+BU BİR DÜZENLEME İSTEĞİ VE DOSYA BÜYÜK: yukarıdaki "DOSYANIN TAMAMINI döndür" kuralı yerine şu biçimi kullan.
+- İlk satır: <!-- ÖZET: (yaptığın değişikliği 1-2 cümleyle Türkçe anlat) -->
+- Sonra yalnızca değişen yerleri bir ya da daha fazla blokla ver:
+<<<ARA
+(mevcut dosyadan BİREBİR kopyalanmış, dosyada tek geçen, 2-12 satırlık parça)
+===
+(o parçanın yeni hâli)
+>>>YAZ
+- Yeni bir şey eklerken ARA kısmına eklenecek yerin hemen önündeki mevcut satırları yaz, YAZ kısmında aynı satırları ve ardından yeni kodu yaz.
+- ARA parçaları kısa olsun ama dosyada yalnızca bir kez geçsin; boşluklar ve girintiler dahil kopyala.
+- Değişiklik dosyanın yarısından fazlasını etkiliyorsa bloklar yerine tam dosyayı ver (<!DOCTYPE html> ile başlayan).`;
+function findLoose(hay, needle) {
+  const i = hay.indexOf(needle); if (i >= 0) return [i, needle.length];
+  // Girintiyi ve satır sonu boşluklarını yok sayarak eşleştir
+  const nl = needle.split("\n").map((l) => l.trim()).filter((l, k, a) => l || (k > 0 && k < a.length - 1));
+  if (!nl.length) return null;
+  const lines = hay.split("\n"); const starts = []; let pos = 0;
+  for (const l of lines) { starts.push(pos); pos += l.length + 1; }
+  for (let s = 0; s + nl.length <= lines.length; s++) {
+    let ok = true; for (let k = 0; k < nl.length; k++) if (lines[s + k].trim() !== nl[k]) { ok = false; break; }
+    if (ok) { const a = starts[s]; const e = s + nl.length < lines.length ? starts[s + nl.length] - 1 : hay.length; return [a, e - a]; }
+  }
+  return null;
+}
+function applyPatches(cur, text) {
+  const re = /<<<\s*ARA[^\n]*\n([\s\S]*?)\n={3,}[^\n]*\n([\s\S]*?)\n?>>>\s*YAZ/g;
+  let m, out = cur, ok = 0, miss = 0;
+  while ((m = re.exec(text))) { const f = findLoose(out, m[1]); if (!f) { miss++; continue; } out = out.slice(0, f[0]) + m[2] + out.slice(f[0] + f[1]); ok++; }
+  return { html: out, ok, miss };
+}
+function extractEdit(text, cur) {
+  if (!/<<<\s*ARA/.test(text)) return extractHtml(text);
+  const sm = text.match(/<!--\s*ÖZET:\s*([\s\S]*?)-->/i);
+  const r = applyPatches(cur, text);
+  need(r.ok > 0, 502, "Değişiklik mevcut koda yerleştirilemedi. İsteği biraz daha açık yazıp tekrar dene; kredin düşmedi.");
+  const title = (r.html.match(/<title>([^<]{1,120})<\/title>/i) || [])[1] || null;
+  return { html: r.html, summary: (sm ? sm[1].trim() : "Değişiklik uygulandı.") + (r.miss ? " (" + r.miss + " küçük parça eşleşmediği için atlandı.)" : ""), title, patched: r.ok };
+}
 function extractHtml(text) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
   const sm = t.match(/<!--\s*ÖZET:\s*([\s\S]*?)-->/i);
@@ -514,7 +556,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.12.2" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.13.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -598,10 +640,12 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
   const img = imageParts(body);
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations) + runOpts(rt, body) + userRule(user) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") }];
+  const patch = cur && cur.length >= PATCH_MIN;
+  if (cur && !patch) rt.maxTokens = Math.max(rt.maxTokens || 12000, Math.min(32000, Math.ceil(cur.length / 2.6) + 3000));
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations) + runOpts(rt, body) + userRule(user) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
-  const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
+  const fin = ({ text, model, usage }) => { const out = patch ? extractEdit(text, cur) : extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
 });
