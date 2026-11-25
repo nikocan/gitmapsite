@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="idea" viewBox="0 0 24 24">
+    <path d="M5 11c0-3 2.7-5 7-5s7 2 7 5H5Zm1.4 2.5c.6 3.5 2.7 6 5.6 7.5 2.9-1.5 5-4 5.6-7.5M12 6c0-1.9 1.1-3.4 3-4"/>
+  </symbol>
+  <symbol id="search" viewBox="0 0 24 24">
+    <circle cx="10" cy="10" r="6.7"/><path d="M15 15l5.6 5.6M6.6 10A3.4 3.4 0 0 1 10 6.6"/>
+  </symbol>
+  <symbol id="studio" viewBox="0 0 24 24">
+    <path d="m3.4 20.6 2-8.7L15.8 2.8l5.4 5.4-9.1 10.4-8.7 2Zm2-8.7 6.7 6.7m1-13.2 5.5 5.5M3.8 20.2l4.9-4.9"/>
+  </symbol>
+  <symbol id="templates" viewBox="0 0 24 24">
+    <path d="m3 7.4 8.2-4.1a2 2 0 0 1 1.6 0L21 7.4l-9 4.5-9-4.5Zm0 4.8 9 4.5 9-4.5M3 17l9 4.5 9-4.5"/>
+  </symbol>
+  <symbol id="projects" viewBox="0 0 24 24">
+    <path d="M3 9V6a2 2 0 0 1 2-2h4l2.3 2.5H19a2 2 0 0 1 2 2v2M3 10h16.9a1 1 0 0 1 1 1.2l-1.2 7A2.2 2.2 0 0 1 17.5 20H5a2 2 0 0 1-2-2v-8Z"/>
+  </symbol>
+  <symbol id="discover" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/><path d="m16.8 7.2-2.9 6.7-6.7 2.9 2.9-6.7 6.7-2.9Z"/>
+  </symbol>
+  <symbol id="assistant" viewBox="0 0 24 24">
+    <path d="M16.5 4.1 18 7.9l3.7 1.5-3.7 1.5-1.5 3.7-1.5-3.7-3.7-1.5L15 7.9l1.5-3.8ZM9.7 5H7a4 4 0 0 0-4 4v5a4 4 0 0 0 3.1 3.9V21l4.2-3H15a4 4 0 0 0 3.3-1.7"/>
+  </symbol>
+  <symbol id="connections" viewBox="0 0 24 24">
+    <path d="m13 6 1.8-1.8a4 4 0 0 1 5.7 5.7l-3.4 3.4a4 4 0 0 1-5.7 0M11 18l-1.8 1.8a4 4 0 0 1-5.7-5.7l3.4-3.4a4 4 0 0 1 5.7 0m-3.4 4.1 5.6-5.6"/>
+  </symbol>
+  <symbol id="skills" viewBox="0 0 24 24">
+    <path d="M12 21v-7M12 16C5.3 16 3 12 3 7c5.3 0 8.7 2.5 9 9Zm.2-3.3C12.2 6 16 3.3 21 3c0 5.4-2.7 9.2-8.8 9.7Z"/>
+  </symbol>
+  <symbol id="events" viewBox="0 0 24 24">
+    <path d="M12 3c-3.6 0-6 2.8-6 6.8V12c0 1.7-1.1 3.4-2.4 4.7h16.8C19.1 15.4 18 13.7 18 12V9.8C18 5.8 15.6 3 12 3Zm-2.5 16.4a2.8 2.8 0 0 0 5 0"/>
+  </symbol>
+  <symbol id="automation" viewBox="0 0 24 24">
+    <rect x="3" y="9.5" width="4.8" height="4.8" rx="1.3"/><rect x="16.3" y="3.2" width="4.7" height="4.7" rx="1.3"/><rect x="16.3" y="16.1" width="4.7" height="4.7" rx="1.3"/><path d="M8 12h1.3c3.4 0 2.1-6.4 5.6-6.4h1.3M8 12h1.3c3.4 0 2.1 6.4 5.6 6.4h1.3"/>
+  </symbol>
+  <symbol id="publish" viewBox="0 0 24 24">
+    <path d="M4 10.5 21 3l-5.3 17.9-4.3-6.3L4 10.5Zm7.4 4.1L21 3M3 17l3-2m0 6 3-3"/>
+  </symbol>
+</svg>

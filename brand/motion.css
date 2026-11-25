@@ -1,0 +1,27 @@
+/* The squirrel settles on arrival, then inspects its acorn when approached. */
+.gm-squirrel .sq-tail { transform-origin: 43px 71px; }
+.gm-squirrel .sq-head { transform-origin: 65px 49px; }
+.gm-squirrel .sq-nut { transform-origin: 65px 62px; }
+@keyframes gm-tail-flick {
+  0%, 100% { transform: rotate(0); }
+  34% { transform: rotate(-7deg); }
+  66% { transform: rotate(3deg); }
+}
+@keyframes gm-sniff {
+  0%, 38%, 72%, 100% { transform: rotate(0); }
+  24%, 60% { transform: rotate(2deg) translateY(1.4px); }
+}
+@keyframes gm-nibble {
+  0%, 42%, 74%, 100% { transform: translateY(0); }
+  28%, 62% { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .logo .sq-tail { animation: gm-tail-flick .86s ease-in-out .15s 1; }
+  .gm-squirrel:hover .sq-head { animation: gm-sniff .82s ease-in-out; }
+  .gm-squirrel:hover .sq-nut { animation: gm-nibble .82s ease-in-out; }
+}
+.brand-film { width:min(96vw,1100px); max-height:94dvh; padding:0; border:1px solid #39443a; border-radius:18px; background:#101211; color:#f2f0e6; }
+.brand-film::backdrop { background:rgba(5,11,8,.86); }
+.brand-film header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 16px; }
+.brand-film h2 { margin:0; font:700 clamp(16px,2vw,22px)/1.2 Inter,system-ui,sans-serif; letter-spacing:-.04em; }
+.brand-film video { display:block; width:100%; max-height:calc(90dvh - 64px); aspect-ratio:16/9; background:#101211; }
