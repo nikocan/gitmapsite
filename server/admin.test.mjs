@@ -112,3 +112,19 @@ test("optional profile fields can be saved and cleared", async t => {
   assert.equal(cleared.status,200);
   assert.equal(cleared.user.instructions,"");
 });
+
+test("manager cost ledger validates tariffs and updates an integration without double counting", async t=>{
+  const {request,admin,member}=await fixture(t);
+  const report="admin/costs?month=2026-11";
+  assert.equal((await request("GET",report,null,member.token)).status,403);
+  const line={month:"2026-11",name:"SMS",quantity:100,unit:.45};
+  for(const quantity of [30,100])assert.equal((await request("PUT","admin/costs/integration",{...line,quantity},admin)).status,200);
+  assert.equal((await request("PUT","admin/costs/rate",{model:"demo",input:-1,output:2,cached:0},admin)).status,400);
+  assert.equal((await request("PUT","admin/costs/settings",{pack_size:0,pack_price:20},admin)).status,400);
+  assert.equal((await request("PUT","admin/costs/settings",{budget:100,weekly:681.05,balance:24.23},admin)).status,200);
+  const summary=await request("GET",report,null,admin);
+  assert.equal(summary.total,45);
+  assert.equal(summary.settings.balance,24.23);
+  assert.equal(summary.integrations.length,1);
+  assert.equal((await request("GET","admin/costs?month=2026-12",null,admin)).total,0);
+});
