@@ -285,7 +285,18 @@ async function aiStream({ res, cors }, rt, messages, finish) {
   res.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no", Connection: "keep-alive", ...cors });
   function ev(o) { if (!res.destroyed && !res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); }
   ev({ t: "phase", phase: "connected" }); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
-  try { const out = await start(); if (!signal.aborted && !res.destroyed) { ev({ t: "phase", phase: "processing" }); ev({ t: "done", ...finish(out) }); } }
+  try { const out = await start();
+    // Uzunluk sınırında kesilen HTML'i otomatik tamamlat (en çok 2 kez); kredi tek işlem olarak kalır
+    for (let k = 0; rt.autoContinue && k < 2 && /^(length|max_tokens)$/.test(out.finish || "") && !/<\/html>/i.test(out.text) && !signal.aborted && !res.destroyed; k++) {
+      ev({ t: "phase", phase: "continuing" });
+      const more = [...messages, { role: "assistant", content: out.text }, { role: "user", content: "Yanıtın uzunluk sınırında kesildi. Tam olarak kaldığın yerden devam et: önceki kısmı TEKRARLAMA, açıklama ya da ``` yazma, yalnızca kalan kodu yaz ve </html> ile bitir." }];
+      const next = await (await streamChatWith(rt, more, (d) => ev({ t: "delta", d }), signal))();
+      let add = String(next.text || "").replace(/^```(?:html)?\s*/i, "");
+      for (let n = Math.min(300, out.text.length, add.length); n >= 20; n--) if (out.text.endsWith(add.slice(0, n))) { add = add.slice(n); break; }
+      out.text += add; out.finish = next.finish;
+      if (next.usage && out.usage) out.usage = { ...out.usage, total_tokens: (out.usage.total_tokens || 0) + (next.usage.total_tokens || 0) };
+    }
+    if (!signal.aborted && !res.destroyed) { ev({ t: "phase", phase: "processing" }); ev({ t: "done", ...finish(out) }); } }
   catch (e) { if (!signal.aborted) { if (!(e instanceof HttpErr)) console.error(new Date().toISOString(), "stream", e); ev({ t: "error", error: e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.", status: e.code || 500 }); } }
   finally { clearInterval(hb); res.end(); }
   return null;
@@ -442,7 +453,7 @@ function extractHtml(text, meta) {
   }
   const html = t.slice(i);
   const title = (html.match(/<title>([^<]{1,120})<\/title>/i) || [])[1] || null;
-  const cut = meta && meta.finish === "length" && !/<\/html>/i.test(html);
+  const cut = meta && /^(length|max_tokens)$/.test(meta.finish || "") && !/<\/html>/i.test(html);
   return { html, summary: (sm ? sm[1].trim() : "Uygulama hazır.") + (cut ? " ⚠️ Yanıt model uzunluk sınırında kesildi; sayfanın sonu eksik olabilir. “devam et ve eksik kalan kısmı tamamla” yazarak tamamlatabilirsin." : ""), title };
 }
 const ASSIST_SYSTEM = `Sen Gitmapp'in Yayın Asistanısın. Teknik bilgisi olmayan kullanıcılara uygulamalarını yayına almalarında kısa, sıcak ve net Türkçe cümlelerle yardım edersin (en fazla 5 cümle, gerekirse madde işareti).
@@ -628,7 +639,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.17.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.18.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -711,10 +722,13 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
+  const tokens = str(body.tokens, 1500, "Tasarım sistemi");
   const img = imageParts(body);
   const patch = cur && cur.length >= PATCH_MIN;
   if (cur && !patch) rt.maxTokens = Math.max(rt.maxTokens || 12000, Math.min(32000, Math.ceil(cur.length / 2.6) + 3000));
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations) + runOpts(rt, body) + userRule(user) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
+  if (!cur) rt.maxTokens = Math.max(rt.maxTokens || 12000, tierOf(rt.model) === "guclu" ? 20000 : 14000);
+  rt.autoContinue = !patch;
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations) + runOpts(rt, body) + userRule(user) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
