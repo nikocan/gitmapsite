@@ -472,6 +472,33 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
 });
 
 // Yapay zekâ
+// Element edits return only bounded presentation values. Apply happens in the inspector.
+route("POST", "/api/ai/element", async ({body,user,req}) => {
+  const request = str(body.prompt, 1000, "İstek", true);
+  const context = str(body.element, 1500, "Öğe", true);
+  const rt = await resolveRoute(user, body, req, "build");
+  const system = "Seçilen arayüz öğesini düzenle. Yalnız JSON döndür: {styles:{},text?:string}. "
+    + "styles alanları: color ve background-color (#rrggbb); border-radius, font-size, padding, gap (0-96px); "
+    + "font-weight (400,500,600,700,800); text-align (left,center,right); display (flex,grid,block); flex-direction (row,column). "
+    + "Sadece istenen değişiklikleri öner. Metni yalnız istendiyse ve öğe metin düzenlemeye uygunsa yaz."
+    + runOpts(rt,body);
+  rt.maxTokens = 700;
+  const {text,usage} = await chatWith(rt,[{role:"system",content:system},{role:"user",content:JSON.stringify({context,request})}]);
+  let suggestion;
+  try { suggestion = JSON.parse(text.trim().replace(/^```(?:json)?\s*|\s*```$/gi,"")); } catch {}
+  const styles = {};
+  for (const [key,value] of Object.entries(suggestion?.styles || {})) {
+    if (typeof value !== "string") continue;
+    const valid = ["color","background-color"].includes(key) ? /^#[a-f0-9]{6}$/i.test(value)
+      : ["border-radius","font-size","padding","gap"].includes(key) ? /^\d{1,2}px$/.test(value) && parseInt(value)<=96
+      : ({"font-weight":["400","500","600","700","800"],"text-align":["left","center","right"],display:["flex","grid","block"],"flex-direction":["row","column"]})[key]?.includes?.(value) === true;
+    if (valid) styles[key]=value;
+  }
+  const patch = {styles};
+  if(body.editableText === true && typeof suggestion?.text === "string") patch.text=suggestion.text.slice(0,4000);
+  need(Object.keys(styles).length || patch.text !== undefined,422,"Bu öğe için uygulanabilir bir öneri alınamadı");
+  return {patch,credits:charge(user,rt,"build",usage)};
+});
 route("POST", "/api/ai/generate", async (ctx) => {
   const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
