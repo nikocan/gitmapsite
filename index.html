@@ -745,6 +745,8 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
 <script src="config.js"></script>
+<link rel="stylesheet" href="design-stage.css">
+<script src="design-stage.js"></script>
 <script>
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
@@ -1900,6 +1902,8 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const [versions,setVersions]=useState([]);const [input,setInput]=useState("");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatEnd=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
+ const [navigateStage,setNavigateStage]=useState(false);
+ const [stageSkills,setStageSkills]=useState(false);
  const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [openLog,setOpenLog]=useState({});
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{if(!runOpen)return;const h=()=>setRunOpen(false);const k=e=>{if(e.key==="Escape")setRunOpen(false)};const tm=setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{clearTimeout(tm);document.removeEventListener("click",h);removeEventListener("keydown",k)}},[runOpen]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
@@ -1908,7 +1912,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector}));if(st.html)setPendTheme(id)};
  useEffect(()=>{LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))})},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
- useEffect(()=>{if(incoming){let n=0;const assets={};const h=String(incoming.html||"").replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{300,}/g,m=>{n++;assets["IMG_"+n]=m;return "{{IMG_"+n+"}}"});setSt({...incoming,html:h,assets});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
+ useEffect(()=>{if(incoming){let n=0;const assets={};const h=String(incoming.html||"").replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{300,}/g,m=>{n++;assets["IMG_"+n]=m;return "{{IMG_"+n+"}}"});designView.current=null;setSt({...incoming,html:h,assets});setVeMode(incoming.design?"select":null);setCode(false);if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},120);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{chatEnd.current&&chatEnd.current.scrollIntoView({behavior:"smooth",block:"end"})},[st.msgs.length,busy,plan]);
  useEffect(()=>{codeEnd.current&&codeEnd.current.scrollIntoView({block:"end"})},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
@@ -1934,8 +1938,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   }catch(e){upd(m=>({content:e.message,err:true,log:{...m.log,running:false,error:"hata",secs:Math.floor((Date.now()-start)/1000)}}));failAuth(e)}
   setBusy(false);setLive("");return result;
  }
- async function gen(text){if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
-  text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text||busy)return;
+ async function gen(text){  text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text||busy)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
   if(!API_ON){toast("Stüdyo sunucusu şu an kurulum aşamasında, birazdan tekrar deneyin.");return}
   setInput("");track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode,images:atts.length}});
@@ -1998,10 +2001,38 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   if(sd.kind)setPrefs(p=>({...p,kind:sd.kind}));if(sd.theme)setPrefs(p=>({...p,theme:sd.theme,sector:sd.sector||p.sector}));if(sd.emoji)setSt(x=>({...x,emoji:sd.emoji}));
   setTimeout(()=>{if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)doForMe(sd.kind);else if(sd.prompt)ghostRun([{el:".gta",fn:()=>typeInto(sd.prompt),after:250},{el:".gsend",fn:()=>gen(sd.prompt)}]);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
  async function applyTheme(){const t=themeById(pendTheme);setPendTheme(null);if(!st.html||busy)return;await build("Uygulamanın görsel tasarımını baştan “"+t.name+"” tasarım diline göre yeniden düzenle. Tüm içerik, veriler ve özellikler aynen kalsın; sadece renkler, yazı tipi, köşeler, boşluklar ve bileşen stilleri değişsin.",null,"“"+t.name+"” tasarımını uygula",true)}
- useEffect(()=>{const h=e=>{const d=e.data;if(!d||!d.gm||!frameRef.current||e.source!==frameRef.current.contentWindow)return;
-   if(d.gm==="select"){setPicked(d);const t=document.querySelector(".gta");t&&t.focus()}
-   else if(d.gm==="text"){setSt(s=>{const h=s.html||"";const n=h.split(d.old).length-1;if(n!==1){toast("Bu metni otomatik değiştiremedim; öğeyi “Seç” ile seçip yapay zekâya söyle.");return s}setVersions(v=>[...v.slice(-9),h]);toast("Metin güncellendi (kredi harcanmadı)");return {...s,html:h.replace(d.old,d.now.replace(/[<>]/g,""))}})}};
-  addEventListener("message",h);return()=>removeEventListener("message",h)},[]);
+ useEffect(()=>{setNavigateStage(false)},[veMode,st.html,code]);
+ const designView=useRef(null);
+ const editing = veMode === "select" && !!st.html && !code;
+ const previewSource = useMemo(()=>editing ? resolve(Stage.preview(st.html,designView.current)) : resolve(st.html),[editing,st.html,st.assets]);
+ useEffect(()=>{setPicked(null)},[st.html,st.appId,editing]);
+ useEffect(()=>{
+   if(!editing){designView.current=null;return;}
+   const receive=e=>{
+     if(e.source!==frameRef.current?.contentWindow || e.data?.gm!=="pick")return;
+     const {index,tag,color,background,parent,selector,original,children,sample,view}=e.data;
+     if(typeof tag!=="string" || (!Number.isInteger(index) && !(typeof selector==="string" && selector.length<=4000)))return;
+     if(selector){try{document.createDocumentFragment().querySelector(selector)}catch{return}}
+     designView.current=typeof e.data.activeView==="string"?e.data.activeView.slice(0,100):null;
+     setPicked({index,tag,color,background,parent,selector,original:typeof original==="string"?original:null,children,sample:typeof sample==="string"?sample:"",view});
+   };
+   window.addEventListener("message",receive);
+   return ()=>window.removeEventListener("message",receive);
+ },[editing]);
+ function commitDesign(next){
+   if(next===st.html)return;
+   setVersions(v=>[...v.slice(-9),st.html]);
+   setSt(s=>({...s,html:next}));setPicked(null);toast("Tasarım güncellendi");
+ }
+ async function suggestElement(prompt,node,voice){
+   const j=await api("POST","/api/ai/element",{...aiBody(),prompt,editableText:!node.children.length,
+     element:JSON.stringify({tag:node.localName,text:node.textContent.slice(0,320),style:node.style.cssText.slice(0,300),brand:voice}).slice(0,1500)});
+   spent(j);return j.patch;
+ }
+ function downloadDesign(){
+   const url=URL.createObjectURL(new Blob([resolve(st.html)],{type:"text/html;charset=utf-8"}));
+   const a=document.createElement("a");a.href=url;a.download="index.html";a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ }
  function mic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesle yazmayı desteklemiyor (Chrome ya da Safari dene).");return}
   if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang="tr-TR";r.interimResults=false;r.continuous=false;recRef.current=r;
   r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ");setInput(v=>(v?v+" ":"")+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
@@ -2053,13 +2084,14 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   <div class="steps4">${[["sparkles","Anlat","Fikrini Türkçe yaz"],["eye","Gör","Canlı önizlemede çalışır"],["wand","Düzelt","Sohbetle değişiklik iste"],["rocket","Yayınla","Kendi adresinle canlıya al"]].map(([ic,t,d],i)=>html`<div class="st4"><${Icon} n=${ic} s=${18} c="#e4ff3d"/><div><b>${t}</b><span>${d}</span></div></div>`)}</div>
  </div>`;
 
- const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${resolve(st.html)+(ve&&veMode?VE_SCRIPT(veMode):"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${pickerEl()}${galEl()}
+ const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${ve?previewSource:resolve(st.html)} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
+ return html`<div class="ws">${stageSkills&&html`<${SkillsModal} close=${()=>setStageSkills(false)} toast=${toast}/>`}${pickerEl()}${galEl()}
   <div class="ws-top">
    <select class="in" style=${{width:58,padding:"6px",fontSize:18}} value=${st.emoji} onChange=${e=>setSt(s=>({...s,emoji:e.target.value}))}>${EMOJIS.map(x=>html`<option>${x}</option>`)}</select>
    <input class="in ws-title" value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
    <input type="color" title="Ana renk" value=${st.color} onInput=${e=>setSt(s=>({...s,color:e.target.value}))} class="clr"/>
    <span style=${{flex:1}}></span>
+   <button class="btn g s" aria-pressed=${editing} disabled=${busy||!st.html} onClick=${()=>{setCode(false);setVeMode(editing?null:"select")}}><${Icon} n="pointer" s=${14}/>${editing?"Önizlemeye dön":"Düzenle"}</button>
    ${seg([["phone","phone","","Telefon"],["tablet","tablet","","Tablet"],["desktop","monitor","","Masaüstü"]],stage,setStage)}
    <button class="ib" disabled=${!st.html} onClick=${()=>setFull(true)} title="Tam ekran önizleme"><${Icon} n="expand" s=${15}/></button>
    <button class="ib" disabled=${!st.html} onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button>
@@ -2069,19 +2101,23 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
    <button class="ib" onClick=${reset} title="Yeni proje">${sure?html`<span style=${{fontSize:12,padding:"0 4px"}}>Emin misiniz?</span>`:html`<${Icon} n="plus" s=${17}/>`}</button>
    <button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title="Kaydet"><${Icon} n="save" s=${16}/></button>
    <button class="btn s" disabled=${saving||busy||!st.html} onClick=${publish}><${Icon} n="rocket" s=${15}/> Yayınla</button></div>
-  <div class="ws-grid studio-grid">
+  <div class=${"ws-grid studio-grid"+(editing?" stage-grid":"")}>
+   ${editing&&html`<${StageInspector} source=${st.html} picked=${picked} commit=${commitDesign} ask=${suggestElement} toast=${toast}
+     stage=${stage} title=${st.title} download=${downloadDesign} showSkills=${()=>setStageSkills(true)}
+     focusSource=${index=>frameRef.current?.contentWindow.postMessage({gm:"focus-source",index},"*")}/>`}
    <div class="ws-chat">
     <div class="ws-ctrl">${controls()}</div>
     <div class="ws-msgs">${st.msgs.map(msgEl)}${planCard()}<div ref=${chatEnd}></div></div>
-    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}${prompt(false)}
+    <div class="ws-in">${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}${prompt(false)}
      <div class="sugg">${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${st.html&&html`<button type="button" class="chip gm forme-chip" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${12}/> Benim için yap</button>`}${st.html&&html`<button type="button" class="chip on" disabled=${busy} onClick=${review}><${Icon} n="shield" s=${12}/> Kontrol et ve düzelt</button>`}${st.html&&(prefs.kind==="game"?["Daha zor yap","Ses efekti ekle","Güçlendirme ekle"]:prefs.kind==="site"?["Daha modern yap","Yorumlar ekle","SSS ekle"]:["Daha modern yap","Koyu tema ekle","İstatistik ekle"]).map(t=>html`<button type="button" class="chip" disabled=${busy} onClick=${()=>gen(t)}>${t}</button>`)}</div></div>
    </div>
    <div class="ws-prev">
+    ${editing&&html`<div class="vebar glass"><button class=${!navigateStage?"on":""} onClick=${()=>{setNavigateStage(false);frameRef.current?.contentWindow.postMessage({gm:"navigate",on:false},"*")}}>Seç</button><button class=${navigateStage?"on":""} onClick=${()=>{setPicked(null);setNavigateStage(true);frameRef.current?.contentWindow.postMessage({gm:"navigate",on:true},"*")}}>Gezin</button></div>`}
     ${busy&&live?html`<div class="livecode"><div class="lc-h"><${Spark} s=${15}/><span class="shimmer">Kod yazılıyor</span><span style=${{marginLeft:"auto",color:"#767671"}}>${(live.length/1024).toFixed(1)} KB · ${secs} sn</span></div><pre class="lc-b mono">${live.slice(-6000)}<span class="caret"></span><span ref=${codeEnd}></span></pre></div>`
     :code&&st.html?html`<div style=${{width:"100%",display:"flex",flexDirection:"column"}}><div style=${{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}><${Icon} n="file" s=${14} c="#767671"/><span style=${{color:"var(--mut)",fontSize:12}}>index.html · ${(st.html.length/1024).toFixed(1)} KB</span><span style=${{flex:1}}></span><button class="ib" title="Kopyala" onClick=${async()=>{try{await navigator.clipboard.writeText(st.html);toast("Kod kopyalandı")}catch(e){toast("Kopyalanamadı")}}}><${Icon} n="copy" s=${15}/></button></div><pre class="lc-b mono" style=${{flex:1,margin:0}}>${st.html}</pre></div>`
     :!st.html?html`<div class="prev-empty">${busy?html`<${Spark} s=${34}/><span class="shimmer" style=${{marginTop:12}}>Hazırlanıyor…</span>`:html`<${Icon} n=${plan?"compass":"sparkles"} s=${30} c="#4a5470"/><span style=${{marginTop:10}}>${plan?"Planı onaylayınca önizleme burada görünecek":"Önizleme burada görünecek"}</span>`}</div>`
     :frameEl(stage,true)}
-    ${st.html&&!busy&&!code&&html`<div class="vebar glass"><button class=${veMode==="select"?"on":""} title="Öğe seç ve yapay zekâya değiştir" onClick=${()=>{setVeMode(veMode==="select"?null:"select");setPicked(null)}}><${Icon} n="pointer" s=${16}/><span>Seç</span></button><button class=${veMode==="text"?"on":""} title="Metne tıkla, doğrudan yaz (kredi harcamaz)" onClick=${()=>setVeMode(veMode==="text"?null:"text")}><${Icon} n="type" s=${16}/><span>Metin</span></button>${veMode&&html`<button onClick=${()=>{setVeMode(null);setPicked(null)}} title="Düzenlemeyi kapat"><${Icon} n="x" s=${15}/></button>`}</div>`}
+
    </div></div>
   ${full&&st.html&&html`<div class="fullprev" onClick=${()=>setFull(false)}><div class="fp-bar glass" onClick=${e=>e.stopPropagation()}><b style=${{marginRight:8}}>${st.title||"Önizleme"}</b>${seg([["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]],stage,setStage)}<span style=${{flex:1}}></span><button class="ib" onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button><button class="ib" onClick=${()=>setFull(false)} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div><div class="fp-stage" onClick=${e=>e.stopPropagation()}>${frameEl(stage)}</div></div>`}
   </div>`;
@@ -2542,14 +2578,14 @@ function ProjectsPage({auth,openAuth,toast,openInStudio,openPublish,health,go,on
  useEffect(()=>{if(auth.user)load();else setApps([])},[auth.user&&auth.user.id]);
  useEffect(()=>{if(tab==="top"&&!top&&API_ON)api("GET","/api/store").then(j=>setTop(j.apps.slice().sort((a,b)=>(b.opens||0)-(a.opens||0)))).catch(()=>setTop([]))},[tab]);
  const recent=LS.get("recent",[])||[];
- const edit=async a=>{try{const j=await api("GET","/api/apps/"+a.id);const r=[a.id,...recent.filter(x=>x!==a.id)].slice(0,12);LS.set("recent",r);openInStudio(j.app)}catch(e){toast(e.message)}};
+ const edit=async (a,design=false)=>{try{const j=await api("GET","/api/apps/"+a.id);const r=[a.id,...recent.filter(x=>x!==a.id)].slice(0,12);LS.set("recent",r);openInStudio(j.app,design)}catch(e){toast(e.message)}};
  const rm=async a=>{if(del!==a.id){setDel(a.id);setTimeout(()=>setDel(null),3000);toast("Silmek için tekrar tıkla");return}try{await api("DELETE","/api/apps/"+a.id);toast("Silindi");load()}catch(e){toast(e.message)}};
  const mine=(apps||[]).filter(a=>!q||a.title.toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr")));
  const rows=tab==="mine"?mine:tab==="recent"?recent.map(id=>mine.find(a=>a.id===id)).filter(Boolean):tab==="top"?(top||[]):[];
  const card=(a,own)=>html`<div class="pj" key=${a.id||a.slug}>
    <div class="pj-img" onClick=${()=>own?edit(a):go("app/"+a.slug)}><${ProjThumb} a=${a}/>${a.status==="published"||!own?html`<span class="pj-badges"><span class="pj-b">Yayında</span>${(a.opens||0)>0&&html`<span class="pj-b lemon"><${Icon} n="rocket" s=${12}/> ${fmt(a.opens)}</span>`}</span>`:""}</div>
    <div class="pj-m"><span class="avatar" style=${{width:34,height:34,fontSize:12}}>${(own?(auth.user.name||"?"):(a.author||"?")).split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase()}</span><div style=${{flex:1,minWidth:0}}><b>${a.title}</b><span>${own?"Düzenlendi "+agoTR(a.updated):a.author+" · "+fmt(a.opens||0)+" ziyaret"}</span></div>
-   ${own&&html`<span style=${{position:"relative"}}><button class="ib" onClick=${()=>setMenu(menu===a.id?null:a.id)}><${Icon} n="more" s=${16}/></button>${menu===a.id&&html`<div class="pj-menu glass" onMouseLeave=${()=>setMenu(null)}><button onClick=${()=>edit(a)}><${Icon} n="hammer" s=${15}/> Geliştir'de aç</button><button onClick=${()=>openPublish(a)}><${Icon} n="rocket" s=${15}/> Yayınla / ayarlar</button>${a.url&&html`<button onClick=${()=>window.open(a.url,"_blank","noopener")}><${Icon} n="external" s=${15}/> Canlı adresi aç</button>`}${a.url&&html`<button onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="link" s=${15}/> Adresi kopyala</button>`}<button class="dang" onClick=${()=>rm(a)}><${Icon} n="trash" s=${15}/> ${del===a.id?"Emin misin? Tekrar tıkla":"Sil"}</button></div>`}</span>`}</div></div>`;
+   ${own&&html`<span style=${{position:"relative"}}><button class="ib" onClick=${()=>setMenu(menu===a.id?null:a.id)}><${Icon} n="more" s=${16}/></button>${menu===a.id&&html`<div class="pj-menu glass" onMouseLeave=${()=>setMenu(null)}><button onClick=${()=>edit(a,true)}><${Icon} n="pointer" s=${15}/> Tasarımı düzenle</button><button onClick=${()=>edit(a)}><${Icon} n="hammer" s=${15}/> Geliştir'de aç</button><button onClick=${()=>openPublish(a)}><${Icon} n="rocket" s=${15}/> Yayınla / ayarlar</button>${a.url&&html`<button onClick=${()=>window.open(a.url,"_blank","noopener")}><${Icon} n="external" s=${15}/> Canlı adresi aç</button>`}${a.url&&html`<button onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="link" s=${15}/> Adresi kopyala</button>`}<button class="dang" onClick=${()=>rm(a)}><${Icon} n="trash" s=${15}/> ${del===a.id?"Emin misin? Tekrar tıkla":"Sil"}</button></div>`}</span>`}</div></div>`;
  return html`<div class="explore">
   <div class="pj-shell">
    <div class="pj-bar"><label class="pj-q"><${Icon} n="search" s=${16}/><input placeholder="Ara" value=${q} onInput=${e=>{setQ(e.target.value);if(tab!=="mine"&&tab!=="recent")setTab("mine")}}/></label>${[["mine","Projelerim"],["recent","Son görüntülenenler"],["top","Bugün en çok ziyaret edilenler"],["tpl","Gitmapp şablonları"]].map(([k,l])=>html`<button key=${k} class=${"pj-t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}<span style=${{flex:1}}></span><a class="pj-all" href="#" onClick=${e=>{e.preventDefault();go(tab==="tpl"?"sablonlar":"magaza")}}>Tümüne göz at <${Icon} n="arrowRight" s=${16}/></a></div>
@@ -2596,14 +2632,6 @@ function CommandPalette({close,go,openInStudio,onTpl,auth}){
  return html`<div class="drawer cmdk-bg" onClick=${close}><div class="cmdk glass" onClick=${e=>e.stopPropagation()}><label class="cmdk-q"><${Icon} n="search" s=${18}/><input ref=${ref} placeholder="Proje, şablon, sayfa ara ya da yapılacak bir şey yaz…" value=${q} onInput=${e=>{setQ(e.target.value);setI(0)}} onKeyDown=${key}/><kbd>Esc</kbd></label>
   <div class="cmdk-l">${res.map((r,k)=>{const head=r.g!==lastG;lastG=r.g;return html`${head&&html`<div class="cmdk-g" key=${"g"+k}>${r.g}</div>`}<button key=${k} class=${"cmdk-r"+(k===i?" on":"")} onMouseEnter=${()=>setI(k)} onClick=${()=>pick(r)}><${Icon} n=${r.ic} s=${16}/><b>${r.t}</b><span>${r.s}</span>${k===i&&html`<kbd>↵</kbd>`}</button>`})}${!res.length&&html`<div class="empty" style=${{border:0}}>Sonuç yok</div>`}</div></div></div>`;
 }
-
-// Görsel düzenleme: önizlemeye eklenen küçük betik (yalnızca önizlemede, kayda girmez)
-const VE_SCRIPT=mode=>`<script>(function(){var M=${JSON.stringify(mode)},hov=null;var st=document.createElement("style");st.textContent=".__gmh{outline:2px solid #e4ff3d!important;outline-offset:2px!important;cursor:${mode==="text"?"text":"pointer"}!important}.__gms{outline:2px dashed #e4ff3d!important}";document.head.appendChild(st);
-function path(e){var p=[];while(e&&e.nodeType===1&&e!==document.body&&p.length<5){var s=e.tagName.toLowerCase();if(e.id){s+="#"+e.id;p.unshift(s);break}var c=(e.className&&typeof e.className==="string")?e.className.trim().split(/\\s+/).filter(function(x){return x&&x.indexOf("__gm")<0}).slice(0,2):[];if(c.length)s+="."+c.join(".");var i=1,x=e;while(x=x.previousElementSibling)if(x.tagName===e.tagName)i++;s+=":nth-of-type("+i+")";p.unshift(s);e=e.parentElement}return p.join(" > ")}
-document.addEventListener("mouseover",function(e){if(hov)hov.classList.remove("__gmh");hov=e.target;if(hov&&hov!==document.body)hov.classList.add("__gmh")},true);
-document.addEventListener("click",function(e){var t=e.target;if(!t||t===document.body)return;e.preventDefault();e.stopPropagation();
- if(M==="select"){document.querySelectorAll(".__gms").forEach(function(x){x.classList.remove("__gms")});t.classList.add("__gms");var h=t.outerHTML.replace(/ class="[^"]*__gm[^"]*"/g,"").slice(0,600);parent.postMessage({gm:"select",sel:path(t),html:h,text:(t.innerText||"").trim().slice(0,120),tag:t.tagName.toLowerCase()},"*")}
- else if(M==="text"&&t.children.length===0&&(t.innerText||"").trim()){var old=t.innerText;t.contentEditable="true";t.focus();t.addEventListener("blur",function b(){t.removeEventListener("blur",b);t.contentEditable="false";if(t.innerText!==old)parent.postMessage({gm:"text",old:old,now:t.innerText},"*")})}},true);})();<\/script>`;
 
 /* ================= v4.2 — AKILLI YAZIM: hayalet öneri (Tab), hızlı ekler, istem iyileştirme ================= */
 const GH_PHRASES=[
@@ -2940,7 +2968,7 @@ function App(){
  const addBuild=(r,notes,prof)=>setBuilds([{full:r.full_name,url:r.html_url,notes,fw:prof.fw,target:prof.target,status:"Bekliyor",created:new Date().toISOString()},...builds.filter(b=>b.full!==r.full_name)]);
  async function runAll(arr){setBusyAll(true);for(const r of arr){try{setSec(r.full_name,await securityScan(r))}catch(e){toast(e.message);break}}setBusyAll(false);toast("Toplu test tamamlandı")}
  const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,cat:cat&&cat.id,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
- const openInStudio=a=>{setIncoming({html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#e4ff3d",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
+ const openInStudio=(a,design=false)=>{setIncoming({design,kind:a.meta?.kind,html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#e4ff3d",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
  const isAdm=!!(auth.user&&auth.user.admin);
  useEffect(()=>{const h=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCmdk(x=>!x)}};addEventListener("keydown",h);try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9]{12}$/.test(r))LS.set("ref",r)}catch(e){}return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(apiOn&&auth.user)api("GET","/api/apps").then(j=>setMyApps(j.apps)).catch(()=>{});else setMyApps([])},[apiOn,auth.user&&auth.user.id,view]);
