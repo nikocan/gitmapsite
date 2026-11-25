@@ -974,6 +974,7 @@ a{color:#64a8ff}.btn,a.btn{text-decoration:none}
 .hk-empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:50px 20px;color:var(--sys2)}.hk-empty b{color:var(--ink);font-size:16px}
 .hk-note{display:flex;gap:10px;align-items:flex-start;margin-top:22px;padding:14px 16px;border-radius:16px;background:var(--fill1);border:1px solid var(--sep);font-size:13px;color:var(--label2);line-height:1.55}.hk-note b{color:var(--ink)}.hk-note svg{flex:none;margin-top:2px}
 @media(max-width:720px){.hk-grid{grid-template-columns:1fr}.hk-head h1{font-size:24px}.hk-bar{position:static}}
+.adm-gate{max-width:440px;margin:24px auto}.adm-gate>.btn{margin-top:16px}.adm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.adm-stats .box{display:grid;gap:8px;text-align:left;color:inherit;cursor:pointer;margin:0}.adm-stats strong{font-size:26px}.adm-table{max-width:100%;overflow-x:auto}.adm-table th,.adm-table td{white-space:nowrap}.adm-table small{display:block;color:var(--mut)}.adm-credit,.adm-row{display:flex;align-items:end;flex-wrap:wrap;gap:10px}.adm-credit h3{flex-basis:100%;margin:0}.adm-credit label{display:grid;gap:4px}.adm-search{margin:8px 0 16px;width:min(100%,380px)}.adm-row{align-items:center;margin:12px 0}
 </style>
 </head>
 <body>
@@ -987,8 +988,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.1.0";
+const VERSION="5.2.0";
 const CHANGELOG=[
+ {v:"5.2.0",date:"2026-11-25",items:["Yönetim merkezine kullanıcı ve proje dizinleri eklendi. Yönetici oturumu, sipariş takibi ve ortak paket fiyatları düzenlendi."]},
  {v:"5.1.0",date:"2026-11-25",items:[
   "🧩 Hazır Kodlar yenilendi (App Store kartları): her projede sahibinin logosu, adı, kategorisi ve sağ üstte “İste” düğmesi; altında yıldız, dil (renkli nokta), son güncelleme ve çatal sayısı tek satırda",
   "🖼️ Kırık önizleme görselleri artık boş kalmıyor: görsel yüklenemezse proje adıyla şık bir kapak, logo yoksa App Store tarzı ikon gösterilir; yüklenirken iskelet animasyonu",
@@ -1556,7 +1558,9 @@ const AI_ADDONS=[
  {id:"whatsapp",ic:"📱",name:"WhatsApp asistanı",desc:"WhatsApp Business üzerinden otomatik yanıt (Meta onayı gerekir)",mult:2}
 ];
 const ORDER_ST=["Yeni talep","Teklif gönderildi","Ödeme alındı","Geliştiriliyor","Test","Web'de yayında","Mağazaya gönderildi","Mağazada"];
-const getPrices=()=>Object.assign({},DEFAULT_PRICES,LS.get("prices",{})||{});
+let siteSettings=null;
+const getBusiness=()=>siteSettings?.business ?? LS.get("settings",{}) ?? {};
+const getPrices=()=>({...DEFAULT_PRICES,...(siteSettings?.prices ?? LS.get("prices",{}))});
 const tl=n=>new Intl.NumberFormat("tr-TR").format(Math.round(n))+" ₺";
 function tierOf(r,cat){if(cat)return cat.tier;const t=(r.topics||[]).join(" ");if(/portfolio|landing|blog|static-site/.test(t))return"site";if(/ecommerce|erp|lms|marketplace|multivendor/.test(t))return"platform";return"is"}
 
@@ -1683,7 +1687,7 @@ function AiGuide(){
 }
 
 function Wizard({pick,setPick,orders,setOrders,toast,go,uid}){
- const P=getPrices();const S=LS.get("settings",{})||{};
+ const P=getPrices();const S=getBusiness();
  const [step,setStep]=useState(0);
  const [f,setF]=useState(()=>Object.assign({tier:pick&&pick.tier||"is",idea:"",brand:"",slogan:"",color:"#5e5ce6",sector:"",domain:"",hosting:"biz",mobile:"yok",paid:false,price:"",ai:[],bakim:true,name:"",phone:"",email:"",note:""},pick&&pick.tier?{tier:pick.tier}:{}));
  const u=(k,v)=>setF(o=>({...o,[k]:v}));
@@ -1757,9 +1761,9 @@ Müşteri: ${o.name} | ${o.phone||""} ${o.email||""}
 Uygulama: ${o.repo?o.repo.full_name+" ("+o.repo.html_url+")":"Hazır uygulama seçilmedi"}
 İstek: ${o.idea}
 Marka: ${o.brand} | Sektör: ${o.sector||"-"} | Renk: ${o.color}
-Paket: ${TIERS[o.tier].name} | Mobil: ${o.mobile}${o.paid?" (ücretli: "+o.price+" ₺)":""}
+Paket: ${(TIERS[o.tier]?.name||"Belirtilmedi")} | Mobil: ${o.mobile}${o.paid?" (ücretli: "+o.price+" ₺)":""}
 Alan adı: ${o.domain||"-"} | Barındırma: ${o.hosting==="biz"?"Biz yönetelim":"Kendi Hostinger hesabı"}
-AI: ${o.ai.length?o.ai.map(id=>AI_ADDONS.find(a=>a.id===id).name).join(", "):"-"} | Bakım: ${o.bakim?"Evet":"Hayır"}
+AI: ${o.ai.length?o.ai.map(id=>(AI_ADDONS.find(a=>a.id===id)?.name||id)).join(", "):"-"} | Bakım: ${o.bakim?"Evet":"Hayır"}
 Not: ${o.note||"-"}
 Tek sefer: ${tl(o.total)} | Aylık: ${tl(o.monthly)}`}
 
@@ -1770,30 +1774,80 @@ function MyOrders({orders,toast}){
    <div style=${{fontSize:13}}>Durum: <b>${o.status}</b>${o.live?html` · <a href=${o.live} target="_blank">${o.live}</a>`:""}</div></div>`})}</div>`;
 }
 
-function AdminOrders({orders,setOrders,toast}){
- const [open,setOpen]=useState(null);
- const upd=(id,p)=>setOrders(orders.map(o=>o.id===id?{...o,...p}:o));
- const sum=orders.filter(o=>ORDER_ST.indexOf(o.status)>=2);const rev=sum.reduce((a,o)=>a+o.total,0);const mrr=sum.reduce((a,o)=>a+o.monthly,0);
+function useRemoteData(path,scope=""){
+ const [revision,setRevision]=useState(0),[state,setState]=useState(null);
+ const key=path?scope+"|"+path+"|"+revision:null;
+ useEffect(()=>{
+  if(!key)return;
+  let current=true;
+  api("GET",path).then(data=>{if(current)setState({key,data})}).catch(e=>{if(current)setState({key,error:e.message})});
+  return ()=>{current=false};
+ },[key]);
+ return {...(key&&state?.key===key?state:{}),refresh:()=>setRevision(i=>i+1)};
+}
+function LoadState({request}){
+ return request.error?html`<div class="box" role="alert">${request.error} <button class="btn g s" onClick=${request.refresh}>Tekrar dene</button></div>`:html`<p role="status">Yükleniyor…</p>`;
+}
+function AdminHome({go,request}){
+ return html`<section><h1>Yönetim merkezi</h1><p class="sub">Siparişler, kullanıcı hesapları ve projeler.</p>
+ ${request.data?html`<div class="adm-stats">${[["pending","Bekleyen siparişler","siparisler","receipt"],["users","Kullanıcılar","kullanicilar","users"],["projects","Projeler","yonetim-projeler","folder"],["published","Yayındaki projeler","yonetim-projeler","globe"]].map(([k,label,page,icon])=>html`<button key=${k} class="box" onClick=${()=>go(page,k==="published"?"published":"")}><${Icon} n=${icon}/><strong>${request.data.stats[k]}</strong><span>${label}</span></button>`)}</div>`:html`<${LoadState} request=${request}/>`}</section>`;
+}
+function AdminPager({page,total,go}){
+ if(total<=30&&page===1)return null;
+ return html`<div class="adm-row"><button class="btn g s" disabled=${page===1} onClick=${()=>go(page-1)}>Önceki</button><span>${page}. sayfa · ${total} kayıt</span><button class="btn g s" disabled=${page*30>=total} onClick=${()=>go(page+1)}>Sonraki</button></div>`;
+}
+function AdminDirectory({kind,status,onStatus,toast}){
+ const users=kind==="users", title=users?"Kullanıcılar":"Projeler";
+ const [query,setQuery]=useState(""),[page,setPage]=useState(1),[credit,setCredit]=useState(null);
+ const [saving,setSaving]=useState(false),[error,setError]=useState("");
+ const request=useRemoteData("/api/admin/"+kind+"?page="+page+"&q="+encodeURIComponent(query)+(users?"":"&status="+status));
+ async function visibility(project){
+  if(saving)return;setSaving(true);setError("");
+  try{await api("PATCH","/api/admin/projects/"+encodeURIComponent(project.id),{listed:!project.listed});request.refresh();toast("Mağaza görünürlüğü güncellendi")}catch(e){setError(e.message)}finally{setSaving(false)}
+ }
+ return html`<section><h1>${title}</h1><input class="in adm-search" type="search" aria-label=${title+" içinde ara"} placeholder=${users?"Ad veya e-posta ara":"Proje veya sahip e-postası ara"} value=${query} onInput=${e=>{setQuery(e.target.value);setPage(1);setCredit(null)}}/>
+ ${!users&&html`<label>Proje durumu <select class="in" value=${status} onChange=${e=>{onStatus(e.target.value);setPage(1)}}><option value="">Tümü</option><option value="draft">Taslak</option><option value="published">Yayında</option></select></label>`}
+ ${error&&html`<p role="alert">${error}</p>`}
+ ${credit&&html`<${CreditAdmin} key=${credit} selected=${credit} toast=${toast} done=${()=>{setCredit(null);request.refresh()}} close=${()=>setCredit(null)}/>`}
+ ${request.data?html`${request.data.rows.length?html`<div class="adm-table"><table><thead><tr>${(users?["Hesap","Rol","Kredi",""]:["Proje","Sahip","Durum","Son düzenleme","Mağaza"]).map((s,i)=>html`<th key=${i}>${s}</th>`)}</tr></thead><tbody>
+ ${request.data.rows.map(r=>html`<tr key=${r.id}>${users?html`<td><b>${r.name||r.email}</b><small>${r.email}</small></td><td>${r.admin?"Yönetici":"Kullanıcı"}</td><td>${r.credits??0}</td><td><button class="btn g s" onClick=${()=>setCredit(r.email)}>Kredi yükle</button></td>`:html`<td>${r.url?html`<a href=${r.url} target="_blank" rel="noopener noreferrer">${r.title} ↗</a>`:r.title}</td><td>${r.owner}</td><td>${r.status==="published"?"Yayında":"Taslak"}${r.listed?" · Mağazada":""}</td><td>${r.updated?.slice(0,10)}</td><td>${r.status==="published"?html`<button class="btn g s" disabled=${saving} onClick=${()=>visibility(r)}>${r.listed?"Mağazadan gizle":"Mağazada göster"}</button>`:"—"}</td>`}</tr>`)}</tbody></table></div>`:html`<p class="empty">Kayıt bulunamadı.</p>`}<${AdminPager} page=${page} total=${request.data.total} go=${setPage}/>`:html`<${LoadState} request=${request}/>`}</section>`;
+}
+function AdminOrders({toast,onChange}){
+ const [open,setOpen]=useState(null),[live,setLive]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [page,setPage]=useState(1),[query,setQuery]=useState("");
+ const request=useRemoteData("/api/admin/orders?page="+page+"&q="+encodeURIComponent(query));
+ async function change(id,patch){
+  if(busy)return;
+  setBusy(true);setError("");
+  try{
+   await api(patch?"PATCH":"DELETE","/api/admin/orders/"+encodeURIComponent(id),patch||undefined);
+   if(!patch){setOpen(null);if(request.data.orders.length===1&&page>1)setPage(page-1)}
+   request.refresh();onChange();toast(patch?"Sipariş güncellendi":"Sipariş silindi");
+  }catch(e){setError(e.message)}finally{setBusy(false)}
+ }
  async function cmd(o){const t=`Gitmapsite siparişi ${o.id} — "${o.brand}" uygulamasını yap:
 1) ${o.repo?o.repo.html_url+" deposunu klonla":"Bu ihtiyaca uygun MIT/Apache lisanslı hazır projeyi bul: "+o.idea}.
 2) Güvenlik testinden geçir, bağımlılıkları güncelle, Türkçeleştir.
 3) Marka: ${o.brand}, slogan "${o.slogan||""}", ana renk ${o.color}, sektör ${o.sector||"-"}.
 4) Müşteri isteği: ${o.idea}${o.note?" | Ek: "+o.note:""}
-5) AI eklentileri: ${o.ai.length?o.ai.map(id=>AI_ADDONS.find(a=>a.id===id).name).join(", ")+" (Hostinger AI Router ile)":"yok"}.
+5) AI eklentileri: ${o.ai.length?o.ai.map(id=>(AI_ADDONS.find(a=>a.id===id)?.name||id)).join(", ")+" (Hostinger AI Router ile)":"yok"}.
 6) Yayın: ${o.domain||"geçici alt alan adı"} · Hostinger ${o.hosting==="biz"?"(bizim ajans hesabımız)":"(müşterinin hesabı)"} · SSL.
 7) Mobil: ${o.mobile==="yok"?"yok":o.mobile==="ikisi"?"Capacitor ile Android + iOS derlemesi":"Capacitor ile Android derlemesi"}.
 Bitince canlı URL'yi ver ve sipariş durumunu güncelle.`;try{await navigator.clipboard.writeText(t);toast("Claude komutu kopyalandı")}catch(e){toast("Kopyalanamadı")}}
- return html`<div><h1>Siparişler</h1><p class="sub">Müşteri talepleri ve teslimat süreci.</p>
-  <div class="stat"><div class="st"><b>${orders.length}</b><span>Toplam talep</span></div><div class="st"><b>${orders.filter(o=>o.status===ORDER_ST[0]).length}</b><span>Yeni (yanıt bekliyor)</span></div><div class="st"><b>${tl(rev)}</b><span>Tahsil edilen kurulum</span></div><div class="st"><b>${tl(mrr)}</b><span>Aylık tekrarlayan gelir</span></div></div>
-  ${!orders.length?html`<div class="empty">Henüz sipariş yok. Müşteri görünümündeki "Uygulamamı Oluştur" sihirbazından gelen talepler burada listelenir.</div>`:
-  html`<table><thead><tr><th>Sipariş</th><th>Müşteri</th><th>Paket</th><th>Tutar</th><th>Durum</th><th></th></tr></thead><tbody>${orders.map(o=>html`<tr>
+ const search=html`<input class="in adm-search" type="search" aria-label="Sipariş ara" placeholder="Sipariş no, marka veya müşteri ara" value=${query} onInput=${e=>{setQuery(e.target.value);setPage(1);setOpen(null)}}/>`;
+ const {orders,stats}=request.data||{};
+ return html`<div><h1>Siparişler</h1><p class="sub">Müşteri talepleri ve teslimat süreci.</p>${search}
+  ${!request.data?html`<${LoadState} request=${request}/>`:html`
+  <div class="stat">${[[stats.total,"Toplam talep"],[stats.pending,"Yeni talep"],[tl(stats.revenue),"Tahsil edilen kurulum"],[tl(stats.monthly),"Aylık tekrarlayan gelir"]].map(([v,n])=>html`<div class="st" key=${n}><b>${v}</b><span>${n}</span></div>`)}</div>
+  ${error&&html`<p role="alert">${error}</p>`}${!orders.length?html`<p class="empty">Sipariş bulunamadı.</p>`:
+  html`<div class="adm-table"><table><thead><tr><th>Sipariş</th><th>Müşteri</th><th>Paket</th><th>Tutar</th><th>Durum</th><th></th></tr></thead><tbody>${orders.map(o=>html`<tr key=${o.id}>
    <td><b>${o.brand}</b><div style=${{color:"var(--mut)",fontSize:11}}>${o.id} · ${new Date(o.created).toLocaleDateString("tr-TR")}</div></td>
    <td>${o.name}<div style=${{color:"var(--mut)",fontSize:11}}>${o.phone} ${o.email}</div></td>
-   <td>${TIERS[o.tier].name}${o.mobile!=="yok"?" + 📱":""}${o.ai.length?" + 🤖"+o.ai.length:""}</td>
+   <td>${(TIERS[o.tier]?.name||"Belirtilmedi")}${o.mobile&&o.mobile!=="yok"?" + 📱":""}${o.ai.length?" · "+o.ai.length+" AI":""}</td>
    <td>${tl(o.total)}<div style=${{color:"var(--mut)",fontSize:11}}>${tl(o.monthly)}/ay</div></td>
-   <td><select class="in" value=${o.status} onChange=${e=>upd(o.id,{status:e.target.value})}>${ORDER_ST.map(s=>html`<option>${s}</option>`)}</select></td>
-   <td style=${{whiteSpace:"nowrap"}}><button class="btn g s" onClick=${()=>setOpen(open===o.id?null:o.id)}>Detay</button> <button class="btn s" onClick=${()=>cmd(o)}>Claude komutu</button></td></tr>
-   ${open===o.id&&html`<tr><td colspan="6"><pre class="cmd">${orderText(o)}</pre><div style=${{display:"flex",gap:8,alignItems:"center"}}>Canlı URL: <input class="in" style=${{flex:1}} value=${o.live||""} onInput=${e=>upd(o.id,{live:e.target.value})} placeholder="https://…"/>${o.phone&&html`<a class="btn g s" target="_blank" href=${"https://wa.me/"+(o.phone.replace(/\D/g,"").replace(/^0/,"90"))}>WhatsApp'tan yaz ↗</a>`}<button class="btn g s" onClick=${()=>{setOrders(orders.filter(x=>x.id!==o.id))}}>Sil</button></div></td></tr>`}`)}</tbody></table>`}</div>`;
+   <td><select class="in" aria-label=${o.id+" durumu"} disabled=${busy} value=${o.status} onChange=${e=>change(o.id,{status:e.target.value})}>${[...ORDER_ST,"İptal"].map(s=>html`<option>${s}</option>`)}</select></td>
+   <td style=${{whiteSpace:"nowrap"}}><button class="btn g s" onClick=${()=>{setOpen(open===o.id?null:o.id);setLive(o.live||"");setError("")}}>Detay</button> <button class="btn s" onClick=${()=>cmd(o)}>Claude komutu</button></td></tr>
+   ${open===o.id&&html`<tr><td colspan="6"><pre class="cmd">${orderText(o)}</pre><div style=${{display:"flex",gap:8,alignItems:"center"}}>Canlı URL: <input class="in" style=${{flex:1}} aria-label="Canlı URL" value=${live} onInput=${e=>setLive(e.target.value)} placeholder="https://…"/><button class="btn s" disabled=${busy||live===(o.live||"")} onClick=${()=>change(o.id,{live})}>Adresi kaydet</button>${o.phone&&html`<a class="btn g s" target="_blank" href=${"https://wa.me/"+(o.phone.replace(/\D/g,"").replace(/^0/,"90"))}>WhatsApp'tan yaz ↗</a>`}<button class="btn g s" disabled=${busy} onClick=${()=>{if(confirm(o.id+" numaralı sipariş silinsin mi?"))change(o.id,null)}}>Sil</button></div></td></tr>`}`)}</tbody></table></div>`}<${AdminPager} page=${page} total=${request.data.total} go=${setPage}/>`}</div>`;
 }
 
 const SOURCES=[
@@ -1835,22 +1889,31 @@ function Strategy(){
  </div>`;
 }
 
-function Settings2({toast}){
- const [t,setT]=useState(LS.get("token",""));const [S,setS]=useState(LS.get("settings",{})||{});const [P,setP]=useState(getPrices());
- const saveS=()=>{LS.set("settings",S);toast("Kaydedildi")};const saveP=()=>{LS.set("prices",P);toast("Fiyatlar güncellendi")};
+function SettingsEditor({toast,config}){
+ if(!config.data)return html`<div><h1>Ayarlar</h1><${LoadState} request=${config}/></div>`;
+ return html`<${Settings2} toast=${toast} initial=${siteSettings||config.data}/>`;
+}
+function Settings2({toast,initial}){
+ const [t,setT]=useState(LS.get("token",""));
+ const [S,setS]=useState(()=>initial.business||getBusiness()),[P,setP]=useState(()=>({...getPrices(),...initial.prices}));
+ const [busy,setBusy]=useState(false),[error,setError]=useState("");
+ async function persist(body){
+  if(busy)return;setBusy(true);setError("");
+  try{siteSettings=await api("PATCH","/api/admin/settings",body);toast("Ayarlar kaydedildi")}catch(e){setError(e.message)}finally{setBusy(false)}
+ }
  const PL={site:"⚡ Hızlı Site",is:"💼 İş Uygulaması",platform:"🏗️ Gelişmiş Platform",mobil:"📱 Mobil paket",bakim:"🛠️ Bakım (aylık)",hosting:"🌐 Barındırma (aylık)",ai:"🤖 AI eklentisi (aylık)"};
- return html`<div><h1>Ayarlar</h1>
+ return html`<div><h1>Ayarlar</h1>${error&&html`<p role="alert">${error}</p>`}
   <div class="box"><b>İşletme ayarları</b>
    <label style=${{display:"block",marginTop:10}}>Talepleri alacağınız WhatsApp numarası<input class="in" style=${{width:"100%",marginTop:4}} placeholder="905xxxxxxxxx" value=${S.whatsapp||""} onInput=${e=>setS({...S,whatsapp:e.target.value})}/></label>
    <p style=${{color:"var(--mut)",fontSize:12}}>Dolu olursa, müşteri talep gönderdiğinde özet WhatsApp'ta size hazır mesaj olarak açılır.</p>
    <label style=${{display:"block",marginTop:6}}>Hostinger referans / partner bağlantınız<input class="in" style=${{width:"100%",marginTop:4}} placeholder="https://hostinger.com?REFERRALCODE=…" value=${S.hostingerRef||""} onInput=${e=>setS({...S,hostingerRef:e.target.value})}/></label>
    <p style=${{color:"var(--mut)",fontSize:12}}>Sihirbazdaki "Hostinger'da sorgula" butonu bu bağlantıyı kullanır; komisyon size yazılır.</p>
-   <button class="btn" onClick=${saveS}>Kaydet</button></div>
+   <button class="btn" disabled=${busy} onClick=${()=>persist({business:S})}>Kaydet</button></div>
   <div class="box"><b>Paket fiyatları (₺)</b><div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))",gap:10,marginTop:10}}>${Object.keys(PL).map(k=>html`<label>${PL[k]}<input class="in" type="number" style=${{width:"100%",marginTop:4}} value=${P[k]} onInput=${e=>setP({...P,[k]:+e.target.value||0})}/></label>`)}</div>
-   <div style=${{display:"flex",gap:8,marginTop:10}}><button class="btn" onClick=${saveP}>Fiyatları kaydet</button><button class="btn g" onClick=${()=>{setP({...DEFAULT_PRICES});LS.set("prices",{});toast("Varsayılan fiyatlar")}}>Varsayılana dön</button></div></div>
+   <div style=${{display:"flex",gap:8,marginTop:10}}><button class="btn" disabled=${busy} onClick=${()=>persist({prices:P})}>Fiyatları kaydet</button><button class="btn g" disabled=${busy} onClick=${()=>{setP({...DEFAULT_PRICES});persist({prices:DEFAULT_PRICES})}}>Varsayılana dön</button></div></div>
   <div class="box"><b>GitHub token (isteğe bağlı)</b><p style=${{color:"var(--mut)",fontSize:12}}>Saatlik limit 60 → 5000. Sadece bu tarayıcıda saklanır, yetki gerekmez.</p>
    <div style=${{display:"flex",gap:8}}><input class="in" type="password" style=${{flex:1}} value=${t} onInput=${e=>setT(e.target.value)} placeholder="github_pat_…"/><button class="btn" onClick=${()=>{LS.set("token",t.trim());toast("Kaydedildi")}}>Kaydet</button></div></div>
-  <div class="box"><b>Veri</b><p style=${{color:"var(--mut)",fontSize:12}}>Şu an tüm veriler (siparişler dahil) bu tarayıcıda saklanır. Faz 2'de ortak veritabanına taşınacak.</p><button class="btn g" onClick=${()=>{["saved","secs","builds","q","orders"].forEach(k=>LS.set(k,null));location.reload()}}>Tüm verileri sıfırla</button></div></div>`;
+  <div class="box"><b>Veri</b><p style=${{color:"var(--mut)",fontSize:12}}>Bu tarayıcıdaki proje listesi, kuyruk ve yerel talep kopyalarını temizleyebilirsiniz.</p><button class="btn g" onClick=${()=>{if(!confirm("Bu tarayıcıdaki yerel kayıtlar temizlensin mi?"))return;["saved","secs","builds","q","orders"].forEach(k=>LS.set(k,null));location.reload()}}>Yerel kayıtları temizle</button></div></div>`;
 }
 
 /* ================= v3.0 — STÜDYO · MAĞAZA · API ================= */
@@ -1858,11 +1921,14 @@ const API=((window.GMS_CONFIG||{}).api||"").replace(/\/$/,"");
 let API_ON=false;
 const TOK={get:()=>LS.get("tok","")||"",set:t=>LS.set("tok",t||"")};
 const SID=(()=>{let s=LS.get("sid","");if(!s){s=Math.random().toString(36).slice(2,12)+Date.now().toString(36);LS.set("sid",s)}return s})();
-async function api(method,path,body){
+async function api(method,path,body,signal){
  if(!API)throw new Error("Sunucu yapılandırılmadı");
- const t=TOK.get();const r=await fetch(API+path,{method,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:body?JSON.stringify(body):undefined});
+ const t=TOK.get();const r=await fetch(API+path,{method,signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:body?JSON.stringify(body):undefined});
  let j={};try{j=await r.json()}catch(e){}
- if(!r.ok){const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}crEvent(j);return j;
+ if(!r.ok){
+  if(path.startsWith("/api/admin/") && (r.status===401||r.status===403) && t && t===TOK.get())
+   dispatchEvent(new CustomEvent("gm:admin-session",{detail:r.status}));
+  const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}if(path!=="/api/admin/credits")crEvent(j);return j;
 }
 function crEvent(j){if(j&&typeof j==="object"&&j.credits!=null&&isFinite(+j.credits))dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:+j.credits,spent:+(j.spent||0)}}))}
 function track(type,o){if(!API_ON)return;o=o||{};api("POST","/api/events",{session_id:SID,type,query:o.query?String(o.query).slice(0,200):null,category:o.category||null,repo:o.repo||null,meta:o.meta||null}).catch(()=>{})}
@@ -1873,29 +1939,42 @@ const slugify2=s=>(s||"uygulama").toLowerCase().replace(/ı/g,"i").replace(/ğ/g
 const AppIcon=({emoji,color,size=56})=>html`<div style=${{width:size,height:size,borderRadius:size*.24,background:color||"#e4ff3d",color:lumHex(color||"#e4ff3d")>.55?"#111315":"#fff",display:"grid",placeItems:"center",fontSize:size*.52,flexShrink:0,boxShadow:"0 4px 14px #0006"}}>${symbolIcon(emoji||"✨",Math.round(size*.56))}</div>`;
 
 function useAuth(apiOn){
- const [user,setUser]=useState(null);
- const refresh=()=>{if(!API_ON||!TOK.get()){setUser(null);return}api("GET","/api/auth/me").then(j=>{setUser(j.user);if(!j.user)TOK.set("")}).catch(()=>{})};
- useEffect(refresh,[apiOn]);
- return {user,refresh,patch:p=>setUser(u=>u?{...u,...p}:u),login:(t,u)=>{TOK.set(t);setUser(u)},logout:()=>{TOK.set("");setUser(null)}};
+ const [user,setUser]=useState(null),[phase,setPhase]=useState("checking");const generation=useRef(0);
+ const refresh=useCallback(()=>{
+  const id=++generation.current,token=TOK.get();
+  if(!apiOn||!token){setUser(null);setPhase(token?"checking":"ready");return}
+  setPhase("checking");
+  api("GET","/api/auth/me").then(j=>{if(id!==generation.current||token!==TOK.get())return;setUser(j.user);if(!j.user)TOK.set("");setPhase("ready")})
+   .catch(()=>{if(id===generation.current){setUser(null);setPhase("error")}});
+ },[apiOn]);
+ useEffect(()=>{
+  refresh();
+  const sync=e=>{if(e.key==="gms_tok"||e.key===null)refresh()};
+  const rejected=e=>{if(e.detail===401)TOK.set("");refresh()};
+  addEventListener("storage",sync);addEventListener("gm:admin-session",rejected);
+  return()=>{generation.current++;removeEventListener("storage",sync);removeEventListener("gm:admin-session",rejected)};
+ },[refresh]);
+ return {user,phase,refresh,patch:p=>setUser(u=>u?{...u,...p}:u),
+  login:(t,u)=>{generation.current++;TOK.set(t);setUser(u);setPhase("ready")},
+  logout:()=>{generation.current++;TOK.set("");setUser(null);setPhase("ready")}};
 }
-
-function AuthBox({auth,health,toast,onDone,title,reason,initMode}){
- const [mode,setMode]=useState(initMode||"kayit");const [email,setEmail]=useState("");const [pw,setPw]=useState("");const [name,setName]=useState("");const [busy,setBusy]=useState(false);
- async function go(e){e.preventDefault();setBusy(true);try{const j=await api("POST",mode==="kayit"?"/api/auth/register":"/api/auth/login",{email,password:pw,name,ref:LS.get("ref","")||undefined});auth.login(j.token,j.user);toast("Hoş geldiniz!");onDone&&onDone()}catch(er){toast(er.message)}setBusy(false)}
+function AuthBox({auth,health,toast,onDone,title,reason,initMode,adminOnly=false,returnTo}){
+ const [mode,setMode]=useState(initMode||"giris");const [email,setEmail]=useState("");const [pw,setPw]=useState("");const [name,setName]=useState("");const [busy,setBusy]=useState(false),[error,setError]=useState("");
+ async function go(e){e.preventDefault();if(busy)return;setBusy(true);setError("");try{const j=await api("POST",mode==="kayit"?"/api/auth/register":"/api/auth/login",{email,password:pw,name,ref:LS.get("ref","")||undefined});if(adminOnly&&!j.user.admin)throw new Error("Bu hesabın yönetici yetkisi yok.");auth.login(j.token,j.user);toast("Hoş geldiniz!");onDone&&onDone()}catch(er){setError(er.message)}setBusy(false)}
  const oauth=p=>API+"/api/auth/oauth/"+p+"/start";
  return html`<div>
   <h2 class="auth-h">${title||(mode==="kayit"?"Hesap oluştur":"Tekrar hoş geldin")}</h2><p class="auth-s">${mode==="kayit"?"25 kredi hediye · kredi kartı gerekmez":"Projelerine kaldığın yerden devam et"}</p>
   ${reason&&html`<p class="sub" style=${{margin:"0 0 14px"}}>${reason}</p>`}
-  <div class="oauthb">
-   <a class="oa" href=${health.google?oauth("google"):"#"} onClick=${e=>{if(!health.google){e.preventDefault();toast("Google ile giriş çok yakında açılıyor; şimdilik e-postayla devam et.")}}}><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1-3.7 1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg> Google ile devam et</a>
-   <a class="oa" href=${health.github?oauth("github"):"#"} onClick=${e=>{if(!health.github){e.preventDefault();toast("GitHub ile giriş çok yakında açılıyor; şimdilik e-postayla devam et.")}}}><${Icon} n="code" s=${17}/> GitHub ile devam et</a>
-   <div class="oa-or"><span>ya da e-posta ile</span></div></div>
+  ${(health.google||health.github)&&html`<div class="oauthb">
+   ${health.google&&html`<a class="oa" href=${health.google?oauth("google"):"#"} onClick=${()=>LS.set("afterAuth",returnTo||location.hash.slice(1)||"studio")}><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1-3.7 1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg> Google ile devam et</a>`}
+   ${health.github&&html`<a class="oa" href=${health.github?oauth("github"):"#"} onClick=${()=>LS.set("afterAuth",returnTo||location.hash.slice(1)||"studio")}><${Icon} n="code" s=${17}/> GitHub ile devam et</a>`}
+   <div class="oa-or"><span>ya da e-posta ile</span></div></div>`}
   <form onSubmit=${go} style=${{display:"flex",flexDirection:"column",gap:9}}>
    ${mode==="kayit"&&html`<input class="in" placeholder="Adınız" value=${name} onInput=${e=>setName(e.target.value)}/>`}
-   <input class="in" type="email" required placeholder="E-posta" value=${email} onInput=${e=>setEmail(e.target.value)}/>
-   <input class="in" type="password" required minLength="8" placeholder="Şifre (en az 8 karakter)" value=${pw} onInput=${e=>setPw(e.target.value)}/>
-   <button class="btn" disabled=${busy}>${busy?"Bekleyin…":mode==="kayit"?"Hesap oluştur":"Giriş yap"}</button></form>
-  <p style=${{color:"var(--mut)",fontSize:12.5,marginTop:10}}>${mode==="kayit"?html`Hesabınız var mı? <a href="#" onClick=${e=>{e.preventDefault();setMode("giris")}}>Giriş yapın</a>`:html`Hesabınız yok mu? <a href="#" onClick=${e=>{e.preventDefault();setMode("kayit")}}>Ücretsiz oluşturun</a>`}</p></div>`;
+   <input class="in" type="email" autocomplete="username" aria-label="E-posta" required placeholder="E-posta" value=${email} onInput=${e=>setEmail(e.target.value)}/>
+   <input class="in" type="password" autocomplete=${mode==="kayit"?"new-password":"current-password"} aria-label="Şifre" required minLength=${mode==="kayit"?8:1} placeholder="Şifre (en az 8 karakter)" value=${pw} onInput=${e=>setPw(e.target.value)}/>
+   ${error&&html`<p role="alert">${error}</p>`}<button class="btn" disabled=${busy}>${busy?"Bekleyin…":mode==="kayit"?"Hesap oluştur":"Giriş yap"}</button></form>
+  ${!adminOnly&&html`<p style=${{color:"var(--mut)",fontSize:12.5,marginTop:10}}>${mode==="kayit"?html`Hesabınız var mı? <a href="#" onClick=${e=>{e.preventDefault();setMode("giris")}}>Giriş yapın</a>`:html`Hesabınız yok mu? <a href="#" onClick=${e=>{e.preventDefault();setMode("kayit")}}>Ücretsiz oluşturun</a>`}</p>`}</div>`;
 }
 const Modal=({close,children,w=440})=>html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`;
 
@@ -2675,7 +2754,7 @@ function Assistant({context}){
 }
 
 function PublishPanel({app,auth,health,toast,close,onChange}){
- const S=LS.get("settings",{})||{};
+ const S=getBusiness();
  const [a,setA]=useState(app);const [slug,setSlug]=useState(app.slug||slugify2(app.title));const [busy,setBusy]=useState("");
  const [gh,setGh]=useState(app.github_repo?{repo:app.github_repo,pages_url:app.pages_url}:null);
  const [dom,setDom]=useState(slugify2(app.title).replace(/-/g,""));const [domRes,setDomRes]=useState(null);
@@ -2724,7 +2803,7 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
 /* ================= v3.3 — APP STORE TARZI KEŞFET, CAM KENAR ÇUBUĞU, HAYALET İMLEÇ ================= */
 
 // iOS / Material tarzı renkli ikon karoları
-const TILE={"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
 const NAV_TONE={"$beceri":"#c084fc","$asistan":"#22d3ee",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
@@ -3398,15 +3477,15 @@ function OrderLookup({toast}){
 }
 
 function Radar({toast}){
- const [days,setDays]=useState(7);const [d,setD]=useState(null);
- useEffect(()=>{setD(null);api("GET","/api/admin/radar?days="+days).then(setD).catch(e=>{toast(e.message);setD({rows:[],stats:{}})})},[days]);
+ const [days,setDays]=useState(7);const request=useRemoteData("/api/admin/radar?days="+days);const d=request.data;
+
  const g=k=>(d?d.rows:[]).filter(r=>r.kind===k);
  const catName=id=>{const c=STORE_CATS.find(x=>x.id===id);return c?c.ic+" "+c.name:id};
  const T=(title,list,f)=>html`<div class="box" style=${{margin:0}}><b>${iconLabel(title)}</b>${!list.length?html`<p style=${{color:"var(--mut)",fontSize:13}}>Henüz veri yok.</p>`:html`<table><tbody>${list.slice(0,15).map(r=>html`<tr><td>${f?f(r.label):r.label}</td><td style=${{width:50,textAlign:"right"}}><b>${r.hits}</b></td></tr>`)}</tbody></table>`}</div>`;
  return html`<div><h1>Talep Radarı</h1><p class="sub">Kullanıcıların Stüdyo'da ne yapmak istediği, neleri aradığı ve hangi uygulamalara ilgi gösterdiği. Üretim Ajanı hangi uygulamaları hazırlayacağını buradan seçecek.</p>
   ${d&&d.stats&&html`<div class="stat"><div class="st"><b>${d.stats.users||0}</b><span>Kullanıcı</span></div><div class="st"><b>${d.stats.apps||0}</b><span>Yapılan uygulama</span></div><div class="st"><b>${d.stats.published||0}</b><span>Yayında</span></div><div class="st"><b>${d.stats.listed||0}</b><span>Mağazada</span></div></div>`}
   <div class="chips">${[1,7,30,90].map(x=>html`<span class=${"chip"+(days===x?" on":"")} onClick=${()=>setDays(x)}>Son ${x} gün</span>`)}</div>
-  ${d===null?html`<div class="empty">Yükleniyor…</div>`:html`<div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${T("💡 Stüdyo'da istenen fikirler",g("fikir"))}${T("🔎 En çok aranan kelimeler",g("arama"))}${T("🗂️ En çok bakılan kategoriler",g("kategori"),catName)}${T("📱 En çok ilgi gören uygulamalar",g("uygulama"))}</div>`}</div>`;
+  ${!d?html`<${LoadState} request=${request}/>`:html`<div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${T("💡 Stüdyo'da istenen fikirler",g("fikir"))}${T("🔎 En çok aranan kelimeler",g("arama"))}${T("🗂️ En çok bakılan kategoriler",g("kategori"),catName)}${T("📱 En çok ilgi gören uygulamalar",g("uygulama"))}</div>`}</div>`;
 }
 
 
@@ -3511,11 +3590,13 @@ function Account({auth,health,toast,models,go}){
  </div>`;
 }
 
-function CreditAdmin({toast}){
- const [e,setE]=useState("");const [a,setA]=useState(100);
- async function go(ev){ev.preventDefault();try{const j=await api("POST","/api/admin/credits",{email:e.trim(),amount:+a,reason:"Yönetici yüklemesi"});toast("Yüklendi. Yeni bakiye: "+j.credits)}catch(er){toast(er.message)}}
- return html`<div class="box" style=${{marginTop:16}}><b><${Icon} n="gem" s=${16}/> Kullanıcıya kredi yükle</b><p style=${{color:"var(--mut)",fontSize:12}}>Ödeme altyapısı açılana kadar kredi satın alma talepleri Siparişler'e düşer; ödemeyi aldıktan sonra buradan yükleyin.</p>
-  <form onSubmit=${go} style=${{display:"flex",gap:8,flexWrap:"wrap"}}><input class="in" type="email" required placeholder="Kullanıcı e-postası" value=${e} onInput=${x=>setE(x.target.value)} style=${{flex:1}}/><input class="in" type="number" style=${{width:110}} value=${a} onInput=${x=>setA(x.target.value)}/><button class="btn">Yükle</button></form></div>`;
+function CreditAdmin({selected="",done,close,toast}){
+ const [email,setEmail]=useState(selected),[amount,setAmount]=useState("100"),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ async function submit(e){
+  e.preventDefault();if(busy)return;setBusy(true);setError("");
+  try{const j=await api("POST","/api/admin/credits",{email,amount:Number(amount)});if(toast)toast("Yeni bakiye: "+j.credits);if(done)done()}catch(e){setError(e.message)}finally{setBusy(false)}
+ }
+ return html`<form class="box adm-credit" onSubmit=${submit}><h3>Kullanıcıya kredi yükle</h3><label>E-posta<input class="in" type="email" required readOnly=${!!selected} value=${email} onInput=${e=>setEmail(e.target.value)}/></label><label>Kredi miktarı<input class="in" type="number" min="1" max="100000" required value=${amount} onInput=${e=>setAmount(e.target.value)}/></label><button class="btn" disabled=${busy}>Yükle</button>${close&&html`<button type="button" class="btn g" onClick=${close} disabled=${busy}>Vazgeç</button>`}${error&&html`<p role="alert">${error}</p>`}</form>`;
 }
 
 /* ================= UYGULAMA ================= */
@@ -3761,20 +3842,29 @@ function App(){
  }
  const installButton=()=>!installed&&html`<button class="btn g" onClick=${installApp}><${Icon} n="download" s=${15}/> Uygulamayı yükle</button>`;
 
- const CUST=["ana","magaza","studio","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
- const hv=()=>{const v=location.hash.slice(1);return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
+ const CUST=["ana","magaza","studio","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","kullanicilar","yonetim-projeler","siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const hv=()=>{const v=location.hash.slice(1);if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(()=>LS.get("compactStudio",false));const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
- const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
- const [health,setHealth]=useState({});const [apiOn,setApiOn]=useState(false);
+ const setView=v=>{if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
+ const [health,setHealth]=useState({}),[apiOn,setApiOn]=useState(false),[healthError,setHealthError]=useState(false),[attempt,retry]=useState(0);
+ const [,setSettingsVersion]=useState(0);
  const [msg,setMsg]=useState("");const toast=m=>{setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
- useEffect(()=>{if(!API)return;fetch(API+"/api/health").then(r=>r.json()).then(j=>{if(j.ok){API_ON=true;setHealth(j);setApiOn(true)}}).catch(()=>{})},[]);
+ useEffect(()=>{
+  let current=true;setHealthError(false);const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),10000);
+  api("GET","/api/health",undefined,controller.signal).then(j=>{if(!j.ok)throw new Error();if(current){API_ON=true;setHealth(j);setApiOn(true)}})
+   .catch(()=>{if(current){API_ON=false;setApiOn(false);setHealthError(true)}}).finally(()=>clearTimeout(timer));
+  return ()=>{current=false;clearTimeout(timer);controller.abort()};
+ },[attempt]);
+ const config=useRemoteData(apiOn?"/api/settings":null);
+ useEffect(()=>{if(config.data){siteSettings=config.data;setSettingsVersion(v=>v+1)}},[config.data]);
  const auth=useAuth(apiOn);
  const models=useModels(apiOn,auth.user&&auth.user.id);
  useEffect(()=>{const h=()=>{const v=location.hash.slice(1);
-   if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");setView(LS.get("afterAuth","studio")||"studio");return}
+   if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v==="github-baglandi"){auth.refresh();toast("GitHub hesabınız bağlandı 🐙");setView("uygulamalarim");return}
-   if(v==="auth-hata"||v==="auth-eposta-yok"){toast(v==="auth-hata"?"Giriş tamamlanamadı, tekrar deneyin":"Hesabınızda doğrulanmış e-posta bulunamadı");setView("studio");return}
+   if(v==="auth-hata"||v==="auth-eposta-yok"){toast(v==="auth-hata"?"Giriş tamamlanamadı, tekrar deneyin":"Hesabınızda doğrulanmış e-posta bulunamadı");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v.startsWith("app/")){setAppSlug(decodeURIComponent(v.slice(4)));setViewS("detay");setMode("musteri");return}
+   if(v==="admin"){setView("yonetim");return}
    if(ALL.includes(v)){setViewS(v);if(ADMIN.includes(v))setMode("admin");if(CUST.includes(v))setMode("musteri")}};
   h();window.addEventListener("hashchange",h);return()=>window.removeEventListener("hashchange",h)},[apiOn]);
  const isNew=LS.get("seenVer","")!==VERSION&&view!=="guncel";
@@ -3802,27 +3892,24 @@ function App(){
  useEffect(()=>{const o=()=>setCp(true);addEventListener("gm:cp",o);const j=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="j"){e.preventDefault();setCpS(x=>{LS.set("cpOpen",!x);return !x})}};addEventListener("keydown",j);return()=>{removeEventListener("gm:cp",o);removeEventListener("keydown",j)}},[]);
  useEffect(()=>{const h=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCmdk(x=>!x)}};addEventListener("keydown",h);try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9]{12}$/.test(r))LS.set("ref",r)}catch(e){}return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(apiOn&&auth.user)api("GET","/api/apps").then(j=>setMyApps(j.apps)).catch(()=>{});else setMyApps([])},[apiOn,auth.user&&auth.user.id,view]);
- const [apiOrders,setApiOrders]=useState(null);
- useEffect(()=>{if(apiOn&&isAdm)api("GET","/api/admin/orders").then(j=>setApiOrders(j.orders)).catch(e=>toast(e.message));else setApiOrders(null)},[apiOn,isAdm]);
- async function setOrdersApi(next){const prev=apiOrders||[];setApiOrders(next);
-  for(const p of prev){const n=next.find(x=>x.id===p.id);
-   try{if(!n)await api("DELETE","/api/admin/orders/"+p.id);else if(n.status!==p.status||(n.live||"")!==(p.live||""))await api("PATCH","/api/admin/orders/"+p.id,{status:n.status,live:n.live||""})}catch(e){toast(e.message)}}}
- const adminOrders=apiOn?(apiOrders||[]):orders;const setAdminOrders=apiOn?setOrdersApi:setOrders;
- const needLogin=mode==="admin"&&apiOn&&!isAdm&&ADMIN.includes(view);
- const switchMode=m=>{setMode(m);setView(m==="admin"?"siparisler":"ana")};
+ const adminPage=ADMIN.includes(view);
+ const [projectStatus,setProjectStatus]=useState("");
+ const overview=useRemoteData(isAdm&&mode==="admin"?"/api/admin/overview":null,auth.user?.id);
+ const needLogin=adminPage&&(!apiOn||auth.phase!=="ready"||!isAdm);
+ const switchMode=m=>{setMode(m);setView(m==="admin"?"yonetim":"ana")};
  const useTemplate=async t=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!h.includes("Gitmapp hazır şablonu")||!/<script>window\.(APP|SITE)=/.test(h))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
    setIncoming({openDesign:t.openDesign===true,html:h,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,appId:null,msgs:[{role:"assistant",content:"“"+t.name+"” şablonu hazır. Önizlemedeki okla bir öğe seçebilir veya Tasarım sekmesinde düzenleyebilirsin."}]});setView("studio")}catch(e){toast(e.message)}};
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
  const goStore=(o)=>{setSq({q:"",cat:"",...o,n:Date.now()});setView("magaza")};
- const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
+
  const NAVC=[["ana","Yeni"],["$ara","Ara",0,"⌘K"],["studio","Geliştir"],["$asistan","Asistan",0,"⌘J"],["magaza","Keşfet"],["uygulamalarim","Projeler"],["sablonlar","Şablonlar"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],"$recent","$more",...(moreOpen?[["oyunlar","Oyna"],["kategoriler","Kategoriler"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]]:[]),"",["guncel","Güncellemeler",isNew?"YENİ":0]];
- const NAVA=[["siparisler","Siparişler",newOrders],...(apiOn?[["radar","Talep Radarı"]]:[]),["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
- const navGo=(k,extra)=>{setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
+ const NAVA=[["yonetim","Yönetim merkezi"],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
+ const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":k==="magaza"?view==="magaza"&&sq.cat!=="oyun":view===k;
- const TITLES={ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
+ const TITLES={yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
  const navList=(cls)=>NAV.map((it,i)=>it==="$recent"?(myApps.length>0&&html`<div key="rec"><div class="nav-sec">Projeler</div>${myApps.slice(0,5).map(a=>html`<button key=${a.id} class="nav rec" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>`)}</div>`):it==="$more"?html`<button key="more" class="nav more" onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} data-v=${it[0]} class=${"nav "+cls+(navOn(it[0])||it[0]==="$asistan"&&cp?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[0]==="$beceri"&&skillsOn().length?html`<b>${skillsOn().length}</b>`:it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
  const initials=u=>((u.name||u.email||"?").split(/[\s@]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("")||"?").toUpperCase();
- const NAV=mode==="admin"?NAVA:NAVC;
+ const NAV=mode==="admin"&&isAdm?NAVA:NAVC;
  // Asistanın eylemlerini uygula
  const viewRef=useRef(view);viewRef.current=view;
  const cpStudio=a=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done}}));if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
@@ -3837,17 +3924,24 @@ function App(){
  const cpCtx=()=>({sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
   <aside class="side glass noprint">${view==="studio"&&html`<button class="ib studio-nav-switch" aria-label=${compact?"Menüyü genişlet":"Menüyü daralt"} title=${compact?"Menüyü genişlet":"Menüyü daralt"} onClick=${()=>{setCompact(!compact);LS.set("compactStudio",!compact)}}><${Icon} n="menu" s=${16}/></button>`}<div class="logo"><${BrandMark} s=${32}/><${Wordmark}/></div>
-   <div style=${{position:"relative"}}><button class="wsw" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?"Yönetici görünümü":"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
+   <div style=${{position:"relative"}}><button class="wsw" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?(isAdm?"Yönetici görünümü":"Yönetici girişi"):"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
     ${wsMenu&&html`<div class="wsw-m glass" onMouseLeave=${()=>setWsMenu(false)}><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
    <nav class="navs">${navList("")}</nav>
    <div class="side-foot">${installButton()}
     ${mode==="musteri"&&html`<button class="refc" onClick=${async()=>{if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",u)}}}><div><b>Gitmapp'i paylaş</b><span>Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi</span></div><span class="refc-i"><${Icon} n="gift" s=${20}/></span></button>`}
     ${apiOn?(auth.user?html`<div class="me" onClick=${()=>setView("hesabim")} title="Hesabım"><span class="avatar">${initials(auth.user)}</span><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><span class="me-cr" title="Kredilerim: canlı harcama" onClick=${e=>{e.stopPropagation();setCrOpen(true)}}><${Icon} n="gem" s=${11}/> <${CountUp} v=${auth.user.credits??0}/> kredi</span>${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
-  <div class="bnav glass noprint">${(mode==="admin"?[["siparisler","Siparişler"],["radar","Radar"],["plan","Plan"],["kesfet","GitHub"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
-  ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button>`:""}</div></div></div>`}
+  <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
+  ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></div></div>`}
   <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span>${auth.user&&html`<button class="crchip" style=${{marginLeft:"auto"}} onClick=${()=>setCrOpen(true)}><${Icon} n="gem" s=${12}/><${CountUp} v=${auth.user.credits??0}/></button>`}</div>`}
-   ${needLogin?html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} initMode="giris" title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok.":"Siparişleri ve talep radarını görmek için yönetici hesabıyla giriş yapın."}/></div>`:html`<div>
+   ${needLogin?html`<section class="box adm-gate">
+    ${healthError||auth.phase==="error"?html`<h1>Yönetici girişi</h1><p role="alert">Oturum sunucusuna ulaşılamadı.</p><button class="btn" onClick=${()=>apiOn?auth.refresh():retry(x=>x+1)}>Tekrar dene</button>`:
+    !apiOn||auth.phase==="checking"?html`<p role="status">Yönetici oturumu kontrol ediliyor…</p>`:
+    health.adminLogin===false?html`<h1>Yönetici girişi</h1><p>Yönetici girişi bu sunucuda henüz yapılandırılmamış. Sunucu yöneticisi yönetici e-postasını ve oturum açma yöntemini ayarlamalı.</p>`:
+    html`<${AuthBox} auth=${auth} health=${health} toast=${toast} adminOnly=${true} returnTo=${view} title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok. Yönetici hesabınızla giriş yapabilirsiniz.":"Yönetim merkezine erişmek için yönetici hesabınızla giriş yapın."}/>`}
+    <button class="btn g" onClick=${()=>switchMode("musteri")}>Kullanıcı alanına dön</button></section>`:html`<div key=${adminPage?auth.user?.id:"public"}>
+   ${view==="yonetim"&&html`<${AdminHome} request=${overview} go=${(page,status)=>{setProjectStatus(status);setView(page)}}/>`}
+   ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
    ${view==="studio"&&html`<${Studio} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
    ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
@@ -3864,7 +3958,7 @@ function App(){
    ${view==="paketler"&&html`<${Packages} goWizard=${goWizard}/>`}
    ${view==="ai-destek"&&html`<${AiGuide}/>`}
    ${view==="siparislerim"&&html`<${MyOrders} orders=${orders} toast=${toast}/>`}
-   ${view==="siparisler"&&html`<${AdminOrders} orders=${adminOrders} setOrders=${setAdminOrders} toast=${toast}/>`}
+   ${view==="siparisler"&&html`<${AdminOrders} toast=${toast} onChange=${overview.refresh}/>`}
    ${view==="radar"&&apiOn&&html`<div><${AiCheck} toast=${toast}/><${Radar} toast=${toast}/><${CreditAdmin} toast=${toast}/></div>`}
    ${view==="plan"&&html`<${Strategy}/>`}
    ${view==="kesfet"&&html`<${Discover} results=${results} setResults=${setResults} open=${setCur} saved=${saved} toggleSave=${toggleSave} secs=${secs} toast=${toast}/>`}
@@ -3872,7 +3966,7 @@ function App(){
    ${view==="liste"&&html`<${SavedView} saved=${saved} open=${setCur} toggleSave=${toggleSave} secs=${secs} present=${setDeck} runAll=${runAll} busyAll=${busyAll} toast=${toast}/>`}
    ${view==="kuyruk"&&html`<${Builds} builds=${builds} setBuilds=${setBuilds} open=${setCur} saved=${saved}/>`}
    ${view==="guncel"&&html`<${Updates}/>`}
-   ${view==="ayar"&&html`<${Settings2} toast=${toast}/>`}
+   ${view==="ayar"&&html`<${SettingsEditor} toast=${toast} config=${config}/>`}
    </div>`}
   </main>
   ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} close=${()=>setCur(null)} sec=${secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}} onWant=${mode==="musteri"?(r=>{setCur(null);goWizard(r)}):null}/>`}
