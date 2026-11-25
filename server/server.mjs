@@ -182,7 +182,25 @@ async function postChat(rt, payload, signal) {
   let r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) });
   // Bazı modeller sıcaklık ayarını kabul etmez: ayarsız tekrar dene
   if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
+  // Gitmapp (Hostinger AI Router): model reddedilirse listedeki diğer modelleri sırayla dene
+  if (rt.provider === "gitmapp" && [401, 403, 404].includes(r.status) && !rt.noFallback) {
+    let ids = []; try { ids = await listModels("gitmapp", rt.key); } catch { }
+    for (const alt of ids.filter((x) => x !== body.model).slice(0, 3)) {
+      const r2 = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify({ ...body, model: alt }) });
+      if (r2.ok) { console.warn(new Date().toISOString(), "model yedeğe geçti:", body.model, "→", alt, "(", r.status, ")"); rt.model = alt; return r2; }
+    }
+  }
   return r;
+}
+function aiErr(rt, status, t) {
+  const tail = t ? ": " + String(t).replace(/\s+/g, " ").slice(0, 180) : "";
+  if (rt.provider === "gitmapp") {
+    if (status === 401) return "Gitmapp yapay zekâ anahtarı geçersiz (401). Yönetici, hPanel › AI Router'dan anahtarı kopyalayıp sunucudaki AI_KEY değerini güncellemeli" + tail;
+    if (status === 403) return "Hostinger AI Router isteği reddetti (403). Olası nedenler: AI Router kredi bakiyesi bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. hPanel › AI Router'dan bakiye ve modelleri kontrol edin" + tail;
+    if (status === 404) return "“" + rt.model + "” modeli AI Router'da bulunamadı (404). Yönetici AI_MODELS listesini doğru model adlarıyla güncellemeli" + tail;
+    if (status === 429) return "Yapay zekâ şu an yoğun ya da kota doldu (429), biraz sonra tekrar deneyin" + tail;
+  }
+  return (status === 401 || status === 403 ? "Anahtar reddedildi (" + status + ")" : "Yapay zekâ hatası (" + status + ")") + tail;
 }
 function visionErr(r, t, messages) {
   const hasImg = messages.some((m) => Array.isArray(m.content));
@@ -191,14 +209,14 @@ function visionErr(r, t, messages) {
 async function chatWith(rt, messages, maxTokens = 12000) {
   const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens }, AbortSignal.timeout(240000));
   const t = await r.text(); visionErr(r, t, messages);
-  need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200));
+  need(r.ok, r.status === 429 ? 429 : r.status >= 400 && r.status < 500 ? 400 : 502, aiErr(rt, r.status, t));
   const j = JSON.parse(t);
   return { text: j.choices?.[0]?.message?.content || "", model: rt.model, usage: j.usage || null };
 }
 // Canlı akış (SSE): model yanıtını parça parça iletir
 async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) {
   const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens, stream: true }, AbortSignal.any([AbortSignal.timeout(300000), signal]));
-  if (!r.ok) { const t = await r.text(); visionErr(r, t, messages); need(false, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200)); }
+  if (!r.ok) { const t = await r.text(); visionErr(r, t, messages); need(false, r.status === 429 ? 429 : r.status >= 400 && r.status < 500 ? 400 : 502, aiErr(rt, r.status, t)); }
   return async () => {
     if (!(r.headers.get("content-type") || "").includes("event-stream")) { const j = await r.json(); const c = j.choices?.[0]?.message?.content || ""; onDelta(c); return { text: c, model: rt.model, usage: j.usage || null }; }
     const dec = new TextDecoder(); let buf = "", text = "", usage = null;
@@ -265,7 +283,7 @@ function runOpts(rt, body) {
   const t = body.settings || {};
   if (t.temperature != null && t.temperature !== "" && isFinite(+t.temperature)) rt.temperature = Math.max(0, Math.min(1.5, +t.temperature));
   rt.maxTokens = { kisa: 6000, dengeli: 12000, ayrintili: 20000 }[t.detail] || 12000;
-  const ins = String(t.instructions || "").replace(/[<>`]/g, "").trim().slice(0, 1000);
+  const ins = String(t.instructions || "").replace(/[<>`]/g, "").trim().slice(0, 3000);
   return ins ? "\n- Kullanıcının ek talimatları (yukarıdaki kurallarla çelişmedikçe uy): " + ins : "";
 }
 // Görseller (çizim/yerleşim, stil örneği, içerik görseli) → çok kipli kullanıcı mesajı
@@ -647,7 +665,7 @@ route("GET", "/api/admin/ai-check", async ({ user }) => {
   delete modelCaches[Object.keys(modelCaches).find((k) => k.startsWith("gitmapp:")) || "_"];
   const ids = await listModels("gitmapp", CFG.aiKey); out.list = ids.slice(0, 40);
   const model = await defaultModel();
-  try { const r = await postChat({ provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model }, { messages: [{ role: "user", content: "Sadece OK yaz." }], max_tokens: 10 }, AbortSignal.timeout(30000)); const t = await r.text(); out.chat = { ok: r.ok, status: r.status, model, reply: r.ok ? (JSON.parse(t).choices?.[0]?.message?.content || "").slice(0, 40) : t.slice(0, 200) }; } catch (e) { out.chat = { ok: false, model, error: e.message }; }
+  try { const r = await postChat({ provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model, noFallback: true }, { messages: [{ role: "user", content: "Sadece OK yaz." }], max_tokens: 10 }, AbortSignal.timeout(30000)); const t = await r.text(); out.chat = { ok: r.ok, status: r.status, model, reply: r.ok ? (JSON.parse(t).choices?.[0]?.message?.content || "").slice(0, 40) : t.slice(0, 200) }; } catch (e) { out.chat = { ok: false, model, error: e.message }; }
   return out;
 });
 route("GET", "/api/admin/radar", ({ user, url }) => {

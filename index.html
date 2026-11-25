@@ -708,6 +708,35 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 .mp-mm{display:flex;align-items:center;gap:8px}.mp-cr{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--label3)}.mp-ok{margin-left:auto;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#e4ff3d;color:#0a0a0a}
 .mp-f{display:flex;align-items:center;gap:8px;padding:12px 22px 16px;border-top:1px solid #1f1f23;font-size:12.5px;color:var(--label3)}
 @media(max-width:720px){.mp-tiers{grid-template-columns:1fr}}
+
+/* v4.4 — sade ve kompakt yerleşim */
+@media(min-width:821px){.topbar{display:none!important}.main{padding-top:18px!important}.main.is-home{padding-top:0!important}}
+.side{width:236px;padding:12px 10px 10px}.logo{padding:2px 6px 10px}.wsw{padding:6px 8px;margin-bottom:8px}
+.nav{padding:5px 8px;font-size:14px;gap:10px;border-radius:11px}.nav .tile{width:26px!important;height:26px!important;border-radius:8px!important}.nav .tile svg{width:15px;height:15px}
+.nav-sec{padding:10px 10px 4px}.nav.rec{padding:4px 8px}.refc{padding:10px 10px 10px 12px}.refc span{font-size:11px}.side-foot{gap:4px}.me{padding:6px}
+.ws{height:calc(100vh - 36px)}.ws-top{margin-bottom:8px}.ws-grid{gap:10px}.ws-msgs{padding:12px;gap:12px}
+.mu.long{max-height:7.6em;overflow:hidden;cursor:pointer;-webkit-mask-image:linear-gradient(180deg,#000 60%,transparent);mask-image:linear-gradient(180deg,#000 60%,transparent)}.mu.long.open{max-height:none;-webkit-mask-image:none;mask-image:none}
+.ma-t.err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:10px 12px;font-size:13px}
+.hero{margin-top:3vh}.hero-greet{font-size:38px}
+.home-hero{min-height:0;padding:40px 24px 110px}.home-h{margin:84px 0 26px}
+.hc.on{background:#f4f4ef;color:#0a0a0b;border-color:#f4f4ef}
+.ctp{position:relative;width:min(900px,100%);margin-top:18px;padding:18px 20px 20px;border-radius:26px;background:rgba(14,14,16,.92);backdrop-filter:blur(14px);border:1px solid #26262a;text-align:left;animation:dgin .3s}
+.ctp-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.ctp-h b{font-size:18px}.ctp-h a{display:flex;align-items:center;gap:6px;color:#f4f4ef;font-weight:600;font-size:14px}
+.ctp-row{display:grid;grid-auto-flow:column;grid-auto-columns:300px;gap:16px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory}.ctp-row::-webkit-scrollbar{display:none}.ctp-row>*{scroll-snap-align:start}
+.ctp-n{position:absolute;right:12px;top:42%;width:40px;height:40px;background:#1c1c20;box-shadow:0 8px 20px rgba(0,0,0,.6)}
+.ctp-empty{display:flex;align-items:center;gap:10px;color:var(--label2);font-size:14px;padding:8px 0}
+.home-sheet{margin-top:-80px!important}
+/* beceriler */
+.skm{width:min(920px,100%);max-height:90vh;display:flex;flex-direction:column;background:#121214;border:1px solid #26262a;border-radius:24px;padding:22px 24px 16px;text-align:left;animation:dgin .25s;box-shadow:0 40px 80px -30px #000}
+.skm-h{display:flex;gap:12px;align-items:flex-start}.skm-h h2{margin:0;font-size:24px;letter-spacing:-.4px}.skm-h p{margin:4px 0 0;color:var(--label2);font-size:14px}
+.skm-tabs{display:flex;gap:24px;border-bottom:1px solid #222226;margin:16px 0 14px}.skm-tabs button{border:0;background:none;color:var(--label2);font-weight:600;font-size:15px;padding:10px 0;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}.skm-tabs button.on{color:#fff;border-color:#e4ff3d}.skm-tabs em,.skm-f em{font-style:normal;font:500 12px "JetBrains Mono",monospace;color:var(--label3);margin-left:6px}.skm-tabs button.on em{color:#e4ff3d}
+.skm-q{display:flex;align-items:center;gap:10px;border:1px solid #2a2a2e;border-radius:14px;padding:10px 14px;color:var(--label3);background:#0f0f11}.skm-q input{flex:1;border:0;background:none;outline:0;color:var(--txt);font-size:14.5px}
+.skm-f{display:flex;gap:6px;margin:12px 0}.skm-f button{border:1px solid transparent;background:none;color:var(--label2);border-radius:99px;padding:6px 12px;cursor:pointer;font-size:13.5px}.skm-f button.on{border-color:#e4ff3d;color:#e4ff3d}
+.skm-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:auto;padding:2px 2px 6px}
+.skc{display:flex;flex-direction:column;gap:6px;border:1px solid #232327;border-radius:16px;padding:14px 16px;background:#151517;transition:border-color .2s}.skc.on{border-color:rgba(228,255,61,.45);background:#16170f}
+.skc-t{display:flex;align-items:center;gap:10px}.skc-t b{flex:1;font-size:15px;font-family:"JetBrains Mono",monospace;font-weight:500}.skc p{margin:0;color:var(--label2);font-size:13px;line-height:1.5}.skc>span{font-size:11.5px;color:var(--label3)}
+.skb{display:inline-flex;align-items:center;gap:6px;border:1px solid #2c2c30;background:#1a1a1d;color:#f4f4ef;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}.skb:hover{border-color:#4a4a50}.skb.on{background:#e4ff3d;color:#0a0a0a;border-color:#e4ff3d}
+@media(max-width:720px){.skm-g{grid-template-columns:1fr}.ctp-row{grid-auto-columns:260px}}
 </style>
 </head>
 <body>
@@ -721,8 +750,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="4.3.0";
+const VERSION="4.4.0";
 const CHANGELOG=[
+ {v:"4.4.0",date:"2026-11-25",items:[
+  "🛠️ Yapay zekâ hatası düzeltmesi: seçilen model AI Router'da reddedilirse (401/403/404) Gitmapp otomatik olarak listedeki diğer modeli dener; hata mesajları artık nedeni ve çözümü açıkça yazar (bakiye, model izni, anahtar)",
+  "🧠 Beceriler: yapay zekâya kalıcı uzmanlık yükle (kurumsal dil, KVKK uyumu, erişilebilirlik, SEO, mobil önce, koyu tema, Türkiye biçimleri, çok dilli, PWA, yazdır/PDF, CSV, oyun hissi…). Yüklü beceriler her yeni üretime otomatik eklenir",
+  "🧩 Açılış ekranında kategori seçince (Pano, Portal, İç araç, Açılış sayfası…) o kategorinin canlı şablonları kaydırılabilir bir panelde açılır; istem kutusunun ipucu da kategoriye göre değişir",
+  "📐 Sade ve kompakt yerleşim: masaüstünde üst başlık çubuğu kaldırıldı, kenar çubuğu sıkılaştırıldı, Geliştir ekranı daha fazla alan kullanır, uzun istekler sohbette katlanır, hatalar ayrı kutuda görünür",
+ ]},
  {v:"4.3.0",date:"2026-11-25",items:[
   "🎯 Yeni ikon seti: tüm arayüzde modern, tutarlı çizgi ikonlar (Lucide); emojiler model seçiciden ve başlıklardan kaldırıldı",
   "🏷️ Gerçek marka logoları: Claude, Gemini, DeepSeek, Mistral, Qwen, Kimi, Llama, Grok ile WhatsApp, Telegram, Google Haritalar, Analytics, Takvim, E-Tablolar, Supabase, Firebase, Instagram, YouTube, GitHub, Calendly ve daha fazlası",
@@ -1881,7 +1916,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({settings:runRef.current,integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:curModel||undefined});
+ const aiBody=()=>({settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:curModel||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -1998,7 +2033,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const planCard=()=>plan&&html`<div class="gcard" style=${{padding:14}}><div style=${{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><${Icon} n="compass" s=${16} c="#e4ff3d"/><b>Yapım planı</b><span style=${{color:"var(--mut)",fontSize:12}}>düzenleyebilirsiniz</span></div>
   <textarea class="in mono" style=${{width:"100%",minHeight:180,fontSize:12.5,lineHeight:1.6}} value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>
   <div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><button class="btn s" disabled=${busy} onClick=${approvePlan}><${Icon} n="check" s=${14}/> Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>{const p=plan.prompt;setPlan(null);gen(p)}}><${Icon} n="refresh" s=${14}/> Yeniden planla</button><button class="btn g s" onClick=${()=>setPlan(null)}>Vazgeç</button></div></div>`;
- const msgEl=(m,i)=>m.role==="user"?html`<div class="mu" key=${i}>${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=""/>`)}</div>`}${m.content}</div>`:html`<div class="ma" key=${m.id||i}>
+ const msgEl=(m,i)=>m.role==="user"?html`<div class=${"mu"+((m.content||"").length>260?" long":"")} key=${i} onClick=${e=>{if((m.content||"").length>260)e.currentTarget.classList.toggle("open")}}>${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=""/>`)}</div>`}${m.content}</div>`:html`<div class="ma" key=${m.id||i}>
    ${m.log&&html`<${WorkLog} log=${m.log} open=${!!openLog[m.id]} toggle=${()=>setOpenLog(o=>({...o,[m.id]:!o[m.id]}))}/>`}
    ${m.content&&html`<div class=${"ma-t"+(m.err?" err":"")}>${!m.log&&html`<span class="ma-ic"><${Spark} s=${15} on=${false}/></span>`}<div style=${{whiteSpace:"pre-wrap"}}>${m.anim?html`<${Typewriter} text=${m.content}/>`:m.content}</div></div>`}</div>`;
 
@@ -2133,10 +2168,10 @@ Object.assign(ICON_SVG,{
  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
 });
 // iOS / Material tarzı renkli ikon karoları
-const TILE={ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={"$beceri":["brain",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
-const NAV_TONE={ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
+const NAV_TONE={"$beceri":"#c084fc",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
 const toneOf=(k,n)=>NAV_TONE[k]||TONES[[...String(k||n||"x")].reduce((h,c)=>(h*31+c.charCodeAt(0))%997,0)%TONES.length];
 const Tile=({k,n,g,s=28})=>{const t=TILE[k]||[n||"dot",g||""];const tc=k?toneOf(k):(g?g.split(",")[0]:toneOf(null,n));return html`<span class="tile" style=${{width:s,height:s,borderRadius:s*.3,["--tc"]:tc}}><${Icon} n=${t[0]} s=${s*.54} c="currentColor" w=${1.7}/></span>`};
 const BrandMark=({s=34,mono})=>html`<span class="brand" style=${{width:s,height:s,borderRadius:s*.28}}><svg width=${s*.66} height=${s*.66} viewBox="0 0 24 24" fill="none" stroke=${mono?"#e4ff3d":"#0a0a0a"} stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.6" cy="10" r="4.8"/><path d="M15.4 5.6v9.6a5.6 5.6 0 0 1-10 3.5"/><circle cx="19.2" cy="4.4" r="1.5" fill=${mono?"#e4ff3d":"#0a0a0a"} stroke="none"/></svg></span>`;
@@ -2628,7 +2663,7 @@ function enhancePrompt(v,kind){const sec=detectSector(v,kind);const s=sectorById
 const HOME_CHIPS=[["chart","Pano","app","Satış, sipariş ve müşteri verilerimi grafiklerle gösteren, filtrelenebilir bir yönetim panosu"],["users","Portal","app","Müşterilerimin giriş yapıp taleplerini, faturalarını ve belgelerini görebildiği bir müşteri portalı"],["layers","Sunum","site","Şirketimi anlatan, kaydırarak ilerleyen 8 slaytlık modern bir tanıtım sunumu"],["box","İç araç","app","Ekibimin stok, görev ve izin taleplerini yönettiği basit bir iç araç"],["rocket","Açılış sayfası","site","Yeni ürünüm için başlık, özellikler, fiyatlar, SSS ve e-posta kayıt formu olan bir açılış sayfası"],["target","Satış","app","Teklif hazırlama, müşteri takibi ve satış hunisi olan bir satış uygulaması"],["gamepad","Oyun","game","Dokunmatik kontrollü, skor tablolu, giderek zorlaşan bir arcade oyunu"]];
 const HOME_PH=["bir randevu uygulaması","bir emlak sitesi","müşteri paneli","bir stok takip aracı","bir restoran menüsü","bir quiz oyunu"];
 function HomePage(props){const {auth,startTemplate,go}=props;
- const [v,setV]=useState("");const [ph,setPh]=useState("");const [kind,setKind]=useState("app");const [modeOpen,setModeOpen]=useState(false);const [listening,setListening]=useState(false);
+ const [v,setV]=useState("");const [ph,setPh]=useState("");const [chip,setChip]=useState(null);const [kind,setKind]=useState("app");const [modeOpen,setModeOpen]=useState(false);const [listening,setListening]=useState(false);
  const prefs=LS.get("studioPrefs",{})||{};const [mode,setMode]=useState(prefs.mode||"hizli");const conns=activeIntegrations().length;
  useEffect(()=>{let i=0,c=0,del=false,t;const tick=()=>{const w=HOME_PH[i%HOME_PH.length];if(!del){c++;setPh(w.slice(0,c));if(c>=w.length){del=true;t=setTimeout(tick,1600);return}}else{c--;setPh(w.slice(0,c));if(c<=0){del=false;i++}}t=setTimeout(tick,del?28:55)};tick();return()=>clearTimeout(t)},[]);
  const setM=m=>{setMode(m);LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode:m});setModeOpen(false)};
@@ -2640,7 +2675,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
    <button class="home-pill" onClick=${()=>go("baglantilar")}><span class="hp-ic">${["sparkles","bolt","db"].map(n=>html`<i key=${n}><${Icon} n=${n} s=${13} c="#0a0a0a" w=${2}/></i>`)}</span>Uygulamalarına yapay zekâ ve servis ekle <${Icon} n="arrowRight" s=${16}/></button>
    <h1 class="home-h">${first?html`Yapmaya hazır mısın, <span class="hl">${first}</span>?`:html`Fikrini yaz, <span class="hl">gitmapp</span> yapsın.`}</h1>
    <div class=${"gbox hg"+(v.trim()?" typing":"")}><form class="home-box" onSubmit=${submit}>
-    <${GhostTA} className="hta" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+ph+" yapmasını iste"}/>
+    <${GhostTA} className="hta" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+(chip?CHIP_PH[chip]:ph)+" yapmasını iste"}/>
     <div class="hb-row">
      <button type="button" class="hbi" title="Çizim ya da görsel ekle" onClick=${()=>startTemplate({sketch:"layout",kind})}><${Icon} n="plus" s=${18}/></button>
      <button type="button" class="hbw" onClick=${()=>go("baglantilar")}><${Icon} n="grid" s=${15}/> Çalışma alanı${conns?html`<em>${conns}</em>`:""}</button>
@@ -2653,7 +2688,8 @@ function HomePage(props){const {auth,startTemplate,go}=props;
      <button class="hbs" disabled=${!v.trim()} title="Başlat (Enter)"><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
     </div></form></div>
    ${v.trim().length>4&&html`<div class="qadd" key="qa">${QUICK_ADD[kind].map(([ic,l,t],i)=>html`<button key=${l} style=${{animationDelay:i*40+"ms"}} onClick=${()=>setV(addTo(v,t))}><${Icon} n=${ic} s=${14}/>+ ${l}</button>`)}</div>`}
-   <div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class="hc" onClick=${()=>{setV(p);setKind(k)}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>
+   <div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class=${"hc"+(chip===l?" on":"")} onClick=${()=>{if(chip===l){setChip(null);return}setChip(l);setKind(k);const t=document.querySelector("textarea.hta");t&&t.focus()}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>
+   ${chip&&!v.trim()&&html`<${ChipTemplates} chip=${chip} onTpl=${props.onTpl} go=${go}/>`}
   </section>
   <div class="home-sheet"><${ProjectsPage} ...${props}/></div>
  </div>`;
@@ -2680,6 +2716,51 @@ const FAM_BRAND={claude:"claude",gemini:"gemini",deepseek:"deepseek",mistral:"mi
 const FamLogo=({f,s=40})=>FAM_BRAND[f]&&BRANDS[FAM_BRAND[f]]?html`<${BrandLogo} b=${FAM_BRAND[f]} s=${s}/>`:f==="gpt"?html`<span class="blogo txt" style=${{width:s,height:s,borderRadius:s*.28,fontSize:s*.3}} title="OpenAI GPT">GPT</span>`:html`<span class="blogo" style=${{width:s,height:s,borderRadius:s*.28,["--bc"]:"#a78bfa"}}><${Icon} n="sparkles" s=${s*.5} c="#c4b5fd"/></span>`;
 const FAM_SKILLS={claude:["Kod yazma","Uzun dosya","Hatasız düzenleme","Türkçe arayüz","Talimata sadakat"],gpt:["Genel bilgi","Yaratıcı fikir","Oyun mekaniği","Hızlı mini sürüm","Görsel okuma"],gemini:["Çok uzun bağlam","Hız","Görsel anlama","Çok dilli","Ekonomik"],deepseek:["Ucuz","Güçlü kod","Akıl yürütme","Açık ağırlık"],grok:["Güncel dil","Hız","Sohbet"],mistral:["Avrupa verisi","Kod (Codestral)","Hız"],kimi:["Uzun bağlam","Ajan işleri","Araç kullanımı"],qwen:["Açık model","Kod","Ekonomik"],llama:["Açık model","Basit işler"],diger:["Deneme"]};
 const TIER_IC={hizli:"zap",dengeli:"scale",guclu:"rocket"};
+
+/* ================= v4.4 — BECERİLER, ŞABLON PANELİ, SADE YERLEŞİM ================= */
+const SKILLS=[
+ {id:"kurumsal-dil",n:"kurumsal-dil",d:"Tüm metinleri resmi, güven veren kurumsal Türkçeyle yazar; argo ve emoji kullanmaz.",src:"gitmapp",p:"Metinler resmi ve kurumsal Türkçe olsun, emoji ve argo kullanma, kısa ve net cümleler kur."},
+ {id:"kvkk",n:"kvkk-uyumu",d:"Formlara KVKK aydınlatma onayı, gizlilik bağlantısı ve çerez bildirimi ekler.",src:"gitmapp",p:"Kişisel veri toplayan her forma KVKK aydınlatma metni onay kutusu, alt bilgiye Gizlilik Politikası bağlantısı ve sayfaya sade bir çerez bildirimi ekle."},
+ {id:"erisilebilirlik",n:"erisilebilirlik",d:"Kontrast, klavye ile kullanım, alt metinler ve odak halkaları (WCAG AA).",src:"gitmapp",p:"WCAG AA erişilebilirlik: yeterli renk kontrastı, tüm etkileşimler klavyeyle yapılabilsin, görünür odak halkaları, görsellerde alt metin, form alanlarında label olsun."},
+ {id:"seo",n:"seo-temeli",d:"Başlık, açıklama, Open Graph, yapılandırılmış veri ve anlamlı başlık hiyerarşisi.",src:"gitmapp",p:"SEO: anlamlı <title> ve meta description, Open Graph etiketleri, tek H1 ve düzgün başlık hiyerarşisi, uygun yerde JSON-LD (LocalBusiness/Product) ekle."},
+ {id:"mobil-once",n:"mobil-once",d:"Önce telefon tasarlar: alt gezinme çubuğu, büyük dokunma alanları, tek el kullanımı.",src:"gitmapp",p:"Önce mobil tasarla: alt gezinme çubuğu, en az 44px dokunma alanları, tek elle ulaşılabilir ana düğmeler, yatay taşma olmasın."},
+ {id:"koyu-tema",n:"koyu-tema",d:"Sistem temasını izleyen açık/koyu tema ve geçiş düğmesi.",src:"gitmapp",p:"prefers-color-scheme'i izleyen açık/koyu tema ve kalıcı (localStorage) bir tema geçiş düğmesi ekle."},
+ {id:"tr-para",n:"tr-bicimleri",d:"₺ para birimi, tarih ve telefon biçimleri, Türkiye il listesi.",src:"gitmapp",p:"Para birimini ₺ ve tr-TR biçiminde göster, tarihleri gün ay yıl biçiminde yaz, telefonları 05xx xxx xx xx biçiminde doğrula; il seçimlerinde 81 il listesini kullan."},
+ {id:"cok-dil",n:"cok-dilli",d:"Türkçe/İngilizce dil seçici ve tüm metinlerin iki dilde hazırlanması.",src:"gitmapp",p:"Sağ üstte TR/EN dil seçici ekle; tüm arayüz metinlerini iki dilde bir sözlükten oku, seçim localStorage'da saklansın."},
+ {id:"pano",n:"yonetici-panosu",d:"Uygulamaya istatistik kartları ve grafikli küçük bir yönetici özeti ekler.",src:"gitmapp",p:"Ana ekranda özet istatistik kartları (toplamlar, bugün, bu ay) ve SVG ile çizilmiş basit bir çizgi/çubuk grafik göster."},
+ {id:"bos-durum",n:"bos-durumlar",d:"Boş listeler, yükleniyor ve hata durumları için özenli ekranlar.",src:"gitmapp",p:"Her liste ve ekran için boş durum (açıklama + eylem düğmesi), yükleniyor iskeleti ve hata mesajı tasarla."},
+ {id:"animasyon",n:"ince-animasyonlar",d:"Sayfa geçişleri, kart üzerine gelme ve düğme dokunuşlarında ölçülü hareketler.",src:"topluluk",p:"Ölçülü mikro animasyonlar ekle: görünür olunca yumuşak beliren bölümler, kartlarda hafif yükselme, düğmelerde basınca küçülme; prefers-reduced-motion'a uy."},
+ {id:"whatsapp-siparis",n:"whatsapp-siparis",d:"Sepet ve formlardan hazır mesajla WhatsApp'a yönlendirme.",src:"topluluk",p:"Sepet ya da talep formu doldurulunca içeriği düzgün biçimlenmiş bir mesajla wa.me bağlantısına aktaran 'WhatsApp ile gönder' düğmesi ekle."},
+ {id:"pwa",n:"pwa-hazir",d:"Telefona yüklenebilir: manifest, simge ve çevrimdışı açılma.",src:"topluluk",p:"Uygulamayı PWA'ya uygun yap: meta theme-color, apple-mobile-web-app etiketleri, satır içi manifest ve basit çevrimdışı mesajı."},
+ {id:"yazdir",n:"yazdir-pdf",d:"Fatura, teklif ve raporlar için temiz yazdırma (PDF) görünümü.",src:"topluluk",p:"Belge niteliğindeki ekranlar için @media print stilleri ve 'Yazdır / PDF' düğmesi ekle; gezinme ve düğmeler çıktıda gizlensin."},
+ {id:"csv",n:"csv-ice-dis-aktar",d:"Listeleri CSV olarak indirme ve CSV'den içe aktarma.",src:"topluluk",p:"Listelere CSV olarak dışa aktar (UTF-8 BOM, noktalı virgül) ve CSV dosyasından içe aktar özelliği ekle."},
+ {id:"oyun-hissi",n:"oyun-hissi",d:"Oyunlara titreşim, ekran sarsıntısı, parçacık efektleri ve ses.",src:"topluluk",p:"Oyunda vuruş ve puanlarda küçük ekran sarsıntısı, parçacık efektleri, WebAudio ile kısa ses efektleri ve destekleniyorsa titreşim ekle."},
+];
+const skillsOn=()=>LS.get("skills",[])||[];
+const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>on.includes(x.id)).map(x=>"["+x.n+"] "+x.p).join("\n")};
+function SkillsModal({close,toast}){
+ const [on,setOn]=useState(skillsOn);const [tab,setTab]=useState("kesfet");const [src,setSrc]=useState("");const [q,setQ]=useState("");
+ useEffect(()=>{const h=e=>{if(e.key==="Escape")close()};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
+ const tog=id=>{const n=on.includes(id)?on.filter(x=>x!==id):[...on,id];setOn(n);LS.set("skills",n);toast(on.includes(id)?"Beceri kaldırıldı":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
+ const base=tab==="yuklu"?SKILLS.filter(x=>on.includes(x.id)):SKILLS;
+ const list=base.filter(x=>(!src||x.src===src)&&(!q||(x.n+x.d).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
+ return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="skm" onClick=${e=>e.stopPropagation()}>
+  <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><p>Yapay zekâya kalıcı uzmanlık kazandır. Yüklediğin beceriler her yeni üretimde otomatik uygulanır.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  <div class="skm-tabs"><button class=${tab==="yuklu"?"on":""} onClick=${()=>setTab("yuklu")}>Yüklü <em>${on.length}</em></button><button class=${tab==="kesfet"?"on":""} onClick=${()=>setTab("kesfet")}>Keşfet <em>${SKILLS.length}</em></button></div>
+  <label class="skm-q"><${Icon} n="search" s=${16}/><input placeholder="Beceri ara…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
+  <div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
+  <div class="skm-g">${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.d}</p><span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span></div>`})}${!list.length&&html`<div class="empty" style=${{gridColumn:"1/-1",border:0}}>${tab==="yuklu"?"Henüz beceri yüklemedin. Keşfet sekmesinden ekleyebilirsin.":"Sonuç yok"}</div>`}</div>
+ </div></div>`;
+}
+// Açılış ekranı: seçilen kategoriye göre şablon paneli
+const CHIP_TPL={Pano:["crm","muhasebe","stok","sigorta"],Portal:["sigorta","klinik","crm"],Sunum:["emlak","sigortasite","restoran"],"İç araç":["stok","muhasebe","klinik","crm"],"Açılış sayfası":["sigortasite","emlak","restoran"],Satış:["crm","sigortasite","emlak"],Oyun:[]};
+const CHIP_PH={Pano:"satışlarımı grafiklerle gösteren bir pano",Portal:"müşterilerimin giriş yaptığı bir portal",Sunum:"şirketimi anlatan bir sunum",["İç araç"]:"ekibimin kullanacağı bir iç araç",["Açılış sayfası"]:"ürünüm için bir açılış sayfası",Satış:"teklif ve satış takibi yapan bir uygulama",Oyun:"dokunmatik kontrollü bir oyun"};
+function ChipTemplates({chip,onTpl,go}){const ids=CHIP_TPL[chip]||[];const ref=useRef(null);const [demo,setDemo]=useState(null);
+ const list=ids.map(id=>TEMPLATE_LIB.find(t=>t.id===id)).filter(Boolean);
+ return html`<div class="ctp" key=${chip}><div class="ctp-h"><b>${chip} şablonları</b><a href="#" onClick=${e=>{e.preventDefault();go("sablonlar")}}>Tümünü gör <${Icon} n="arrowRight" s=${15}/></a></div>
+  ${list.length?html`<div class="ctp-row" ref=${ref}>${list.map(t=>html`<${TplCard} key=${t.id} t=${t} w=${300} onDemo=${setDemo} onUse=${onTpl}/>`)}</div>`:html`<div class="ctp-empty"><${Icon} n="gamepad" s=${22}/> Oyunlar için şablon yerine kısa bir fikir yazman yeterli; ör. “uzay gemisiyle meteorlardan kaçılan oyun”.</div>`}
+  ${list.length>2&&html`<button class="navarr ctp-n" onClick=${()=>ref.current&&ref.current.scrollBy({left:320,behavior:"smooth"})}><${Icon} n="chevRight" s=${18}/></button>`}
+  ${demo&&html`<${TplDemo} t=${demo} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onTpl(t)}}/>`}</div>`}
 
 function MyApps({auth,openAuth,toast,openInStudio,openPublish,health}){
  const [apps,setApps]=useState(null);const [del,setDel]=useState(null);
@@ -2849,7 +2930,7 @@ function App(){
  const [saved,setSaved]=useState(LS.get("saved",{})||{});const [secs,setSecs]=useState(LS.get("secs",{})||{});const [builds,setBuildsS]=useState(LS.get("builds",[])||[]);
  const [orders,setOrdersS]=useState(LS.get("orders",[])||[]);const [pick,setPick]=useState(null);const [storeCat,setStoreCat]=useState(null);
  const [deck,setDeck]=useState(null);const [rate,setRate]=useState(RATE);const [busyAll,setBusyAll]=useState(false);
- const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);
+ const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
  const openAuth=reason=>{LS.set("afterAuth",view);setAuthModal(reason||"")};
  const toggleSave=r=>{const n={...saved};if(n[r.full_name])delete n[r.full_name];else n[r.full_name]=r;setSaved(n);LS.set("saved",n)};
@@ -2876,12 +2957,12 @@ function App(){
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
  const goStore=(o)=>{setSq({q:"",cat:"",...o,n:Date.now()});setView("magaza")};
  const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
- const NAVC=[["ana","Yeni"],["$ara","Ara",0,"⌘K"],["studio","Geliştir"],["magaza","Keşfet"],["uygulamalarim","Projeler"],["sablonlar","Şablonlar"],["baglantilar","Bağlantılar"],["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],"$recent","$more",...(moreOpen?[["oyunlar","Oyna"],["kategoriler","Kategoriler"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]]:[]),"",["guncel","Güncellemeler",isNew?"YENİ":0]];
+ const NAVC=[["ana","Yeni"],["$ara","Ara",0,"⌘K"],["studio","Geliştir"],["magaza","Keşfet"],["uygulamalarim","Projeler"],["sablonlar","Şablonlar"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],"$recent","$more",...(moreOpen?[["oyunlar","Oyna"],["kategoriler","Kategoriler"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]]:[]),"",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const NAVA=[["siparisler","Siparişler",newOrders],...(apiOn?[["radar","Talep Radarı"]]:[]),["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
- const navGo=(k,extra)=>{setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
+ const navGo=(k,extra)=>{setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":k==="magaza"?view==="magaza"&&sq.cat!=="oyun":view===k;
  const TITLES={ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
- const navList=(cls)=>NAV.map((it,i)=>it==="$recent"?(myApps.length>0&&html`<div key="rec"><div class="nav-sec">Projeler</div>${myApps.slice(0,5).map(a=>html`<button key=${a.id} class="nav rec" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>`)}</div>`):it==="$more"?html`<button key="more" class="nav more" onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} class=${"nav "+cls+(navOn(it[0])?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
+ const navList=(cls)=>NAV.map((it,i)=>it==="$recent"?(myApps.length>0&&html`<div key="rec"><div class="nav-sec">Projeler</div>${myApps.slice(0,5).map(a=>html`<button key=${a.id} class="nav rec" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>`)}</div>`):it==="$more"?html`<button key="more" class="nav more" onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} class=${"nav "+cls+(navOn(it[0])?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[0]==="$beceri"&&skillsOn().length?html`<b>${skillsOn().length}</b>`:it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
  const initials=u=>((u.name||u.email||"?").split(/[\s@]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("")||"?").toUpperCase();
  const NAV=mode==="admin"?NAVA:NAVC;
  return html`<div class="app">
@@ -2928,6 +3009,7 @@ function App(){
   ${deck&&html`<${Deck} repos=${deck} secs=${secs} close=${()=>setDeck(null)}/>`}
   ${authModal!==null&&html`<${AuthScreen} auth=${auth} health=${health} toast=${toast} reason=${authModal} close=${()=>setAuthModal(null)}/>`}
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
+  ${skills&&html`<${SkillsModal} close=${()=>setSkills(false)} toast=${toast}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
  </div>`;
