@@ -939,6 +939,8 @@ a{color:#64a8ff}.btn,a.btn{text-decoration:none}
 .tpl-ic{background:none!important;box-shadow:none!important;padding:0!important;width:auto!important;height:auto!important;font-size:0!important}
 .skpromo{background:var(--fill1)!important;border:1px solid var(--sep)!important}
 .product-mark.pm2{background:none!important;box-shadow:none!important;width:auto!important;height:auto!important}.product-heading .pm2 .appic{width:56px!important;height:56px!important;border-radius:13px!important}
+.vc-dialog{width:min(540px,calc(100% - 20px));max-height:90dvh;box-sizing:border-box;padding:0;border:1px solid var(--line);border-radius:18px;background:var(--card,#181818);color:var(--txt,#eee);box-shadow:0 24px 80px #0007}.vc-dialog::backdrop{background:#0009}
+.vc-dialog>header,.vc-tools{display:flex;align-items:center;justify-content:space-between;gap:10px}.vc-dialog>header{position:sticky;top:0;padding:16px 20px;background:var(--card,#181818);border-bottom:1px solid var(--line);z-index:1}.vc-dialog h2,.vc-dialog h3{margin:0}.vc-dialog h2{font-size:19px}.vc-dialog h3{font-size:15px}.vc-dialog small,.vc-dialog time,.vc-dialog code{color:var(--mut);overflow-wrap:anywhere}.vc-body{padding:16px 20px;display:grid;gap:14px}.vc-body p,.vc-history{margin:0}.vc-body p,.vc-dialog summary{line-height:1.5;font-size:14px}.vc-tools{flex-wrap:wrap}.vc-field{display:grid;gap:5px;flex:1;min-width:0;font-size:13px}.vc-dialog .in{width:100%;box-sizing:border-box}.vc-field+button{align-self:end}.vc-dialog form:not(.vc-tools),.vc-section{display:grid;gap:10px}.vc-dialog form>.btn{justify-self:start}.vc-section{border-top:1px solid var(--line);padding-top:12px}.vc-dialog summary{cursor:pointer}.vc-dialog pre{max-height:170px;overflow:auto;margin:8px 0;padding:8px;background:#101215;border-radius:8px;font-size:12px}.vc-add{color:#9ae4b4}.vc-del,.vc-error{color:#ff9a99}.vc-history{padding:0;list-style:none;max-height:170px;overflow:auto}.vc-history li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;border-bottom:1px solid var(--line);padding:7px 0;font-size:12px}.vc-history span{white-space:pre-line;overflow-wrap:anywhere}.vc-trigger{max-width:170px;min-height:34px}.vc-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -952,8 +954,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.0.0";
+const VERSION="5.1.0";
 const CHANGELOG=[
+ {v:"5.1.0",date:"2026-11-25",items:["Stüdyo’da Dallar üzerinden proje için dal oluşturabilir, index.html değişikliklerini inceleyebilir ve mesajla commit kaydedebilirsiniz.","Aynı panelden GitHub hesabınızı bağlayıp projenin GitHub deposunda dal ve commit oluşturabilirsiniz."]},
  {v:"5.0.0",date:"2026-11-25",items:[
   "🎨 Yeni görünüm, Apple dengesi: sarı artık yalnızca marka logosunda ve gerçekten dikkat isteyen yerlerde (onay bekleyen adım, vurgulu başlık). Birincil düğmeler beyaz, ikinciller gri; seçili sekme, çip, paket ve adımlar sakin gri dolguyla gösterilir. Bağlantılar Apple mavisi, bildirimler cam görünümlü",
   "✏️ Tek tip ikon seti: tüm arayüz ve 8 hazır şablon, SF Symbols tarzında ince çizgili Lucide ikonlarına geçti; yarı saydam dolgulu eski ikonlar ve emojiler kaldırıldı. Kenar menüsündeki renkli kutucuklar yerine sade tek renk ikonlar",
@@ -2345,9 +2348,133 @@ function DesignScene({project,resolve,save,close,aiBody,spent,failAuth}) {
    <a href="https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/" target="_blank" rel="noopener noreferrer">Figma bağlantı kılavuzu ↗</a></details>
   </aside></div></div>`;
 }
-function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,models,go,seed,clearSeed}){
+function studioSource(htmlText){
+ const assets={};let count=0;
+ const html=String(htmlText||"").replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{300,}/g,data=>{
+  const key="IMG_"+(++count);assets[key]=data;return "{{"+key+"}}";
+ });
+ return {html,assets};
+}
+// Show the affected block without attempting a quadratic line diff on generated HTML.
+function changedBlock(previous, current) {
+ const oldLines=previous?previous.split("\n"):[], newLines=current?current.split("\n"):[];
+ let start=0, lastOld=oldLines.length, lastNew=newLines.length;
+ while(start<lastOld && start<lastNew && oldLines[start]===newLines[start])start++;
+ while(lastOld>start && lastNew>start && oldLines[lastOld-1]===newLines[lastNew-1]){lastOld--;lastNew--}
+ return {start,old:oldLines.slice(start,lastOld),next:newLines.slice(start,lastNew)};
+}
+function VersionPanel({appId,content,active,initialSource,auth,health,close,saveProject,openAuth,onWork,onDetach}){
+ const dialog=useRef(null), [source,setSource]=useState(initialSource||active?.source||"gitmapp");
+ const [name,setName]=useState(active?.source===source?active.name:""),[catalog,setCatalog]=useState(null),[detail,setDetail]=useState(null);
+ const [revision,refresh]=useState(0),[busy,setBusy]=useState(false),[error,setError]=useState(""),[connectionIssue,setConnectionIssue]=useState(false),[notice,setNotice]=useState("");
+ const [message,setMessage]=useState(""),[newName,setNewName]=useState(""),[creating,setCreating]=useState(false);
+ const [repoInput,setRepoInput]=useState(""),[linking,setLinking]=useState(false);
+ function report(failure){
+  setError(failure.message);setConnectionIssue([401,403,404,412].includes(failure.status));
+ }
+ const apiPath="/api/apps/"+appId+"/git", suffix="?source="+source;
+ const bound=active?.source===source && active?.name===name && (source==="gitmapp"||active?.repo===catalog?.repo);
+ const snapshot=detail?.name===name && detail?.source===source?detail:null;
+ const stale=bound && snapshot && snapshot.head!==active.head;
+ const difference=snapshot && content!==snapshot.html;
+ useEffect(()=>{const el=dialog.current,prev=document.activeElement;el.showModal();return()=>{el.close();if(prev?.isConnected)prev.focus()}},[]);
+ useEffect(()=>{
+  let current=true;
+  setCatalog(null);setDetail(null);setError("");
+  if(appId&&auth.user){
+   api("GET",apiPath+suffix).then(data=>{
+    if(!current)return;
+    setCatalog({...data,page:1});if(!data.setup)setName(n=>n||data.defaultBranch);
+   }).catch(e=>{if(current)report(e)});
+  }
+  return ()=>{current=false};
+ },[appId,auth.user?.id,source,revision]);
+ useEffect(()=>{
+  let current=true;
+  setDetail(null);
+  if(catalog && !catalog.setup && name){
+   api("GET",apiPath+"/branch"+suffix+"&name="+encodeURIComponent(name)+"&repo="+encodeURIComponent(catalog.repo||""))
+    .then(data=>{if(current)setDetail({...data,name,source})}).catch(e=>{if(current)report(e)});
+  }
+  return ()=>{current=false};
+ },[catalog,name,source]);
+ async function action(fn){
+  if(busy)return;
+  setBusy(true);setError("");setNotice("");
+  try{await fn()}catch(e){report(e)}finally{setBusy(false)}
+ }
+ function selectSource(next){
+  if(next===source)return;
+  setCatalog(null);setDetail(null);setName(active?.source===next?active.name:"");
+  setSource(next);setNewName("");setCreating(false);setLinking(false);setNotice("");setError("");
+ }
+ function context(head,branch=name){return {source,name:branch,head,repo:catalog.repo}}
+ async function createBranch(){
+  const branch=newName.trim();
+  const result=await api("POST",apiPath+"/branches"+suffix,{name:branch,base:name,head:snapshot.head,repo:catalog.repo});
+  if(!active||bound)onWork(context(result.head,branch));
+  setDetail(null);setName(branch);setNewName("");setCreating(false);
+  setNotice(branch+" dalı oluşturuldu.");refresh(x=>x+1);
+ }
+ async function commit(){
+  const result=await api("POST",apiPath+"/commits"+suffix,{name,head:snapshot.head,html:content,message,repo:catalog.repo});
+  onWork(context(result.head));setMessage("");setNotice(name+" dalına commit kaydedildi.");refresh(x=>x+1);
+ }
+ function checkout(){
+  if(content!==snapshot.html && !confirm("Çalışma alanındaki index.html seçili dalın sürümüyle değiştirilsin mi?"))return;
+  onWork(context(snapshot.head),snapshot.html);close();
+ }
+ const block=useMemo(()=>difference?changedBlock(snapshot.html||"",content):null,[snapshot,content]);
+ function lines(items,sign){
+  const other=sign==="+"?block.old:block.next;
+  return items.slice(0,16).map((line,i)=>{
+   let first=0;const pair=other[i]||"";
+   while(first<line.length&&first<pair.length&&line[first]===pair[first])first++;
+   const start=Math.max(0,first-55),end=start+280;
+   return html`<div key=${sign+i} class=${sign==="+"?"vc-add":"vc-del"}>${sign} ${start?"…":""}${line.slice(start,end)}${line.length>end?"…":""}</div>`;
+  });
+ }
+ async function connectGitHub(privateRepos=false){
+  const j=await api("POST","/api/auth/link");
+  location.href=API+"/api/auth/oauth/github/start?return_to=versions&link="+encodeURIComponent(j.link)+(privateRepos?"&scope=private":"");
+ }
+ const linkForm=()=>html`<form class="vc-tools" onSubmit=${e=>{e.preventDefault();action(async()=>{await api("POST",apiPath+"/link",{repo:repoInput.trim()});setCatalog(null);setName("");setLinking(false);setRepoInput("");refresh(x=>x+1)})}}>
+ <label class="vc-field">GitHub depon<input class="in" value=${repoInput} onInput=${e=>setRepoInput(e.target.value)} placeholder=${(auth.user?.github||"kullanici")+"/proje"} required/></label><button class="btn g s" disabled=${busy||!repoInput.trim()}>Mevcut depoyu bağla</button></form>`;
+ const closePanel=()=>{if(!busy)close()};
+ return ReactDOM.createPortal(html`<dialog ref=${dialog} class="vc-dialog" aria-labelledby="vc-heading" onCancel=${e=>{e.preventDefault();closePanel()}}>
+ <header><div><h2 id="vc-heading">Sürüm kontrolü</h2><small>${active?"Çalışma dalı · "+(active.source==="github"?"GitHub":"Gitmapp")+" / "+active.name:"Proje çalışma alanı"}</small></div><button class="ib" title="Kapat" disabled=${busy} onClick=${closePanel}><${Icon} n="x"/></button></header>
+ <div class="vc-body">
+ ${!appId||!auth.user?html`<p>Projenin dalları ve commit geçmişi hesabında saklanır.</p><button class="btn" disabled=${busy} onClick=${()=>auth.user?action(async()=>{if(!await saveProject())throw new Error("Proje kaydedilemedi. Bağlantınızı kontrol edip tekrar deneyin.")}):(close(),openAuth("Sürüm kontrolü için giriş yapın."))}>${auth.user?"Projeyi kaydet ve başla":"Giriş yap"}</button>`:html`
+ <div class="vc-tools"><div class="seg" role="group" aria-label="Sürüm kaynağı">${[["gitmapp","Gitmapp"],["github","GitHub"]].map(([k,label])=>html`<button key=${k} aria-pressed=${source===k} class=${source===k?"on":""} disabled=${busy} onClick=${()=>selectSource(k)}>${label}</button>`)}</div>
+ <button class="ib" disabled=${busy} onClick=${()=>refresh(x=>x+1)} title="Dalları ve commitleri yenile"><${Icon} n="refresh" s=${16}/></button></div>
+ ${catalog?.setup==="account"?html`<p>${health.github?"GitHub’daki dallara erişmek için hesabını bağla.":"GitHub bağlantısı bu sunucuda yapılandırılmamış. Gitmapp sekmesinde dal ve commit kullanabilirsin."}</p>${health.github&&html`<button class="btn" disabled=${busy} onClick=${()=>action(()=>connectGitHub())}>GitHub hesabımı bağla</button>`}`:
+ catalog?.setup==="repository"?html`<p>Bu proje için @${auth.user.github} hesabında herkese açık bir depo oluştur. Uygulama kodu ilk GitHub commit’iyle eklenir. Mevcut bir deponu da bağlayabilirsin.</p><button class="btn" disabled=${busy} onClick=${()=>action(async()=>{await api("POST",apiPath+"/repository");refresh(x=>x+1)})}>Herkese açık depo oluştur</button>${linkForm()}`:
+ catalog?html`<div class="vc-tools"><small>${catalog.repo||"Gitmapp proje deposu"} · index.html</small>${source==="github"&&html`<button class="btn g s" disabled=${busy} onClick=${()=>setLinking(!linking)}>Depo ayarları</button>`}</div>
+ ${source==="github"&&linking&&html`${linkForm()}${catalog.custom&&html`<button class="btn g s" disabled=${busy} onClick=${()=>action(async()=>{await api("POST",apiPath+"/unlink",{repo:catalog.repo});setCatalog(null);setName("");setLinking(false);refresh(x=>x+1)})}>Depo bağlantısını kaldır</button>`}`}
+ <div class="vc-tools"><label class="vc-field">Dal<select aria-label="Dal" class="in" value=${name} disabled=${busy} onChange=${e=>{setName(e.target.value);setError("");setNotice("")}}>${[...new Set([name,catalog.defaultBranch,...catalog.branches].filter(Boolean))].map(b=>html`<option value=${b} key=${b}>${b}</option>`)}</select></label>
+ <button class="btn g s" disabled=${busy||!snapshot||stale} aria-expanded=${creating} onClick=${()=>setCreating(!creating)}>Yeni dal</button></div>
+ ${catalog.more&&html`<button class="btn g s" disabled=${busy} onClick=${()=>action(async()=>{const page=catalog.page+1,d=await api("GET",apiPath+suffix+"&page="+page);setCatalog({...d,page,branches:[...catalog.branches,...d.branches]})})}>Diğer dalları göster</button>`}
+ ${creating&&html`<form class="vc-tools" onSubmit=${e=>{e.preventDefault();action(createBranch)}}><label class="vc-field">Yeni dal adı<input class="in" required maxlength="250" placeholder="tasarim/yeni-menu" value=${newName} onInput=${e=>setNewName(e.target.value)}/></label><button class="btn s" disabled=${busy||!snapshot||stale||!newName.trim()}>Dal oluştur</button></form>`}
+ ${snapshot&&html`<section class="vc-section"><div class="vc-tools"><h3>Çalışma dosyası</h3><code>${snapshot.head.slice(0,7)}</code></div>
+ ${block?html`<details><summary>index.html · Değişen bölümü göster</summary><pre>${lines(block.old,"-")}${block.old.length>16?"…\n":""}${lines(block.next,"+")}${block.next.length>16?"…":""}</pre></details>`:html`<p>Çalışma dosyası bu dalla güncel.</p>`}
+ ${stale&&html`<p role="alert">Bu dal başka bir yerde güncellendi. Farkı inceleyip yeni sürümü açabilir veya taslağınla devam edebilirsin.</p>`}
+ <div class="vc-tools">${snapshot.html!==null&&html`<button class="btn g s" disabled=${busy} onClick=${checkout}>Dal sürümünü aç</button>`}
+ ${(active&&!bound||stale)&&html`<button class="btn g s" disabled=${busy} onClick=${()=>{onWork(context(snapshot.head));setNotice("Taslak "+name+" dalı üzerinde çalışıyor.")}}>Bu taslakla dalda çalış</button>`}</div>
+ <form onSubmit=${e=>{e.preventDefault();action(commit)}}><label class="vc-field">Commit mesajı<input class="in" maxlength="200" value=${message} onInput=${e=>setMessage(e.target.value)} placeholder="Örneğin: Mobil menüyü sadeleştir"/></label><button class="btn" disabled=${busy||!difference||!message.trim()||stale||(active&&!bound)}>${source==="github"?"GitHub’a commit gönder":"Commit kaydet"}</button></form></section>
+ <section class="vc-section"><h3>Son commitler</h3><ol class="vc-history">${snapshot.history.map(h=>html`<li key=${h.sha}><code>${h.sha.slice(0,7)}</code><span>${h.message}</span><time>${h.created?new Date(h.created).toLocaleDateString("tr-TR"):""}</time></li>`)}</ol></section>`}
+ `:null}
+ ${(!catalog||(!catalog.setup&&!snapshot))&&!error&&html`<p role="status">Dal bilgileri yükleniyor…</p>`}
+ ${active&&html`<button class="btn g s" disabled=${busy} onClick=${()=>{onDetach();close()}}>Çalışmayı proje taslağına aktar</button>`}`}
+ ${source==="github"&&error&&!catalog&&auth.user?.github&&linkForm()}
+ ${source==="github"&&error&&connectionIssue&&health.github&&html`<div class="vc-tools"><button class="btn g s" disabled=${busy} onClick=${()=>action(()=>connectGitHub())}>GitHub hesabını yeniden bağla</button><button class="btn g s" disabled=${busy} onClick=${()=>action(()=>connectGitHub(true))}>Özel depolar için erişim iste</button></div>`}
+ ${error&&html`<p class="vc-error" role="alert">${error}</p>`}${notice&&html`<p role="status">${notice}</p>`}</div></dialog>`,document.body);
+}
+
+function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
+ const [gitOpen,setGitOpen]=useState(false);
+ useEffect(()=>{if(resumeVersions){setGitOpen("github");clearResumeVersions()}},[resumeVersions]);
  const [saved,setSaved]=useState(null),[saveFailed,setSaveFailed]=useState(false),[localOk,setLocalOk]=useState(true);
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
  const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?{...m.log,running:false}:undefined}))}});
@@ -2362,7 +2489,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector}));if(st.html)setPendTheme(id)};
  useEffect(()=>{setLocalOk(LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))}));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
- useEffect(()=>{if(incoming){proposedTitle.current="";let n=0;const assets={};const h=String(incoming.html||"").replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{300,}/g,m=>{n++;assets["IMG_"+n]=m;return "{{IMG_"+n+"}}"});const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setSt({...project,html:h,assets});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
+ useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},120);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{chatEnd.current&&chatEnd.current.scrollIntoView({behavior:"smooth",block:"end"})},[st.msgs.length,busy,plan]);
  useEffect(()=>{codeEnd.current&&codeEnd.current.scrollIntoView({block:"end"})},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
@@ -2435,6 +2562,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  async function review(){if(!st.html||busy)return;const prev=st.html;
   await runStream("review","Kontrol et ve düzelt","/api/ai/review",{html:prev,...aiBody()},j=>{setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html}));return j.summary})}
  async function save(){
+  if(st.gitContext){setGitOpen(true);return null}
   if(!auth.user){openAuth("Uygulamanızı kaydetmek ve yayınlamak için ücretsiz hesap oluşturun. Çalışmanız kaybolmaz.");return null}
   setSaving(true);const body={title:st.title||"Adsız uygulama",html:resolve(st.html),emoji:st.emoji,color:st.color,prompt_log:st.msgs.filter(m=>m.content).map(m=>({role:m.role,content:m.content})).slice(-50),meta:{model:curModel||undefined,kind:prefs.kind,theme:effTheme.id,provider:prefs.provider}};
   try{let j;try{j=st.appId?await api("PUT","/api/apps/"+st.appId,body):await api("POST","/api/apps",body)}catch(e){if(st.appId&&(e.status===404||e.status===403))j=await api("POST","/api/apps",body);else throw e}
@@ -2553,8 +2681,18 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const activeStep=todo?.items.findIndex(t=>t.state==="run")??-1;
  const progress=activeStep>=0?`${activeStep+1}/${todo.items.length} · ${todo.items[activeStep].title}`:st.msgs.at(-1)?.log?.title||"İstek işleniyor";
  const openDesign=()=>{setCode(false);setVeMode(null);setPicked(null);setDesignOpen(true)};
+ function workOnBranch(gitContext,value){
+  if(value===undefined){setSt(s=>({...s,gitContext}));return}
+  setVersions([]);setPicked(null);setVeMode(null);setTodo(null);setPlan(null);
+  const source=studioSource(value);
+  setSt(s=>({...s,...source,gitContext}));
+ }
+ function detachBranch(){
+  setSt(s=>({...s,gitContext:null}));
+  toast("Dalın çalışma dosyası proje taslağına alındı.");
+ }
  const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${resolve(st.html)+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}
+ return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}
   <div class="ws-top">
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
    <input class="in ws-title" value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
@@ -2567,9 +2705,10 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
    <span style=${{position:"relative"}}><button class="ib" disabled=${!versions.length||busy} onClick=${()=>setHist(!hist)} title="Sürüm geçmişi"><${Icon} n="history" s=${16}/></button>${hist&&html`<div class="histm glass" onMouseLeave=${()=>setHist(false)}><b>Sürüm geçmişi</b>${versions.map((v,i)=>({v,i})).reverse().map(({v,i})=>html`<button key=${i} onClick=${()=>{setVersions(x=>[...x.slice(0,i),st.html]);setSt(s=>({...s,html:v}));setHist(false);toast("Sürüm "+(i+1)+" geri yüklendi")}}><span class="hist-n">${i+1}</span><span>Sürüm ${i+1}<small>${(v.length/1024).toFixed(1)} KB</small></span><${Icon} n="undo" s=${14}/></button>`)}</div>`}</span>
    <button class="ib" disabled=${!versions.length||busy} onClick=${undo} title="Önceki sürüm"><${Icon} n="undo" s=${16}/></button>
    <button class="ib" disabled=${busy||todo?.running||saving} onClick=${reset} title="Yeni proje">${sure?html`<span style=${{fontSize:12,padding:"0 4px"}}>Emin misiniz?</span>`:html`<${Icon} n="plus" s=${17}/>`}</button>
-   <span class="studio-save" role="status">${saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title="Kaydet"><${Icon} n="save" s=${16}/></button>
+   <button class="btn g s vc-trigger" disabled=${saving||busy||todo?.running||!st.html} onClick=${()=>setGitOpen(true)} title="Sürüm kontrolü" aria-label="Sürüm kontrolü"><${Icon} n="branch" s=${16}/><span>${st.gitContext?.name||"Dallar"}</span></button>
+   <span class="studio-save" role="status">${st.gitContext?(localOk?"Dal taslağı":"Cihaza kaydedilemedi"):saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title=${st.gitContext?"Dala commit kaydet":"Kaydet"}><${Icon} n="save" s=${16}/></button>
    <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
-   <button class="btn s" disabled=${saving||busy||!st.html} onClick=${publish}><${Icon} n="rocket" s=${15}/> Yayınla</button></div>
+   <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${Icon} n="rocket" s=${15}/> Yayınla</button></div>
   <div class="ws-grid studio-grid">
    <div class="ws-chat">
     <div class="ws-ctrl">${controls()}</div>
@@ -3699,8 +3838,10 @@ function App(){
  useEffect(()=>{if(!API)return;fetch(API+"/api/health").then(r=>r.json()).then(j=>{if(j.ok){API_ON=true;setHealth(j);setApiOn(true)}}).catch(()=>{})},[]);
  const auth=useAuth(apiOn);
  const models=useModels(apiOn,auth.user&&auth.user.id);
+ const [resumeVersions,setResumeVersions]=useState(false);
  useEffect(()=>{const h=()=>{const v=location.hash.slice(1);
    if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");setView(LS.get("afterAuth","studio")||"studio");return}
+   if(v==="github-dallar"){auth.refresh();setResumeVersions(true);setView("studio");return}
    if(v==="github-baglandi"){auth.refresh();toast("GitHub hesabınız bağlandı 🐙");setView("uygulamalarim");return}
    if(v==="auth-hata"||v==="auth-eposta-yok"){toast(v==="auth-hata"?"Giriş tamamlanamadı, tekrar deneyin":"Hesabınızda doğrulanmış e-posta bulunamadı");setView("studio");return}
    if(v.startsWith("app/")){setAppSlug(decodeURIComponent(v.slice(4)));setViewS("detay");setMode("musteri");return}
@@ -3777,7 +3918,7 @@ function App(){
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button>`:""}</div></div></div>`}
   <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span>${auth.user&&html`<button class="crchip" style=${{marginLeft:"auto"}} onClick=${()=>setCrOpen(true)}><${Icon} n="gem" s=${12}/><${CountUp} v=${auth.user.credits??0}/></button>`}</div>`}
    ${needLogin?html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} initMode="giris" title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok.":"Siparişleri ve talep radarını görmek için yönetici hesabıyla giriş yapın."}/></div>`:html`<div>
-   ${view==="studio"&&html`<${Studio} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
+   ${view==="studio"&&html`<${Studio} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
    ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
