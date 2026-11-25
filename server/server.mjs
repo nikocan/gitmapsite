@@ -60,21 +60,31 @@ try { db.exec("ALTER TABLE apps ADD COLUMN meta TEXT DEFAULT '{}'"); } catch { }
 try { db.exec("ALTER TABLE users ADD COLUMN ref_by TEXT"); } catch { }
 try { db.exec("ALTER TABLE users ADD COLUMN ref_paid INTEGER DEFAULT 0"); } catch { }
 db.exec("CREATE TABLE IF NOT EXISTS app_data(slug TEXT NOT NULL, k TEXT NOT NULL, v TEXT, updated TEXT DEFAULT (datetime('now')), PRIMARY KEY(slug,k))");
+if (!db.prepare("PRAGMA table_info(users)").all().some(c => c.name === "session_version")) {
+  db.exec("ALTER TABLE users ADD COLUMN session_version INTEGER NOT NULL DEFAULT 0");
+}
+db.exec("CREATE TABLE IF NOT EXISTS server_settings(k TEXT PRIMARY KEY, v TEXT NOT NULL)");
 const q = (sql) => db.prepare(sql);
 const now = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 const rid = (n = 12) => crypto.randomBytes(n * 2).toString("base64url").replace(/[-_]/g, "").slice(0, n);
 
 // ---------- Kimlik ----------
+// Keep locally configured instances usable without a shared default signing key.
+let signingKey = E.SECRET;
+if (!signingKey || signingKey === "dev-secret-change-me") {
+  q("INSERT OR IGNORE INTO server_settings(k,v) VALUES('session_key',?)").run(crypto.randomBytes(32).toString("hex"));
+  signingKey = q("SELECT v FROM server_settings WHERE k='session_key'").get().v;
+}
 const b64u = (s) => Buffer.from(s).toString("base64url");
 const sign = (obj, ttlSec = 60 * 60 * 24 * 30) => {
   const p = b64u(JSON.stringify({ ...obj, exp: Math.floor(Date.now() / 1000) + ttlSec }));
-  return p + "." + crypto.createHmac("sha256", CFG.secret).update(p).digest("base64url");
+  return p + "." + crypto.createHmac("sha256", signingKey).update(p).digest("base64url");
 };
 const verify = (tok) => {
   if (!tok || typeof tok !== "string" || !tok.includes(".")) return null;
   const [p, s] = tok.split(".");
-  const exp = crypto.createHmac("sha256", CFG.secret).update(p).digest("base64url");
-  if (!s || s.length !== exp.length || !crypto.timingSafeEqual(Buffer.from(s), Buffer.from(exp))) return null;
+  const exp = crypto.createHmac("sha256", signingKey).update(p).digest("base64url");
+  if (!/^[A-Za-z0-9_-]{43}$/.test(s) || s.length !== exp.length || !crypto.timingSafeEqual(Buffer.from(s), Buffer.from(exp))) return null;
   try { const o = JSON.parse(Buffer.from(p, "base64url").toString()); return o.exp > Date.now() / 1000 ? o : null; } catch { return null; }
 };
 const hashPw = (pw) => { const salt = crypto.randomBytes(16).toString("hex"); return salt + ":" + crypto.scryptSync(pw, salt, 64).toString("hex"); };
@@ -84,13 +94,20 @@ const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u
 function authUser(req) {
   const h = req.headers.authorization || "";
   const t = verify(h.startsWith("Bearer ") ? h.slice(7) : "");
-  return t && t.uid && !t.purpose && !t.prov ? q("SELECT * FROM users WHERE id=?").get(t.uid) || null : null;
+  if (!t?.uid || t.purpose || t.prov) return null;
+  const user = q("SELECT * FROM users WHERE id=?").get(t.uid);
+  return user && (t.version ?? 0) === user.session_version ? user : null;
 }
 function upsertOAuthUser({ email, name, github_login, github_token, google_sub }) {
   email = email.toLowerCase();
   let u = q("SELECT * FROM users WHERE email=?").get(email);
   if (!u) { const id = rid(); q("INSERT INTO users(id,email,name,email_verified) VALUES(?,?,?,1)").run(id, email, name || ""); u = q("SELECT * FROM users WHERE id=?").get(id); }
-  else q("UPDATE users SET email_verified=1, name=COALESCE(NULLIF(name,''),?) WHERE id=?").run(name || "", u.id);
+  else {
+    if (email === CFG.admin && !u.email_verified) {
+      q("UPDATE users SET pass=NULL, github_login=NULL, github_token=NULL, google_sub=NULL, session_version=session_version+1 WHERE id=?").run(u.id);
+    }
+    q("UPDATE users SET email_verified=1, name=COALESCE(NULLIF(name,''),?) WHERE id=?").run(name || "", u.id);
+  }
   if (github_login) q("UPDATE users SET github_login=?, github_token=? WHERE id=?").run(github_login, github_token, u.id);
   if (google_sub) q("UPDATE users SET google_sub=? WHERE id=?").run(google_sub, u.id);
   return q("SELECT * FROM users WHERE id=?").get(u.id);
@@ -468,27 +485,38 @@ const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, sl
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
-route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "5.3.0" }));
+function adminLoginConfigured() {
+  if (!CFG.admin) return false;
+  if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
+  return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
+}
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.4.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
   const email = str(body.email, 200, "E-posta", true).trim().toLowerCase(); const pw = str(body.password, 200, "Şifre", true);
   need(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 400, "Geçerli bir e-posta girin"); need(pw.length >= 8, 400, "Şifre en az 8 karakter olmalı");
+  need(email !== CFG.admin, 409, "Bu adres için giriş yapın.");
   need(!q("SELECT 1 FROM users WHERE email=?").get(email), 409, "Bu e-posta ile zaten hesap var, giriş yapın");
   const id = rid(); const ref = /^[A-Za-z0-9]{12}$/.test(body.ref || "") && q("SELECT 1 FROM users WHERE id=?").get(body.ref) ? body.ref : null; q("INSERT INTO users(id,email,name,pass,ref_by) VALUES(?,?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw), ref); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, +(E.SIGNUP_CREDITS || 25), "Hoş geldin kredisi");
-  const u = q("SELECT * FROM users WHERE id=?").get(id); return { token: sign({ uid: id }), user: pubUser(u) };
+  const u = q("SELECT * FROM users WHERE id=?").get(id); return { token: sign({ uid: id, version:u.session_version }), user: pubUser(u) };
 });
 route("POST", "/api/auth/login", ({ body }) => {
   const email = (str(body.email, 200, "E-posta", true) || "").trim().toLowerCase(); const u = q("SELECT * FROM users WHERE email=?").get(email);
   need(u && checkPw(String(body.password || ""), u.pass), 401, "E-posta veya şifre hatalı");
-  return { token: sign({ uid: u.id }), user: pubUser(u) };
+  return { token: sign({ uid: u.id, version:u.session_version }), user: pubUser(u) };
 });
 route("GET", "/api/auth/me", ({ user }) => ({ user: pubUser(user) }));
-route("POST", "/api/auth/link", ({ user }) => { need(user, 401, "Giriş yapın"); return { link: sign({ uid: user.id, purpose: "link" }, 600) }; });
+route("POST", "/api/auth/link", ({ user }) => { need(user, 401, "Giriş yapın"); return { link: sign({ uid: user.id, version:user.session_version, purpose: "link" }, 600) }; });
 route("GET", "/api/auth/oauth/:prov/start", ({ params, url, res }) => {
-  const prov = params.prov; const link = url.searchParams.get("link"); let uid = null;
-  if (link) { const t = verify(link); uid = t && t.purpose === "link" ? t.uid : null; }
-  const state = sign({ prov, uid, n: rid(6) }, 600);
+  const prov = params.prov; const link = url.searchParams.get("link"); let uid = null, version = null;
+  if (link) {
+    const t = verify(link);
+    const account = t?.purpose === "link" && q("SELECT session_version FROM users WHERE id=?").get(t.uid);
+    need(account && account.session_version === (t.version ?? 0), 401, "Oturum sona erdi. Yeniden giriş yapın.");
+    uid = t.uid; version = account.session_version;
+  }
+  const state = sign({ prov, uid, version, n: rid(6) }, 600);
   let loc;
   if (prov === "github") { need(CFG.gh.id, 503, "GitHub girişi henüz yapılandırılmadı"); loc = `https://github.com/login/oauth/authorize?client_id=${CFG.gh.id}&scope=${encodeURIComponent(url.searchParams.get("scope") === "private" ? "read:user user:email repo" : "read:user user:email public_repo")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/github/callback")}`; }
   else if (prov === "google") { need(CFG.google.id, 503, "Google girişi henüz yapılandırılmadı"); loc = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CFG.google.id}&response_type=code&scope=${encodeURIComponent("openid email profile")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/google/callback")}&prompt=select_account`; }
@@ -505,7 +533,7 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
       const tr = await fetch("https://github.com/login/oauth/access_token", { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify({ client_id: CFG.gh.id, client_secret: CFG.gh.secret, code }) });
       const tok = (await tr.json()).access_token; if (!tok) return back("auth-hata");
       const me = await ghApi(tok, "GET", "/user"); const em = await ghApi(tok, "GET", "/user/emails");
-      if (st.uid && q("SELECT 1 FROM users WHERE id=?").get(st.uid)) { q("UPDATE users SET github_login=?, github_token=? WHERE id=?").run(me.data.login, tok, st.uid); return back("github-baglandi"); }
+      if (st.uid) { if (!q("SELECT 1 FROM users WHERE id=? AND session_version=?").get(st.uid,st.version ?? 0)) return back("auth-hata"); q("UPDATE users SET github_login=?, github_token=? WHERE id=?").run(me.data.login, tok, st.uid); return back("github-baglandi"); }
       const primary = (em.data || []).find((e) => e.primary && e.verified) || (em.data || []).find((e) => e.verified);
       if (!primary) return back("auth-eposta-yok");
       u = upsertOAuthUser({ email: primary.email, name: me.data.name || me.data.login, github_login: me.data.login, github_token: tok });
@@ -516,7 +544,7 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
       if (!info.email || !info.email_verified) return back("auth-eposta-yok");
       u = upsertOAuthUser({ email: info.email, name: info.name, google_sub: info.sub });
     }
-    return back("auth=" + sign({ uid: u.id }));
+    return back("auth=" + sign({ uid: u.id, version:u.session_version }));
   } catch (e) { console.error(e); return back("auth-hata"); }
 });
 
@@ -622,9 +650,16 @@ route("GET", "/api/me/usage", ({ user }) => {
 });
 route("POST", "/api/admin/credits", ({ user, body }) => {
   need(isAdmin(user), 403, "Yönetici yetkisi gerekli");
-  const email = (str(body.email, 200, "E-posta", true) || "").trim().toLowerCase(); const amount = Math.round(+body.amount || 0); need(amount && Math.abs(amount) <= 100000, 400, "Miktar geçersiz");
-  const u = q("SELECT id FROM users WHERE email=?").get(email); need(u, 404, "Bu e-postayla kullanıcı yok");
-  q("UPDATE users SET credits=COALESCE(credits,0)+? WHERE id=?").run(amount, u.id); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(u.id, amount, str(body.reason, 120, "Açıklama") || "Yönetici yüklemesi");
+  const email = str(body.email,200,"E-posta",true).trim().toLowerCase();
+  const amount=Number(body.amount); need(Number.isInteger(amount) && amount!==0 && Math.abs(amount)<=100000,400,"Miktar geçersiz");
+  const reason=str(body.reason,120,"Açıklama") || "Yönetici yüklemesi";
+  const u=q("SELECT id FROM users WHERE email=?").get(email); need(u,404,"Bu e-postayla kullanıcı yok");
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    need(q("UPDATE users SET credits=COALESCE(credits,0)+? WHERE id=? AND COALESCE(credits,0)+?>=0").run(amount,u.id,amount).changes,400,"Bakiye yetersiz");
+    q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(u.id,amount,reason);
+    db.exec("COMMIT");
+  } catch(e) { db.exec("ROLLBACK"); throw e; }
   return { ok: true, credits: q("SELECT credits FROM users WHERE id=?").get(u.id).credits };
 });
 route("POST", "/api/ai/assist", async ({ body, user, req }) => {
@@ -1023,12 +1058,94 @@ route("GET", "/api/orders/status", ({ url }) => {
   const ok = o && ((o.phone && digits(c).length >= 7 && digits(o.phone).endsWith(digits(c).slice(-10))) || (o.email && o.email.toLowerCase() === c.toLowerCase()));
   return { order: ok ? { id: o.id, brand: o.brand, status: o.status, live_url: o.live_url, created: o.created, total: o.total } : null };
 });
-route("GET", "/api/admin/orders", ({ user }) => { need(isAdmin(user), 403, "Yönetici yetkisi gerekli"); return { orders: q("SELECT * FROM orders ORDER BY created DESC LIMIT 500").all().map((o) => ({ ...JSON.parse(o.data), id: o.id, status: o.status, live: o.live_url || "", created: o.created })) }; });
-route("PATCH", "/api/admin/orders/:id", ({ user, params, body }) => {
-  need(isAdmin(user), 403, "Yönetici yetkisi gerekli"); if (body.status) need(ORDER_ST.includes(body.status), 400, "Durum geçersiz");
-  q("UPDATE orders SET status=COALESCE(?,status), live_url=COALESCE(?,live_url), updated=? WHERE id=?").run(body.status || null, body.live !== undefined ? str(body.live, 500, "URL") || "" : null, now(), params.id); return { ok: true };
+function adminOrder(row) {
+  const data = JSON.parse(row.data);
+  return { ...data, id:row.id, name:row.customer_name, phone:row.phone, email:row.email, brand:row.brand,
+    total:row.total, monthly:row.monthly, status:row.status, live:row.live_url || "", created:row.created,
+    ai:Array.isArray(data.ai) ? data.ai.filter(x=>typeof x==="string") : [] };
+}
+route("GET", "/api/admin/orders", ({url}) => {
+  if (!url.searchParams.has("page")) return {orders:q("SELECT * FROM orders ORDER BY created DESC,id DESC LIMIT 500").all().map(adminOrder)};
+  const data=directory(url,"orders","*",["id","brand","customer_name","email"],"created DESC,id DESC");
+  const paid=ORDER_ST.slice(2,-1), marks=paid.map(()=>"?").join(",");
+  const stats=q(`SELECT count(*) total,count(CASE WHEN status='Yeni talep' THEN 1 END) pending,
+    COALESCE(sum(CASE WHEN status IN (${marks}) THEN total END),0) revenue,
+    COALESCE(sum(CASE WHEN status IN (${marks}) THEN monthly END),0) monthly FROM orders`).get(...paid,...paid);
+  return {orders:data.rows.map(adminOrder), total:data.total, stats};
 });
-route("DELETE", "/api/admin/orders/:id", ({ user, params }) => { need(isAdmin(user), 403, "Yönetici yetkisi gerekli"); q("DELETE FROM orders WHERE id=?").run(params.id); return { ok: true }; });
+route("PATCH", "/api/admin/orders/:id", ({ params, body }) => {
+  if (body.status !== undefined) need(ORDER_ST.includes(body.status), 400, "Durum geçersiz");
+  const live = body.live === undefined ? null : str(body.live, 500, "URL")?.trim() || "";
+  if (live) need(validWebUrl(live), 400, "Geçerli bir http veya https adresi girin.");
+  const result = q("UPDATE orders SET status=COALESCE(?,status), live_url=COALESCE(?,live_url), updated=? WHERE id=?").run(body.status ?? null, live, now(), params.id);
+  need(result.changes, 404, "Sipariş bulunamadı");
+  return { order:adminOrder(q("SELECT * FROM orders WHERE id=?").get(params.id)) };
+});
+route("DELETE", "/api/admin/orders/:id", ({ params }) => {
+  need(q("DELETE FROM orders WHERE id=?").run(params.id).changes, 404, "Sipariş bulunamadı");
+  return { ok:true };
+});
+
+function validWebUrl(value) {
+  try { return ["https:", "http:"].includes(new URL(value).protocol); } catch { return false; }
+}
+function publicSettings() {
+  const read = k => { const row=q("SELECT v FROM server_settings WHERE k=?").get(k); return row ? JSON.parse(row.v) : null; };
+  return { business:read("business"), prices:read("prices") };
+}
+route("GET", "/api/settings", publicSettings);
+route("PATCH", "/api/admin/settings", ({body}) => {
+  const write=q("INSERT INTO server_settings(k,v) VALUES(?,?) ON CONFLICT(k) DO UPDATE SET v=excluded.v");
+  if (body.business) {
+    const whatsapp=str(body.business.whatsapp,30,"Telefon")?.trim() || "";
+    const hostingerRef=str(body.business.hostingerRef,500,"Bağlantı")?.trim() || "";
+    need(!whatsapp || /^\+?[\d ()-]{7,30}$/.test(whatsapp), 400, "WhatsApp numarası geçersiz");
+    need(!hostingerRef || validWebUrl(hostingerRef), 400, "Geçerli bir partner bağlantısı girin");
+    write.run("business",JSON.stringify({whatsapp,hostingerRef}));
+  } else {
+    const prices={};
+    for (const k of ["site","is","platform","mobil","bakim","hosting","ai"]) {
+      const v=body.prices?.[k]; need(Number.isFinite(v) && v>=0,400,"Paket fiyatı geçersiz"); prices[k]=v;
+    }
+    write.run("prices",JSON.stringify(prices));
+  }
+  return publicSettings();
+});
+route("GET", "/api/admin/overview", () => {
+  const stats=q(`SELECT (SELECT count(*) FROM users) users,(SELECT count(*) FROM apps) projects,
+    (SELECT count(*) FROM apps WHERE status='published') published,(SELECT count(*) FROM orders WHERE status='Yeni talep') pending`).get();
+  return { stats };
+});
+function directory(url, from, fields, searchable, order, condition="", values=[]) {
+  const term=(url.searchParams.get("q") || "").trim().slice(0,200);
+  const page=Number(url.searchParams.get("page") || 1);
+  need(Number.isInteger(page) && page>0 && page<=1000000,400,"Sayfa geçersiz");
+  const search=searchable.map(col=>"instr(lower("+col+"),lower(?))>0").join(" OR ");
+  const filter="("+search+")"+condition;
+  const args=[...searchable.map(()=>term),...values];
+  const total=q("SELECT count(*) n FROM "+from+" WHERE "+filter).get(...args).n;
+  const rows=q("SELECT "+fields+" FROM "+from+" WHERE "+filter+" ORDER BY "+order+" LIMIT 30 OFFSET ?").all(...args,(page-1)*30);
+  return {rows,total};
+}
+route("GET", "/api/admin/users", ({url}) => {
+  const data=directory(url,"users","id,email,name,credits,email_verified,created",["email","name"],"created DESC,id DESC");
+  return {...data,rows:data.rows.map(u=>({id:u.id,email:u.email,name:u.name,credits:u.credits,admin:isAdmin(u),created:u.created}))};
+});
+route("GET", "/api/admin/projects", ({url}) => {
+  const status=url.searchParams.get("status") || "";
+  need(["","draft","published"].includes(status),400,"Proje durumu geçersiz");
+  const data=directory(url,"apps a JOIN users u ON u.id=a.owner_id",
+    "a.id,a.title,a.status,a.listed,a.slug,a.updated,u.email owner",["a.title","u.email"],"a.updated DESC,a.id DESC",
+    status ? " AND a.status=?" : "",status ? [status] : []);
+  return {...data,rows:data.rows.map(r=>({...r,url:r.status==="published" && r.slug ? "https://"+CFG.appHost+"/"+r.slug : null}))};
+});
+route("PATCH", "/api/admin/projects/:id", ({params,body}) => {
+  need(typeof body.listed==="boolean",400,"Mağaza görünürlüğü gerekli");
+  const app=q("SELECT status FROM apps WHERE id=?").get(params.id);
+  need(app,404,"Proje bulunamadı");need(app.status==="published",409,"Proje yayında olmalı");
+  q("UPDATE apps SET listed=?,updated=? WHERE id=? AND status='published'").run(body.listed?1:0,now(),params.id);
+  return {ok:true};
+});
 
 // Talep radarı
 const EV = ["search", "category_view", "app_view", "app_want", "wizard_submit", "radar_search", "studio_prompt", "store_view", "store_open", "template_use", "template_demo"];
@@ -1077,7 +1194,12 @@ const server = http.createServer(async (req, res) => {
     if (!r) return send(404, { error: "Bulunamadı" });
     const params = url.pathname.match(r.re).groups || {};
     const body = ["POST", "PUT", "PATCH"].includes(req.method) ? await readBody(req) : {};
-    const out = await r.fn({ req, res, url, params, body, cors, user: authUser(req) });
+    const user = authUser(req);
+    if (url.pathname.startsWith("/api/admin/")) {
+      need(user, 401, "Yönetici hesabınızla giriş yapın.");
+      need(isAdmin(user), 403, "Bu hesabın yönetici yetkisi yok.");
+    }
+    const out = await r.fn({ req, res, url, params, body, cors, user });
     if (out !== null && out !== undefined) send(200, out);
   } catch (e) {
     if (e instanceof HttpErr) send(e.code, { error: e.message });
@@ -1085,14 +1207,21 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// CLI: ADMIN_EMAIL ortam değişkeniyle: node server.mjs create-admin
-if (process.argv[2] === "create-admin") {
-  if (!CFG.admin) { console.error("ADMIN_EMAIL ortam değişkeni tanımlı değil."); process.exit(1); }
-  const pw = crypto.randomBytes(9).toString("base64url");
+// Only the server operator can provision or reset password access.
+if (["create-admin","reset-admin"].includes(process.argv[2])) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(CFG.admin)) { console.error("ADMIN_EMAIL geçerli bir e-posta adresi olmalı."); process.exit(1); }
   const u = q("SELECT * FROM users WHERE email=?").get(CFG.admin);
-  if (u) q("UPDATE users SET pass=?, email_verified=1 WHERE id=?").run(hashPw(pw), u.id);
-  else q("INSERT INTO users(id,email,name,pass,email_verified) VALUES(?,?,?,?,1)").run(rid(), CFG.admin, "Yönetici", hashPw(pw));
+  if (process.argv[2] === "create-admin" && u?.email_verified && u.pass) {
+    console.log("Yönetici hesabı zaten hazır. Mevcut parola korunuyor.");
+    process.exit(0);
+  }
+  const pw = crypto.randomBytes(18).toString("base64url");
+  if (u) {
+    q(`UPDATE users SET pass=?, email_verified=1, session_version=session_version+1,
+      github_login=CASE WHEN email_verified THEN github_login END, github_token=CASE WHEN email_verified THEN github_token END,
+      google_sub=CASE WHEN email_verified THEN google_sub END WHERE id=?`).run(hashPw(pw), u.id);
+  } else q("INSERT INTO users(id,email,name,pass,email_verified) VALUES(?,?,?,?,1)").run(rid(), CFG.admin, "Yönetici", hashPw(pw));
   console.log(`Yönetici hesabı hazır: ${CFG.admin}\nŞifre: ${pw}\n(Bu şifreyi güvenli bir yere kaydedin.)`);
   process.exit(0);
 }
-server.listen(CFG.port, "127.0.0.1", () => console.log(`Gitmapp API :${CFG.port} — AI:${!!CFG.aiKey} GitHub:${!!CFG.gh.id} Google:${!!CFG.google.id} Alan adı:${!!CFG.hostingerToken}`));
+server.listen(CFG.port, "127.0.0.1", () => console.log(`Gitmapp API :${server.address().port} — AI:${!!CFG.aiKey} GitHub:${!!CFG.gh.id} Google:${!!CFG.google.id} Alan adı:${!!CFG.hostingerToken}`));
