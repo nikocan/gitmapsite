@@ -1357,6 +1357,14 @@ button.adp-mini{color:inherit;text-align:left}
 @media(max-width:640px){.cx-card{margin-left:0}}
 /* v5.15 — Yeni sürüm bandı, önceki oturum etiketi */
 .upd-bar{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:#1f1f1e;border:1px solid rgba(228,255,61,.4);box-shadow:0 18px 50px -14px rgba(0,0,0,.8);color:#ecebe6;font-size:14px;animation:fadeIn .25s}.upd-bar>svg{color:#e4ff3d}
+.nx-sugg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.nx-chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:6px 11px;border-radius:99px;border:1px solid #2e2e2c;background:#1a1a19;color:#d6d5cf;font:inherit;font-size:12.5px;cursor:pointer;transition:background .15s,border-color .15s}
+.nx-chip:hover{background:#232322;border-color:#45443f;color:#fff}.nx-chip svg{flex-shrink:0;color:#a3a29b}.nx-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nx-chip em{font-style:normal;font-size:10.5px;color:#0a0a0a;background:#e4ff3d;border-radius:99px;padding:1px 6px}
+.nx-qbtn{margin-right:6px;border-radius:99px;padding:6px 12px}
+.nx-queue{display:flex;flex-direction:column;gap:4px;margin:0 0 8px;padding:8px;border:1px dashed #3a3937;border-radius:12px;background:#161615}
+.nx-q{display:flex;align-items:center;gap:8px;font-size:13px}.nx-qn{width:18px;height:18px;border-radius:50%;background:#2a2a28;display:grid;place-items:center;font-size:11px;color:#bdbcb5;flex-shrink:0}
+.nx-qt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d6d5cf}.nx-queue small{color:#8a8882;font-size:11.5px;padding-left:26px}
 .cx-old{font-style:normal;font-size:12px;color:#8a8882;padding:2px 8px;border-radius:99px;border:1px solid #3a3937}
 
 .side .side-top{min-height:42px;margin-bottom:6px;flex-shrink:0}
@@ -1385,8 +1393,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.16.0";
+const VERSION="5.17.0";
 const CHANGELOG=[
+ {v:"5.17.0",date:"2026-11-25",items:[
+  "🚫 Ana sayfadan istem girince ekranda gezen sarı ok (hayalet imleç) artık çıkmıyor; istek doğrudan gönderiliyor ve çalışma alanı hemen açılıyor. İmleç kullanıldığı yerlerde de iş bitmesini beklemeden kayboluyor",
+  "⏭️ Claude Code gibi sıra: model çalışırken yazmaya devam edebilirsin. Enter ya da “Sıraya ekle” ile istekler sıraya giriyor, iş bitince otomatik sırayla çalışıyor. Sıradakileri giriş alanının üstünde görüp çıkarabilirsin",
+  "💡 Giriş alanının üstünde 6 akıllı öneri: plandaki henüz yapılmamış ekranlar ve koddaki eksikler (mobil uyum, veri saklama, arama, grafik, dışa aktarma, bildirim, SEO, rekor, dokunmatik…) projenin ilerleyişine göre değişiyor. Tıklayınca istem kutusuna yazılıyor"]},
  {v:"5.16.0",date:"2026-11-25",items:[
   "🎯 Seçtiğin dil modeli artık gerçekten kullanılıyor: seçili model sağlayıcıda kapalıysa sessizce başka modele geçilmiyor, açıkça söyleniyor. Kartta işi yapan modelin adı görünüyor",
   "💬 Model kod yazmadan önce soru sorarsa (Claude Code gibi) bu artık hata değil, sohbet: soruyu görüyorsun, yanıtını yazınca isteğinle birlikte modele geri gidiyor ve uygulama yapılıyor. Kredi düşmüyor",
@@ -2760,6 +2772,38 @@ function WorkLog({log,lastAt,retry,onToggle,live}){
 
 // ---------- v5.10 — Prompt motoru: göndermeden önce ne olacağını söyler ----------
 const ACK_W=new Set("tamam tamamdır tmm tm ok okey okay olur peki anladım anladim evet aynen güzel guzel süper super harika mükemmel tşk tşkler teşekkür teşekkürler teşekkürü ederim sağol sağolun sağ ol eyvallah eyv iyi çok cok 👍 👌 🙏 ✅ 😊 🙂".split(" "));
+// v5.17 — Sıradaki adım önerileri: koda, plana ve ilerlemeye bakarak 6 istem önerir (ücretsiz, yerel)
+const NX_FEAT=[
+ {k:"*",has:/@media/i,ic:"phone",l:"Mobil uyum",p:"Telefon ve tablet görünümünü iyileştir: menü dar ekranda açılır menüye dönüşsün, kartlar tek sütuna insin, dokunma alanları büyüsün."},
+ {k:"app site",has:/localStorage/i,ic:"save",l:"Verileri sakla",p:"Girilen tüm verileri tarayıcıda sakla; sayfa yenilenince kaybolmasın, ilk açılışta örnek verilerle dolsun."},
+ {k:"app site",has:/type=["']search|placeholder=["'][^"']*(ara|search)/i,ic:"search",l:"Arama ve filtre",p:"Listelere arama kutusu, durum/kategori filtreleri ve sıralama ekle."},
+ {k:"app",has:/prefers-color-scheme|data-theme|dark-?mode|koyu tema/i,ic:"moon",l:"Koyu tema",p:"Açık/koyu tema geçişi ekle, tercihi hatırla ve sistem temasına uy."},
+ {k:"app",has:/<canvas|chart|grafik|<svg[^>]*viewBox[^>]*>\s*<(polyline|path)/i,ic:"chart",l:"Özet ve grafik",p:"Ana ekrana özet kartları (toplamlar, bu hafta, değişim yüzdesi) ve basit bir grafik ekle."},
+ {k:"app site",has:/required|setCustomValidity|checkValidity/i,need:/<form|<input/i,ic:"check",l:"Form doğrulama",p:"Formlara doğrulama ekle: zorunlu alanlar, e-posta/telefon biçimi ve anlaşılır Türkçe hata mesajları."},
+ {k:"app",has:/csv|\.xlsx|download=|dışa aktar|indir/i,ic:"download",l:"Dışa aktar",p:"Kayıtları CSV olarak dışa aktarma ve yazdırma düğmesi ekle."},
+ {k:"app",has:/toast|bildirim|snackbar/i,ic:"bell",l:"Bildirimler",p:"Kaydet, sil, güncelle işlemlerinden sonra kısa bildirimler (toast) göster; silmede onay iste ve geri al seçeneği sun."},
+ {k:"app",has:/şifre|password|giriş yap|oturum/i,ic:"user",l:"Giriş ekranı",p:"Giriş ve kayıt ekranı ekle (demo hesapla giriş), kullanıcı adını üst çubukta göster ve çıkış yap seçeneği koy."},
+ {k:"site",has:/<meta[^>]+name=["']description/i,ic:"globe",l:"SEO",p:"SEO için sayfa başlığı, açıklama, Open Graph paylaşım etiketleri ve anlamlı başlık hiyerarşisi ekle."},
+ {k:"site",has:/iletişim|contact|wa\.me|whatsapp/i,ic:"chat",l:"İletişim",p:"İletişim bölümü ekle: form, harita alanı, telefon ve tek dokunuşla WhatsApp butonu."},
+ {k:"site",has:/yorum|testimonial|referans/i,ic:"star",l:"Müşteri yorumları",p:"Müşteri yorumları ve güven veren rakamlar (yıl, müşteri sayısı) bölümü ekle."},
+ {k:"game",has:/localStorage/i,ic:"star",l:"Rekor",p:"En yüksek skoru kaydet, oyun sonunda göster ve yeni rekorda kutlama efekti oynat."},
+ {k:"game",has:/AudioContext|new Audio/i,ic:"mic",l:"Ses efektleri",p:"Kısa ses efektleri ekle (Web Audio ile üretilmiş), sesi açıp kapatma düğmesi koy."},
+ {k:"game",has:/touchstart|pointerdown/i,ic:"phone",l:"Dokunmatik",p:"Telefonda oynanabilsin: dokunmatik kontroller ve ekrana göre ölçeklenen oyun alanı ekle."},
+ {k:"game",has:/pause|duraklat/i,ic:"stop",l:"Duraklat",p:"Duraklat/devam et ekle (P tuşu ve ekrandaki düğme), sekme gizlenince oyun otomatik dursun."},
+ {k:"game",has:/level|seviye|zorluk/i,ic:"layers",l:"Seviyeler",p:"Seviyeler ve giderek artan zorluk ekle; seviye geçişinde kısa bir ekran göster."},
+ {k:"*",has:/aria-label|role=["']/i,ic:"eye",l:"Erişilebilirlik",p:"Erişilebilirliği iyileştir: düğme etiketleri, klavyeyle gezinme, odak çerçeveleri ve yeterli renk kontrastı."},
+ {k:"*",has:/@keyframes|transition/i,ic:"sparkles",l:"Animasyon",p:"Ekran geçişlerine ve düğmelere yumuşak, kısa animasyonlar ekle (azaltılmış hareket tercihine uy)."}
+];
+function nextPrompts({html,kind,plan,asked}){const out=[];const H=String(html||"");const txt=H.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g," ").toLocaleLowerCase("tr");
+ if(!H)return [];
+ // 1) Planda olup kodda henüz olmayan ekranlar
+ const scr=String(plan||"").match(/(?:ekranlar|sayfalar|bölümler)\s*:\s*([^\n]+)/i);
+ if(scr)scr[1].split(/[,;·]| ve /).map(x=>x.replace(/[.*]/g,"").trim()).filter(x=>x.length>2&&x.length<40).forEach(x=>{if(!txt.includes(x.toLocaleLowerCase("tr").split(" ")[0]))out.push({ic:"layers",l:x,p:"Planda olan “"+x+"” ekranını ekle; menüden açılsın, örnek verilerle dolu olsun ve mevcut tasarıma uysun.",src:"plan"})});
+ // 2) Koda göre eksik özellikler
+ for(const f of NX_FEAT){if(f.k!=="*"&&!f.k.split(" ").includes(kind))continue;if(f.need&&!f.need.test(H))continue;if(!f.has.test(H))out.push({...f,src:"kod"})}
+ // 3) Her zaman faydalı son adım
+ out.push({ic:"shield",l:"Kontrol et",p:"Tüm uygulamayı uçtan uca kontrol et: çalışmayan düğme, boş ekran, konsol hatası ve taşmaları bul ve düzelt.",src:"kalite"});
+ const seen=new Set();return out.filter(x=>!asked.has(x.p)&&!seen.has(x.l)&&seen.add(x.l)).slice(0,6)}
 // v5.15.1 — "başla / devam / tekrar dene" gibi tek kelimelik komutlar
 const GO_W=new Set("başla basla başlat baslat başlayalım baslayalim devam et ettir tekrar yeniden dene deneyelim yap uygula hadi haydi onayla onaylıyorum onayliyorum".split(" "));
 const isGo=t=>{const w=String(t||"").toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);return w.length>0&&w.length<=4&&w.every(x=>GO_W.has(x)||ACK_W.has(x))&&w.some(x=>GO_W.has(x))};
@@ -3640,7 +3684,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput","")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
- const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
+ const [queue,setQueue]=useState([]);const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput",input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
  const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector(input||(firstUser&&firstUser.content)||"",prefs.kind);
@@ -3736,7 +3780,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
- async function gen(text){if(busy||todo?.running)return;if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+ async function gen(text){if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
@@ -3750,6 +3794,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(prefs.mode==="ajan")return agent(text);
   if(prefs.mode==="planli"&&!st.html)return requestPlan(text,takeImages());
   await build(text,null,text,false,takeImages())}
+ useEffect(()=>{if(busy||todo?.running||!queue.length||plan)return;const t=setTimeout(()=>{const [n,...rest]=queue;setQueue(rest);gen(n)},600);return()=>clearTimeout(t)},[busy,todo?.running,queue.length,plan]);
  function lastAsk(){if(st.html)return "";const u=st.msgs.filter(m=>m.role==="user"&&m.content&&!isGo(m.content)&&!GREET.test(m.content.trim())&&m.content.trim().length>=14).pop();return u?u.content.trim():""}
  function requestPlan(text,im,retrying=false){
   return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},signal),result=>{
@@ -3817,7 +3862,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if((sd.prompt||sd.kind||sd.sketch)&&st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışmanız var. Yeni projeye geçilsin mi?"))return;
   if(sd.prompt||sd.kind||sd.sketch){setSt(blank);setTodo(null);setVersions([]);setPlan(null);setInput("");setAtts([])}
   if(sd.kind)setPrefs(p=>({...p,kind:sd.kind}));if(sd.theme)setPrefs(p=>({...p,theme:sd.theme,sector:sd.sector||p.sector}));if(sd.emoji)setSt(x=>({...x,emoji:sd.emoji}));
-  setTimeout(()=>{if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)doForMe(sd.kind);else if(sd.prompt)ghostRun([{el:".gta",fn:()=>typeInto(sd.prompt),after:250},{el:".gsend",fn:()=>gen(sd.prompt)}]);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
+  setTimeout(()=>{if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)doForMe(sd.kind);else if(sd.prompt)gen(sd.prompt);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
  async function applyTheme(){const t=themeById(pendTheme);setPendTheme(null);if(!st.html||busy)return;await build("Uygulamanın görsel tasarımını baştan “"+t.name+"” tasarım diline göre yeniden düzenle. Tüm içerik, veriler ve özellikler aynen kalsın; sadece renkler, yazı tipi, köşeler, boşluklar ve bileşen stilleri değişsin.",null,"“"+t.name+"” tasarımını uygula",true)}
  useEffect(()=>{frameRef.current?.contentWindow?.postMessage({gm:"picker-mode",mode:veMode},"*")},[veMode]);
  useEffect(()=>{function receive(e){
@@ -3879,7 +3924,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
    ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onClick=${()=>{setInput(k+" ");document.querySelector(".gta")?.focus()}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
-   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Ne değiştirmek istersin?":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
+   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${!!todo?.running} placeholder=${busy?"Yazmaya devam et · Enter ile sıraya eklenir":st.html?"Ne değiştirmek istersin?":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
      ${plusOpen&&html`<div class="amenu plusm" role="menu">
@@ -3896,7 +3941,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
      </div>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
     <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> İşlem sürüyor</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
-    ${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
+    ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/> Sıraya ekle</button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
  const planCard=()=>plan&&html`<section class="studio-plan" aria-label="Yapım planı">
   <header><h2>Yapım planı</h2><button type="button" class="btn g s" aria-pressed=${editPlan} disabled=${busy} onClick=${()=>{followChat.current=false;setEditPlan(!editPlan)}}>${editPlan?"Düzenlemeyi bitir":"Planı düzenle"}</button></header>
   ${editPlan?html`<textarea class="in" aria-label="Yapım planı" rows="6" maxlength="6000" value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>`:html`<div class="studio-message-text">${plan.text}</div>`}
@@ -3967,7 +4012,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    <div class="ws-chat">
     <div class="ws-ctrl">${controls(true)}<button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
     <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map(msgEl)}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
-    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${prompt(false)}
+    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const nx=nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked});
+  return nx.length>0&&!input.trim()&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${prompt(false)}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${st.html&&html`<button type="button" class="chip gm forme-chip" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${12}/> Benim için yap</button>`}${st.html&&html`<button type="button" class="chip on" disabled=${busy} onClick=${review}><${Icon} n="shield" s=${12}/> Kontrol et ve düzelt</button>`}${st.html&&html`<button class="chip" onClick=${()=>{setCode(false);setStage(stage==="phone"?"desktop":"phone")}}>${stage==="phone"?"Masaüstünde kontrol et":"Telefonda kontrol et"}</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
@@ -4093,7 +4139,7 @@ async function ghostRun(steps){
   el.scrollIntoView({block:"center",behavior:"smooth"});await wait(380);const r=el.getBoundingClientRect();
   c.style.transform="translate("+(r.left+Math.min(r.width*.5,r.width-14))+"px,"+(r.top+r.height*.55)+"px)";await wait(st.slow?950:720);
   c.classList.add("click");el.classList.add("gh-hit");await wait(200);c.classList.remove("click");setTimeout(()=>el.classList.remove("gh-hit"),500);
-  if(st.fn)await st.fn(el);await wait(st.after||120)}
+  if(st.fn){const pr=st.fn(el);if(pr&&pr.then)await Promise.race([pr,wait(1500)])}await wait(st.after||120)}
  await wait(400);c.classList.remove("on");return ran;
 }
 
