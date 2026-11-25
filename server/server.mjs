@@ -1,6 +1,7 @@
 // Gitmapp API — Node.js (harici bağımlılık yok) + SQLite
 // Uç noktalar: kimlik, yapay zekâ ile uygulama üretimi, uygulamalar, mağaza, siparişler, talep radarı, alan adı sorgusu
 import http from "node:http";
+import { MAX_PROJECT_HTML, linkedRepo, registerVersions } from "./version-control.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -415,7 +416,7 @@ async function copilotModel() {
 
 // ---------- Harici API'ler ----------
 async function ghApi(token, method, p, body) {
-  const r = await fetch("https://api.github.com" + p, { method, headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "User-Agent": "gitmapp", ...(body ? { "Content-Type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined });
+  const r = await fetch("https://api.github.com" + p, { method, signal: AbortSignal.timeout(20000), headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "User-Agent": "gitmapp", ...(body ? { "Content-Type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch { }
   return { status: r.status, ok: r.ok, data: j };
 }
@@ -490,7 +491,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.4.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.5.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -516,7 +517,7 @@ route("GET", "/api/auth/oauth/:prov/start", ({ params, url, res }) => {
     need(account && account.session_version === (t.version ?? 0), 401, "Oturum sona erdi. Yeniden giriş yapın.");
     uid = t.uid; version = account.session_version;
   }
-  const state = sign({ prov, uid, version, n: rid(6) }, 600);
+  const state = sign({ prov, uid, version, versions: prov === "github" && !!uid && url.searchParams.get("return_to") === "versions", n: rid(6) }, 600);
   let loc;
   if (prov === "github") { need(CFG.gh.id, 503, "GitHub girişi henüz yapılandırılmadı"); loc = `https://github.com/login/oauth/authorize?client_id=${CFG.gh.id}&scope=${encodeURIComponent(url.searchParams.get("scope") === "private" ? "read:user user:email repo" : "read:user user:email public_repo")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/github/callback")}`; }
   else if (prov === "google") { need(CFG.google.id, 503, "Google girişi henüz yapılandırılmadı"); loc = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CFG.google.id}&response_type=code&scope=${encodeURIComponent("openid email profile")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/google/callback")}&prompt=select_account`; }
@@ -533,7 +534,7 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
       const tr = await fetch("https://github.com/login/oauth/access_token", { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify({ client_id: CFG.gh.id, client_secret: CFG.gh.secret, code }) });
       const tok = (await tr.json()).access_token; if (!tok) return back("auth-hata");
       const me = await ghApi(tok, "GET", "/user"); const em = await ghApi(tok, "GET", "/user/emails");
-      if (st.uid) { if (!q("SELECT 1 FROM users WHERE id=? AND session_version=?").get(st.uid,st.version ?? 0)) return back("auth-hata"); q("UPDATE users SET github_login=?, github_token=? WHERE id=?").run(me.data.login, tok, st.uid); return back("github-baglandi"); }
+      if (st.uid) { if (!q("SELECT 1 FROM users WHERE id=? AND session_version=?").get(st.uid,st.version ?? 0)) return back("auth-hata"); q("UPDATE users SET github_login=?, github_token=? WHERE id=?").run(me.data.login, tok, st.uid); return back(st.versions ? "github-dallar" : "github-baglandi"); }
       const primary = (em.data || []).find((e) => e.primary && e.verified) || (em.data || []).find((e) => e.verified);
       if (!primary) return back("auth-eposta-yok");
       u = upsertOAuthUser({ email: primary.email, name: me.data.name || me.data.login, github_login: me.data.login, github_token: tok });
@@ -974,7 +975,7 @@ route("GET", "/api/apps", ({ user }) => { need(user, 401, "Giriş yapın"); retu
 route("GET", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); return { app: appRow(ownApp(user, params.id), true) }; });
 route("POST", "/api/apps", ({ user, body }) => {
   need(user, 401, "Kaydetmek için giriş yapın");
-  const id = rid(); const html = str(body.html, 1500000, "HTML", true);
+  const id = rid(); const html = str(body.html, MAX_PROJECT_HTML, "HTML", true);
   q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,prompt_log,meta) VALUES(?,?,?,?,?,?,?,?,?,?)").run(id, user.id, str(body.title, 80, "Ad") || "Adsız uygulama", str(body.description, 400, "Açıklama"), CATS.includes(body.category) ? body.category : "diger", str(body.emoji, 8, "Simge") || "✨", /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : "#4f8cff", html, JSON.stringify((Array.isArray(body.prompt_log) ? body.prompt_log : []).slice(-50)), cleanMeta(body.meta, "{}"));
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(id), true) };
 });
@@ -982,7 +983,7 @@ route("PUT", "/api/apps/:id", ({ user, body, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
   q(`UPDATE apps SET title=?, description=?, category=?, emoji=?, color=?, html=?, prompt_log=?, meta=?, updated=? WHERE id=?`).run(
     str(body.title, 80, "Ad") || a.title, body.description !== undefined ? str(body.description, 400, "Açıklama") : a.description, CATS.includes(body.category) ? body.category : a.category, str(body.emoji, 8, "Simge") || a.emoji,
-    /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : a.color, body.html !== undefined ? str(body.html, 1500000, "HTML", true) : a.html, Array.isArray(body.prompt_log) ? JSON.stringify(body.prompt_log.slice(-50)) : a.prompt_log, cleanMeta(body.meta, a.meta), now(), a.id);
+    /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : a.color, body.html !== undefined ? str(body.html, MAX_PROJECT_HTML, "HTML", true) : a.html, Array.isArray(body.prompt_log) ? JSON.stringify(body.prompt_log.slice(-50)) : a.prompt_log, cleanMeta(body.meta, a.meta), now(), a.id);
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id), true) };
 });
 route("DELETE", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("DELETE FROM apps WHERE id=?").run(a.id); return { ok: true }; });
@@ -998,10 +999,12 @@ route("POST", "/api/apps/:id/publish", ({ user, body, params }) => {
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id)) };
 });
 route("POST", "/api/apps/:id/unpublish", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("UPDATE apps SET status='draft', listed=0 WHERE id=?").run(a.id); return { ok: true }; });
+registerVersions({ db, route, ownApp, need, ghApi, slugify });
 route("POST", "/api/apps/:id/github", async ({ user, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
   need(user.github_token, 412, "Önce GitHub hesabınızı bağlayın");
-  const name = "gitmapp-" + (a.slug || slugify(a.title)); const login = user.github_login;
+  const login = user.github_login;
+  const name = a.github_repo ? linkedRepo(a, user, need).split("/")[1] : "gitmapp-" + (a.slug || slugify(a.title));
   let repo = await ghApi(user.github_token, "GET", `/repos/${login}/${name}`);
   if (repo.status === 404) { repo = await ghApi(user.github_token, "POST", "/user/repos", { name, description: (a.title + " — Gitmapp ile yapıldı").slice(0, 300), homepage: a.slug ? `https://${CFG.appHost}/${a.slug}` : undefined, auto_init: false }); need(repo.ok, 502, "GitHub deposu oluşturulamadı: " + (repo.data && repo.data.message)); }
   const ex = await ghApi(user.github_token, "GET", `/repos/${login}/${name}/contents/index.html`);
