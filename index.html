@@ -806,6 +806,46 @@ body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#10
 .app.cp-on .ws-top{flex-wrap:wrap;gap:4px}.app.cp-on .ws-title{min-width:70px;flex:1 1 100px}.app.cp-on .ws-top .clr{display:none}.app.cp-on .ws-top .ib{width:32px;height:32px}.app.cp-on .ws-top .seg button{padding:5px 7px}
 @media(max-width:1500px){.app.cp-on .ws-top>.ib[title^="Yeni sekmede"],.app.cp-on .ws-top>.ib[title^="Tam ekran"]{display:none}}
 @media(max-width:820px){.ws:has(.studio-stage){height:auto}.ws .studio-grid{display:flex;flex-direction:column}.ws .studio-stage{order:-1;min-height:0}.ws .studio-stage .ws-prev{height:clamp(300px,52dvh,580px);min-height:0;flex:none}.ws .ws-chat{max-height:none}.ws .ws-msgs{max-height:40dvh}.ws .ws-top{min-width:0;flex-wrap:wrap}.ws .ws-title{min-width:100px;max-width:55vw}.picker-menu button{min-height:44px}}
+/* v4.8 — GitHub içe aktarma ve canlı krediler */
+.ghi-bg{z-index:90!important;align-items:center;justify-content:center}
+.ghi{width:min(1180px,96vw);height:min(820px,92vh);display:flex;flex-direction:column;border:1px solid #2a2a2e;border-radius:22px;background:rgba(14,14,16,.97);overflow:hidden;text-align:left;animation:dgin .22s}
+.ghi-h{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #1f1f23}.ghi-logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f4f4ef;color:#0a0a0b;flex-shrink:0}
+.ghi-ht{display:flex;flex-direction:column;min-width:0;flex:1}.ghi-ht b{font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ghi-ht small{font-size:12px;color:var(--label3);display:flex;align-items:center;gap:4px}
+.ghi-kind{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid #2c2c30;white-space:nowrap}.ghi-kind.k-static,.ghi-kind.k-prebuilt{color:#34d399;border-color:rgba(52,211,153,.35)}.ghi-kind.k-build{color:#facc15;border-color:rgba(250,204,21,.35)}.ghi-kind.k-none{color:#f87171}
+.ghi-b{flex:1;display:grid;grid-template-columns:340px minmax(0,1fr);min-height:0}
+.ghi-side{border-right:1px solid #1f1f23;overflow:auto;padding:12px 14px 16px;display:flex;flex-direction:column;gap:6px}
+.ghi-desc{margin:0 0 4px;font-size:13px;color:var(--label2);line-height:1.5}
+.ghi-sec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--label3);margin:10px 0 2px}
+.ghi-chk{display:flex;gap:8px;align-items:flex-start;font-size:12.8px;line-height:1.45;color:#dcdcd6}.ghi-chk svg{flex-shrink:0;margin-top:2px}
+.ghi-deps-t{display:flex;align-items:center;gap:6px;border:0;background:none;color:var(--label2);font-size:12.5px;padding:4px 0;cursor:pointer}
+.ghi-deps{display:flex;flex-wrap:wrap;gap:4px}.ghi-deps span{font-size:11px;font-family:"JetBrains Mono",monospace;padding:2px 7px;border-radius:6px;background:#18181b;border:1px solid #26262a}.ghi-deps span.dev{opacity:.6}.ghi-deps i{font-style:normal;color:var(--label3);margin-left:4px}
+.ghi-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.ghi-stats span{display:flex;flex-direction:column;align-items:center;padding:6px 2px;border-radius:10px;background:#141416;border:1px solid #222226;font-size:11px;color:var(--label3)}.ghi-stats b{font-size:16px;color:var(--txt)}
+.ghi-src{font-size:11px;color:var(--label3);word-break:break-all;font-family:"JetBrains Mono",monospace}
+.ghi-opts{display:flex;flex-direction:column;gap:6px}.ghi-opt{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1px solid #26262a;background:#141416;color:var(--txt);border-radius:12px;padding:9px 11px;cursor:pointer}.ghi-opt:hover{border-color:#3a3a40}.ghi-opt:disabled{opacity:.5}.ghi-opt svg{color:#e4ff3d;margin-top:2px;flex-shrink:0}.ghi-opt span{display:flex;flex-direction:column}.ghi-opt b{font-size:13px}.ghi-opt small{font-size:11.5px;color:var(--label3)}
+.ghi-sel{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--label2)}.ghi-sel select{flex:1;background:#141416;color:var(--txt);border:1px solid #2a2a2e;border-radius:9px;padding:6px 8px;font:inherit;font-size:12.5px}
+.ghi-prev{display:flex;flex-direction:column;min-width:0;min-height:0;padding:10px 12px;gap:8px;background:radial-gradient(600px 300px at 50% 0,rgba(228,255,61,.04),transparent)}
+.ghi-pbar{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--label2)}
+.ghi-frame{flex:1;min-height:0;display:flex;justify-content:center;align-items:stretch}.ghi-frame iframe{border:0;background:#fff;border-radius:14px;width:100%;height:100%;box-shadow:0 20px 50px -20px #000}.ghi-frame.phone iframe{width:390px;max-width:100%;border-radius:28px;border:8px solid #1b1b1e}
+.ghi-frame pre{width:100%;margin:0;overflow:auto}.ghi-frame .prev-empty{width:100%}
+.ghi-err{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;border:1px solid rgba(248,113,113,.3);background:rgba(248,113,113,.06);font-size:13px;width:100%;align-self:flex-start}.ghi-err svg{color:#f87171;flex-shrink:0;margin-top:2px}.ghi-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ghi-f{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid #1f1f23;flex-wrap:wrap}.ghi-note{font-size:12px;color:var(--label3);max-width:520px}
+.ghi-take{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px}.ghi-take span{display:flex;align-items:center;gap:5px;color:var(--label3)}.ghi-take span.done{color:#34d399}.ghi-take span.run{color:#e4ff3d}.ghi-take i{width:8px;height:8px;border-radius:50%;background:#2c2c30;display:inline-block}.ghi-terr{color:#f87171}
+.gh-detect{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 10px;margin:0 0 8px;border-radius:12px;border:1px solid rgba(228,255,61,.3);background:rgba(228,255,61,.05);font-size:13px}.gh-detect b{font-weight:600}.gh-detect .btn{padding:5px 10px}
+@media(max-width:860px){.ghi{width:100vw;height:100dvh;border-radius:0}.ghi-b{grid-template-columns:1fr;grid-template-rows:auto minmax(320px,1fr);overflow:auto}.ghi-side{border-right:0;border-bottom:1px solid #1f1f23;max-height:none}.ghi-f .btn{flex:1 1 auto}}
+/* krediler */
+.crchip{display:inline-flex;align-items:center;gap:5px;border:1px solid #2c2c30;background:#151517;color:var(--txt);border-radius:99px;padding:3px 9px;font-size:12.5px;font-weight:600;cursor:pointer;position:relative}.crchip svg{color:#e4ff3d}
+.cr-fly{position:fixed;z-index:120;pointer-events:none;font-weight:800;font-size:15px;color:#e4ff3d;text-shadow:0 2px 10px rgba(0,0,0,.6);animation:crfly 1.4s ease-out forwards}@keyframes crfly{0%{opacity:0;transform:translateY(6px) scale(.8)}15%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-34px)}}
+.me .me-cr{cursor:pointer;border-radius:6px;padding:0 3px;margin-left:-3px}.me .me-cr:hover{background:#1f1f23;color:var(--txt)}
+.crp-bg{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.35)}
+.crp{position:fixed;left:250px;bottom:16px;width:360px;max-height:min(640px,86vh);overflow:auto;border:1px solid #2a2a2e;border-radius:20px;background:rgba(14,14,16,.97);padding:14px;display:flex;flex-direction:column;gap:8px;animation:dgin .2s}
+@media(max-width:820px){.crp{left:8px;right:8px;width:auto;bottom:calc(78px + env(safe-area-inset-bottom))}}
+.crp-h{display:flex;align-items:center;gap:10px;position:relative}.crp-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(228,255,61,.12);color:#e4ff3d}.crp-h small{font-size:11.5px;color:var(--label3);display:block}.crp-h b{font-size:26px;letter-spacing:-.5px}
+.crp-fl{position:absolute;left:120px;top:4px;color:#f87171;font-weight:800;animation:crfly 1.6s ease-out forwards}
+.crp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.crp-grid div{display:flex;flex-direction:column;padding:8px;border-radius:12px;background:#141416;border:1px solid #222226}.crp-grid small{font-size:10.5px;color:var(--label3)}.crp-grid b{font-size:17px}.crp-grid span{font-size:10.5px;color:var(--label3)}
+.crp-sec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--label3);margin-top:4px}
+.crp-bar{display:grid;grid-template-columns:110px 1fr 34px;align-items:center;gap:8px;font-size:12.5px}.crp-bar i{height:6px;border-radius:9px;background:#1d1d21;overflow:hidden}.crp-bar em{display:block;height:100%;background:linear-gradient(90deg,#e4ff3d,#22d3ee);border-radius:9px}.crp-bar b{text-align:right}
+.crp-list{display:flex;flex-direction:column}.crp-list div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 2px;border-top:1px solid #1b1b1f;font-size:13px}.crp-list div:first-child{border-top:0}.crp-list span{display:flex;flex-direction:column}.crp-list small{font-size:11px;color:var(--label3)}.crp-list b{font-size:13px;color:#f4f4ef;white-space:nowrap}
+.crp-f{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}.crp-n{font-size:11px;color:var(--label3);line-height:1.5}
 </style>
 </head>
 <body>
@@ -819,8 +859,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="4.8.0";
+const VERSION="4.9.0";
 const CHANGELOG=[
+ {v:"4.9.0",date:"2026-11-25",items:[
+  "🐙 GitHub'dan içe aktar: istem kutusuna, ⌘K aramasına ya da Asistan'a bir GitHub adresi (depo, klasör ya da dosya yolu, github.io sayfası) yazınca depo okunur ve site saniyeler içinde canlı önizlemede açılır. Projeler'de “GitHub'dan içe aktar” kartı, Stüdyo'da /github komutu",
+  "🔎 Bağımlılık kontrolü: dosya sayısı ve boyutu, giriş sayfası, derleme gerekip gerekmediği (Vite, Next.js, React, Vue, Angular…), package.json bağımlılıkları, dış CDN kaynaklarına erişim, sayfanın istediği ama depoda olmayan dosyalar, sunucu tarafı kodlar, açıkta kalmış gizli anahtar dosyaları ve lisans tek ekranda listelenir",
+  "📦 Tek dosyada birleştirme: CSS, @import'lar, betikler, simgeler ve küçük görseller sayfanın içine alınır; büyük dosyalar ve modüller jsDelivr üzerinden sabit sürüme bağlanır. Derleme isteyen projelerde yayındaki sürüm (GitHub Pages ya da ana sayfa adresi) alınır ya da yapay zekâyla tek dosyaya dönüştürülür",
+  "🚀 Projeyi devral: tek tıkla (ya da “projeyi devral” yazarak, /devral komutuyla veya Asistan'a söyleyerek) site Gitmapp projesine dönüşür ve app.gitmapp.com adresinde yayına girer; kaynak depo ve sürüm proje bilgisine yazılır. Geliştir'de aç ve Tasarımda aç ile hemen düzenlenebilir",
+  "🔐 GitHub hesabını bağlayınca özel depolar da okunabilir ve GitHub istek sınırı yükselir; giriş sonrası içe aktarma kaldığı yerden devam eder",
+  "💎 Canlı krediler: her işlemden sonra bakiye anında güncellenir, harcanan miktar uçan bir “−3 kredi” etiketiyle gösterilir. Kenar çubuğundaki ya da Stüdyo'daki kredi rakamına dokununca kalan kredi, bu oturum, bugün, 7 ve 30 gün harcaması, işlem türüne göre dağılım ve son işlemler açılır",
+ ]},
  {v:"4.8.0",date:"2026-11-25",items:["Sekiz şablonun tanıtımı yenilendi. Öne çıkan özellikleri inceleyebilir, farklı cihazlarda deneyebilir ve tasarımı doğrudan düzenleyebilirsiniz.","Şablonlara özgün ürün simgeleri eklendi. Menü ve işlem ikonları ortak bir iki tonlu setle yenilendi."]},
  {v:"4.7.0",date:"2026-11-25",items:["Önizlemedeki ok sürüklenebilir, köşeye yerleşir ve kullanılmadığında küçülür. Seçim ve metin araçları açık ekranda çalışır.","Mobil şablon tabloları, grafikler ve tam ekran demolar düzenlendi. Gitmapp ana ekrana yüklenebilir."]},
  {v:"4.6.0",date:"2026-11-25",items:[
@@ -1642,8 +1690,9 @@ async function api(method,path,body){
  if(!API)throw new Error("Sunucu yapılandırılmadı");
  const t=TOK.get();const r=await fetch(API+path,{method,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:body?JSON.stringify(body):undefined});
  let j={};try{j=await r.json()}catch(e){}
- if(!r.ok){const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}return j;
+ if(!r.ok){const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}crEvent(j);return j;
 }
+function crEvent(j){if(j&&typeof j==="object"&&j.credits!=null&&isFinite(+j.credits))dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:+j.credits,spent:+(j.spent||0)}}))}
 function track(type,o){if(!API_ON)return;o=o||{};api("POST","/api/events",{session_id:SID,type,query:o.query?String(o.query).slice(0,200):null,category:o.category||null,repo:o.repo||null,meta:o.meta||null}).catch(()=>{})}
 const STORE_CATS2=[["is","💼","İş & Ofis"],["verimlilik","✅","Verimlilik"],["egitim","🎓","Eğitim"],["saglik","💪","Sağlık & Spor"],["eticaret","🛒","Alışveriş"],["yemek","🍽️","Yemek"],["oyun","🎮","Oyun"],["finans","💰","Finans"],["sosyal","💬","Sosyal"],["araclar","🛠️","Araçlar"],["diger","✨","Diğer"]];
 const catLabel=id=>{const c=STORE_CATS2.find(x=>x[0]===id);return c?c[1]+" "+c[2]:"✨ Diğer"};
@@ -1726,7 +1775,7 @@ async function apiStream(path,body,onDelta){
  while(true){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
   while((i=buf.indexOf("\n\n"))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);const line=chunk.split("\n").find(l=>l.startsWith("data:"));if(!line)continue;let ev;try{ev=JSON.parse(line.slice(5))}catch(e){continue}
    if(ev.t==="delta")onDelta(ev.d);else if(ev.t==="done")final=ev;else if(ev.t==="error"){const e=new Error(ev.error);e.status=ev.status;throw e}}}
- if(!final)throw new Error("Bağlantı kesildi, lütfen tekrar deneyin.");return final;
+ if(!final)throw new Error("Bağlantı kesildi, lütfen tekrar deneyin.");crEvent(final);return final;
 }
 // Akan koddan gerçek ilerleme adımları
 const BUILD_STEPS=[
@@ -1941,7 +1990,7 @@ function TodoCard({todo,busy,onStart,onStop,onCancel}){
 }
 
 // ---- Eğik çizgi komutları ----
-const SLASH=[["/ajan","list","Ajan modu: yapılacaklar listesi çıkar, adım adım yap"],["/plan","compass","Önce plan yaz, onayla, sonra yap"],["/kontrol","shield","Kodu incele ve hataları düzelt"],["/gorsel","image","Çizim ya da görsel ekle"],["/tasarim","palette","Tasarım stüdyosunu aç"],["/model","cpu","Dil modelini değiştir"],["/ayarlar","sliders","Çalıştırma ayarları"],["/geri","undo","Önceki sürüme dön"],["/kaydet","save","Uygulamayı kaydet"],["/yayinla","rocket","Yayınla"],["/yeni","plus","Yeni proje başlat"],["/yardim","help","Tüm komutları göster"]];
+const SLASH=[["/github","github","GitHub deposunu önizle, Geliştir'e ya da Tasarım'a al"],["/devral","rocket","GitHub projesini devral ve yayınla"],["/ajan","list","Ajan modu: yapılacaklar listesi çıkar, adım adım yap"],["/plan","compass","Önce plan yaz, onayla, sonra yap"],["/kontrol","shield","Kodu incele ve hataları düzelt"],["/gorsel","image","Çizim ya da görsel ekle"],["/tasarim","palette","Tasarım stüdyosunu aç"],["/model","cpu","Dil modelini değiştir"],["/ayarlar","sliders","Çalıştırma ayarları"],["/geri","undo","Önceki sürüme dön"],["/kaydet","save","Uygulamayı kaydet"],["/yayinla","rocket","Yayınla"],["/yeni","plus","Yeni proje başlat"],["/yardim","help","Tüm komutları göster"]];
 
 // Figma can import these vectors without a network connection or an account token.
 function sceneVectors() {
@@ -2259,6 +2308,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   setBusy(false);setLive("");return result;
  }
  async function gen(text){if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+  {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text||busy)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
   if(!API_ON){toast("Stüdyo sunucusu şu an kurulum aşamasında, birazdan tekrar deneyin.");return}
@@ -2295,7 +2345,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   const say=t=>setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",anim:true,content:t}]}));
   if(c==="/ajan"){if(!arg){setPrefs(p=>({...p,mode:"ajan"}));toast("Ajan modu açık");return}setPrefs(p=>({...p,mode:"ajan"}));prefsRef.current={...prefsRef.current,mode:"ajan"};return agent(arg)}
   if(c==="/plan"){setPrefs(p=>({...p,mode:"planli"}));if(arg){prefsRef.current={...prefsRef.current,mode:"planli"};setTimeout(()=>gen(arg),0)}return}
-  if(c==="/kontrol")return review();if(c==="/geri")return undo();if(c==="/kaydet")return save();if(c==="/yayinla")return publish();
+  if(c==="/github"){dispatchEvent(new CustomEvent("gm:gh",{detail:{url:arg||"",auto:false}}));return}if(c==="/devral"){if(!ghFind(arg)){say("Kullanım: /devral github.com/kullanici/depo");return}dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(arg),auto:true}}));return}if(c==="/kontrol")return review();if(c==="/geri")return undo();if(c==="/kaydet")return save();if(c==="/yayinla")return publish();
   if(c==="/gorsel")return fileRef.current&&fileRef.current.click();if(c==="/tasarim")return setGallery(true);if(c==="/model")return setPicker(true);if(c==="/ayarlar")return setTimeout(()=>setRunOpen(true),0);
   if(c==="/yeni"){if(st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışma silinsin mi?"))return;setSt(blank);setVersions([]);setPlan(null);setTodo(null);return}
   say("Komutlar:\n"+SLASH.map(([k,,d])=>k+" — "+d).join("\n"))}
@@ -2366,11 +2416,12 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   <button type="button" class="pill" onClick=${()=>setGallery(true)} title="Tasarım teması"><${Swatches} t=${effTheme} s=${10}/><span>${effTheme.name}</span><${Icon} n="chevDown" s=${13} c="#767671"/></button>
   <span style=${{position:"relative"}}><button type="button" class=${"pill"+(runOpen?" on":"")+((runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli")?" mod":"")} onClick=${()=>setRunOpen(!runOpen)} title="Çalıştırma ayarları"><${Icon} n="sliders" s=${15}/><span>Ayarlar</span></button>${runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`}</span>
   ${seg([["hizli","zap","Hızlı","Doğrudan yap"],["planli","compass","Planlı","Önce plan yazılır, onaylarsınız, sonra yapılır"],["ajan","list","Ajan","Claude Code gibi: işi yapılacaklar listesine böler, onayınla adım adım yapar"]],prefs.mode,k=>setPrefs(p=>({...p,mode:k})))}
-  ${auth.user?html`<button type="button" class="pill" onClick=${()=>go&&go("hesabim")}><${Icon} n="gem" s=${14}/><span>${auth.user.credits??0}</span></button>`:""}</div>`;
+  ${auth.user?html`<button type="button" class="pill pill-cr" title="Kredilerim (canlı)" onClick=${()=>dispatchEvent(new Event("gm:cr"))}><${Icon} n="gem" s=${14}/><span><${CountUp} v=${auth.user.credits??0}/></span></button>`:""}</div>`;
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} close=${()=>setGallery(false)}/>`;
  const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
  const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
+   ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
    ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onMouseDown=${e=>{e.preventDefault();setInput(k+" ")}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
    <${GhostTA} className="gta" rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Değişiklik iste: “butonları yeşil yap”, “iletişim formu ekle”…":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
@@ -2888,7 +2939,7 @@ function ProjectsPage({auth,openAuth,toast,openInStudio,openPublish,health,go,on
    :!auth.user&&tab!=="top"?html`<div class="ex-empty"><${BrandMark} s=${56}/><h3>Projelerini görmek için giriş yap</h3><p>Yaptığın uygulamalar, siteler ve oyunlar burada durur.</p><button class="btn" onClick=${()=>openAuth("Projelerinizi görmek için giriş yapın.")}>Giriş yap / Kayıt ol</button></div>`
    :(tab==="top"?top:apps)===null?html`<div class="pj-grid">${[1,2,3].map(i=>html`<div class="pj" key=${i}><div class="pj-img sk-b" style=${{height:230}}></div></div>`)}</div>`
    :!rows.length?html`<div class="ex-empty"><${BrandMark} s=${56}/><h3>${tab==="recent"?"Henüz açtığın proje yok":tab==="top"?"Bugün ziyaret yok":"İlk projeni oluştur"}</h3><p>Bir fikir yaz ya da hazır bir şablonla başla.</p><div style=${{display:"flex",gap:8}}><button class="btn" onClick=${()=>go("studio")}><${Icon} n="plus" s=${15}/> Yeni proje</button><button class="btn g" onClick=${()=>setTab("tpl")}>Şablonlara bak</button></div></div>`
-   :html`<div class="pj-grid">${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${()=>go("studio")}><span><${Icon} n="plus" s=${28}/></span><b>Yeni proje</b><small>Fikrini yaz, çizimini yükle ya da şablon seç</small></button>`}${rows.map(a=>card(a,tab!=="top"))}</div>`}
+   :html`<div class="pj-grid">${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${()=>go("studio")}><span><${Icon} n="plus" s=${28}/></span><b>Yeni proje</b><small>Fikrini yaz, çizimini yükle ya da şablon seç</small></button>`}${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${()=>{const u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","");if(u&&u.trim())dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u.trim(),auto:false}}))}}><span><${Icon} n="github" s=${28}/></span><b>GitHub'dan içe aktar</b><small>Depoyu önizle, bağımlılıkları kontrol et, devral ve yayınla</small></button>`}${rows.map(a=>card(a,tab!=="top"))}</div>`}
   </div>
   ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
  </div>`;
@@ -2920,7 +2971,7 @@ function CommandPalette({close,go,openInStudio,onTpl,auth}){
  useEffect(()=>{ref.current&&ref.current.focus();if(API_ON){if(auth.user)api("GET","/api/apps").then(j=>setApps(j.apps)).catch(()=>{});api("GET","/api/store").then(j=>setStore(j.apps)).catch(()=>{})}},[]);
  const P=[["studio","hammer","Yeni proje","Geliştir"],["uygulamalarim","folder","Projeler",""],["sablonlar","layers","Şablonlar",""],["baglantilar","plug","Bağlantılar",""],["magaza","star","Keşfet",""],["eylem","bell","Eylem merkezi",""],["modeller","cpu","Dil modelleri",""],["hesabim","user","Hesabım",""],["guncel","download","Güncellemeler",""]];
  const ql=q.toLocaleLowerCase("tr");const m=s=>!ql||String(s).toLocaleLowerCase("tr").includes(ql);
- const res=[...P.filter(p=>m(p[2])).map(p=>({g:"Sayfalar",ic:p[1],t:p[2],s:p[3],run:()=>go(p[0])})),...apps.filter(a=>m(a.title)).slice(0,6).map(a=>({g:"Projelerin",ic:"folder",t:a.title,s:a.status==="published"?"Yayında":"Taslak",run:async()=>{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}})),...TEMPLATE_LIB.filter(t=>m(t.name+" "+t.sector)).map(t=>({g:"Şablonlar",ic:"layers",t:t.name,s:t.sector,run:()=>onTpl(t)})),...store.filter(a=>ql&&m(a.title)).slice(0,6).map(a=>({g:"Mağaza",ic:"apps",t:a.title,s:a.author,run:()=>go("app/"+a.slug)})),...(ql?[{g:"Yapay zekâ",ic:"sparkles",t:"“"+q+"” için uygulama yap",s:"Geliştir'de başlat",run:()=>go("studio",{prompt:q})}]:[])];
+ const res=[...P.filter(p=>m(p[2])).map(p=>({g:"Sayfalar",ic:p[1],t:p[2],s:p[3],run:()=>go(p[0])})),...apps.filter(a=>m(a.title)).slice(0,6).map(a=>({g:"Projelerin",ic:"folder",t:a.title,s:a.status==="published"?"Yayında":"Taslak",run:async()=>{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}})),...TEMPLATE_LIB.filter(t=>m(t.name+" "+t.sector)).map(t=>({g:"Şablonlar",ic:"layers",t:t.name,s:t.sector,run:()=>onTpl(t)})),...store.filter(a=>ql&&m(a.title)).slice(0,6).map(a=>({g:"Mağaza",ic:"apps",t:a.title,s:a.author,run:()=>go("app/"+a.slug)})),...(ghFind(q)?[{g:"GitHub",ic:"github",t:"Önizle: "+ghShort(ghFind(q)),s:"Geliştir ve Tasarım'a al",run:()=>dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(q),auto:false}}))},{g:"GitHub",ic:"rocket",t:"Projeyi devral: "+ghShort(ghFind(q)),s:"Kontrol et ve canlıya al",run:()=>dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(q),auto:true}}))}]:[]),...(ql?[{g:"Yapay zekâ",ic:"sparkles",t:"“"+q+"” için uygulama yap",s:"Geliştir'de başlat",run:()=>go("studio",{prompt:q})}]:[])];
  const pick=r=>{close();r&&r.run()};
  const key=e=>{if(e.key==="ArrowDown"){e.preventDefault();setI(x=>Math.min(res.length-1,x+1))}else if(e.key==="ArrowUp"){e.preventDefault();setI(x=>Math.max(0,x-1))}else if(e.key==="Enter"){e.preventDefault();pick(res[i])}else if(e.key==="Escape")close()};
  let lastG="";
@@ -3300,7 +3351,7 @@ function CreditAdmin({toast}){
 // ---------- Gitmapp Asistan: yan sohbet, sesli konuşma, oto pilot ----------
 
 const CP_VIEWS={ana:"Ana sayfa",studio:"Geliştir",magaza:"Keşfet",uygulamalarim:"Projeler",sablonlar:"Şablonlar",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",modeller:"Dil modelleri",hesabim:"Hesabım",guncel:"Güncellemeler",paketler:"Paketler",olustur:"Bize yaptır","ai-destek":"Yapay zekâ rehberi"};
-const CP_CONFIRM={yap:1,kontrol:1,kaydet:1,yayinla:1,sablon:1,yeni:1};
+const CP_CONFIRM={yap:1,kontrol:1,kaydet:1,yayinla:1,sablon:1,yeni:1,github:1};
 const CP_START=[["sparkles","Fikrimi birlikte netleştirelim","Bir uygulama fikrim var, birlikte netleştirelim. Bana sorular sor."],["layers","Bana uygun bir şablon öner","İşime uygun hazır bir şablon öner ve aç."],["sliders","Ayarları benim için yap","Geliştirme ayarlarını benim için en uygun şekilde yap."],["rocket","Yayınlamama yardım et","Uygulamamı yayına almama adım adım yardım et."]];
 const CP_YES=/^(evet|onayla|onaylıyorum|onay|tamam|olur|başla|başlat|yap|devam|tabii|kesinlikle)\b/i,CP_NO=/^(hayır|vazgeç|iptal|atla|dur|istemiyorum|gerek yok)\b/i;
 function cpParse(text){text=String(text||"");const m=text.match(/<eylem>([\s\S]*?)(<\/eylem>|$)/i);let acts=[];
@@ -3313,7 +3364,7 @@ function cpLabel(a){const th=a.deger&&THEMES.find(t=>t.id===a.deger);const K={ap
   case "prompt":return ["edit","İstem kutusuna yaz",String(a.metin||"")];case "yap":return ["play","Geliştirmeye başla","kredi kullanır"];case "kontrol":return ["shield","Kontrol et ve düzelt","kredi kullanır"];
   case "kaydet":return ["save","Projeyi kaydet"];case "yayinla":return ["rocket","Yayınla"];case "sablon":{const t=TEMPLATE_LIB.find(x=>x.id===a.id);return ["layers","Şablonu aç: "+(t?t.name:a.id),"mevcut çalışmanın yerine geçer"]}
   case "panel":return [{model:"cpu",tasarim:"palette",beceriler:"brain",ara:"search",ayarlar:"sliders"}[a.ad]||"grid",({model:"Model seçici",tasarim:"Tasarım galerisi",beceriler:"Beceriler",ara:"Arama",ayarlar:"Ayarlar"}[a.ad]||"Panel")+" açılsın"];
-  case "yeni":return ["plus","Yeni proje başlat","açık çalışma kapanır"];default:return ["dot",a.t]}}
+  case "yeni":return ["plus","Yeni proje başlat","açık çalışma kapanır"];case "github":return ["github",(a.devral?"Projeyi devral: ":"GitHub önizleme: ")+ghShort(a.url||""),a.devral?"kontrol edilir ve canlıya alınır":"Geliştir ve Tasarım'a alınabilir"];default:return ["dot",a.t]}}
 function cpSpeakText(t){return String(t||"").replace(/<[^>]+>/g," ").replace(/https?:\/\/\S+/g,"bağlantı").replace(/[*_#`>|~]/g,"").replace(/^\s*[-•]\s*/gm,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/\s+/g," ").trim()}
 function ghostEnsure(){let c=document.getElementById("ghost");if(!c){c=document.createElement("div");c.id="ghost";c.innerHTML='<svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 3l7 18 2.5-7.5L21 11z" fill="#fff" stroke="#0f0f0e" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="gh-ring"></span><span class="gh-tag">Gitmapp</span>';document.body.appendChild(c);c.style.transform="translate("+(innerWidth*.6)+"px,"+(innerHeight*.8)+"px)"}return c}
 function ghostPoint(el){const c=ghostEnsure();el.scrollIntoView({block:"nearest",behavior:"smooth"});setTimeout(()=>{const r=el.getBoundingClientRect();c.classList.add("on","wait");c.style.transform="translate("+(r.left+r.width*.5)+"px,"+(r.top+r.height*.6)+"px)"},120)}
@@ -3424,6 +3475,104 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
  </aside>`;
 }
 
+// ---------- GitHub'dan içe aktar: önizle → Geliştir/Tasarım → projeyi devral ve yayınla ----------
+Object.assign(ICON_SVG,{github:'<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/>',branch:'<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',package:'<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/>',circleX:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',coins:'<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>'});
+const GH_URL_RE=/(?:https?:\/\/)?(?:www\.)?github\.com\/[\w.-]+\/[\w.-]+(?:\/(?:tree|blob)\/[^\s"'<>]+)?|(?:https?:\/\/)?raw\.githubusercontent\.com\/[^\s"'<>]+|(?:https?:\/\/)?[\w-]+\.github\.io(?:\/[\w.-]+)?\/?/i;
+const ghFind=t=>{const m=String(t||"").match(GH_URL_RE);return m?m[0].replace(/[.,;)]+$/,""):null};
+const ghWantsTakeover=t=>/devral|bünyeye al|canlıya al|yayına al|taşı(?:yalım)?\b/i.test(String(t||""));
+const ghShort=u=>{const m=String(u||"").match(/github\.com\/([\w.-]+\/[\w.-]+)/i)||String(u||"").match(/([\w-]+)\.github\.io\/?([\w.-]+)?/i);return m?(m[2]!==undefined&&!/github\.com/i.test(u)?m[1]+"/"+(m[2]||m[1]+".github.io"):m[1]).replace(/\.git$/,""):u};
+const GH_KIND={static:["Hazır site","Derleme gerekmiyor"],prebuilt:["Derlenmiş çıktı","Depodaki derlenmiş sürüm kullanılır"],build:["Derleme gerekiyor","Yayındaki sürüm ya da yapay zekâ dönüşümü"],none:["Sayfa yok","Çalıştırılabilir HTML bulunamadı"]};
+const ST_IC={ok:["check","#34d399"],warn:["alert","#facc15"],fail:["circleX","#f87171"]};
+
+function GhImport({url,auto,close,auth,openAuth,toast,onStudio,models,go}){
+ const [info,setInfo]=useState(null);const infoS=info;const [err,setErr]=useState(null);const [busy,setBusy]=useState("inspect");const [res,setRes]=useState(null);const [dev,setDev]=useState("desktop");
+ const [entry,setEntry]=useState(null);const [live,setLive]=useState(null);const [conv,setConv]=useState("");const [take,setTake]=useState(null);const [showDeps,setShowDeps]=useState(false);const autoRef=useRef(!!auto);
+ const linkGh=async(priv)=>{if(!auth.user){openAuth("GitHub hesabını bağlamak için önce ücretsiz hesap oluştur.");return}try{const j=await api("POST","/api/auth/link");LS.set("ghPending",url);location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)+(priv?"&scope=private":"")}catch(e){toast(e.message)}};
+ async function inspect(){setBusy("inspect");setErr(null);setInfo(null);setRes(null);
+  try{const j=await api("POST","/api/github/inspect",{url});setInfo(j);setEntry(j.entry);track("github_inspect",{repo:j.repo.full,meta:{kind:j.kind}});
+   const fail=j.checks.some(c=>c.st==="fail");
+   if(j.kind==="static"||j.kind==="prebuilt")await doImport("repo",j.entry,j,fail);
+   else if(j.kind==="build"&&(j.pages||j.homepage))await doImport("live",null,j,fail);
+   else setBusy("")}catch(e){setErr(e);setBusy("")}}
+ async function doImport(mode,ent,inf,fail){setBusy("import");setErr(null);
+  try{const j=await api("POST","/api/github/import",{url,mode,entry:ent||undefined});setRes(j);setBusy("");
+   if(autoRef.current){autoRef.current=false;if(fail){toast("Kontrollerde dikkat edilmesi gereken bir sorun var; devralmadan önce incele.");return}takeover(j,inf)}}
+  catch(e){setErr(e);setBusy("")}}
+ async function convert(){if(!auth.user&&false)return;setBusy("convert");setErr(null);setConv("");let acc="";
+  try{const j=await apiStream("/api/github/convert",{url,provider:"gitmapp"},d=>{acc+=d;setConv(acc)});setRes({html:j.html,title:j.title||info.repo.name,report:{css:0,js:0,img:0,linked:0,missing:[],external:[],dropped:[],warnings:[],source:"Yapay zekâ dönüşümü · "+(j.spent?j.spent+" kredi":"")}});setBusy("")}
+  catch(e){setErr(e);setBusy("");if(e.status===402)go&&go("hesabim");if((e.status===401||e.status===403)&&!auth.user)openAuth("Yapay zekâ dönüşümü için ücretsiz hesap oluştur.")}}
+ async function takeover(r,inf){r=r||res;const info=inf||infoS;if(!r||!info)return;if(!auth.user){LS.set("ghPending",url);openAuth("Projeyi devralıp yayınlamak için ücretsiz hesap oluştur; içe aktarma kaldığı yerden devam eder.");return}
+  const st=[["save","Gitmapp projesi oluşturuluyor"],["pub","Canlı adrese yayınlanıyor"],["done","Canlıda"]];setTake({step:0,st});
+  try{const meta={kind:info&&info.kind==="build"&&info.framework?"app":"site",source:"github:"+info.repo.full+"@"+info.repo.sha};
+   const a=(await api("POST","/api/apps",{title:(r.title||info.repo.name).slice(0,80),description:(info.repo.description||("GitHub: "+info.repo.full)).slice(0,400),html:r.html,emoji:"🐙",color:"#e4ff3d",category:"araclar",prompt_log:[{role:"assistant",content:"GitHub'dan devralındı: "+info.repo.full+" ("+info.repo.ref+" · "+info.repo.sha+")"}],meta})).app;
+   setTake({step:1,st,app:a});const p=(await api("POST","/api/apps/"+a.id+"/publish",{listed:false})).app;
+   setTake({step:2,st,app:p});track("github_takeover",{repo:info.repo.full});toast("Proje devralındı ve canlıda 🚀")}
+  catch(e){setTake(t=>({...(t||{}),error:e.message}));toast(e.message)}}
+ useEffect(()=>{inspect()},[url]);
+ useEffect(()=>{const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
+ const R=info&&info.repo;const rep=res&&res.report;const per=(models&&models.data&&models.data.platform||[]).find(m=>m.id===(models.data.default))||null;
+ const studio=design=>{const r=res;onStudio({html:r.html,title:r.title||R.name,emoji:"🐙",color:"#e4ff3d",kind:info.kind==="build"?"app":"site",openDesign:design,appId:take&&take.app?take.app.id:null,msgs:[{role:"assistant",content:"“"+R.full+"” GitHub'dan içe aktarıldı ve sağda çalışıyor ("+R.ref+" · "+R.sha+"). Şimdi sohbetle değiştirebilir, Tasarım'da öğe öğe düzenleyebilir ya da yayınlayabilirsin."+(rep&&rep.warnings.length?"\n\nNotlar:\n• "+rep.warnings.join("\n• "):"")}]});close()};
+ const errBox=err&&html`<div class="ghi-err"><${Icon} n="alert" s=${16}/><div><b>${err.message}</b>${(err.status===404||err.status===429)&&html`<div class="ghi-act">${!(info&&info.github&&info.github.connected)&&html`<button class="btn s" onClick=${()=>linkGh(false)}><${Icon} n="github" s=${14}/> GitHub hesabını bağla</button><button class="btn g s" onClick=${()=>linkGh(true)}>Özel depolar için bağla</button>`}<button class="btn g s" onClick=${inspect}><${Icon} n="refresh" s=${14}/> Tekrar dene</button></div>`}</div></div>`;
+ return html`<div class="drawer ghi-bg" onClick=${close}><div class="ghi glass" onClick=${e=>e.stopPropagation()} role="dialog" aria-label="GitHub'dan içe aktar">
+  <div class="ghi-h"><span class="ghi-logo"><${Icon} n="github" s=${20}/></span><div class="ghi-ht"><b>${R?R.full:ghShort(url)}</b><small>${R?html`<${Icon} n="branch" s=${11}/> ${R.ref} · ${R.sha}${R.private?" · özel":""}${R.lang?" · "+R.lang:""}${R.stars?" · ★ "+R.stars:""}`:"GitHub deposu okunuyor…"}</small></div>
+   ${info&&html`<span class=${"ghi-kind k-"+info.kind} title=${GH_KIND[info.kind][1]}>${GH_KIND[info.kind][0]}${info.framework?" · "+info.framework:""}</span>`}
+   ${info&&!info.github.connected&&html`<button class="btn g s" title="Özel depolar ve daha yüksek GitHub sınırı" onClick=${()=>linkGh(false)}><${Icon} n="github" s=${14}/> Bağla</button>`}
+   <button class="ib" onClick=${close} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div>
+  <div class="ghi-b">
+   <div class="ghi-side">
+    ${R&&R.description&&html`<p class="ghi-desc">${R.description}</p>`}
+    <div class="ghi-sec">Kontroller</div>
+    ${busy==="inspect"&&!info?html`<div class="ghi-chk"><${Spark} s=${14}/><span class="shimmer">Depo, dosyalar ve bağımlılıklar kontrol ediliyor…</span></div>`:""}
+    ${info&&info.checks.map((c,i)=>html`<div class="ghi-chk" key=${i}><${Icon} n=${ST_IC[c.st][0]} s=${14} c=${ST_IC[c.st][1]}/><span>${c.t}</span></div>`)}
+    ${info&&info.deps.length>0&&html`<button class="ghi-deps-t" onClick=${()=>setShowDeps(!showDeps)}><${Icon} n="package" s=${14}/> ${info.deps.filter(d=>!d.dev).length} bağımlılık · ${info.deps.filter(d=>d.dev).length} geliştirme <${Icon} n=${showDeps?"chevDown":"chevRight"} s=${13}/></button>${showDeps&&html`<div class="ghi-deps">${info.deps.map(d=>html`<span key=${d.n} class=${d.dev?"dev":""}>${d.n}<i>${d.v}</i></span>`)}</div>`}`}
+    ${rep&&html`<div class="ghi-sec">Birleştirme</div><div class="ghi-stats">${[["CSS",rep.css],["JS",rep.js],["görsel",rep.img],["bağlantılı",rep.linked]].map(([l,n])=>html`<span key=${l}><b>${n}</b>${l}</span>`)}</div>
+     ${rep.missing.length>0&&html`<div class="ghi-chk"><${Icon} n="circleX" s=${14} c="#f87171"/><span>Eksik: ${rep.missing.slice(0,4).join(", ")}</span></div>`}
+     ${rep.dropped.length>0&&html`<div class="ghi-chk"><${Icon} n="alert" s=${14} c="#facc15"/><span>Alınamadı: ${rep.dropped.slice(0,4).join(", ")}</span></div>`}
+     ${rep.warnings.map((w,i)=>html`<div class="ghi-chk" key=${"w"+i}><${Icon} n="alert" s=${14} c="#facc15"/><span>${w}</span></div>`)}
+     ${rep.external.length>0&&html`<div class="ghi-chk"><${Icon} n="globe" s=${14} c="#94a3b8"/><span>Dış kaynaklar: ${rep.external.join(", ")}</span></div>`}
+     <small class="ghi-src">${rep.source}</small>`}
+    ${info&&(info.kind==="build"||info.pagesList.length>0||info.kind==="static")&&html`<div class="ghi-sec">Kaynak</div><div class="ghi-opts">
+     ${info.kind!=="build"&&html`<label class="ghi-sel"><span>Sayfa</span><select value=${entry||""} onChange=${e=>{setEntry(e.target.value);doImport("repo",e.target.value,info)}}>${[info.entry,...info.pagesList].filter(Boolean).map(p=>html`<option key=${p}>${p}</option>`)}</select></label>`}
+     ${(info.pages||info.homepage)&&html`<button class="ghi-opt" disabled=${!!busy} onClick=${()=>doImport("live",null,info)}><${Icon} n="globe" s=${15}/><span><b>Yayındaki sürümü al</b><small>${(info.pages||info.homepage).replace(/^https?:\/\//,"")} · ücretsiz</small></span></button>`}
+     ${info.kind==="build"&&html`<button class="ghi-opt" disabled=${!!busy} onClick=${convert}><${Icon} n="wand" s=${15}/><span><b>Yapay zekâyla tek dosyaya dönüştür</b><small>Kaynak kod okunur, derlemesiz çalışan sürüm yazılır${per?" · ~"+per.credits+" kredi":""}</small></span></button>`}</div>`}
+   </div>
+   <div class="ghi-prev">
+    <div class="ghi-pbar"><span>${busy==="import"?html`<span class="shimmer">Site birleştiriliyor…</span>`:busy==="convert"?html`<span class="shimmer">Yapay zekâ dönüştürüyor… ${(conv.length/1024).toFixed(1)} KB</span>`:res?"Canlı önizleme":"Önizleme"}</span><span style=${{flex:1}}></span>
+     <div class="seg">${[["phone","phone"],["desktop","monitor"]].map(([k,ic])=>html`<button key=${k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${14}/></button>`)}</div></div>
+    <div class=${"ghi-frame "+dev}>${res?html`<iframe title="GitHub önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${res.html}></iframe>`:busy==="convert"?html`<pre class="lc-b mono">${conv.slice(-5000)}<span class="caret"></span></pre>`:busy?html`<div class="prev-empty"><${Spark} s=${30}/></div>`:errBox||html`<div class="prev-empty"><${Icon} n="github" s=${30} c="#4a5470"/><span style=${{marginTop:10}}>Kaynak seçince önizleme burada açılır</span></div>`}</div>
+    ${res&&err&&errBox}
+   </div></div>
+  <div class="ghi-f">
+   ${take?html`<div class="ghi-take">${take.st.map(([k,l],i)=>html`<span key=${k} class=${i<take.step||take.step===2?"done":i===take.step&&!take.error?"run":""}>${i<take.step||take.step===2?html`<${Icon} n="check" s=${13} w=${2.4}/>`:i===take.step&&!take.error?html`<${Spark} s=${13}/>`:html`<i></i>`}${l}</span>`)}
+     ${take.step===2&&take.app&&take.app.url&&html`<a class="btn s" href=${take.app.url} target="_blank" rel="noopener"><${Icon} n="external" s=${14}/> ${take.app.url.replace(/^https?:\/\//,"")}</a><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(take.app.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="copy" s=${14}/></button>`}
+     ${take.error&&html`<span class="ghi-terr">${take.error}</span>`}</div>`
+   :html`<span class="ghi-note">${res?"Önizleme ücretsiz. Devraldığında site Gitmapp'e kopyalanır ve kendi adresinde yayınlanır; mağazada listelenmez.":"Depo okunduktan sonra önizleme kendiliğinden açılır."}</span>`}
+   <span style=${{flex:1}}></span>
+   <button class="btn g s" disabled=${!res} onClick=${()=>studio(true)}><${Icon} n="layers" s=${14}/> Tasarımda aç</button>
+   <button class="btn g s" disabled=${!res} onClick=${()=>studio(false)}><${Icon} n="hammer" s=${14}/> Geliştir'de aç</button>
+   ${!(take&&take.step===2)&&html`<button class="btn s ghi-go" disabled=${!res||(take&&!take.error)} onClick=${()=>takeover()}><${Icon} n="rocket" s=${14}/> Projeyi devral ve yayınla</button>`}
+   ${take&&take.step===2&&html`<button class="btn s" onClick=${()=>{close();go&&go("uygulamalarim")}}>Projelerde gör</button>`}</div>
+ </div></div>`;
+}
+
+// ---------- Canlı kredi göstergesi ----------
+const KIND_TR={build:"Geliştirme",plan:"Plan",review:"Kontrol",design:"Tasarım önerisi",github:"GitHub dönüşümü",element:"Öğe düzenleme"};
+function CountUp({v}){const [n,setN]=useState(v);const ref=useRef(v);useEffect(()=>{const from=ref.current,to=v;ref.current=v;if(from===to)return;const t0=performance.now();let raf;const step=t=>{const k=Math.min(1,(t-t0)/600);setN(Math.round(from+(to-from)*(1-Math.pow(1-k,3))));if(k<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf)},[v]);return n}
+function CreditPanel({auth,close,go,flash}){const [d,setD]=useState(null);const [e,setE]=useState(null);
+ const load=()=>api("GET","/api/me/usage").then(j=>{setD(j);auth.patch({credits:j.credits})}).catch(x=>setE(x.message));
+ useEffect(()=>{load();const h=()=>setTimeout(load,300);addEventListener("gm:credits",h);const k=ev=>{if(ev.key==="Escape")close()};addEventListener("keydown",k);return()=>{removeEventListener("gm:credits",h);removeEventListener("keydown",k)}},[]);
+ const sess=LS.get("crSession",{n:0,s:0})||{n:0,s:0};const S=d&&d.summary;const max=S?Math.max(1,...S.byKind.map(k=>k.s)):1;
+ return html`<div class="crp-bg" onClick=${close}><div class="crp glass" onClick=${ev=>ev.stopPropagation()} role="dialog" aria-label="Kredilerim">
+  <div class="crp-h"><span class="crp-ic"><${Icon} n="gem" s=${18}/></span><div><small>Kalan kredi</small><b><${CountUp} v=${auth.user?(auth.user.credits??0):0}/></b></div>${flash&&html`<span class="crp-fl" key=${flash.k}>−${flash.s}</span>`}<span style=${{flex:1}}></span><button class="ib sm" onClick=${close}><${Icon} n="x" s=${15}/></button></div>
+  ${e&&html`<div class="ghi-chk"><${Icon} n="alert" s=${14} c="#facc15"/><span>${e}</span></div>`}
+  <div class="crp-grid">${[["Bu oturum",sess.s,sess.n],["Bugün",S&&S.today.s,S&&S.today.n],["7 gün",S&&S.week.s,S&&S.week.n],["30 gün",S&&S.month.s,S&&S.month.n]].map(([l,s,n])=>html`<div key=${l}><small>${l}</small><b>${s==null?"…":s}</b><span>${n==null?"":n+" işlem"}</span></div>`)}</div>
+  ${S&&S.byKind.length>0&&html`<div class="crp-sec">Nereye harcandı (30 gün)</div>${S.byKind.map(k=>html`<div class="crp-bar" key=${k.kind}><span>${KIND_TR[k.kind]||k.kind}</span><i><em style=${{width:(k.s/max*100)+"%"}}></em></i><b>${k.s}</b></div>`)}`}
+  <div class="crp-sec">Son işlemler</div>
+  <div class="crp-list">${d?d.usage.slice(0,8).map((u,i)=>html`<div key=${i}><span>${KIND_TR[u.kind]||u.kind}<small>${shortModel(u.model||"")} · ${agoTR(u.created)}</small></span><b>${u.credits?"−"+u.credits:u.provider&&u.provider!=="gitmapp"?"kendi anahtar":"0"}</b></div>`):html`<div><span class="shimmer">Yükleniyor…</span></div>`}${d&&!d.usage.length&&html`<div><span>Henüz kredi harcanmadı</span></div>`}</div>
+  <div class="crp-f"><button class="btn s" onClick=${()=>{close();go("hesabim")}}><${Icon} n="card" s=${14}/> Kredi yükle / Hesabım</button><button class="btn g s" onClick=${()=>{close();go("modeller")}}><${Icon} n="cpu" s=${14}/> Model fiyatları</button></div>
+  <small class="crp-n">Asistan, önizleme ve GitHub içe aktarma ücretsizdir. Geliştirme, kontrol, plan, tasarım önerisi ve yapay zekâ dönüşümü kredi kullanır.</small>
+ </div></div>`}
+
 function App(){
  const installPrompt=useRef(null);
  const [installed,setInstalled]=useState(()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true);
@@ -3462,7 +3611,7 @@ function App(){
  const [saved,setSaved]=useState(LS.get("saved",{})||{});const [secs,setSecs]=useState(LS.get("secs",{})||{});const [builds,setBuildsS]=useState(LS.get("builds",[])||[]);
  const [orders,setOrdersS]=useState(LS.get("orders",[])||[]);const [pick,setPick]=useState(null);const [storeCat,setStoreCat]=useState(null);
  const [deck,setDeck]=useState(null);const [rate,setRate]=useState(RATE);const [busyAll,setBusyAll]=useState(false);
- const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
+ const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
  const openAuth=reason=>{LS.set("afterAuth",view);setAuthModal(reason||"")};
  const toggleSave=r=>{const n={...saved};if(n[r.full_name])delete n[r.full_name];else n[r.full_name]=r;setSaved(n);LS.set("saved",n)};
@@ -3474,6 +3623,11 @@ function App(){
  const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,cat:cat&&cat.id,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
  const openInStudio=(a,openDesign=false)=>{setIncoming({openDesign,kind:a.meta?.kind,html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#e4ff3d",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
  const isAdm=!!(auth.user&&auth.user.admin);
+ useEffect(()=>{const g=e=>{const d=e.detail||{};let u=String(d.url||"").trim();if(!u){u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","")||"";u=u.trim()}if(u)setGh({url:u,auto:!!d.auto,n:Date.now()})};addEventListener("gm:gh",g);const co=()=>setCrOpen(true);addEventListener("gm:cr",co);
+  const c=e=>{const d=e.detail||{};auth.patch({credits:d.credits});if(d.spent>0){const x=LS.get("crSession",{n:0,s:0})||{n:0,s:0};LS.set("crSession",{n:x.n+1,s:x.s+d.spent});setCrFlash({s:d.spent,k:Date.now()});const el=[...document.querySelectorAll(".me-cr,.crchip,.pill-cr")].find(z=>z.getBoundingClientRect().width>0);const r=el?el.getBoundingClientRect():{left:innerWidth-90,top:70,width:40};const f=document.createElement("div");f.className="cr-fly";f.textContent="−"+d.spent+" kredi";f.style.left=(r.left+r.width/2-30)+"px";f.style.top=(r.top-6)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1500)}};addEventListener("gm:credits",c);
+  return()=>{removeEventListener("gm:gh",g);removeEventListener("gm:cr",co);removeEventListener("gm:credits",c)}},[]);
+ useEffect(()=>{try{sessionStorage.getItem("crS")||(sessionStorage.setItem("crS","1"),LS.set("crSession",{n:0,s:0}))}catch(e){}},[]);
+ useEffect(()=>{const p=LS.get("ghPending","");if(p&&auth.user){LS.set("ghPending","");setGh({url:p,auto:false,n:Date.now()})}},[auth.user&&auth.user.id]);
  useEffect(()=>{const o=()=>setCp(true);addEventListener("gm:cp",o);const j=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="j"){e.preventDefault();setCpS(x=>{LS.set("cpOpen",!x);return !x})}};addEventListener("keydown",j);return()=>{removeEventListener("gm:cp",o);removeEventListener("keydown",j)}},[]);
  useEffect(()=>{const h=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCmdk(x=>!x)}};addEventListener("keydown",h);try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9]{12}$/.test(r))LS.set("ref",r)}catch(e){}return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(apiOn&&auth.user)api("GET","/api/apps").then(j=>setMyApps(j.apps)).catch(()=>{});else setMyApps([])},[apiOn,auth.user&&auth.user.id,view]);
@@ -3502,6 +3656,7 @@ function App(){
  const viewRef=useRef(view);viewRef.current=view;
  const cpStudio=a=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done}}));if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
  const cpRun=async a=>{
+  if(a.t==="github"){if(!a.url)throw new Error("GitHub adresi yok");setGh({url:String(a.url),auto:!!a.devral,n:Date.now()});return wait(400)}
   if(a.t==="git"){if(!CP_VIEWS[a.view])throw new Error("Bu sayfa bulunamadı");return ghostDo('.side .nav[data-v="'+a.view+'"]',()=>navGo(a.view))}
   if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp);return wait(500)}
   if(a.t==="panel"&&a.ad==="beceriler")return ghostDo('.side .nav[data-v="$beceri"]',()=>setSkills(true));
@@ -3516,11 +3671,11 @@ function App(){
    <nav class="navs">${navList("")}</nav>
    <div class="side-foot">${installButton()}
     ${mode==="musteri"&&html`<button class="refc" onClick=${async()=>{if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",u)}}}><div><b>Gitmapp'i paylaş</b><span>Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi</span></div><span class="refc-i"><${Icon} n="gift" s=${20}/></span></button>`}
-    ${apiOn?(auth.user?html`<div class="me" onClick=${()=>setView("hesabim")} title="Hesabım"><span class="avatar">${initials(auth.user)}</span><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><${Icon} n="gem" s=${11}/> ${auth.user.credits??0} kredi${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
+    ${apiOn?(auth.user?html`<div class="me" onClick=${()=>setView("hesabim")} title="Hesabım"><span class="avatar">${initials(auth.user)}</span><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><span class="me-cr" title="Kredilerim: canlı harcama" onClick=${e=>{e.stopPropagation();setCrOpen(true)}}><${Icon} n="gem" s=${11}/> <${CountUp} v=${auth.user.credits??0}/> kredi</span>${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
   <div class="bnav glass noprint">${(mode==="admin"?[["siparisler","Siparişler"],["radar","Radar"],["plan","Plan"],["kesfet","GitHub"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button>`:""}</div></div></div>`}
-  <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span></div>`}
+  <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span>${auth.user&&html`<button class="crchip" style=${{marginLeft:"auto"}} onClick=${()=>setCrOpen(true)}><${Icon} n="gem" s=${12}/><${CountUp} v=${auth.user.credits??0}/></button>`}</div>`}
    ${needLogin?html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} initMode="giris" title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok.":"Siparişleri ve talep radarını görmek için yönetici hesabıyla giriş yapın."}/></div>`:html`<div>
    ${view==="studio"&&html`<${Studio} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
@@ -3556,6 +3711,8 @@ function App(){
   ${skills&&html`<${SkillsModal} close=${()=>setSkills(false)} toast=${toast}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
   ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
+  ${gh&&html`<${GhImport} key=${gh.n} url=${gh.url} auto=${gh.auto} close=${()=>setGh(null)} auth=${auth} openAuth=${openAuth} toast=${toast} models=${models} go=${navGo} onStudio=${o=>{setIncoming(o);setView("studio")}}/>`}
+  ${crOpen&&auth.user&&html`<${CreditPanel} auth=${auth} close=${()=>setCrOpen(false)} go=${navGo} flash=${crFlash}/>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
  </div>`;
 }

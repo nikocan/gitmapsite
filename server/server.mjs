@@ -361,6 +361,7 @@ Gitmapp'te neler yapılabilir:
 - Tasarım temaları sektöre göre otomatik önerilir ya da seçilir; kağıda çizilen ekranın ya da bir stil örneğinin fotoğrafı eklenebilir, yerleşim ve renkler tanınır.
 - Çalıştırma ayarları: yaratıcılık (0-1.5), ayrıntı (kisa/dengeli/ayrintili), ek talimatlar. Beceriler panelinde hazır yetenekler açılır. Dil modeli seçici: Gitmapp'te hazır modeller (kredi kullanır) ya da kullanıcının kendi API anahtarı.
 - Şablonlar: CRM, muhasebe/fatura, stok, sigorta, klinik paneli; emlak, sigorta ve restoran siteleri. Demo çalışır, tek tıkla Stüdyo'ya alınıp kişiselleştirilir. Hepsi ücretsiz.
+- GitHub'dan içe aktarma: depo, klasör ya da dosya yolu verilince site önizlenir, bağımlılıklar kontrol edilir; Geliştir/Tasarım'a alınabilir ya da "projeyi devral" ile Gitmapp'e taşınıp yayınlanır. Derleme isteyen projelerde yayındaki sürüm ya da yapay zekâ dönüşümü kullanılır.
 - Kaydet ve Yayınla: app.gitmapp.com/<ad> adresi ücretsiz; GitHub'a kaydetme ve GitHub Pages; Keşfet mağazasında listeleme. Bağlantılar sayfasından WhatsApp, ödeme, e-posta gibi servisler eklenir.
 - Hesapsız 3 deneme vardır; ücretsiz hesapla hoş geldin kredisi verilir. Sen (Asistan) ücretsizsin; geliştirme, kontrol ve plan adımları kredi kullanır.
 
@@ -387,6 +388,7 @@ Eylem türleri:
 - {"t":"sablon","id":"<şablon kimliği>"} şablonu Stüdyo'ya alır (onay ister).
 - {"t":"panel","ad":"model|tasarim|beceriler|ara|ayarlar"} ilgili paneli açar.
 - {"t":"yeni"} yeni boş proje başlatır (onay ister).
+- {"t":"github","url":"<GitHub adresi>","devral":false} GitHub deposunu/dosya yolunu içe aktarır ve önizler; "devral":true ise bağımlılıkları kontrol edip projeyi Gitmapp'e alır ve yayınlar (onay ister). Kullanıcı bir GitHub adresi verirse bu eylemi kullan.
 Sadece sohbet ediyorsan eylem bloğu ekleme.`;
 async function copilotModel() {
   if (E.COPILOT_MODEL) return E.COPILOT_MODEL;
@@ -460,13 +462,13 @@ async function appData(req, res, a, key) {
 const routes = [];
 const route = (m, p, fn) => routes.push({ m, re: new RegExp("^" + p.replace(/:(\w+)/g, "(?<$1>[^/]+)") + "$"), fn });
 const cleanMeta = (m, old) => { let o = {}; try { o = JSON.parse(old || "{}"); } catch { } if (!m || typeof m !== "object") return JSON.stringify(o);
-  if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; return JSON.stringify(o); };
+  if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; if (/^github:[\w.-]{1,60}\/[\w.-]{1,100}(@[\w./-]{1,80})?$/.test(m.source || "")) o.source = m.source; return JSON.stringify(o); };
 const metaOf = (a) => { let m = {}; try { m = JSON.parse(a.meta || "{}"); } catch { } let n = 0; try { n = JSON.parse(a.prompt_log || "[]").filter((x) => x.role === "user").length; } catch { } return { ...m, steps: n }; };
 const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, slug: a.slug, description: a.description, category: a.category, emoji: a.emoji, color: a.color, status: a.status, listed: !!a.listed, price: a.price, downloads: a.downloads, opens: a.opens, github_repo: a.github_repo, pages_url: a.pages_url, created: a.created, updated: a.updated, published_at: a.published_at, url: a.slug && a.status === "published" ? `https://${CFG.appHost}/${a.slug}` : null, ...(withHtml ? { html: a.html, prompt_log: JSON.parse(a.prompt_log || "[]") } : {}) });
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
-route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "4.7.0" }));
+route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "4.9.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -488,7 +490,7 @@ route("GET", "/api/auth/oauth/:prov/start", ({ params, url, res }) => {
   if (link) { const t = verify(link); uid = t && t.purpose === "link" ? t.uid : null; }
   const state = sign({ prov, uid, n: rid(6) }, 600);
   let loc;
-  if (prov === "github") { need(CFG.gh.id, 503, "GitHub girişi henüz yapılandırılmadı"); loc = `https://github.com/login/oauth/authorize?client_id=${CFG.gh.id}&scope=${encodeURIComponent("read:user user:email public_repo")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/github/callback")}`; }
+  if (prov === "github") { need(CFG.gh.id, 503, "GitHub girişi henüz yapılandırılmadı"); loc = `https://github.com/login/oauth/authorize?client_id=${CFG.gh.id}&scope=${encodeURIComponent(url.searchParams.get("scope") === "private" ? "read:user user:email repo" : "read:user user:email public_repo")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/github/callback")}`; }
   else if (prov === "google") { need(CFG.google.id, 503, "Google girişi henüz yapılandırılmadı"); loc = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CFG.google.id}&response_type=code&scope=${encodeURIComponent("openid email profile")}&state=${state}&redirect_uri=${encodeURIComponent(CFG.api + "/api/auth/oauth/google/callback")}&prompt=select_account`; }
   else throw new HttpErr(404, "Bilinmeyen sağlayıcı");
   res.writeHead(302, { Location: loc }); res.end(); return null;
@@ -612,7 +614,11 @@ route("PUT", "/api/keys/:prov", async ({ user, params, body }) => {
 route("DELETE", "/api/keys/:prov", ({ user, params }) => { need(user, 401, "Giriş yapın"); q("DELETE FROM user_keys WHERE user_id=? AND provider=?").run(user.id, params.prov); return { ok: true }; });
 route("GET", "/api/me/usage", ({ user }) => {
   need(user, 401, "Giriş yapın");
-  return { credits: q("SELECT credits FROM users WHERE id=?").get(user.id).credits ?? 0, usage: q("SELECT created,kind,provider,model,tokens,credits FROM usage WHERE user_id=? ORDER BY id DESC LIMIT 50").all(user.id), log: q("SELECT created,amount,reason FROM credit_log WHERE user_id=? ORDER BY id DESC LIMIT 30").all(user.id) };
+  const sum = (since) => q("SELECT COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=?").get(user.id, since);
+  const d0 = new Date().toISOString().slice(0, 10) + " 00:00:00"; const d7 = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 19).replace("T", " "); const d30 = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 19).replace("T", " ");
+  const byKind = q("SELECT kind, COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=? GROUP BY kind ORDER BY s DESC").all(user.id, d30);
+  const topup = q("SELECT COALESCE(SUM(amount),0) s FROM credit_log WHERE user_id=? AND amount>0").get(user.id).s;
+  return { summary: { today: sum(d0), week: sum(d7), month: sum(d30), byKind, received: topup }, credits: q("SELECT credits FROM users WHERE id=?").get(user.id).credits ?? 0, usage: q("SELECT created,kind,provider,model,tokens,credits FROM usage WHERE user_id=? ORDER BY id DESC LIMIT 50").all(user.id), log: q("SELECT created,amount,reason FROM credit_log WHERE user_id=? ORDER BY id DESC LIMIT 30").all(user.id) };
 });
 route("POST", "/api/admin/credits", ({ user, body }) => {
   need(isAdmin(user), 403, "Yönetici yetkisi gerekli");
@@ -646,12 +652,273 @@ route("POST", "/api/ai/copilot", async (ctx) => {
   return fin(await chatWith(rt, messages, 1400));
 });
 
+// ---------- GitHub'dan içe aktarma: incele → bağımlılık kontrolü → tek dosyada birleştir → devral ----------
+const GH_TOKEN_ENV = E.GITHUB_TOKEN || "";
+function parseGh(s) {
+  s = String(s || "").trim().replace(/^git\+/, "");
+  let m = s.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:\/(?:tree|blob)\/([^/?#]+)(?:\/([^?#]*))?)?\/?(?:[?#].*)?$/i);
+  if (m) return { owner: m[1], repo: m[2], ref: m[3] || null, path: decodeURIComponent(m[4] || "").replace(/^\/+|\/+$/g, "") };
+  m = s.match(/^(?:https?:\/\/)?raw\.githubusercontent\.com\/([\w.-]+)\/([\w.-]+)\/([^/]+)\/(.*)$/i);
+  if (m) return { owner: m[1], repo: m[2], ref: m[3], path: decodeURIComponent(m[4]) };
+  m = s.match(/^(?:https?:\/\/)?([\w-]+)\.github\.io(?:\/([\w.-]+))?\/?/i);
+  if (m) return { owner: m[1], repo: m[2] || m[1] + ".github.io", ref: null, path: "" };
+  m = s.match(/^([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:@([\w./-]+))?$/);
+  if (m && !/^\d+$/.test(m[1])) return { owner: m[1], repo: m[2], ref: m[3] || null, path: "" };
+  return null;
+}
+function ghTok(user) { return (user && user.github_token) || GH_TOKEN_ENV || null; }
+async function ghRead(tok, p) {
+  let r; try { r = await fetch("https://api.github.com" + p, { headers: { Accept: "application/vnd.github+json", "User-Agent": "gitmapp", ...(tok ? { Authorization: "Bearer " + tok } : {}) }, signal: AbortSignal.timeout(15000) }); }
+  catch { throw new HttpErr(504, "GitHub'a ulaşılamadı, tekrar deneyin"); }
+  const j = await r.json().catch(() => null);
+  if ((r.status === 403 || r.status === 429) && !(r.headers.get("x-ratelimit-remaining") === "0" || /rate limit/i.test((j && j.message) || ""))) return { status: 404, ok: false, data: j };
+  if (r.status === 403 || r.status === 429) throw new HttpErr(429, tok ? "GitHub istek sınırı doldu, birkaç dakika sonra tekrar deneyin" : "GitHub'ın anonim istek sınırı doldu. GitHub hesabını bağlarsan hemen devam edebilirsin.");
+  return { status: r.status, ok: r.ok, data: j };
+}
+const hostOk = (h) => E.IMPORT_ALLOW_LOCAL === "1" || !/^(localhost|127\.|10\.|192\.168\.|169\.254\.|0\.|::1|\[)/i.test(h) && !/^172\.(1[6-9]|2\d|3[01])\./.test(h) && !/\.(local|internal|localhost)$/i.test(h) && !/^\d+$/.test(h);
+async function rawGet(o, maxBytes) {
+  // o: {url, tok}; yönlendirmeler elle izlenir, iç ağ adreslerine gidilmez
+  let url = o.url, r;
+  for (let i = 0; i < 4; i++) {
+    let u; try { u = new URL(url); } catch { return null; } if (!/^https?:$/.test(u.protocol) || !hostOk(u.hostname)) return null;
+    try { r = await fetch(url, { headers: { "User-Agent": "gitmapp", ...(o.tok && u.hostname === "raw.githubusercontent.com" ? { Authorization: "token " + o.tok } : {}) }, redirect: "manual", signal: AbortSignal.timeout(15000) }); } catch { return null; }
+    if (r.status >= 300 && r.status < 400 && r.headers.get("location")) { url = new URL(r.headers.get("location"), url).href; continue; } break;
+  }
+  if (!r || !r.ok) return null;
+  const len = +(r.headers.get("content-length") || 0); if (len && len > maxBytes) return { tooBig: true, size: len };
+  const buf = Buffer.from(await r.arrayBuffer()); if (buf.length > maxBytes) return { tooBig: true, size: buf.length };
+  return { buf, type: (r.headers.get("content-type") || "").split(";")[0].trim() };
+}
+const ghCache = new Map();
+function cacheGet(k) { const v = ghCache.get(k); if (v && Date.now() - v.t < 300000) return v.v; ghCache.delete(k); return null; }
+function cacheSet(k, v) { if (ghCache.size > 200) ghCache.delete(ghCache.keys().next().value); ghCache.set(k, { t: Date.now(), v }); }
+function rateGh(user, req, limit) {
+  const day = new Date().toISOString().slice(0, 10); const k = user ? "gh:" + user.id : "ghip:" + clientIp(req);
+  const r = q("SELECT n FROM ai_usage WHERE k=? AND day=?").get(k, day);
+  need(!r || r.n < (user ? limit : Math.ceil(limit / 4)), 429, user ? "Bugünkü GitHub içe aktarma sınırına ulaştınız, yarın tekrar deneyin." : "Günlük deneme hakkınız doldu. Ücretsiz hesapla devam edebilirsiniz.");
+  q("INSERT INTO ai_usage(k,day,n) VALUES(?,?,1) ON CONFLICT(k,day) DO UPDATE SET n=n+1").run(k, day);
+}
+const posix = (...a) => { const out = []; for (const seg of a.join("/").split("/")) { if (!seg || seg === ".") continue; if (seg === "..") out.pop(); else out.push(seg); } return out.join("/"); };
+const dirOf = (p) => p.includes("/") ? p.slice(0, p.lastIndexOf("/")) : "";
+const BUILD_FW = [["next", "Next.js"], ["nuxt", "Nuxt"], ["@sveltejs/kit", "SvelteKit"], ["astro", "Astro"], ["gatsby", "Gatsby"], ["@angular/core", "Angular"], ["react-scripts", "Create React App"], ["vite", "Vite"], ["parcel", "Parcel"], ["webpack", "Webpack"], ["@vue/cli-service", "Vue CLI"]];
+const UI_LIB = [["react", "React"], ["vue", "Vue"], ["svelte", "Svelte"], ["preact", "Preact"], ["solid-js", "Solid"], ["tailwindcss", "Tailwind CSS"]];
+const SERVER_DEP = ["express", "fastify", "koa", "@nestjs/core", "hapi", "mongoose", "pg", "mysql2", "prisma", "@prisma/client", "sequelize"];
+
+async function ghInspect(user, input) {
+  const g = parseGh(input); need(g, 400, "GitHub bağlantısı tanınmadı. Örnek: github.com/kullanici/depo ya da kullanici/depo");
+  const tok = ghTok(user);
+  const ck = [g.owner, g.repo, g.ref, g.path, tok ? "t" : ""].join("|").toLowerCase(); const hit = cacheGet(ck); if (hit) return hit;
+  const meta = await ghRead(tok, `/repos/${g.owner}/${g.repo}`);
+  need(meta.status !== 404, 404, user && user.github_token ? "Depo bulunamadı ya da erişim iznin yok." : "Depo bulunamadı. Özel bir depoysa önce GitHub hesabını bağla.");
+  need(meta.ok, 502, "GitHub deposu okunamadı (" + meta.status + ")");
+  const R = meta.data; const ref = g.ref || R.default_branch;
+  const br = await ghRead(tok, `/repos/${g.owner}/${g.repo}/commits/${encodeURIComponent(ref)}`);
+  need(br.ok && br.data && br.data.sha, 404, "“" + ref + "” dalı ya da sürümü bulunamadı");
+  const sha = br.data.sha;
+  const tr = await ghRead(tok, `/repos/${g.owner}/${g.repo}/git/trees/${sha}?recursive=1`);
+  need(tr.ok, 502, "Dosya listesi okunamadı");
+  let files = (tr.data.tree || []).filter((x) => x.type === "blob").map((x) => ({ path: x.path, size: x.size || 0 }));
+  let base = g.path; let entryHint = null;
+  if (/\.html?$/i.test(base)) { entryHint = base; base = dirOf(base); }
+  if (base && !files.some((f) => f.path.startsWith(base + "/"))) throw new HttpErr(404, "“" + base + "” klasörü depoda yok");
+  const inBase = files.filter((f) => !base || f.path.startsWith(base + "/"));
+  const rel = (p) => base ? p.slice(base.length + 1) : p;
+  const has = (p) => inBase.some((f) => rel(f.path) === p);
+  let pkg = null;
+  if (has("package.json")) { const r = await rawGet({ url: `https://raw.githubusercontent.com/${g.owner}/${g.repo}/${sha}/${posix(base, "package.json")}`, tok }, 200000); try { pkg = r && r.buf ? JSON.parse(r.buf.toString("utf8")) : null; } catch { pkg = null; } }
+  const allDeps = pkg ? { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) } : {};
+  const fw = BUILD_FW.find(([k]) => allDeps[k]); const ui = UI_LIB.filter(([k]) => allDeps[k]).map(([, l]) => l);
+  // Giriş dosyasını seç: önce derlenmiş çıktı, sonra kök
+  const htmls = inBase.filter((f) => /\.html?$/i.test(f.path)).map((f) => rel(f.path));
+  const BUILT = ["dist/index.html", "build/index.html", "out/index.html", "docs/index.html", "_site/index.html", "public/index.html", "www/index.html", "site/index.html"];
+  let entry = entryHint ? rel(entryHint) : null; let kind = "static";
+  if (!entry) {
+    const built = BUILT.find((p) => has(p) && !(p === "public/index.html" && fw));
+    const rootIdx = has("index.html") ? "index.html" : null;
+    if (fw && built && built !== "public/index.html") { entry = built; kind = "prebuilt"; }
+    else if (fw) { kind = "build"; entry = rootIdx || (has("public/index.html") ? "public/index.html" : null); }
+    else entry = rootIdx || built || htmls.sort((a, b) => a.split("/").length - b.split("/").length || a.length - b.length)[0] || null;
+  }
+  const homepage = (R.homepage && /^https?:\/\//.test(R.homepage) ? R.homepage : null) || (pkg && /^https?:\/\//.test(pkg.homepage || "") ? pkg.homepage : null);
+  const pages = R.has_pages ? (g.repo.toLowerCase() === (g.owner + ".github.io").toLowerCase() ? `https://${g.owner}.github.io/` : `https://${g.owner}.github.io/${g.repo}/`) : null;
+  if (!entry && kind !== "build") kind = "none";
+  // Kontroller
+  const checks = [];
+  const add = (st, t) => checks.push({ st, t });
+  add("ok", `Depo okundu: ${inBase.length} dosya, ${(inBase.reduce((s, f) => s + f.size, 0) / 1024 / 1024).toFixed(1)} MB${tr.data.truncated ? " (çok büyük, liste kısaltıldı)" : ""}`);
+  if (kind === "static") add(entry ? "ok" : "fail", entry ? `Giriş sayfası: ${entry} (derleme gerekmiyor)` : "Çalıştırılabilir bir HTML sayfası bulunamadı");
+  if (kind === "prebuilt") add("ok", `${fw[1]} projesi; derlenmiş çıktı bulundu: ${entry}`);
+  if (kind === "build") add("warn", `${fw[1]} projesi derleme gerektiriyor ve depoda derlenmiş çıktı yok.` + (pages || homepage ? " Yayındaki sürüm kullanılabilir." : " Yapay zekâyla tek dosyaya dönüştürülebilir."));
+  if (pkg) {
+    const n = Object.keys(pkg.dependencies || {}).length, d = Object.keys(pkg.devDependencies || {}).length;
+    add("ok", `package.json: ${n} bağımlılık, ${d} geliştirme bağımlılığı${ui.length ? " · " + ui.join(", ") : ""}`);
+    const srv = SERVER_DEP.filter((k) => allDeps[k]);
+    if (srv.length) add("warn", `Sunucu tarafı paketler var (${srv.join(", ")}). Gitmapp yalnızca tarayıcıda çalışan kısmı alır; veriler GitmappDB ile saklanabilir.`);
+    if (pkg.engines && pkg.engines.node) add("ok", "Node sürümü: " + pkg.engines.node);
+  }
+  const srvFiles = inBase.filter((f) => /\.(php|py|rb|go|java|cs)$/i.test(f.path) || /(^|\/)(server|app)\.(js|mjs|ts)$/i.test(f.path) || /(^|\/)Dockerfile$/.test(f.path)).length;
+  if (srvFiles) add("warn", `${srvFiles} sunucu tarafı dosya var; bunlar Gitmapp'te çalıştırılmaz.`);
+  const secret = inBase.filter((f) => /(^|\/)\.env(\.(local|production|development))?$/i.test(f.path) || /\.(pem|key|p12)$/i.test(f.path) || /(^|\/)id_rsa/.test(f.path)).map((f) => rel(f.path));
+  if (secret.length) add("fail", `Gizli anahtar içerebilecek dosya depoda açık duruyor: ${secret.slice(0, 3).join(", ")}. Bu dosyalar alınmaz; içindeki anahtarları yenilemeni öneririz.`);
+  const cdn = [];
+  if (entry && kind !== "build") {
+    const r = await rawGet({ url: `https://raw.githubusercontent.com/${g.owner}/${g.repo}/${sha}/${posix(base, entry).split("/").map(encodeURIComponent).join("/")}`, tok: R.private ? tok : null }, 2000000);
+    if (r && r.buf) {
+      const h = r.buf.toString("utf8"); const refs = []; const ed = dirOf(entry);
+      h.replace(/<(?:script|link|img)\b[^>]*?\s(?:src|href)\s*=\s*["']([^"'#]+)/gi, (m, u) => { refs.push([/^(https?:)?\/\//.test(u) ? u : u.split("?")[0], /^<link/i.test(m) && !/stylesheet|icon/i.test(m)]); return m; });
+      const ext2 = [...new Set(refs.filter(([u, sk]) => !sk && /^(https?:)?\/\//.test(u)).map(([u]) => u.startsWith("//") ? "https:" + u : u))].slice(0, 10);
+      await Promise.all(ext2.map(async (u) => { let ok = false; try { const x = new URL(u); if (hostOk(x.hostname)) { const rr = await fetch(u, { method: "HEAD", redirect: "follow", signal: AbortSignal.timeout(6000) }); ok = rr.ok || rr.status === 405; } } catch { } cdn.push({ url: u, ok }); }));
+      const fileSet = new Set(inBase.map((f) => rel(f.path)));
+      const miss = [...new Set(refs.filter(([u, skip2]) => !skip2 && !/^(https?:|\/\/|data:|mailto:|tel:|javascript:|\{|\$)/i.test(u)).map(([u]) => { let v = u; try { v = decodeURIComponent(u); } catch { } return v.startsWith("/") ? posix(dirOf(entry), v.replace(new RegExp("^/" + g.repo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "/"), "/")) : posix(ed, v); }))].filter((p) => !fileSet.has(p));
+      if (ext2.length) { const bad = cdn.filter((c) => !c.ok); add(bad.length ? "warn" : "ok", bad.length ? `Dış kaynaklardan ${bad.length}/${ext2.length} tanesine ulaşılamadı: ${bad.slice(0, 2).map((c) => c.url.replace(/^https?:\/\//, "").slice(0, 50)).join(", ")}` : `Dış kaynaklar (CDN) erişilebilir: ${ext2.length}/${ext2.length}`); }
+      add(miss.length ? "fail" : "ok", miss.length ? `Sayfanın istediği ${miss.length} dosya depoda yok: ${miss.slice(0, 3).join(", ")}` : "Sayfanın istediği tüm yerel dosyalar depoda mevcut");
+    }
+  }
+  const pagesList = htmls.filter((h) => h !== entry && dirOf(h) === dirOf(entry || "")).slice(0, 20);
+  if (pagesList.length) add("warn", `${pagesList.length} ek sayfa var (${pagesList.slice(0, 3).join(", ")}${pagesList.length > 3 ? "…" : ""}); ilk sürümde ana sayfa alınır.`);
+  if (R.license && R.license.spdx_id && R.license.spdx_id !== "NOASSERTION") add("ok", "Lisans: " + R.license.spdx_id);
+  else if (!R.private && !(user && user.github_login && user.github_login.toLowerCase() === g.owner.toLowerCase())) add("warn", "Depoda lisans yok; başkasına aitse yayınlamadan önce sahibinden izin al.");
+  const out = {
+    repo: { owner: g.owner, name: g.repo, full: R.full_name, description: R.description, stars: R.stargazers_count, private: !!R.private, lang: R.language, pushed: R.pushed_at, url: R.html_url, ref, sha: sha.slice(0, 12), base, mine: !!(user && user.github_login && user.github_login.toLowerCase() === g.owner.toLowerCase()) },
+    kind, entry, framework: fw ? fw[1] : null, ui, pages, homepage, pagesList, cdn,
+    deps: pkg ? Object.entries(pkg.dependencies || {}).map(([n, v]) => ({ n, v, dev: false })).concat(Object.entries(pkg.devDependencies || {}).map(([n, v]) => ({ n, v, dev: true }))).slice(0, 80) : [],
+    scripts: pkg && pkg.scripts ? Object.keys(pkg.scripts).slice(0, 12) : [],
+    checks, auth: user && user.github_token ? "user" : tok ? "server" : "none",
+    _files: inBase.map((f) => ({ p: rel(f.path), s: f.size })), _sha: sha,
+  };
+  cacheSet(ck, out); return out;
+}
+const pubInspect = (x) => { const { _files, _sha, ...rest } = x; return rest; };
+
+const IMG_EXT = /\.(png|jpe?g|gif|webp|svg|ico|avif|bmp)$/i;
+const MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", ico: "image/x-icon", avif: "image/avif", bmp: "image/bmp", woff2: "font/woff2", woff: "font/woff", ttf: "font/ttf", otf: "font/otf" };
+// Tek dosyada birleştir. src: { load(p,max), pub(p) -> herkese açık URL|null, exists(p) -> bool|null, root, label }
+async function bundleSite(src, entry) {
+  const rep = { css: 0, js: 0, img: 0, linked: 0, missing: [], external: [], dropped: [], warnings: [] };
+  const first = await src.load(entry, 2_000_000); need(first && first.buf, 502, "Giriş sayfası indirilemedi: " + entry);
+  let html = first.buf.toString("utf8"); const dir = dirOf(entry); let fetches = 0; let budget = 900_000;
+  const isExt = (u) => /^(https?:)?\/\//i.test(u); const skip = (u) => !u || /^(data:|blob:|mailto:|tel:|javascript:|#|about:)/i.test(u) || /\{\{|\$\{|<%/.test(u);
+  const resolve = (from, u) => { u = u.split("#")[0].split("?")[0]; if (!u) return null; try { u = decodeURIComponent(u); } catch { } if (u.startsWith("/")) { u = u.replace(new RegExp("^/" + (src.prefix || "\\0") + "/"), "/"); return posix(src.root, u); } return posix(from, u); };
+  const ext = (u) => { const h = (u.startsWith("//") ? "https:" + u : u); try { const x = new URL(h); if (!rep.external.includes(x.host)) rep.external.push(x.host); } catch { } return h; };
+  async function asset(p, max) { if (src.exists(p) === false) { if (!rep.missing.includes(p)) rep.missing.push(p); return null; } if (++fetches > 60) return null; return src.load(p, max); }
+  const memo = new Map();
+  async function asUrl(p, imgOk) { const k = p + "|" + !!imgOk; if (!memo.has(k)) memo.set(k, asUrl0(p, imgOk)); return memo.get(k); }
+  async function asUrl0(p, imgOk) {
+    if (imgOk && IMG_EXT.test(p) && budget > 60000) { const r = await asset(p, 48000); if (r && r.buf) { const e = p.split(".").pop().toLowerCase(); const d = "data:" + (MIME[e] || r.type || "application/octet-stream") + ";base64," + r.buf.toString("base64"); budget -= d.length; rep.img++; return d; } }
+    else if (src.exists(p) === false) { if (!rep.missing.includes(p)) rep.missing.push(p); return null; }
+    const pu = src.pub(p); if (pu) { rep.linked++; return pu; }
+    if (!rep.dropped.includes(p)) rep.dropped.push(p); return null;
+  }
+  async function cssFix(css, from) {
+    const jobs = []; css.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g, (m, q2, u) => { jobs.push(u); return m; });
+    const map = {}; for (const u of [...new Set(jobs)]) { if (skip(u)) continue; if (isExt(u)) { map[u] = ext(u); continue; } const p = resolve(from, u); if (p) map[u] = await asUrl(p, true); }
+    css = css.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g, (m, q2, u) => map[u] ? `url("${map[u]}")` : m);
+    const imps = []; css.replace(/@import\s+(?:url\()?\s*['"]([^'"]+)['"]\s*\)?\s*;/g, (m, u) => { imps.push(u); return m; });
+    for (const u of imps) { if (isExt(u)) { ext(u); continue; } const p = resolve(from, u); const r = p && await asset(p, 300000); css = css.replace(new RegExp("@import\\s+(?:url\\()?\\s*['\"]" + u.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "['\"]\\s*\\)?\\s*;"), r && r.buf ? await cssFix(r.buf.toString("utf8"), dirOf(p)) : ""); }
+    return css;
+  }
+  html = html.replace(/<base\b[^>]*>/gi, "");
+  // 1) Stil dosyaları
+  const links = [...html.matchAll(/<link\b[^>]*>/gi)].map((m) => m[0]);
+  for (const tag of links) {
+    const rel2 = (tag.match(/\brel\s*=\s*["']?([^"'\s>]+)/i) || [])[1] || ""; const href = (tag.match(/\bhref\s*=\s*["']([^"']+)["']/i) || [])[1];
+    if (!href || skip(href)) continue;
+    if (isExt(href)) { html = html.replace(tag, tag.replace(href, ext(href))); continue; }
+    const p = resolve(dir, href); if (!p) continue;
+    if (/stylesheet/i.test(rel2)) { const r = await asset(p, 400000); if (r && r.buf) { const media = (tag.match(/\bmedia\s*=\s*["']([^"']+)["']/i) || [])[1]; const css = await cssFix(r.buf.toString("utf8"), dirOf(p)); budget -= css.length; rep.css++; html = html.replace(tag, () => `<style${media ? ` media="${media}"` : ""}>\n${css}\n</style>`); } else html = html.replace(tag, ""); }
+    else if (/icon|apple-touch/i.test(rel2)) { const u = await asUrl(p, true); html = html.replace(tag, u ? tag.replace(href, u) : ""); }
+    else if (/modulepreload|preload|prefetch|manifest/i.test(rel2)) html = html.replace(tag, "");
+  }
+  // 2) Betikler
+  const scripts = [...html.matchAll(/<script\b([^>]*)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>\s*<\/script>/gi)];
+  for (const m of scripts) {
+    const [tag, a1, s, a2] = m; if (skip(s)) continue; if (isExt(s)) { html = html.replace(tag, tag.replace(s, ext(s))); continue; }
+    const p = resolve(dir, s); if (!p) continue; const attrs = (a1 + a2).replace(/\s+(async|defer|crossorigin(=["'][^"']*["'])?|integrity=["'][^"']*["'])/gi, "");
+    const r = await asset(p, 600000); if (!r || !r.buf) { if (r && r.tooBig) { const pu = src.pub(p); if (pu) { html = html.replace(tag, `<script${attrs} src="${pu}"></script>`); rep.linked++; continue; } rep.dropped.push(p); } html = html.replace(tag, ""); continue; }
+    const js = r.buf.toString("utf8"); const isMod = /type\s*=\s*["']module["']/i.test(attrs);
+    if (isMod && /(?:\bimport\b[^;'"]*?|\bfrom\s*|\bimport\s*\()\s*["']\.{0,2}\//.test(js)) { const pu = src.pub(p); if (pu) { html = html.replace(tag, () => `<script${attrs} src="${pu}"></script>`); rep.linked++; continue; } rep.warnings.push(p + " modül olarak başka dosyalar içe aktarıyor; tek dosyada çalışmayabilir."); }
+    if (/\bfetch\(\s*["'`](?!https?:)/.test(js)) rep.warnings.push(p + " çalışırken başka dosyalar yüklüyor (fetch); bu veriler ayrıca taşınmalı.");
+    budget -= js.length; rep.js++; html = html.replace(tag, () => `<script${attrs}>\n${js.replace(/<\/script/gi, "<\\/script")}\n</script>`);
+  }
+  // 3) Satır içi stiller ve diğer kaynaklar (img, source, video, audio, a[href] dosyaları)
+  const styles = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
+  for (const m of styles) if (/url\(/.test(m[1]) && m[1].length < 400000) { const fixed = await cssFix(m[1], dir); html = html.replace(m[1], () => fixed); }
+  const attrRe = /(<(?:img|source|video|audio|track|input|image|use|object|embed|iframe)\b[^>]*?\s)(src|poster|data-src|href|xlink:href|data)(\s*=\s*["'])([^"']+)(["'])/gi;
+  const found = [...html.matchAll(attrRe)].map((m) => m[4]).filter((u) => !skip(u) && !isExt(u));
+  const amap = {}; for (const u of [...new Set(found)]) { const p = resolve(dir, u); if (p) amap[u] = await asUrl(p, true); }
+  html = html.replace(attrRe, (m, a, k, eq, u, cl) => isExt(u) ? a + k + eq + ext(u) + cl : amap[u] ? a + k + eq + amap[u] + cl : m);
+  html = html.replace(/\ssrcset\s*=\s*["']([^"']+)["']/gi, (m, v) => { const parts = v.split(",").map((x) => x.trim().split(/\s+/)); const ok = parts.map(([u, d]) => { if (skip(u) || isExt(u)) return [u, d]; const p = resolve(dir, u); const pu = p && src.pub(p); return pu ? [pu, d] : null; }).filter(Boolean); return ok.length ? ` srcset="${ok.map((x) => x.filter(Boolean).join(" ")).join(", ")}"` : ""; });
+  html = html.replace(/(<a\b[^>]*\shref\s*=\s*["'])([^"'#?]+\.(?:pdf|zip|docx?|xlsx?|pptx?|mp3|mp4|png|jpe?g))(["'])/gi, (m, a, u, c) => { if (isExt(u)) return m; const p = resolve(dir, u); const pu = p && src.pub(p); return pu ? a + pu + c : m; });
+  if (!/<meta[^>]+viewport/i.test(html)) html = html.replace(/<head[^>]*>/i, (h) => h + '\n<meta name="viewport" content="width=device-width,initial-scale=1">');
+  if (!/<meta[^>]+charset/i.test(html)) html = html.replace(/<head[^>]*>/i, (h) => h + '\n<meta charset="utf-8">');
+  const title = ((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || "").replace(/\s+/g, " ").trim().slice(0, 80);
+  need(html.length <= 1500000, 413, `Birleştirilmiş sayfa çok büyük (${Math.round(html.length / 1024)} KB, sınır 1,5 MB). Daha küçük bir klasör ya da sayfa seç ya da yapay zekâyla sadeleştirerek dönüştür.`);
+  if (html.length > 400000) rep.warnings.push("Sayfa büyük (" + Math.round(html.length / 1024) + " KB): önizleme ve yayın çalışır, yapay zekâ ile düzenleme için önce sadeleştirmek gerekebilir.");
+  return { html, title, report: rep };
+}
+function repoSource(user, x) {
+  const tok = ghTok(user); const g = x.repo; const sha = x._sha; const base = g.base;
+  const set = new Map(x._files.map((f) => [f.p, f.s]));
+  return {
+    root: dirOf(x.entry || ""), prefix: g.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+    exists: (p) => set.has(p),
+    load: (p, max) => { const s = set.get(p); if (s != null && s > max) return { tooBig: true, size: s }; return rawGet({ url: `https://raw.githubusercontent.com/${g.owner}/${g.name}/${sha}/${posix(base, p).split("/").map(encodeURIComponent).join("/")}`, tok: g.private ? tok : null }, max); },
+    pub: (p) => g.private ? null : `https://cdn.jsdelivr.net/gh/${g.owner}/${g.name}@${sha}/${posix(base, p).split("/").map(encodeURIComponent).join("/")}`,
+  };
+}
+function urlSource(pageUrl) {
+  const u0 = new URL(pageUrl); need(/^https?:$/.test(u0.protocol), 400, "Adres http(s) olmalı");
+  need(hostOk(u0.hostname), 400, "Bu adres içe aktarılamaz");
+  const abs = (p) => new URL(p.split("/").map(encodeURIComponent).join("/"), u0.origin + "/").href;
+  return { root: "", exists: () => null, load: (p, max) => rawGet({ url: abs(p) }, max), pub: (p) => abs(p) };
+}
+async function liveEntry(src0, url) { const u = new URL(url); const path = u.pathname.replace(/^\//, ""); return /\.html?$/i.test(path) ? path : posix(path, "index.html"); }
+
+route("POST", "/api/github/inspect", async ({ body, user, req }) => {
+  rateGh(user, req, 120);
+  const x = await ghInspect(user, str(body.url, 400, "Adres", true));
+  return { ...pubInspect(x), github: { connected: !!(user && user.github_token), login: user ? user.github_login || null : null } };
+});
+route("POST", "/api/github/import", async ({ body, user, req }) => {
+  rateGh(user, req, 60);
+  const x = await ghInspect(user, str(body.url, 400, "Adres", true));
+  const mode = ["repo", "live"].includes(body.mode) ? body.mode : (x.kind === "build" ? "live" : "repo");
+  let out;
+  if (mode === "live") {
+    const live = [x.pages, x.homepage].find((u) => typeof u === "string" && u) || null;
+    const target = typeof body.liveUrl === "string" && /^https?:\/\//.test(body.liveUrl) ? body.liveUrl : live;
+    need(target, 422, "Bu proje derleme gerektiriyor ve yayında bir sürümü bulunamadı. “Yapay zekâyla dönüştür” seçeneğini kullan.");
+    const s = urlSource(target); out = await bundleSite(s, await liveEntry(s, target)); out.report.source = target;
+  } else {
+    let entry = x.entry; if (typeof body.entry === "string" && x._files.some((f) => f.p === body.entry) && /\.html?$/i.test(body.entry)) entry = body.entry;
+    need(entry, 422, "İçe aktarılacak bir HTML sayfası bulunamadı.");
+    need(x.kind !== "build" || body.entry, 422, "Bu proje derleme gerektiriyor; yayındaki sürümü ya da yapay zekâ dönüşümünü kullan.");
+    out = await bundleSite(repoSource(user, { ...x, entry }), entry); out.report.source = x.repo.full + "@" + x.repo.sha + "/" + posix(x.repo.base, entry);
+  }
+  return { html: out.html, title: out.title || x.repo.name, report: out.report, repo: x.repo, kind: x.kind, mode };
+});
+// Derleme isteyen projeler: kaynak kodu yapay zekâyla tek dosyalık uygulamaya çevir (kredi kullanır)
+route("POST", "/api/github/convert", async (ctx) => {
+  const { body, user, req } = ctx;
+  const x = await ghInspect(user, str(body.url, 400, "Adres", true));
+  const rt = await resolveRoute(user, body, req, "build"); rt.maxTokens = 20000;
+  const pick = x._files.filter((f) => /\.(jsx?|tsx?|vue|svelte|astro|css|scss|html?|json|md)$/i.test(f.p) && !/(^|\/)(node_modules|dist|build|out|\.next|coverage|test|tests|__tests__|\.github)\//.test(f.p) && !/(lock|\.min\.|\.d\.ts$|\.test\.|\.spec\.)/i.test(f.p) && !/(^|\/)\.env/.test(f.p) && f.s < 60000)
+    .sort((a, b) => { const w = (p) => /package\.json$/.test(p) ? 0 : /(^|\/)(src\/)?(main|index|app)\.(jsx?|tsx?|vue|svelte)$/i.test(p) ? 1 : /^src\//.test(p) ? 2 : /readme/i.test(p) ? 4 : 3; return w(a.p) - w(b.p) || a.s - b.s; });
+  const src = repoSource(user, { ...x, entry: x.entry || "index.html" }); let total = 0; const parts = [];
+  for (const f of pick) { if (total > 90000 || parts.length >= 40) break; const r = await src.load(f.p, 60000); if (!r || !r.buf) continue; const t = r.buf.toString("utf8"); total += t.length; parts.push(`--- ${f.p} ---\n${t}`); }
+  need(parts.length, 422, "Dönüştürülecek kaynak dosya bulunamadı");
+  const messages = [{ role: "system", content: GEN_SYSTEM + `\n- GÖREV: Aşağıda bir GitHub projesinin (${x.framework || "web"} ${x.ui.join("/")}) kaynak dosyaları var. Bu projeyi derleme gerektirmeyen, TEK DOSYALIK, birebir aynı görünen ve aynı işlevleri yapan bir HTML'e dönüştür. Bileşenleri, sayfaları (hash yönlendirme ile), stilleri, metinleri ve verileri koru. React/Vue gerekiyorsa CDN'den yükle (esm.sh ya da unpkg) veya vanilla JS'e çevir. Sunucu/API çağrılarını localStorage ya da örnek verilerle çalışır hale getir; dışarıdaki herkese açık API'leri koruyabilirsin.` + runOpts(rt, body) }, { role: "user", content: `Depo: ${x.repo.full} (${x.repo.ref})\n\n` + parts.join("\n\n") }];
+  const fin = ({ text, model, usage }) => { const o = extractHtml(text); const credits = charge(user, rt, "github", usage); return { ...o, model, provider: rt.provider, spent: rt.credits, credits, repo: x.repo }; };
+  if (body.stream === true) return aiStream(ctx, rt, messages, fin);
+  return fin(await chatWith(rt, messages, 20000));
+});
+
 // Uygulamalar (kullanıcının kendi)
 route("GET", "/api/apps", ({ user }) => { need(user, 401, "Giriş yapın"); return { apps: q("SELECT * FROM apps WHERE owner_id=? ORDER BY updated DESC").all(user.id).map((a) => appRow(a)) }; });
 route("GET", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); return { app: appRow(ownApp(user, params.id), true) }; });
 route("POST", "/api/apps", ({ user, body }) => {
   need(user, 401, "Kaydetmek için giriş yapın");
-  const id = rid(); const html = str(body.html, 400000, "HTML", true);
+  const id = rid(); const html = str(body.html, 1500000, "HTML", true);
   q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,prompt_log,meta) VALUES(?,?,?,?,?,?,?,?,?,?)").run(id, user.id, str(body.title, 80, "Ad") || "Adsız uygulama", str(body.description, 400, "Açıklama"), CATS.includes(body.category) ? body.category : "diger", str(body.emoji, 8, "Simge") || "✨", /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : "#4f8cff", html, JSON.stringify((Array.isArray(body.prompt_log) ? body.prompt_log : []).slice(-50)), cleanMeta(body.meta, "{}"));
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(id), true) };
 });
@@ -659,7 +926,7 @@ route("PUT", "/api/apps/:id", ({ user, body, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
   q(`UPDATE apps SET title=?, description=?, category=?, emoji=?, color=?, html=?, prompt_log=?, meta=?, updated=? WHERE id=?`).run(
     str(body.title, 80, "Ad") || a.title, body.description !== undefined ? str(body.description, 400, "Açıklama") : a.description, CATS.includes(body.category) ? body.category : a.category, str(body.emoji, 8, "Simge") || a.emoji,
-    /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : a.color, body.html !== undefined ? str(body.html, 400000, "HTML", true) : a.html, Array.isArray(body.prompt_log) ? JSON.stringify(body.prompt_log.slice(-50)) : a.prompt_log, cleanMeta(body.meta, a.meta), now(), a.id);
+    /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : a.color, body.html !== undefined ? str(body.html, 1500000, "HTML", true) : a.html, Array.isArray(body.prompt_log) ? JSON.stringify(body.prompt_log.slice(-50)) : a.prompt_log, cleanMeta(body.meta, a.meta), now(), a.id);
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id), true) };
 });
 route("DELETE", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("DELETE FROM apps WHERE id=?").run(a.id); return { ok: true }; });
