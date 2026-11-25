@@ -571,7 +571,7 @@ route("PATCH", "/api/admin/orders/:id", ({ user, params, body }) => {
 route("DELETE", "/api/admin/orders/:id", ({ user, params }) => { need(isAdmin(user), 403, "Yönetici yetkisi gerekli"); q("DELETE FROM orders WHERE id=?").run(params.id); return { ok: true }; });
 
 // Talep radarı
-const EV = ["search", "category_view", "app_view", "app_want", "wizard_submit", "radar_search", "studio_prompt", "store_view", "store_open"];
+const EV = ["search", "category_view", "app_view", "app_want", "wizard_submit", "radar_search", "studio_prompt", "store_view", "store_open", "template_use", "template_demo"];
 route("POST", "/api/events", ({ body, user }) => {
   need(EV.includes(body.type), 400, "Olay türü geçersiz");
   q("INSERT INTO events(session_id,user_id,type,query,category,repo,meta) VALUES(?,?,?,?,?,?,?)").run(str(body.session_id, 64, "Oturum"), user ? user.id : null, body.type, str(body.query, 200, "Sorgu"), str(body.category, 60, "Kategori"), str(body.repo, 200, "Depo"), body.meta ? JSON.stringify(body.meta).slice(0, 4000) : null);

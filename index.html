@@ -436,6 +436,32 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
 .todo-i{width:18px;height:18px;border-radius:6px;border:1.5px solid #3a4560;display:grid;place-items:center;flex-shrink:0;margin-top:1px}.todo-r.done .todo-i{background:#14301f;border-color:#14301f;color:#86efac}.todo-r.run .todo-i{border-color:transparent}
 .todo-f{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);font-size:12.5px;color:#cfd8ea;background:rgba(0,0,0,.2)}
 @media(max-width:820px){.sketch{height:620px}.sk-text{width:100%;bottom:auto;padding:26px 22px;background:linear-gradient(180deg,rgba(11,15,23,.92),rgba(11,15,23,.6) 80%,transparent)}.sk-text h2{font-size:28px}.sketch .sk-phone{left:50%;top:72%;width:170px;height:340px}.skpromo{flex-wrap:wrap}}
+
+/* v3.7 hazır şablonlar */
+.tpth{position:relative;overflow:hidden;width:100%;background:#fff}.tpth iframe{border:0;transform-origin:0 0;pointer-events:none;position:absolute;left:0;top:0}
+.tpc{display:flex;flex-direction:column;gap:12px}
+.tpc-img{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 0 0 1px var(--sep),0 24px 40px -28px rgba(0,0,0,.9);transition:transform .35s var(--ease),box-shadow .35s}
+.tpc-img:hover{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(255,255,255,.18),0 30px 50px -26px rgba(79,140,255,.55)}
+.tpc-ov{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 40%,rgba(5,8,14,.55));opacity:0;transition:opacity .25s}.tpc-img:hover .tpc-ov{opacity:1}
+.tpc-b{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);color:#111;font-weight:700;font-size:13px;padding:9px 14px;border-radius:99px}
+.tpc-type{position:absolute;left:10px;top:10px;font-size:11px;font-weight:700;background:rgba(10,14,22,.72);backdrop-filter:blur(6px);color:#fff;padding:4px 9px;border-radius:99px}
+.tpc-m{display:flex;align-items:center;gap:12px}.tpc-m b{display:block;font-size:15px}.tpc-m span{font-size:12.5px;color:var(--label3)}
+.tpc-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.shelf-x .tpc{width:340px}.shelf-x:has(.tpc){grid-auto-columns:340px}
+.tp-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;border-radius:28px;padding:40px 44px;background:radial-gradient(600px 300px at 90% 0,rgba(6,182,212,.35),transparent 60%),radial-gradient(500px 300px at 0 100%,rgba(139,92,246,.35),transparent 60%),linear-gradient(140deg,#121a2c,#0d1220);border:1px solid var(--sep)}
+.tp-hero h1{font-size:40px;letter-spacing:-1.2px;line-height:1.06;margin:8px 0 12px}.tp-hero p{color:#c3cbe0;font-size:15px;line-height:1.6;margin:0}
+.tp-stats{display:flex;gap:28px;margin-top:22px}.tp-stats b{display:block;font-size:26px;letter-spacing:-.5px}.tp-stats span{font-size:12px;color:var(--label3)}
+.tp-stack{position:relative;height:300px}.tp-sc{position:absolute;width:300px;border-radius:14px;overflow:hidden;box-shadow:0 30px 50px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.12);transition:transform .5s var(--ease)}
+.tp-sc:nth-child(1){left:0;top:70px;transform:rotate(-6deg)}.tp-sc:nth-child(2){left:22%;top:20px;z-index:2}.tp-sc:nth-child(3){left:44%;top:90px;transform:rotate(6deg)}
+.tp-hero:hover .tp-sc:nth-child(1){transform:rotate(-9deg) translateX(-10px)}.tp-hero:hover .tp-sc:nth-child(3){transform:rotate(9deg) translateX(10px)}
+.tp-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 20px}.tp-secs{display:flex;gap:6px;flex-wrap:wrap}
+.tp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:28px 22px}
+.tp-how{margin-top:44px;padding:26px;border-radius:24px;border:1px solid var(--sep);background:rgba(255,255,255,.02)}.tp-how h3{margin:0 0 16px;font-size:20px}
+.tp-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.tp-steps div{display:flex;flex-direction:column;gap:6px}.tp-steps b{font-size:14.5px;margin-top:4px}.tp-steps span{font-size:13px;color:var(--label2);line-height:1.5}
+.tp-note{font-size:12px;color:var(--label3);margin:18px 0 0}
+.fp-bar a.ib{text-decoration:none}
+@media(max-width:1000px){.tp-hero{grid-template-columns:1fr}.tp-stack{display:none}.tp-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:820px){.tp-hero{padding:26px 22px}.tp-hero h1{font-size:30px}.tp-grid{grid-template-columns:1fr}.shelf-x .tpc{width:300px}}
 </style>
 </head>
 <body>
@@ -449,8 +475,17 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="3.6.0";
+const VERSION="3.7.0";
 const CHANGELOG=[
+ {v:"3.7.0",date:"2026-11-25",items:[
+  "🧩 Yeni “Şablonlar” bölümü: 8 tam çalışan hazır şablon, canlı demo ile",
+  "📊 Yönetim panelleri: Nova CRM (sürükle-bırak satış hunisi), Defter ön muhasebe / ERP (yazdırılabilir fatura, KDV, vade), Depom stok takip (hareketle otomatik stok düşümü, kritik stok uyarısı), Poliçem sigorta acentesi (yenileme, komisyon, hasar), Gülüş Kliniği randevu ajandası",
+  "🌐 Web siteleri: Konutya emlak (filtreli ilanlar, galeri, favoriler, kredi hesaplama), Kalkan Sigorta (4 adımlı teklif sihirbazı ve şirket karşılaştırma), Lokanta 1923 restoran (menü, sepet, WhatsApp sipariş, rezervasyon)",
+  "▶️ Her şablon canlı denenebilir: telefon, tablet, masaüstü görünümü; kayıt ekle, ara, sırala, CSV indir, koyu tema",
+  "🔨 “Kullan” ile şablon Geliştir'e yüklenir; yapay zekâyla firma adı, renk, alan ve özellikler değiştirilir",
+  "⭐ Keşfet'e “Hazır şablonlar · canlı demo” rafı; telefonda alt menüye Şablonlar",
+  "🎨 Tamamı özgün tasarım: 2025–26 çizgisi (bento ızgaralar, cam menüler, büyük tipografi), kodla çizilmiş görseller ve ücretsiz Google yazı tipleri",
+ ]},
  {v:"3.6.0",date:"2026-11-25",items:[
   "✏️ Çizimden uygulama: kağıda çizdiğin ekranın fotoğrafını ekle; yapay zekâ menüleri, kategorileri, görsel alanlarını, okları ve el yazısı başlıkları tanıyıp birebir yerleşimle uygulamaya çevirir",
   "🖼️ Görsel ekleme: düğmeyle, sürükle-bırak ya da yapıştır ile en fazla 3 görsel. Her görsele rol ver: Yerleşim çizimi, Stil / renk ya da İçerik görseli (uygulamanın içinde gösterilir)",
@@ -1562,7 +1597,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector}));if(st.html)setPendTheme(id)};
  useEffect(()=>{LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))})},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
- useEffect(()=>{if(incoming){let n=0;const assets={};const h=String(incoming.html||"").replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{300,}/g,m=>{n++;assets["IMG_"+n]=m;return "{{IMG_"+n+"}}"});setSt({...incoming,html:h,assets});setVersions([]);clearIncoming()}},[incoming]);
+ useEffect(()=>{if(incoming){let n=0;const assets={};const h=String(incoming.html||"").replace(/data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]{300,}/g,m=>{n++;assets["IMG_"+n]=m;return "{{IMG_"+n+"}}"});setSt({...incoming,html:h,assets});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},120);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{chatEnd.current&&chatEnd.current.scrollIntoView({behavior:"smooth",block:"end"})},[st.msgs.length,busy,plan]);
  useEffect(()=>{codeEnd.current&&codeEnd.current.scrollIntoView({block:"end"})},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
@@ -1811,7 +1846,7 @@ Object.assign(ICON_SVG,{
  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
 });
 // iOS / Material tarzı renkli ikon karoları
-const TILE={magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["phone","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["phone","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const Tile=({k,n,g,s=28})=>{const t=TILE[k]||[n||"dot",g||"#3b82f6,#6366f1"];return html`<span class="tile" style=${{width:s,height:s,borderRadius:s*.3,background:"linear-gradient(145deg,"+t[1]+")"}}><${Icon} n=${t[0]} s=${s*.56} c="#fff" w=${2}/></span>`};
 const BrandMark=({s=34})=>html`<span class="brand" style=${{width:s,height:s,borderRadius:s*.3}}><svg width=${s*.62} height=${s*.62} viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg></span>`;
@@ -1839,7 +1874,8 @@ function Shelf({title,more,children,scroll}){const ref=useRef(null);const mv=d=>
  return html`<section class="shelf"><div class="shelf-h"><h3>${title}</h3>${scroll&&html`<span class="shelf-n"><button class="navarr" onClick=${()=>mv(-1)}><${Icon} n="chevLeft" s=${18}/></button><button class="navarr" onClick=${()=>mv(1)}><${Icon} n="chevRight" s=${18}/></button></span>`}${more&&html`<a class="seeall" href="#" onClick=${e=>{e.preventDefault();more()}}>Tümünü Gör</a>`}</div><div ref=${ref} class=${scroll?"shelf-x":"shelf-g"}>${children}</div></section>`}
 function EdCard({eyebrow,title,text,icon,grad,onClick,emojis}){return html`<div class="edcard" onClick=${onClick}><div class="ed-t"><div class="eyebrow">${eyebrow}</div><h4>${title}</h4><p>${text}</p></div><div class="ed-art" style=${{background:"radial-gradient(circle at 30% 25%,#ffffff33,transparent 45%),linear-gradient(145deg,"+grad+")"}}><${Icon} n=${icon} s=${64} c="#fff" w=${1.4}/>${(emojis||[]).map((e,i)=>html`<span class="ed-chip" style=${{["--i"]:i}}>${e}</span>`)}</div></div>`}
 
-function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn}){
+function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn,onTpl}){
+ const [tdemo,setTdemo]=useState(null);
  const [apps,setApps]=useState(null);const [fresh,setFresh]=useState([]);const [cat,setCat]=useState(cat0||"");const [q,setQ]=useState(q0||"");const [sort,setSort]=useState("pop");const [sel,setSel]=useState(null);const [all,setAll]=useState(false);const [full,setFull]=useState(false);
  useEffect(()=>{setQ(q0||"")},[q0]);useEffect(()=>{setCat(cat0||"")},[cat0]);
  useEffect(()=>{if(!API_ON){setApps([]);return}const t=setTimeout(()=>{api("GET","/api/store?"+new URLSearchParams({cat,q,sort:sort==="yeni"?"yeni":""})).then(j=>setApps(j.apps)).catch(e=>{toast(e.message);setApps([])});if(q.trim().length>2)track("search",{query:q.trim(),category:"magaza"})},q?400:0);return()=>clearTimeout(t)},[cat,q,sort,apiOn]);
@@ -1885,6 +1921,8 @@ function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn}
    <${EdCard} eyebrow="Yayınla" title="Kendi alan adınla canlıya al" text="app.gitmapp.com adresinde anında, istersen kendi alan adında." icon="rocket" grad="#f97316,#f43f5e" emojis=${["🌐","📱"]} onClick=${()=>go("uygulamalarim")}/>
   </${Shelf}>
 
+  <${Shelf} title="Hazır şablonlar · canlı demo" scroll=${true} more=${()=>go("sablonlar")}>${TEMPLATE_LIB.map(t=>html`<${TplCard} key=${t.id} t=${t} w=${340} onDemo=${setTdemo} onUse=${onTpl}/>`)}</${Shelf}>
+  ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
   <${Shelf} title="Sektörüne özel tasarımlar" scroll=${true}>${DSECTORS.map(sc=>html`<div class="seccard" key=${sc.id} onClick=${()=>startTemplate({kind:sc.id==="oyun"?"game":"app",theme:sc.th[0],sector:sc.id})}>
    <div class="sc-h"><${Tile} n=${sc.ic} g=${sc.g} s=${34}/><div><b>${sc.l}</b><span>${sc.th.map(id=>themeById(id).name).join(" · ")}</span></div></div>
    <div class="sc-mocks">${sc.th.map((id,i)=>html`<div class="sc-m" key=${id} style=${{["--i"]:i}}><${ThemeMock} t=${themeById(id)} kind=${sc.id==="oyun"?"game":"app"} w=${84}/></div>`)}</div>
@@ -2027,6 +2065,45 @@ function AiCheck({toast}){
    <div><span>Örnek üretim</span>${r.chat?pill(r.chat.ok,r.chat.ok?"çalışıyor · "+r.chat.model+" → “"+r.chat.reply+"”":(r.chat.status||"")+" "+(r.chat.reply||r.chat.error||"")):"—"}</div>
    ${r.chat&&!r.chat.ok&&html`<div class="aic-help">Anahtar reddediliyorsa: hPanel → AI Router'dan anahtarı kopyalayın (sk-hstgr- ile başlar), sunucuda <span class="mono">/etc/gitmapp/api.env</span> içindeki <span class="mono">AI_KEY</span> değerini güncelleyip <span class="mono">systemctl restart gitmapp-api</span> çalıştırın. Model adı reddediliyorsa <span class="mono">AI_MODELS=claude-sonnet-5,gpt-5.2</span> gibi doğru adları ekleyin.</div>`}
   </div>`}</div>`;
+}
+
+/* ================= v3.7 — HAZIR ŞABLONLAR (çalışan demolar) ================= */
+const TEMPLATE_LIB=[
+ {id:"crm",name:"Nova CRM",type:"panel",sector:"İş & Satış",kind:"app",emoji:"🎯",pr:"#5b5bf7",ac:"#22d3ee",desc:"Müşteriler, sürükle-bırak satış hunisi, fırsatlar ve görevler. Satış ekipleri için tam CRM.",feat:["Kanban satış hunisi","Müşteri kartları","Görev ve hatırlatmalar","Gelir grafikleri","CSV dışa aktarma"]},
+ {id:"muhasebe",name:"Defter",type:"panel",sector:"Finans & Muhasebe",kind:"app",emoji:"🧾",pr:"#0f9d76",ac:"#3b82f6",desc:"Satış faturaları, cariler, giderler ve ürünler. Yazdırılabilir fatura ve KDV hesabıyla ön muhasebe / ERP.",feat:["Yazdırılabilir fatura (PDF)","KDV ve vade takibi","Cari hesaplar","Gider dağılımı","Geciken tahsilat uyarısı"]},
+ {id:"stok",name:"Depom",type:"panel",sector:"Stok & Depo",kind:"app",emoji:"📦",pr:"#f97316",ac:"#facc15",desc:"Ürün kartları, giriş-çıkış hareketleri, tedarikçiler ve kritik stok uyarıları. Hareket girildikçe stok otomatik güncellenir.",feat:["Otomatik stok düşümü","Kritik seviye uyarısı","Stok değeri","Tedarikçi listesi","Raf/konum bilgisi"]},
+ {id:"sigorta",name:"Poliçem",type:"panel",sector:"Sigorta",kind:"app",emoji:"🛡️",pr:"#2563eb",ac:"#10b981",desc:"Sigorta acentesi paneli: poliçeler, sigortalılar, teklif hunisi, hasar dosyaları ve yenileme takibi.",feat:["Yenileme yaklaşan poliçeler","Komisyon hesabı","Teklif hunisi","Hasar dosyaları","Branş raporları"]},
+ {id:"klinik",name:"Gülüş Kliniği",type:"panel",sector:"Sağlık",kind:"app",emoji:"🦷",pr:"#0ea5e9",ac:"#14b8a6",desc:"Randevu ajandası, hasta kartları, hizmet ve ücretler. Diş, güzellik ya da danışmanlık kliniklerine uygun.",feat:["Günlük randevu ajandası","Hasta notları","Hekime göre rapor","Onay bekleyenler","Hizmet ve fiyat listesi"]},
+ {id:"emlak",name:"Konutya",type:"site",sector:"Emlak",kind:"site",emoji:"🏡",pr:"#0f766e",ac:"#f59e0b",desc:"Emlak ofisi sitesi: filtreli ilan listesi, ilan detayı ve galerisi, favoriler, kredi hesaplama ve danışman formu.",feat:["Arama ve filtreler","İlan detay + galeri","Favoriler","Kredi hesaplama","WhatsApp ile iletişim"]},
+ {id:"sigortasite",name:"Kalkan Sigorta",type:"site",sector:"Sigorta",kind:"site",emoji:"✅",pr:"#2563eb",ac:"#10b981",desc:"Sigorta acentesi sitesi: ürünler, 4 adımlı teklif sihirbazı, şirket karşılaştırma, SSS ve iletişim.",feat:["Teklif sihirbazı","Şirket fiyat karşılaştırma","Ürün sayfaları","KVKK onaylı formlar","SSS"]},
+ {id:"restoran",name:"Lokanta 1923",type:"site",sector:"Yemek & Kafe",kind:"site",emoji:"🍽️",pr:"#c2410c",ac:"#eab308",desc:"Restoran sitesi: kategorili menü, sepet ve WhatsApp siparişi, masa rezervasyonu, yorumlar ve iletişim.",feat:["Kategorili menü","Sepet + WhatsApp sipariş","Masa rezervasyonu","Misafir yorumları","Harita ve saatler"]},
+];
+const TPL_URL=id=>"templates/"+id+".html";
+function TplThumb({t,w=380}){const s=w/1440;return html`<div class="tpth" style=${{height:900*s}}><iframe title=${t.name} src=${TPL_URL(t.id)} loading="lazy" tabindex="-1" sandbox="allow-scripts" style=${{width:1440,height:900,transform:"scale("+s+")"}}></iframe></div>`}
+function TplCard({t,onDemo,onUse,w}){return html`<div class="tpc">
+ <div class="tpc-img" onClick=${()=>onDemo(t)}><${TplThumb} t=${t} w=${w||380}/><div class="tpc-ov"><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı demo</span></div><span class="tpc-type">${t.type==="panel"?"Yönetim paneli":"Web sitesi"}</span></div>
+ <div class="tpc-m"><span class="tpc-ic" style=${{background:"linear-gradient(145deg,"+t.pr+","+t.ac+")"}}>${t.emoji}</span><div style=${{flex:1,minWidth:0}}><b>${t.name}</b><span>${t.sector}</span></div><button class="getbtn" onClick=${()=>onUse(t)}>KULLAN</button></div>
+</div>`}
+function TplDemo({t,close,onUse}){const [dev,setDev]=useState("desktop");
+ useEffect(()=>{const h=e=>{if(e.key==="Escape")close()};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
+ return html`<div class="fullprev" onClick=${close}><div class="fp-bar glass" onClick=${e=>e.stopPropagation()}><span class="tpc-ic" style=${{width:30,height:30,fontSize:15,background:"linear-gradient(145deg,"+t.pr+","+t.ac+")"}}>${t.emoji}</span><div style=${{display:"flex",flexDirection:"column",marginRight:8}}><b>${t.name}</b><span style=${{fontSize:11.5,color:"var(--label3)"}}>Canlı demo · veriler kurgusaldır, değişiklikler yalnızca bu tarayıcıda kalır</span></div>
+  <div class="seg">${[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]].map(([k,ic,l])=>html`<button key=${k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div><span style=${{flex:1}}></span>
+  <a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></a><button class="getbtn solid" onClick=${()=>onUse(t)}><${Icon} n="hammer" s=${14}/> Bu şablonla başla</button><button class="ib" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button></div>
+  <div class="fp-stage" onClick=${e=>e.stopPropagation()}><iframe title=${t.name} src=${TPL_URL(t.id)} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></div></div>`}
+function TemplatesPage({onUse,toast}){
+ const [type,setType]=useState("");const [sec,setSec]=useState("");const [demo,setDemo]=useState(null);
+ const secs=[...new Set(TEMPLATE_LIB.map(t=>t.sector))];const list=TEMPLATE_LIB.filter(t=>(!type||t.type===type)&&(!sec||t.sector===sec));
+ return html`<div class="explore">
+  <div class="tp-hero"><div><div class="eyebrow light">Hazır şablonlar · canlı demo</div><h1>Sıfırdan başlama.<br/>Çalışan bir şablonla başla.</h1><p>CRM, ön muhasebe, stok, sigorta, klinik, emlak ve restoran… Her şablon gerçekten çalışır: kayıt ekle, ara, sürükle, yazdır. Beğendiğini seç, Geliştir'de yapay zekâyla kendi işine göre değiştir.</p>
+   <div class="tp-stats"><div><b>${TEMPLATE_LIB.length}</b><span>Çalışan şablon</span></div><div><b>${secs.length}</b><span>Sektör</span></div><div><b>₺0</b><span>Ücretsiz</span></div></div></div>
+   <div class="tp-stack">${TEMPLATE_LIB.slice(0,3).map((t,i)=>html`<div class="tp-sc" key=${t.id} style=${{["--i"]:i}}><${TplThumb} t=${t} w=${300}/></div>`)}</div></div>
+  <div class="tp-filter"><div class="seg">${[["","grid","Tümü"],["panel","apps","Yönetim panelleri"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   <div class="tp-secs">${["",...secs].map(s=>html`<span key=${s} class=${"chip"+(sec===s?" on":"")} onClick=${()=>setSec(s)}>${s||"Tüm sektörler"}</span>`)}</div></div>
+  <div class="tp-grid">${list.map((t,i)=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}</div>
+  <section class="tp-how"><h3>Şablonla nasıl çalışılır?</h3><div class="tp-steps">${[["play","Canlı dene","Demoda kayıt ekle, sürükle, yazdır; telefon ve tablette nasıl göründüğüne bak."],["hammer","Kullan","Şablon Geliştir'e yüklenir. “Logomuzu koy, alanlara TC no ekle” gibi isteklerle değiştir."],["image","Kendi görsellerini ekle","Ürün, ilan ya da menü fotoğraflarını sürükle; içerik görseli olarak yerleşsin."],["rocket","Yayınla","Kendi adresinle tek tıkla canlıya al, istersen mağazada sat."]].map(([ic,t,d],i)=>html`<div key=${i}><${Tile} n=${ic} g=${["#3b82f6,#6366f1","#f97316,#ec4899","#22c55e,#14b8a6","#a855f7,#ec4899"][i]} s=${36}/><b>${t}</b><span>${d}</span></div>`)}</div>
+   <p class="tp-note">Şablonlar Gitmapp tarafından özgün olarak tasarlandı; görseller kod ile çizildi, yazı tipleri Google Fonts'tan ücretsiz lisanslıdır. İçlerindeki firma, kişi ve ilanlar kurgusaldır.</p></section>
+  ${demo&&html`<${TplDemo} t=${demo} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
+ </div>`;
 }
 
 function MyApps({auth,openAuth,toast,openInStudio,openPublish,health}){
@@ -2172,7 +2249,7 @@ function CreditAdmin({toast}){
 
 /* ================= UYGULAMA ================= */
 function App(){
- const CUST=["magaza","studio","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const CUST=["magaza","studio","sablonlar","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1);return v.startsWith("app/")?"detay":ALL.includes(v)?v:"magaza"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
  const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
@@ -2213,14 +2290,16 @@ function App(){
  const adminOrders=apiOn?(apiOrders||[]):orders;const setAdminOrders=apiOn?setOrdersApi:setOrders;
  const needLogin=mode==="admin"&&apiOn&&!isAdm&&ADMIN.includes(view);
  const switchMode=m=>{setMode(m);setView(m==="admin"?"siparisler":"magaza")};
+ const useTemplate=async t=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();track("template_use",{repo:"tpl:"+t.id});
+   setIncoming({html:h,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,appId:null,msgs:[{role:"assistant",content:"“"+t.name+"” şablonu yüklendi ve sağda çalışıyor. Şimdi kendi işine göre değiştirelim: örneğin “Firma adını Eczabirlik yap, ana rengi lacivert yap”, “Müşterilere TC kimlik no alanı ekle” ya da “Fatura altına IBAN bilgimizi yaz” diyebilirsin."}]});setView("studio")}catch(e){toast(e.message)}};
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
  const goStore=(o)=>{setSq({q:"",cat:"",...o,n:Date.now()});setView("magaza")};
  const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
- const NAVC=[["magaza","Keşfet"],["studio","Geliştir"],["oyunlar","Oyna"],["kategoriler","Kategoriler"],["uygulamalarim","Uygulamalarım"],["modeller","Dil Modelleri"],"Hizmetler",["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"],"",["guncel","Güncellemeler",isNew?"YENİ":0]];
+ const NAVC=[["magaza","Keşfet"],["studio","Geliştir"],["sablonlar","Şablonlar"],["oyunlar","Oyna"],["kategoriler","Kategoriler"],["uygulamalarim","Uygulamalarım"],["modeller","Dil Modelleri"],"Hizmetler",["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"],"",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const NAVA=[["siparisler","Siparişler",newOrders],...(apiOn?[["radar","Talep Radarı"]]:[]),["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
  const navGo=k=>{setMore(false);if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":k==="magaza"?view==="magaza"&&sq.cat!=="oyun":view===k;
- const TITLES={detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",uygulamalarim:"Uygulamalarım",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
+ const TITLES={sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",uygulamalarim:"Uygulamalarım",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
  const navList=(cls)=>NAV.map((it,i)=>typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} class=${"nav "+cls+(navOn(it[0])?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[2]?html`<b>${it[2]}</b>`:""}</button>`);
  const initials=u=>((u.name||u.email||"?").split(/[\s@]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("")||"?").toUpperCase();
  const NAV=mode==="admin"?NAVA:NAVC;
@@ -2232,15 +2311,16 @@ function App(){
    <div class="side-foot">
     ${apiOn?(auth.user?html`<div class="me" onClick=${()=>setView("hesabim")} title="Hesabım"><span class="avatar">${initials(auth.user)}</span><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><${Icon} n="gem" s=${11}/> ${auth.user.credits??0} kredi${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
-  <div class="bnav glass noprint">${(mode==="admin"?[["siparisler","Siparişler"],["radar","Radar"],["plan","Plan"],["kesfet","GitHub"]]:[["magaza","Keşfet"],["studio","Geliştir"],["oyunlar","Oyna"],["uygulamalarim","Uygulamalar"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
+  <div class="bnav glass noprint">${(mode==="admin"?[["siparisler","Siparişler"],["radar","Radar"],["plan","Plan"],["kesfet","GitHub"]]:[["magaza","Keşfet"],["studio","Geliştir"],["sablonlar","Şablonlar"],["uygulamalarim","Uygulamalar"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#7d89a1"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button>`:""}</div></div></div>`}
   <main class="main"><div class="topbar glass noprint"><span>${TITLES[view]||""}</span></div>
    ${needLogin?html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} initMode="giris" title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok.":"Siparişleri ve talep radarını görmek için yönetici hesabıyla giriş yapın."}/></div>`:html`<div>
    ${view==="studio"&&html`<${Studio} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
+   ${view==="sablonlar"&&html`<${TemplatesPage} onUse=${useTemplate} toast=${toast}/>`}
    ${view==="detay"&&html`<${AppDetail} key=${appSlug} slug=${appSlug} go=${navGo} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio} toast=${toast} startTemplate=${startTemplate}/>`}
    ${view==="modeller"&&html`<${ModelsPage} models=${models} go=${setView}/>`}
    ${view==="hesabim"&&html`<${Account} auth=${auth} health=${health} toast=${toast} models=${models} go=${setView}/>`}
-   ${view==="magaza"&&html`<${Store} apiOn=${apiOn} go=${navGo} q0=${sq.q} cat0=${sq.cat} key=${sq.n} startTemplate=${startTemplate} toast=${toast} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio}/>`}
+   ${view==="magaza"&&html`<${Store} onTpl=${useTemplate} apiOn=${apiOn} go=${navGo} q0=${sq.q} cat0=${sq.cat} key=${sq.n} startTemplate=${startTemplate} toast=${toast} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio}/>`}
    ${view==="uygulamalarim"&&html`<${MyApps} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
    ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>{track("app_want",{repo:r.full_name,category:c&&c.id});goWizard(r,null,c)}} onDetail=${r=>{track("app_view",{repo:r.full_name,category:storeCat&&storeCat.id});setCur(r)}} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
    ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView}/>`}
