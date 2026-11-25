@@ -193,11 +193,12 @@ async function resolveRoute(user, body, req, kind) {
   if (provider === "gitmapp") {
     need(CFG.aiKey, 503, "Yapay zekâ henüz yapılandırılmadı (AI_KEY eksik)");
     const ids = await listModels("gitmapp", CFG.aiKey);
-    const model = body.model && ids.includes(body.model) ? body.model : await defaultModel();
+    need(!body.model || ids.includes(body.model), 400, "“" + String(body.model).slice(0, 60) + "” modeli şu an Gitmapp'in yapay zekâ sağlayıcısında açık değil. Model listesinden başka bir model seç; kredin düşmedi.");
+    const model = body.model || await defaultModel(); const picked = !!body.model;
     const tier = tierOf(model); const factor = kind === "plan" ? 0.34 : 1; const credits = Math.max(1, Math.round(TIER_CREDITS[tier] * factor));
     if (!user) { need(tier !== "guclu", 403, "Güçlü modelleri kullanmak için ücretsiz hesap oluşturun."); useAi("ip:" + clientIp(req), CFG.aiDailyAnon, true); }
     else { const u = q("SELECT credits FROM users WHERE id=?").get(user.id); need((u.credits ?? 0) >= credits, 402, `Krediniz yetersiz (gereken ${credits}, kalan ${u.credits ?? 0}). Hesabım sayfasından kredi yükleyebilir ya da kendi API anahtarınızı bağlayabilirsiniz.`); useAi("u:" + user.id, 300, false); }
-    return { provider, base: CFG.aiBase, key: CFG.aiKey, model, credits: user ? credits : 0 };
+    return { provider, base: CFG.aiBase, key: CFG.aiKey, model, picked, credits: user ? credits : 0 };
   }
   need(user, 401, "Kendi anahtarınızı kullanmak için giriş yapın");
   const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider=?").get(user.id, provider);
@@ -214,7 +215,7 @@ async function postChat(rt, payload, signal) {
   // Bazı modeller sıcaklık ayarını kabul etmez: ayarsız tekrar dene
   if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
   // Gitmapp (Hostinger AI Router): model reddedilirse listedeki diğer modelleri sırayla dene
-  if (rt.provider === "gitmapp" && [401, 403, 404].includes(r.status) && !rt.noFallback) {
+  if (rt.provider === "gitmapp" && [401, 403, 404].includes(r.status) && !rt.noFallback && !rt.picked) {
     let ids = []; try { ids = await listModels("gitmapp", rt.key); } catch { }
     for (const alt of ids.filter((x) => x !== body.model).slice(0, 3)) {
       const r2 = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify({ ...body, model: alt }) });
@@ -245,24 +246,27 @@ async function chatWith(rt, messages, maxTokens = 12000, signal) {
   const t = await r.text(); visionErr(r, t, messages);
   need(r.ok, r.status === 429 ? 429 : r.status >= 400 && r.status < 500 ? 400 : 502, aiErr(rt, r.status, t));
   const j = JSON.parse(t);
-  return { text: j.choices?.[0]?.message?.content || "", model: rt.model, usage: j.usage || null };
+  return { text: partText(j.choices?.[0]?.message?.content), model: rt.model, usage: j.usage || null, finish: j.choices?.[0]?.finish_reason || null };
 }
+// İçerik bazı sağlayıcılarda dizi parçalar halinde gelir: [{type:"text",text:"..."}]
+function partText(c) { return Array.isArray(c) ? c.map((p) => (typeof p === "string" ? p : p && (p.text || ""))).join("") : (c || ""); }
 // Canlı akış (SSE): model yanıtını parça parça iletir
 async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) {
   const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens, stream: true }, AbortSignal.any([AbortSignal.timeout(300000), signal]));
   if (!r.ok) { const t = await r.text(); visionErr(r, t, messages); need(false, r.status === 429 ? 429 : r.status >= 400 && r.status < 500 ? 400 : 502, aiErr(rt, r.status, t)); }
   return async () => {
-    if (!(r.headers.get("content-type") || "").includes("event-stream")) { const j = await r.json(); const c = j.choices?.[0]?.message?.content || ""; onDelta(c); return { text: c, model: rt.model, usage: j.usage || null }; }
-    const dec = new TextDecoder(); let buf = "", text = "", usage = null;
+    if (!(r.headers.get("content-type") || "").includes("event-stream")) { const j = await r.json(); need(!j.error, 502, "Yapay zekâ sağlayıcısı hata döndürdü (" + rt.model + "): " + String(j.error?.message || j.error).slice(0, 200)); const c = partText(j.choices?.[0]?.message?.content); onDelta(c); return { text: c, model: rt.model, usage: j.usage || null, finish: j.choices?.[0]?.finish_reason || null }; }
+    const dec = new TextDecoder(); let buf = "", text = "", usage = null, finish = null, perr = null;
     for await (const chunk of r.body) {
       buf += dec.decode(chunk, { stream: true }); let i;
       while ((i = buf.indexOf("\n")) >= 0) {
         const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
         if (!line.startsWith("data:")) continue; const d = line.slice(5).trim(); if (d === "[DONE]") continue;
-        try { const j = JSON.parse(d); const c = j.choices?.[0]?.delta?.content; if (c) { text += c; onDelta(c); } if (j.usage) usage = j.usage; } catch {}
+        try { const j = JSON.parse(d); if (j.error) perr = j.error.message || String(j.error); const c = partText(j.choices?.[0]?.delta?.content); if (c) { text += c; onDelta(c); } if (j.choices?.[0]?.finish_reason) finish = j.choices[0].finish_reason; if (j.usage) usage = j.usage; } catch {}
       }
     }
-    return { text, model: rt.model, usage };
+    need(text || !perr, 502, "Yapay zekâ sağlayıcısı akış sırasında hata döndürdü (" + rt.model + "): " + String(perr).slice(0, 200) + " · kredin düşmedi.");
+    return { text, model: rt.model, usage, finish };
   };
 }
 function responseSignal(res) {
@@ -414,22 +418,28 @@ function applyPatches(cur, text) {
   while ((m = re.exec(text))) { const f = findLoose(out, m[1]); if (!f) { miss++; continue; } out = out.slice(0, f[0]) + m[2] + out.slice(f[0] + f[1]); ok++; }
   return { html: out, ok, miss };
 }
-function extractEdit(text, cur) {
-  if (!/<<<\s*ARA/.test(text)) return extractHtml(text);
+function extractEdit(text, cur, meta) {
+  if (!/<<<\s*ARA/.test(text)) return extractHtml(text, meta);
   const sm = text.match(/<!--\s*ÖZET:\s*([\s\S]*?)-->/i);
   const r = applyPatches(cur, text);
   need(r.ok > 0, 502, "Değişiklik mevcut koda yerleştirilemedi. İsteği biraz daha açık yazıp tekrar dene; kredin düşmedi.");
   const title = (r.html.match(/<title>([^<]{1,120})<\/title>/i) || [])[1] || null;
   return { html: r.html, summary: (sm ? sm[1].trim() : "Değişiklik uygulandı.") + (r.miss ? " (" + r.miss + " küçük parça eşleşmediği için atlandı.)" : ""), title, patched: r.ok };
 }
-function extractHtml(text) {
+function extractHtml(text, meta) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
   const sm = t.match(/<!--\s*ÖZET:\s*([\s\S]*?)-->/i);
   const i = t.search(/<!DOCTYPE html|<html/i);
-  need(i >= 0, 502, "Yapay zekâ geçerli bir uygulama üretemedi, isteğinizi biraz daha açık yazıp tekrar deneyin.");
+  if (i < 0) {
+    const said = t.replace(/<!--[\s\S]*?-->/g, "").replace(/\s+/g, " ").trim();
+    console.warn(new Date().toISOString(), "html yok:", (meta && meta.model) || "?", "finish=" + ((meta && meta.finish) || "?"), "len=" + t.length, JSON.stringify(said.slice(0, 200)));
+    need(said, 502, "Model (" + ((meta && meta.model) || "?") + ") boş yanıt döndü" + (meta && meta.finish ? " (bitiş: " + meta.finish + ")" : "") + ". Tekrar dene ya da başka bir model seç; kredin düşmedi.");
+    need(false, 502, "Model kod yerine şunu yazdı: «" + said.slice(0, 400) + (said.length > 400 ? "…" : "") + "» · Soruyu yanıtlayıp tekrar gönderebilir ya da isteği netleştirebilirsin; kredin düşmedi.");
+  }
   const html = t.slice(i);
   const title = (html.match(/<title>([^<]{1,120})<\/title>/i) || [])[1] || null;
-  return { html, summary: sm ? sm[1].trim() : "Uygulama hazır.", title };
+  const cut = meta && meta.finish === "length" && !/<\/html>/i.test(html);
+  return { html, summary: (sm ? sm[1].trim() : "Uygulama hazır.") + (cut ? " ⚠️ Yanıt model uzunluk sınırında kesildi; sayfanın sonu eksik olabilir. “devam et ve eksik kalan kısmı tamamla” yazarak tamamlatabilirsin." : ""), title };
 }
 const ASSIST_SYSTEM = `Sen Gitmapp'in Yayın Asistanısın. Teknik bilgisi olmayan kullanıcılara uygulamalarını yayına almalarında kısa, sıcak ve net Türkçe cümlelerle yardım edersin (en fazla 5 cümle, gerekirse madde işareti).
 Gitmapp'te yayın adımları: 1) Stüdyo'da uygulamayı yap ve kaydet. 2) "Hemen yayınla" ile ücretsiz app.gitmapp.com/<ad> adresi alınır, telefona "Ana ekrana ekle" ile indirilebilir. 3) "GitHub'a kaydet" ile uygulama kullanıcının KENDİ GitHub hesabına kaydedilir ve ücretsiz GitHub Pages adresi açılır (GitHub ile bağlan butonu). 4) Alan adı: ekrandan sorgulanır; kullanıcı Hostinger'dan kendisi alabilir ya da "Benim adıma alın" ile Gitmapp ekibi kullanıcı adına alıp bağlar. 5) Mağazaya koy: kategori ve fiyat seçilir, uygulama Gitmapp Mağazası'nda listelenir.
@@ -645,7 +655,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations) + runOpts(rt, body) + userRule(user) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
-  const fin = ({ text, model, usage }) => { const out = patch ? extractEdit(text, cur) : extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
+  const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
 });
@@ -692,7 +702,7 @@ route("POST", "/api/ai/review", async (ctx) => {
   const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "review");
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: html }];
-  const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
+  const fin = ({ text, model, usage, finish }) => { const out = extractHtml(text, { model, finish }); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
 });
@@ -1071,7 +1081,7 @@ route("POST", "/api/github/prototype", async (ctx) => {
     .sort((a, b) => { const w = (p) => /(layout|dashboard|index|home|app)\b/i.test(p) ? 0 : /(route|model)/i.test(p) ? 1 : 2; return w(a.p) - w(b.p) || a.s - b.s; });
   for (const f of ui) { if (total > 80000 || parts.length >= 34) break; await add(f.p, 12000); }
   const messages = [{ role: "system", content: GEN_SYSTEM + `\n- GÖREV: Bir GitHub projesinin (${x.framework || x.repo.lang || "bilinmeyen yapı"}) README'si, dosya yapısı ve arayüz dosyaları veriliyor. Projeyi ÇALIŞTIRMADAN anla ve ana ekranlarını SİMÜLE eden, tıklanabilir, TEK DOSYALIK bir PROTOTİP yap. Kurallar: Projenin gerçek modüllerini, menülerini, tablolarını, formlarını ve iş akışlarını (ör. sipariş → onay → sevkiyat) README ve kaynaklardan çıkar; uydurma modül ekleme. Kenar menüsü ya da sekmelerle 4-7 ekran arasında hash yönlendirme ile geçilsin; her ekranda gerçekçi Türkçe örnek veriler, durum rozetleri, arama ve filtre çalışsın; formlar localStorage'a kaydetsin. Arayüz tamamen Türkçe, modern ve sade olsun. En üstte ince bir şerit: “Prototip · ${x.repo.full} yapısından üretildi”. ÖZET yorumunda tespit ettiğin modülleri ve ekranları madde madde yaz.` + runOpts(rt, body) }, { role: "user", content: `Depo: ${x.repo.full} (${x.repo.ref})\nAçıklama: ${x.repo.description || "-"}\n\nDOSYA YAPISI:\n${tree}\n\n${parts.join("\n\n")}` }];
-  const fin = ({ text, model, usage }) => { const o = extractHtml(text); const credits = charge(user, rt, "prototype", usage); return { ...o, model, provider: rt.provider, spent: rt.credits, credits, repo: x.repo }; };
+  const fin = ({ text, model, usage, finish }) => { const o = extractHtml(text, { model, finish }); const credits = charge(user, rt, "prototype", usage); return { ...o, model, provider: rt.provider, spent: rt.credits, credits, repo: x.repo }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages, 16000));
 });
@@ -1086,7 +1096,7 @@ route("POST", "/api/github/convert", async (ctx) => {
   for (const f of pick) { if (total > 90000 || parts.length >= 40) break; const r = await src.load(f.p, 60000); if (!r || !r.buf) continue; const t = r.buf.toString("utf8"); total += t.length; parts.push(`--- ${f.p} ---\n${t}`); }
   need(parts.length, 422, "Dönüştürülecek kaynak dosya bulunamadı");
   const messages = [{ role: "system", content: GEN_SYSTEM + `\n- GÖREV: Aşağıda bir GitHub projesinin (${x.framework || "web"} ${x.ui.join("/")}) kaynak dosyaları var. Bu projeyi derleme gerektirmeyen, TEK DOSYALIK, birebir aynı görünen ve aynı işlevleri yapan bir HTML'e dönüştür. Bileşenleri, sayfaları (hash yönlendirme ile), stilleri, metinleri ve verileri koru. React/Vue gerekiyorsa CDN'den yükle (esm.sh ya da unpkg) veya vanilla JS'e çevir. Sunucu/API çağrılarını localStorage ya da örnek verilerle çalışır hale getir; dışarıdaki herkese açık API'leri koruyabilirsin.` + runOpts(rt, body) }, { role: "user", content: `Depo: ${x.repo.full} (${x.repo.ref})\n\n` + parts.join("\n\n") }];
-  const fin = ({ text, model, usage }) => { const o = extractHtml(text); const credits = charge(user, rt, "github", usage); return { ...o, model, provider: rt.provider, spent: rt.credits, credits, repo: x.repo }; };
+  const fin = ({ text, model, usage, finish }) => { const o = extractHtml(text, { model, finish }); const credits = charge(user, rt, "github", usage); return { ...o, model, provider: rt.provider, spent: rt.credits, credits, repo: x.repo }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages, 20000));
 });

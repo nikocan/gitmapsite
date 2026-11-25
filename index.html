@@ -2660,6 +2660,7 @@ const STUDIO_EVENTS={
 function studioStatus(log,lastAt){
  if(log.stopped)return "İşlem durduruldu";
  if(log.cut)return "İşlem yarıda kaldı";
+ if(log.asked)return "Model kod yazmadan önce soru sordu";
  if(log.error)return "İşlem tamamlanamadı";
  const kind=STUDIO_ACTIVITY[log.kind];
  if(!log.running)return log.kind==="update"&&log.events?.includes("unchanged")?"Değişiklik oluşmadı":kind?.done||"İşlem tamamlandı";
@@ -2689,7 +2690,8 @@ function WorkLog({log,lastAt,retry,onToggle,live}){
   const parts=["structure","styles","scripts"].filter(k=>ev.includes(k)).map(k=>({structure:"HTML yapısı",styles:"stiller",scripts:"JavaScript"})[k]);
   steps.push(html`<${ClStepRow} key="rcv" title=${writing?(log.req?.size&&Number(log.req.size)>=9?"Değişen parçaları yazıyor":"Kodu yazıyor")+(parts.length?" · "+parts.join(", "):""):"Yanıt alındı"+(parts.length?" · "+parts.join(", "):"")} state=${writing?"run":"ok"} live=${writing}>${tail&&html`<${ClIO} label=${writing?"Yanıt (canlı)":"Yanıt (son kısım)"}><code>${tail.slice(-700)}</code>${writing&&html`<span class="caret"></span>`}<//>`}<//>`)}
  if(ev.includes("processing")&&log.running)steps.push(html`<${ClStepRow} key="proc" title=${STUDIO_EVENTS.processing} state="run"/>`);
- if(!log.running&&!failed)steps.push(html`<${ClStepRow} key="done" title=${ev.includes("unchanged")?STUDIO_EVENTS.unchanged:ev.includes("plan")?STUDIO_EVENTS.plan:ev.includes("agent")?STUDIO_EVENTS.agent:STUDIO_EVENTS.preview} state="ok" open0=${false}>${(log.res?.summary||meta.length)&&html`<${ClIO} label="Sonuç" mono=${false}>${log.res?.summary&&html`<p>${log.res.summary}</p>`}<small class="cx-meta">${meta.join(" · ")}</small><//>`}<//>`);
+ if(log.asked)steps.push(html`<${ClStepRow} key="ask" title="Soru soruldu · yanıtını bekliyor, kredi harcanmadı" state="ok"/>`);
+ if(!log.running&&!failed&&!log.asked)steps.push(html`<${ClStepRow} key="done" title=${ev.includes("unchanged")?STUDIO_EVENTS.unchanged:ev.includes("plan")?STUDIO_EVENTS.plan:ev.includes("agent")?STUDIO_EVENTS.agent:STUDIO_EVENTS.preview} state="ok" open0=${false}>${(log.res?.summary||meta.length)&&html`<${ClIO} label="Sonuç" mono=${false}>${log.res?.summary&&html`<p>${log.res.summary}</p>`}<small class="cx-meta">${meta.join(" · ")}</small><//>`}<//>`);
  if(failed)steps.push(html`<${ClStepRow} key="err" title=${log.stopped?"Durdurdun · kredi harcanmadı":log.cut?"Sayfa yenilendiği ya da kapandığı için yarıda kaldı · Yeniden dene ile devam et":"Hata"} state="err">${log.res?.error&&html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`}<//>`);
  return html`<div class="studio-activity cx">
   ${log.task&&html`<h3>${log.task}</h3>`}
@@ -3655,6 +3657,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    if(error.name==="AbortError")finish({stopped:true});
    else{
     const message=error.message||"Bilinmeyen hata";
+    const asked=String(message).match(/^Model kod yerine şunu yazdı: «([\s\S]*?)»/);
+    if(asked){finish({asked:true,res:{summary:asked[1].slice(0,600)}},asked[1]+"\n\nYanıtını yaz, isteğinle birlikte modele geri göndereyim.",false);return null}
     finish({error:true,res:{error:String(message).slice(0,400),tail:liveRef.current.slice(-500)}},message,true);
     failAuth(error);
    }
@@ -3682,6 +3686,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
   {const it=promptIntent(text,{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),last:lastAsk()});
+   {const lw=st.msgs.findLast(m=>m.log);if(lw&&lw.log.asked&&!lw.log.answered&&it.k!=="approve"&&it.k!=="resume"&&lw.log.req?.text){const q=lw.log.res?.summary||"";lw.log.answered=true;const full=lw.log.req.text+"\n\nModelin sorusu: "+q+"\nYanıtım: "+text+"\n\nBu yanıtla artık soru sormadan uygulamayı yap.";setInput("");if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}return build(full,null,text,false,takeImages())}}
    if(it.k==="resume"){setInput("");toast("Son isteğin yeniden gönderiliyor");text=lastAsk()}else
    if(it.k==="approve"){setInput("");if(plan)return approvePlan();if(todo&&todo.awaiting){setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text}]}));return runTodos()}}
    if(it.k==="chat"&&!atts.length){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
