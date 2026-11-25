@@ -181,9 +181,13 @@ async function postChat(rt, payload, signal) {
   if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
   return r;
 }
+function visionErr(r, t, messages) {
+  const hasImg = messages.some((m) => Array.isArray(m.content));
+  if (!r.ok && hasImg && r.status >= 400 && r.status < 500 && /image|vision|multimodal|content type|image_url/i.test(t)) throw new HttpErr(400, "Seçili model görsel okuyamıyor. Görsel destekli bir model (ör. Claude Sonnet ya da GPT) seçip tekrar deneyin.");
+}
 async function chatWith(rt, messages, maxTokens = 12000) {
   const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens }, AbortSignal.timeout(240000));
-  const t = await r.text();
+  const t = await r.text(); visionErr(r, t, messages);
   need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200));
   const j = JSON.parse(t);
   return { text: j.choices?.[0]?.message?.content || "", model: rt.model, usage: j.usage || null };
@@ -191,7 +195,7 @@ async function chatWith(rt, messages, maxTokens = 12000) {
 // Canlı akış (SSE): model yanıtını parça parça iletir
 async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) {
   const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens, stream: true }, AbortSignal.any([AbortSignal.timeout(300000), signal]));
-  if (!r.ok) { const t = await r.text(); need(false, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200)); }
+  if (!r.ok) { const t = await r.text(); visionErr(r, t, messages); need(false, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200)); }
   return async () => {
     if (!(r.headers.get("content-type") || "").includes("event-stream")) { const j = await r.json(); const c = j.choices?.[0]?.message?.content || ""; onDelta(c); return { text: c, model: rt.model, usage: j.usage || null }; }
     const dec = new TextDecoder(); let buf = "", text = "", usage = null;
@@ -261,6 +265,24 @@ function runOpts(rt, body) {
   const ins = String(t.instructions || "").replace(/[<>`]/g, "").trim().slice(0, 1000);
   return ins ? "\n- Kullanıcının ek talimatları (yukarıdaki kurallarla çelişmedikçe uy): " + ins : "";
 }
+// Görseller (çizim/yerleşim, stil örneği, içerik görseli) → çok kipli kullanıcı mesajı
+const IMG_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+const IMG_RULES = {
+  layout: (n) => `Görsel ${n} kağıda çizilmiş ya da ekran görüntüsü olan bir YERLEŞİM ÇİZİMİDİR (wireframe). Ekranların ve bölümlerin sırasını, menü/sekme/kategori konumlarını, kutuların oranlarını ve hizalarını birebir takip et. Çizimdeki el yazısı başlık ve etiketleri oku ve kullan. Çarpı (X) ya da dağ/güneş simgeli kutular görsel alanıdır: uygun bir görsel, emoji ya da degrade koy. Okları ekranlar arası geçiş olarak yorumla.`,
+  style: (n) => `Görsel ${n} bir STİL/RENK örneğidir. Renk paletini, yazı karakteri hissini, köşe, gölge ve boşluk dilini buna benzet; içeriğini kopyalama.`,
+  content: (n) => `Görsel ${n} uygulamada gösterilecek bir İÇERİK GÖRSELİDİR. Uygun yerde <img src="{{IMG_${n}}}" alt="(kısa açıklama)"> olarak kullan; src değerini aynen {{IMG_${n}}} yaz, görseli başka biçimde gömme.`,
+};
+function imageParts(body) {
+  const arr = Array.isArray(body.images) ? body.images.slice(0, 3) : [];
+  const out = { text: "", parts: [] };
+  arr.forEach((im, i) => {
+    if (!im || typeof im.data !== "string" || im.data.length > 700000 || !IMG_RE.test(im.data)) throw new HttpErr(400, "Görsel " + (i + 1) + " okunamadı (JPEG/PNG/WebP, en fazla ~500 KB)");
+    const role = IMG_RULES[im.role] ? im.role : "layout"; const n = /^\d{1,2}$/.test(String(im.n || "")) ? +im.n : i + 1;
+    out.text += "\n- " + IMG_RULES[role](n); out.parts.push({ type: "image_url", image_url: { url: im.data } });
+  });
+  return out;
+}
+const withImages = (text, img) => img.parts.length ? [{ type: "text", text }, ...img.parts] : text;
 const kindOf = (k) => (KIND_RULES[k] ? k : "app");
 function extractHtml(text) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
@@ -377,17 +399,18 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + runOpts(rt, body) }];
-  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: "İstenen değişiklik: " + prompt });
-  else messages.push({ role: "user", content: "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : "") });
+  const img = imageParts(body);
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + runOpts(rt, body) + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") }];
+  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
+  else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
 });
 route("POST", "/api/ai/plan", async ({ body, user, req }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
-  const rt = await resolveRoute(user, body, req, "plan");
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` + (designRule(body.design) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design) : "") }, { role: "user", content: prompt }], 1500);
+  const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` + (designRule(body.design) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design) : "") }, { role: "user", content: withImages(prompt, img) }], 1500);
   const credits = charge(user, rt, "plan", usage);
   return { plan: text.trim(), spent: rt.credits, credits };
 });
@@ -399,6 +422,18 @@ route("POST", "/api/ai/review", async (ctx) => {
   const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
+});
+// Ajan modu: işi Claude Code gibi yapılacaklar listesine böler
+route("POST", "/api/ai/todos", async ({ body, user, req }) => {
+  const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind); const cur = !!body.has_html;
+  const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen bir yazılım ajanısın. Kullanıcının isteğini tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} için ${cur ? "mevcut dosya üzerinde yapılacak" : "sıfırdan yapılacak"} 3-6 adımlık bir YAPILACAKLAR LİSTESİNE böl. İlk adım ${cur ? "en önemli değişiklik" : "çalışan temel iskelet ve ana ekran"} olsun; sonraki her adım öncekine tek bir anlamlı özellik eklesin. SADECE JSON döndür: [{"baslik":"kısa Türkçe başlık (en fazla 8 kelime)","detay":"modelin uygulayacağı net talimat (1-2 cümle)"}]` }, { role: "user", content: withImages(prompt, img) }], 1200);
+  let todos = [];
+  try { const m = text.match(/\[[\s\S]*\]/); todos = JSON.parse(m ? m[0] : text); } catch { todos = text.split("\n").map((l) => l.replace(/^[\s\-*\d.)]+/, "").trim()).filter((l) => l.length > 3).map((l) => ({ baslik: l.slice(0, 60), detay: l })); }
+  todos = (Array.isArray(todos) ? todos : []).slice(0, 6).map((t) => ({ title: String(t.baslik || t.title || "").slice(0, 80), detail: String(t.detay || t.detail || t.baslik || "").slice(0, 400) })).filter((t) => t.title);
+  need(todos.length, 502, "Yapılacaklar listesi çıkarılamadı, tekrar deneyin");
+  const credits = charge(user, rt, "plan", usage);
+  return { todos, spent: rt.credits, credits, per: TIER_CREDITS[tierOf(rt.model)] || 0 };
 });
 // Model kataloğu: Gitmapp'te hazır modeller + kullanıcının bağlı anahtarları
 route("GET", "/api/ai/models", async ({ user }) => {
@@ -567,7 +602,7 @@ route("GET", "/api/admin/radar", ({ user, url }) => {
 
 // ---------- Sunucu ----------
 async function readBody(req) {
-  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_000_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); try { const v = JSON.parse(Buffer.concat(ch).toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
+  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); try { const v = JSON.parse(Buffer.concat(ch).toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
 }
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
