@@ -8,9 +8,9 @@
 <meta name="theme-color" content="#0a0a0a" /><meta name="robots" content="index,follow" /><link rel="canonical" href="https://gitmapp.com/" />
 <meta property="og:type" content="website" /><meta property="og:site_name" content="gitmapp" /><meta property="og:title" content="gitmapp — Fikrinden canlı uygulamaya, dakikalar içinde" />
 <meta property="og:description" content="Türkçe anlat, yapay zekâ yapsın: uygulama, site ve oyun. Hazır şablonlar ve tek tıkla yayın." /><meta property="og:url" content="https://gitmapp.com/" /><meta name="twitter:card" content="summary_large_image" />
-<link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./pwa/icon-180.png">
-<link rel="icon" type="image/svg+xml" href="./brand/app-icon.svg" />
-<link rel="stylesheet" href="./brand/motion.css" />
+<link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./pwa/icon-180.png?v=agent">
+<link rel="icon" type="image/svg+xml" href="./brand/app-icon.svg?v=agent" />
+<link rel="stylesheet" href="./brand/motion.css?v=agent" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@500;700&family=DM+Sans:wght@500;700&family=Space+Grotesk:wght@500;700&family=Playfair+Display:wght@600;700&family=Nunito:wght@600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
 <style>
@@ -21,7 +21,6 @@ button,input,select,textarea{font:inherit;color:inherit}
 .app{display:flex;min-height:100vh}
 .side{width:230px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;padding:4px 8px 18px}
-.logo i{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-style:normal}
 .nav{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--mut);border:0;background:none;text-align:left;width:100%}
 .nav:hover{background:#222221;color:var(--txt)}.nav.on{background:#292928;color:#fff}
 .nav b{margin-left:auto;background:var(--acc);color:#fff;border-radius:20px;padding:0 7px;font-size:11px}
@@ -160,7 +159,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .glass{background:rgba(14,14,14,.66);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%)}
 .side{width:256px;border-right:1px solid rgba(255,255,255,.06);padding:16px 12px 12px;gap:2px;overflow:auto}
 .logo{gap:11px;font-size:19px;letter-spacing:-.2px;padding:2px 6px 14px}
-.brand{display:grid;place-items:center;flex-shrink:0;background:linear-gradient(145deg,#e4ff3d,#a3e635 55%,#f4ffb3);box-shadow:0 6px 18px -6px rgba(163,230,53,.7),inset 0 0 0 1px rgba(255,255,255,.18)}
+.brand{display:block;flex-shrink:0;color:inherit}
 .tile{display:grid;place-items:center;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 2px 6px -2px rgba(0,0,0,.6)}
 .sbox{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:9px 12px;margin-bottom:10px;transition:border-color .2s,background .2s}.sbox:focus-within{border-color:#e4ff3d;background:rgba(228,255,61,.08)}
 .sbox input{flex:1;min-width:0;border:0;background:none;outline:0;font-size:14px}.sbox input::placeholder{color:#888883}
@@ -186,7 +185,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .explore{max-width:1180px;margin:0 auto}
 .hero-banner{position:relative;overflow:hidden;border-radius:28px;min-height:340px;display:flex;align-items:center;padding:42px 48px;background:radial-gradient(800px 400px at 85% 20%,rgba(255,95,162,.55),transparent 60%),radial-gradient(700px 500px at 10% 110%,rgba(255,179,71,.55),transparent 60%),linear-gradient(120deg,#ff7a45,#e8467c 45%,#8b5cf6);box-shadow:0 30px 60px -30px rgba(232,70,124,.6)}
 .hero-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,15,23,.35),transparent 60%);pointer-events:none}
-.hb-mark{position:absolute;right:-70px;bottom:-110px;opacity:.13;transform:rotate(-14deg);pointer-events:none}.hb-mark .brand{background:#fff!important;box-shadow:none}
+.hb-mark{position:absolute;right:-70px;bottom:-110px;opacity:.13;transform:rotate(-14deg);pointer-events:none}
 .hb-txt{position:relative;z-index:2;max-width:540px}
 .hb-txt h1{font-size:44px;line-height:1.08;letter-spacing:-1.2px;margin:6px 0 12px;font-weight:800;color:#fff}
 .hb-txt p{color:rgba(255,255,255,.88);font-size:16px;line-height:1.55;margin:0 0 22px}
@@ -473,8 +472,6 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
 /* ===== v4.0 GITMAPP KİMLİĞİ — limon sarısı, grafit, ince çizgi ===== */
 body{background:radial-gradient(900px 520px at 85% -10%,rgba(228,255,61,.07),transparent 60%),var(--bg)}
 body::before{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px}
-.brand{background:#e4ff3d!important;box-shadow:0 0 0 1px rgba(228,255,61,.35),0 8px 24px -10px rgba(228,255,61,.55)}
-.wordmark i{width:auto!important;height:auto!important;background:none!important;box-shadow:none!important;display:inline!important;border-radius:0!important;font-size:inherit}.wordmark{font-family:Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.06em;color:#f4f4ef;line-height:1}.wordmark i{font-style:normal;color:#e4ff3d}
 .tile{background:#141414;color:#e4ff3d;box-shadow:inset 0 0 0 1px #2a2a2a}
 .tile.hue{color:var(--tc,#e4ff3d)}
 .nav.on .tile{background:#e4ff3d;color:#0a0a0a;box-shadow:none}
@@ -1058,8 +1055,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.8.0";
+const VERSION="5.8.1";
 const CHANGELOG=[
+ {v:"5.8.1",date:"2026-11-25",items:["Gitmapp logosu gözlüklü ve kravatlı bir ajan sincap olarak yenilendi. Menü, giriş ekranı ve uygulama simgeleri aynı yazısız işareti kullanıyor."]},
  {v:"5.8.0",date:"2026-11-25",items:[
   "💬 Asistan paneli de Claude sohbet dilini kullanıyor: istek gelince “… isteği değerlendiriliyor” satırı ve canlı sayaçlı “Düşünüyor… N sn” kutusu çıkıyor",
   "💭 Her yanıtın üstünde “N sn düşündü” satırı var; basınca ne düşündüğü açılıyor",
@@ -2350,7 +2348,7 @@ function SketchScene({onStart,compact}){
    <rect class="sk-scan" x="560" y="24" width="360" height="4" fill="rgba(79,140,255,.85)"/>
   </svg>
   <div class="sk-phone"><div class="sk-screen">
-   <div class="sk-bar"><${BrandMark} s=${20}/><b>Gitmapp</b><span style=${{flex:1}}></span><${Icon} n="search" s=${13}/></div>
+   <div class="sk-bar"><${BrandMark} s=${24} label="Gitmapp"/><span style=${{flex:1}}></span><${Icon} n="search" s=${13}/></div>
    <div class="sk-hero"><span class="eyebrow light" style=${{fontSize:7}}>Çizimden uygulamaya</span><b>Kuaför Randevu</b><span>Çiziminden oluşturuldu</span></div>
    <div class="sk-cats">${[["sparkles","#ec4899,#f472b6","Saç"],["heart","#f43f5e,#f59e0b","Bakım"],["star","#8b5cf6,#d946ef","Makyaj"]].map(([ic,g,l])=>html`<div key=${l}><${Tile} n=${ic} g=${g} s=${22}/><span>${l}</span></div>`)}</div>
    ${[["💇","#ec4899","Saç kesimi","45 dk"],["💅","#8b5cf6","Manikür","30 dk"],["🧖","#f59e0b","Cilt bakımı","60 dk"]].map(([e,c,t,d])=>html`<div class="sk-row" key=${t}><${AppIcon2} emoji=${e} color=${c} size=${24}/><div><b>${t}</b><span>${d}</span></div><i>AL</i></div>`)}
@@ -3103,8 +3101,7 @@ const ecosystemRoutes={ana:"idea","$ara":"search",studio:"studio",sablonlar:"tem
 const EcosystemIcon=({name,s=20})=>html`<svg class="gm-icon" aria-hidden="true" focusable="false" width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><use href=${"./brand/ecosystem.svg#"+name}/></svg>`;
 const NavIcon=({k,n,s})=>ecosystemRoutes[k]?html`<${EcosystemIcon} name=${ecosystemRoutes[k]} s=${s}/>`:html`<${Icon} n=${(TILE[k]||[n||"dot"])[0]} s=${s} c="currentColor"/>`;
 const Tile=({k,n,s=28})=>html`<span class="tile" style=${{width:s,height:s}}><${NavIcon} k=${k} n=${n} s=${Math.round(s*.68)}/></span>`;
-const BrandMark=({s=34})=>html`<span class="brand" aria-hidden="true" style=${{width:s,height:s,borderRadius:s*.28,color:"#101211"}}><svg class="gm-squirrel" aria-hidden="true" focusable="false" width=${s*.91} height=${s*.91} viewBox="0 0 96 96"><use class="sq-tail" href="./brand/squirrel.svg#tail"/><use href="./brand/squirrel.svg#body"/><use class="sq-head" href="./brand/squirrel.svg#head"/><use class="sq-nut" href="./brand/squirrel.svg#acorn"/></svg></span>`;
-const Wordmark=({s=19})=>html`<span class="wordmark" style=${{fontSize:s}}>gitmapp<i>.</i></span>`;
+const BrandMark=({s=34,label})=>html`<svg class="brand gm-squirrel" width=${s} height=${s} viewBox="0 0 96 96" fill="currentColor" role=${label?"img":undefined} aria-label=${label} aria-hidden=${label?undefined:"true"} focusable="false"><use href="./brand/squirrel.svg?v=agent#agent"/></svg>`;
 const CAT_META={is:["briefcase","#3b82f6,#6366f1"],verimlilik:["check","#22c55e,#14b8a6"],egitim:["cap","#f59e0b,#f97316"],saglik:["heart","#f43f5e,#ec4899"],eticaret:["bag","#8b5cf6,#d946ef"],yemek:["utensils","#f97316,#ef4444"],oyun:["gamepad","#6366f1,#a855f7"],finans:["wallet","#10b981,#22c55e"],sosyal:["chat","#0ea5e9,#22d3ee"],araclar:["wrench","#64748b,#94a3b8"],diger:["sparkles","#ec4899,#f59e0b"]};
 const catName=id=>{const c=STORE_CATS2.find(x=>x[0]===id);return c?c[2]:"Diğer"};
 const SYMBOL_ICON={"🎯": "brand_crm", "🧾": "brand_muhasebe", "📦": "brand_stok", "🛡️": "brand_sigorta", "🦷": "brand_klinik", "🏡": "brand_emlak", "✅": "check", "🍽️": "brand_restoran", "✨": "sparkles", "📅": "calendar", "💇": "scissors", "☕": "coffee", "🛒": "shopping-cart", "💰": "wallet", "🧠": "brain", "🎮": "gamepad", "🎉": "confetti", "🏋️": "barbell", "📚": "books", "🏥": "hospital", "🏠": "home", "🚗": "car", "🐾": "paw-print", "🎵": "music-notes", "📷": "camera", "💬": "chat", "🌱": "plant", "⚽": "soccer-ball", "⚖️": "scale", "⚡": "bolt", "⚫": "dot", "✈️": "airplane", "✍️": "pen", "🌙": "moon", "🌾": "grains", "🎓": "cap", "🎨": "paint-brush", "🎬": "film-strip", "🏗️": "crane", "🏢": "realty", "🏨": "bed", "🐋": "sailboat", "👥": "users", "💼": "briefcase", "📄": "file", "📇": "users", "📡": "radar", "📱": "phone", "🔎": "search", "🔵": "dot", "🚀": "rocket", "🚚": "truck", "🛠️": "wrench", "🖼️": "image", "🟠": "dot", "🟢": "dot", "🟣": "dot", "🟧": "grid", "🤖": "bot", "🦙": "cpu", "💅": "flower", "🧖": "hand-heart", "🔥": "flame", "🗺️": "map", "📸": "camera", "🌐": "globe", "🌍": "globe", "🌟": "star", "⭐": "star", "👾": "gamepad", "🐙": "code", "🏁": "target", "💳": "card", "🔗": "link", "📨": "send", "⬇": "download", "👁": "eye", "✏️": "edit", "🔑": "key", "🗂️": "folder", "💡": "bolt", "🛍️": "bag", "🗑️": "trash", "📊": "chart", "💎": "gem", "🧭": "compass", "💪": "barbell", "▶": "play", "★": "star", "☆": "star", "⑂": "share"};
@@ -3689,7 +3686,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
 }
 function AuthScreen({auth,health,toast,reason,close}){
  return html`<div class="authx"><button class="authx-x ib" onClick=${close} title="Kapat"><${Icon} n="x" s=${17}/></button>
-  <div class="authx-l"><div class="authx-logo"><${BrandMark} s=${34}/><${Wordmark} s=${22}/></div>
+  <div class="authx-l"><div class="authx-logo"><${BrandMark} s=${46} label="Gitmapp"/></div>
    <div class="authx-f"><${AuthBox} auth=${auth} health=${health} toast=${toast} reason=${reason} onDone=${close}/>
     <p class="authx-legal">Devam ederek <a href="#guncel">Kullanım Koşulları</a> ve <a href="#guncel">Gizlilik Politikası</a>'nı kabul etmiş olursun.</p></div></div>
   <div class="authx-r"><div class="siri"><i></i><i></i><i></i><i></i><i></i></div>
@@ -4238,7 +4235,7 @@ function App(){
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
  const cpCtx=()=>({sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
-  <aside class="side glass noprint">${view==="studio"&&html`<button class="ib studio-nav-switch" aria-label=${compact?"Menüyü genişlet":"Menüyü daralt"} title=${compact?"Menüyü genişlet":"Menüyü daralt"} onClick=${()=>{setCompact(!compact);LS.set("compactStudio",!compact)}}><${Icon} n="menu" s=${16}/></button>`}<div class="logo"><${BrandMark} s=${32}/><${Wordmark}/></div>
+  <aside class="side glass noprint">${view==="studio"&&html`<button class="ib studio-nav-switch" aria-label=${compact?"Menüyü genişlet":"Menüyü daralt"} title=${compact?"Menüyü genişlet":"Menüyü daralt"} onClick=${()=>{setCompact(!compact);LS.set("compactStudio",!compact)}}><${Icon} n="menu" s=${16}/></button>`}<div class="logo"><${BrandMark} s=${42} label="Gitmapp"/></div>
    <div style=${{position:"relative"}}><button class="wsw" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?(isAdm?"Yönetici görünümü":"Yönetici girişi"):"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
     ${wsMenu&&html`<div class="wsw-m glass" onMouseLeave=${()=>setWsMenu(false)}><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
    <nav class="navs">${navList("")}</nav>
