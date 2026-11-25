@@ -765,7 +765,7 @@ body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#10
 .ds-modal{position:fixed;inset:0;z-index:1800;background:#19191a;color:#e7e7e4;display:flex;flex-direction:column;text-align:left;color-scheme:dark}
 .ds-bar,.ds-tools,.ds-target{display:flex;align-items:center;gap:10px}.ds-bar{padding:10px 16px;border-bottom:1px solid #38383c}.ds-bar div{margin-right:auto;min-width:0}.ds-bar small,.ds-bar strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-bar small{font:10px monospace;letter-spacing:.12em;color:#bcbdb7}.ds-work{display:grid;grid-template-columns:minmax(0,1fr) 282px;flex:1;min-height:0}.ds-board{background-color:#242426;background-image:radial-gradient(#46464a 1px,transparent 1px);background-size:16px 16px;display:flex;align-items:center;flex-direction:column;padding:12px;min-height:0;gap:10px}.ds-viewport{position:relative;width:100%;min-height:0;flex:1;overflow:hidden}.ds-board iframe{position:absolute;top:0;left:50%;transform-origin:top center;border:0;border-radius:5px;max-width:none;background:white;box-shadow:0 5px 16px #0004}.ds-tools,.ds-target{padding:4px;border-radius:8px;background:#18181a}.ds-modal button:not(.btn):not(.ib),.ds-panel a{border:1px solid #414146;border-radius:6px;background:#262629;color:inherit;padding:5px 9px;font:inherit;cursor:pointer}.ds-tools button[aria-pressed=true]{color:#e4ff3d!important;border-color:#a0af4d!important}.ds-modal button:disabled{opacity:.45}.ds-panel{overflow:auto;padding:14px;border-left:1px solid #39393d;font-size:13px}.ds-panel h3{margin:0 0 12px}.ds-panel p,.ds-panel label,.ds-bar label{color:#bdbdb8;font-size:12px}.ds-panel label{display:grid;gap:4px;margin-bottom:6px}.ds-panel select,.ds-panel input,.ds-panel textarea,.ds-bar select{width:100%;min-width:0;border:1px solid #414146;border-radius:5px;background:#262629;color:#eee;padding:5px}.ds-bar select{width:auto}.ds-panel input[type=color]{height:30px;padding:2px}.ds-target{margin-bottom:10px}.ds-target code{color:#e4ff3d}.ds-target b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.ds-target button{white-space:nowrap}.ds-fields{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px}.ds-fields .wide{grid-column:1/-1}.ds-panel details{border-top:1px solid #404045;padding:9px 0}.ds-panel summary{cursor:pointer;font-weight:bold;margin-bottom:6px}.ds-panel a{display:block;text-decoration:none;margin:6px 0}.ds-panel textarea{resize:vertical}.ds-panel p:empty{display:none}
 @media(max-width:720px){.ds-work{grid-template-columns:1fr;grid-template-rows:minmax(180px,1fr) minmax(120px,38%)}.ds-board{padding:5px}.ds-panel{border-top:1px solid #39393d}.ds-bar{padding:6px;gap:4px}.ds-bar small,.ds-bar label{font-size:10px}.ds-bar .btn{font-size:11px}}
-.studio-stage{display:flex;flex-direction:column;min-height:0;min-width:0}.studio-stage .ws-prev{flex:1;min-width:0}.stage-tabs,.stage-progress{display:flex;gap:4px;align-items:center;padding:4px 0 8px}.stage-tabs button{padding:6px 12px;border-radius:9px;background:transparent;border:1px solid transparent;color:#c4c4bc;cursor:pointer}.stage-tabs button[aria-pressed=true]{color:#eff3dd;background:#272925;border-color:#45483e}.stage-tabs button:disabled{opacity:.55;cursor:default}.stage-progress{justify-content:space-between;color:#e4e4d9;font-size:13px}.studio-save,.stage-progress small{font-size:12px;color:#b8b8ae}.ws-msgs .todo{flex-shrink:0;max-height:none;overflow:visible}.todo-b summary{cursor:pointer;color:#c7c7c0}.todo-r.run span{color:#c7c7c0}.sugg[hidden],.studio-shell .refc{display:none}.studio-nav-switch{align-self:flex-end}.studio-shell.nav-compact .side{width:48px;align-items:center}.studio-shell.nav-compact .side>:not(.studio-nav-switch){display:none}
+.studio-stage{display:flex;flex-direction:column;min-height:0;min-width:0}.studio-stage .ws-prev{flex:1;min-width:0}.stage-tabs,.stage-progress{display:flex;gap:4px;align-items:center;padding:4px 0 8px}.stage-tabs button{padding:6px 12px;border-radius:9px;background:transparent;border:1px solid transparent;color:#c4c4bc;cursor:pointer}.stage-tabs button[aria-pressed=true]{color:#eff3dd;background:#272925;border-color:#45483e}.stage-tabs button:disabled{opacity:.55;cursor:default}.stage-progress{justify-content:space-between;color:#e4e4d9;font-size:13px}.studio-save,.stage-progress small{font-size:12px;color:#b8b8ae}.ws-msgs .todo{flex-shrink:0;max-height:none;overflow:visible}.todo-b summary{cursor:pointer;color:#c7c7c0}.todo-r.run span{color:#c7c7c0}.sugg[hidden],.studio-shell .refc{display:none}
 @media(max-width:820px){.studio-stage{min-height:480px}.studio-stage .ws-prev{min-height:400px}}
 /* v4.5 — Gitmapp Asistan (yan sohbet) */
 .app{--assistant-width:clamp(330px,25vw,400px);--assistant-inset:10px}.cp{position:fixed;top:10px;right:10px;bottom:10px;width:var(--assistant-width);z-index:70;display:flex;flex-direction:column;border:1px solid #26262a;border-radius:22px;background:rgba(13,13,15,.94);backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 30px 80px -20px rgba(0,0,0,.8);animation:cpin .28s cubic-bezier(.2,.8,.2,1);overflow:hidden}
@@ -1357,6 +1357,20 @@ button.adp-mini{color:inherit;text-align:left}
 /* v5.15 — Yeni sürüm bandı, önceki oturum etiketi */
 .upd-bar{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:#1f1f1e;border:1px solid rgba(228,255,61,.4);box-shadow:0 18px 50px -14px rgba(0,0,0,.8);color:#ecebe6;font-size:14px;animation:fadeIn .25s}.upd-bar>svg{color:#e4ff3d}
 .cx-old{font-style:normal;font-size:12px;color:#8a8882;padding:2px 8px;border-radius:99px;border:1px solid #3a3937}
+
+.side .side-top{min-height:42px;margin-bottom:6px;flex-shrink:0}
+.side .side-top .logo{align-items:center;padding:0 7px}
+.side-foot .side-more>.ib{display:flex;width:100%;height:34px;border:0;justify-content:flex-start;gap:9px;padding:0 10px;border-radius:8px;background:transparent;color:var(--mut);font-size:13px}
+.side-foot .side-more>.ib:hover{background:var(--bg2);color:inherit}
+.side-foot .smenu{top:auto;bottom:calc(100% + 5px);left:0;right:auto;min-width:100%}
+.studio-start-nav{display:flex;align-self:stretch;justify-content:flex-start}.studio-side-toggle svg{transform:scaleX(-1)}
+.studio-changes{width:100%;min-width:0;overflow:auto;padding:8px}
+.studio-changes h3{font-size:12px;color:var(--mut);margin:16px 0 6px}
+.studio-changes pre{background:var(--bg2);padding:12px;overflow:auto;white-space:pre;border-inline-start:2px solid #a47871}
+.studio-changes section:last-child pre{border-color:#91a072}
+@media(min-width:821px){.app.studio-shell.nav-compact>.side{display:none}
+ .studio-shell .studio-side-toggle{flex-shrink:0}.studio-shell .stage-tabs{flex-wrap:wrap}}
+@media(max-width:820px){.studio-side-toggle,.studio-start-nav{display:none!important}.stage-tabs{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -3540,7 +3554,14 @@ function VersionPanel({appId,content,active,initialSource,auth,health,close,save
  ${error&&html`<p class="vc-error" role="alert">${error}</p>`}${notice&&html`<p role="status">${notice}</p>`}</div></dialog>`,document.body);
 }
 
-function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
+function StudioChanges({before,after}){
+ const change=useMemo(()=>changedBlock(before,after),[before,after]);
+ if(!change.old.length&&!change.next.length)return html`<p>Önceki sürümle aynı.</p>`;
+ return html`<div class="studio-changes"><b>index.html · Değişen bölüm</b>
+ ${[["Önceki sürüm",change.old],["Çalışma kopyası",change.next]].map(([title,lines])=>html`<section key=${title}><h3>${title} · ${lines.length?(change.start+1)+"–"+(change.start+lines.length)+". satırlar":"Satır yok"}</h3><pre class="mono" tabindex="0" aria-label=${title}>${lines.join("\n")}</pre></section>`)}
+ </div>`;
+}
+function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
  const [gitOpen,setGitOpen]=useState(false);
@@ -3549,7 +3570,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
  const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running?{...m.log,running:false,cut:true,secs:m.log.secs||0}:m.log):undefined}))}});
  const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput","")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
- const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
+ const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
@@ -3818,8 +3839,9 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   ${m.content&&html`<div class=${"studio-message-text"+(m.err?" studio-error":"")} role=${m.err?"alert":undefined}>${m.content}</div>`}
  </article>`;
 
+ const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
  const hasWork=st.html||busy||plan||st.msgs.length;
- if(!hasWork)return html`<div class="hero studio-start">${pickerEl()}${galEl()}${runEl()}
+ if(!hasWork)return html`<div class="hero studio-start"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
   <h1 class="hero-greet"><span class="grad-text">Merhaba${auth.user&&(auth.user.nickname||auth.user.name)?" "+(auth.user.nickname||auth.user.name.split(" ")[0]):""}</span>, bugün ne yapalım?</h1>
   <p class="hero-sub">Bir proje türü seç ve ne yapmak istediğini yaz.</p>
   <div class="start-type">${typeSwitch()}</div>
@@ -3851,6 +3873,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${preview(st.html)+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
  return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
+   ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
    <input class="in ws-title" value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
    ${proposedTitle.current&&proposedTitle.current!==st.title&&!busy&&html`<button class="chip" title="Üretilen başlığı kullan" onClick=${()=>setSt(x=>({...x,title:proposedTitle.current}))}>${proposedTitle.current}</button>`}
@@ -3877,12 +3900,14 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
    <section class="studio-stage" ref=${stageRef} tabindex="-1" aria-label="Önizleme ve kod"><div class="stage-tabs" aria-label="Çalışma görünümü">
     <button aria-pressed=${!code&&!designOpen} onClick=${()=>setCode(false)}>Önizleme</button>
     <button aria-label="Tasarımı düzenle" title=${busy?"Üretim tamamlandığında düzenleyebilirsiniz":"Tasarımı düzenle"} disabled=${busy||todo?.running||!st.html} onClick=${openDesign}>Tasarım</button>
-    <button aria-pressed=${code&&!designOpen} onClick=${()=>{setCode(true);setPicked(null);setVeMode(null)}}>Kod</button>
+    <button aria-pressed=${code&&!designOpen&&!(compare&&versions.length)} onClick=${()=>{setCode(true);setCompare(false);setSidebarClosed(true);setPicked(null);setVeMode(null)}}>Kod</button>
+    <button disabled=${!versions.length||busy} aria-pressed=${!!(code&&compare&&versions.length&&!busy)} onClick=${()=>{setCode(true);setCompare(true);setSidebarClosed(true);setPicked(null);setVeMode(null)}}>Değişiklikler</button>
     </div>
    <div class="ws-prev">
     ${code&&busy&&live?html`<div class="livecode"><div class="lc-h"><${Spark} s=${15}/><span class="shimmer">Kod yazılıyor</span><span style=${{marginLeft:"auto",color:"#767671"}}>${(live.length/1024).toFixed(1)} KB · ${secs} sn</span></div><pre class="lc-b mono">${live.slice(-6000)}<span class="caret"></span><span ref=${codeEnd}></span></pre></div>`
+    :code&&compare&&versions.length&&!busy?html`<${StudioChanges} before=${versions.at(-1)} after=${st.html}/>`
     :code&&st.html?html`<div style=${{width:"100%",display:"flex",flexDirection:"column"}}><div style=${{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}><${Icon} n="file" s=${14} c="#767671"/><span style=${{color:"var(--mut)",fontSize:12}}>index.html · ${(st.html.length/1024).toFixed(1)} KB</span><span style=${{flex:1}}></span><button class="ib" title="Kopyala" onClick=${async()=>{try{await navigator.clipboard.writeText(st.html);toast("Kod kopyalandı")}catch(e){toast("Kopyalanamadı")}}}><${Icon} n="copy" s=${15}/></button></div><pre class="lc-b mono" style=${{flex:1,margin:0}}>${st.html}</pre></div>`
-    :!st.html?html`<div class="prev-empty">${busy?html`<${Spark} s=${34}/><span style=${{marginTop:12}}>${code?"Kod akışı bekleniyor":"İlk çalışan sürüm burada görünecek"}</span>`:html`<${Icon} n=${plan?"compass":"sparkles"} s=${30} c="#4a5470"/><span style=${{marginTop:10}}>${plan?"Planı onaylayınca önizleme burada görünecek":"Önizleme burada görünecek"}</span>`}</div>`
+    :!st.html?html`<div class="prev-empty">${busy?html`<${Spark} s=${34}/><span style=${{marginTop:12}}>${code?"Kod akışı bekleniyor":"İlk çalışan sürüm burada görünecek"}</span>`:html`<${Icon} n=${plan?"compass":"sparkles"} s=${30} c="#4a5470"/><span style=${{marginTop:10}}>${code?"Projenin kaynak kodu burada görünecek":plan?"Planı onaylayınca önizleme burada görünecek":"Önizleme burada görünecek"}</span>`}</div>`
     :frameEl(stage,true)}
     ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
    </div></section></div>
@@ -5131,7 +5156,14 @@ function App(){
 
  const CUST=["ana","magaza","studio","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","kullanicilar","yonetim-projeler","siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1).split("?")[0];if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
- const [compact,setCompact]=useState(()=>LS.get("compactStudio",false));const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
+ const [compact,setCompact]=useState(true);const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
+ useEffect(()=>{if(view!=="studio")return;
+  setCompact(true);
+  const toggle=e=>{if((e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey&&e.key.toLowerCase()==="b"&&matchMedia("(min-width:821px)").matches&&!e.target.closest?.("input,textarea,[contenteditable=true],[role=dialog]")){
+   e.preventDefault();setCompact(v=>!v);
+  }};
+  window.addEventListener("keydown",toggle);return ()=>window.removeEventListener("keydown",toggle);
+ },[view]);
  const canLeaveStudio=v=>view!=="studio"||v==="studio"||!window.__gmStudio?.calisiyor||confirm("Üretim sürüyor. Sayfadan ayrılmak istiyor musun?");
  const setView=v=>{if(!canLeaveStudio(v))return;if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
  const [health,setHealth]=useState({}),[apiOn,setApiOn]=useState(false),[healthError,setHealthError]=useState(false),[attempt,retry]=useState(0);
@@ -5268,8 +5300,13 @@ function App(){
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
  const cpCtx=()=>({sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
-  <aside class="side glass noprint">${view==="studio"&&html`<button class="ib studio-nav-switch" aria-label=${compact?"Menüyü genişlet":"Menüyü daralt"} title=${compact?"Menüyü genişlet":"Menüyü daralt"} onClick=${()=>{setCompact(!compact);LS.set("compactStudio",!compact)}}><${Icon} n="menu" s=${16}/></button>`}<div class="side-top"><div class="logo"><${BrandMark} s=${32} label="Gitmapp"/><${Wordmark} s=${21}/></div>
-    <div class="side-more"><button class="ib" aria-label="Diğer seçenekler" aria-expanded=${sMenu} aria-controls="side-options" title="Ayarlar ve diğer" onClick=${()=>setSMenu(!sMenu)}><${Icon} n="more" s=${18}/></button>
+  <aside id="workspace-navigation" class="side glass noprint"><div class="side-top"><div class="logo"><${BrandMark} s=${32} label="Gitmapp"/><${Wordmark} s=${21}/></div>
+</div>
+   <div style=${{position:"relative"}}><button class="wsw" aria-expanded=${wsMenu} aria-controls="workspace-options" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?(isAdm?"Yönetici görünümü":"Yönetici girişi"):"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
+    ${wsMenu&&html`<div class="wsw-m glass" id="workspace-options"><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
+   <nav class="navs" aria-label="Ana menü">${navList()}</nav>
+   <div class="side-foot">
+    <div class="side-more"><button class="ib" aria-label="Ayarlar ve seçenekler" aria-expanded=${sMenu} aria-controls="side-options" title="Ayarlar ve diğer" onClick=${()=>setSMenu(!sMenu)}><${Icon} n="cog" s=${17}/><span>Ayarlar ve seçenekler</span></button>
      ${sMenu&&html`<div class="smenu" id="side-options">
       <button onClick=${()=>{setSMenu(false);openSettings("genel")}}><${Icon} n="cog" s=${16}/> Ayarlar<kbd>⌘,</kbd></button>
       ${auth.user&&html`<button onClick=${()=>{setSMenu(false);openSettings("profil")}}><${Icon} n="user" s=${16}/> Profil ve talimatlar</button>`}
@@ -5278,11 +5315,8 @@ function App(){
       <hr/><button onClick=${()=>{setSMenu(false);navGo("guncel")}}><${Icon} n="download" s=${16}/> Güncellemeler<kbd>v${VERSION}</kbd></button>
       <button onClick=${()=>{setSMenu(false);sincap("manual")}}><${BrandMark} s=${16}/> Fındık'a sor</button>
       ${auth.user&&html`<hr/><button onClick=${()=>{setSMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${16}/> Çıkış yap</button>`}
-     </div>`}</div></div>
-   <div style=${{position:"relative"}}><button class="wsw" aria-expanded=${wsMenu} aria-controls="workspace-options" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?(isAdm?"Yönetici görünümü":"Yönetici girişi"):"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
-    ${wsMenu&&html`<div class="wsw-m glass" id="workspace-options"><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
-   <nav class="navs" aria-label="Ana menü">${navList()}</nav>
-   <div class="side-foot">${installButton()}
+     </div>`}</div>
+${installButton()}
     ${mode==="musteri"&&html`<button class="refc" onClick=${async()=>{if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",u)}}}><div><b>Gitmapp'i paylaş</b><span>Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi</span></div><span class="refc-i"><${Icon} n="gift" s=${20}/></span></button>`}
     ${apiOn?(auth.user?html`<div class="me" onClick=${()=>openSettings("profil")} title="Profil ve ayarlar"><${UserAvatar} u=${auth.user} s=${34}/><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><span class="me-cr" title="Kredilerim: canlı harcama" onClick=${e=>{e.stopPropagation();setCrOpen(true)}}><${Icon} n="gem" s=${11}/> <${CountUp} v=${auth.user.credits??0}/> kredi</span>${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
@@ -5297,7 +5331,7 @@ function App(){
     <button class="btn g" onClick=${()=>switchMode("musteri")}>Kullanıcı alanına dön</button></section>`:html`<div key=${adminPage?auth.user?.id:"public"}>
    ${view==="yonetim"&&html`<${AdminHome} request=${overview} go=${(page,status)=>{setProjectStatus(status);setView(page)}}/>`}
    ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
-   ${view==="studio"&&html`<${Studio} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
+   ${view==="studio"&&html`<${Studio} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
    ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
