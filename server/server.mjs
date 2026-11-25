@@ -468,7 +468,7 @@ const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, sl
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
-route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "5.0.0" }));
+route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "5.1.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
