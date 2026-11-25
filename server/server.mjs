@@ -273,6 +273,71 @@ async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) 
     return { text, model: rt.model, usage, finish };
   };
 }
+// Uzunluk sınırında kesilen HTML'i otomatik tamamlat (en çok 2 kez); kredi tek işlem olarak kalır
+async function continueHtml(rt, messages, out, onDelta, signal, onPhase, gone = () => false) {
+  for (let k = 0; rt.autoContinue && k < 2 && /^(length|max_tokens)$/.test(out.finish || "") && !/<\/html>/i.test(out.text) && !signal.aborted && !gone(); k++) {
+    onPhase && onPhase();
+    const more = [...messages, { role: "assistant", content: out.text }, { role: "user", content: "Yanıtın uzunluk sınırında kesildi. Tam olarak kaldığın yerden devam et: önceki kısmı TEKRARLAMA, açıklama ya da ``` yazma, yalnızca kalan kodu yaz ve </html> ile bitir." }];
+    let add = "";
+    const next = await (await streamChatWith(rt, more, (d) => { add += d; }, signal))();
+    add = String(add || next.text || "").replace(/^```(?:html)?\s*/i, "");
+    for (let n = Math.min(300, out.text.length, add.length); n >= 20; n--) if (out.text.endsWith(add.slice(0, n))) { add = add.slice(n); break; }
+    out.text += add; onDelta(add); out.finish = next.finish;
+    if (next.usage && out.usage) out.usage = { ...out.usage, total_tokens: (out.usage.total_tokens || 0) + (next.usage.total_tokens || 0) };
+  }
+  return out;
+}
+// v5.20 — Bulut işleri: üretim tarayıcı bağlantısından bağımsız sürer; sayfa değişse ya da yenilense de biter, sonuç saklanır
+db.exec(`CREATE TABLE IF NOT EXISTS ai_jobs(id TEXT PRIMARY KEY,user_id TEXT,kind TEXT,status TEXT,result TEXT,error TEXT,created INTEGER,finished INTEGER)`);
+const JOBS = new Map();
+function jobPublic(j) { return { id: j.id, kind: j.kind, status: j.status, secs: Math.round(((j.finished || Date.now()) - j.created) / 1000), len: j.text ? j.text.length : 0, error: j.error || null, label: j.label || "" }; }
+function jobSubscribe(res, cors, j) {
+  res.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no", Connection: "keep-alive", ...cors });
+  const w = (o) => { if (!res.destroyed && !res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); };
+  w({ t: "job", id: j.id, status: j.status });
+  for (const ph of j.phases || []) w({ t: "phase", phase: ph });
+  if (j.text) w({ t: "delta", d: j.text });
+  if (j.status === "done") { w({ t: "done", ...j.result }); res.end(); return; }
+  if (j.status !== "running") { w({ t: "error", error: j.error || "İş tamamlanamadı", status: j.code || 500 }); res.end(); return; }
+  j.subs.add(w); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
+  const off = () => { clearInterval(hb); j.subs.delete(w); };
+  res.once("close", off); j.ends.add(() => { off(); if (!res.writableEnded) res.end(); });
+}
+async function aiJob({ res, cors, user }, rt, messages, finish, kind, label) {
+  const ctl = new AbortController();
+  const j = { id: rid(), uid: user.id, kind, label: String(label || "").slice(0, 120), status: "running", text: "", phases: [], created: Date.now(), subs: new Set(), ends: new Set(), ctl };
+  const emit = (o) => { for (const w of j.subs) w(o); };
+  const start = await streamChatWith(rt, messages, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal);
+  JOBS.set(j.id, j); j.phases.push("connected");
+  q("INSERT INTO ai_jobs(id,user_id,kind,status,created) VALUES(?,?,?,?,?)").run(j.id, user.id, kind, "running", j.created);
+  (async () => {
+    try {
+      const out = await start();
+      await continueHtml(rt, messages, out, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal, () => { j.phases.push("continuing"); emit({ t: "phase", phase: "continuing" }); });
+      j.phases.push("processing"); emit({ t: "phase", phase: "processing" });
+      j.result = finish(out); j.status = "done"; emit({ t: "done", ...j.result });
+    } catch (e) {
+      j.status = ctl.signal.aborted ? "canceled" : "error"; j.code = e.code || 500;
+      j.error = ctl.signal.aborted ? "İşi durdurdun · kredi harcanmadı" : e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.";
+      if (!(e instanceof HttpErr) && !ctl.signal.aborted) console.error(new Date().toISOString(), "job", e);
+      emit({ t: "error", error: j.error, status: j.code });
+    } finally {
+      j.finished = Date.now();
+      try { q("UPDATE ai_jobs SET status=?,result=?,error=?,finished=? WHERE id=?").run(j.status, j.result ? JSON.stringify(j.result) : null, j.error || null, j.finished, j.id); } catch {}
+      for (const f of j.ends) f(); j.ends.clear();
+      setTimeout(() => JOBS.delete(j.id), 2 * 3600e3).unref?.();
+    }
+  })();
+  jobSubscribe(res, cors, j);
+  return null;
+}
+function jobFor(user, id) {
+  need(user, 401, "Giriş yapın");
+  const j = JOBS.get(id);
+  if (j) { need(j.uid === user.id, 404, "İş bulunamadı"); return j; }
+  const row = q("SELECT * FROM ai_jobs WHERE id=? AND user_id=?").get(id, user.id); need(row, 404, "İş bulunamadı");
+  return { id: row.id, kind: row.kind, status: row.status === "running" ? "error" : row.status, error: row.status === "running" ? "Sunucu yeniden başladığı için iş yarıda kaldı · kredi harcanmadı" : row.error, result: row.result ? JSON.parse(row.result) : null, created: row.created, finished: row.finished || Date.now(), phases: [], text: "" };
+}
 function responseSignal(res) {
   const controller = new AbortController();
   if (res.destroyed) controller.abort();
@@ -286,16 +351,7 @@ async function aiStream({ res, cors }, rt, messages, finish) {
   function ev(o) { if (!res.destroyed && !res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); }
   ev({ t: "phase", phase: "connected" }); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
   try { const out = await start();
-    // Uzunluk sınırında kesilen HTML'i otomatik tamamlat (en çok 2 kez); kredi tek işlem olarak kalır
-    for (let k = 0; rt.autoContinue && k < 2 && /^(length|max_tokens)$/.test(out.finish || "") && !/<\/html>/i.test(out.text) && !signal.aborted && !res.destroyed; k++) {
-      ev({ t: "phase", phase: "continuing" });
-      const more = [...messages, { role: "assistant", content: out.text }, { role: "user", content: "Yanıtın uzunluk sınırında kesildi. Tam olarak kaldığın yerden devam et: önceki kısmı TEKRARLAMA, açıklama ya da ``` yazma, yalnızca kalan kodu yaz ve </html> ile bitir." }];
-      const next = await (await streamChatWith(rt, more, (d) => ev({ t: "delta", d }), signal))();
-      let add = String(next.text || "").replace(/^```(?:html)?\s*/i, "");
-      for (let n = Math.min(300, out.text.length, add.length); n >= 20; n--) if (out.text.endsWith(add.slice(0, n))) { add = add.slice(n); break; }
-      out.text += add; out.finish = next.finish;
-      if (next.usage && out.usage) out.usage = { ...out.usage, total_tokens: (out.usage.total_tokens || 0) + (next.usage.total_tokens || 0) };
-    }
+    await continueHtml(rt, messages, out, (d) => ev({ t: "delta", d }), signal, () => ev({ t: "phase", phase: "continuing" }), () => res.destroyed);
     if (!signal.aborted && !res.destroyed) { ev({ t: "phase", phase: "processing" }); ev({ t: "done", ...finish(out) }); } }
   catch (e) { if (!signal.aborted) { if (!(e instanceof HttpErr)) console.error(new Date().toISOString(), "stream", e); ev({ t: "error", error: e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.", status: e.code || 500 }); } }
   finally { clearInterval(hb); res.end(); }
@@ -480,6 +536,7 @@ Nasıl davranırsın:
 - Mevcut bir uygulama açıksa (durumda acikUygulama=true) istemleri değişiklik isteği olarak yaz.
 - Kullanıcı bir ayar, ekran ya da işlem isterse açıklama yapmak yerine eylemle kendin yap. Kredi harcayan ya da geri alınamayan adımlar (yap, kontrol, kaydet, yayinla, sablon, yeni) ekranda kullanıcının tek tık onayıyla çalışır; bunu bir cümleyle belirt.
 - Bilmediğin bir şeyi uydurma. Listede olmayan sayfa, tema ya da şablon kimliği kullanma.
+- Stüdyo durumuna uy: "calisiyor" true ise yeni geliştirme isteği için yine "prompt" + "yap" öner (iş bitince sırayla çalışır, kullanıcıya "sıraya ekledim" de); bu sırada "kontrol", "kaydet", "yayinla", "sablon", "yeni" önerme. "bulut" true ise kullanıcıya başka sayfaya geçebileceğini, işin bulutta süreceğini söyleyebilirsin. "sira" sıradaki istek sayısıdır.
 
 EYLEMLER: Bir şey yapman gerektiğinde yanıtının EN SONUNA tek bir blok ekle; blok içinde yalnızca geçerli JSON dizisi olsun, en fazla 6 eylem:
 <eylem>[{"t":"git","view":"sablonlar"},{"t":"tur","deger":"app"}]</eylem>
@@ -569,6 +626,10 @@ async function appData(req, res, a, key) {
 // ---------- API ----------
 const routes = [];
 const route = (m, p, fn) => routes.push({ m, re: new RegExp("^" + p.replace(/:(\w+)/g, "(?<$1>[^/]+)") + "$"), fn });
+route("GET", "/api/ai/jobs/:id", ({ user, params }) => jobPublic(jobFor(user, params.id)));
+route("GET", "/api/ai/jobs/:id/stream", ({ user, params, res, cors }) => { jobSubscribe(res, cors, jobFor(user, params.id)); return null; });
+route("POST", "/api/ai/jobs/:id/cancel", ({ user, params }) => { const j = jobFor(user, params.id); if (j.ctl && j.status === "running") j.ctl.abort(); return { ok: true }; });
+route("GET", "/api/ai/jobs", ({ user }) => { need(user, 401, "Giriş yapın"); return { jobs: [...JOBS.values()].filter((j) => j.uid === user.id && j.status === "running").map(jobPublic) }; });
 const cleanMeta = (m, old) => { let o = {}; try { o = JSON.parse(old || "{}"); } catch { } if (!m || typeof m !== "object") return JSON.stringify(o);
   if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; if (/^github:[\w.-]{1,60}\/[\w.-]{1,100}(@[\w./-]{1,80})?$/.test(m.source || "")) o.source = m.source; return JSON.stringify(o); };
 const metaOf = (a) => { let m = {}; try { m = JSON.parse(a.meta || "{}"); } catch { } let n = 0; try { n = JSON.parse(a.prompt_log || "[]").filter((x) => x.role === "user").length; } catch { } return { ...m, steps: n }; };
@@ -639,7 +700,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.19.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.20.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -732,6 +793,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
+  if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
 });
@@ -779,6 +841,7 @@ route("POST", "/api/ai/review", async (ctx) => {
   const rt = await resolveRoute(user, body, req, "review");
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: html }];
   const fin = ({ text, model, usage, finish }) => { const out = extractHtml(text, { model, finish }); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
+  if (body.stream === true && body.job === true && ctx.user) return aiJob(ctx, rt, messages, fin, "review", "Kontrol et ve düzelt");
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
 });
