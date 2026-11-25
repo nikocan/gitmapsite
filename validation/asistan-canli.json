@@ -1,0 +1,88 @@
+[
+  [
+    {
+      "kimlik": "one",
+      "dal": "Proje taslağı",
+      "amac": "Mevsim menüsünü inceleyin, kişi sayısını ve saati seçerek masanızı ayırın.",
+      "ekranlar": [
+        "Avluda bu akşam",
+        "Mevsim menüsü",
+        "Masa ayır",
+        "Masa rezervasyonları"
+      ],
+      "bilesen": "Avluda bu akşam",
+      "secili": null,
+      "tema": "Sıcak Lezzet",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "\"Avluda bu akşam\" ekranını daha davetkâr hale getirecek bir değişiklik isteği hazırladım: öne çıkan günün menüsü, büyük bir \"Masa Ayır\" düğmesi ve iştah açan görsel düzen. İstem kutusuna yazdım; geliştirmeye başlayayım mı? İsterseniz önce eklemek istediğiniz bir şey varsa söyleyin.\n\n<eylem>[{\"t\":\"prompt\",\"metin\":\"Ana ekran olan 'Avluda bu akşam' sayfasını iyileştir: en üste restoranın atmosferini yansıtan sıcak bir karşılama alanı ve kısa bir hoş geldin yazısı ekle. Günün öne çıkan 2-3 mevsim menüsü ürününü fotoğraf alanı, isim ve fiyatla kart şeklinde göster. Belirgin, büyük bir 'Masa Ayır' düğmesi ekle ve Masa ayır ekranına yönlendir. Çalışma saatleri ve konum bilgisini alt kısımda küçük bir bölümde göster. Sıcak Lezzet temasının turuncu tonlarına uygun, iştah açan ve ferah bir yerleşim kullan.\"}]</eylem>"
+  ],
+  [
+    {
+      "kimlik": "two",
+      "dal": "Proje taslağı",
+      "amac": "Öğrenci ders programını görür, dersini seçer ve ödev yanıtını teslim eder.",
+      "ekranlar": [
+        "Öğrenci çalışma alanı",
+        "Ders programı",
+        "Ödevi teslim et",
+        "Teslim edilen ödevler"
+      ],
+      "bilesen": "Öğrenci çalışma alanı",
+      "secili": null,
+      "tema": "Neşeli Renkler",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "Ana ekranı \"Öğrenci çalışma alanı\" için bir iyileştirme istemi hazırladım: ders programı özeti, yaklaşan ödevler ve hızlı teslim butonu ekleyen, çocuk dostu temaya uygun bir düzenleme. İstem kutusuna yazdım; geliştirmeye başlayayım mı? Onay verirsen tek tıkla çalışır.\n\n<eylem>[{\"t\":\"prompt\",\"metin\":\"Öğrenci çalışma alanı ekranını iyileştir: en üste öğrenciyi adıyla karşılayan sıcak bir başlık ve bugünün tarihi gelsin. Altında bugünün ders programını gösteren yatay kaydırılabilir renkli kartlar, onun altında yaklaşan ödevleri son teslim tarihine göre sıralayan bir liste olsun. Her ödev kartında derse hızlı geçiş ve 'Ödevi teslim et' butonu bulunsun. Teslim edilen ödev sayısını gösteren küçük bir ilerleme göstergesi ekle. Neşeli Renkler temasına uygun, büyük ve okunaklı yazılarla, çocuk dostu bir düzen kullan.\"},{\"t\":\"yap\"}]</eylem>"
+  ],
+  [
+    {
+      "kimlik": "one",
+      "dal": "main",
+      "kaynak": "gitmapp",
+      "amac": "Mevsim menüsünü inceleyin, kişi sayısını ve saati seçerek masanızı ayırın.",
+      "ekranlar": [
+        "Avluda bu akşam",
+        "Mevsim menüsü",
+        "Masa ayır",
+        "Masa rezervasyonları"
+      ],
+      "bilesen": "Avluda bu akşam",
+      "secili": null,
+      "tema": "Sıcak Lezzet",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "\"Avluda bu akşam\" ekranını daha davetkâr ve işlevsel hale getirecek bir istem hazırladım: üstte günün öne çıkan menüsüyle büyük bir karşılama alanı, hemen altında tek dokunuşla \"Masa ayır\" butonu ve öne çıkan birkaç yemek kartı olacak. İstemi kutuya yazdım; geliştirmeye başlayayım mı? Başka bir şeyi iyileştirmek istediysen (örneğin düzen mi, renkler mi) söyle, istemi ona göre güncelleyeyim.\n\n<eylem>[{\"t\":\"prompt\",\"metin\":\"Ana ekran olan 'Avluda bu akşam' bölümünü iyileştir: en üste restoranın sıcak atmosferini yansıtan, günün öne çıkan menüsünü büyük görselle gösteren bir karşılama alanı ekle. Hemen altına belirgin bir 'Masa ayır' butonu koy ve dokununca Masa ayır ekranına götürsün. Devamında mevsim menüsünden seçilmiş 3-4 öne çıkan yemeği fiyat ve kısa açıklamayla kart olarak listele. Mevcut Sıcak Lezzet temasına uygun, iştah açan turuncu tonlarda, ferah ve kolay okunur bir düzen kullan. Diğer ekranlara dokunma.\"}]</eylem>"
+  ],
+  [
+    {
+      "kimlik": "one",
+      "dal": "ogrenci",
+      "kaynak": "gitmapp",
+      "amac": "Öğrenci ders programını görür, dersini seçer ve ödev yanıtını teslim eder.",
+      "ekranlar": [
+        "Öğrenci çalışma alanı",
+        "Ders programı",
+        "Ödevi teslim et",
+        "Teslim edilen ödevler"
+      ],
+      "bilesen": "Öğrenci çalışma alanı",
+      "secili": null,
+      "tema": "Sıcak Lezzet",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "Ana ekran olan \"Öğrenci çalışma alanı\"nı daha kullanışlı hale getirecek bir değişiklik istemi hazırladım: üstte öğrenciyi adıyla karşılayan özet başlık, bugünün derslerini gösteren kompakt bir program kartı ve teslim tarihi yaklaşan ödevler için uyarı kartları ekleniyor. Onaylarsan geliştirme başlar; bu adım kredi kullanır. Farklı bir iyileştirme istersen söyle, istemi güncelleyeyim.\n\n<eylem>[{\"t\":\"prompt\",\"metin\":\"Öğrenci çalışma alanı ekranını iyileştir: en üste öğrenciyi adıyla karşılayan ve bugünün tarihini gösteren bir özet başlık ekle. Altına bugünün derslerini saat sırasıyla listeleyen kompakt bir 'Bugünkü Program' kartı koy; derse tıklanınca Ders programı ekranındaki ilgili derse gitsin. Teslim tarihi yaklaşan ödevleri kalan gün sayısıyla gösteren uyarı kartları ekle, tıklanınca Ödevi teslim et ekranı açılsın. 'Ders programına git' ve 'Teslim edilen ödevler' için iki hızlı erişim düğmesi ekle. Mevcut Sıcak Lezzet temasına ve renklerine sadık kal, telefon ekranında rahat okunacak boşluklar kullan.\"},{\"t\":\"yap\"}]</eylem>"
+  ]
+]

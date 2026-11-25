@@ -1,0 +1,56 @@
+{
+  "kaynak": "https://trends.google.com/trending/rss?geo=TR",
+  "bolge": "TR",
+  "sorgular": [
+    {
+      "sorgu": "hm",
+      "yayin": "Wed, 25 Nov 2026 15:10:00 -0800",
+      "trafik": "500+"
+    },
+    {
+      "sorgu": "fox",
+      "yayin": "Wed, 25 Nov 2026 15:10:00 -0800",
+      "trafik": "100+"
+    },
+    {
+      "sorgu": "now tv",
+      "yayin": "Wed, 25 Nov 2026 14:30:00 -0800",
+      "trafik": "1000+"
+    },
+    {
+      "sorgu": "lukaku",
+      "yayin": "Wed, 25 Nov 2026 14:30:00 -0800",
+      "trafik": "1000+"
+    },
+    {
+      "sorgu": "ersin destanoğlu",
+      "yayin": "Wed, 25 Nov 2026 14:20:00 -0800",
+      "trafik": "1000+"
+    },
+    {
+      "sorgu": "kainat güzellik yarışması",
+      "yayin": "Wed, 25 Nov 2026 14:20:00 -0800",
+      "trafik": "100+"
+    },
+    {
+      "sorgu": "sporx",
+      "yayin": "Wed, 25 Nov 2026 14:20:00 -0800",
+      "trafik": "500+"
+    },
+    {
+      "sorgu": "trtspor",
+      "yayin": "Wed, 25 Nov 2026 14:20:00 -0800",
+      "trafik": "100+"
+    },
+    {
+      "sorgu": "shakhtar donetsk vs fenerbahçe standings",
+      "yayin": "Wed, 25 Nov 2026 14:10:00 -0800",
+      "trafik": "2000+"
+    },
+    {
+      "sorgu": "76ers - heat",
+      "yayin": "Wed, 25 Nov 2026 14:10:00 -0800",
+      "trafik": "200+"
+    }
+  ]
+}

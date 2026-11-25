@@ -1,0 +1,322 @@
+[
+  {
+    "sablon": "sofra",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/sofra-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "sofra",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/sofra-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "derslik",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/derslik-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "derslik",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/derslik-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "usta",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/usta-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "usta",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/usta-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "percem",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/percem-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "percem",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/percem-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "dukkan",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/dukkan-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "dukkan",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/dukkan-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "fatura",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/fatura-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "fatura",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/fatura-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "konak",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/konak-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "konak",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/konak-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "ziyaret",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/ziyaret-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "ziyaret",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/ziyaret-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "firsat",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/firsat-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "firsat",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/firsat-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "muayene",
+    "genislik": 390,
+    "sonuc": "Geçti",
+    "ekran": "screens/muayene-390.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  },
+  {
+    "sablon": "muayene",
+    "genislik": 1440,
+    "sonuc": "Geçti",
+    "ekran": "screens/muayene-1440.png",
+    "kontroller": [
+      "Ana görev",
+      "Uzun Türkçe metin",
+      "Boş durum",
+      "Geçersiz form",
+      "Klavye odağı",
+      "Metin kontrastı ≥ 4,5:1",
+      "Yatay taşma",
+      "Stüdyo düzenle, simgeyi seç ve kaldır, kaydet ve yeniden aç"
+    ]
+  }
+]

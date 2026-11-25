@@ -455,7 +455,7 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
 .tpc{display:flex;flex-direction:column;gap:12px}
 .tpc-img{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 0 0 1px var(--sep),0 24px 40px -28px rgba(0,0,0,.9);transition:transform .35s var(--ease),box-shadow .35s}
 .tpc-img:hover{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(255,255,255,.18),0 30px 50px -26px rgba(228,255,61,.55)}
-.tpc-ov{border:0;padding:0;width:100%;cursor:pointer;color:inherit;position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 40%,rgba(5,8,14,.55));opacity:0;transition:opacity .25s}.tpc-img:hover .tpc-ov,.tpc-ov:focus-visible{opacity:1}.tpc-type{pointer-events:none}
+.tpc-ov{border:0;padding:0;width:100%;cursor:pointer;color:inherit;position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 40%,rgba(5,8,14,.55));opacity:0;transition:opacity .25s}.tpc-img:hover .tpc-ov,.tpc-ov:focus-visible{opacity:1}.tpc-type{pointer-events:none}@media(hover:none){.tpc-ov{opacity:1;align-items:end;padding:12px}}
 .tpc-b{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);color:#111;font-weight:700;font-size:13px;padding:9px 14px;border-radius:99px}
 .tpc-type{position:absolute;left:10px;top:10px;font-size:11px;font-weight:700;background:rgba(10,14,22,.72);backdrop-filter:blur(6px);color:#fff;padding:4px 9px;border-radius:99px}
 .tpc-m{display:flex;align-items:center;gap:12px}.tpc-m b{display:block;font-size:15px}.tpc-m span{font-size:12.5px;color:var(--label3)}
@@ -1405,6 +1405,7 @@ button.adp-mini{color:inherit;text-align:left}
 @media(min-width:821px){.app.studio-shell.nav-compact>.side{display:none}
  .studio-shell .studio-side-toggle{flex-shrink:0}.studio-shell .stage-tabs{flex-wrap:wrap}}
 @media(max-width:820px){.studio-side-toggle,.studio-start-nav{display:none!important}.stage-tabs{flex-wrap:wrap}}
+@media(max-width:600px){.ds-panel .ds-fields{grid-template-columns:minmax(0,1fr)}.ds-panel .ds-fields input,.ds-panel .ds-fields select{min-height:44px;width:100%;box-sizing:border-box}}
 </style>
 </head>
 <body>
@@ -2615,7 +2616,7 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
  async function saveProfile(extra){setSaving(true);setProfileStatus(null);try{const j=await api("PATCH","/api/me/profile",extra||f);auth.patch(j.user);setProfileStatus({text:extra&&"avatar" in extra?(extra.avatar?"Profil fotoğrafı güncellendi":"Profil fotoğrafı kaldırıldı"):"Profil kaydedildi"})}catch(e){setProfileStatus({text:e.message,error:true})}finally{setSaving(false)}}
  async function pickPhoto(e){const fl=e.target.files&&e.target.files[0];e.target.value="";if(!fl)return;try{const d=await shrinkImage(fl);await saveProfile({avatar:d})}catch(x){setProfileStatus({text:x.message,error:true})}}
  async function buy(c,p){if(!u)return;try{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:u.name||u.email,email:u.email,brand:"Kredi paketi",tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:c+" kredi satın alma talebi ("+p+" ₺)",type:"kredi",total:p,monthly:0});toast("Talebin alındı ("+id+"). Ödeme bağlantısı e-postana gelecek.")}catch(e){toast(e.message)}}
- function exportData(){const d={dışaAktarım:new Date().toISOString(),profil:u?{ad:u.name,eposta:u.email,hitap:u.nickname,isAlani:u.role,talimatlar:u.instructions,uyelik:u.created}:null,ayarlar:GS,taslak:LS.get("studio",null)};
+ function exportData(){const d={dışaAktarım:new Date().toISOString(),profil:u?{ad:u.name,eposta:u.email,hitap:u.nickname,isAlani:u.role,talimatlar:u.instructions,uyelik:u.created}:null,ayarlar:GS,taslak:LS.get("studio:"+(u?.id||"guest"),null)};
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:"application/json"}));a.download="gitmapp-verilerim.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
  const needLogin=html`<div class="st-login"><p>Bu bölüm hesabına bağlı. Giriş yaptığında ayarların tüm cihazlarında aynı olur.</p><${AuthBox} auth=${auth} health=${health||{}} toast=${toast} reason=""/></div>`;
  const body=()=>{switch(tab){
@@ -3487,8 +3488,8 @@ if(document.documentElement.scrollWidth>W+4)I.push({k:"tasma",t:"Yatay taşma: s
 if(small>4)I.push({k:"yazi",t:small+" metin 11 px'ten küçük; okunması zor"});
 if(low.length)I.push({k:"kontrast",t:"Düşük kontrast: “"+low.join("”, “")+"”"});
 if(imgs)I.push({k:"gorsel",t:imgs+" görsel yüklenemedi"});
-parent.postMessage({gm:"qa",errors:E.slice(0,5),issues:I,w:W},"*")}
-addEventListener("load",function(){setTimeout(run,1400)})})()<\/script>`;
+parent.postMessage({gm:"qa",errors:E.slice(0,5),issues:I,w:W,screens:Array.from(document.querySelectorAll("h1,h2,h3,nav a,nav button")).filter(el=>el.getClientRects().length).slice(0,12).map(el=>el.textContent.trim().slice(0,70))},"*")}
+addEventListener("load",function(){run();setTimeout(run,1400);var timer;document.addEventListener("click",function(){clearTimeout(timer);timer=setTimeout(run,160)})})})()<\/script>`;
 const QA_STYLE=`<style data-gm-sb>html{scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.4) transparent}::-webkit-scrollbar{width:6px;height:6px;background:transparent}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(128,128,128,.4);border-radius:6px}::-webkit-scrollbar-corner{background:transparent}</style>`;
 function withQA(h){if(!h||h.includes("data-gm-qa"))return h;const m=/<head[^>]*>/i.exec(h);return m?h.slice(0,m.index+m[0].length)+QA_STYLE+QA_SCRIPT+h.slice(m.index+m[0].length):QA_STYLE+QA_SCRIPT+h}
 function designTokens(h){h=String(h||"");const out=[];const root=h.match(/:root\s*\{([^}]{0,3000})\}/);if(root){const v=root[1].match(/--[\w-]+\s*:\s*[^;]{1,60}/g)||[];out.push(...v.slice(0,18).map(x=>x.replace(/\s+/g," ").trim()))}
@@ -3517,10 +3518,10 @@ const designPresets={
 function validTarget(path){
  return Array.isArray(path)&&path.length>0&&path.length<=100&&path.every(p=>p&&typeof p.tag==="string"&&/^[a-z][a-z0-9-]*$/.test(p.tag)&&(typeof p.id==="string"&&p.id.length>0&&p.id.length<=255||Number.isSafeInteger(p.index)&&p.index>0));
 }
-function DesignScene({project,resolve,save,close,aiBody,spent,failAuth}) {
+function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAuth}) {
  const [initial]=useState(()=>readDesign(project.html));
  const [rules,setRules]=useState(initial.rules), [history,setHistory]=useState([]);
- const [src]=useState(()=>withStoreShim(designDocument(resolve(initial.base),initial.rules,true)));
+ const [src]=useState(()=>withStoreShim(taskPreview(designDocument(resolve(initial.base),initial.rules,true))));
  const [target,setTarget]=useState(null),[delta,setDelta]=useState({}),[selecting,setSelecting]=useState(true);
  const [device,setDevice]=useState("auto"),[prompt,setPrompt]=useState(""),[asking,setAsking]=useState(false),[figma,setFigma]=useState(false);
  const [feedback,setFeedback]=useState(""),[skill,setSkill]=useState("Görsel hiyerarşi");
@@ -3583,7 +3584,7 @@ function DesignScene({project,resolve,save,close,aiBody,spent,failAuth}) {
    if(!target||!prompt.trim()||asking)return;
    const ticket=++request.current;setAsking(true);setFeedback("");
    try{
-     const j=await api("POST","/api/ai/design",{...aiBody(),prompt,skill,tag:target.tag,label:target.label,leaf:target.leaf,current:{...values,text:target.leaf?values.text:undefined}});
+     const j=await api("POST","/api/ai/design",{...aiBody(),projectContext:{...aiBody().projectContext,cihaz:device,secili:{metin:target.label,etiket:target.tag},bilesen:target.tag},prompt,skill,tag:target.tag,label:target.label,leaf:target.leaf,current:{...values,text:target.leaf?values.text:undefined}});
      spent(j);if(request.current!==ticket)return;
      setDelta(d=>({...d,...j.values}));setFeedback("Öneri hazır. Özellikleri inceleyip uygulayın.");
    }catch(e){if(request.current===ticket){setFeedback(e.message);failAuth(e)}}finally{if(request.current===ticket)setAsking(false)}
@@ -3602,7 +3603,7 @@ function DesignScene({project,resolve,save,close,aiBody,spent,failAuth}) {
    <div class="ds-viewport" ref=${viewport}><iframe title="Tasarım tuvali" sandbox="allow-scripts" ref=${frame} srcDoc=${src} style=${{width:device==="auto"?"100%":Number(device),height:bounds.height?bounds.height/zoom:"100%",transform:"translateX(-50%) scale("+zoom+")"}}></iframe></div></div>
   <aside class="ds-panel"><h3>Özellikler</h3>${!target?html`<p>${selecting?"Düzenlemek istediğiniz öğeye dokunun.":"Şablonda başka bir ekrana geçin, ardından Öğe seç’e dokunun."}</p>`:html`<div class="ds-target"><code>${target.tag}</code><b>${target.label}</b><button disabled=${target.tag==="body"} onClick=${()=>post({gm:"design-parent"})}>Üst öğe</button></div>
    <label>Çalışma stili<select value="" onChange=${e=>{if(e.target.value)setDelta(d=>({...d,...designPresets[e.target.value]}))}}><option value="">Stil seçin</option>${Object.keys(designPresets).map(n=>html`<option key=${n}>${n}</option>`)}</select></label>
-   <div class="ds-fields">${Object.entries(designFields).filter(([k])=>(k!=="text"||target.leaf)&&(!["primary","accent"].includes(k)||target.tag==="body")).map(([k,[name,type,opts]])=>html`<label key=${k} class=${k==="text"?"wide":""}>${name}${Array.isArray(type)?html`<select value=${values[k]||""} onChange=${e=>setField(k,e.target.value)}><option value="" disabled>Seçin</option>${type.map((v,i)=>html`<option key=${v} value=${v}>${opts?.[i]||v}</option>`)}</select>`:html`<input type=${type} min=${k==="fontSize"?1:0} max=${type==="number"?opts:undefined} maxLength=${500} value=${values[k]??(type==="color"?"#ffffff":"")} onInput=${e=>{if(type!=="number"||e.target.value!==""&&e.target.validity.valid)setField(k,type==="number"?Number(e.target.value):e.target.value)}}/>`}</label>`)}</div>
+   <div class="ds-fields">${Object.entries(designFields).filter(([k])=>(k!=="text"||target.leaf)&&(!["primary","accent"].includes(k)||target.tag==="body")).map(([k,[name,type,opts]])=>html`<label key=${k} class=${k==="text"?"wide":""}>${name}${Array.isArray(type)?html`<select value=${values[k]||""} onChange=${e=>setField(k,e.target.value)}><option value="" disabled=${k!=="icon"}>${k==="icon"?"Simge yok":"Seçin"}</option>${type.map((v,i)=>html`<option key=${v} value=${v}>${opts?.[i]||v}</option>`)}</select>`:html`<input type=${type} min=${k==="fontSize"?1:0} max=${type==="number"?opts:undefined} maxLength=${500} value=${values[k]??(type==="color"?"#ffffff":"")} onInput=${e=>{if(type!=="number"||e.target.value!==""&&e.target.validity.valid)setField(k,type==="number"?Number(e.target.value):e.target.value)}}/>`}</label>`)}</div>
    <details open><summary>Yapay zekâ ile düzenle</summary><label>Beceri<select value=${skill} onChange=${e=>setSkill(e.target.value)}>${["Görsel hiyerarşi","Marka dili","Okunabilirlik","Menü ve buton tasarımı"].map(n=>html`<option key=${n}>${n}</option>`)}</select></label>
    <textarea rows="2" aria-label="Seçim için istek" placeholder="Örn. Bu düğmeyi markamıza uygun, daha belirgin yap" value=${prompt} onInput=${e=>setPrompt(e.target.value)}></textarea><button disabled=${asking||!prompt.trim()} onClick=${suggest}>${asking?"Öneri hazırlanıyor…":"Seçim için öner"}</button></details>
    <button class="btn s" disabled=${!pending||asking} onClick=${apply}>Seçime uygula</button>`}
@@ -3744,33 +3745,67 @@ function StudioChanges({before,after}){
  ${[["Önceki sürüm",change.old],["Çalışma kopyası",change.next]].map(([title,lines])=>html`<section key=${title}><h3>${title} · ${lines.length?(change.start+1)+"–"+(change.start+lines.length)+". satırlar":"Satır yok"}</h3><pre class="mono" tabindex="0" aria-label=${title}>${lines.join("\n")}</pre></section>`)}
  </div>`;
 }
+function studioScope(account, project) {
+ const branch=project?.gitContext;
+ return JSON.stringify([account,project?.appId||project?.draftId||null,branch?.source||null,branch?.repo||null,branch?.name||null]);
+}
+function speechText(results,finalOnly=false){
+ const parts=[];
+ for(const result of results){
+   const text=result[0].transcript.trim();
+   if(!text)continue;
+   // Interim hypotheses describe the unfinished segment. Keep committed segments verbatim.
+   const previous=parts.at(-1);
+   if(previous&&!previous.final&&text.startsWith(previous.text+" "))parts.pop();
+   parts.push({text,final:result.isFinal});
+ }
+ return parts.filter(p=>!finalOnly||p.final).map(p=>p.text).join(" ");
+}
 function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
  const [gitOpen,setGitOpen]=useState(false);
  useEffect(()=>{if(resumeVersions){setGitOpen("github");clearResumeVersions()}},[resumeVersions]);
  const [saved,setSaved]=useState(null),[saveFailed,setSaveFailed]=useState(false),[localOk,setLocalOk]=useState(true);
+ const account=auth.user?.id||"guest", store="studio:"+account;
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
- const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running&&!m.log.job?{...m.log,running:false,cut:true,secs:m.log.secs||0}:m.log):undefined}))}});
- const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput","")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
+ const [st,setSt]=useState(()=>{const legacy=account==="guest"?LS.get("studio",null):null;const guest=account!=="guest"&&LS.get("claimDraft",null)?LS.get("studio:guest",null):null;const claim=guest&&guest.draftId===LS.get("claimDraft",null);const v=claim?{...guest,msgs:[],appId:null,gitContext:null}:LS.get(store,null)||(legacy?{...legacy,msgs:[],appId:null,gitContext:null}:blank);return {...v,draftId:v.draftId||crypto.randomUUID(),msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running&&!m.log.job?{...m.log,running:false,cut:true,secs:m.log.secs||0}:m.log):undefined}))}});
+ const scope=studioScope(account,st), epoch=useRef(0);
+ const renderEpoch=epoch.current;
+ useEffect(()=>{if(account!=="guest")LS.del("claimDraft")},[account]);
+ const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput:"+scope,"")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const jobRef=useRef(null),detachRef=useRef(false);
- const resumedRef=useRef(false);
+
  useEffect(()=>{detachRef.current=false;return()=>{detachRef.current=true;try{abortRef.current&&abortRef.current.abort()}catch(e){}}},[]);
- useEffect(()=>{if(resumedRef.current||!auth.user||!API_ON)return;resumedRef.current=true;const m=st.msgs.findLast(x=>x.log&&x.log.running&&x.log.job);if(m)setTimeout(()=>resumeJob(m),50)},[auth.user?.id]);
- const [queue,setQueue]=useState(()=>LS.get("studioQueue",[])||[]);useEffect(()=>{LS.set("studioQueue",queue)},[queue]);const [ctrlOpen,setCtrlOpen]=useState(false);useEffect(()=>{if(busy)setCtrlOpen(false)},[busy]);const [qa,setQa]=useState(null);
- useEffect(()=>{const h=e=>{const d=e.data;if(!d||d.gm!=="qa"||!frameRef.current||e.source!==frameRef.current.contentWindow)return;setQa({len:(st.html||"").length,errors:Array.isArray(d.errors)?d.errors.slice(0,5).map(String):[],issues:Array.isArray(d.issues)?d.issues.slice(0,6):[]})};addEventListener("message",h);return()=>removeEventListener("message",h)},[st.html]);const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
+ useEffect(()=>{if(!auth.user||!API_ON)return;const m=st.msgs.findLast(x=>x.log&&x.log.running&&x.log.job);if(m){const t=setTimeout(()=>resumeJob(m),50);return()=>clearTimeout(t)}},[scope,auth.user?.id]);
+ const [queue,setQueue]=useState(()=>LS.get("studioQueue:"+scope,[])||[]);useEffect(()=>{LS.set("studioQueue:"+scope,queue)},[queue]);const [ctrlOpen,setCtrlOpen]=useState(false);useEffect(()=>{if(busy)setCtrlOpen(false)},[busy]);const [qa,setQa]=useState(null);
+ useEffect(()=>{const h=e=>{const d=e.data;if(!d||d.gm!=="qa"||!frameRef.current||e.source!==frameRef.current.contentWindow)return;setQa({source:st.html,screens:Array.isArray(d.screens)?d.screens.slice(0,12).map(v=>String(v).slice(0,70)):[],len:(st.html||"").length,errors:Array.isArray(d.errors)?d.errors.slice(0,5).map(String):[],issues:Array.isArray(d.issues)?d.issues.slice(0,6):[]})};addEventListener("message",h);return()=>removeEventListener("message",h)},[st.html]);const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
  const [live,setLive]=useState("");const liveRef=useRef("");const codeEnd=useRef(null);
- useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput",input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
- const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector(input||(firstUser&&firstUser.content)||"",prefs.kind);
+ useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput:"+scope,input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
+ const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector([st.purpose,st.title,firstUser?.content,input].filter(Boolean).join(" "),prefs.kind);
  const sector=prefs.sector!=="auto"?prefs.sector:autoSec;const styleAtt=atts.find(a=>a.role==="style");const customTheme=styleAtt?themeFromPalette(styleAtt.pal):(st.custom||null);const effTheme=prefs.theme==="gorsel"&&customTheme?customTheme:prefs.theme==="auto"||prefs.theme==="gorsel"?suggestThemes(sector)[0]:themeById(prefs.theme);const effRef=useRef(effTheme);effRef.current=effTheme;
  const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector,kind:String(id).startsWith("pk-")?"site":p.kind}));if(st.html)setPendTheme(id);if(String(id).startsWith("pk-"))toast("Panel şablonu seçildi · tür: Web (masaüstü panel)")};
  const startPanel=d=>{pickTheme(d.id,null);const app=PK_APPS.find(a=>a.id===d.app);setInput(app.id==="giris"?"“"+d.name+"” şablonuyla giriş, kayıt ve şifre sıfırlama ekranları olan bir hesap sayfası yap.":"“"+d.name+"” şablonuyla "+app.l+" yönetim paneli yap. Menüde "+app.nav.join(", ")+" olsun; her sayfayı gerçekçi Türkçe örnek verilerle doldur, açık/koyu tema geçişi ekle.");setTimeout(()=>{const t=document.querySelector(".gta");t&&t.focus()},120)};
- useEffect(()=>{setLocalOk(LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))}));setSaveFailed(false)},[st]);
+ useEffect(()=>{setLocalOk(LS.set(store,st)&&LS.set("studioMsgs:"+scope,st.msgs));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
- const preview=h=>withStoreShim(resolve(h));
- useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
+ const recordKey="templateRows:"+scope;
+ const records=useMemo(()=>LS.get(recordKey,[]),[recordKey,st.html]);
+ function taskPreview(h){
+  const anchor="/* gitmapp-task-records */";
+  if(!h.includes(anchor))return h;
+  const data=JSON.stringify(records).replace(/</g,"\\u003c");
+  const token=JSON.stringify(scope).replace(/</g,"\\u003c");
+  return h.replace(anchor,()=>`rows=${data};form.addEventListener("gitmapp-save",()=>parent.postMessage({gm:"task-records",scope:${token},rows},"*"));`);
+ }
+ useEffect(()=>{
+  const receive=e=>{if(e.source!==frameRef.current?.contentWindow||e.data?.gm!=="task-records"||e.data.scope!==scope||!Array.isArray(e.data.rows))return;
+   if(!LS.set(recordKey,e.data.rows))toast("Cihaz depolaması dolu. Önizleme kayıtları bu oturumda tutulacak.")};
+  addEventListener("message",receive);return()=>removeEventListener("message",receive);
+ },[recordKey]);
+ const preview=h=>withStoreShim(taskPreview(resolve(h)));
+ useEffect(()=>{if(incoming){proposedTitle.current="";const source=incoming.draftId&&incoming.assets?{html:incoming.html,assets:incoming.assets}:studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);switchProject({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},500);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{
   const chat=chatRef.current;
@@ -3785,12 +3820,13 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:curModel||undefined});
+ const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:curModel||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
  async function runActivity(kind,userText,execute,onDone,{imgs,images=imgs?.length||0,retry,legacyRetry,finalEvent,task,req}={}){
-  if(abortRef.current)return null;
+  if(abortRef.current||detachRef.current||renderEpoch!==epoch.current)return null;
+  const ticket=epoch.current;const valid=()=>ticket===epoch.current&&!detachRef.current;
   const id=Date.now()+Math.random();
   const start=Date.now(),controller=new AbortController();
   abortRef.current=controller;
@@ -3810,7 +3846,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log,secs:Math.floor((Date.now()-start)/1000)}}:m)}));
   };
   const onDelta=chunk=>{
-   if(!chunk)return;
+   if(!valid()||!chunk)return;
    liveRef.current+=chunk;
    record("receiving");
    const response=liveRef.current;
@@ -3820,9 +3856,11 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   };
   try{
    const result=await execute(controller.signal,onDelta,phase=>{
-    if(String(phase).startsWith("job:")){const jid=phase.slice(4);log.job=jid;jobRef.current=jid;LS.set("bgJob",{id:jid,label:String(task||userText||STUDIO_ACTIVITY[kind]?.waiting||"Üretim").slice(0,60),start});setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log}}:m)}));return}
+    if(!valid())return;
+    if(String(phase).startsWith("job:")){const jid=phase.slice(4);log.job=jid;jobRef.current=jid;LS.set("bgJob",{id:jid,account,scope,label:String(task||userText||STUDIO_ACTIVITY[kind]?.waiting||"Üretim").slice(0,60),start});setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log}}:m)}));return}
     if(phase==="connected"||phase==="processing"||phase==="continuing")record(phase);
    });
+   if(!valid())return null;
    const message=onDone(result);
    spent(result);
    const endEvent=typeof finalEvent==="function"?finalEvent(result):finalEvent;
@@ -3830,7 +3868,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
    return result;
   }catch(error){
-   if(error.name==="AbortError"&&detachRef.current)return null;
+   if(!valid())return null;
    if(error.name==="AbortError")finish({stopped:true});
    else{
     const message=error.message||"Bilinmeyen hata";
@@ -3841,19 +3879,20 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    }
    return null;
   }finally{
-   if(!detachRef.current){abortRef.current=null;streamClock.current=null;setBusy(false);setLive("");if(log.job){LS.del("bgJob");jobRef.current=null}}
+   if(valid()){abortRef.current=null;streamClock.current=null;setBusy(false);setLive("");if(log.job){LS.del("bgJob");jobRef.current=null}}
   }
  }
  // v5.20 — Bulut işine yeniden bağlan: sayfa değişip dönünce ya da yenilenince iş kaldığı yerden izlenir, sonuç uygulanır
- async function resumeJob(m){const id=m.id,jid=m.log.job,start=m.log.start||Date.now();const controller=new AbortController();abortRef.current=controller;jobRef.current=jid;
+ async function resumeJob(m){const ticket=epoch.current;const valid=()=>ticket===epoch.current&&!detachRef.current;const id=m.id,jid=m.log.job,start=m.log.start||Date.now();const controller=new AbortController();abortRef.current=controller;jobRef.current=jid;
   setBusy(true);setT0(start);streamClock.current={id,last:Date.now()};liveRef.current="";setLive("");
   const upd=f=>setSt(s=>({...s,msgs:s.msgs.map(x=>x.id===id?{...x,...f(x)}:x)}));
-  try{const j=await apiStream("/api/ai/jobs/"+jid+"/stream",null,d=>{liveRef.current+=d;streamClock.current&&(streamClock.current.last=Date.now());setLive(liveRef.current)},controller.signal,ph=>{if(String(ph).startsWith("job:"))return;upd(x=>({log:{...x.log,events:(x.log.events||[]).includes(ph)?x.log.events:[...(x.log.events||[]),ph]}}))});
+  try{const j=await apiStream("/api/ai/jobs/"+jid+"/stream",null,d=>{if(!valid())return;liveRef.current+=d;streamClock.current&&(streamClock.current.last=Date.now());setLive(liveRef.current)},controller.signal,ph=>{if(String(ph).startsWith("job:"))return;upd(x=>({log:{...x.log,events:(x.log.events||[]).includes(ph)?x.log.events:[...(x.log.events||[]),ph]}}))});
+   if(!valid())return;
    if(j.html){setSt(s=>{if(s.html)setVersions(v=>[...v.slice(-9),s.html]);return {...s,html:j.html,tokens:s.tokens||designTokens(j.html),title:s.title||j.title||"Yeni uygulama"}})}
    upd(x=>({content:j.summary||"Hazır",log:{...x.log,running:false,resumed:true,model:j.model||x.log.model,kb:j.html?(new Blob([j.html]).size/1024).toFixed(1):"",spent:j.spent,secs:Math.floor((Date.now()-start)/1000),events:[...(x.log.events||[]),x.log.kind==="review"?"preview":"preview"],res:{summary:String(j.summary||"").slice(0,600),patched:j.patched||0,title:j.title||""}}}));
    toast("Bulutta süren iş tamamlandı · önizleme güncellendi");
-  }catch(e){if(e.name==="AbortError"&&detachRef.current)return;const stop=/durdurdun/i.test(e.message||"");upd(x=>({content:e.message,err:!stop,log:{...x.log,running:false,error:!stop,stopped:stop,res:{error:String(e.message||"").slice(0,400)}}}))}
-  finally{if(!detachRef.current){setBusy(false);abortRef.current=null;jobRef.current=null;streamClock.current=null;setLive("");LS.del("bgJob")}}}
+  }catch(e){if(!valid())return;const stop=/durdurdun/i.test(e.message||"");upd(x=>({content:e.message,err:!stop,log:{...x.log,running:false,error:!stop,stopped:stop,res:{error:String(e.message||"").slice(0,400)}}}))}
+  finally{if(valid()){setBusy(false);abortRef.current=null;jobRef.current=null;streamClock.current=null;setLive("");LS.del("bgJob")}}}
  function runStream(kind,userText,path,body,onDone,im={},retry,task){
   const mode=kind==="review"?"review":body.html?"update":"build";
   const legacyRetry=task?undefined:{kind,text:kind==="review"||body.plan?"":String(body.prompt||""),shown:userText||""};
@@ -3868,7 +3907,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{if(jobRef.current)return;e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
- async function gen(text){if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+ async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
@@ -3882,7 +3921,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(prefs.mode==="ajan")return agent(text);
   if(prefs.mode==="planli"&&!st.html)return requestPlan(text,takeImages());
   await build(text,null,text,false,takeImages())}
- useEffect(()=>{if(busy||todo?.running||!queue.length||plan)return;const t=setTimeout(()=>{const [n,...rest]=queue;setQueue(rest);gen(n)},600);return()=>clearTimeout(t)},[busy,todo?.running,queue.length,plan]);
+ useEffect(()=>{if(busy||todo?.running||!queue.length||plan)return;const t=setTimeout(()=>{const [n,...rest]=queue;setQueue(rest);gen(n)},600);return()=>clearTimeout(t)},[scope,busy,todo?.running,queue,plan]);
  function lastAsk(){if(st.html)return "";const u=st.msgs.filter(m=>m.role==="user"&&m.content&&!isGo(m.content)&&!GREET.test(m.content.trim())&&m.content.trim().length>=14).pop();return u?u.content.trim():""}
  function requestPlan(text,im,retrying=false){
   return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},signal),result=>{
@@ -3900,7 +3939,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  async function approvePlan(){
   const p=plan;if(!p||busy||!p.text.trim())return;
   setPlan(null);
-  if(!await build(p.prompt,p.text,"Planı onayladım, yap.",false,{...p.im,thumbs:undefined}))setPlan(p);
+  const ticket=epoch.current;if(!await build(p.prompt,p.text,"Planı onayladım, yap.",false,{...p.im,thumbs:undefined})&&epoch.current===ticket)setPlan(p);
  }
  // Ajan modu: yapılacaklar listesi → onay → adım adım üretim
  function agent(text,im=takeImages(),retrying=false){
@@ -3908,11 +3947,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    setTodo({prompt:text,im,per:result.per,awaiting:true,running:false,items:result.todos.map(t=>({...t,state:"wait"}))});
   },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>agent(text,im,true),finalEvent:"agent"});
  }
- async function runTodos(){const t=todo;if(!t||t.running||abortRef.current)return;stopRef.current=false;let items=t.items.map(x=>({...x}));const put=()=>setTodo(o=>o&&{...o,items:items.map(x=>({...x}))});
+ async function runTodos(){const ticket=epoch.current,t=todo;if(!t||t.running||abortRef.current)return;stopRef.current=false;let items=t.items.map(x=>({...x}));const put=()=>setTodo(o=>o&&{...o,items:items.map(x=>({...x}))});
   setTodo(o=>({...o,awaiting:false,running:true}));let html=st.html;const all=items.map((x,i)=>(i+1)+". "+x.title).join("\n");
   for(let i=0;i<items.length;i++){if(stopRef.current)break;if(items[i].state==="done")continue;items[i].state="run";put();
    const first=!html;const prompt=first?t.prompt+"\n\nTüm yapılacaklar:\n"+all+"\n\nŞimdi yalnız şu adımı yap: "+items[i].detail:"Yapılacaklar listesindeki "+(i+1)+". adımı uygula: "+items[i].detail+"\n(Önceki adımları bozma.)";
    const r=await build(prompt,null,"Adım "+(i+1)+": "+items[i].title,false,i===0&&t.im?{...t.im,thumbs:undefined}:null,html||"");
+   if(ticket!==epoch.current)return;
    if(!r){items[i].state=stopRef.current?"wait":"err";put();break}html=r;items[i].state="done";put()}
   setTodo(o=>o&&{...o,running:false});toast(items.some(x=>x.state==="err")?"Bir adım başarısız oldu":items.every(x=>x.state==="done")?"Ajan tamamlandı":"Ajan durduruldu")}
  // Eğik çizgi komutları
@@ -3922,21 +3962,23 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(c==="/plan"){setPrefs(p=>({...p,mode:"planli"}));if(arg){prefsRef.current={...prefsRef.current,mode:"planli"};setTimeout(()=>gen(arg),0)}return}
   if(c==="/github"){dispatchEvent(new CustomEvent("gm:gh",{detail:{url:arg||"",auto:false}}));return}if(c==="/devral"){if(!ghFind(arg)){say("Kullanım: /devral github.com/kullanici/depo");return}dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(arg),auto:true}}));return}if(c==="/kontrol")return review();if(c==="/geri")return undo();if(c==="/kaydet")return save();if(c==="/yayinla")return publish();
   if(c==="/gorsel")return fileRef.current&&fileRef.current.click();if(c==="/tasarim")return setGallery(true);if(c==="/model")return setPicker(true);if(c==="/ayarlar")return setTimeout(()=>setRunOpen(true),0);
-  if(c==="/yeni"){if(st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışma silinsin mi?"))return;setInput("");setAtts([]);setSt(blank);setVersions([]);setPlan(null);setTodo(null);return}
+  if(c==="/yeni"){if(st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışma silinsin mi?"))return;setInput("");setAtts([]);switchProject(blank);setVersions([]);setPlan(null);setTodo(null);return}
   say("Komutlar:\n"+SLASH.map(([k,,d])=>k+" — "+d).join("\n"))}
  async function addFiles(files,role){const list=[...(files||[])].slice(0,3-atts.length);if(!list.length){toast("En fazla 3 görsel ekleyebilirsin");return}
-  for(const f of list){try{const a=await prepImage(f);if(role)a.role=role;setAtts(x=>[...x,a].slice(0,3));if(a.role==="style")setPrefs(p=>({...p,theme:"gorsel"}))}catch(e){toast(e.message)}}}
+  for(const f of list){try{const a=await prepImage(f);if(detachRef.current||renderEpoch!==epoch.current)return;if(role)a.role=role;setAtts(x=>[...x,a].slice(0,3));if(a.role==="style")setPrefs(p=>({...p,theme:"gorsel"}))}catch(e){toast(e.message)}}}
  async function review(){if(!st.html||busy)return;const prev=st.html;
   await runStream("review","Kontrol et ve düzelt","/api/ai/review",{html:prev,...aiBody()},j=>{setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html}));return j.summary})}
  async function save(){
   if(st.gitContext){setGitOpen(true);return null}
-  if(!auth.user){openAuth("Uygulamanızı kaydetmek ve yayınlamak için ücretsiz hesap oluşturun. Çalışmanız kaybolmaz.");return null}
-  setSaving(true);const body={title:st.title||"Adsız uygulama",html:resolve(st.html),emoji:st.emoji,color:st.color,prompt_log:st.msgs.filter(m=>m.content).map(m=>({role:m.role,content:m.content})).slice(-50),meta:{model:curModel||undefined,kind:prefs.kind,theme:effTheme.id,provider:prefs.provider}};
+  if(!auth.user){LS.set("claimDraft",st.draftId);openAuth("Uygulamanızı kaydetmek ve yayınlamak için ücretsiz hesap oluşturun. Çalışmanız kaybolmaz.");return null}
+  const ticket=epoch.current;setSaving(true);const body={title:st.title||"Adsız uygulama",html:resolve(st.html),emoji:st.emoji,color:st.color,prompt_log:st.msgs.filter(m=>m.content).map(m=>({role:m.role,content:m.content})).slice(-50),meta:{purpose:st.purpose||firstUser?.content?.slice(0,220),model:curModel||undefined,kind:prefs.kind,theme:effTheme.id,provider:prefs.provider}};
   try{let j;try{j=st.appId?await api("PUT","/api/apps/"+st.appId,body):await api("POST","/api/apps",body)}catch(e){if(st.appId&&(e.status===404||e.status===403))j=await api("POST","/api/apps",body);else throw e}
+   if(ticket!==epoch.current||detachRef.current)return null;
+   if(!st.appId||j.app.id!==st.appId){const nextKey=studioScope(account,{...st,appId:j.app.id});LS.set("cp:"+nextKey,LS.get("cp:"+scope,[]));LS.set("templateRows:"+nextKey,LS.get(recordKey,[]))}
    setSaved({...st,appId:j.app.id,prefs,userId:auth.user.id});setSaveFailed(false);setSt(s=>({...s,appId:j.app.id}));toast("Kaydedildi");setSaving(false);return j.app}catch(e){setSaveFailed(true);toast(e.message);setSaving(false);return null}}
  async function publish(){const a=await save();if(a)openPublish(a)}
  function undo(){if(!versions.length)return;const v=versions[versions.length-1];setVersions(versions.slice(0,-1));setSt(s=>({...s,html:v,msgs:[...s.msgs,{role:"assistant",content:"Önceki sürüme dönüldü.",anim:true}]}))}
- const typeInto=text=>new Promise(res=>{let i=0;const step=Math.max(1,Math.ceil(text.length/55));const t=setInterval(()=>{i+=step;setInput(text.slice(0,i));if(i>=text.length){clearInterval(t);res()}},24)});
+ const typeInto=text=>{setInput(text);inputRef.current=text};
  async function doForMe(kind){if(busy){sincap("busy");return}let ran=0;try{ran=await doForMe0(kind)}catch(e){sincap("nostart",e.message?"Hmm, bir şey ters gitti: "+e.message+". Birlikte tekrar deneyelim mi? Ne yapmak istediğini bana anlat.":"");return}
   // hiçbir adım çalışmadıysa ya da üretim hiç başlamadıysa sincap devreye girer
   const t0=Date.now();setTimeout(()=>{const g=window.__gmStudio||{};if(ran&&(g.calisiyor||g.acikUygulama))return;const lt=window.__gmLastToast;
@@ -3946,11 +3988,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(input.trim()){return await ghostRun([{el:".gsend",slow:true,fn:()=>gen()}])}
   const opts=TEMPLATES.map((t,i)=>[t,i]).filter(([t])=>(t[3]||"app")===k);if(!opts.length)return 0;const [t,i]=opts[Math.floor(Math.random()*opts.length)];
   return await ghostRun([{el:'.seg [data-k="'+k+'"]',fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.tpl[data-i="'+i+'"]',slow:true,fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",fn:()=>typeInto(t[2]),after:250},{el:".gsend",fn:()=>gen(t[2])}]);}
+ const seedActions=useRef(null);seedActions.current={gen,doForMe};
  useEffect(()=>{if(!seed)return;const sd=seed;clearSeed&&clearSeed();
   if((sd.prompt||sd.kind||sd.sketch)&&st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışmanız var. Yeni projeye geçilsin mi?"))return;
-  if(sd.prompt||sd.kind||sd.sketch){setSt(blank);setTodo(null);setVersions([]);setPlan(null);setInput("");setAtts([])}
+  if(sd.prompt||sd.kind||sd.sketch){switchProject(blank);setTodo(null);setVersions([]);setPlan(null);setInput("");setAtts([])}
   if(sd.kind)setPrefs(p=>({...p,kind:sd.kind}));if(sd.theme)setPrefs(p=>({...p,theme:sd.theme,sector:sd.sector||p.sector}));if(sd.emoji)setSt(x=>({...x,emoji:sd.emoji}));
-  setTimeout(()=>{if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)doForMe(sd.kind);else if(sd.prompt)gen(sd.prompt);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
+  const ticket=epoch.current;setTimeout(()=>{if(ticket!==epoch.current||detachRef.current)return;if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)seedActions.current.doForMe(sd.kind);else if(sd.prompt)seedActions.current.gen(sd.prompt);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
  async function applyTheme(){const t=themeById(pendTheme);setPendTheme(null);if(!st.html||busy)return;await build("Uygulamanın görsel tasarımını baştan “"+t.name+"” tasarım diline göre yeniden düzenle. Tüm içerik, veriler ve özellikler aynen kalsın; sadece renkler, yazı tipi, köşeler, boşluklar ve bileşen stilleri değişsin.",null,"“"+t.name+"” tasarımını uygula",true)}
  useEffect(()=>{frameRef.current?.contentWindow?.postMessage({gm:"picker-mode",mode:veMode},"*")},[veMode]);
  useEffect(()=>{function receive(e){
@@ -3971,16 +4014,43 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   // Safari ve bazı Chrome sürümleri aynı cümleyi her güncellemede baştan (büyüyerek) gönderir; eklemek yerine
   // dinleme başladığındaki metnin üstüne güncel dökümü yazıyoruz, böylece cümle tekrar etmez
   const base=input.trim()?input.replace(/\s+$/,"")+" ":"";
-  r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ").replace(/\s+/g," ").trim();setInput(base+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
+  r.onresult=e=>{if(recRef.current===r)setInput(base+speechText(e.results))};r.onend=()=>{if(recRef.current===r){recRef.current=null;setListening(false)}};r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
  function openTab(){const w=window.open("","_blank");if(!w){toast("Açılır pencere engellendi");return}w.opener=null;w.document.title=st.title||"Önizleme";w.document.body.style.margin="0";const f=w.document.createElement("iframe");f.setAttribute("sandbox","allow-scripts allow-forms allow-modals allow-popups");f.style.cssText="border:0;width:100vw;height:100vh;display:block";f.srcdoc=resolve(st.html);w.document.body.appendChild(f)}
- function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setInput("");setTodo(null);setAtts([]);setSt(blank);setVersions([]);setSure(false);setPlan(null)}
+ function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setInput("");setTodo(null);setAtts([]);switchProject(blank);setVersions([]);setSure(false);setPlan(null)}
  // Asistan köprüsü: yan paneldeki asistanın istediği adımları imleçle yapar
  const [plusOpen,setPlusOpen]=useState(false);useEffect(()=>{if(!plusOpen)return;const h=e=>{if(!e.target.closest(".plusw"))setPlusOpen(false)};const k=e=>{if(e.key==="Escape")setPlusOpen(false)};setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{document.removeEventListener("click",h);removeEventListener("keydown",k)}},[plusOpen]);
  useEffect(()=>{const k=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="u"){e.preventDefault();fileRef.current&&fileRef.current.click()}};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  const inputRef=useRef("");inputRef.current=input;const actRef=useRef(null);
- window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy||!!todo?.running,bulut:!!jobRef.current,sira:queue.length,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
- useEffect(()=>{dispatchEvent(new Event("gm:studio"))},[busy,!!todo?.running]);
- actRef.current=async a=>{const g=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
+ const documentInfo=useMemo(()=>{
+  const template=document.createElement("template");template.innerHTML=st.html||"";
+  const nodes=template.content.querySelectorAll("h1,h2,h3,nav a,title");
+  return {
+   screens:[...nodes].slice(0,12).map(n=>n.textContent.trim().slice(0,70)).filter(Boolean),
+   purpose:template.content.querySelector('meta[name="description"]')?.content?.slice(0,220)
+  };
+ },[st.html]);
+ const screens=qa?.source===st.html&&qa.screens.length?qa.screens:documentInfo.screens;
+ const recentDiff=useMemo(()=>{
+  if(!versions.length)return null;
+  const diff=changedBlock(versions.at(-1),st.html);
+  return {satir:diff.start+1,once:diff.old.join("\n").slice(0,160),sonra:diff.next.join("\n").slice(0,160)};
+ },[versions,st.html]);
+ const designChanges=useMemo(()=>readDesign(st.html||"").rules.slice(-2).map(rule=>({
+  oge:rule.path.at(-1)?.tag,alanlar:Object.keys(rule.values)
+ })),[st.html]);
+ const proje={
+  kimlik:st.appId||st.draftId,dal:st.gitContext?.name||"Proje taslağı",kaynak:st.gitContext?.source,
+  amac:documentInfo.purpose||st.purpose||firstUser?.content?.slice(0,220)||st.title,
+  ekranlar:screens,bilesen:picked?.component||picked?.tag||screens[0],
+  secili:picked?{secici:picked.sel?.slice(0,150),metin:picked.text?.slice(0,100)}:null,
+  tema:effTheme.name,cihaz:stage,
+  sonDegisiklikler:st.msgs.filter(m=>m.role==="assistant"&&m.content&&!m.err).slice(-3).map(m=>m.content.slice(0,120)),
+  tasarim:designChanges,sonDuzenleme:recentDiff
+ };
+ window.__gmStudio={scope,proje,acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy||!!todo?.running,bulut:!!jobRef.current,sira:queue.length,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
+ useEffect(()=>{dispatchEvent(new Event("gm:studio"))},[scope,busy,!!todo?.running]);
+ actRef.current=async (a,active=()=>true)=>{const ticket=epoch.current;
+  const g=(sel,fn,o)=>{const apply=()=>{if(active()&&ticket===epoch.current&&!detachRef.current)return fn()};return document.querySelector(sel)?ghostRun([{el:sel,fn:apply,...o}]):Promise.resolve(apply())};
   if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
   if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,mode:a.deger}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
   if(a.t==="tema"){if(!lookupDesign(a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
@@ -3991,10 +4061,10 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(a.t==="kaydet")return g('.ib[title="Kaydet"]',()=>save());
   if(a.t==="yayinla")return g(".ws-top .btn.s",()=>publish());
   if(a.t==="panel"){if(a.ad==="model")return g('.pill[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('.pill[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.pill[title="Çalıştırma ayarları"]',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));return}
-  if(a.t==="yeni"){setTodo(null);setAtts([]);setSt(blank);setVersions([]);setPlan(null);setInput("");return}};
- useEffect(()=>{const h=e=>{const {a,done}=e.detail||{};if(!a)return;Promise.resolve().then(()=>actRef.current&&actRef.current(a)).then(()=>done&&done(),er=>{toast(er.message||"Adım yapılamadı");done&&done()})};addEventListener("gm:act",h);return()=>{removeEventListener("gm:act",h);window.__gmStudio={acik:false}}},[]);
+  if(a.t==="yeni"){setTodo(null);setAtts([]);switchProject(blank);setVersions([]);setPlan(null);setInput("");return}};
+ useEffect(()=>{const h=e=>{const {a,done,active}=e.detail||{};if(!a)return;Promise.resolve().then(()=>actRef.current&&actRef.current(a,active)).then(()=>done&&done(),er=>{toast(er.message||"Adım yapılamadı");done&&done()})};addEventListener("gm:act",h);return()=>{removeEventListener("gm:act",h);window.__gmStudio={acik:false}}},[]);
  const send=e=>{e.preventDefault();gen()};
- const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();gen()}};
+ const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent?.isComposing&&e.keyCode!==229){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();gen()}};
  const seg=(items,val,set,label)=>html`<div class="seg" role="group" aria-label=${label}>${items.map(([k,ic,l,tip])=>html`<button type="button" data-k=${k} aria-label=${l||tip} aria-pressed=${val===k} title=${tip||""} class=${val===k?"on":""} onClick=${()=>set(k)}><${Icon} n=${ic} s=${15}/>${l&&html`<span>${l}</span>`}</button>`)}</div>`;
  const typeSwitch=()=>seg(KINDS.map(([k,,l])=>[k,KIND_ICON[k],l]),prefs.kind,k=>setPrefs(p=>({...p,kind:k})),"Proje türü");
  const controls=(workspace=false)=>html`<div class="ctrls" role="group" aria-label="Üretim seçenekleri">
@@ -4068,18 +4138,35 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const saveLabel=saving?"Kaydediliyor…":saveFailed?"Hesaba kaydedilemedi":synced?"Hesaba kaydedildi":localOk?"Yerel taslak":"Cihaza kaydedilemedi";
 
  const openDesign=()=>{setCode(false);setVeMode(null);setPicked(null);setDesignOpen(true)};
+ function switchProject(project){
+  if(!st.appId&&(st.html||st.msgs.length)){
+   const indexKey="localDrafts:"+account,index=LS.get(indexKey,[]);
+   if(LS.set("localDraft:"+studioScope(account,st),st)){
+    LS.set(indexKey,[{id:st.draftId,title:st.title||"Adsız proje"},...index.filter(entry=>entry.id!==st.draftId)]);
+   }else toast("Önceki yerel taslak için cihazda yeterli alan yok.");
+  }
+  epoch.current++;abortRef.current?.abort();abortRef.current=null;jobRef.current=null;
+  stopRef.current=true;recRef.current?.abort?.();recRef.current=null;
+  const next={...project,draftId:project.draftId||crypto.randomUUID()};
+  const key=studioScope(account,next);
+  setListening(false);setSaving(false);setBusy(false);setLive("");setPicked(null);setQa(null);setVersions([]);setAtts([]);setPlan(null);setTodo(null);setVeMode(null);setPendTheme(null);
+  setQueue(LS.get("studioQueue:"+key,[]));setInput(LS.get("studioInput:"+key,""));lastRetry.current=null;proposedTitle.current="";
+  const history=LS.get("studioMsgs:"+key,next.msgs||[]);
+  setSt({...next,msgs:history.map(m=>m.log?.running&&!m.log.job?{...m,log:{...m.log,running:false,cut:true}}:m)});
+ }
  function workOnBranch(gitContext,value){
-  if(value===undefined){setSt(s=>({...s,gitContext}));return}
+  if(studioScope(account,{...st,gitContext})===scope){setSt(s=>({...s,...(value===undefined?{}:studioSource(value)),gitContext}));return}
+  if(value===undefined){switchProject({...st,gitContext,msgs:[]});return}
   setVersions([]);setPicked(null);setVeMode(null);setTodo(null);setPlan(null);
   const source=studioSource(value);
-  setSt(s=>({...s,...source,gitContext}));
+  switchProject({...st,...source,gitContext,msgs:[]});
  }
  function detachBranch(){
-  setSt(s=>({...s,gitContext:null}));
+  switchProject({...st,gitContext:null,msgs:[]});
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
- const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
+ const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
+ return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -4093,7 +4180,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    <span style=${{position:"relative"}}><button class="ib" disabled=${!versions.length||busy} onClick=${()=>setHist(!hist)} title="Sürüm geçmişi"><${Icon} n="history" s=${16}/></button>${hist&&html`<div class="histm glass" onMouseLeave=${()=>setHist(false)}><b>Sürüm geçmişi</b>${versions.map((v,i)=>({v,i})).reverse().map(({v,i})=>html`<button key=${i} onClick=${()=>{setVersions(x=>[...x.slice(0,i),st.html]);setSt(s=>({...s,html:v}));setHist(false);toast("Sürüm "+(i+1)+" geri yüklendi")}}><span class="hist-n">${i+1}</span><span>Sürüm ${i+1}<small>${(v.length/1024).toFixed(1)} KB</small></span><${Icon} n="undo" s=${14}/></button>`)}</div>`}</span>
    <button class="ib" disabled=${!versions.length||busy} onClick=${undo} title="Önceki sürüm"><${Icon} n="undo" s=${16}/></button>
    <button class="ib" disabled=${busy||todo?.running||saving} onClick=${reset} title="Yeni proje">${sure?html`<span style=${{fontSize:12,padding:"0 4px"}}>Emin misiniz?</span>`:html`<${Icon} n="plus" s=${17}/>`}</button>
-   <button class="btn g s vc-trigger" disabled=${saving||busy||todo?.running||!st.html} onClick=${()=>setGitOpen(true)} title="Sürüm kontrolü" aria-label="Sürüm kontrolü"><${Icon} n="branch" s=${16}/><span>${st.gitContext?.name||"Dallar"}</span></button>
+   <button class="btn g s vc-trigger" disabled=${saving||!st.html} onClick=${()=>setGitOpen(true)} title="Sürüm kontrolü" aria-label="Sürüm kontrolü"><${Icon} n="branch" s=${16}/><span>${st.gitContext?.name||"Dallar"}</span></button>
    <span class="studio-save" role="status">${st.gitContext?(localOk?"Dal taslağı":"Cihaza kaydedilemedi"):saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title=${st.gitContext?"Dala commit kaydet":"Kaydet"}><${Icon} n="save" s=${16}/></button>
    <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
    <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
@@ -4465,6 +4552,16 @@ function AiCheck({toast}){
 
 /* ================= v3.7 — HAZIR ŞABLONLAR (çalışan demolar) ================= */
 const TEMPLATE_LIB=[
+{"id": "fatura", "name": "Hesap Pusulası", "sector": "Finans & Muhasebe", "desc": "Hizmet bedelini ve KDV tutarını hesaplayıp müşteri için bir proforma hazırlayın.", "feat": ["Birim fiyat ve miktar", "KDV hesabı", "Proforma arşivi"], "pr": "#273a54", "ac": "#273a54", "type": "panel", "kind": "app", "emoji": "🧾", "workflow": true},
+{"id": "dukkan", "name": "Kutu Dükkân", "sector": "Perakende & E-ticaret", "desc": "Ürünleri kutunuza ekleyin, adetleri değiştirin ve teslim alma siparişi verin.", "feat": ["Ürün seçimi", "Adet ve sepet toplamı", "Teslim alma siparişi"], "pr": "#38522e", "ac": "#38522e", "type": "site", "kind": "site", "emoji": "🛒", "workflow": true},
+{"id": "ziyaret", "name": "Sokak Rehberi", "sector": "Emlak", "desc": "Bütçenize göre ilanları süzün ve seçtiğiniz daire için ziyaret saati isteyin.", "feat": ["Bütçe filtresi", "İlan seçimi", "Ziyaret talepleri"], "pr": "#16504e", "ac": "#16504e", "type": "site", "kind": "site", "emoji": "🏡", "workflow": true},
+{"id": "konak", "name": "Kıyı Pansiyon", "sector": "Otel & Turizm", "desc": "Giriş ve çıkış günlerini seçin, konaklama ücretini görün ve oda talebi bırakın.", "feat": ["Oda sınıfı", "Gece hesabı", "Konaklama talebi"], "pr": "#204c63", "ac": "#204c63", "type": "site", "kind": "site", "emoji": "🏨", "workflow": true},
+{"id": "muayene", "name": "Poliklinik Ajandası", "sector": "Sağlık", "desc": "Branş ve hekim seçin, uygun saatlerden birini ayırın.", "feat": ["Branşa göre hekim", "Saat çakışması kontrolü", "Günlük randevular"], "pr": "#27578a", "ac": "#27578a", "type": "panel", "kind": "app", "emoji": "🩺", "workflow": true},
+{"id": "firsat", "name": "Teklif Masası", "sector": "Ajans & CRM", "desc": "Müşteri fırsatını kaydedin, teklif ve kazanıldı aşamalarına ilerletin.", "feat": ["Fırsat kaydı", "Aşama geçişi", "Satış panosu"], "pr": "#63412f", "ac": "#63412f", "type": "panel", "kind": "app", "emoji": "📊", "workflow": true},
+{"id": "sofra", "name": "Avlu Sofrası", "sector": "Yemek & Kafe", "desc": "Mevsim menüsünü inceleyin, kişi sayısını ve saati seçerek masanızı ayırın.", "feat": ["Mevsim menüsü", "Masa rezervasyonu", "Rezervasyon listesi"], "pr": "#703c28", "ac": "#703c28", "type": "site", "kind": "site", "emoji": "🍽️", "workflow": true},
+{"id": "derslik", "name": "Derslik", "sector": "Eğitim", "desc": "Öğrenci ders programını görür, dersini seçer ve ödev yanıtını teslim eder.", "feat": ["Haftalık ders programı", "Metinle ödev teslimi", "Teslim geçmişi"], "pr": "#394c87", "ac": "#394c87", "type": "panel", "kind": "app", "emoji": "📚", "workflow": true},
+{"id": "usta", "name": "Atölye Defteri", "sector": "Teknik servis", "desc": "Arızayı fotoğrafla kaydedin ve iş emrini uygun teknisyene atayın.", "feat": ["Fotoğraflı iş emri", "Teknisyen atama", "İş emri listesi"], "pr": "#234944", "ac": "#234944", "type": "panel", "kind": "app", "emoji": "🔧", "workflow": true},
+{"id": "percem", "name": "Perçem Randevu", "sector": "Kuaför & Güzellik", "desc": "Hizmetinizi ve uzmanınızı seçip salon ajandasına randevu ekleyin.", "feat": ["Hizmet fiyatları", "Uzman seçimi", "Randevu ajandası"], "pr": "#633551", "ac": "#633551", "type": "site", "kind": "site", "emoji": "✂️", "workflow": true},
  {id:"crm",name:"Nova CRM",type:"panel",sector:"İş & Satış",kind:"app",emoji:"🎯",pr:"#5b5bf7",ac:"#22d3ee",desc:"Satış ekibiniz her fırsatın hangi aşamada olduğunu, son görüşmeyi ve sıradaki görevi tek yerden takip etsin.",feat:["Kanban satış hunisi","Müşteri kartları","Görev ve hatırlatmalar","Gelir grafikleri","CSV dışa aktarma"]},
  {id:"muhasebe",name:"Defter",type:"panel",sector:"Finans & Muhasebe",kind:"app",emoji:"🧾",pr:"#0f9d76",ac:"#3b82f6",desc:"Müşteriye fatura kesin, vadesi yaklaşan alacakları görün ve giderlerinizi aynı defterde takip edin.",feat:["Yazdırılabilir fatura (PDF)","KDV ve vade takibi","Cari hesaplar","Gider dağılımı","Geciken tahsilat uyarısı"]},
  {id:"stok",name:"Depom",type:"panel",sector:"Stok & Depo",kind:"app",emoji:"📦",pr:"#f97316",ac:"#facc15",desc:"Ürün giriş ve çıkışlarını kaydedin. Hangi rafta ne kadar ürün kaldığını ve hangi stokların azaldığını görün.",feat:["Otomatik stok düşümü","Kritik seviye uyarısı","Stok değeri","Tedarikçi listesi","Raf/konum bilgisi"]},
@@ -4478,13 +4575,21 @@ const TPL_URL=id=>"templates/"+id+".html";
 function ProductMark({t}){
  return html`<span class="product-mark pm2"><${AppIcon2} emoji=${"brand_"+t.id} color=${t.pr} size=${46}/></span>`;
 }
-function TplThumb({t,w=380}){const s=w/1440;return html`<div class="tpth" style=${{height:900*s}}><iframe title=${t.name} src=${TPL_URL(t.id)} loading="lazy" tabindex="-1" sandbox="allow-scripts" style=${{width:1440,height:900,transform:"scale("+s+")"}}></iframe></div>`}
+function TplThumb({t}){
+ return html`<img loading="lazy" alt=${t.name+" masaüstü önizlemesi"} src=${"templates/previews/"+t.id+".webp"} style=${{width:"100%",display:"block",aspectRatio:"8 / 5",objectFit:"cover"}}/>`;
+}
 function TplCard({t,onDemo,onUse,w}){return html`<div class="tpc">
- <div class="tpc-img"><${TplThumb} t=${t} w=${w||380}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı demoyu aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı demo</span></button><span class="tpc-type">${t.type==="panel"?"Yönetim paneli":"Web sitesi"}</span></div>
- <div class="tpc-m"><${ProductMark} t=${t}/><div style=${{flex:1,minWidth:0}}><b>${t.name}</b><span>${t.sector}</span></div><button class="getbtn" onClick=${()=>onUse(t)}>Kullan</button></div>
+ <div class="tpc-img"><${TplThumb} t=${t} w=${w||380}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı demoyu aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı dene</span></button><span class="tpc-type">${t.type==="panel"?"Yönetim paneli":"Web sitesi"}</span></div>
+ <div class="tpc-m"><${ProductMark} t=${t}/><div style=${{flex:1,minWidth:0}}><b>${t.name}</b><span>${t.sector}</span></div></div><div style=${{padding:"0 14px 14px"}}><p>${t.desc}</p><button class="chip" onClick=${()=>onDemo({...t,previewDevice:"phone"})}>Telefon</button> <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"desktop"})}>Masaüstü</button> <button class="getbtn" onClick=${()=>onUse(t)}>Stüdyo’da kullan</button></div>
 </div>`}
 function TplDemo({t,close,onUse}){
- const [dev,setDev]=useState("desktop"),dialog=useRef(null);
+ const [dev,setDev]=useState(t.previewDevice||"desktop"),dialog=useRef(null);
+ const [source,setSource]=useState(""),[failure,setFailure]=useState("");
+ useEffect(()=>{const controller=new AbortController();
+  fetch(TPL_URL(t.id),{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error("Demo yüklenemedi");return r.text()})
+   .then(h=>{if(!controller.signal.aborted)setSource(withStoreShim(h))}).catch(e=>{if(!controller.signal.aborted)setFailure(e.message)});
+  return()=>controller.abort();
+ },[t.id]);
  useEffect(()=>{
    const el=dialog.current,trigger=document.activeElement;
    el.showModal();
@@ -4500,20 +4605,20 @@ function TplDemo({t,close,onUse}){
    <button class="getbtn" onClick=${()=>onUse({...t,openDesign:true})}>Tasarımı düzenle</button><button class="getbtn solid" onClick=${()=>onUse(t)}>Bu şablonla başla <${Icon} n="arrowRight" s=${16}/></button></div>
   </header>
   <div class="product-caption"><span>Canlı demo</span> Örnek verilerle deneyin</div>
-  <div class="fp-stage product-stage" onClick=${e=>{if(e.target===e.currentTarget)close()}}><iframe title=${t.name} src=${TPL_URL(t.id)} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></div></dialog>`,document.body);
+  <div class="fp-stage product-stage" onClick=${e=>{if(e.target===e.currentTarget)close()}}>${failure&&html`<p role="alert">${failure}</p>`}<iframe title=${t.name} srcDoc=${source} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></div></dialog>`,document.body);
 }
 function TemplatesPage({onUse,toast}){
  const [type,setType]=useState("");const [sec,setSec]=useState("");const [demo,setDemo]=useState(null);
  const secs=[...new Set(TEMPLATE_LIB.map(t=>t.sector))];const list=TEMPLATE_LIB.filter(t=>(!type||t.type===type)&&(!sec||t.sector===sec));
  return html`<div class="explore">
-  <div class="tp-hero"><div><div class="eyebrow light">Hazır şablonlar · canlı demo</div><h1>Sıfırdan başlama.<br/>Çalışan bir şablonla başla.</h1><p>CRM, ön muhasebe, stok, sigorta, klinik, emlak ve restoran… Her şablon gerçekten çalışır: kayıt ekle, ara, sürükle, yazdır. Beğendiğini seç, Geliştir'de yapay zekâyla kendi işine göre değiştir.</p>
+  <div class="tp-hero"><div><div class="eyebrow light">Hazır şablonlar · canlı demo</div><h1>Sıfırdan başlama.<br/>Çalışan bir şablonla başla.</h1><p>Menüden rezervasyona, ders programından ödev teslimine kadar işine uygun bir akışı dene. Seçtiğin şablonu Stüdyo’da kendi projene dönüştür.</p>
    <div class="tp-stats"><div><b>${TEMPLATE_LIB.length}</b><span>Çalışan şablon</span></div><div><b>${secs.length}</b><span>Sektör</span></div><div><b>₺0</b><span>Ücretsiz</span></div></div></div>
    <div class="tp-stack">${TEMPLATE_LIB.slice(0,3).map((t,i)=>html`<div class="tp-sc" key=${t.id} style=${{["--i"]:i}}><${TplThumb} t=${t} w=${300}/></div>`)}</div></div>
   <div class="tp-filter"><div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Yönetim panelleri"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <div class="tp-secs" role="group" aria-label="Şablon sektörü">${["",...secs].map(s=>html`<button type="button" key=${s} aria-pressed=${sec===s} class=${"chip"+(sec===s?" on":"")} onClick=${()=>setSec(s)}>${s||"Tüm sektörler"}</button>`)}</div></div>
   <div class="tp-grid">${list.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}${!list.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSec("")}}>Filtreleri temizle</button></div>`}</div>
   <section class="tp-how"><h3>Şablonla nasıl çalışılır?</h3><div class="tp-steps">${[["play","Canlı dene","Demoda kayıt ekle, sürükle, yazdır; telefon ve tablette nasıl göründüğüne bak."],["hammer","Kullan","Şablon Geliştir'e yüklenir. “Logomuzu koy, alanlara TC no ekle” gibi isteklerle değiştir."],["image","Kendi görsellerini ekle","Ürün, ilan ya da menü fotoğraflarını sürükle; içerik görseli olarak yerleşsin."],["rocket","Yayınla","Kendi adresinle tek tıkla canlıya al, istersen mağazada sat."]].map(([ic,t,d],i)=>html`<div key=${i}><${Tile} n=${ic} g=${["#e4ff3d,#a3e635","#f97316,#ec4899","#22c55e,#14b8a6","#a855f7,#ec4899"][i]} s=${36}/><b>${t}</b><span>${d}</span></div>`)}</div>
-   <p class="tp-note">Şablonlar Gitmapp tarafından özgün olarak tasarlandı; görseller kod ile çizildi, yazı tipleri Google Fonts'tan ücretsiz lisanslıdır. İçlerindeki firma, kişi ve ilanlar kurgusaldır.</p></section>
+   <p class="tp-note">Uyarlanan şablonların kaynak ve lisans bilgileri indirilen HTML dosyasında bulunur. İçlerindeki firma, kişi ve ilanlar kurgusaldır.</p></section>
   ${demo&&html`<${TplDemo} t=${demo} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
  </div>`;
 }
@@ -4600,11 +4705,15 @@ const activeIntegrations=()=>{const st=connState();return [...CONN.filter(c=>!c.
 const agoTR=s=>{if(!s)return"";const d=(Date.now()-new Date(String(s).replace(" ","T")+"Z").getTime())/864e5;return d<1/24?"az önce":d<1?Math.round(d*24)+" saat önce":d<30?Math.round(d)+" gün önce":new Date(String(s).replace(" ","T")+"Z").toLocaleDateString("tr-TR")};
 function ProjThumb({a,w=380}){const s=w/1280;return a.url&&a.status==="published"?html`<div class="tpth" style=${{height:800*s}}><iframe title=${a.title} src=${a.url} loading="lazy" tabindex="-1" sandbox="allow-scripts allow-same-origin" style=${{width:1280,height:800,transform:"scale("+s+")"}}></iframe></div>`
  :html`<div class="pj-ph" style=${{height:800*s,background:"radial-gradient(circle at 30% 20%,"+(a.color||"#e4ff3d")+"55,transparent 60%),#121212"}}><${AppIcon2} emoji=${a.emoji} color=${a.color} size=${64}/><b>${a.title}</b><span>Taslak · önizleme için yayınla</span></div>`}
-function ProjectsPage({auth,openAuth,toast,openInStudio,openPublish,health,go,onTpl}){
+function ProjectsPage({newProject,openDraft,auth,openAuth,toast,openInStudio,openPublish,health,go,onTpl}){
  const [apps,setApps]=useState(null);const [top,setTop]=useState(null);const [tab,setTab]=useState("mine");const [q,setQ]=useState("");const [menu,setMenu]=useState(null);const [del,setDel]=useState(null);const [tdemo,setTdemo]=useState(null);
  const load=()=>api("GET","/api/apps").then(j=>setApps(j.apps)).catch(e=>{toast(e.message);setApps([])});
  useEffect(()=>{if(auth.user)load();else setApps([])},[auth.user&&auth.user.id]);
  useEffect(()=>{if(tab==="top"&&!top&&API_ON)api("GET","/api/store").then(j=>setTop(j.apps.slice().sort((a,b)=>(b.opens||0)-(a.opens||0)))).catch(()=>setTop([]))},[tab]);
+ const owner=auth.user?.id||"guest",activeDraft=LS.get("studio:"+owner,null);
+ const current=activeDraft&&!activeDraft.appId&&(activeDraft.html||activeDraft.msgs?.length)?[{id:activeDraft.draftId,title:activeDraft.title||"Adsız proje"}]:[];
+ const drafts=[...current,...LS.get("localDrafts:"+owner,[]).filter(entry=>entry.id!==activeDraft?.draftId)];
+ function resumeDraft(id){const draft=id===activeDraft?.draftId?activeDraft:LS.get("localDraft:"+studioScope(owner,{draftId:id}),null);if(draft)openDraft(draft)}
  const recent=LS.get("recent",[])||[];
  const edit=async (a,openDesign=false)=>{try{const j=await api("GET","/api/apps/"+a.id);const r=[a.id,...recent.filter(x=>x!==a.id)].slice(0,12);LS.set("recent",r);openInStudio(j.app,openDesign)}catch(e){toast(e.message)}};
  const rm=async a=>{if(del!==a.id){setDel(a.id);setTimeout(()=>setDel(null),3000);toast("Silmek için tekrar tıkla");return}try{await api("DELETE","/api/apps/"+a.id);toast("Silindi");load()}catch(e){toast(e.message)}};
@@ -4616,12 +4725,12 @@ function ProjectsPage({auth,openAuth,toast,openInStudio,openPublish,health,go,on
    ${own&&html`<span style=${{position:"relative"}}><button class="ib" onClick=${()=>setMenu(menu===a.id?null:a.id)}><${Icon} n="more" s=${16}/></button>${menu===a.id&&html`<div class="pj-menu glass" onMouseLeave=${()=>setMenu(null)}><button onClick=${()=>edit(a)}><${Icon} n="hammer" s=${15}/> Geliştir'de aç</button><button onClick=${()=>edit(a,true)}><${Icon} n="layers" s=${15}/> Tasarımı düzenle</button><button onClick=${()=>openPublish(a)}><${Icon} n="rocket" s=${15}/> Yayınla / ayarlar</button>${a.url&&html`<button onClick=${()=>window.open(a.url,"_blank","noopener")}><${Icon} n="external" s=${15}/> Canlı adresi aç</button>`}${a.url&&html`<button onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="link" s=${15}/> Adresi kopyala</button>`}<button class="dang" onClick=${()=>rm(a)}><${Icon} n="trash" s=${15}/> ${del===a.id?"Emin misin? Tekrar tıkla":"Sil"}</button></div>`}</span>`}</div></div>`;
  return html`<div class="explore">
   <div class="pj-shell">
-   <div class="pj-bar"><label class="pj-q"><${Icon} n="search" s=${16}/><input placeholder="Ara" value=${q} onInput=${e=>{setQ(e.target.value);if(tab!=="mine"&&tab!=="recent")setTab("mine")}}/></label>${[["mine","Projelerim"],["recent","Son görüntülenenler"],["top","Bugün en çok ziyaret edilenler"],["tpl","Gitmapp şablonları"]].map(([k,l])=>html`<button key=${k} class=${"pj-t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}<span style=${{flex:1}}></span><a class="pj-all" href="#" onClick=${e=>{e.preventDefault();go(tab==="tpl"?"sablonlar":"magaza")}}>Tümüne göz at <${Icon} n="arrowRight" s=${16}/></a></div>
-   ${tab==="tpl"?html`<div class="pj-grid">${TEMPLATE_LIB.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setTdemo} onUse=${onTpl}/>`)}</div>`
+   <div class="pj-bar"><label class="pj-q"><${Icon} n="search" s=${16}/><input placeholder="Ara" value=${q} onInput=${e=>{setQ(e.target.value);if(tab!=="mine"&&tab!=="recent"&&tab!=="draft")setTab("mine")}}/></label>${[["mine","Projelerim"],["draft","Yerel taslaklar"],["recent","Son görüntülenenler"],["top","Bugün en çok ziyaret edilenler"],["tpl","Gitmapp şablonları"]].map(([k,l])=>html`<button key=${k} class=${"pj-t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}<span style=${{flex:1}}></span><a class="pj-all" href="#" onClick=${e=>{e.preventDefault();go(tab==="tpl"?"sablonlar":"magaza")}}>Tümüne göz at <${Icon} n="arrowRight" s=${16}/></a></div>
+   ${tab==="draft"?html`<div class="pj-grid"><button class="pj pj-new" onClick=${newProject}><b>Yeni proje</b></button>${drafts.filter(d=>d.title.toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(d=>html`<button class="pj" key=${d.id} onClick=${()=>resumeDraft(d.id)}><b>${d.title}</b><small>Stüdyo’da aç</small></button>`)}</div>`:tab==="tpl"?html`<div class="pj-grid">${TEMPLATE_LIB.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setTdemo} onUse=${onTpl}/>`)}</div>`
    :!auth.user&&tab!=="top"?html`<div class="ex-empty"><${BrandMark} s=${56}/><h3>Projelerini görmek için giriş yap</h3><p>Yaptığın uygulamalar, siteler ve oyunlar burada durur.</p><button class="btn" onClick=${()=>openAuth("Projelerinizi görmek için giriş yapın.")}>Giriş yap / Kayıt ol</button></div>`
    :(tab==="top"?top:apps)===null?html`<div class="pj-grid">${[1,2,3].map(i=>html`<div class="pj" key=${i}><div class="pj-img sk-b" style=${{height:230}}></div></div>`)}</div>`
-   :!rows.length?html`<div class="ex-empty"><${BrandMark} s=${56}/><h3>${tab==="recent"?"Henüz açtığın proje yok":tab==="top"?"Bugün ziyaret yok":"İlk projeni oluştur"}</h3><p>Bir fikir yaz ya da hazır bir şablonla başla.</p><div style=${{display:"flex",gap:8}}><button class="btn" onClick=${()=>go("studio")}><${Icon} n="plus" s=${15}/> Yeni proje</button><button class="btn g" onClick=${()=>setTab("tpl")}>Şablonlara bak</button></div></div>`
-   :html`<div class="pj-grid">${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${()=>go("studio")}><span><${Icon} n="plus" s=${28}/></span><b>Yeni proje</b><small>Fikrini yaz, çizimini yükle ya da şablon seç</small></button>`}${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${()=>{const u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","");if(u&&u.trim())dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u.trim(),auto:false}}))}}><span><${Icon} n="github" s=${28}/></span><b>GitHub'dan içe aktar</b><small>Depoyu önizle, bağımlılıkları kontrol et, devral ve yayınla</small></button>`}${rows.map(a=>card(a,tab!=="top"))}</div>`}
+   :!rows.length?html`<div class="ex-empty"><${BrandMark} s=${56}/><h3>${tab==="recent"?"Henüz açtığın proje yok":tab==="top"?"Bugün ziyaret yok":"İlk projeni oluştur"}</h3><p>Bir fikir yaz ya da hazır bir şablonla başla.</p><div style=${{display:"flex",gap:8}}><button class="btn" onClick=${newProject}><${Icon} n="plus" s=${15}/> Yeni proje</button><button class="btn g" onClick=${()=>setTab("tpl")}>Şablonlara bak</button></div></div>`
+   :html`<div class="pj-grid">${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${newProject}><span><${Icon} n="plus" s=${28}/></span><b>Yeni proje</b><small>Fikrini yaz, çizimini yükle ya da şablon seç</small></button>`}${tab==="mine"&&!q&&html`<button class="pj pj-new" onClick=${()=>{const u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","");if(u&&u.trim())dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u.trim(),auto:false}}))}}><span><${Icon} n="github" s=${28}/></span><b>GitHub'dan içe aktar</b><small>Depoyu önizle, bağımlılıkları kontrol et, devral ve yayınla</small></button>`}${rows.map(a=>card(a,tab!=="top"))}</div>`}
   </div>
   ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
  </div>`;
@@ -4714,7 +4823,7 @@ function previewPicker(nodePath){
    const path=nodePath(el);
    if(mode==="select"){
      const sel=path.map(p=>p.id?p.tag+"#"+CSS.escape(p.id):p.tag+":nth-of-type("+p.index+")").join(" > ");
-     parent.postMessage({gm:"select",sel,tag:el.localName,text:el.innerText.slice(0,120),html:el.outerHTML.slice(0,600)},"*");return;
+     parent.postMessage({gm:"select",sel,component:el.closest("form,article,section,nav,header,footer")?.querySelector("h1,h2,h3,legend")?.textContent?.slice(0,80),tag:el.localName,text:el.innerText.slice(0,120),html:el.outerHTML.slice(0,600)},"*");return;
    }
    if(el.children.length||!el.textContent.trim()||el.textContent.length>500){parent.postMessage({gm:"picker-tip"},"*");return}
    const old=el.textContent,attr=el.getAttribute("contenteditable");
@@ -4797,14 +4906,14 @@ function HomePage(props){const {auth,startTemplate,go}=props;
  },[modeOpen]);
  const setM=m=>{setMode(m);LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode:m});setModeOpen(false)};
  const submit=e=>{e&&e.preventDefault();const p=v.trim();if(!p)return;LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode,kind});startTemplate({prompt:p,kind})};
- const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.interimResults=true;const base=v.trim()?v.replace(/\s+$/,"")+" ":"";r.onresult=e=>setV(base+[...e.results].map(y=>y[0].transcript).join(" ").replace(/\s+/g," ").trim());r.onend=()=>setListening(false);setListening(true);r.start()};
+ const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.interimResults=true;const base=v.trim()?v.replace(/\s+$/,"")+" ":"";r.onresult=e=>setV(base+speechText(e.results));r.onend=()=>setListening(false);setListening(true);r.start()};
  const first=auth.user&&auth.user.name?auth.user.name.split(" ")[0]:"";
  return html`<div class="home">
   <section class="home-hero"><div class="siri"><i></i><i></i><i></i><i></i><i></i></div>
    <button class="home-pill" onClick=${()=>go("baglantilar")}><span class="hp-ic">${["sparkles","bolt","db"].map(n=>html`<i key=${n}><${Icon} n=${n} s=${13} c="#0a0a0a" w=${2}/></i>`)}</span>Uygulamalarına yapay zekâ ve servis ekle <${Icon} n="arrowRight" s=${16}/></button>
    <h1 class="home-h">${first?html`Yapmaya hazır mısın, <span class="hl">${first}</span>?`:html`Fikrini yaz, <span class="hl">gitmapp</span> yapsın.`}</h1>
    <div class=${"gbox hg"+(v.trim()?" typing":"")}><form class="home-box" onSubmit=${submit}>
-    <${GhostTA} className="hta" aria-label="Yeni proje fikri" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+(chip?CHIP_PH[chip]:ph)+" yapmasını iste"}/>
+    <${GhostTA} className="hta" aria-label="Yeni proje fikri" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent?.isComposing&&e.keyCode!==229){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+(chip?CHIP_PH[chip]:ph)+" yapmasını iste"}/>
     <div class="hb-row"><div class="hb-group">
      <button type="button" class="hbi" title="Çizim ya da görsel ekle" onClick=${()=>startTemplate({sketch:"layout",kind})}><${Icon} n="plus" s=${18}/></button>
      <button type="button" class="hbw" onClick=${()=>go("baglantilar")}><${Icon} n="grid" s=${15}/> Çalışma alanı${conns?html`<em>${conns}</em>`:""}</button>
@@ -5076,16 +5185,26 @@ function CopilotReply({text}){
  }
  return blocks.map(({type,start,items},i)=>type==="p"?html`<p key=${i}>${inline(items[0])}</p>`:React.createElement(type,{key:i,start:type==="ol"?Number(start):undefined},items.map((v,j)=>html`<li key=${j}>${inline(v)}</li>`)));
 }
-function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0);useEffect(()=>{const h=()=>setSb(x=>x+1);addEventListener("gm:studio",h);return()=>removeEventListener("gm:studio",h)},[]);
- const [msgs,setMsgs]=useState(()=>(LS.get("cpMsgs",[])||[]).map(m=>m.st?{...m,st:m.st.map(x=>x==="run"||x==="ask"?"wait":x)}:m));
+function Copilot(props){
+ const [,refresh]=useState(0);
+ React.useLayoutEffect(()=>{const update=()=>refresh(v=>v+1);addEventListener("gm:studio",update);return()=>removeEventListener("gm:studio",update)},[]);
+ const scope=props.ctx().studyo.scope||studioScope(props.auth.user?.id||"guest",null);
+ return html`<${CopilotThread} key=${scope} scope=${scope} ...${props}/>`;
+}
+function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0);useEffect(()=>{const h=()=>setSb(x=>x+1);addEventListener("gm:studio",h);return()=>removeEventListener("gm:studio",h)},[]);
+ const [msgs,setMsgs]=useState(()=>(LS.get("cp:"+scope,[])||[]).map(m=>m.st?{...m,st:m.st.map(x=>x==="run"||x==="ask"?"wait":x)}:m));
  const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
  const [auto,setAuto]=useState(()=>LS.get("cpAuto",false)===true);const [speakOn,setSpeakOn]=useState(()=>LS.get("cpSpeak",true)!==false);
  const [voice,setVoice]=useState(false);const [listen,setListen]=useState(false);const [interim,setInterim]=useState("");const [talking,setTalking]=useState(false);const [asking,setAsking]=useState(null);
  const [run0,setRun0]=useState(null);const [,setTick]=useState(0);const stepT=useRef({});const [openTh,setOpenTh]=useState({});
  const R=useRef({});Object.assign(R.current,{msgs,auto,speakOn,voice,busy,run,ctx,talking});
  useEffect(()=>{if(!busy&&!msgs.some(m=>m.st&&m.st.includes("run")))return;const i=setInterval(()=>setTick(x=>x+1),500);return()=>clearInterval(i)},[busy,msgs]);
+ const archive=useMemo(()=>auth.user?[]:[...(LS.get("cpMsgs",[])||[]),...(LS.get("studio",null)?.msgs||[])].filter(m=>m.content),[auth.user?.id]);
+ const [controller]=useState(()=>new AbortController());
+ const active=()=>!controller.signal.aborted&&scope===(ctx().studyo.scope||studioScope(auth.user?.id||"guest",null));
+ React.useLayoutEffect(()=>()=>{controller.abort();R.current.voice=false;waitRef.current?.r(false)},[]);
  const endRef=useRef(null);const recRef=useRef(null);const waitRef=useRef(null);const emptyRef=useRef(0);const taRef=useRef(null);
- useEffect(()=>{LS.set("cpMsgs",msgs.slice(-40))},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
+ useEffect(()=>{LS.set("cp:"+scope,msgs)},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
  useEffect(()=>{const list=endRef.current?.parentElement;if(list)list.scrollTop=list.scrollHeight},[msgs.length,live,busy,asking,interim]);
  useEffect(()=>{const v=window.speechSynthesis;if(v&&v.getVoices)v.getVoices();return()=>{stopAll()}},[]);
  useEffect(()=>{const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal")&&!R.current.voice)close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
@@ -5100,7 +5219,7 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
  function startListen(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; Chrome, Edge ya da Safari dene.");setVoice(false);R.current.voice=false;return}
   stopSpeak();try{recRef.current&&recRef.current.abort()}catch(e){}
   const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;r.maxAlternatives=1;recRef.current=r;let fin="";
-  r.onresult=e=>{let it="";fin="";for(const x of e.results){if(x.isFinal)fin+=x[0].transcript;else it+=x[0].transcript}setInterim((fin+" "+it).trim())};
+  r.onresult=e=>{fin=speechText(e.results,true);setInterim(speechText(e.results))};
   r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){toast("Mikrofon izni verilmedi. Adres çubuğundaki kilit simgesinden izin verebilirsin.");setVoice(false);R.current.voice=false}};
   r.onend=()=>{setListen(false);const txt=fin.trim();setInterim("");if(recRef.current!==r)return;recRef.current=null;
    if(txt){emptyRef.current=0;onSpoken(txt);return}
@@ -5117,9 +5236,9 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
  const relisten=()=>{if(R.current.voice&&!waitRef.current)setTimeout(()=>{if(R.current.voice&&!R.current.busy&&!R.current.talking&&!recRef.current)startListen()},250)};
  // --- eylemler ---
  const setAct=(mi,ai,s)=>setMsgs(ms=>ms.map((m,i)=>i===mi&&m.st?{...m,st:m.st.map((x,j)=>j===ai?s:x)}:m));
- async function exec(mi,ai){const a=R.current.msgs[mi].acts[ai];stepT.current[mi+"-"+ai]=Date.now();setAct(mi,ai,"run");try{await R.current.run(a)}catch(e){toast(e.message||"Adım yapılamadı")}const k=mi+"-"+ai;stepT.current[k]=Math.max(1,Math.round((Date.now()-stepT.current[k])/1000));setMsgs(ms=>ms.map((m,i)=>i===mi&&m.st?{...m,st:m.st.map((x,j)=>j===ai?"done":x),secs:(m.secs||0)+stepT.current[k]}:m));await wait(220)}
+ async function exec(mi,ai){if(!active())return;const a=R.current.msgs[mi].acts[ai];stepT.current[mi+"-"+ai]=Date.now();setAct(mi,ai,"run");try{await R.current.run(a,active)}catch(e){toast(e.message||"Adım yapılamadı")}const k=mi+"-"+ai;stepT.current[k]=Math.max(1,Math.round((Date.now()-stepT.current[k])/1000));setMsgs(ms=>ms.map((m,i)=>i===mi&&m.st?{...m,st:m.st.map((x,j)=>j===ai?"done":x),secs:(m.secs||0)+stepT.current[k]}:m));await wait(220)}
  async function runActs(mi,all){const m=R.current.msgs[mi];if(!m||!m.acts)return;
-  for(let ai=0;ai<m.acts.length;ai++){const cur=R.current.msgs[mi].st[ai];if(cur==="done"||cur==="skip")continue;const a=m.acts[ai];
+  for(let ai=0;ai<m.acts.length;ai++){if(!active())return;const cur=R.current.msgs[mi].st[ai];if(cur==="done"||cur==="skip")continue;const a=m.acts[ai];
    if(CP_CONFIRM[a.t]&&!all){setAct(mi,ai,"ask");setAsking(mi+"-"+ai);await wait(140);const b=document.querySelector('.cp-ok[data-k="'+mi+"-"+ai+'"]');if(b)ghostPoint(b);
     const ok=await new Promise(r=>{waitRef.current={mi,ai,r};if(R.current.voice&&!R.current.talking&&!recRef.current)startListen()});waitRef.current=null;setAsking(null);ghostHide();
     if(!ok){setAct(mi,ai,"skip");continue}}
@@ -5128,16 +5247,16 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
  function okAct(mi,ai){const w=waitRef.current;if(w&&w.mi===mi&&w.ai===ai){w.r(true);return}if(w){toast("Önce bekleyen adımı onayla ya da atla");return}exec(mi,ai)}
  function skipAct(mi,ai){const w=waitRef.current;if(w&&w.mi===mi&&w.ai===ai){w.r(false);return}setAct(mi,ai,"skip")}
  // --- gönder ---
- async function send(text,fromVoice){text=String(text!=null?text:t).trim();if(!text||R.current.busy)return;if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
+ async function send(text,fromVoice){text=String(text!=null?text:t).trim();if(!active()||!text||R.current.busy)return;if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
   if(waitRef.current){waitRef.current.r(false)}stopSpeak();setT("");
   const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";const t0=Date.now();let first=0;const ttl=clTopic(text);setRun0({t0,ttl,think:null});const thk=()=>Math.max(1,Math.round(((first||Date.now())-t0)/1000));
-  try{const j=await apiStream("/api/ai/copilot",{messages:next.filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice},d=>{if(!first){first=Date.now();setRun0(r=>r&&{...r,think:thk()})}acc+=d;setLive(acc)});
-   const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined,think:thk(),ttl};
+  try{const j=await apiStream("/api/ai/copilot",{messages:next.filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice},d=>{if(!active())return;if(!first){first=Date.now();setRun0(r=>r&&{...r,think:thk()})}acc+=d;setLive(acc)},controller.signal);
+   if(!active())return;const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined,think:thk(),ttl};
    const all=[...R.current.msgs,msg];const mi=all.length-1;setMsgs(all);R.current.msgs=all;setLive("");setRun0(null);setBusy(false);R.current.busy=false;
    const sp=(R.current.speakOn||R.current.voice)?say(msg.content):Promise.resolve();
    if(p.acts.length&&R.current.auto){await sp;await runActs(mi,false)}else{await sp;relisten()}
-  }catch(e){setLive("");setRun0(null);setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
- const key=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}};
+  }catch(e){if(!active())return;setLive("");setRun0(null);setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
+ const key=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent?.isComposing&&e.keyCode!==229){e.preventDefault();send()}};
  const lastA=[...msgs].reverse().find(m=>m.role==="assistant"&&!m.err);
  const status=busy?"Düşünüyor…":talking?"Konuşuyor…":listen?"Dinliyor…":asking?"Onay bekliyor":auto?"Oto pilot açık":"Ücretsiz · sesli ya da yazılı";
  const orb=html`<span class=${"cp-orb"+(listen?" listen":talking?" talk":busy?" think":"")}><i></i></span>`;
@@ -5161,6 +5280,7 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
    ${msgs.length>0&&html`<button class="ib sm" title="Sohbeti temizle" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);setMsgs([])}}><${Icon} n="trash" s=${14}/></button>`}
    <button class="ib sm" title="Kapat (Esc)" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);close()}}><${Icon} n="x" s=${15}/></button></div></div>
   <div class="cp-msgs">
+   ${archive.length>0&&html`<details><summary>Önceki cihaz geçmişi · proje bilinmiyor</summary>${archive.map((m,i)=>html`<p key=${i}>${m.content}</p>`)}</details>`}
    ${!msgs.length&&html`<div class="cp-hello"><div class="cp-big">${orb}</div><h3>Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}, ne yapalım?</h3><p>Fikrini anlat, birlikte netleştirelim. Hazır olunca istemi ben yazar, geliştirmeyi başlatırım. <b>Oto</b> modda ekranları ve ayarları ben yönetirim; sen yalnızca onaylarsın.</p>
     <button class="cp-voicebtn" onClick=${toggleVoice}><${Icon} n="headphones" s=${17}/> Sesli konuşmaya başla</button>
     <div class="cp-start">${CP_START.map(([ic,l,q])=>html`<button key=${l} onClick=${()=>send(q)}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}</div></div>`}
@@ -5311,7 +5431,7 @@ function SquirrelGuide({run,toast}){
  function stopL(){const r=recRef.current;recRef.current=null;try{r&&r.abort()}catch(e){}setListen(false);setInterim("")}
  function startL(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; aşağıya yazabilirsin.");return}
   try{speechSynthesis.cancel()}catch(e){}stopL();const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;let fin="";
-  r.onresult=e=>{let it="";fin="";for(const x of e.results){if(x.isFinal)fin+=x[0].transcript;else it+=x[0].transcript}setInterim((fin+" "+it).trim())};
+  r.onresult=e=>{fin=speechText(e.results,true);setInterim(speechText(e.results))};
   r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")toast("Mikrofon izni verilmedi; adres çubuğundaki kilitten izin verebilirsin.")};
   r.onend=()=>{if(recRef.current!==r)return;recRef.current=null;setListen(false);setInterim("");if(fin.trim())ask(fin.trim(),true)};setListen(true);try{r.start()}catch(e){setListen(false)}}
  async function talk(){setPhase("talk");await say("Seni dinliyorum.");startL()}
@@ -5414,7 +5534,7 @@ function App(){
  useEffect(()=>{if(config.data){siteSettings=config.data;setSettingsVersion(v=>v+1)}},[config.data]);
  const auth=useAuth(apiOn);
  const [bg,setBg]=useState(null);
- useEffect(()=>{let t,alive=true;const tick=async()=>{const b=LS.get("bgJob",null);if(!b||!auth.user||view==="studio"){alive&&setBg(null);return}
+ useEffect(()=>{let t,alive=true;const tick=async()=>{const b=LS.get("bgJob",null);if(!b||b.account!==auth.user?.id||!auth.user||view==="studio"){alive&&setBg(null);return}
   try{const j=await api("GET","/api/ai/jobs/"+b.id);if(!alive)return;setBg({...b,...j});if(j.status!=="running"&&!b.told){LS.set("bgJob",{...b,told:true});toast(j.status==="done"?"Bulutta süren iş bitti · Stüdyo'da aç":"Bulut işi tamamlanamadı")}}catch(e){if(e.status===404){LS.del("bgJob");alive&&setBg(null)}}};
   tick();t=setInterval(tick,3000);return()=>{alive=false;clearInterval(t)}},[view,auth.user?.id]);
  const models=useModels(apiOn,auth.user&&auth.user.id);
@@ -5470,7 +5590,7 @@ function App(){
  const addBuild=(r,notes,prof)=>setBuilds([{full:r.full_name,url:r.html_url,notes,fw:prof.fw,target:prof.target,status:"Bekliyor",created:new Date().toISOString()},...builds.filter(b=>b.full!==r.full_name)]);
  async function runAll(arr){setBusyAll(true);for(const r of arr){try{setSec(r.full_name,await securityScan(r))}catch(e){toast(e.message);break}}setBusyAll(false);toast("Toplu test tamamlandı")}
  const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,cat:cat&&cat.id,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
- const openInStudio=(a,openDesign=false)=>{setIncoming({openDesign,kind:a.meta?.kind,html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#5e5ce6",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
+ const openInStudio=(a,openDesign=false)=>{setIncoming({openDesign,purpose:a.meta?.purpose,kind:a.meta?.kind,html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#5e5ce6",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
  const isAdm=!!(auth.user&&auth.user.admin);
  useEffect(()=>{const g=e=>{const d=e.detail||{};let u=String(d.url||"").trim();if(!u){u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","")||"";u=u.trim()}if(u)setGh({url:u,auto:!!d.auto,n:Date.now()})};addEventListener("gm:gh",g);const co=()=>setCrOpen(true);addEventListener("gm:cr",co);const so=e=>{if(e.detail&&e.detail.html){setCur(null);setIncoming(e.detail);setView("studio")}};addEventListener("gm:studio",so);const sk=()=>setSkills(true);addEventListener("gm:beceri",sk);
   const c=e=>{const d=e.detail||{};auth.patch({credits:d.credits});if(d.spent>0){const x=LS.get("crSession",{n:0,s:0})||{n:0,s:0};LS.set("crSession",{n:x.n+1,s:x.s+d.spent});setCrFlash({s:d.spent,k:Date.now()});const el=[...document.querySelectorAll(".me-cr,.crchip,.pill-cr")].find(z=>z.getBoundingClientRect().width>0);const r=el?el.getBoundingClientRect():{left:innerWidth-90,top:70,width:40};const f=document.createElement("div");f.className="cr-fly";f.textContent="−"+d.spent+" kredi";f.style.left=(r.left+r.width/2-30)+"px";f.style.top=(r.top-6)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1500)}};addEventListener("gm:credits",c);
@@ -5485,8 +5605,12 @@ function App(){
  const overview=useRemoteData(isAdm&&mode==="admin"?"/api/admin/overview":null,auth.user?.id);
  const needLogin=adminPage&&(!apiOn||auth.phase!=="ready"||!isAdm);
  const switchMode=m=>setView(m==="admin"?"yonetim":"ana");
- const useTemplate=async t=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!h.includes("Gitmapp hazır şablonu")||!/<script>window\.(APP|SITE)=/.test(h))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
-   setIncoming({openDesign:t.openDesign===true,html:h,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,appId:null,msgs:[{role:"assistant",content:"“"+t.name+"” şablonu hazır. Önizlemedeki okla bir öğe seçebilir veya Tasarım sekmesinde düzenleyebilirsin."}]});setView("studio")}catch(e){toast(e.message)}};
+ const useTemplate=async (t,active=()=>true)=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
+   const draftId=crypto.randomUUID();
+   const projectHtml=t.workflow?h.replace('const key="gitmapp-'+t.id+'";','const key="gitmapp-'+draftId+'";'):h;
+   setIncoming({draftId,openDesign:t.openDesign===true,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,purpose:t.desc,appId:null,msgs:[]});setView("studio")}catch(e){toast(e.message)}};
+ const openDraft=draft=>{setIncoming(draft);setView("studio")};
+ const newProject=()=>startTemplate({kind:"app"});
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
  const goStore=(o={},fromBack=false)=>{
   if(!canLeaveStudio("magaza"))return;
@@ -5521,15 +5645,16 @@ function App(){
  const NAV=mode==="admin"&&isAdm?NAVA:NAVC;
  // Asistanın eylemlerini uygula
  const viewRef=useRef(view);viewRef.current=view;
- const cpStudio=a=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done}}));if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
- const cpRun=async a=>{
+ const cpStudio=(a,active)=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>active()?window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done,active}})):done();if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
+ const cpRun=async (a,active)=>{
   if(["tur","tema","mod","prompt","yap","sablon"].includes(a.t)&&(window.__gmStudio||{}).calisiyor){toast("Stüdyo'da süren iş bitince bu adım uygulanacak");const t0=Date.now();while((window.__gmStudio||{}).calisiyor&&Date.now()-t0<600000)await wait(800);await wait(400)}
+  if(!active())return;
   if(a.t==="github"){if(!a.url)throw new Error("GitHub adresi yok");setGh({url:String(a.url),auto:!!a.devral,n:Date.now()});return wait(400)}
   if(a.t==="git"){if(!CP_VIEWS[a.view])throw new Error("Bu sayfa bulunamadı");return ghostDo('.side .nav[data-v="'+a.view+'"]',()=>navGo(a.view))}
-  if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp);return wait(500)}
+  if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp,active);return wait(500)}
   if(a.t==="panel"&&a.ad==="beceriler")return ghostDo('.side .nav[data-v="$beceri"]',()=>setSkills(true));
   if(a.t==="panel"&&a.ad==="ara")return ghostDo('.side .nav[data-v="$ara"]',()=>setCmdk(true));
-  if(["tur","mod","tema","ayar","prompt","yap","kontrol","kaydet","yayinla","panel","yeni"].includes(a.t))return cpStudio(a);
+  if(["tur","mod","tema","ayar","prompt","yap","kontrol","kaydet","yayinla","panel","yeni"].includes(a.t))return cpStudio(a,active);
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
  const cpCtx=()=>({sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
@@ -5566,8 +5691,8 @@ ${installButton()}
    ${view==="maliyetler"&&html`<${AdminCosts} toast=${toast}/>`}
    ${view==="yonetim"&&html`<${AdminHome} request=${overview} go=${(page,status)=>{setProjectStatus(status);setView(page)}}/>`}
    ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
-   ${view==="studio"&&html`<${Studio} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
-   ${view==="ana"&&html`<${HomePage} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
+   ${view==="studio"&&html`<${Studio} key=${auth.user?.id||"guest"} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
+   ${view==="ana"&&html`<${HomePage} openDraft=${openDraft} newProject=${newProject} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
    ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
    ${view==="otomasyon"&&html`<${Automations} toast=${toast}/>`}
@@ -5576,7 +5701,7 @@ ${installButton()}
    ${view==="modeller"&&html`<${ModelsPage} models=${models} go=${setView}/>`}
    ${view==="hesabim"&&html`<${Account} auth=${auth} health=${health} toast=${toast} models=${models} go=${setView}/>`}
    ${view==="magaza"&&html`<${Store} onTpl=${useTemplate} apiOn=${apiOn} healthError=${healthError} retry=${()=>retry(x=>x+1)} go=${navGo} filters=${sq} onFilters=${goStore} startTemplate=${startTemplate}/>`}
-   ${view==="uygulamalarim"&&html`<${ProjectsPage} go=${navGo} onTpl=${useTemplate} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
+   ${view==="uygulamalarim"&&html`<${ProjectsPage} openDraft=${openDraft} newProject=${newProject} go=${navGo} onTpl=${useTemplate} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
    ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>{track("app_want",{repo:r.full_name,category:c&&c.id});goWizard(r,null,c)}} onDetail=${r=>{track("app_view",{repo:r.full_name,category:storeCat&&storeCat.id});setCur(r)}} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
    ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView}/>`}
    ${view==="paketler"&&html`<${Packages} goWizard=${goWizard}/>`}
