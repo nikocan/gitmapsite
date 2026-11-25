@@ -1,4 +1,3 @@
 window.GMS_CONFIG = {
-  supabaseUrl: "",
-  supabaseKey: ""
+  api: "https://api.gitmapp.com"
 };

@@ -1,1 +1,3 @@
 .netlify
+data.db*
+server/data.db*
