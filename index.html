@@ -1351,8 +1351,10 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.12.1";
+const VERSION="5.12.2";
 const CHANGELOG=[
+ {v:"5.12.2",date:"2026-11-25",items:[
+  "🧭 Keşfet'te uygulamaların yanındaki alakasız fotoğraflar kaldırıldı; her uygulama kendi simgesi ve kategori rengiyle görünüyor"]},
  {v:"5.12.1",date:"2026-11-25",items:[
   "🔁 Asistan, Stüdyo'da bir üretim sürerken yeni bir işi araya sokmuyor: tür, tasarım, istem ve “geliştirmeye başla” adımları önceki iş bitince sırayla uygulanıyor",
   "💳 Yapay zekâ sağlayıcısının bakiyesi bittiğinde (402) çıkan İngilizce hata yerine ne olduğu ve kimin ne yapması gerektiği Türkçe yazıyor; Gitmapp kredin düşmüyor",
@@ -3941,12 +3943,11 @@ async function ghostRun(steps){
 }
 
 // ---------- Keşfet (App Store düzeni) ----------
-function AppPhoto({a,size}){
- const board=sectorBoards[a.category]||sectorBoards.diger;
- const photos=board[0].split(" ");
- const index=Array.from(a.slug||a.title||"").reduce((sum,c)=>sum+c.codePointAt(0),0)%photos.length;
- return html`<img loading="lazy" alt="" width=${size} height=${size} style=${{objectFit:"cover",borderRadius:"22%",flexShrink:0}} src=${"brand/gallery/"+photos[index]+".webp"}/>`;
-}
+// Keşfet'te uygulama simgesi: rastgele fotoğraf yerine uygulamanın kendi simgesi; yoksa kategorisine uygun çizilmiş simge
+const CAT_TONE={is:"#5e5ce6",verimlilik:"#0a84ff",egitim:"#ff9f0a",saglik:"#30d158",spor:"#ff375f",eticaret:"#bf5af2",yemek:"#ff6b2c",oyun:"#64d2ff",finans:"#32d74b",sosyal:"#ff2d55",araclar:"#8e8e93",guzellik:"#ff6fae",etkinlik:"#ffd60a",emlak:"#ac8e68",seyahat:"#40c8e0",teknoloji:"#5e5ce6",fotograf:"#ff9f0a",bahce:"#34c759"};
+function AppPhoto({a,size}){const sec=sectorById(a.category)||sectorById({is:"is",oyun:"oyun"}[a.category]);const ic=a.emoji||(sec&&sec.ic)||KIND_ICON[a.kind]||"sparkles";
+ const col=/^#[0-9a-f]{6}$/i.test(a.color||"")?a.color:CAT_TONE[a.category]||(sec&&sec.g?sec.g.split(",")[0]:"#5e5ce6");
+ return html`<${AppIcon2} emoji=${ic} color=${col} size=${size}/>`}
 function AppRow({a,onOpen,btn,onBtn,sub}){return html`<div class="arow" onClick=${onOpen}><${AppPhoto} a=${a} size=${68}/><div class="arow-b"><button type="button" class="arow-t arow-title" onClick=${e=>{e.stopPropagation();onOpen()}}>${a.title}</button><div class="arow-s">${sub||catName(a.category)}</div><div class="arow-a"><button class="getbtn" onClick=${e=>{e.stopPropagation();onBtn()}}>${btn}</button>${a.price?html`<span class="iap">Ücretli</span>`:a.downloads?html`<span class="iap">${fmt(a.downloads)} indirme</span>`:""}</div></div></div>`}
 function Shelf({title,more,children,scroll}){const ref=useRef(null);const mv=d=>ref.current&&ref.current.scrollBy({left:d*ref.current.clientWidth*.9,behavior:"smooth"});
  return html`<section class="shelf"><div class="shelf-h"><h3>${title}</h3>${scroll&&html`<span class="shelf-n"><button class="navarr" onClick=${()=>mv(-1)}><${Icon} n="chevLeft" s=${18}/></button><button class="navarr" onClick=${()=>mv(1)}><${Icon} n="chevRight" s=${18}/></button></span>`}${more&&html`<a class="seeall" href="#" onClick=${e=>{e.preventDefault();more()}}>Tümünü Gör</a>`}</div><div ref=${ref} class=${scroll?"shelf-x":"shelf-g"}>${children}</div></section>`}
