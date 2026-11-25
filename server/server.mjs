@@ -2,7 +2,7 @@
 // Uç noktalar: kimlik, yapay zekâ ile uygulama üretimi, uygulamalar, mağaza, siparişler, talep radarı, alan adı sorgusu
 import http from "node:http";
 import { MAX_PROJECT_HTML, linkedRepo, registerVersions } from "./version-control.mjs";
-import { GEN_SYSTEM, KIND_RULES, connRules, scopeRule, profileRelevant } from "./prompts.mjs";
+import { GEN_SYSTEM, KIND_RULES, connRules, scopeRule, profileRelevant, buildBudget } from "./prompts.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -215,6 +215,8 @@ async function postChat(rt, payload, signal) {
   let r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) });
   // Bazı modeller sıcaklık ayarını kabul etmez: ayarsız tekrar dene
   if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
+  // Model bu kadar uzun yanıtı desteklemiyorsa (max_tokens sınırı) desteklediği güvenli bir sınırla tekrar dene
+  if (r.status === 400 && body.max_tokens > 16000) { const t = await r.clone().text(); if (/max_tokens|max_completion_tokens|maximum|too large|output tokens/i.test(t)) { const lim = +(t.match(/(?:at most|maximum[^0-9]{0,20}|<=\s*)(\d{4,6})/i) || [])[1]; body.max_tokens = lim && lim >= 4000 ? Math.min(lim, body.max_tokens) : 16000; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
   // Kullanım bilgisi (stream_options) desteklenmiyorsa onsuz tekrar dene
   if (r.status === 400 && body.stream_options) { const t = await r.clone().text(); if (/stream_options|include_usage/i.test(t)) { delete body.stream_options; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
   // Gitmapp (Hostinger AI Router): model reddedilirse listedeki diğer modelleri sırayla dene
@@ -288,7 +290,7 @@ async function aiStream({ res, cors }, rt, messages, finish) {
   ev({ t: "phase", phase: "connected" }); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
   try { const out = await start();
     // Uzunluk sınırında kesilen HTML'i otomatik tamamlat (en çok 2 kez); kredi tek işlem olarak kalır
-    for (let k = 0; rt.autoContinue && k < 2 && /^(length|max_tokens)$/.test(out.finish || "") && !/<\/html>/i.test(out.text) && !signal.aborted && !res.destroyed; k++) {
+    for (let k = 0; rt.autoContinue && k < 3 && /^(length|max_tokens)$/.test(out.finish || "") && !/<\/html>/i.test(out.text) && !signal.aborted && !res.destroyed; k++) {
       ev({ t: "phase", phase: "continuing" });
       const more = [...messages, { role: "assistant", content: out.text }, { role: "user", content: "Yanıtın uzunluk sınırında kesildi. Tam olarak kaldığın yerden devam et: önceki kısmı TEKRARLAMA, açıklama ya da ``` yazma, yalnızca kalan kodu yaz ve </html> ile bitir." }];
       const next = await (await streamChatWith(rt, more, (d) => ev({ t: "delta", d }), signal))();
@@ -314,7 +316,7 @@ async function chat(messages, maxTokens = 12000) {
 }
 // Tasarım dili (istemciden gelen tema) — yalnızca güvenli alanlar kabul edilir
 const HEX = /^#[0-9a-fA-F]{6}$/;
-function designRule(d) {
+function designRule(d, kind = "app") {
   if (!d || typeof d !== "object" || !d.palette || typeof d.palette !== "object") return "";
   const p = d.palette; const keys = { bg: "arka plan", sf: "kart/yüzey", pr: "ana renk", ac: "vurgu rengi", tx: "metin" };
   const cols = Object.entries(keys).filter(([k]) => HEX.test(p[k] || "")).map(([k, l]) => l + " " + p[k]);
@@ -322,9 +324,11 @@ function designRule(d) {
   const name = String(d.name || "").replace(/[^\p{L}\p{N} &'-]/gu, "").slice(0, 40);
   const font = /^[A-Za-z ]{2,30}$/.test(d.font || "") ? d.font : "Inter";
   const radius = Math.max(0, Math.min(40, Math.round(+d.radius || 12)));
-  const style = String(d.style || "").replace(/[<>`]/g, "").slice(0, 400);
-  const blueprint = String(d.blueprint || "").replace(/[<>`]/g, "").slice(0, 1800);
-  return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}` + (blueprint ? `\n- EKRAN DÜZENİ (kullanıcının seçtiği panel şablonu; bu yerleşime sadık kal, bölümleri atlama): ${blueprint}` : "");
+  let style = String(d.style || "").replace(/[<>`]/g, "").slice(0, 400);
+  let blueprint = String(d.blueprint || "").replace(/[<>`]/g, "").slice(0, 1800);
+  // Oyunlarda yalnızca renk/yazı/his alınır: uygulama ekran düzeni (kartlar, menüler, sekme çubuğu) oyuna taşınmaz
+  if (kind === "game") { style = style.replace(/\s*\S[^.]*\biçin\b[^.]*ekranı\.[\s\S]*$/i, "").replace(/Ekran düzeni:[\s\S]*$/i, "").trim(); blueprint = ""; }
+  return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}` + (kind === "game" ? " Bu bir oyun: tasarım dilini yalnızca oyun sahnesinin, karakterlerin, HUD'un ve menülerin renk ve havası için kullan; uygulama paneli, kart ızgarası, alt sekme çubuğu ya da sayfa alt bilgisi yapma." : "") + (blueprint ? `\n- EKRAN DÜZENİ (kullanıcının seçtiği panel şablonu; bu yerleşime sadık kal, bölümleri atlama): ${blueprint}` : "");
 }
 // Çalıştırma ayarları (AI Studio benzeri): yaratıcılık, ayrıntı düzeyi, ek talimatlar
 function runOpts(rt, body) {
@@ -679,10 +683,10 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const tokens = str(body.tokens, 1500, "Tasarım sistemi");
   const img = imageParts(body);
   const patch = cur && cur.length >= PATCH_MIN;
-  if (cur && !patch) rt.maxTokens = Math.max(rt.maxTokens || 12000, Math.min(32000, Math.ceil(cur.length / 2.6) + 3000));
-  if (!cur) rt.maxTokens = Math.max(rt.maxTokens || 12000, tierOf(rt.model) === "guclu" ? 20000 : 14000);
+  const opts = runOpts(rt, body); // önce kullanıcının ayrıntı ayarı; aşağıdaki alt sınırlar bunu düşüremez
+  rt.maxTokens = buildBudget(rt.maxTokens, { model: rt.model, strong: tierOf(rt.model) === "guclu", cur, patch, kind });
   rt.autoContinue = !patch;
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur }) + scopeRule(kind) + runOpts(rt, body) + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design, kind) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur }) + scopeRule(kind) + opts + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
@@ -722,7 +726,7 @@ route("POST", "/api/ai/plan", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
   const signal = responseSignal(res);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz. Kullanıcının istemediği WhatsApp düğmesi, iletişim formu, sosyal medya bağlantısı gibi öğeleri plana koyma${kind === "game" ? "; bu bir oyun, plan yalnızca oynanışı, kontrolleri, seviyeleri ve görselliği kapsasın" : ""}.` + (designRule(body.design) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design) : "") }, { role: "user", content: withImages(prompt, img) }], 1500, signal);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz. Kullanıcının istemediği WhatsApp düğmesi, iletişim formu, sosyal medya bağlantısı gibi öğeleri plana koyma${kind === "game" ? "; bu bir oyun, plan yalnızca oynanışı, kontrolleri, seviyeleri ve görselliği kapsasın" : ""}.` + (designRule(body.design, kind) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design, kind) : "") }, { role: "user", content: withImages(prompt, img) }], 1500, signal);
   if (signal.aborted || res.destroyed) return null;
   const credits = charge(user, rt, "plan", usage);
   return { plan: text.trim(), spent: rt.credits, credits };

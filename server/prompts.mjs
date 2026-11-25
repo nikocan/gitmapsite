@@ -15,7 +15,9 @@ Kalite çıtası:
 - Arayüz tamamen Türkçe, mobil öncelikli (390px'te kusursuz, masaüstünde de düzgün), modern ve özenli olsun: tutarlı boşluk ritmi, net tipografi hiyerarşisi, yeterli kontrast (en az 4.5:1), dokunma hedefleri en az 44px, yumuşak geçişler.
 - Boş ekran bırakma: ilk açılışta gerçekçi Türkçe örnek verilerle dolu görünsün. Boş durum, yükleniyor ve hata mesajları olsun; formlarda doğrulama olsun.
 - Uygulamanın adı <title> etiketinde olsun.
-- Mevcut bir HTML verilirse onu kullanıcının istediği değişiklikle güncelle ve DOSYANIN TAMAMINI döndür; istenmeyen kısımları bozma, mevcut özellikleri silme.`;
+- Mevcut bir HTML verilirse onu kullanıcının istediği değişiklikle güncelle ve DOSYANIN TAMAMINI döndür; istenmeyen kısımları bozma, mevcut özellikleri silme.
+- İstek mevcut ürünü bambaşka bir şeye dönüştürüyorsa (ör. blok kırma oyununu platform oyununa çevirmek) eski yerleşimi ve ekranları koruma zorunluluğu yoktur: yeni isteği sıfırdan, eksiksiz yap; eskiden yalnızca uyan renk ve adı al.
+- ÖZET yorumu yalnızca dosyada GERÇEKTEN yaptığın şeyi anlatsın; yapmadığın özelliği yazma.`;
 
 export const KIND_RULES = {
   app: "Bir UYGULAMA yap: ekranlar arası geçiş (alt sekme çubuğu ya da menü), veri ekleme/düzenleme/silme, liste ve özet görünümleri olsun.",
@@ -113,4 +115,16 @@ export function scopeRule(kind) {
   return kind === "game"
     ? "\n- KAPSAM: Bu bir oyun; yalnızca oyunu yap. İletişim, WhatsApp, form, menü sayfası, hakkımızda gibi öğeler ekleme."
     : "\n- KAPSAM: Yalnızca istenen ürünü yap; yukarıda listelenmeyen iletişim düğmesi, form ya da sosyal medya öğesi ekleme.";
+}
+
+// Yanıt uzunluğu (max_tokens): yetersiz bütçe yanıtın yarıda kesilmesine, oyun motoru gibi dosyanın sonundaki
+// kodun hiç gelmemesine yol açar. Kullanıcının ayrıntı ayarı tabandır; burada yalnızca yukarı yuvarlanır.
+export function buildBudget(base, { model = "", strong = false, cur = "", patch = false, kind = "app" } = {}) {
+  let n = base || 12000;
+  if (patch) n = Math.max(n, 10000);
+  else if (cur) n = Math.max(n, strong ? 24000 : 16000, Math.ceil(cur.length / 2.6) + 6000);
+  else n = Math.max(n, strong ? 24000 : 16000, kind === "game" && strong ? 26000 : 0);
+  // Akıl yürüten modeller (gpt-5, o-serisi, düşünen modeller) bütçenin bir kısmını görünmeyen düşünmeye harcar
+  if (/gpt-?5|\bo[134](-|$)|reason|think|r1\b/i.test(model)) n += 8000;
+  return Math.min(n, 40000);
 }

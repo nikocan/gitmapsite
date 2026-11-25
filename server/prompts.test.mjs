@@ -43,3 +43,15 @@ test("oyun kuralları ve kapsam: web sitesi öğeleri yasak, profil alanı oyuna
   assert.match(GEN_SYSTEM, /istenmeyen bölüm ve özellik EKLEME/);
   assert.doesNotMatch(KIND_RULES.site, /iletişim formu ve alt bilgi olsun/);
 });
+
+import { buildBudget } from "./prompts.mjs";
+test("yanıt bütçesi kullanıcının kısa ayarıyla yeni oyunu kesmez", () => {
+  assert.ok(buildBudget(6000, { strong: true, kind: "game" }) >= 24000);
+  assert.ok(buildBudget(12000, { cur: "x".repeat(8000) }) >= 16000);
+  assert.ok(buildBudget(12000, { model: "openai/gpt-5" }) >= 24000);
+  assert.ok(buildBudget(99999, {}) <= 40000);
+});
+test("dönüşüm isteklerinde eski yerleşim zorunlu değil, özet dürüst olmalı", () => {
+  assert.match(GEN_SYSTEM, /bambaşka bir şeye dönüştürüyorsa/);
+  assert.match(GEN_SYSTEM, /yapmadığın özelliği yazma/);
+});

@@ -1543,8 +1543,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.22.0";
+const VERSION="5.23.0";
 const CHANGELOG=[
+ {v:"5.23.0",date:"2026-11-26",items:[
+  "🎮 Oyun isteği uygulama paneline dönüşmüyor: “koşup zıplayan, parkur” gibi kelimeler oyunu “spor” sektörüne eşliyor, otomatik seçilen tasarım (“Parkurlar · Neon Arcade”) modele bir uygulama ekran düzeni (vurgu kartı, kart ızgarası) gönderiyordu. Model de oyun yerine “Oyun Durumu” kartlı bir panel yapıyordu. Artık oyunlarda sektör hep “Oyun”; tasarımdan yalnızca renk, yazı tipi ve his gidiyor",
+  "✂️ Yanıtın yarıda kesilmesi düzeltildi: Ayarlar'daki ayrıntı düzeyi, büyük işler için yükseltilen yanıt sınırını geri düşürüyordu (ör. yeni oyunda 20.000 yerine 6.000). Oyunun motor kodu dosyanın sonunda olduğu için hiç gelmiyor, ekranda yalnızca düğmeler kalıyordu. Yeni üretimde sınır en az 24.000, düşünen modellerde (GPT-5 vb.) +8.000; kesilirse 3 kez otomatik devam",
+  "🔁 Dönüştürme istekleri (ör. blok kırma oyununu platform oyununa çevir): model artık eski ekranları korumak zorunda değil, yeni isteği sıfırdan eksiksiz yapıyor",
+  "📝 Model özet yorumunda yalnızca gerçekten yaptığını yazıyor; yapılmamış özellik “yaptım” diye anlatılmıyor",
+  "🛡️ Model bu kadar uzun yanıtı desteklemezse istek hata vermeden desteklediği sınırla tekrar deneniyor"]},
  {v:"5.22.0",date:"2026-11-25",items:[
   "🚫 Oyunlara ve ilgisiz uygulamalara istenmeden WhatsApp düğmesi, iletişim formu eklenmesi düzeltildi. Sebep: Bağlantılar sayfasında açık olan servisler, projenin türüne ve konusuna bakılmadan her üretime “sağ altta WhatsApp düğmesi ekle” gibi kesin bir emirle gidiyordu",
   "🧭 Bağlantılar artık akıllı: oyunlara hiç eklenmiyor; uygulama ve sitelerde yalnızca konu uygunsa (sipariş, randevu, iletişim…) “uyuyorsa kullan” şeklinde gidiyor; isteğinde açıkça yazarsan (“WhatsApp düğmesi ekle”) kesin uygulanıyor. Küçük düzenlemelerde istenmedikçe hiç gönderilmiyor",
@@ -3118,12 +3124,13 @@ function lookupDesign(id){
 }
 const DEFAULT_TH=["material","cam","minimal"];
 const KIND_SECTOR={game:"oyun"};
-function detectSector(text,kind){const t=String(text||"").toLocaleLowerCase("tr");let best=null,score=0;
+function detectSector(text,kind){if(kind==="game")return "oyun";const t=String(text||"").toLocaleLowerCase("tr");let best=null,score=0;
  for(const s of DSECTORS){const m=t.match(new RegExp(s.k.source,"g"));const n=m?m.length:0;if(n>score){score=n;best=s.id}}
  return best||(kind&&KIND_SECTOR[kind])||null}
 const sectorById=id=>DSECTORS.find(s=>s.id===id);
 const suggestThemes=sec=>(sectorById(sec)?.th||DEFAULT_TH).map(themeById);
-const designPayload=t=>t&&({id:t.id,name:t.name,font:t.font,radius:t.r,palette:t.p,style:t.style,blueprint:t.blueprint||undefined});
+// Oyunlarda yalnızca renk, yazı tipi ve his gider: sektör ekran düzeni ve panel şablonu (kart ızgarası, menü, sekme çubuğu) oyuna taşınmaz
+const designPayload=(t,kind)=>{if(!t)return t;if(kind!=="game")return {id:t.id,name:t.name,font:t.font,radius:t.r,palette:t.p,style:t.style,blueprint:t.blueprint||undefined};const b=designIndex.get(String(t.id).split("-").pop());return {id:t.id,name:(b||t).name,font:t.font,radius:t.r,palette:t.p,style:String((b||t).style||"").replace(/\s*Ekran düzeni:[\s\S]*$/,"")}};
 
 // Tema önizlemesi (telefon ya da tarayıcı çerçevesi)
 const photoExamples=new Map(THEMES.map(base=>[base.id,lookupDesign((DSECTORS.find(s=>s.th.includes(base.id))||DSECTORS[0]).id+"-0-0-"+base.id)]));
@@ -4121,7 +4128,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{if(busy||todo?.running||!queue.length||plan)return;const t=setTimeout(()=>{const [n,...rest]=queue;setQueue(rest);gen(n)},600);return()=>clearTimeout(t)},[busy,todo?.running,queue.length,plan]);
  function lastAsk(){if(st.html)return "";const u=st.msgs.filter(m=>m.role==="user"&&m.content&&!isGo(m.content)&&!GREET.test(m.content.trim())&&m.content.trim().length>=14).pop();return u?u.content.trim():""}
  function requestPlan(text,im,retrying=false){
-  return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},signal),result=>{
+  return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current,prefsRef.current.kind),images:im.send},signal),result=>{
    setEditPlan(false);setPlan({prompt:text,text:result.plan,im});
   },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>requestPlan(text,im,true),finalEvent:"plan"});
  }
@@ -4131,7 +4138,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const sty=atts.find(a=>a.role==="style");const out={send,thumbs:atts.map(a=>a.thumb),assets,custom:sty?themeFromPalette(sty.pal):null};setAtts([]);return out}
  async function build(text,planText,shown,withDesign,im,base){const prev=base!==undefined?base:st.html;im=im||{};
   if(im.assets&&Object.keys(im.assets).length)setSt(s=>({...s,assets:{...(s.assets||{}),...im.assets}}));if(im.custom)setSt(s=>({...s,custom:im.custom}));
-  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,tokens:prev?(st.tokens||designTokens(prev))||undefined:undefined,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,tokens:withDesign||!s.tokens?designTokens(j.html):s.tokens,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
+  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,tokens:prev?(st.tokens||designTokens(prev))||undefined:undefined,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current,prefsRef.current.kind):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,tokens:withDesign||!s.tokens?designTokens(j.html):s.tokens,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
   return j?j.html:null}
  async function approvePlan(){
   const p=plan;if(!p||busy||!p.text.trim())return;
