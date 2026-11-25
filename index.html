@@ -1236,6 +1236,7 @@ button.adp-mini{color:inherit;text-align:left}
 .studio-response>.studio-message-text{margin-top:5px}
 .studio-response>.studio-message-text:only-child{margin-top:0}
 .studio-error{color:#fca5a5}
+.studio-error.stale{color:#8a8882;font-size:13px;opacity:.85;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .studio-activity-line{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:13px;color:var(--ink)}
 .studio-activity-icon{display:inline-flex;align-self:center;color:#7ee2a8}
 .studio-activity-icon.issue{color:#e3b341}
@@ -1370,8 +1371,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.15.0";
+const VERSION="5.15.1";
 const CHANGELOG=[
+ {v:"5.15.1",date:"2026-11-25",items:[
+  "🧹 Stüdyo'da önceki denemelerden kalan hata mesajları (ör. eski 401) artık soluk ve kısaltılmış görünüyor; ham JSON metni sohbetten kaldırıldı, ayrıntısı işlem kartında",
+  "▶️ “başla”, “devam”, “tekrar dene” yazınca: ekranda plan varsa plan onaylanıyor; yoksa son gerçek isteğin yeniden gönderiliyor. Artık “başla” kelimesi için boşuna plan yazılıp kredi harcanmıyor",
+  "⏸️ Yarıda kalan işlemde sebebi yazıyor: sayfa yenilendi ya da kapandı · Yeniden dene ile devam et",
+  "🔄 “Yeni sürüm hazır · Yenile” bandı, Stüdyo'da işlem sürerken sayfayı yenilemiyor; iş bitince yenilemeni söylüyor"]},
  {v:"5.15.0",date:"2026-11-25",items:[
   "🔄 Eski sayfa sorunu giderildi: uygulama her açılışta en güncel sürümü sunucudan kontrol ediyor, tarayıcı önbellekteki eski kopyayı göstermiyor",
   "🆕 Yeni sürüm yayınlandığında üstte “Yeni sürüm hazır · Yenile” bandı çıkıyor. Sekmeye dönünce ve 5 dakikada bir kontrol ediliyor",
@@ -2670,7 +2676,7 @@ function WorkLog({log,lastAt,retry,onToggle,live}){
   steps.push(html`<${ClStepRow} key="rcv" title=${writing?(log.req?.size&&Number(log.req.size)>=9?"Değişen parçaları yazıyor":"Kodu yazıyor")+(parts.length?" · "+parts.join(", "):""):"Yanıt alındı"+(parts.length?" · "+parts.join(", "):"")} state=${writing?"run":"ok"} live=${writing}>${tail&&html`<${ClIO} label=${writing?"Yanıt (canlı)":"Yanıt (son kısım)"}><code>${tail.slice(-700)}</code>${writing&&html`<span class="caret"></span>`}<//>`}<//>`)}
  if(ev.includes("processing")&&log.running)steps.push(html`<${ClStepRow} key="proc" title=${STUDIO_EVENTS.processing} state="run"/>`);
  if(!log.running&&!failed)steps.push(html`<${ClStepRow} key="done" title=${ev.includes("unchanged")?STUDIO_EVENTS.unchanged:ev.includes("plan")?STUDIO_EVENTS.plan:ev.includes("agent")?STUDIO_EVENTS.agent:STUDIO_EVENTS.preview} state="ok" open0=${false}>${(log.res?.summary||meta.length)&&html`<${ClIO} label="Sonuç" mono=${false}>${log.res?.summary&&html`<p>${log.res.summary}</p>`}<small class="cx-meta">${meta.join(" · ")}</small><//>`}<//>`);
- if(failed)steps.push(html`<${ClStepRow} key="err" title=${log.stopped?"Durdurdun · kredi harcanmadı":log.cut?"Yarıda kaldı · kredi harcanmadı":"Hata"} state="err">${log.res?.error&&html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`}<//>`);
+ if(failed)steps.push(html`<${ClStepRow} key="err" title=${log.stopped?"Durdurdun · kredi harcanmadı":log.cut?"Sayfa yenilendiği ya da kapandığı için yarıda kaldı · Yeniden dene ile devam et":"Hata"} state="err">${log.res?.error&&html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`}<//>`);
  return html`<div class="studio-activity cx">
   ${log.task&&html`<h3>${log.task}</h3>`}
   <button type="button" class="cx-head" aria-expanded=${isOpen} onClick=${()=>{setOpen(!isOpen);if(!isOpen)onToggle&&onToggle()}}>
@@ -2683,12 +2689,17 @@ function WorkLog({log,lastAt,retry,onToggle,live}){
 
 // ---------- v5.10 — Prompt motoru: göndermeden önce ne olacağını söyler ----------
 const ACK_W=new Set("tamam tamamdır tmm tm ok okey okay olur peki anladım anladim evet aynen güzel guzel süper super harika mükemmel tşk tşkler teşekkür teşekkürler teşekkürü ederim sağol sağolun sağ ol eyvallah eyv iyi çok cok 👍 👌 🙏 ✅ 😊 🙂".split(" "));
+// v5.15.1 — "başla / devam / tekrar dene" gibi tek kelimelik komutlar
+const GO_W=new Set("başla basla başlat baslat başlayalım baslayalim devam et ettir tekrar yeniden dene deneyelim yap uygula hadi haydi onayla onaylıyorum onayliyorum".split(" "));
+const isGo=t=>{const w=String(t||"").toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);return w.length>0&&w.length<=4&&w.every(x=>GO_W.has(x)||ACK_W.has(x))&&w.some(x=>GO_W.has(x))};
 const GREET=/^(merhaba|selam(lar)?|hey|hi|hello|günaydın|iyi (akşamlar|günler|geceler)|nasılsın)[\s!.?]*$/iu;
 function promptIntent(text,ctx){const t=String(text||"").trim();ctx=ctx||{};if(!t)return {k:"idle"};
  if(t.startsWith("/"))return {k:"cmd",ic:"slash",l:"Komut çalıştırılacak"};
  const words=t.toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);
  const ack=words.length<=4&&words.every(w=>ACK_W.has(w));
  if(ack&&(ctx.plan||ctx.todo))return {k:"approve",ic:"check",l:ctx.plan?"Onay · plan uygulanacak":"Onay · yapılacaklar başlatılacak"};
+ if(isGo(t)&&(ctx.plan||ctx.todo))return {k:"approve",ic:"check",l:ctx.plan?"Onay · plan uygulanacak":"Onay · yapılacaklar başlatılacak"};
+ if(isGo(t)&&ctx.last)return {k:"resume",ic:"refresh",l:"Son isteğin yeniden gönderilecek: “"+String(ctx.last).slice(0,40)+(String(ctx.last).length>40?"…":"")+"”"};
  if(ack||GREET.test(t))return {k:"chat",ic:"chat",l:"Sohbet · kod yazılmaz, kredi harcanmaz"};
  if(/github\.com\/[\w.-]+\/[\w.-]+/i.test(t))return {k:"github",ic:"github",l:"GitHub'dan içe aktarılacak"};
  if(ctx.picked)return {k:"pick",ic:"pointer",l:"Seçili öğe değiştirilecek"};
@@ -3649,7 +3660,8 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
-  {const it=promptIntent(text,{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting)});
+  {const it=promptIntent(text,{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),last:lastAsk()});
+   if(it.k==="resume"){setInput("");toast("Son isteğin yeniden gönderiliyor");text=lastAsk()}else
    if(it.k==="approve"){setInput("");if(plan)return approvePlan();if(todo&&todo.awaiting){setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text}]}));return runTodos()}}
    if(it.k==="chat"&&!atts.length){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
   if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}
@@ -3657,6 +3669,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   if(prefs.mode==="ajan")return agent(text);
   if(prefs.mode==="planli"&&!st.html)return requestPlan(text,takeImages());
   await build(text,null,text,false,takeImages())}
+ function lastAsk(){if(st.html)return "";const u=st.msgs.filter(m=>m.role==="user"&&m.content&&!isGo(m.content)&&!GREET.test(m.content.trim())&&m.content.trim().length>=14).pop();return u?u.content.trim():""}
  function requestPlan(text,im,retrying=false){
   return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current),images:im.send},signal),result=>{
    setEditPlan(false);setPlan({prompt:text,text:result.plan,im});
@@ -3801,7 +3814,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new Event("gm:cp"))}}><${Icon} n="headphones" s=${18}/><span>Asistanla konuş</span><kbd>⌘J</kbd></button>
      </div>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
-    <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> İşlem sürüyor</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
+    <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> İşlem sürüyor</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
     ${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
  const planCard=()=>plan&&html`<section class="studio-plan" aria-label="Yapım planı">
   <header><h2>Yapım planı</h2><button type="button" class="btn g s" aria-pressed=${editPlan} disabled=${busy} onClick=${()=>{followChat.current=false;setEditPlan(!editPlan)}}>${editPlan?"Düzenlemeyi bitir":"Planı düzenle"}</button></header>
@@ -3815,7 +3828,8 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   <div class="studio-message-text">${m.content}</div>
  </article>`:html`<article class="studio-response" key=${m.id||i}>
   ${m.log&&html`<${WorkLog} log=${m.log} live=${streamClock.current?.id===m.id?liveRef.current:""} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} onToggle=${()=>{followChat.current=false}} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
-  ${m.content&&html`<div class=${"studio-message-text"+(m.err?" studio-error":"")} role=${m.err?"alert":undefined}>${m.content}</div>`}
+  ${m.content&&(()=>{const stale=m.err&&(m.log?(m.log.start<PAGE_T0-60000||m!==latestWork):true);const txt=m.err?String(m.content).replace(/[:\s]*\{"error"[\s\S]*$/,"").trim():m.content;
+   return html`<div class=${"studio-message-text"+(m.err?" studio-error":"")+(stale?" stale":"")} role=${m.err&&!stale?"alert":undefined} title=${stale?"Bu hata önceki bir denemeden kaldı":undefined}>${txt}</div>`})()}
  </article>`;
 
  const hasWork=st.html||busy||plan||st.msgs.length;
@@ -5333,7 +5347,7 @@ function App(){
   <${SquirrelGuide} run=${cpRun} toast=${toast}/>
   ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
   ${gh&&html`<${GhImport} key=${gh.n} url=${gh.url} auto=${gh.auto} close=${()=>setGh(null)} auth=${auth} openAuth=${openAuth} toast=${toast} models=${models} go=${navGo} onStudio=${o=>{setIncoming(o);setView("studio")}}/>`}
-  ${newBuild&&html`<div class="upd-bar" role="status"><${Icon} n="download" s=${15}/><span>Yeni sürüm hazır: <b>v${newBuild}</b> (şu an v${VERSION})</span><button class="btn s" onClick=${()=>{try{navigator.serviceWorker&&navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()))}catch(e){}location.reload()}}>Yenile</button><button class="ib" aria-label="Kapat" onClick=${()=>setNewBuild(null)}><${Icon} n="x" s=${14}/></button></div>`}
+  ${newBuild&&html`<div class="upd-bar" role="status"><${Icon} n="download" s=${15}/><span>Yeni sürüm hazır: <b>v${newBuild}</b> (şu an v${VERSION})</span><button class="btn s" onClick=${()=>{if(window.__gmStudio?.calisiyor){toast("Stüdyo'da işlem sürüyor · bitince yenile, yoksa iş yarıda kalır");return}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()))}catch(e){}location.reload()}}>Yenile</button><button class="ib" aria-label="Kapat" onClick=${()=>setNewBuild(null)}><${Icon} n="x" s=${14}/></button></div>`}
   ${stOpen&&html`<${SettingsPanel} tab0=${stOpen} auth=${auth} toast=${toast} go=${navGo} health=${health} close=${()=>setStOpen(null)}/>`}
   ${crOpen&&auth.user&&html`<${CreditPanel} auth=${auth} close=${()=>setCrOpen(false)} go=${navGo} flash=${crFlash}/>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
