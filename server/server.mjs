@@ -173,6 +173,37 @@ async function chatWith(rt, messages, maxTokens = 12000) {
   const j = JSON.parse(t);
   return { text: j.choices?.[0]?.message?.content || "", model: rt.model, usage: j.usage || null };
 }
+// Canlı akış (SSE): model yanıtını parça parça iletir
+async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) {
+  const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
+  if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
+  const r = await fetch(rt.base + "/chat/completions", { method: "POST", signal: AbortSignal.any([AbortSignal.timeout(300000), signal]), headers, body: JSON.stringify({ model: rt.model, messages, max_tokens: maxTokens, stream: true }) });
+  if (!r.ok) { const t = await r.text(); need(false, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? "Anahtar reddedildi: " : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200)); }
+  return async () => {
+    if (!(r.headers.get("content-type") || "").includes("event-stream")) { const j = await r.json(); const c = j.choices?.[0]?.message?.content || ""; onDelta(c); return { text: c, model: rt.model, usage: j.usage || null }; }
+    const dec = new TextDecoder(); let buf = "", text = "", usage = null;
+    for await (const chunk of r.body) {
+      buf += dec.decode(chunk, { stream: true }); let i;
+      while ((i = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+        if (!line.startsWith("data:")) continue; const d = line.slice(5).trim(); if (d === "[DONE]") continue;
+        try { const j = JSON.parse(d); const c = j.choices?.[0]?.delta?.content; if (c) { text += c; onDelta(c); } if (j.usage) usage = j.usage; } catch {}
+      }
+    }
+    return { text, model: rt.model, usage };
+  };
+}
+async function aiStream({ res, cors }, rt, messages, finish) {
+  const ac = new AbortController(); res.on("close", () => { if (!res.writableEnded) ac.abort(); });
+  const start = await streamChatWith(rt, messages, (d) => ev({ t: "delta", d }), ac.signal);
+  res.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no", Connection: "keep-alive", ...cors });
+  function ev(o) { if (!res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); }
+  res.write(": ok\n\n"); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
+  try { const out = await start(); ev({ t: "done", ...finish(out) }); }
+  catch (e) { if (!ac.signal.aborted) { if (!(e instanceof HttpErr)) console.error(new Date().toISOString(), "stream", e); ev({ t: "error", error: e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.", status: e.code || 500 }); } }
+  finally { clearInterval(hb); res.end(); }
+  return null;
+}
 function charge(user, rt, kind, usage) {
   if (!user) return null;
   if (rt.credits) { q("UPDATE users SET credits=credits-? WHERE id=?").run(rt.credits, user.id); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(user.id, -rt.credits, kind + ":" + rt.model); }
@@ -305,16 +336,16 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
 });
 
 // Yapay zekâ
-route("POST", "/api/ai/generate", async ({ body, user, req }) => {
+route("POST", "/api/ai/generate", async (ctx) => {
+  const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: "İstenen değişiklik: " + prompt });
   else messages.push({ role: "user", content: "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : "") });
-  const { text, model, usage } = await chatWith(rt, messages);
-  const out = extractHtml(text);
-  const credits = charge(user, rt, "build", usage);
-  return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage };
+  const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
+  if (body.stream === true) return aiStream(ctx, rt, messages, fin);
+  return fin(await chatWith(rt, messages));
 });
 route("POST", "/api/ai/plan", async ({ body, user, req }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
@@ -323,12 +354,14 @@ route("POST", "/api/ai/plan", async ({ body, user, req }) => {
   const credits = charge(user, rt, "plan", usage);
   return { plan: text.trim(), spent: rt.credits, credits };
 });
-route("POST", "/api/ai/review", async ({ body, user, req }) => {
+route("POST", "/api/ai/review", async (ctx) => {
+  const { body, user, req } = ctx;
   const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "review");
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: html }]);
-  const out = extractHtml(text); const credits = charge(user, rt, "review", usage);
-  return { ...out, spent: rt.credits, credits };
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: html }];
+  const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
+  if (body.stream === true) return aiStream(ctx, rt, messages, fin);
+  return fin(await chatWith(rt, messages));
 });
 // Model kataloğu: Gitmapp'te hazır modeller + kullanıcının bağlı anahtarları
 route("GET", "/api/ai/models", async ({ user }) => {
@@ -501,7 +534,7 @@ const server = http.createServer(async (req, res) => {
     if (!r) return send(404, { error: "Bulunamadı" });
     const params = url.pathname.match(r.re).groups || {};
     const body = ["POST", "PUT", "PATCH"].includes(req.method) ? await readBody(req) : {};
-    const out = await r.fn({ req, res, url, params, body, user: authUser(req) });
+    const out = await r.fn({ req, res, url, params, body, cors, user: authUser(req) });
     if (out !== null && out !== undefined) send(200, out);
   } catch (e) {
     if (e instanceof HttpErr) send(e.code, { error: e.message });
