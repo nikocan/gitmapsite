@@ -5,7 +5,7 @@ const money=v=>(+v||0).toLocaleString("tr-TR",{style:"currency",currency:"TRY",m
 const LS={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(K+k))??d}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}};
 const toast=m=>{document.querySelectorAll(".toast").forEach(x=>x.remove());const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)};
 /* TEMPLATE_ICONS */
-const ic=(n,s=18)=>`<svg aria-hidden="true" focusable="false" width="${s}" height="${s}" viewBox="0 0 256 256" fill="currentColor">${ICON_SVG[n]||""}</svg>`;
+const ic=(n,s=18)=>`<svg aria-hidden="true" focusable="false" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${ICON_SVG[n]||""}</svg>`;
 const hue=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h};
 // Özgün mimari çizim: ilan türüne göre modern villa, apartman ya da taş ev (her ilana tohumdan farklı)
 function house(seed,v=0,kind){let r=hue(seed+v)+1;const R=()=>(r=(r*9301+49297)%233280)/233280;const id="h"+v+"_"+Math.floor(R()*1e6);

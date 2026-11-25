@@ -10,10 +10,10 @@ rd = lambda n: open(os.path.join(HERE, "tpl", n), encoding="utf-8").read()
 ACSS, AJS, SCSS, SJS = rd("admin.css"), rd("admin.js"), rd("site.css"), rd("site.js")
 
 # The main app and exported standalone templates use the same versioned glyphs.
-with open(os.path.join(HERE, "icons", "duotone.json"), encoding="utf-8") as f:
+# Lucide (ISC) — SF Symbols tarzı ince çizgi ikonlar; tools/build_ui_icons.js üretir.
+with open(os.path.join(HERE, "ui_icons.gen.json"), encoding="utf-8") as f:
     ICONS = json.load(f)
-with open(os.path.join(HERE, "icons", "LICENSE-Phosphor.txt"), encoding="utf-8") as f:
-    LICENSE = f.read().strip()
+LICENSE = "Lucide icons, ISC License, https://lucide.dev (tools/icons/LICENSE-Lucide.txt)"
 
 def embed_icons(names):
     return "/* " + LICENSE + " */\nconst ICON_SVG=" + json.dumps({n: ICONS[n] for n in names}, ensure_ascii=False) + ";"

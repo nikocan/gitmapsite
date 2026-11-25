@@ -1,7 +1,7 @@
 (()=>{
 const C=window.APP,KEY="gm_"+C.id+"_v1",$=s=>document.querySelector(s);
 /* TEMPLATE_ICONS */
-const ic=(n,s=18)=>`<svg aria-hidden="true" focusable="false" width="${s}" height="${s}" viewBox="0 0 256 256" fill="currentColor">${ICON_SVG[n]||""}</svg>`;
+const ic=(n,s=18)=>`<svg aria-hidden="true" focusable="false" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${ICON_SVG[n]||""}</svg>`;
 const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const money=v=>(+v||0).toLocaleString("tr-TR",{style:"currency",currency:C.currency||"TRY",maximumFractionDigits:0});
 const dt=v=>v?new Date(v).toLocaleDateString("tr-TR",{day:"numeric",month:"short",year:"numeric"}):"—";
