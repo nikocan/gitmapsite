@@ -412,7 +412,12 @@ function serveApp(req, res, url) {
   const color = /^#[0-9a-f]{6}$/i.test(a.color || "") ? a.color : "#4f8cff";
   if (parts[1] === "manifest.webmanifest") {
     res.writeHead(200, { "Content-Type": "application/manifest+json" });
-    return res.end(JSON.stringify({ name: a.title, short_name: a.title.slice(0, 12), start_url: `/${slug}`, scope: `/${slug}`, display: "standalone", background_color: "#ffffff", theme_color: color, icons: [{ src: `/${slug}/icon.svg`, sizes: "any", type: "image/svg+xml", purpose: "any" }] }));
+    return res.end(JSON.stringify({ name: a.title, short_name: a.title.slice(0, 12), start_url: `/${slug}`, scope: `/${slug}`, display: "standalone", background_color: "#ffffff", theme_color: color, icons: [...[192,512].map(size=>({src:`/${slug}/icon-${size}.png`,sizes:`${size}x${size}`,type:"image/png"})), { src: `/${slug}/icon.svg`, sizes: "any", type: "image/svg+xml", purpose: "any" }] }));
+  }
+  if (["icon-180.png","icon-192.png","icon-512.png"].includes(parts[1]) && parts.length === 2) {
+    const icon = fs.readFileSync(new URL("../pwa/" + parts[1], import.meta.url));
+    res.writeHead(200, {"Content-Type":"image/png","Cache-Control":"public, max-age=86400"});
+    return res.end(icon);
   }
   if (parts[1] === "icon.svg") {
     res.writeHead(200, { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=3600" });
@@ -421,7 +426,7 @@ function serveApp(req, res, url) {
   if (parts[1] === "_data") return appData(req, res, a, parts.slice(2).join("/"));
   if (parts.length > 1) { res.writeHead(404); return res.end(); }
   q("UPDATE apps SET opens=opens+1 WHERE id=?").run(a.id);
-  const inject = `<link rel="manifest" href="/${slug}/manifest.webmanifest"><link rel="icon" href="/${slug}/icon.svg"><meta name="theme-color" content="${color}"><meta name="apple-mobile-web-app-capable" content="yes">`;
+  const inject = `<link rel="apple-touch-icon" href="/${slug}/icon-180.png"><link rel="manifest" href="/${slug}/manifest.webmanifest"><link rel="icon" href="/${slug}/icon.svg"><meta name="theme-color" content="${color}"><meta name="apple-mobile-web-app-capable" content="yes">`;
   const dbLib = `<script>window.GitmappDB={async get(k){const r=await fetch("/${slug}/_data/"+encodeURIComponent(k));if(r.status===404)return null;if(!r.ok)throw new Error("Okunamadı");return (await r.json()).value},async set(k,v){const r=await fetch("/${slug}/_data/"+encodeURIComponent(k),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({value:v})});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||"Kaydedilemedi");return true},async keys(){const r=await fetch("/${slug}/_data/");return (await r.json()).keys}};</script>`;
   const badge = `<a href="${CFG.site}/#magaza" target="_blank" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:#0b0f17;color:#fff;font:600 11px/1 system-ui,sans-serif;padding:7px 10px;border-radius:999px;text-decoration:none;opacity:.85">⚡ Gitmapp ile yapıldı</a>`;
   let html = a.html;
@@ -461,7 +466,7 @@ const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, sl
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
-route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "4.6.0" }));
+route("GET", "/api/health", () => ({ ok: true, ai: !!CFG.aiKey, github: !!CFG.gh.id, google: !!CFG.google.id, domain: !!CFG.hostingerToken, build: "4.7.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {

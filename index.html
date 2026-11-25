@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#0a0a0a" /><meta name="robots" content="index,follow" /><link rel="canonical" href="https://gitmapp.com/" />
 <meta property="og:type" content="website" /><meta property="og:site_name" content="gitmapp" /><meta property="og:title" content="gitmapp — Fikrinden canlı uygulamaya, dakikalar içinde" />
 <meta property="og:description" content="Türkçe anlat, yapay zekâ yapsın: uygulama, site ve oyun. Hazır şablonlar ve tek tıkla yayın." /><meta property="og:url" content="https://gitmapp.com/" /><meta name="twitter:card" content="summary_large_image" />
+<link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./pwa/icon-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23e4ff3d'/%3E%3Cg fill='none' stroke='%230a0a0a' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='14.2' cy='13.3' r='6.4'/%3E%3Cpath d='M20.6 7.4v12.9a7.4 7.4 0 0 1-13.3 4.6'/%3E%3C/g%3E%3Ccircle cx='25.6' cy='5.9' r='2' fill='%230a0a0a'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@500;700&family=DM+Sans:wght@500;700&family=Space+Grotesk:wght@500;700&family=Playfair+Display:wght@600;700&family=Nunito:wght@600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
@@ -447,7 +448,7 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
 .tpc{display:flex;flex-direction:column;gap:12px}
 .tpc-img{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 0 0 1px var(--sep),0 24px 40px -28px rgba(0,0,0,.9);transition:transform .35s var(--ease),box-shadow .35s}
 .tpc-img:hover{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(255,255,255,.18),0 30px 50px -26px rgba(228,255,61,.55)}
-.tpc-ov{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 40%,rgba(5,8,14,.55));opacity:0;transition:opacity .25s}.tpc-img:hover .tpc-ov{opacity:1}
+.tpc-ov{border:0;padding:0;width:100%;cursor:pointer;color:inherit;position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 40%,rgba(5,8,14,.55));opacity:0;transition:opacity .25s}.tpc-img:hover .tpc-ov,.tpc-ov:focus-visible{opacity:1}.tpc-type{pointer-events:none}
 .tpc-b{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);color:#111;font-weight:700;font-size:13px;padding:9px 14px;border-radius:99px}
 .tpc-type{position:absolute;left:10px;top:10px;font-size:11px;font-weight:700;background:rgba(10,14,22,.72);backdrop-filter:blur(6px);color:#fff;padding:4px 9px;border-radius:99px}
 .tpc-m{display:flex;align-items:center;gap:12px}.tpc-m b{display:block;font-size:15px}.tpc-m span{font-size:12.5px;color:var(--label3)}
@@ -534,6 +535,7 @@ a{color:#e4ff3d}
 .cicon{display:grid;place-items:center;flex-shrink:0;color:var(--t,#e4ff3d);background:color-mix(in srgb,var(--t,#e4ff3d) 10%,#121212);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t,#e4ff3d) 28%,#262626)}
 .con-dot{position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;background:#e4ff3d;box-shadow:0 0 0 3px #121212}
 .gm-tag,.soon-tag{font-style:normal;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;vertical-align:middle;margin-left:4px}.gm-tag{background:#e4ff3d;color:#0a0a0a}.soon-tag{background:#2a2a2a;color:#bdbdb6}
+.connector-dialog{position:fixed;inset:0;width:100%;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;color:var(--txt);background:transparent}.connector-dialog[open]{display:flex;justify-content:flex-end}.connector-dialog::backdrop{background:#090a10aa;backdrop-filter:blur(5px)}body:has(.connector-dialog:modal){overflow:hidden}.connector-dialog .csh-f{flex-wrap:wrap;padding-bottom:env(safe-area-inset-bottom)}
 .csheet{width:min(480px,100%);height:100%;background:#101010;border-left:1px solid #232323;padding:22px;display:flex;flex-direction:column;gap:12px;overflow:auto;animation:sl .25s cubic-bezier(.2,.8,.2,1)}@keyframes sl{from{transform:translateX(30px);opacity:0}}
 .csh-h{display:flex;gap:14px;align-items:center;margin-bottom:6px}.csh-h h2{margin:0;font-size:21px}.csh-h span{font-size:13px;color:var(--label3)}
 .fl2{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}.fl2 span{font-size:12.5px;font-weight:600;color:#cfcfc8}.fl2 .in{width:100%;border-radius:12px;padding:11px 12px}
@@ -566,8 +568,13 @@ kbd{font:500 11px "JetBrains Mono",monospace;color:var(--label3);border:1px soli
 .cmdk-r{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:var(--txt);padding:10px 12px;border-radius:12px;cursor:pointer;text-align:left}.cmdk-r b{font-weight:500}.cmdk-r span{margin-left:auto;font-size:12.5px;color:var(--label3)}.cmdk-r.on{background:#1c1c1c}.cmdk-r.on svg{color:#e4ff3d}.cmdk-r kbd{margin-left:8px}
 /* görsel düzenleme, sürüm, ses */
 .ws-prev{position:relative}
-.vebar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:4px;padding:5px;border-radius:14px;border:1px solid #2a2a2a;box-shadow:0 16px 30px -10px #000;z-index:5}
-.vebar button{display:flex;align-items:center;gap:6px;border:0;background:none;color:#d6d6cf;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13px}.vebar button:hover{background:#1f1f1f}.vebar button.on{background:#e4ff3d;color:#0a0a0a}
+.picker-dock{position:absolute;z-index:5;display:flex;align-items:center;gap:4px;max-width:calc(100% - 16px);padding:3px;border-radius:24px;background:#18191d;box-shadow:0 2px 12px #0008;border:1px solid #64655d}
+.picker-dock[data-corner^="t"]{top:10px}.picker-dock[data-corner^="b"]{bottom:10px}.picker-dock[data-corner$="r"]{right:10px;flex-direction:row-reverse}.picker-dock[data-corner$="l"]{left:10px}
+.picker-handle{display:grid;place-items:center;flex:none;width:42px;height:42px;border:0;border-radius:50%;background:#e4ff3d;color:#12130d;touch-action:none;cursor:grab;animation:picker-glow 2.5s ease-in-out infinite}
+.picker-handle:active{cursor:grabbing}.picker-dock:not([data-mode="browse"]) .picker-handle{outline:2px solid white;outline-offset:-4px}
+.picker-menu{display:flex;gap:2px;flex-wrap:wrap}.picker-menu button{min-height:40px;padding:4px 9px;border:0;border-radius:16px;background:transparent;color:#eee;cursor:pointer}.picker-menu button[aria-pressed=true]{background:#373b29;color:#e4ff3d}
+@keyframes picker-glow{50%{box-shadow:0 0 12px #dfff60a0}}@media(prefers-reduced-motion:reduce){.picker-handle{animation:none;box-shadow:0 0 6px #dfff6070}}
+
 .picked{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:8px;border-radius:12px;border:1px solid rgba(228,255,61,.35);background:rgba(228,255,61,.06);font-size:12.5px;animation:popin .3s}
 .histm{position:absolute;right:0;top:calc(100% + 6px);z-index:30;width:240px;max-height:340px;overflow:auto;border:1px solid #2a2a2a;border-radius:14px;padding:8px;box-shadow:0 20px 40px -10px #000}.histm>b{display:block;font-size:12px;color:var(--label3);padding:4px 8px 8px;text-transform:uppercase;letter-spacing:.06em}
 .histm button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:var(--txt);padding:8px;border-radius:10px;cursor:pointer;text-align:left}.histm button:hover{background:#1c1c1c}.histm button span:nth-child(2){flex:1}.histm small{display:block;color:var(--label3);font-size:11px}.hist-n{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:#1c1c1c;font-size:11px;font-weight:700;color:#e4ff3d}
@@ -588,7 +595,9 @@ kbd{font:500 11px "JetBrains Mono",monospace;color:var(--label3);border:1px soli
 .home-h{font-size:clamp(34px,5vw,58px);letter-spacing:-1.8px;line-height:1.05;margin:120px 0 34px;font-weight:800}.hl{color:#e4ff3d}
 .home-box{width:min(760px,100%);background:rgba(18,18,18,.92);backdrop-filter:blur(18px);border:1px solid #2a2a2a;border-radius:28px;padding:16px 16px 12px 22px;text-align:left;box-shadow:0 30px 60px -30px #000,0 0 0 6px rgba(228,255,61,.06);transition:border-color .2s,box-shadow .2s}.home-box:focus-within{border-color:#4a4a4a;box-shadow:0 30px 60px -30px #000,0 0 0 6px rgba(228,255,61,.14)}
 .home-box textarea{width:100%;border:0;outline:0;background:none;resize:none;font-size:17px;line-height:1.5;color:#f4f4ef;min-height:56px}.home-box textarea::placeholder{color:#8a8a84}
-.hb-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hb-row,.hb-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.hb-group{min-width:0}.hb-actions{margin-left:auto;justify-content:flex-end}.hb-row .seg.mini{max-width:100%}
+.home-hero .siri{opacity:.52}
+@media(prefers-reduced-motion:reduce){.home-hero .siri i,.cp .cp-orb{animation:none}}
 .hbi{width:38px;height:38px;border-radius:50%;border:1px solid #2c2c2c;background:none;color:#d6d6cf;display:grid;place-items:center;cursor:pointer}.hbi:hover{background:#1f1f1f}.hbi.rec{background:#e4ff3d;color:#0a0a0a}
 .hbw{display:flex;align-items:center;gap:7px;border:0;background:none;color:#e6e6e0;font-weight:600;font-size:14px;padding:8px 10px;border-radius:12px;cursor:pointer}.hbw:hover{background:#1c1c1c}.hbw em{font-style:normal;font-size:11px;background:#e4ff3d;color:#0a0a0a;border-radius:99px;padding:0 6px}
 .seg.mini button{padding:5px 9px;font-size:12px}
@@ -617,7 +626,7 @@ kbd{font:500 11px "JetBrains Mono",monospace;color:var(--label3);border:1px soli
 .ap-b{margin:12px 10px 12px;padding:10px;border-radius:99px;text-align:center;background:#e4ff3d;color:#0a0a0a;font-weight:700;font-size:13px}
 .authx-t{font-size:clamp(26px,3vw,38px);letter-spacing:-1px;line-height:1.1;text-align:center;margin:0}
 @media(max-width:900px){.authx{grid-template-columns:1fr}.authx-r{display:none}.authx-l{padding:24px}}
-@media(max-width:820px){.hb-row .hbi:first-child{order:0}.home{margin:0 -16px}.home-hero{min-height:560px;padding:40px 16px 100px}.home-h{margin:70px 0 24px}.home-sheet{margin:-60px 12px 0}.hb-row .seg.mini{order:9;width:100%}}
+@media(max-width:820px){.hb-row .hbi:first-child{order:0}.home{margin:0 -16px}.home-hero{min-height:560px;padding:40px 16px 100px}.home-h{margin:70px 0 24px}.home-sheet{margin:-60px 12px 0}.hb-group{gap:5px}.hb-actions{margin-inline-start:auto}}
 
 /* ===== v4.2 — Siri ışıması, çok renkli ama sakin kimlik ===== */
 body::before{display:none!important}
@@ -737,19 +746,29 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 .skc-t{display:flex;align-items:center;gap:10px}.skc-t b{flex:1;font-size:15px;font-family:"JetBrains Mono",monospace;font-weight:500}.skc p{margin:0;color:var(--label2);font-size:13px;line-height:1.5}.skc>span{font-size:11.5px;color:var(--label3)}
 .skb{display:inline-flex;align-items:center;gap:6px;border:1px solid #2c2c30;background:#1a1a1d;color:#f4f4ef;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}.skb:hover{border-color:#4a4a50}.skb.on{background:#e4ff3d;color:#0a0a0a;border-color:#e4ff3d}
 @media(max-width:720px){.skm-g{grid-template-columns:1fr}.ctp-row{grid-auto-columns:260px}}
-@media(max-width:720px){.tpl-demo-bar{flex-wrap:wrap;gap:5px}.tpl-demo-bar>div:first-of-type{flex:1 1 75%}.tpl-demo-bar .seg{flex-basis:100%}}
+/* Template previews share one viewport-level dialog across every entry point. */
+.tpl-dialog{width:100%;height:100dvh;max-width:none;max-height:none;margin:0;box-sizing:border-box;border:0;padding:clamp(8px,2vw,24px);color:var(--txt);background:#101114}
+.tpl-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:10px}
+body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#101114}
+.tpl-demo-bar{display:grid;grid-template-columns:minmax(160px,1fr) auto auto auto;align-items:center;gap:12px;width:min(100%,1400px);padding:10px 14px;border-radius:14px;background:#1c1c20}
+.tpl-demo-info{min-width:0}.tpl-demo-info b,.tpl-demo-info small{display:block}.tpl-demo-info small{font-size:12px;color:var(--label2)}
+.tpl-demo-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tpl-demo-actions button{white-space:nowrap}
+.tpl-dialog .fp-stage{overflow:hidden}.tpl-dialog iframe{max-width:100%}
+@media(max-width:860px){.tpl-demo-bar{grid-template-columns:minmax(0,1fr) auto auto;gap:8px}.tpl-demo-actions{grid-column:1/-1;grid-row:2}}
+@media(max-width:500px){.tpl-demo-bar{grid-template-columns:minmax(0,1fr) auto}.tpl-demo-bar>.seg{grid-column:1/-1;grid-row:2}.tpl-demo-actions{grid-row:3}.tpl-demo-info small{line-height:1.35}.tpl-demo-bar>.ib{grid-column:2;grid-row:1}.tpl-demo-actions .getbtn{padding-inline:10px}}
+
 .ds-modal{position:fixed;inset:0;z-index:1800;background:#19191a;color:#e7e7e4;display:flex;flex-direction:column;text-align:left;color-scheme:dark}
 .ds-bar,.ds-tools,.ds-target{display:flex;align-items:center;gap:10px}.ds-bar{padding:10px 16px;border-bottom:1px solid #38383c}.ds-bar div{margin-right:auto;min-width:0}.ds-bar small,.ds-bar strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-bar small{font:10px monospace;letter-spacing:.12em;color:#bcbdb7}.ds-work{display:grid;grid-template-columns:minmax(0,1fr) 282px;flex:1;min-height:0}.ds-board{background-color:#242426;background-image:radial-gradient(#46464a 1px,transparent 1px);background-size:16px 16px;display:flex;align-items:center;flex-direction:column;padding:12px;min-height:0;gap:10px}.ds-viewport{position:relative;width:100%;min-height:0;flex:1;overflow:hidden}.ds-board iframe{position:absolute;top:0;left:50%;transform-origin:top center;border:0;border-radius:5px;max-width:none;background:white;box-shadow:0 5px 16px #0004}.ds-tools,.ds-target{padding:4px;border-radius:8px;background:#18181a}.ds-modal button:not(.btn):not(.ib),.ds-panel a{border:1px solid #414146;border-radius:6px;background:#262629;color:inherit;padding:5px 9px;font:inherit;cursor:pointer}.ds-tools button[aria-pressed=true]{color:#e4ff3d!important;border-color:#a0af4d!important}.ds-modal button:disabled{opacity:.45}.ds-panel{overflow:auto;padding:14px;border-left:1px solid #39393d;font-size:13px}.ds-panel h3{margin:0 0 12px}.ds-panel p,.ds-panel label,.ds-bar label{color:#bdbdb8;font-size:12px}.ds-panel label{display:grid;gap:4px;margin-bottom:6px}.ds-panel select,.ds-panel input,.ds-panel textarea,.ds-bar select{width:100%;min-width:0;border:1px solid #414146;border-radius:5px;background:#262629;color:#eee;padding:5px}.ds-bar select{width:auto}.ds-panel input[type=color]{height:30px;padding:2px}.ds-target{margin-bottom:10px}.ds-target code{color:#e4ff3d}.ds-target b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.ds-target button{white-space:nowrap}.ds-fields{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px}.ds-fields .wide{grid-column:1/-1}.ds-panel details{border-top:1px solid #404045;padding:9px 0}.ds-panel summary{cursor:pointer;font-weight:bold;margin-bottom:6px}.ds-panel a{display:block;text-decoration:none;margin:6px 0}.ds-panel textarea{resize:vertical}.ds-panel p:empty{display:none}
 @media(max-width:720px){.ds-work{grid-template-columns:1fr;grid-template-rows:minmax(180px,1fr) minmax(120px,38%)}.ds-board{padding:5px}.ds-panel{border-top:1px solid #39393d}.ds-bar{padding:6px;gap:4px}.ds-bar small,.ds-bar label{font-size:10px}.ds-bar .btn{font-size:11px}}
 .studio-stage{display:flex;flex-direction:column;min-height:0;min-width:0}.studio-stage .ws-prev{flex:1;min-width:0}.stage-tabs,.stage-progress{display:flex;gap:4px;align-items:center;padding:4px 0 8px}.stage-tabs button{padding:6px 12px;border-radius:9px;background:transparent;border:1px solid transparent;color:#c4c4bc;cursor:pointer}.stage-tabs button[aria-pressed=true]{color:#eff3dd;background:#272925;border-color:#45483e}.stage-tabs button:disabled{opacity:.55;cursor:default}.stage-progress{justify-content:space-between;color:#e4e4d9;font-size:13px}.studio-save,.stage-progress small{font-size:12px;color:#b8b8ae}.ws-msgs .todo{flex-shrink:0;max-height:none;overflow:visible}.todo-b summary{cursor:pointer;color:#c7c7c0}.todo-r.run span{color:#c7c7c0}.sugg[hidden],.studio-shell .refc{display:none}.studio-nav-switch{align-self:flex-end}.studio-shell.nav-compact .side{width:48px;align-items:center}.studio-shell.nav-compact .side>:not(.studio-nav-switch){display:none}
 @media(max-width:820px){.studio-stage{min-height:480px}.studio-stage .ws-prev{min-height:400px}}
 /* v4.5 — Gitmapp Asistan (yan sohbet) */
-.cp{position:fixed;top:10px;right:10px;bottom:10px;width:372px;z-index:70;display:flex;flex-direction:column;border:1px solid #26262a;border-radius:22px;background:rgba(13,13,15,.94);backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 30px 80px -20px rgba(0,0,0,.8);animation:cpin .28s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+.app{--assistant-width:clamp(330px,25vw,400px);--assistant-inset:10px}.cp{position:fixed;top:10px;right:10px;bottom:10px;width:var(--assistant-width);z-index:70;display:flex;flex-direction:column;border:1px solid #26262a;border-radius:22px;background:rgba(13,13,15,.94);backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 30px 80px -20px rgba(0,0,0,.8);animation:cpin .28s cubic-bezier(.2,.8,.2,1);overflow:hidden}
 @keyframes cpin{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
-@media(min-width:1180px){.app.cp-on .main{margin-right:384px}}
+@media(min-width:1180px){.app.cp-on .main{margin-right:calc(var(--assistant-width) + 2 * var(--assistant-inset))}}
 @media(max-width:820px){.cp{top:auto;left:0;right:0;bottom:0;width:auto;height:min(84vh,720px);border-radius:22px 22px 0 0;padding-bottom:env(safe-area-inset-bottom)}}
-.cp-h{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 14px;border-bottom:1px solid #1e1e22}
-.cp-ht{display:flex;flex-direction:column;min-width:0;flex:1}.cp-ht b{font-size:15px}.cp-ht small{font-size:11.5px;color:var(--label3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-h{display:grid;grid-template-columns:30px minmax(0,1fr) auto auto auto;align-items:center;gap:4px 8px;padding:12px 12px 10px 14px;border-bottom:1px solid #1e1e22}
+.cp-tools{display:contents}.cp-tools>.ib{grid-row:1}.cp-h>.cp-orb{grid-row:1/3}.cp-ht{display:contents}.cp-ht b{grid-column:2;grid-row:1}.cp-h .cp-ht small{grid-column:2;grid-row:2;white-space:normal}.cp-tools .cp-seg{grid-row:2;grid-column:3/-1;justify-self:end}.cp-ht b{font-size:15px}.cp-ht small{font-size:11.5px;color:var(--label3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cp-seg{display:flex;background:#18181b;border:1px solid #26262a;border-radius:99px;padding:2px}.cp-seg button{border:0;background:none;color:var(--label2);font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;cursor:pointer;display:flex;align-items:center;gap:4px}.cp-seg button.on{background:#f4f4ef;color:#0a0a0b}
 .cp-orb{position:relative;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:conic-gradient(from 0deg,#e4ff3d,#22d3ee,#a78bfa,#f472b6,#fb923c,#e4ff3d);animation:cpspin 6s linear infinite;box-shadow:0 0 18px rgba(167,139,250,.25)}
 .cp-orb i{position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a2a30,#0c0c0e 70%)}
@@ -761,7 +780,7 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 .cp-voicebtn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:99px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer;color:#0a0a0b;background:linear-gradient(135deg,#e4ff3d,#a3e635)}
 .cp-start{display:grid;gap:6px;margin-top:16px;text-align:left}.cp-start button{display:flex;align-items:center;gap:10px;border:1px solid #232327;background:#141416;color:var(--txt);border-radius:14px;padding:10px 12px;cursor:pointer;font-size:13.5px;transition:border-color .2s}.cp-start button:hover{border-color:#3a3a40}.cp-start svg{color:#e4ff3d}
 .cp-u{align-self:flex-end;max-width:86%;background:#202024;border:1px solid #2a2a2f;border-radius:16px 16px 4px 16px;padding:8px 12px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}.cp-u svg{color:#e4ff3d;margin-right:5px;vertical-align:-1px}
-.cp-m{display:flex;flex-direction:column;gap:8px;max-width:100%}.cp-t{font-size:13.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:#e9e9e4}.cp-t.err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:8px 10px;font-size:13px}
+.cp-m{display:flex;flex-direction:column;gap:8px;max-width:100%}.cp-t{font-size:13.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:#e9e9e4}.cp-t p,.cp-t ol,.cp-t ul{white-space:normal;margin:0 0 .6em}.cp-t ol,.cp-t ul{padding-inline-start:1.6em}.cp-t li+li{margin-top:.35em}.cp-t>:last-child{margin-bottom:0}.cp-t.err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:8px 10px;font-size:13px}
 .cp-acts{border:1px solid #26262a;border-radius:14px;background:#111113;overflow:hidden}
 .cp-ah{display:flex;align-items:center;gap:6px;padding:8px 10px;font-size:11.5px;font-weight:600;color:var(--label3);letter-spacing:.02em;border-bottom:1px solid #1e1e22}.cp-ah svg{color:#e4ff3d}
 .cp-all{border:1px solid #2c2c30;background:#1a1a1d;color:#f4f4ef;border-radius:99px;font-size:11.5px;font-weight:600;padding:3px 10px;cursor:pointer}
@@ -784,8 +803,9 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 .cp-fab kbd{font-size:10.5px;color:var(--label3);border:1px solid #2c2c30;border-radius:6px;padding:1px 5px;font-family:inherit}
 @media(max-width:820px){.cp-fab{bottom:calc(78px + env(safe-area-inset-bottom));right:12px;padding:5px}.cp-fab span.cp-fl,.cp-fab kbd{display:none}}
 #ghost.wait .gh-ring{animation:ring 1.2s ease-out infinite}
-.app.cp-on .ws-top{flex-wrap:nowrap;gap:4px}.app.cp-on .ws-title{min-width:70px;flex:1 1 100px}.app.cp-on .ws-top .clr{display:none}.app.cp-on .ws-top .ib{width:32px;height:32px}.app.cp-on .ws-top .seg button{padding:5px 7px}
+.app.cp-on .ws-top{flex-wrap:wrap;gap:4px}.app.cp-on .ws-title{min-width:70px;flex:1 1 100px}.app.cp-on .ws-top .clr{display:none}.app.cp-on .ws-top .ib{width:32px;height:32px}.app.cp-on .ws-top .seg button{padding:5px 7px}
 @media(max-width:1500px){.app.cp-on .ws-top>.ib[title^="Yeni sekmede"],.app.cp-on .ws-top>.ib[title^="Tam ekran"]{display:none}}
+@media(max-width:820px){.ws:has(.studio-stage){height:auto}.ws .studio-grid{display:flex;flex-direction:column}.ws .studio-stage{order:-1;min-height:0}.ws .studio-stage .ws-prev{height:clamp(300px,52dvh,580px);min-height:0;flex:none}.ws .ws-chat{max-height:none}.ws .ws-msgs{max-height:40dvh}.ws .ws-top{min-width:0;flex-wrap:wrap}.ws .ws-title{min-width:100px;max-width:55vw}.picker-menu button{min-height:44px}}
 </style>
 </head>
 <body>
@@ -799,8 +819,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="4.6.0";
+const VERSION="4.7.0";
 const CHANGELOG=[
+ {v:"4.7.0",date:"2026-11-25",items:["Önizlemedeki ok sürüklenebilir, köşeye yerleşir ve kullanılmadığında küçülür. Seçim ve metin araçları açık ekranda çalışır.","Mobil şablon tabloları, grafikler ve tam ekran demolar düzenlendi. Gitmapp ana ekrana yüklenebilir."]},
  {v:"4.6.0",date:"2026-11-25",items:[
   "🎧 Gitmapp Asistan: her sayfada sağda açılan yan sohbet paneli (sol menüde “Asistan”, sağ alttaki düğme ya da Ctrl/⌘+J). Fikrini anlat, sana en fazla iki soru sorarak netleştirir",
   "✍️ Sohbetten prompta: fikir netleşince asistan ayrıntılı geliştirme istemini kendisi yazar, istem kutusuna aktarır, uygun tür, tema ve modu seçer, “Geliştirmeye başlayayım mı?” diye sorar. “Prompta dönüştür” ve “Geliştirmeye başla” kısayolları",
@@ -2001,18 +2022,7 @@ function downloadDesign(content,type,name){
  link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),3000);
 }
 // Each exported project carries its own design overrides, including templates that render after load.
-function designRuntime(rules, editing, vectors) {
- const sheet = document.createElement("style");
- document.head.append(sheet);
- let active = null, selecting = editing;
- const original = new Map();
- const selector = path => path.map(({tag,id,index,classes,attr})=>{
-   if(id)return tag+"#"+CSS.escape(id);
-   const names=(classes||[]).map(c=>"."+CSS.escape(c)).join("");
-   const attribute=attr?"["+CSS.escape(attr.name)+"="+CSS.escape(attr.value)+"]":"";
-   return tag+names+attribute+(index?":nth-of-type("+index+")":"");
- }).join(" > ");
- const nodePath = node => {
+function elementPath(node){
    const parts = [];
    while (node && node !== document.documentElement) {
      const tag = node.localName;
@@ -2027,7 +2037,18 @@ function designRuntime(rules, editing, vectors) {
      parts.unshift({tag,classes,attr,index}); node=node.parentElement;
    }
    return parts;
- };
+ }
+function designRuntime(rules, editing, nodePath, vectors) {
+ const sheet = document.createElement("style");
+ document.head.append(sheet);
+ let active = null, selecting = editing;
+ const original = new Map();
+ const selector = path => path.map(({tag,id,index,classes,attr})=>{
+   if(id)return tag+"#"+CSS.escape(id);
+   const names=(classes||[]).map(c=>"."+CSS.escape(c)).join("");
+   const attribute=attr?"["+CSS.escape(attr.name)+"="+CSS.escape(attr.value)+"]":"";
+   return tag+names+attribute+(index?":nth-of-type("+index+")":"");
+ }).join(" > ");
  function labelNode(el){
    if(!el || el.matches("input,textarea,select,canvas,video,iframe,script,style"))return null;
    const nodes=Array.from(el.childNodes).filter(n=>n.nodeType===Node.TEXT_NODE && (n.data.trim()||original.has(n)));
@@ -2108,7 +2129,7 @@ function readDesign(source) {
 function designDocument(base,rules,editing=false) {
  if(!editing&&!rules.length) return base;
  const data=JSON.stringify(rules).replace(/</g,"\\u003c");
- const block='\n<!-- gitmapp-design:v1 --><script type="application/json" data-gms-rules>'+data+'<\/script><script>('+designRuntime.toString()+')(JSON.parse(document.currentScript.previousElementSibling.textContent),'+editing+(editing?','+sceneVectors.toString():'')+');<\/script><!-- /gitmapp-design -->';
+ const block='\n<!-- gitmapp-design:v1 --><script type="application/json" data-gms-rules>'+data+'<\/script><script>('+designRuntime.toString()+')(JSON.parse(document.currentScript.previousElementSibling.textContent),'+editing+','+elementPath.toString()+(editing?','+sceneVectors.toString():'')+');<\/script><!-- /gitmapp-design -->';
  const closing=/<\/body\s*>\s*(?:<\/html\s*>)?\s*$/i.exec(base);
  return closing?base.slice(0,closing.index)+block+base.slice(closing.index):base+block;
 }
@@ -2331,10 +2352,20 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   if(sd.kind)setPrefs(p=>({...p,kind:sd.kind}));if(sd.theme)setPrefs(p=>({...p,theme:sd.theme,sector:sd.sector||p.sector}));if(sd.emoji)setSt(x=>({...x,emoji:sd.emoji}));
   setTimeout(()=>{if(sd.sketch){roleRef.current=sd.sketch;fileRef.current&&fileRef.current.click();return}if(sd.auto)doForMe(sd.kind);else if(sd.prompt)ghostRun([{el:".gta",fn:()=>typeInto(sd.prompt),after:250},{el:".gsend",fn:()=>gen(sd.prompt)}]);else{const ta=document.querySelector(".gta");ta&&ta.focus()}},350)},[seed]);
  async function applyTheme(){const t=themeById(pendTheme);setPendTheme(null);if(!st.html||busy)return;await build("Uygulamanın görsel tasarımını baştan “"+t.name+"” tasarım diline göre yeniden düzenle. Tüm içerik, veriler ve özellikler aynen kalsın; sadece renkler, yazı tipi, köşeler, boşluklar ve bileşen stilleri değişsin.",null,"“"+t.name+"” tasarımını uygula",true)}
- useEffect(()=>{const h=e=>{const d=e.data;if(!d||!d.gm||!frameRef.current||e.source!==frameRef.current.contentWindow)return;
-   if(d.gm==="select"){setPicked(d);const t=document.querySelector(".gta");t&&t.focus()}
-   else if(d.gm==="text"){setSt(s=>{const h=s.html||"";const n=h.split(d.old).length-1;if(n!==1){toast("Bu metni otomatik değiştiremedim; öğeyi “Seç” ile seçip yapay zekâya söyle.");return s}setVersions(v=>[...v.slice(-9),h]);toast("Metin güncellendi (kredi harcanmadı)");return {...s,html:h.replace(d.old,d.now.replace(/[<>]/g,""))}})}};
-  addEventListener("message",h);return()=>removeEventListener("message",h)},[]);
+ useEffect(()=>{frameRef.current?.contentWindow?.postMessage({gm:"picker-mode",mode:veMode},"*")},[veMode]);
+ useEffect(()=>{function receive(e){
+   const d=e.data;
+   if(!veMode||busy||!frameRef.current||e.source!==frameRef.current.contentWindow||!d)return;
+   if(veMode==="select"&&d.gm==="select"&&[d.sel,d.html,d.text,d.tag].every(v=>typeof v==="string")){
+     setPicked(d);document.querySelector("textarea.gta")?.focus({preventScroll:true});
+   }else if(veMode==="text"&&d.gm==="picker-tip"){toast("Metin için doğrudan bir yazıya dokunun.")}
+   else if(veMode==="text"&&d.gm==="text"&&validTarget(d.path)&&typeof d.now==="string"&&typeof d.old==="string"&&d.now.length<=500){
+     const {base,rules}=readDesign(st.html),id=JSON.stringify(d.path),prev=rules.find(r=>JSON.stringify(r.path)===id);
+     const rule={path:d.path,original:prev?.original??d.old,values:{...prev?.values,text:d.now}};
+     const next=designDocument(base,[...rules.filter(r=>JSON.stringify(r.path)!==id),rule]);
+     setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:next}));toast("Seçilen metin güncellendi");
+   }
+ }window.addEventListener("message",receive);return ()=>window.removeEventListener("message",receive)},[st.html,veMode,busy]);
  function mic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesle yazmayı desteklemiyor (Chrome ya da Safari dene).");return}
   if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang="tr-TR";r.interimResults=false;r.continuous=false;recRef.current=r;
   r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ");setInput(v=>(v?v+" ":"")+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
@@ -2407,7 +2438,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const activeStep=todo?.items.findIndex(t=>t.state==="run")??-1;
  const progress=activeStep>=0?`${activeStep+1}/${todo.items.length} · ${todo.items[activeStep].title}`:st.msgs.at(-1)?.log?.title||"İstek işleniyor";
  const openDesign=()=>{setCode(false);setVeMode(null);setPicked(null);setDesignOpen(true)};
- const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${resolve(st.html)+(ve&&veMode?VE_SCRIPT(veMode):"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
+ const frameEl=(sg,ve)=>html`<iframe ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${resolve(st.html)+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
  return html`<div class="ws">${designOpen&&st.html&&html`<${DesignScene} project=${st} resolve=${resolve} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}
   <div class="ws-top">
    <select class="in" style=${{width:58,padding:"6px",fontSize:18}} value=${st.emoji} onChange=${e=>setSt(s=>({...s,emoji:e.target.value}))}>${EMOJIS.map(x=>html`<option>${x}</option>`)}</select>
@@ -2442,7 +2473,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
     :code&&st.html?html`<div style=${{width:"100%",display:"flex",flexDirection:"column"}}><div style=${{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}><${Icon} n="file" s=${14} c="#767671"/><span style=${{color:"var(--mut)",fontSize:12}}>index.html · ${(st.html.length/1024).toFixed(1)} KB</span><span style=${{flex:1}}></span><button class="ib" title="Kopyala" onClick=${async()=>{try{await navigator.clipboard.writeText(st.html);toast("Kod kopyalandı")}catch(e){toast("Kopyalanamadı")}}}><${Icon} n="copy" s=${15}/></button></div><pre class="lc-b mono" style=${{flex:1,margin:0}}>${st.html}</pre></div>`
     :!st.html?html`<div class="prev-empty">${busy?html`<${Spark} s=${34}/><span style=${{marginTop:12}}>${code?"Kod akışı bekleniyor":"İlk çalışan sürüm burada görünecek"}</span>`:html`<${Icon} n=${plan?"compass":"sparkles"} s=${30} c="#4a5470"/><span style=${{marginTop:10}}>${plan?"Planı onaylayınca önizleme burada görünecek":"Önizleme burada görünecek"}</span>`}</div>`
     :frameEl(stage,true)}
-    ${st.html&&!busy&&!code&&html`<div class="vebar glass"><button class=${veMode==="select"?"on":""} title="Öğe seç ve yapay zekâya değiştir" onClick=${()=>{setVeMode(veMode==="select"?null:"select");setPicked(null)}}><${Icon} n="pointer" s=${16}/><span>Seç</span></button><button class=${veMode==="text"?"on":""} title="Metne tıkla, doğrudan yaz (kredi harcamaz)" onClick=${()=>setVeMode(veMode==="text"?null:"text")}><${Icon} n="type" s=${16}/><span>Metin</span></button>${veMode&&html`<button onClick=${()=>{setVeMode(null);setPicked(null)}} title="Düzenlemeyi kapat"><${Icon} n="x" s=${15}/></button>`}</div>`}
+    ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
    </div></section></div>
   ${full&&st.html&&html`<div class="fullprev" onClick=${()=>setFull(false)}><div class="fp-bar glass" onClick=${e=>e.stopPropagation()}><b style=${{marginRight:8}}>${st.title||"Önizleme"}</b>${seg([["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]],stage,setStage)}<span style=${{flex:1}}></span><button class="ib" onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button><button class="ib" onClick=${()=>setFull(false)} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div><div class="fp-stage" onClick=${e=>e.stopPropagation()}>${frameEl(stage)}</div></div>`}
   </div>`;
@@ -2768,15 +2799,23 @@ const TEMPLATE_LIB=[
 const TPL_URL=id=>"templates/"+id+".html";
 function TplThumb({t,w=380}){const s=w/1440;return html`<div class="tpth" style=${{height:900*s}}><iframe title=${t.name} src=${TPL_URL(t.id)} loading="lazy" tabindex="-1" sandbox="allow-scripts" style=${{width:1440,height:900,transform:"scale("+s+")"}}></iframe></div>`}
 function TplCard({t,onDemo,onUse,w}){return html`<div class="tpc">
- <div class="tpc-img" onClick=${()=>onDemo(t)}><${TplThumb} t=${t} w=${w||380}/><div class="tpc-ov"><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı demo</span></div><span class="tpc-type">${t.type==="panel"?"Yönetim paneli":"Web sitesi"}</span></div>
+ <div class="tpc-img"><${TplThumb} t=${t} w=${w||380}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı demoyu aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı demo</span></button><span class="tpc-type">${t.type==="panel"?"Yönetim paneli":"Web sitesi"}</span></div>
  <div class="tpc-m"><span class="tpc-ic" style=${{background:"linear-gradient(145deg,"+t.pr+","+t.ac+")"}}>${t.emoji}</span><div style=${{flex:1,minWidth:0}}><b>${t.name}</b><span>${t.sector}</span></div><button class="getbtn" onClick=${()=>onUse(t)}>KULLAN</button></div>
 </div>`}
-function TplDemo({t,close,onUse}){const [dev,setDev]=useState("desktop");
- useEffect(()=>{const h=e=>{if(e.key==="Escape")close()};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
- return html`<div class="fullprev" onClick=${close}><div class="fp-bar glass tpl-demo-bar" onClick=${e=>e.stopPropagation()}><span class="tpc-ic" style=${{width:30,height:30,fontSize:15,background:"linear-gradient(145deg,"+t.pr+","+t.ac+")"}}>${t.emoji}</span><div style=${{display:"flex",flexDirection:"column",marginRight:8}}><b>${t.name}</b><span style=${{fontSize:11.5,color:"var(--label3)"}}>Canlı demo · veriler kurgusaldır, değişiklikler yalnızca bu tarayıcıda kalır</span></div>
-  <div class="seg">${[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]].map(([k,ic,l])=>html`<button key=${k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div><span style=${{flex:1}}></span>
-  <a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></a><button class="getbtn" onClick=${()=>onUse({...t,openDesign:true})}>Tasarımı düzenle</button><button class="getbtn solid" onClick=${()=>onUse(t)}><${Icon} n="hammer" s=${14}/> Bu şablonla başla</button><button class="ib" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button></div>
-  <div class="fp-stage" onClick=${e=>e.stopPropagation()}><iframe title=${t.name} src=${TPL_URL(t.id)} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></div></div>`}
+function TplDemo({t,close,onUse}){
+ const [dev,setDev]=useState("desktop"),dialog=useRef(null);
+ useEffect(()=>{
+   const el=dialog.current,trigger=document.activeElement;
+   el.showModal();
+   return ()=>{el.close();if(trigger?.isConnected)trigger.focus({preventScroll:true})};
+ },[]);
+ return ReactDOM.createPortal(html`<dialog class="tpl-dialog" ref=${dialog} aria-label=${t.name+" · Canlı demo"} onCancel=${e=>{e.preventDefault();close()}} onClick=${e=>{if(e.target===e.currentTarget)close()}}>
+  <header class="tpl-demo-bar"><div class="tpl-demo-info"><b>${t.name}</b><small>Canlı demo · Örnek veriler bu tarayıcıda saklanır.</small></div>
+   <div class="seg">${[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${dev===k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   <div class="tpl-demo-actions"><a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></a><button class="getbtn" onClick=${()=>onUse({...t,openDesign:true})}>Tasarımı düzenle</button><button class="getbtn solid" onClick=${()=>onUse(t)}>Bu şablonla başla</button></div>
+   <button class="ib" onClick=${close} aria-label="Önizlemeyi kapat"><${Icon} n="x" s=${16}/></button></header>
+  <div class="fp-stage" onClick=${e=>{if(e.target===e.currentTarget)close()}}><iframe title=${t.name} src=${TPL_URL(t.id)} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></div></dialog>`,document.body);
+}
 function TemplatesPage({onUse,toast}){
  const [type,setType]=useState("");const [sec,setSec]=useState("");const [demo,setDemo]=useState(null);
  const secs=[...new Set(TEMPLATE_LIB.map(t=>t.sector))];const list=TEMPLATE_LIB.filter(t=>(!type||t.type===type)&&(!sec||t.sector===sec));
@@ -2874,14 +2913,16 @@ function ConnectorsPage({toast}){
  </div>`;
 }
 function ConnSheet({c,v,close,onSave}){const [cfg,setCfg]=useState(v.cfg||{});const ready=c.f.every(([k])=>(cfg[k]||"").trim());
- return html`<div class="drawer" style=${{justifyContent:"flex-end",padding:0}} onClick=${close}><div class="csheet" onClick=${e=>e.stopPropagation()}>
+ const panel=useRef(null);
+ useEffect(()=>{const el=panel.current;el.showModal();return ()=>el.close()},[]);
+ return ReactDOM.createPortal(html`<dialog ref=${panel} class="connector-dialog" aria-label=${c.n+" bağlantısı"} onCancel=${e=>{e.preventDefault();close()}} onClick=${e=>{if(e.target===e.currentTarget)close()}}><div class="csheet">
   <div class="csh-h"><${ConnIcon} c=${c} s=${56}/><div style=${{flex:1}}><h2>${c.n}</h2><span>${c.d}</span></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
   ${c.soon?html`<div class="csh-soon"><${Icon} n="clock" s=${16}/> Bu bağlantı hazırlanıyor. Açıldığında hesabına bildirim düşecek.</div>`:html`
   ${c.f.map(([k,l,ph])=>html`<label class="fl2" key=${k}><span>${l}</span><input class="in" placeholder=${ph} value=${cfg[k]||""} onInput=${e=>setCfg({...cfg,[k]:e.target.value})}/></label>`)}
   ${c.how&&html`<div class="csh-how"><${Icon} n="help" s=${15}/><span>${c.how}</span></div>`}
   <div class="csh-how" style=${{background:"rgba(228,255,61,.06)",borderColor:"rgba(228,255,61,.2)"}}><${Icon} n="sparkles" s=${15} c="#e4ff3d"/><span>Etkinleştirince Geliştir'de yapılan yeni uygulamalara ve değişikliklere yapay zekâ bu servisi kendisi ekler. Gizli anahtar (secret) girmeyin; buradaki bilgiler uygulamanın içinde görünür.</span></div>`}
   <div class="csh-f">${!c.soon&&html`<button class="btn" disabled=${!ready} onClick=${()=>onSave({on:true,cfg})}>${v.on?"Kaydet":"Etkinleştir"}</button>`}${v.on&&html`<button class="btn g" onClick=${()=>onSave({on:false,cfg})}>Devre dışı bırak</button>`}<button class="btn g" onClick=${close}>Kapat</button></div>
- </div></div>`}
+ </div></dialog>`,document.body)}
 function CustomConn({kind,v,close,onSave}){const [f,setF]=useState(v||{name:"",url:"",desc:"",on:true});const ok=f.name.trim()&&/^https:\/\//.test(f.url);
  const T={custom:["Özel bağlayıcı","Uygulamanın çağıracağı herkese açık bir API ekle. Yapay zekâ bu API'yi fetch ile kullanır."],mcp:["MCP sunucusu","Gitmapp ajanının kullanacağı bir MCP sunucusu kaydet. Ajan modunda MCP araç çağrısı yakında etkinleşecek; şimdiden kaydedebilirsin."],reg:["MCP kayıt defteri","Bir MCP sunucuları dizini (registry) adresi kaydet."]}[kind]||["Özel",""];
  const key=v&&v.edit?v.edit:(kind==="custom"?"custom:":"mcp:")+Date.now().toString(36);
@@ -2959,13 +3000,71 @@ function CommandPalette({close,go,openInStudio,onTpl,auth}){
 }
 
 // Görsel düzenleme: önizlemeye eklenen küçük betik (yalnızca önizlemede, kayda girmez)
-const VE_SCRIPT=mode=>`<script>(function(){var M=${JSON.stringify(mode)},hov=null;var st=document.createElement("style");st.textContent=".__gmh{outline:2px solid #e4ff3d!important;outline-offset:2px!important;cursor:${mode==="text"?"text":"pointer"}!important}.__gms{outline:2px dashed #e4ff3d!important}";document.head.appendChild(st);
-function path(e){var p=[];while(e&&e.nodeType===1&&e!==document.body&&p.length<5){var s=e.tagName.toLowerCase();if(e.id){s+="#"+e.id;p.unshift(s);break}var c=(e.className&&typeof e.className==="string")?e.className.trim().split(/\\s+/).filter(function(x){return x&&x.indexOf("__gm")<0}).slice(0,2):[];if(c.length)s+="."+c.join(".");var i=1,x=e;while(x=x.previousElementSibling)if(x.tagName===e.tagName)i++;s+=":nth-of-type("+i+")";p.unshift(s);e=e.parentElement}return p.join(" > ")}
-document.addEventListener("mouseover",function(e){if(hov)hov.classList.remove("__gmh");hov=e.target;if(hov&&hov!==document.body)hov.classList.add("__gmh")},true);
-document.addEventListener("click",function(e){var t=e.target;if(!t||t===document.body)return;e.preventDefault();e.stopPropagation();
- if(M==="select"){document.querySelectorAll(".__gms").forEach(function(x){x.classList.remove("__gms")});t.classList.add("__gms");var h=t.outerHTML.replace(/ class="[^"]*__gm[^"]*"/g,"").slice(0,600);parent.postMessage({gm:"select",sel:path(t),html:h,text:(t.innerText||"").trim().slice(0,120),tag:t.tagName.toLowerCase()},"*")}
- else if(M==="text"&&t.children.length===0&&(t.innerText||"").trim()){var old=t.innerText;t.contentEditable="true";t.focus();t.addEventListener("blur",function b(){t.removeEventListener("blur",b);t.contentEditable="false";if(t.innerText!==old)parent.postMessage({gm:"text",old:old,now:t.innerText},"*")})}},true);})();<\/script>`;
+function PickerDock({mode,onMode}){
+ const corners=["br","bl","tl","tr"];
+ const [corner,setCorner]=useState(()=>LS.get("pickerCorner","br"));
+ const [open,setOpen]=useState(false),[offset,setOffset]=useState(null);
+ const dock=useRef(null),gesture=useRef(null),timer=useRef(null),dragged=useRef(false);
+ const settle=k=>{setCorner(k);LS.set("pickerCorner",k)};
+ function idle(){
+   clearTimeout(timer.current);
+   timer.current=setTimeout(()=>{if(!gesture.current&&!dock.current?.querySelector(":focus-visible"))setOpen(false)},3500);
+ }
+ useEffect(()=>{if(open)idle();return ()=>clearTimeout(timer.current)},[open]);
+ function begin(e){
+   if(e.button!==0)return;
+   const box=dock.current.getBoundingClientRect();
+   gesture.current={x:e.clientX,y:e.clientY,left:box.left,top:box.top};
+   dragged.current=false;e.currentTarget.setPointerCapture(e.pointerId);
+ }
+ function move(e){
+   const g=gesture.current;if(!g)return;
+   const dx=e.clientX-g.x,dy=e.clientY-g.y;
+   if(!dragged.current&&Math.hypot(dx,dy)<6)return;
+   dragged.current=true;
+   const el=dock.current,b=el.parentElement.getBoundingClientRect();
+   const fit=(v,max)=>Math.max(4,Math.min(v,max-4));
+   setOffset({left:fit(g.left-b.left+dx,b.width-el.offsetWidth),top:fit(g.top-b.top+dy,b.height-el.offsetHeight),right:"auto",bottom:"auto"});
+ }
+ function end(e){
+   if(!gesture.current)return;
+   if(dragged.current){const b=dock.current.parentElement.getBoundingClientRect();settle((e.clientY<b.top+b.height/2?"t":"b")+(e.clientX<b.left+b.width/2?"l":"r"))}
+   gesture.current=null;setOffset(null);idle();
+ }
+ return html`<div class="picker-dock" ref=${dock} data-corner=${corner} data-mode=${mode||"browse"} style=${offset} onPointerMove=${idle} onFocus=${idle} onBlur=${idle} onKeyDown=${e=>{if(e.key==="Escape"){onMode(null);setOpen(false);dock.current.firstElementChild.focus()}}}>
+  <button class="picker-handle" type="button" aria-label=${"Seçici araçları"+(mode==="text"?" · Metin":mode?" · Seçim":"")} aria-expanded=${open} title="Seçici araçları · Taşımak için sürükle" onPointerDown=${begin} onPointerMove=${move} onPointerUp=${end} onPointerCancel=${()=>{gesture.current=null;setOffset(null);idle()}} onClick=${e=>{if(!dragged.current||e.detail===0)setOpen(!open);dragged.current=false}}><${Icon} n="pointer" s=${20}/></button>
+  ${open&&html`<div class="picker-menu" role="group" aria-label="Önizleme araçları">${[["select","Seç"],["text","Metin"],[null,"Gezin"]].map(([key,label])=>html`<button key=${label} aria-pressed=${mode===key} onClick=${()=>{onMode(key);idle()}}>${label}</button>`)}<button title="Sonraki köşeye taşı" aria-label="Sonraki köşeye taşı" onClick=${()=>settle(corners[(corners.indexOf(corner)+1)%4])}><${Icon} n="move" s=${15}/> Köşe</button></div>`}
+ </div>`;
+}
 
+function previewPicker(nodePath){
+ let mode=null,hover=null,current=null,editing=null;
+ const sheet=document.createElement("style");sheet.textContent="[data-gms-hover]{outline:2px solid #6552ee!important;outline-offset:-2px;cursor:crosshair!important}[data-gms-selected]{outline:3px solid #6552ee!important;outline-offset:-3px}";document.head.append(sheet);
+ function clear(){hover?.removeAttribute("data-gms-hover");current?.removeAttribute("data-gms-selected");hover=null;current=null}
+ window.addEventListener("message",e=>{if(e.source===parent&&e.data?.gm==="picker-mode"){editing?.blur();clear();mode=e.data.mode}});
+ window.addEventListener("pointerover",e=>{if(!mode)return;hover?.removeAttribute("data-gms-hover");hover=e.target.closest("svg")?.parentElement||e.target;hover?.setAttribute("data-gms-hover","")},true);
+ window.addEventListener("click",e=>{
+   if(!mode||e.target===editing)return;
+   e.preventDefault();e.stopImmediatePropagation();
+   const el=e.target.closest("svg")?.parentElement||e.target;
+   if(!(el instanceof HTMLElement)||el===document.body)return;
+   current?.removeAttribute("data-gms-selected");current=el;el.setAttribute("data-gms-selected","");
+   const path=nodePath(el);
+   if(mode==="select"){
+     const sel=path.map(p=>p.id?p.tag+"#"+CSS.escape(p.id):p.tag+":nth-of-type("+p.index+")").join(" > ");
+     parent.postMessage({gm:"select",sel,tag:el.localName,text:el.innerText.slice(0,120),html:el.outerHTML.slice(0,600)},"*");return;
+   }
+   if(el.children.length||!el.textContent.trim()||el.textContent.length>500){parent.postMessage({gm:"picker-tip"},"*");return}
+   const old=el.textContent,attr=el.getAttribute("contenteditable");
+   editing=el;el.contentEditable="plaintext-only";el.focus();
+   function key(event){if(event.key==="Escape"){el.textContent=old;el.blur()}else if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();el.blur()}}
+   el.addEventListener("keydown",key);
+   el.addEventListener("blur",()=>{editing=null;el.removeEventListener("keydown",key);if(attr===null)el.removeAttribute("contenteditable");else el.setAttribute("contenteditable",attr);
+     const now=el.innerText.slice(0,500);if(now!==old)parent.postMessage({gm:"text",path,old,now},"*");
+   },{once:true});
+ },true);
+}
+const VE_SCRIPT='<script>('+previewPicker.toString()+')('+elementPath.toString()+');<\/script>';
 /* ================= v4.2 — AKILLI YAZIM: hayalet öneri (Tab), hızlı ekler, istem iyileştirme ================= */
 const GH_PHRASES=[
  "Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği, benim de günlük randevuları görüp iptal edebildiğim bir uygulama",
@@ -3037,17 +3136,17 @@ function HomePage(props){const {auth,startTemplate,go}=props;
    <h1 class="home-h">${first?html`Yapmaya hazır mısın, <span class="hl">${first}</span>?`:html`Fikrini yaz, <span class="hl">gitmapp</span> yapsın.`}</h1>
    <div class=${"gbox hg"+(v.trim()?" typing":"")}><form class="home-box" onSubmit=${submit}>
     <${GhostTA} className="hta" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+(chip?CHIP_PH[chip]:ph)+" yapmasını iste"}/>
-    <div class="hb-row">
+    <div class="hb-row"><div class="hb-group">
      <button type="button" class="hbi" title="Çizim ya da görsel ekle" onClick=${()=>startTemplate({sketch:"layout",kind})}><${Icon} n="plus" s=${18}/></button>
      <button type="button" class="hbw" onClick=${()=>go("baglantilar")}><${Icon} n="grid" s=${15}/> Çalışma alanı${conns?html`<em>${conns}</em>`:""}</button>
      <div class="seg mini">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([k,ic,l])=>html`<button type="button" key=${k} class=${kind===k?"on":""} onClick=${()=>setKind(k)}><${Icon} n=${ic} s=${13}/>${l}</button>`)}</div>
-     <span style=${{flex:1}}></span>
+     </div><div class="hb-group hb-actions">
      <span style=${{position:"relative"}}><button type="button" class="hbm" onClick=${()=>setModeOpen(!modeOpen)}>${{hizli:"Yap",planli:"Planla",ajan:"Ajan"}[mode]} <${Icon} n="chevDown" s=${14}/></button>
       ${modeOpen&&html`<div class="hbm-l glass" onMouseLeave=${()=>setModeOpen(false)}>${[["hizli","zap","Yap","Hemen yazmaya başlar"],["planli","compass","Planla","Önce plan çıkarır, onayınla yapar"],["ajan","list","Ajan","İşi adımlara böler, adım adım yapar"]].map(([k,ic,t,d])=>html`<button type="button" key=${k} class=${mode===k?"on":""} onClick=${()=>setM(k)}><${Icon} n=${ic} s=${16}/><div><b>${t}</b><span>${d}</span></div>${mode===k?html`<${Icon} n="check" s=${15}/>`:""}</button>`)}</div>`}</span>
      <button type="button" class=${"hbi"+(listening?" rec":"")} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${17}/></button>
      <button type="button" class="hbe" disabled=${v.trim().length<6} title="İstemi yapay zekâ için ayrıntılandır (kredi harcamaz)" onClick=${()=>setV(enhancePrompt(v,kind))}><${Icon} n="wand" s=${16}/><span>İyileştir</span></button>
      <button class="hbs" disabled=${!v.trim()} title="Başlat (Enter)"><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
-    </div></form></div>
+    </div></div></form></div>
    ${v.trim().length>4&&html`<div class="qadd" key="qa">${QUICK_ADD[kind].map(([ic,l,t],i)=>html`<button key=${l} style=${{animationDelay:i*40+"ms"}} onClick=${()=>setV(addTo(v,t))}><${Icon} n=${ic} s=${14}/>+ ${l}</button>`)}</div>`}
    <div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class=${"hc"+(chip===l?" on":"")} onClick=${()=>{if(chip===l){setChip(null);return}setChip(l);setKind(k);const t=document.querySelector("textarea.hta");t&&t.focus()}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>
    ${chip&&!v.trim()&&html`<${ChipTemplates} chip=${chip} onTpl=${props.onTpl} go=${go}/>`}
@@ -3293,6 +3392,19 @@ function ghostHide(){const c=document.getElementById("ghost");if(c)c.classList.r
 // Studio dışındaki işler için: hedef varsa imleçle tıklat, yoksa doğrudan yap
 const ghostDo=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
 
+// Render the supported chat formatting as React text nodes, including during streaming.
+function CopilotReply({text}){
+ const inline=value=>value.split(/(\*\*[^*\n]+\*\*)/g).map((part,i)=>part.startsWith("**")&&part.endsWith("**")&&part.length>4?html`<strong key=${i}>${part.slice(2,-2)}</strong>`:part);
+ const blocks=[];
+ for(const line of String(text||"").split(/\r?\n/)){
+   if(!line.trim())continue;
+   const item=line.match(/^\s*(?:(\d+)[.)]|([-*]))\s+(.+)$/);
+   const type=item?(item[1]?"ol":"ul"):"p",last=blocks.at(-1);
+   if(item&&last?.type===type)last.items.push(item[3]);
+   else blocks.push({type,start:item?.[1],items:[item?item[3]:line]});
+ }
+ return blocks.map(({type,start,items},i)=>type==="p"?html`<p key=${i}>${inline(items[0])}</p>`:React.createElement(type,{key:i,start:type==="ol"?Number(start):undefined},items.map((v,j)=>html`<li key=${j}>${inline(v)}</li>`)));
+}
 function Copilot({close,run,ctx,auth,openAuth,toast}){
  const [msgs,setMsgs]=useState(()=>(LS.get("cpMsgs",[])||[]).map(m=>m.st?{...m,st:m.st.map(x=>x==="run"||x==="ask"?"wait":x)}:m));
  const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
@@ -3301,9 +3413,9 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
  const R=useRef({});Object.assign(R.current,{msgs,auto,speakOn,voice,busy,run,ctx,talking});
  const endRef=useRef(null);const recRef=useRef(null);const waitRef=useRef(null);const emptyRef=useRef(0);const taRef=useRef(null);
  useEffect(()=>{LS.set("cpMsgs",msgs.slice(-40))},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
- useEffect(()=>{endRef.current&&endRef.current.scrollIntoView({block:"end"})},[msgs.length,live,busy,asking,interim]);
+ useEffect(()=>{const list=endRef.current?.parentElement;if(list)list.scrollTop=list.scrollHeight},[msgs.length,live,busy,asking,interim]);
  useEffect(()=>{const v=window.speechSynthesis;if(v&&v.getVoices)v.getVoices();return()=>{stopAll()}},[]);
- useEffect(()=>{const k=e=>{if(e.key==="Escape"&&!R.current.voice)close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
+ useEffect(()=>{const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal")&&!R.current.voice)close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  // --- ses: okuma ---
  function say(text){return new Promise(res=>{const s=window.speechSynthesis;const clean=cpSpeakText(text);if(!s||!clean){res();return}s.cancel();
   const parts=[];let cur="";(clean.match(/[^.!?…]+[.!?…]*/g)||[clean]).forEach(x=>{if((cur+x).length>180&&cur){parts.push(cur);cur=x}else cur+=x});if(cur.trim())parts.push(cur);
@@ -3360,17 +3472,17 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
   ${m.acts.map((a,ai)=>{const [ic,l,d]=cpLabel(a);const s=m.st[ai];const k=mi+"-"+ai;return html`<div key=${ai} class=${"cp-a "+s}><span class="cp-ai">${s==="done"?html`<${Icon} n="check" s=${13} w=${2.4}/>`:s==="run"?html`<${Spark} s=${13}/>`:html`<${Icon} n=${ic} s=${13}/>`}</span><div class="cp-at"><b>${l}</b>${d&&html`<small class=${a.t==="prompt"?"cp-pr":""}>${d}</small>`}</div>
    ${s==="wait"||s==="ask"?html`<span class="cp-ab">${s==="ask"&&html`<button class="cp-skip" onClick=${()=>skipAct(mi,ai)}>Atla</button>`}<button class=${"cp-ok"+(s==="ask"?" pulse":"")} data-k=${k} onClick=${()=>okAct(mi,ai)}>${s==="ask"?"Onayla":"Uygula"}</button></span>`:s==="skip"?html`<span class="cp-st">atlandı</span>`:""}</div>`})}</div>`};
  return html`<aside class="cp glass" role="complementary" aria-label="Gitmapp Asistan">
-  <div class="cp-h">${orb}<div class="cp-ht"><b>Asistan</b><small>${status}</small></div>
-   <div class="cp-seg" title="Oto pilot: asistan ekranları açar ve ayarları kendisi yapar; sen yalnızca onaylarsın"><button class=${!auto?"on":""} onClick=${()=>setAuto(false)}>Sohbet</button><button class=${auto?"on":""} onClick=${()=>{setAuto(true);toast("Oto pilot açık: ekranları ben yönetirim, sen yalnızca onaylarsın")}}><${Icon} n="pilot" s=${11}/> Oto</button></div>
+  <div class="cp-h">${orb}<div class="cp-ht"><b>Asistan</b><small>${status}</small></div><div class="cp-tools">
+   <div class="cp-seg" title="Oto pilot: asistan ekranları açar ve ayarları kendisi yapar; sen yalnızca onaylarsın"><button aria-pressed=${!auto} class=${!auto?"on":""} onClick=${()=>setAuto(false)}>Sohbet</button><button aria-pressed=${auto} class=${auto?"on":""} onClick=${()=>{setAuto(true);toast("Oto pilot açık: ekranları ben yönetirim, sen yalnızca onaylarsın")}}><${Icon} n="pilot" s=${11}/> Oto</button></div>
    <button class="ib sm" title=${speakOn?"Yanıtları sesli okuma: açık":"Yanıtları sesli okuma: kapalı"} onClick=${()=>{if(speakOn)stopSpeak();setSpeakOn(!speakOn)}}><${Icon} n=${speakOn?"volume":"volumeX"} s=${15}/></button>
    ${msgs.length>0&&html`<button class="ib sm" title="Sohbeti temizle" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);setMsgs([])}}><${Icon} n="trash" s=${14}/></button>`}
-   <button class="ib sm" title="Kapat (Esc)" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);close()}}><${Icon} n="x" s=${15}/></button></div>
+   <button class="ib sm" title="Kapat (Esc)" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);close()}}><${Icon} n="x" s=${15}/></button></div></div>
   <div class="cp-msgs">
    ${!msgs.length&&html`<div class="cp-hello"><div class="cp-big">${orb}</div><h3>Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}, ne yapalım?</h3><p>Fikrini anlat, birlikte netleştirelim. Hazır olunca istemi ben yazar, geliştirmeyi başlatırım. <b>Oto</b> modda ekranları ve ayarları ben yönetirim; sen yalnızca onaylarsın.</p>
     <button class="cp-voicebtn" onClick=${toggleVoice}><${Icon} n="headphones" s=${17}/> Sesli konuşmaya başla</button>
     <div class="cp-start">${CP_START.map(([ic,l,q])=>html`<button key=${l} onClick=${()=>send(q)}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}</div></div>`}
-   ${msgs.map((m,mi)=>m.role==="user"?html`<div class="cp-u" key=${mi}>${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}><div class=${"cp-t"+(m.err?" err":"")}>${m.content}</div>${m.acts&&actCard(m,mi)}</div>`)}
-   ${busy&&html`<div class="cp-m"><div class="cp-t">${cpParse(live).body||html`<span class="shimmer">Düşünüyorum…</span>`}${live&&html`<span class="caret"></span>`}</div></div>`}
+   ${msgs.map((m,mi)=>m.role==="user"?html`<div class="cp-u" key=${mi}>${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}><div class=${"cp-t"+(m.err?" err":"")}>${m.err?m.content:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
+   ${busy&&html`<div class="cp-m"><div class="cp-t">${cpParse(live).body?html`<${CopilotReply} text=${cpParse(live).body}/>`:html`<span class="shimmer">Düşünüyorum…</span>`}${live&&html`<span class="caret"></span>`}</div></div>`}
    ${msgs.length>=2&&!busy&&lastA&&!(lastA.acts||[]).some(a=>a.t==="prompt")&&html`<div class="cp-sug"><button onClick=${()=>send("Konuştuklarımızı ayrıntılı bir geliştirme istemine dönüştür, istem kutusuna yaz ve uygun tür, tema ve modu ayarla.")}><${Icon} n="wand" s=${13}/> Prompta dönüştür</button><button onClick=${()=>send("Bunu geliştirmeye başla.")}><${Icon} n="play" s=${13}/> Geliştirmeye başla</button></div>`}
    <div ref=${endRef}></div></div>
   <div class="cp-in">
@@ -3384,6 +3496,22 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){
 }
 
 function App(){
+ const installPrompt=useRef(null);
+ const [installed,setInstalled]=useState(()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true);
+ useEffect(()=>{
+   function available(e){e.preventDefault();installPrompt.current=e}
+   function complete(){installPrompt.current=null;setInstalled(true)}
+   window.addEventListener("beforeinstallprompt",available);window.addEventListener("appinstalled",complete);
+   if(window.isSecureContext&&"serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+   return ()=>{window.removeEventListener("beforeinstallprompt",available);window.removeEventListener("appinstalled",complete)};
+ },[]);
+ async function installApp(){
+   const event=installPrompt.current;
+   if(event){installPrompt.current=null;try{await event.prompt();await event.userChoice;return}catch{}}
+   toast(/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1?"Safari’de Paylaş → Ana Ekrana Ekle’yi seçin.":"Tarayıcı menüsünden Uygulamayı yükle veya Ana ekrana ekle seçeneğini açın.");
+ }
+ const installButton=()=>!installed&&html`<button class="btn g" onClick=${installApp}><${Icon} n="download" s=${15}/> Uygulamayı yükle</button>`;
+
  const CUST=["ana","magaza","studio","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1);return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(()=>LS.get("compactStudio",false));const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
@@ -3428,8 +3556,8 @@ function App(){
  const adminOrders=apiOn?(apiOrders||[]):orders;const setAdminOrders=apiOn?setOrdersApi:setOrders;
  const needLogin=mode==="admin"&&apiOn&&!isAdm&&ADMIN.includes(view);
  const switchMode=m=>{setMode(m);setView(m==="admin"?"siparisler":"ana")};
- const useTemplate=async t=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();track("template_use",{repo:"tpl:"+t.id});
-   setIncoming({openDesign:t.openDesign===true,html:h,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,appId:null,msgs:[{role:"assistant",content:"“"+t.name+"” şablonu yüklendi ve sağda çalışıyor. Şimdi kendi işine göre değiştirelim: örneğin “Firma adını Eczabirlik yap, ana rengi lacivert yap”, “Müşterilere TC kimlik no alanı ekle” ya da “Fatura altına IBAN bilgimizi yaz” diyebilirsin."}]});setView("studio")}catch(e){toast(e.message)}};
+ const useTemplate=async t=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!h.includes("Gitmapp hazır şablonu")||!/<script>window\.(APP|SITE)=/.test(h))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
+   setIncoming({openDesign:t.openDesign===true,html:h,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,appId:null,msgs:[{role:"assistant",content:"“"+t.name+"” şablonu hazır. Önizlemedeki okla bir öğe seçebilir veya Tasarım sekmesinde düzenleyebilirsin."}]});setView("studio")}catch(e){toast(e.message)}};
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
  const goStore=(o)=>{setSq({q:"",cat:"",...o,n:Date.now()});setView("magaza")};
  const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
@@ -3457,12 +3585,12 @@ function App(){
    <div style=${{position:"relative"}}><button class="wsw" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?"Yönetici görünümü":"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
     ${wsMenu&&html`<div class="wsw-m glass" onMouseLeave=${()=>setWsMenu(false)}><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
    <nav class="navs">${navList("")}</nav>
-   <div class="side-foot">
+   <div class="side-foot">${installButton()}
     ${mode==="musteri"&&html`<button class="refc" onClick=${async()=>{if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",u)}}}><div><b>Gitmapp'i paylaş</b><span>Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi</span></div><span class="refc-i"><${Icon} n="gift" s=${20}/></span></button>`}
     ${apiOn?(auth.user?html`<div class="me" onClick=${()=>setView("hesabim")} title="Hesabım"><span class="avatar">${initials(auth.user)}</span><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><${Icon} n="gem" s=${11}/> ${auth.user.credits??0} kredi${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
   <div class="bnav glass noprint">${(mode==="admin"?[["siparisler","Siparişler"],["radar","Radar"],["plan","Plan"],["kesfet","GitHub"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
-  ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button>`:""}</div></div></div>`}
+  ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button>`:""}</div></div></div>`}
   <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span></div>`}
    ${needLogin?html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} initMode="giris" title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok.":"Siparişleri ve talep radarını görmek için yönetici hesabıyla giriş yapın."}/></div>`:html`<div>
    ${view==="studio"&&html`<${Studio} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
