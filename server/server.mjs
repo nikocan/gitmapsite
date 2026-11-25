@@ -56,6 +56,7 @@ CREATE INDEX IF NOT EXISTS usage_user ON usage(user_id, created);
 CREATE TABLE IF NOT EXISTS credit_log(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, created TEXT DEFAULT (datetime('now')), amount INTEGER, reason TEXT);
 `);
 try { db.exec("ALTER TABLE users ADD COLUMN credits INTEGER DEFAULT " + (+(E.SIGNUP_CREDITS || 25))); } catch { }
+try { db.exec("ALTER TABLE apps ADD COLUMN meta TEXT DEFAULT '{}'"); } catch { }
 const q = (sql) => db.prepare(sql);
 const now = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 const rid = (n = 12) => crypto.randomBytes(n * 2).toString("base64url").replace(/[-_]/g, "").slice(0, n);
@@ -129,7 +130,14 @@ async function listModels(provider, key) {
   const c = modelCaches[ck]; if (c && Date.now() - c.t < 10 * 60 * 1000) return c.ids;
   const headers = { Authorization: "Bearer " + key };
   if (provider === "anthropic") Object.assign(headers, { "x-api-key": key, "anthropic-version": "2023-06-01" });
-  const r = await fetch(pbase(provider) + "/models", { headers, signal: AbortSignal.timeout(20000) });
+  let r;
+  try { r = await fetch(pbase(provider) + "/models", { headers, signal: AbortSignal.timeout(20000) }); } catch (e) { if (provider !== "gitmapp") throw e; r = { ok: false, status: 0 }; }
+  // Hostinger AI Router /models uç noktasını sunmayabilir: yapılandırılmış/varsayılan listeye düş
+  if (!r.ok && provider === "gitmapp") {
+    const ids = [...new Set([CFG.aiModel, ...(E.AI_MODELS || "claude-sonnet-5,gpt-5.2").split(",")].map((x) => (x || "").trim()).filter(Boolean))];
+    console.warn(new Date().toISOString(), "AI Router /models kullanılamadı (" + r.status + "), sabit liste:", ids.join(","));
+    modelCaches[ck] = { t: Date.now(), ids, fallback: r.status }; return ids;
+  }
   need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, r.status === 401 || r.status === 403 ? "Anahtar geçersiz ya da yetkisi yok" : "Model listesi alınamadı (" + r.status + ")");
   const j = await r.json();
   const ids = (j.data || j.models || []).map((m) => String(m.id || m.name || "").replace(/^models\//, "")).filter((x) => x && usable(x));
@@ -164,21 +172,26 @@ async function resolveRoute(user, body, req, kind) {
   useAi("k:" + user.id, 500, false);
   return { provider, base: pbase(provider), key: decKey(row.enc), model: body.model, credits: 0 };
 }
-async function chatWith(rt, messages, maxTokens = 12000) {
+async function postChat(rt, payload, signal) {
   const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
   if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
-  const r = await fetch(rt.base + "/chat/completions", { method: "POST", signal: AbortSignal.timeout(240000), headers, body: JSON.stringify({ model: rt.model, messages, max_tokens: maxTokens }) });
+  const body = { model: rt.model, ...payload, ...(rt.temperature != null ? { temperature: rt.temperature } : {}) };
+  let r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) });
+  // Bazı modeller sıcaklık ayarını kabul etmez: ayarsız tekrar dene
+  if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
+  return r;
+}
+async function chatWith(rt, messages, maxTokens = 12000) {
+  const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens }, AbortSignal.timeout(240000));
   const t = await r.text();
-  need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? "Anahtar reddedildi: " : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200));
+  need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200));
   const j = JSON.parse(t);
   return { text: j.choices?.[0]?.message?.content || "", model: rt.model, usage: j.usage || null };
 }
 // Canlı akış (SSE): model yanıtını parça parça iletir
 async function streamChatWith(rt, messages, onDelta, signal, maxTokens = 12000) {
-  const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
-  if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
-  const r = await fetch(rt.base + "/chat/completions", { method: "POST", signal: AbortSignal.any([AbortSignal.timeout(300000), signal]), headers, body: JSON.stringify({ model: rt.model, messages, max_tokens: maxTokens, stream: true }) });
-  if (!r.ok) { const t = await r.text(); need(false, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? "Anahtar reddedildi: " : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200)); }
+  const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens, stream: true }, AbortSignal.any([AbortSignal.timeout(300000), signal]));
+  if (!r.ok) { const t = await r.text(); need(false, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? (rt.provider === "gitmapp" ? "Gitmapp yapay zekâ anahtarı reddedildi (yönetici AI_KEY ayarını kontrol etmeli): " : "Anahtar reddedildi: ") : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200)); }
   return async () => {
     if (!(r.headers.get("content-type") || "").includes("event-stream")) { const j = await r.json(); const c = j.choices?.[0]?.message?.content || ""; onDelta(c); return { text: c, model: rt.model, usage: j.usage || null }; }
     const dec = new TextDecoder(); let buf = "", text = "", usage = null;
@@ -240,6 +253,14 @@ function designRule(d) {
   const style = String(d.style || "").replace(/[<>`]/g, "").slice(0, 400);
   return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}`;
 }
+// Çalıştırma ayarları (AI Studio benzeri): yaratıcılık, ayrıntı düzeyi, ek talimatlar
+function runOpts(rt, body) {
+  const t = body.settings || {};
+  if (t.temperature != null && t.temperature !== "" && isFinite(+t.temperature)) rt.temperature = Math.max(0, Math.min(1.5, +t.temperature));
+  rt.maxTokens = { kisa: 6000, dengeli: 12000, ayrintili: 20000 }[t.detail] || 12000;
+  const ins = String(t.instructions || "").replace(/[<>`]/g, "").trim().slice(0, 1000);
+  return ins ? "\n- Kullanıcının ek talimatları (yukarıdaki kurallarla çelişmedikçe uy): " + ins : "";
+}
 const kindOf = (k) => (KIND_RULES[k] ? k : "app");
 function extractHtml(text) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
@@ -292,7 +313,10 @@ function serveApp(req, res, url) {
 // ---------- API ----------
 const routes = [];
 const route = (m, p, fn) => routes.push({ m, re: new RegExp("^" + p.replace(/:(\w+)/g, "(?<$1>[^/]+)") + "$"), fn });
-const appRow = (a, withHtml) => ({ id: a.id, title: a.title, slug: a.slug, description: a.description, category: a.category, emoji: a.emoji, color: a.color, status: a.status, listed: !!a.listed, price: a.price, downloads: a.downloads, opens: a.opens, github_repo: a.github_repo, pages_url: a.pages_url, created: a.created, updated: a.updated, published_at: a.published_at, url: a.slug && a.status === "published" ? `https://${CFG.appHost}/${a.slug}` : null, ...(withHtml ? { html: a.html, prompt_log: JSON.parse(a.prompt_log || "[]") } : {}) });
+const cleanMeta = (m, old) => { let o = {}; try { o = JSON.parse(old || "{}"); } catch { } if (!m || typeof m !== "object") return JSON.stringify(o);
+  if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; return JSON.stringify(o); };
+const metaOf = (a) => { let m = {}; try { m = JSON.parse(a.meta || "{}"); } catch { } let n = 0; try { n = JSON.parse(a.prompt_log || "[]").filter((x) => x.role === "user").length; } catch { } return { ...m, steps: n }; };
+const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, slug: a.slug, description: a.description, category: a.category, emoji: a.emoji, color: a.color, status: a.status, listed: !!a.listed, price: a.price, downloads: a.downloads, opens: a.opens, github_repo: a.github_repo, pages_url: a.pages_url, created: a.created, updated: a.updated, published_at: a.published_at, url: a.slug && a.status === "published" ? `https://${CFG.appHost}/${a.slug}` : null, ...(withHtml ? { html: a.html, prompt_log: JSON.parse(a.prompt_log || "[]") } : {}) });
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
@@ -353,7 +377,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "build");
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design) + runOpts(rt, body) }];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: "İstenen değişiklik: " + prompt });
   else messages.push({ role: "user", content: "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : "") });
   const fin = ({ text, model, usage }) => { const out = extractHtml(text); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
@@ -424,14 +448,14 @@ route("GET", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş ya
 route("POST", "/api/apps", ({ user, body }) => {
   need(user, 401, "Kaydetmek için giriş yapın");
   const id = rid(); const html = str(body.html, 400000, "HTML", true);
-  q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,prompt_log) VALUES(?,?,?,?,?,?,?,?,?)").run(id, user.id, str(body.title, 80, "Ad") || "Adsız uygulama", str(body.description, 400, "Açıklama"), CATS.includes(body.category) ? body.category : "diger", str(body.emoji, 8, "Simge") || "✨", /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : "#4f8cff", html, JSON.stringify((Array.isArray(body.prompt_log) ? body.prompt_log : []).slice(-50)));
+  q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,prompt_log,meta) VALUES(?,?,?,?,?,?,?,?,?,?)").run(id, user.id, str(body.title, 80, "Ad") || "Adsız uygulama", str(body.description, 400, "Açıklama"), CATS.includes(body.category) ? body.category : "diger", str(body.emoji, 8, "Simge") || "✨", /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : "#4f8cff", html, JSON.stringify((Array.isArray(body.prompt_log) ? body.prompt_log : []).slice(-50)), cleanMeta(body.meta, "{}"));
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(id), true) };
 });
 route("PUT", "/api/apps/:id", ({ user, body, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
-  q(`UPDATE apps SET title=?, description=?, category=?, emoji=?, color=?, html=?, prompt_log=?, updated=? WHERE id=?`).run(
+  q(`UPDATE apps SET title=?, description=?, category=?, emoji=?, color=?, html=?, prompt_log=?, meta=?, updated=? WHERE id=?`).run(
     str(body.title, 80, "Ad") || a.title, body.description !== undefined ? str(body.description, 400, "Açıklama") : a.description, CATS.includes(body.category) ? body.category : a.category, str(body.emoji, 8, "Simge") || a.emoji,
-    /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : a.color, body.html !== undefined ? str(body.html, 400000, "HTML", true) : a.html, Array.isArray(body.prompt_log) ? JSON.stringify(body.prompt_log.slice(-50)) : a.prompt_log, now(), a.id);
+    /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : a.color, body.html !== undefined ? str(body.html, 400000, "HTML", true) : a.html, Array.isArray(body.prompt_log) ? JSON.stringify(body.prompt_log.slice(-50)) : a.prompt_log, cleanMeta(body.meta, a.meta), now(), a.id);
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id), true) };
 });
 route("DELETE", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("DELETE FROM apps WHERE id=?").run(a.id); return { ok: true }; });
@@ -473,7 +497,7 @@ route("POST", "/api/store/:slug/download", ({ params }) => { q("UPDATE apps SET 
 route("POST", "/api/store/:slug/remix", ({ user, params }) => {
   need(user, 401, "Kopyalamak için giriş yapın"); const a = q("SELECT * FROM apps WHERE slug=? AND status='published' AND listed=1").get(params.slug); need(a, 404, "Uygulama bulunamadı");
   need(!a.price || a.owner_id === user.id, 402, "Bu ücretli bir uygulama; kopyalamak için satın alma yakında açılacak.");
-  const id = rid(); q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html) VALUES(?,?,?,?,?,?,?,?)").run(id, user.id, (a.title + " (kopya)").slice(0, 80), a.description, a.category, a.emoji, a.color, a.html);
+  const id = rid(); q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,meta) VALUES(?,?,?,?,?,?,?,?,?)").run(id, user.id, (a.title + " (kopya)").slice(0, 80), a.description, a.category, a.emoji, a.color, a.html, a.meta || "{}");
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(id), true) };
 });
 
@@ -517,6 +541,17 @@ route("POST", "/api/events", ({ body, user }) => {
   need(EV.includes(body.type), 400, "Olay türü geçersiz");
   q("INSERT INTO events(session_id,user_id,type,query,category,repo,meta) VALUES(?,?,?,?,?,?,?)").run(str(body.session_id, 64, "Oturum"), user ? user.id : null, body.type, str(body.query, 200, "Sorgu"), str(body.category, 60, "Kategori"), str(body.repo, 200, "Depo"), body.meta ? JSON.stringify(body.meta).slice(0, 4000) : null);
   return { ok: true };
+});
+// Yönetici: yapay zekâ bağlantı testi
+route("GET", "/api/admin/ai-check", async ({ user }) => {
+  need(isAdmin(user), 403, "Yetkisiz"); const out = { base: CFG.aiBase, key: CFG.aiKey ? "sk-…" + CFG.aiKey.slice(-4) : null, models: null, chat: null };
+  if (!CFG.aiKey) return out;
+  try { const r = await fetch(CFG.aiBase + "/models", { headers: { Authorization: "Bearer " + CFG.aiKey }, signal: AbortSignal.timeout(15000) }); out.models = { ok: r.ok, status: r.status }; } catch (e) { out.models = { ok: false, error: e.message }; }
+  delete modelCaches[Object.keys(modelCaches).find((k) => k.startsWith("gitmapp:")) || "_"];
+  const ids = await listModels("gitmapp", CFG.aiKey); out.list = ids.slice(0, 40);
+  const model = await defaultModel();
+  try { const r = await postChat({ provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model }, { messages: [{ role: "user", content: "Sadece OK yaz." }], max_tokens: 10 }, AbortSignal.timeout(30000)); const t = await r.text(); out.chat = { ok: r.ok, status: r.status, model, reply: r.ok ? (JSON.parse(t).choices?.[0]?.message?.content || "").slice(0, 40) : t.slice(0, 200) }; } catch (e) { out.chat = { ok: false, model, error: e.message }; }
+  return out;
 });
 route("GET", "/api/admin/radar", ({ user, url }) => {
   need(isAdmin(user), 403, "Yönetici yetkisi gerekli"); const d = Math.max(1, Math.min(365, Math.floor(+(url.searchParams.get("days") || 7)) || 7)); const since = `datetime('now','-${d} days')`;
