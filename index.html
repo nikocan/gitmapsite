@@ -1543,8 +1543,15 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.21.0";
+const VERSION="5.22.0";
 const CHANGELOG=[
+ {v:"5.22.0",date:"2026-11-25",items:[
+  "🚫 Oyunlara ve ilgisiz uygulamalara istenmeden WhatsApp düğmesi, iletişim formu eklenmesi düzeltildi. Sebep: Bağlantılar sayfasında açık olan servisler, projenin türüne ve konusuna bakılmadan her üretime “sağ altta WhatsApp düğmesi ekle” gibi kesin bir emirle gidiyordu",
+  "🧭 Bağlantılar artık akıllı: oyunlara hiç eklenmiyor; uygulama ve sitelerde yalnızca konu uygunsa (sipariş, randevu, iletişim…) “uyuyorsa kullan” şeklinde gidiyor; isteğinde açıkça yazarsan (“WhatsApp düğmesi ekle”) kesin uygulanıyor. Küçük düzenlemelerde istenmedikçe hiç gönderilmiyor",
+  "🧠 Model talimatları yeniden yazıldı: önce veri modeli ve ekran akışını kurup kodu eksiksiz yazması, çalışmayan düğme, yarım fonksiyon ve “TODO” bırakmaması, mobilde kusursuz görünüm, kontrast ve dokunma hedefi kuralları eklendi. “Yalnızca istenen ürünü yap” kapsam kuralı eklendi",
+  "🎮 Oyun kuralı netleşti: ekran yalnızca oyuna ayrılıyor, iletişim/form/mağaza gibi web sitesi öğeleri yasak; web sitelerinde iletişim formu artık zorunlu değil, konu gerektiriyorsa ekleniyor",
+  "👤 Profildeki iş alanı (ör. şirketin sektörü) oyunlara taşınmıyor; uygulamalarda da yalnızca projenin konusuyla ilgiliyse kullanılıyor. Başka projeden şirket adı/içerik sızması bu yüzdendi",
+  "🤖 Ajan modu: ilk adım artık boş bir iskelet değil, ana ekranları ve temel özellikleri eksiksiz kuran kullanılabilir bir sürüm; adım sayısı 2-5 (önceden 3-6). Daha az bekleme, daha iyi ilk sonuç"]},
  {v:"5.21.0",date:"2026-11-25",items:[
   "⏱️ Claude Code / Codex tarzı canlı durum satırı: iş sürerken giriş alanının üstünde parlayan bir fiil (“Düşünüyor… · Tasarım yazılıyor… · Ekranlar yazılıyor… · Etkileşimler yazılıyor… · Önizleme hazırlanıyor…”), geçen süre, gelen kod (KB), hız (token/sn) ve tahmini kalan süre görünüyor",
   "📶 Durum satırının üstünde ince renkli ilerleme çubuğu; modelin o an yazdığı son kod satırı yanıp sönen imleçle akıyor. Ajan modunda “Adım 2/6” etiketi, sıradaki istek sayısı ve “esc ile durdur” da burada",
