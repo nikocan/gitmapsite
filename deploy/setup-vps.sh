@@ -29,6 +29,7 @@ esac
 
 say "2/6 Uygulama dosyaları ($ROOT)"
 command -v git >/dev/null || apt-get install -y -qq git
+git config --global --get-all safe.directory 2>/dev/null | grep -qx "$ROOT" || git config --global --add safe.directory "$ROOT"
 if [ -d "$ROOT/.git" ]; then git -C "$ROOT" pull -q --ff-only; else git clone -q --depth 1 "$REPO" "$ROOT"; fi
 chown -R www-data:www-data "$ROOT" 2>/dev/null || true
 echo "Son sürüm: $(git -C "$ROOT" log -1 --format='%h %s' | cut -c1-80)"

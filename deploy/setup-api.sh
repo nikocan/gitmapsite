@@ -17,6 +17,7 @@ asks(){ local v; read -r -s -p "$1" v </dev/tty || true; echo >&2; echo "$v"; }
 systemctl is-active --quiet nginx || fail "nginx çalışmıyor."
 
 say "1/8 Kod güncelleniyor"
+git config --global --get-all safe.directory 2>/dev/null | grep -qx "$REPO_DIR" || git config --global --add safe.directory "$REPO_DIR"
 git -C "$REPO_DIR" pull -q --ff-only
 [ -f "$REPO_DIR/server/server.mjs" ] || fail "server/server.mjs bulunamadı."
 
@@ -94,6 +95,7 @@ say "6/8 Otomatik güncelleme (kod değişince API kendiliğinden yeniden başla
 cat > /usr/local/bin/gitmapp-update <<'EOF'
 #!/usr/bin/env bash
 cd /var/www/gitmapp || exit 0
+git config --global --get-all safe.directory 2>/dev/null | grep -qx /var/www/gitmapp || git config --global --add safe.directory /var/www/gitmapp
 OLD=$(git rev-parse HEAD); git pull -q --ff-only || exit 0; NEW=$(git rev-parse HEAD)
 if [ "$OLD" != "$NEW" ] && ! git diff --quiet "$OLD" "$NEW" -- server/; then systemctl restart gitmapp-api; echo "$(date -Is) API yeniden başlatıldı ($NEW)"; fi
 EOF
