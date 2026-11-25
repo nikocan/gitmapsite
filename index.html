@@ -9,7 +9,8 @@
 <meta property="og:type" content="website" /><meta property="og:site_name" content="gitmapp" /><meta property="og:title" content="gitmapp — Fikrinden canlı uygulamaya, dakikalar içinde" />
 <meta property="og:description" content="Türkçe anlat, yapay zekâ yapsın: uygulama, site ve oyun. Hazır şablonlar ve tek tıkla yayın." /><meta property="og:url" content="https://gitmapp.com/" /><meta name="twitter:card" content="summary_large_image" />
 <link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./pwa/icon-180.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23e4ff3d'/%3E%3Cg fill='none' stroke='%230a0a0a' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='14.2' cy='13.3' r='6.4'/%3E%3Cpath d='M20.6 7.4v12.9a7.4 7.4 0 0 1-13.3 4.6'/%3E%3C/g%3E%3Ccircle cx='25.6' cy='5.9' r='2' fill='%230a0a0a'/%3E%3C/svg%3E" />
+<link rel="icon" type="image/svg+xml" href="./brand/app-icon.svg" />
+<link rel="stylesheet" href="./brand/motion.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@500;700&family=DM+Sans:wght@500;700&family=Space+Grotesk:wght@500;700&family=Playfair+Display:wght@600;700&family=Nunito:wght@600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
 <style>
@@ -473,7 +474,7 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
 body{background:radial-gradient(900px 520px at 85% -10%,rgba(228,255,61,.07),transparent 60%),var(--bg)}
 body::before{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px}
 .brand{background:#e4ff3d!important;box-shadow:0 0 0 1px rgba(228,255,61,.35),0 8px 24px -10px rgba(228,255,61,.55)}
-.wordmark i{width:auto!important;height:auto!important;background:none!important;box-shadow:none!important;display:inline!important;border-radius:0!important;font-size:inherit}.wordmark{font-weight:800;letter-spacing:-.06em;color:#f4f4ef;line-height:1}.wordmark i{font-style:normal;color:#e4ff3d}
+.wordmark i{width:auto!important;height:auto!important;background:none!important;box-shadow:none!important;display:inline!important;border-radius:0!important;font-size:inherit}.wordmark{font-family:Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.06em;color:#f4f4ef;line-height:1}.wordmark i{font-style:normal;color:#e4ff3d}
 .tile{background:#141414;color:#e4ff3d;box-shadow:inset 0 0 0 1px #2a2a2a}
 .tile.hue{color:var(--tc,#e4ff3d)}
 .nav.on .tile{background:#e4ff3d;color:#0a0a0a;box-shadow:none}
@@ -1041,8 +1042,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.6.0";
+const VERSION="5.7.0";
 const CHANGELOG=[
+ {v:"5.7.0",date:"2026-11-25",items:["Kuyruğunda küçük g taşıyan sincap Gitmapp’ın yeni simgesi oldu. Gezinme ve yayın için 12 ikon çizildi.","Keşfet sayfasından İngilizce tanıtım filmini izleyebilirsiniz."]},
  {v:"5.6.0",date:"2026-11-25",items:[
   "💬 Stüdyo sohbeti Claude'un konuşma diline geçti: her istekte önce “… isteği değerlendiriliyor” düşünme bloğu açılır, model yanıt vermeye başlayınca kapanıp “N sn düşündü” olarak kalır (içinde planlanan adımlar)",
   "✳️ Çalışırken turuncu, dönen Claude yıldızıyla “Kodu yazıyor / Değişikliği uyguluyor / Kodu inceliyor” satırı ve canlı süre (ör. 1d 41sn); altında çerçeveli kartta tamamlanan adımlar ayraçlarla listelenir, sıradaki adım parıldar",
@@ -2985,7 +2987,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
    <button class="btn g s vc-trigger" disabled=${saving||busy||todo?.running||!st.html} onClick=${()=>setGitOpen(true)} title="Sürüm kontrolü" aria-label="Sürüm kontrolü"><${Icon} n="branch" s=${16}/><span>${st.gitContext?.name||"Dallar"}</span></button>
    <span class="studio-save" role="status">${st.gitContext?(localOk?"Dal taslağı":"Cihaza kaydedilemedi"):saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title=${st.gitContext?"Dala commit kaydet":"Kaydet"}><${Icon} n="save" s=${16}/></button>
    <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
-   <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${Icon} n="rocket" s=${15}/> Yayınla</button></div>
+   <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
   <div class="ws-grid studio-grid">
    <div class="ws-chat">
     <div class="ws-ctrl">${controls()}</div>
@@ -3075,8 +3077,11 @@ const TILE={yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["f
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
 const NAV_TONE={"$beceri":"#c084fc","$asistan":"#22d3ee",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
 const toneOf=(k,n)=>NAV_TONE[k]||TONES[[...String(k||n||"x")].reduce((h,c)=>(h*31+c.charCodeAt(0))%997,0)%TONES.length];
-const Tile=({k,n,g,s=28})=>{const t=TILE[k]||[n||"dot",g||""];return html`<span class="tile" style=${{width:s,height:s}}><${Icon} n=${t[0]} s=${Math.round(s*.68)} c="currentColor"/></span>`};
-const BrandMark=({s=34,mono})=>html`<span class="brand" style=${{width:s,height:s,borderRadius:s*.28}}><svg width=${s*.66} height=${s*.66} viewBox="0 0 24 24" fill="none" stroke=${mono?"#e4ff3d":"#0a0a0a"} stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.6" cy="10" r="4.8"/><path d="M15.4 5.6v9.6a5.6 5.6 0 0 1-10 3.5"/><circle cx="19.2" cy="4.4" r="1.5" fill=${mono?"#e4ff3d":"#0a0a0a"} stroke="none"/></svg></span>`;
+const ecosystemRoutes={ana:"idea","$ara":"search",studio:"studio",sablonlar:"templates",uygulamalarim:"projects",magaza:"discover","$asistan":"assistant",baglantilar:"connections","$beceri":"skills",eylem:"events",otomasyon:"automation"};
+const EcosystemIcon=({name,s=20})=>html`<svg class="gm-icon" aria-hidden="true" focusable="false" width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><use href=${"./brand/ecosystem.svg#"+name}/></svg>`;
+const NavIcon=({k,n,s})=>ecosystemRoutes[k]?html`<${EcosystemIcon} name=${ecosystemRoutes[k]} s=${s}/>`:html`<${Icon} n=${(TILE[k]||[n||"dot"])[0]} s=${s} c="currentColor"/>`;
+const Tile=({k,n,s=28})=>html`<span class="tile" style=${{width:s,height:s}}><${NavIcon} k=${k} n=${n} s=${Math.round(s*.68)}/></span>`;
+const BrandMark=({s=34})=>html`<span class="brand" aria-hidden="true" style=${{width:s,height:s,borderRadius:s*.28,color:"#101211"}}><svg class="gm-squirrel" aria-hidden="true" focusable="false" width=${s*.91} height=${s*.91} viewBox="0 0 96 96"><use class="sq-tail" href="./brand/squirrel.svg#tail"/><use href="./brand/squirrel.svg#body"/><use class="sq-head" href="./brand/squirrel.svg#head"/><use class="sq-nut" href="./brand/squirrel.svg#acorn"/></svg></span>`;
 const Wordmark=({s=19})=>html`<span class="wordmark" style=${{fontSize:s}}>gitmapp<i>.</i></span>`;
 const CAT_META={is:["briefcase","#3b82f6,#6366f1"],verimlilik:["check","#22c55e,#14b8a6"],egitim:["cap","#f59e0b,#f97316"],saglik:["heart","#f43f5e,#ec4899"],eticaret:["bag","#8b5cf6,#d946ef"],yemek:["utensils","#f97316,#ef4444"],oyun:["gamepad","#6366f1,#a855f7"],finans:["wallet","#10b981,#22c55e"],sosyal:["chat","#0ea5e9,#22d3ee"],araclar:["wrench","#64748b,#94a3b8"],diger:["sparkles","#ec4899,#f59e0b"]};
 const catName=id=>{const c=STORE_CATS2.find(x=>x[0]===id);return c?c[2]:"Diğer"};
@@ -3116,7 +3121,15 @@ function Shelf({title,more,children,scroll}){const ref=useRef(null);const mv=d=>
  return html`<section class="shelf"><div class="shelf-h"><h3>${title}</h3>${scroll&&html`<span class="shelf-n"><button class="navarr" onClick=${()=>mv(-1)}><${Icon} n="chevLeft" s=${18}/></button><button class="navarr" onClick=${()=>mv(1)}><${Icon} n="chevRight" s=${18}/></button></span>`}${more&&html`<a class="seeall" href="#" onClick=${e=>{e.preventDefault();more()}}>Tümünü Gör</a>`}</div><div ref=${ref} class=${scroll?"shelf-x":"shelf-g"}>${children}</div></section>`}
 function EdCard({eyebrow,title,text,icon,grad,onClick,emojis}){return html`<div class="edcard" onClick=${onClick}><div class="ed-t"><div class="eyebrow">${eyebrow}</div><h4>${title}</h4><p>${text}</p></div><div class="ed-art" style=${{background:"radial-gradient(circle at 30% 25%,#ffffff33,transparent 45%),linear-gradient(145deg,"+grad+")"}}><${Icon} n=${icon} s=${64} c="#fff" w=${1.4}/>${(emojis||[]).map((e,i)=>html`<span class="ed-chip" style=${{["--i"]:i}}>${symbolIcon(e,18)}</span>`)}</div></div>`}
 
+function BrandFilm({close}){
+ const ref=useRef(null);
+ useEffect(()=>{const modal=ref.current;modal.showModal();return()=>modal.close()},[]);
+ return ReactDOM.createPortal(html`<dialog class="brand-film" ref=${ref} aria-labelledby="film-title" onCancel=${e=>{e.preventDefault();close()}} onClick=${e=>{if(e.target===ref.current)close()}}>
+  <div><header><h2 id="film-title" lang="en">Small idea. Big appetite.</h2><button class="ib" aria-label="Filmi kapat" onClick=${close}><${Icon} n="x" s=${18}/></button></header>
+  <video controls playsInline preload="metadata" poster="./brand/film/poster.jpg" aria-label="Gitmapp İngilizce tanıtım filmi"><source src="./brand/film/gitmapp.mp4" type="video/mp4"/><track kind="captions" src="./brand/film/captions-en.vtt" srcLang="en" label="English"/><a href="./brand/film/gitmapp.mp4">Filmi indir</a></video></div></dialog>`,document.body);
+}
 function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn,onTpl}){
+ const [film,setFilm]=useState(false);
  const [tdemo,setTdemo]=useState(null);
  const [apps,setApps]=useState(null);const [fresh,setFresh]=useState([]);const [cat,setCat]=useState(cat0||"");const [q,setQ]=useState(q0||"");const [sort,setSort]=useState("pop");const [sel,setSel]=useState(null);const [all,setAll]=useState(false);const [full,setFull]=useState(false);
  useEffect(()=>{setQ(q0||"")},[q0]);useEffect(()=>{setCat(cat0||"")},[cat0]);
@@ -3149,9 +3162,10 @@ function Store({toast,auth,openAuth,openInStudio,go,q0,cat0,startTemplate,apiOn,
  const floatIcons=(list.length>=5?list.slice(0,5).map(a=>[a.emoji,a.color]):[["🎮","#5e5ce6"],["💇","#ff375f"],["🍽️","#ff9f0a"],["💰","#30d158"],["✅","#0a84ff"]]);
  return html`<div class="explore">
   <div class="hero-banner">
+   ${film&&html`<${BrandFilm} close=${()=>setFilm(false)}/>`}
    <div class="hb-mark"><${BrandMark} s=${380}/></div>
    <div class="hb-txt"><div class="eyebrow light">Gitmapp Stüdyo</div><h1>Fikrini anlat,<br/>dakikalar içinde yayında olsun.</h1><p>Uygulama, web sitesi ya da oyun. Seçtiğin yapay zekâ modeli yazar, sen tek tıkla kendi adınla yayınlarsın.</p>
-    <div style=${{display:"flex",gap:10,flexWrap:"wrap"}}><button class="hb-btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${17}/> Geliştirmeye başla</button><button class="hb-btn ghost" onClick=${()=>startTemplate({auto:true})}><${Icon} n="cursor" s=${16}/> Benim için yap</button></div></div>
+    <div style=${{display:"flex",gap:10,flexWrap:"wrap"}}><button class="hb-btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${17}/> Geliştirmeye başla</button><button class="hb-btn ghost" onClick=${()=>startTemplate({auto:true})}><${Icon} n="cursor" s=${16}/> Benim için yap</button><button class="hb-btn ghost" aria-haspopup="dialog" onClick=${()=>setFilm(true)}><${Icon} n="play" s=${16}/> Tanıtım filmini izle</button></div></div>
    <div class="hb-art">${floatIcons.map(([e,c],i)=>html`<span class="hb-ic" key=${i} style=${{["--i"]:i}}><${AppIcon2} emoji=${e} color=${c} size=${104}/></span>`)}</div>
   </div>
 
@@ -4200,7 +4214,7 @@ function App(){
     ${mode==="musteri"&&html`<button class="refc" onClick=${async()=>{if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",u)}}}><div><b>Gitmapp'i paylaş</b><span>Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi</span></div><span class="refc-i"><${Icon} n="gift" s=${20}/></span></button>`}
     ${apiOn?(auth.user?html`<div class="me" onClick=${()=>setView("hesabim")} title="Hesabım"><span class="avatar">${initials(auth.user)}</span><div style=${{minWidth:0,flex:1}}><b>${auth.user.name||auth.user.email}</b><span><span class="me-cr" title="Kredilerim: canlı harcama" onClick=${e=>{e.stopPropagation();setCrOpen(true)}}><${Icon} n="gem" s=${11}/> <${CountUp} v=${auth.user.credits??0}/> kredi</span>${isAdm?" · yönetici":""}</span></div><button class="ib sm" title="Çıkış yap" onClick=${e=>{e.stopPropagation();auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${14}/></button></div>`:html`<button class="btn" style=${{width:"100%",borderRadius:12}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span class="sf-note"><${Icon} n="cog" s=${12}/> Sunucu bağlanıyor…</span>`}
     <div class="sf-note">${mode==="admin"?html`GitHub limiti: ${rate.rem}/${rate.lim} · `:""}v${VERSION}</div></div></aside>
-  <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${Icon} n=${(TILE[k]||["dot"])[0]} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
+  <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} onClick=${()=>navGo(k)}><span class="bn-ic"><${NavIcon} k=${k} s=${21}/></span><span>${l}</span></button>`)}<button class=${more?"on":""} onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><div class="sheet glass" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div><div class="sheet-grid">${installButton()}${navList("")}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></div></div>`}
   <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span>${auth.user&&html`<button class="crchip" style=${{marginLeft:"auto"}} onClick=${()=>setCrOpen(true)}><${Icon} n="gem" s=${12}/><${CountUp} v=${auth.user.credits??0}/></button>`}</div>`}
    ${needLogin?html`<section class="box adm-gate">
