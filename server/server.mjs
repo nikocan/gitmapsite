@@ -229,8 +229,10 @@ function aiErr(rt, status, t) {
     if (status === 401) return "Gitmapp yapay zekâ anahtarı geçersiz (401). Yönetici, hPanel › AI Router'dan anahtarı kopyalayıp sunucudaki AI_KEY değerini güncellemeli" + tail;
     if (status === 403) return "Hostinger AI Router isteği reddetti (403). Olası nedenler: AI Router kredi bakiyesi bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. hPanel › AI Router'dan bakiye ve modelleri kontrol edin" + tail;
     if (status === 404) return "“" + rt.model + "” modeli AI Router'da bulunamadı (404). Yönetici AI_MODELS listesini doğru model adlarıyla güncellemeli" + tail;
+    if (status === 402 || /insufficient_quota|insufficient credits/i.test(String(t))) return "Gitmapp'in yapay zekâ sağlayıcısındaki (Hostinger AI Router) bakiye bitti (402). Bu senin Gitmapp kredinle ilgili değil; kredin düşmedi. Yönetici hPanel › AI Router'dan bakiye yüklemeli. Bu arada Hesabım'dan kendi API anahtarını bağlayarak devam edebilirsin";
     if (status === 429) return "Yapay zekâ şu an yoğun ya da kota doldu (429), biraz sonra tekrar deneyin" + tail;
   }
+  if (status === 402 || /insufficient_quota|insufficient credits/i.test(String(t))) return "Bağladığın API anahtarının sağlayıcı bakiyesi bitti (402). Sağlayıcının panelinden bakiye yükle ya da Gitmapp kredisiyle devam etmek için anahtarı kaldır";
   return (status === 401 || status === 403 ? "Anahtar reddedildi (" + status + ")" : "Yapay zekâ hatası (" + status + ")") + tail;
 }
 function visionErr(r, t, messages) {
@@ -314,7 +316,8 @@ function designRule(d) {
   const font = /^[A-Za-z ]{2,30}$/.test(d.font || "") ? d.font : "Inter";
   const radius = Math.max(0, Math.min(40, Math.round(+d.radius || 12)));
   const style = String(d.style || "").replace(/[<>`]/g, "").slice(0, 400);
-  return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}`;
+  const blueprint = String(d.blueprint || "").replace(/[<>`]/g, "").slice(0, 1800);
+  return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}` + (blueprint ? `\n- EKRAN DÜZENİ (kullanıcının seçtiği panel şablonu; bu yerleşime sadık kal, bölümleri atlama): ${blueprint}` : "");
 }
 // Çalıştırma ayarları (AI Studio benzeri): yaratıcılık, ayrıntı düzeyi, ek talimatlar
 function runOpts(rt, body) {
@@ -511,7 +514,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.11.2" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.12.1" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {

@@ -1261,6 +1261,83 @@ button.adp-mini{color:inherit;text-align:left}
  .ws .ws-msgs{min-height:120px;max-height:42dvh;padding:14px!important}
  .studio-preview-jump{display:inline-flex;align-items:center;gap:5px;margin-top:6px}
 }
+/* v5.12 — Panel kiti ve çizilmiş ekranlar */
+.dg-modes{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}.dg-modes button{border:0;background:none;color:#a3a19a;font:inherit;font-size:14px;font-weight:600;padding:8px 14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px}.dg-modes button.on{background:#f4f4ef;color:#101211}
+.pk-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:4px 0 16px}
+.pk-ms{display:flex;padding:4px;border-radius:99px;background:#24242e;border:1px solid #33333f}.pk-ms button{width:40px;height:30px;border-radius:99px;border:0;background:none;color:#a3a19a;font-size:15px;cursor:pointer}.pk-ms button.on{background:#7c5cff;color:#fff}
+.pk-accs{display:flex;gap:8px}.pk-accs button{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(0,0,0,.25)}.pk-accs button.on{border-color:#fff}
+.pk-note{color:#8a8882;font-size:13px}
+.pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-content:start}
+.pk-card{display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);animation:slidein .45s cubic-bezier(.2,.8,.2,1) both}.pk-card.on{border-color:rgba(228,255,61,.55);box-shadow:0 0 0 1px rgba(228,255,61,.35)}
+.pk-stage{border:0;padding:0;background:none;cursor:zoom-in;border-radius:12px;overflow:hidden;display:block}.pk-stage:hover .pk-frame{transform:translateY(-3px)}
+.pk-cb{display:flex;gap:6px}.pk-cb .btn{flex:1;justify-content:center}
+.pk-frame{position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(255,255,255,.08);transition:transform .3s}
+.pk-scr{position:absolute;left:0;top:0;width:1280px;height:800px;transform-origin:0 0;display:flex;background:var(--bg);color:var(--tx);font-family:Poppins,Inter,system-ui,sans-serif;font-size:13px;overflow:hidden}
+.pk-side{width:210px;flex:none;background:var(--sf);border-right:1px solid var(--ln);padding:20px 14px;display:flex;flex-direction:column;gap:4px}
+.pk-logo{display:flex;align-items:center;gap:9px;margin:0 6px 18px;font-size:17px}
+.pk-side>span{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--mu);font-size:13.5px}.pk-side>span i{width:16px;height:16px;border-radius:5px;border:2px solid currentColor;opacity:.7}.pk-side>span.on{background:var(--pr);color:#fff}
+.pk-up{margin-top:auto;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--pr),var(--ac));color:#fff;display:flex;flex-direction:column;gap:2px}.pk-up small{opacity:.8}
+.pk-main{flex:1;min-width:0;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.pk-top{display:flex;align-items:center;gap:14px}.pk-top>div{flex:1;display:flex;flex-direction:column}.pk-top b{font-size:20px}.pk-top small{color:var(--mu)}
+.pk-search{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;min-width:220px;border-radius:10px;background:var(--bg);border:1px solid var(--ln);color:var(--mu)}.pk-search.pk-lg{min-width:520px;padding:16px 20px;font-size:16px;background:var(--sf)}
+.pk-mode,.pk-bell{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--sf);border:1px solid var(--ln);color:var(--mu)}
+.pk-av{display:inline-block;border-radius:50%;flex:none;border:2px solid var(--sf)}
+.pk-row{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;flex:1;min-height:0}.pk-row.short{flex:none}.pk-row>div{min-width:0;display:flex}
+.pk-w{flex:1;min-width:0;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.pk-wh{display:flex;align-items:center;justify-content:space-between}.pk-wh b{font-size:14.5px}.pk-wh span{font-size:12px;color:var(--mu);padding:4px 10px;border:1px solid var(--ln);border-radius:8px}
+.pk-kpi{flex-direction:row;align-items:center;gap:12px}.pk-ki{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;flex:none}.pk-kpi>div{flex:1;display:flex;flex-direction:column}.pk-kpi small{color:var(--mu)}.pk-kpi b{font-size:21px}.pk-kpi em{font-style:normal;font-size:12px;font-weight:600;color:#22c55e;background:rgba(34,197,94,.12);padding:3px 8px;border-radius:99px}.pk-kpi em.dn{color:#ef4444;background:rgba(239,68,68,.12)}
+.pk-svg{width:100%;flex:1;min-height:0}.pk-ax{display:flex;justify-content:space-between;color:var(--mu);font-size:11px}
+.pk-bars{flex:1;display:flex;align-items:flex-end;gap:7%;padding-top:10px}.pk-bars i{flex:1;border-radius:6px 6px 3px 3px}
+.pk-center{align-items:center}.pk-donut{width:62%;max-width:180px}.pk-leg{display:flex;gap:14px;font-size:12px;color:var(--mu)}.pk-leg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.pk-funnel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}.pk-funnel i{height:26px;border-radius:8px;background:linear-gradient(90deg,var(--pr),var(--ac))}
+.pk-l{display:inline-block;height:8px;border-radius:99px;background:var(--tx);opacity:.18}
+.pk-tb{display:flex;flex-direction:column}.pk-tr{display:grid;grid-template-columns:2fr 1.4fr 1fr 1.1fr;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--ln)}.pk-tr.th{border-top:0;color:var(--mu);font-size:12px;padding-top:0}.pk-tr>span{display:flex;align-items:center;gap:8px;min-width:0}
+.pk-st{font-style:normal;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px}.pk-st.s0{color:#22c55e;background:rgba(34,197,94,.13)}.pk-st.s1{color:#f59e0b;background:rgba(245,158,11,.14)}.pk-st.s2{color:#ef4444;background:rgba(239,68,68,.13)}
+.pk-li{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:10px}.pk-li.on{background:color-mix(in srgb,var(--pr) 14%,transparent)}.pk-li>div{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}.pk-li small{color:var(--mu);font-size:11px}
+.pk-people{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-content:start}.pk-people>.pk-wh{grid-column:1/-1}.pk-people .pk-li{border:1px solid var(--ln);padding:12px}
+.pk-tool{flex-direction:row;align-items:center;padding:10px 14px}.pk-chip{padding:7px 14px;border-radius:99px;border:1px solid var(--ln);color:var(--mu)}.pk-chip.on{background:var(--pr);border-color:var(--pr);color:#fff}
+.pk-btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;border-radius:10px;background:var(--pr);color:#fff;font-weight:600;align-self:flex-start}.pk-btn.wide{align-self:stretch}.pk-btn.ghost{background:none;border:1px solid var(--ln);color:var(--tx)}
+.pk-gridw{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-content:start;background:none;border:0;padding:0}.pk-gridw.folders{grid-template-columns:repeat(6,1fr)}.pk-gridw.cards{grid-template-columns:repeat(4,1fr)}
+.pk-tile{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}.pk-tile b{font-size:13.5px}
+.pk-thumb{height:90px;border-radius:10px;display:grid;place-items:center;color:#fff}.pk-thumb.pk-lg{height:150px;display:block;margin:8px 0}.folders .pk-thumb{height:56px;color:var(--pr)}
+.pk-steps{flex-direction:row;justify-content:space-between;align-items:center;padding:14px 26px}.pk-steps span{display:flex;align-items:center;gap:10px;color:var(--mu);font-weight:500}.pk-steps i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--ln);font-style:normal}.pk-steps .on{color:var(--tx)}.pk-steps .on i{background:var(--pr);border-color:var(--pr);color:#fff}
+.pk-sum{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px dashed var(--ln)}
+.pk-bank{color:#fff;justify-content:space-between;border:0;min-height:150px}.pk-bank b{font-size:22px;letter-spacing:.12em}.pk-bank div{display:flex;justify-content:space-between;opacity:.85}
+.pk-fld{display:flex;flex-direction:column;gap:6px}.pk-fld small{color:var(--mu)}.pk-fld span{height:40px;border-radius:10px;border:1px solid var(--ln);background:var(--bg)}.pk-fld span.tall{height:90px}
+.pk-cal{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.pk-cal span{display:grid;place-items:center;border-radius:8px;font-size:12px;color:var(--mu);min-height:24px}.pk-cal span.on{background:var(--pr);color:#fff}.pk-cal span.ev{box-shadow:inset 0 -3px 0 var(--ac)}
+.pk-prof{gap:10px;justify-content:center}.pk-pst{display:flex;gap:22px}.pk-pst span{display:flex;flex-direction:column;align-items:center}.pk-pst small{color:var(--mu)}
+.pk-kan{flex-direction:row;gap:14px;background:none;border:0;padding:0}.pk-kan>div{flex:1;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}.pk-kan small{color:var(--mu)}
+.pk-kc{background:var(--bg);border:1px solid var(--ln);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}.pk-kc>div{display:flex}.pk-kc .pk-av{margin-right:-6px}.pk-kc .pk-st{align-self:flex-start}
+.pk-chat{justify-content:flex-end}.pk-chat .pk-wh{margin-bottom:auto}.pk-bub{align-self:flex-start;padding:12px 14px;border-radius:14px 14px 14px 4px;background:var(--bg);border:1px solid var(--ln);color:var(--tx)}.pk-bub.me{align-self:flex-end;background:var(--pr);border-color:var(--pr);color:#fff;border-radius:14px 14px 4px 14px}
+.pk-send{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid var(--ln);color:var(--mu)}.pk-send span{flex:1}.pk-send i{width:30px;height:30px;border-radius:9px;background:var(--pr)}
+.pk-feed{background:none;border:0;padding:0;gap:14px}.pk-post{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:14px}.pk-acts{display:flex;gap:18px;color:var(--mu);font-size:12px}
+.pk-stories{flex-direction:row;gap:18px;padding:14px 18px}.pk-stories span{display:flex;flex-direction:column;align-items:center;gap:6px}.pk-stories .pk-av{box-shadow:0 0 0 3px var(--pr)}
+.pk-hero{align-items:center;justify-content:center;gap:16px;padding:34px;background:linear-gradient(135deg,color-mix(in srgb,var(--pr) 22%,var(--sf)),var(--sf))}.pk-hero b{font-size:26px}
+.pk-auth{flex:1;display:grid;grid-template-columns:1fr 1fr}.pk-ab{display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:60px;color:#fff}.pk-ab b{font-size:34px;line-height:1.15}.pk-ab span{opacity:.85;font-size:16px}
+.pk-af{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:0 120px}.pk-af>b{font-size:28px}.pk-af>small{color:var(--mu);font-size:14px}.pk-af .pk-av{align-self:center}.pk-af>b:nth-child(2){text-align:center}
+.pk-view{position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;animation:fadeIn .2s}.pk-view>div{max-width:min(1140px,100%);max-height:94dvh;overflow:auto;background:#1a1a22;border:1px solid #2e2e3a;border-radius:24px;padding:16px}
+.pk-view header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.pk-view header small{color:#8a8882}.pk-big .pk-frame{border-radius:16px}
+.pk-bp{font-size:13px;color:#a3a19a;line-height:1.55;margin:12px 4px 2px}.pk-bp b{color:#ecebe6}
+/* Mobil ve web ekran çizimleri */
+.tm.sm{display:flex;flex-direction:column;gap:.7em;padding:.9em;overflow:hidden;background:var(--bg);color:var(--tx);border-radius:calc(var(--r) + .6em)}
+.sm-top{display:flex;justify-content:space-between;font-size:.7em;opacity:.6}
+.sm-hero{position:relative;padding:1em;border-radius:var(--r);color:#fff;display:flex;flex-direction:column;gap:.25em;min-height:7em}.sm-hero small{opacity:.85;font-size:.75em}.sm-hero b{font-size:1.25em;line-height:1.15}.sm-hero span:not(.sm-hic){margin-top:auto;font-size:.75em;font-weight:600}.sm-hic{position:absolute;right:.8em;top:.8em;opacity:.55}
+.sm-h2{display:flex;justify-content:space-between;align-items:baseline}.sm-h2 b{font-size:1em}.sm-h2 small{font-size:.75em;opacity:.55}
+.sm-row2{display:grid;grid-template-columns:1fr 1fr;gap:.6em}.sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55em}
+.sm-card{background:var(--sf);border-radius:var(--r);padding:.5em;display:flex;flex-direction:column;gap:.35em;box-shadow:0 .1em .4em rgba(0,0,0,.08)}
+.sm-th{width:2.6em;height:2.6em;border-radius:calc(var(--r)*.7);display:grid;place-items:center;color:#fff;flex:none}.sm-th.sm-lg{width:100%;height:4.6em}
+.sm-l{display:block;height:.5em;border-radius:99px;background:currentColor;opacity:.22}
+.sm-search{padding:.6em .8em;border-radius:99px;background:var(--sf);font-size:.8em;opacity:.8}
+.sm-chips{display:flex;gap:.4em}.sm-chips span{font-size:.72em;padding:.35em .8em;border-radius:99px;background:var(--sf)}.sm-chips span.on{background:var(--pr);color:#fff}
+.sm-item{display:flex;align-items:center;gap:.6em;background:var(--sf);border-radius:var(--r);padding:.5em}.sm-item>div{flex:1;display:flex;flex-direction:column;gap:.35em}.sm-item em{font-style:normal;font-size:.75em;font-weight:700;color:var(--pr)}
+.sm-week{display:grid;grid-template-columns:repeat(7,1fr);gap:.25em}.sm-week span{display:flex;flex-direction:column;align-items:center;font-size:.8em;font-weight:700;padding:.35em 0;border-radius:.8em;background:var(--sf)}.sm-week small{font-size:.75em;font-weight:500;opacity:.55}.sm-week .on{background:var(--pr);color:#fff}
+.sm-slot{display:flex;gap:.5em;align-items:flex-start}.sm-slot>small{font-size:.7em;opacity:.55;width:3em;padding-top:.3em}.sm-slot>div{flex:1;background:var(--sf);border-left:.3em solid;border-radius:.4em var(--r) var(--r) .4em;padding:.55em;display:flex;flex-direction:column;gap:.35em}
+.sm-stat{display:flex;align-items:center;gap:.8em;background:var(--sf);border-radius:var(--r);padding:.8em}.sm-stat svg{width:4.4em}.sm-stat b{font-size:1.5em;display:block}.sm-stat small{font-size:.75em;opacity:.6}
+.sm-bars{flex:1;min-height:4em;display:flex;align-items:flex-end;gap:.45em;background:var(--sf);border-radius:var(--r);padding:.8em}.sm-bars i{flex:1;border-radius:.3em}
+.sm-tab{margin-top:auto;display:flex;justify-content:space-around;padding:.6em 0 .2em;border-top:1px solid rgba(127,127,127,.15)}
+.tm-site.sm{padding:0;gap:0}.sm-nav{display:flex;align-items:center;gap:1em;padding:.6em 1em;font-size:.8em}.sm-nav b{flex:1;display:flex;align-items:center;gap:.4em}.sm-nav span{opacity:.6}.sm-nav em{font-style:normal;color:#fff;padding:.3em .9em;border-radius:99px}
+.sm-site{flex:1;display:grid;grid-template-columns:1.2fr 1fr;gap:.7em;padding:0 1em 1em;align-content:start}.sm-site>.sm-hero{grid-row:span 3;min-height:100%}
+@media(max-width:820px){.pk-grid{grid-template-columns:1fr}.pk-bar{gap:10px}.pk-note{width:100%}}
 </style>
 </head>
 <body>
@@ -1274,8 +1351,18 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.11.2";
+const VERSION="5.12.1";
 const CHANGELOG=[
+ {v:"5.12.1",date:"2026-11-25",items:[
+  "🔁 Asistan, Stüdyo'da bir üretim sürerken yeni bir işi araya sokmuyor: tür, tasarım, istem ve “geliştirmeye başla” adımları önceki iş bitince sırayla uygulanıyor",
+  "💳 Yapay zekâ sağlayıcısının bakiyesi bittiğinde (402) çıkan İngilizce hata yerine ne olduğu ve kimin ne yapması gerektiği Türkçe yazıyor; Gitmapp kredin düşmüyor",
+  "📶 Safari'deki “Load failed” gibi bağlantı hataları “Bağlantı koptu… kredi düşmedi” olarak gösteriliyor"]},
+ {v:"5.12.0",date:"2026-11-25",items:[
+  "🧩 Tasarım stüdyosuna “Yönetim panelleri” bölümü: E-ticaret, Finans, İş ilanları, İçerik (CMS), CRM, Analitik, Proje yönetimi, Mesajlaşma, Sosyal ağ, Kripto, E-posta, Dosya yönetimi, Yardım merkezi, Eğitim ve Giriş ekranları; 15 türde 40 ekran",
+  "🌗 Her panel tek tıkla açık ya da koyu, 6 vurgu rengiyle; toplam 480 çeşit. Tüm şablonlar Gitmapp için sıfırdan çizildi, grafikler gerçek SVG",
+  "🔍 Bir panele dokununca büyük önizleme açılıyor; altında yapay zekâya gidecek ekran düzeni yazıyor",
+  "🚀 “Tasarımı kullan” düzeni ve renkleri seçer; “Bununla başlat” ayrıca hazır isteği yazar. Yapay zekâ kenar çubuğu, KPI kartları, grafik ve tablo yerleşimine birebir uyar",
+  "📱 Mobil ve web tasarımlarındaki alakasız fotoğraflar kaldırıldı; yerine sektöre göre çizilmiş gerçek arayüzler geldi: kart akışı, liste, ızgara, takvim ve istatistik ekranları"]},
  {v:"5.11.2",date:"2026-11-25",items:[
   "Geliştir'de istemler ve yanıtlar sade sohbet akışında görünür. Üretim ilerlerken kısa durum satırları, ayrıntılar açıldığında ise alınan yanıt ve önizleme adımları gösterilir.",
   "Plan okuma ve düzenleme ayrıldı. Ajan yarıda kaldığında kalan adımlardan devam edebilirsin.",
@@ -2476,7 +2563,9 @@ function Typewriter({text,speed=12,onDone}){
 }
 
 // Akışlı API çağrısı (sunucu olayları)
-async function apiStream(path,body,onDelta,signal,onPhase){
+const netErr=e=>{if(e&&e.name==="AbortError")return e;if(e instanceof TypeError||/load failed|failed to fetch|networkerror|network connection was lost/i.test(String(e&&e.message))){const x=new Error("Bağlantı koptu: internet ya da sunucuyla bağlantı kesildi. Sayfayı açık tutup tekrar dene; kredi düşmedi.");x.status=0;x.net=true;return x}return e};
+async function apiStream(path,body,onDelta,signal,onPhase){try{return await apiStream0(path,body,onDelta,signal,onPhase)}catch(e){throw netErr(e)}}
+async function apiStream0(path,body,onDelta,signal,onPhase){
  const t=TOK.get();const r=await fetch(API+path,{method:"POST",signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
  if(!r.ok){let j={};try{j=await r.json()}catch(e){}const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}
  const rd=r.body.getReader();const dec=new TextDecoder();let buf="",final=null;
@@ -2633,7 +2722,7 @@ const sectorBoards={
  fotograf:["camera man-in-hat link-in-bio-background","Sergiler|Portreler|Çekim planı|Sanatçılar|Albümler"],
  bahce:["category-cactus category-sunflowers category-anthuriums","Bitkilerim|Türler|Bakım takvimi|Seralar|Bahçe günlüğü"]
 };
-const compositions=["Kapak","Diptik","Mozaik","Panorama","Fotoğraf dizisi"];
+const compositions=["Kart akışı","Liste","Izgara","Takvim","İstatistik"];
 const designIndex=new Map(THEMES.map(t=>[t.id,t]));
 const boardCount=DSECTORS.length*300;
 const boardSpecs=DSECTORS.map((sector,index)=>{
@@ -2645,7 +2734,7 @@ function makeBoard(spec,screen,layout,color){
  const base=designIndex.get(preferred[(color+screen+layout)%preferred.length]);
  const title=titles[screen],id=[sector.id,screen,layout,base.id].join("-");
  return {...base,id,sector:sector.id,layout,title,photos:photos.map((_,i)=>photos[(i+screen+color)%photos.length]),
- name:title+" · "+base.name,tag:compositions[layout],style:base.style+" "+sector.l+" için "+title+" ekranı. Fotoğraf kompozisyonu: "+compositions[layout]+"."};
+ name:title+" · "+base.name,tag:compositions[layout],style:base.style+" "+sector.l+" için "+title+" ekranı. Ekran düzeni: "+["üstte büyük vurgu kartı, altında öne çıkan iki kart","arama, filtre çipleri ve küçük görselli liste","ikili kart ızgarası","haftalık takvim şeridi ve saat dilimleri","halka ilerleme göstergesi ve haftalık sütun grafik"][layout]+"."};
 }
 function boardAt(spec,n){
  const variant=(n*37+spec.index*13)%300;
@@ -2653,6 +2742,7 @@ function boardAt(spec,n){
 }
 function lookupDesign(id){
  if(designIndex.has(id))return designIndex.get(id);
+ if(String(id).startsWith("pk-"))return lookupPanel(id);
  const match=/^([a-z]+)-([0-4])-([0-4])-([a-z]+)$/.exec(id);
  if(!match)return;
  const [,sector,screen,layout,base]=match,spec=boardSpecs.find(s=>s.sector.id===sector);
@@ -2667,19 +2757,15 @@ function detectSector(text,kind){const t=String(text||"").toLocaleLowerCase("tr"
  return best||(kind&&KIND_SECTOR[kind])||null}
 const sectorById=id=>DSECTORS.find(s=>s.id===id);
 const suggestThemes=sec=>(sectorById(sec)?.th||DEFAULT_TH).map(themeById);
-const designPayload=t=>t&&({id:t.id,name:t.name,font:t.font,radius:t.r,palette:t.p,style:t.style});
+const designPayload=t=>t&&({id:t.id,name:t.name,font:t.font,radius:t.r,palette:t.p,style:t.style,blueprint:t.blueprint||undefined});
 
 // Tema önizlemesi (telefon ya da tarayıcı çerçevesi)
 const photoExamples=new Map(THEMES.map(base=>[base.id,lookupDesign((DSECTORS.find(s=>s.th.includes(base.id))||DSECTORS[0]).id+"-0-0-"+base.id)]));
 function ThemeMock({t,kind="app",w=128}){
  t=photoExamples.get(t.id)||t;
  const st={"--bg":t.bgCss||t.p.bg,"--sf":t.sfCss||t.p.sf,"--pr":t.p.pr,"--ac":t.p.ac,"--tx":t.p.tx,"--r":Math.min(t.r,18)*(w/128)+"px",fontFamily:"'"+t.font+"',system-ui,sans-serif",fontSize:w/128*10+"px"};
- if(t.photos){
-  return html`<div class=${"photo-screen "+(kind==="site"?"landscape":"")} style=${{...st,width:kind==="site"?w*1.7:w,height:kind==="site"?w*1.2:w*1.78}}>
-   <small>${sectorById(t.sector).l}</small><strong>${t.title}</strong>
-   <div class=${"photo-layout layout-"+t.layout}>${t.photos.slice(0,t.layout===0?1:t.layout===1?2:3).map(photo=>html`<img key=${photo} loading="lazy" alt="" src=${"brand/gallery/"+photo+".webp"}/>`)}</div>
-   <span>${kind==="game"?"Başlat":kind==="site"?"Keşfet":"Görüntüle"} →</span></div>`;
- }
+ if(t.dash)return html`<${DashMock} d=${t} w=${Math.round(w*(kind==="site"?1.7:1.6))}/>`;
+ if(t.title)return html`<${ScreenMock} t=${t} kind=${kind} w=${w}/>`;
  const pop=t.id==="pop";const neon=t.id==="neon";const glass=t.id==="cam";
  const card={background:"var(--sf)",borderRadius:"var(--r)",border:pop?"1.5px solid #111":glass?"1px solid rgba(255,255,255,.3)":"1px solid rgba(0,0,0,.05)",boxShadow:pop?"2px 2px 0 #111":neon?"0 0 10px rgba(0,245,212,.25)":"0 2px 6px rgba(0,0,0,.06)",backdropFilter:glass?"blur(6px)":"none"};
  if(kind==="site")return html`<div class="tm tm-site" style=${{...st,width:w*1.7,height:w*1.2}}>
@@ -2738,8 +2824,135 @@ function GalleryCategories({selected,choose}){
   ${groups.every(([,items])=>!items.length)&&html`<p role="status">Kategori bulunamadı.</p><button onClick=${()=>setQuery("")}>Aramayı temizle</button>`}</div></div>
  </nav>`;
 }
-function DesignGallery({kind,sel,sector,onPick,close}){
- const [sec,setSec]=useState(sector||"hepsi");const [k,setK]=useState(kind||"app");
+// ================= v5.12 — PANEL KİTİ: çizilmiş, özgün yönetim paneli şablonları =================
+const PK_ACC=[["mor","#7c5cff","#22d3ee"],["mavi","#3b82f6","#f59e0b"],["yesil","#10b981","#8b5cf6"],["turuncu","#f97316","#06b6d4"],["pembe","#ec4899","#6366f1"],["limon","#b8d400","#7c5cff"]];
+const PK_MODE={koyu:{bg:"#13131a",sf:"#1c1c26",ln:"#2a2a38",tx:"#ececf3",mu:"#8b8ba3"},acik:{bg:"#f3f4f9",sf:"#ffffff",ln:"#e5e7f0",tx:"#171723",mu:"#7a7f94"}};
+// Her uygulama: ikon, menü, KPI'lar, tablo sütunları ve ekranlar (satır düzeni: "tür:sütun" · 12 sütunluk ızgara)
+const PK_APPS=[
+ {id:"eticaret",l:"E-ticaret",ic:"bag",nav:["Panel","Ürünler","Siparişler","Müşteriler","Yorumlar","Raporlar"],kpi:[["Toplam satış","₺184.320","+12,4%"],["Siparişler","1.248","+8,1%"],["Ziyaretçi","32.940","+21%"],["İade oranı","%1,8","−0,4"]],cols:["Sipariş","Müşteri","Tutar","Durum"],list:"En çok satanlar",chart:"Satış grafiği",
+  s:[["dash","Gösterge paneli","kpi*4|line:8 donut:4|table:8 list:4"],["urunler","Ürün listesi","toolbar:12|table:12"],["izgara","Ürün ızgarası","toolbar:12|grid:12"],["siparis","Sipariş detayı","steps:12|table:8 summary:4"],["musteri","Müşteriler","toolbar:12|people:12"]]},
+ {id:"finans",l:"Finans",ic:"wallet",nav:["Panel","Kartlar","İşlemler","Bütçe","Raporlar"],kpi:[["Bakiye","₺92.450","+4,2%"],["Gelir","₺38.100","+9%"],["Gider","₺21.760","−3%"]],cols:["İşlem","Kategori","Tutar","Tarih"],list:"Son transferler",chart:"Gelir ve gider",
+  s:[["dash","Gösterge paneli","kpi*3 bank:3|bar:8 list:4|table:12"],["kartlar","Kartlar","bank:4 bank:4 bank:4|table:12"],["islem","İşlemler","toolbar:12|table:12"]]},
+ {id:"isilan",l:"İş ilanları",ic:"briefcase",nav:["Panel","İlanlar","Adaylar","Mülakatlar","Şirketler"],kpi:[["Açık ilan","48","+6"],["Başvuru","1.932","+14%"],["Mülakat","126","+9"],["İşe alım","31","+4"]],cols:["Pozisyon","Şirket","Başvuru","Durum"],list:"Yeni adaylar",chart:"Başvurular",
+  s:[["dash","Gösterge paneli","kpi*4|bar:7 donut:5|table:12"],["ilanlar","İlan listesi","toolbar:12|cards:12"],["yeni","Yeni ilan","form:8 summary:4"]]},
+ {id:"icerik",l:"İçerik (CMS)",ic:"file",nav:["Panel","Yazılar","Medya","Yorumlar","Kategoriler"],kpi:[["Yazılar","342","+12"],["Okunma","128B","+18%"],["Yorum","2.410","+7%"],["Abone","9.870","+3%"]],cols:["Başlık","Yazar","Okunma","Durum"],list:"Popüler yazılar",chart:"Okunma",
+  s:[["dash","Gösterge paneli","kpi*4|line:8 list:4|cards:12"],["yazilar","Yazılar","toolbar:12|table:12"],["medya","Medya","toolbar:12|grid:12"],["ekle","Yazı ekle","form:8 summary:4"]]},
+ {id:"crm",l:"CRM",ic:"users",nav:["Panel","Müşteriler","Fırsatlar","Etkinlikler","Görevler"],kpi:[["Yeni müşteri","214","+11%"],["Açık fırsat","₺1,2M","+6%"],["Kazanma","%38","+2"],["Görüşme","96","+15"]],cols:["Müşteri","Şirket","Değer","Aşama"],list:"Bugünkü görüşmeler",chart:"Satış hunisi",
+  s:[["dash","Gösterge paneli","kpi*4|funnel:6 line:6|table:8 cal:4"],["etkinlik","Etkinlikler","cal:12"],["detay","Müşteri detayı","profile:4 table:8"]]},
+ {id:"analitik",l:"Analitik",ic:"chart",nav:["Genel bakış","Kitle","Kaynaklar","Sayfalar","Dönüşüm"],kpi:[["Ziyaret","248B","+18%"],["Tekil","96B","+11%"],["Hemen çıkma","%34","−2"],["Ort. süre","3:42","+0:21"]],cols:["Kaynak","Oturum","Dönüşüm","Değişim"],list:"Ülkelere göre",chart:"Tarayıcılar",
+  s:[["dash","Gösterge paneli 1","kpi*4|map:8 bar:4|table:6 list:6"],["dash2","Gösterge paneli 2","list:4 bar:8|table:4 table:4 donut:4"]]},
+ {id:"proje",l:"Proje yönetimi",ic:"kanban",nav:["Panel","Projeler","Panolar","Takvim","Ekip"],kpi:[["Aktif proje","18","+3"],["Görev","264","+22"],["Geciken","7","−2"],["Tamamlanan","%72","+6"]],cols:["Görev","Sorumlu","Bitiş","Durum"],list:"Ekip",chart:"İlerleme",
+  s:[["dash","Gösterge paneli","kpi*4|kanban:12"],["ekle","Proje ekle","steps:12|form:8 summary:4"]]},
+ {id:"mesaj",l:"Mesajlaşma",ic:"chat",nav:["Sohbetler","Gruplar","Aramalar","Arşiv"],kpi:[],cols:[],list:"Sohbetler",chart:"",
+  s:[["sohbet","Sohbet","chatlist:4 chat:8"],["sohbet2","Sohbet ve profil","chatlist:3 chat:6 profile:3"]]},
+ {id:"sosyal",l:"Sosyal ağ",ic:"heart",nav:["Akış","Keşfet","Gruplar","Etkinlikler","Profil"],kpi:[],cols:[],list:"Önerilen kişiler",chart:"",
+  s:[["akis","Akış","feed:8 people:4"],["akis2","Akış ve hikâyeler","stories:12|feed:8 list:4"]]},
+ {id:"kripto",l:"Kripto",ic:"trend",nav:["Panel","Cüzdan","Piyasa","Al-Sat","Geçmiş"],kpi:[["Portföy","$48.210","+5,2%"],["BTC","$96.420","+1,8%"],["ETH","$3.412","−0,6%"],["Kâr/zarar","+$2.140","+4%"]],cols:["Varlık","Fiyat","24s","Miktar"],list:"Piyasa",chart:"Portföy değeri",
+  s:[["dash","Gösterge paneli","kpi*4|line:8 list:4|table:12"]]},
+ {id:"eposta",l:"E-posta",ic:"mail",nav:["Gelen kutusu","Yıldızlı","Gönderilen","Taslaklar","Çöp"],kpi:[],cols:[],list:"Gelen kutusu",chart:"",
+  s:[["gelen","Gelen kutusu","mails:12"],["oku","Okuma görünümü","mails:4 read:8"],["yaz","Yeni ileti","mails:4 form:8"]]},
+ {id:"dosya",l:"Dosya yönetimi",ic:"folder",nav:["Dosyalarım","Paylaşılanlar","Son açılanlar","Yıldızlı","Çöp"],kpi:[["Kullanılan","68 GB","%68"],["Belge","1.204","+38"],["Görsel","3.870","+120"],["Video","214","+6"]],cols:["Ad","Boyut","Değiştirildi","Sahibi"],list:"Depolama",chart:"",
+  s:[["dash","Dosyalar","kpi*4|folders:12|table:12"],["klasor","Klasör","toolbar:12|grid:12"]]},
+ {id:"yardim",l:"Yardım merkezi",ic:"help",nav:["Panel","Bilgi bankası","Talepler","Kategoriler"],kpi:[["Açık talep","42","−6"],["Ort. yanıt","18 dk","−4"],["Memnuniyet","%94","+2"],["Makale","318","+9"]],cols:["Talep","Müşteri","Öncelik","Durum"],list:"Sık sorulanlar",chart:"Talepler",
+  s:[["bilgi","Bilgi bankası","search:12|cats:12"],["talep","Talepler","kpi*4|table:12"]]},
+ {id:"kurs",l:"Eğitim (kurs)",ic:"cap",nav:["Panel","Kurslar","Öğrenciler","Takvim","Sertifikalar"],kpi:[["Kurs","24","+2"],["Öğrenci","3.418","+12%"],["Tamamlama","%67","+5"],["Puan","4,8","+0,1"]],cols:["Öğrenci","Kurs","İlerleme","Son giriş"],list:"Yaklaşan dersler",chart:"",
+  s:[["dash","Gösterge paneli","kpi*4|cards:12|table:8 cal:4"],["kurslar","Kurs listesi","toolbar:12|cards:12"]]},
+ {id:"giris",l:"Giriş ekranları",ic:"lock",nav:[],kpi:[],cols:[],list:"",chart:"",
+  s:[["giris","Giriş yap","auth:12"],["kayit","Kayıt ol","auth:12"],["sifre","Şifre sıfırla","auth:12"],["kilit","Kilit ekranı","auth:12"]]}
+];
+const PK_COUNT=PK_APPS.reduce((n,a)=>n+a.s.length,0);
+const PK_W={kpi:"KPI kartı",line:"çizgi grafik",bar:"sütun grafik",donut:"halka grafik",table:"tablo",list:"liste",toolbar:"arama ve filtre çubuğu",grid:"ızgara",steps:"adım göstergesi",summary:"özet kartı",people:"kişi kartları",bank:"banka kartı",cards:"içerik kartları",form:"form",funnel:"satış hunisi",cal:"takvim",map:"dünya haritası",profile:"profil kartı",kanban:"kanban panosu",chatlist:"sohbet listesi",chat:"mesaj akışı",feed:"gönderi akışı",stories:"hikâye şeridi",mails:"e-posta listesi",read:"ileti okuma alanı",folders:"klasör kartları",search:"büyük arama alanı",cats:"kategori kartları",auth:"ortalanmış giriş kartı"};
+function pkRows(spec){return spec.split("|").map(r=>r.trim().split(/\s+/).flatMap(c=>{const m=/^(\w+)\*(\d+)$/.exec(c);if(m)return Array.from({length:+m[2]},()=>[m[1],12/+m[2]]);const [t,n]=c.split(":");return [[t,+n||12]]}))}
+function pkDesign(app,sc,mode,acc){const M=PK_MODE[mode],A=PK_ACC.find(a=>a[0]===acc)||PK_ACC[0];
+ const rows=pkRows(sc[2]).map((r,i)=>(i+1)+". sıra: "+r.map(([t,n])=>PK_W[t]+(t==="kpi"&&app.kpi.length?" ("+app.kpi.map(k=>k[0]).join(", ")+")":t==="table"&&app.cols.length?" ("+app.cols.join(", ")+")":"")+" ["+n+"/12]").join(" + ")).join("; ");
+ return {id:["pk",app.id,sc[0],mode,acc].join("-"),dash:true,app:app.id,screen:sc[0],mode,acc,name:app.l+" · "+sc[1],tag:(mode==="koyu"?"Koyu":"Açık")+" panel",font:"Poppins",r:14,
+  p:{bg:M.bg,sf:M.sf,pr:A[1],ac:A[2],tx:M.tx},
+  style:"Masaüstü yönetim paneli (dashboard). "+(mode==="koyu"?"Koyu":"Açık")+" tema, ince kenarlıklı yüzeyler, yumuşak gölgeler, Poppins; grafikler SVG ile çizilsin, ikonlar çizgi stilinde.",
+  blueprint:"Uygulama: "+app.l+" paneli, ekran: "+sc[1]+". Solda daraltılabilir kenar çubuğu (logo, menü: "+(app.nav.join(", ")||"yok")+"), üstte arama, bildirim ve profil çubuğu"+(app.id==="giris"?" yerine ortada tek kart":"")+". Ekran düzeni (12 sütun): "+rows+". Üst çubukta tek tıkla açık/koyu tema geçiş düğmesi olsun. Tüm metinler ve örnek veriler Türkçe; sayılar ₺ ve Türkçe biçimde. Mobilde kenar çubuğu alta menüye dönsün, kartlar tek sütuna insin."}}
+function lookupPanel(id){const m=/^pk-([a-z]+)-([a-z0-9]+)-(koyu|acik)-([a-z]+)$/.exec(id||"");if(!m)return;const app=PK_APPS.find(a=>a.id===m[1]);const sc=app&&app.s.find(x=>x[0]===m[2]);if(!sc||!PK_ACC.some(a=>a[0]===m[4]))return;return pkDesign(app,sc,m[3],m[4])}
+// Mini grafik ve bileşen çizimleri
+const pkSeries=(n,seed)=>Array.from({length:n},(_,i)=>30+Math.round(28*Math.sin(i*.9+seed)+18*Math.cos(i*.45+seed*2)+i*2));
+function PkLine({seed=1,area=true}){const d=pkSeries(12,seed),mx=Math.max(...d),pts=d.map((v,i)=>[i*(300/11),100-v/mx*86]);const path="M"+pts.map(p=>p.map(x=>x.toFixed(1)).join(" ")).join(" L");
+ const d2=pkSeries(12,seed+2).map((v,i)=>[i*(300/11),100-v/mx*70]);
+ return html`<svg viewBox="0 0 300 100" preserveAspectRatio="none" class="pk-svg">${[25,50,75].map(y=>html`<line key=${y} x1="0" x2="300" y1=${y} y2=${y} stroke="var(--ln)" stroke-width="1"/>`)}${area&&html`<path d=${path+" L300 100 L0 100Z"} fill="var(--pr)" opacity=".14"/>`}<path d=${"M"+d2.map(p=>p.map(x=>x.toFixed(1)).join(" ")).join(" L")} fill="none" stroke="var(--ac)" stroke-width="2" stroke-dasharray="4 4"/><path d=${path} fill="none" stroke="var(--pr)" stroke-width="2.6" stroke-linejoin="round"/></svg>`}
+function PkBars({seed=2,n=12}){const d=pkSeries(n,seed),mx=Math.max(...d);return html`<div class="pk-bars">${d.map((v,i)=>html`<i key=${i} style=${{height:Math.round(v/mx*100)+"%",background:i%3===1?"var(--ac)":"var(--pr)",opacity:i%3===2?.45:1}}></i>`)}</div>`}
+function PkDonut({v=68}){const c=2*Math.PI*36;return html`<svg viewBox="0 0 100 100" class="pk-donut"><circle cx="50" cy="50" r="36" fill="none" stroke="var(--ln)" stroke-width="12"/><circle cx="50" cy="50" r="36" fill="none" stroke="var(--pr)" stroke-width="12" stroke-dasharray=${c*v/100+" "+c} transform="rotate(-90 50 50)" stroke-linecap="round"/><circle cx="50" cy="50" r="36" fill="none" stroke="var(--ac)" stroke-width="12" stroke-dasharray=${c*.18+" "+c} stroke-dashoffset=${-c*v/100-4} transform="rotate(-90 50 50)" stroke-linecap="round"/><text x="50" y="49" text-anchor="middle" font-size="15" font-weight="700" fill="var(--tx)">${v}%</text><text x="50" y="63" text-anchor="middle" font-size="8" fill="var(--mu)">toplam</text></svg>`}
+const pkL=(w,o)=>html`<span class="pk-l" style=${{width:w,...(o||{})}}></span>`;
+const pkAv=(i,s=22)=>html`<span class="pk-av" style=${{width:s,height:s,background:["var(--pr)","var(--ac)","#f59e0b","#ef4444","#10b981"][i%5]}}></span>`;
+function PkWidget({t,app,i}){const k=app.kpi[i%Math.max(1,app.kpi.length)]||["Değer","—",""];const head=(x,sub)=>html`<div class="pk-wh"><b>${x}</b>${sub!==false&&html`<span>${sub||"Bu ay ⌄"}</span>`}</div>`;
+ switch(t){
+  case "kpi":return html`<div class="pk-w pk-kpi"><span class="pk-ki" style=${{background:i%2?"var(--ac)":"var(--pr)"}}><${Icon} n=${app.ic} s=${14}/></span><div><small>${k[0]}</small><b>${k[1]}</b></div><em class=${String(k[2]).startsWith("−")?"dn":""}>${k[2]}</em></div>`;
+  case "line":return html`<div class="pk-w">${head(app.chart||"Grafik")}<${PkLine} seed=${i+1}/><div class="pk-ax">${["Oca","Şub","Mar","Nis","May","Haz"].map(m=>html`<span key=${m}>${m}</span>`)}</div></div>`;
+  case "bar":return html`<div class="pk-w">${head(app.chart||"Dağılım")}<${PkBars} seed=${i+2}/></div>`;
+  case "donut":return html`<div class="pk-w pk-center">${head("Dağılım")}<${PkDonut} v=${62+i*3}/><div class="pk-leg"><span><i style=${{background:"var(--pr)"}}></i>Online</span><span><i style=${{background:"var(--ac)"}}></i>Mağaza</span></div></div>`;
+  case "funnel":return html`<div class="pk-w">${head(app.chart)}<div class="pk-funnel">${[100,78,54,31].map((w,j)=>html`<i key=${j} style=${{width:w+"%",opacity:1-j*.18}}></i>`)}</div></div>`;
+  case "map":return html`<div class="pk-w">${head("Ziyaretçi haritası")}<svg viewBox="0 0 300 120" class="pk-svg">${Array.from({length:180},(_,j)=>{const x=(j*37)%300,y=(j*53)%120;const land=Math.sin(x/38)+Math.cos(y/22)+Math.sin((x+y)/60)>.6;return land?html`<circle key=${j} cx=${x} cy=${y} r="2.2" fill=${j%11===0?"var(--pr)":j%17===0?"var(--ac)":"var(--ln)"}/>`:null})}</svg></div>`;
+  case "table":return html`<div class="pk-w">${head(app.cols.length?app.cols[0]==="Sipariş"?"Son siparişler":app.l+" kayıtları":"Kayıtlar")}<div class="pk-tb"><div class="pk-tr th">${(app.cols.length?app.cols:["Ad","Tür","Değer","Durum"]).map(c=>html`<span key=${c}>${c}</span>`)}</div>${[0,1,2,3,4].map(r=>html`<div class="pk-tr" key=${r}><span>${pkAv(r,16)}${pkL(56+r*7%30)}</span><span>${pkL(48)}</span><span><b>${["₺1.240","₺860","₺3.420","₺520","₺2.180"][r]}</b></span><span><em class=${"pk-st s"+(r%3)}>${["Tamamlandı","Bekliyor","İptal"][r%3]}</em></span></div>`)}</div></div>`;
+  case "list":case "people":return html`<div class=${"pk-w"+(t==="people"?" pk-people":"")}>${head(app.list||"Liste",false)}${(t==="people"?[0,1,2,3,4,5,6,7]:[0,1,2,3,4]).map(r=>html`<div class="pk-li" key=${r}>${pkAv(r,t==="people"?30:24)}<div>${pkL(70+(r*13)%40)}${pkL(44,{opacity:.5})}</div><b>${t==="people"?"":["₺4.2B","₺3.1B","₺2.8B","₺1.9B","₺1.2B"][r]}</b></div>`)}</div>`;
+  case "toolbar":return html`<div class="pk-w pk-tool"><span class="pk-search"><${Icon} n="search" s=${12}/> Ara…</span>${["Tümü","Aktif","Taslak"].map((x,j)=>html`<span key=${x} class=${"pk-chip"+(j===0?" on":"")}>${x}</span>`)}<span style=${{flex:1}}></span><span class="pk-btn">+ Yeni ekle</span></div>`;
+  case "grid":case "cards":case "folders":return html`<div class=${"pk-w pk-gridw "+t}>${(t==="folders"?[0,1,2,3,4,5]:[0,1,2,3,4,5,6,7]).map(r=>html`<div class="pk-tile" key=${r}><span class="pk-thumb" style=${{background:t==="folders"?"transparent":"linear-gradient(135deg,"+(r%2?"var(--pr)":"var(--ac)")+",transparent 120%)"}}>${t==="folders"?html`<${Icon} n="folder" s=${26}/>`:html`<${Icon} n=${app.ic} s=${18}/>`}</span>${pkL("70%")}${pkL("45%",{opacity:.5})}</div>`)}</div>`;
+  case "steps":return html`<div class="pk-w pk-steps">${["Bilgiler","Detaylar","Ekip","Onay"].map((x,j)=>html`<span key=${x} class=${j<2?"on":""}><i>${j<1?"✓":j+1}</i>${x}</span>`)}</div>`;
+  case "summary":return html`<div class="pk-w">${head("Özet",false)}${[0,1,2,3].map(r=>html`<div class="pk-sum" key=${r}>${pkL(70)}<b>${["₺2.480","₺120","₺0","₺2.600"][r]}</b></div>`)}<span class="pk-btn wide">Kaydet</span></div>`;
+  case "bank":return html`<div class="pk-w pk-bank" style=${{background:"linear-gradient(135deg,var(--pr),var(--ac))"}}><small>Gitmapp Kart</small><b>•••• 48${i}2</b><div><span>N. CAN</span><span>09/29</span></div></div>`;
+  case "form":return html`<div class="pk-w">${head("Bilgiler",false)}${[0,1,2,3].map(r=>html`<div class="pk-fld" key=${r}><small>${["Başlık","Kategori","Açıklama","Etiketler"][r]}</small><span class=${r===2?"tall":""}></span></div>`)}</div>`;
+  case "cal":return html`<div class="pk-w">${head("Kasım 2026")}<div class="pk-cal">${Array.from({length:35},(_,j)=>html`<span key=${j} class=${j===17?"on":j%9===3?"ev":""}>${j<2?"":j-1}</span>`)}</div></div>`;
+  case "profile":return html`<div class="pk-w pk-center pk-prof">${pkAv(1,56)}${pkL(90)}${pkL(60,{opacity:.5})}<div class="pk-pst">${["Sipariş","Puan","Yıl"].map((x,j)=>html`<span key=${x}><b>${[48,"4,9",3][j]}</b><small>${x}</small></span>`)}</div><span class="pk-btn wide">Mesaj gönder</span></div>`;
+  case "kanban":return html`<div class="pk-w pk-kan">${["Yapılacak","Sürüyor","İncelemede","Tamamlandı"].map((c,j)=>html`<div key=${c}><b>${c} <small>${[6,4,3,9][j]}</small></b>${[0,1,2].slice(0,3-j%2).map(r=>html`<div class="pk-kc" key=${r}><em class=${"pk-st s"+((r+j)%3)}>${["Tasarım","Kod","Test"][(r+j)%3]}</em>${pkL("80%")}${pkL("50%",{opacity:.5})}<div>${pkAv(r)}${pkAv(r+1)}</div></div>`)}</div>`)}</div>`;
+  case "chatlist":case "mails":return html`<div class="pk-w">${t==="mails"?html`<span class="pk-btn wide">✎ Yeni ileti</span>`:html`<span class="pk-search"><${Icon} n="search" s=${12}/> Sohbet ara</span>`}${[0,1,2,3,4,5].map(r=>html`<div class=${"pk-li"+(r===1?" on":"")} key=${r}>${pkAv(r,28)}<div>${pkL(80+(r*11)%40)}${pkL(120,{opacity:.45})}</div><small>${["09:24","Dün","Pzt","12 Kas","10 Kas","8 Kas"][r]}</small></div>`)}</div>`;
+  case "chat":return html`<div class="pk-w pk-chat">${head("Elif Kaya · çevrimiçi",false)}${[0,1,2,3].map(r=>html`<div class=${"pk-bub"+(r%2?" me":"")} key=${r}>${pkL(120+(r*37)%90,{background:"currentColor",opacity:.35})}</div>`)}<div class="pk-send"><span>Mesaj yaz…</span><i></i></div></div>`;
+  case "read":return html`<div class="pk-w">${head("Haftalık rapor hazır",false)}<div class="pk-li">${pkAv(2,30)}<div>${pkL(90)}${pkL(60,{opacity:.5})}</div></div>${[0,1,2,3,4,5,6].map(r=>pkL((92-(r*7)%30)+"%",{display:"block",margin:"8px 0"}))}<span class="pk-btn">Yanıtla</span></div>`;
+  case "feed":return html`<div class="pk-w pk-feed">${[0,1].map(r=>html`<div key=${r} class="pk-post"><div class="pk-li">${pkAv(r+2,30)}<div>${pkL(90)}${pkL(50,{opacity:.5})}</div></div>${pkL("90%",{display:"block",margin:"6px 0"})}<span class="pk-thumb pk-lg" style=${{background:"linear-gradient(135deg,var(--pr),var(--ac))"}}></span><div class="pk-acts"><span>♡ 248</span><span>💬 32</span><span>↗ 12</span></div></div>`)}</div>`;
+  case "stories":return html`<div class="pk-w pk-stories">${[0,1,2,3,4,5,6,7].map(r=>html`<span key=${r}>${pkAv(r,44)}${pkL(40)}</span>`)}</div>`;
+  case "search":return html`<div class="pk-w pk-hero"><b>Size nasıl yardımcı olabiliriz?</b><span class="pk-search pk-lg"><${Icon} n="search" s=${14}/> Bir soru yazın…</span></div>`;
+  case "cats":return html`<div class="pk-w pk-gridw grid">${["Başlarken","Hesap","Ödemeler","Güvenlik","Entegrasyon","Sorun giderme"].map((x,r)=>html`<div class="pk-tile" key=${x}><span class="pk-ki" style=${{background:r%2?"var(--ac)":"var(--pr)"}}><${Icon} n=${["rocket","user","card","shield","plug","wrench"][r]} s=${14}/></span><b>${x}</b>${pkL("80%",{opacity:.5})}</div>`)}</div>`;
+  case "auth":return null;
+  default:return html`<div class="pk-w"></div>`}}
+// Tam ekran panel çizimi (1280×800 mantıksal boyut, karta ölçeklenir)
+function DashMock({d,w=300}){const app=PK_APPS.find(a=>a.id===d.app),sc=app.s.find(x=>x[0]===d.screen),M=PK_MODE[d.mode],A=PK_ACC.find(a=>a[0]===d.acc)||PK_ACC[0];
+ const vars={"--bg":M.bg,"--sf":M.sf,"--ln":M.ln,"--tx":M.tx,"--mu":M.mu,"--pr":A[1],"--ac":A[2]};const sc2=w/1280;
+ const inner=app.id==="giris"?html`<div class="pk-auth"><div class="pk-ab" style=${{background:"linear-gradient(150deg,var(--pr),var(--ac))"}}><${BrandMark} s=${40}/><b>${sc[1]==="Kilit ekranı"?"Tekrar hoş geldin":"Panelinize hoş geldiniz"}</b><span>Tüm işletmen tek ekranda.</span></div><div class="pk-af">${sc[0]==="kilit"?html`${pkAv(1,72)}<b>Nahit Can</b>`:html`<b>${sc[1]}</b><small>${sc[0]==="sifre"?"E-postana sıfırlama bağlantısı gönderelim.":"Devam etmek için bilgilerini gir."}</small>`}${(sc[0]==="kayit"?["Ad soyad","E-posta","Şifre"]:sc[0]==="sifre"?["E-posta"]:sc[0]==="kilit"?["Şifre"]:["E-posta","Şifre"]).map(x=>html`<div class="pk-fld" key=${x}><small>${x}</small><span></span></div>`)}<span class="pk-btn wide">${sc[0]==="kayit"?"Hesap oluştur":sc[0]==="sifre"?"Bağlantı gönder":sc[0]==="kilit"?"Kilidi aç":"Giriş yap"}</span>${sc[0]==="giris"&&html`<span class="pk-btn ghost wide">Google ile devam et</span>`}</div></div>`
+ :html`<aside class="pk-side"><div class="pk-logo"><${BrandMark} s=${26}/><b>Panel</b></div>${app.nav.map((n,j)=>html`<span key=${n} class=${j===0?"on":""}><i></i>${n}</span>`)}<div class="pk-up"><b>Pro'ya geç</b><small>Tüm raporlar</small></div></aside>
+  <div class="pk-main"><div class="pk-top"><div><b>Merhaba Nahit 👋</b><small>${app.l} · ${sc[1]}</small></div><span class="pk-search"><${Icon} n="search" s=${12}/> Ara…</span><span class="pk-mode">${d.mode==="koyu"?"☾":"☀"}</span><span class="pk-bell"><${Icon} n="bell" s=${14}/></span>${pkAv(0,30)}</div>
+   ${pkRows(sc[2]).map((r,ri)=>html`<div class=${"pk-row"+(r.every(([t])=>t==="kpi"||t==="toolbar"||t==="steps"||t==="bank")?" short":"")} key=${ri}>${r.map(([t,n],j)=>html`<div key=${j} style=${{gridColumn:"span "+n}}><${PkWidget} t=${t} app=${app} i=${j+ri}/></div>`)}</div>`)}</div>`;
+ return html`<div class="pk-frame" style=${{width:w,height:w*.625}}><div class=${"pk-scr "+d.mode} style=${{...vars,transform:"scale("+sc2+")"}}>${inner}</div></div>`}
+// Panel kiti tarayıcısı (Tasarım stüdyosu içinde "Paneller" sekmesi)
+function PanelKit({sel,onPick,onStart}){
+ const [app,setApp]=useState("hepsi");const [mode,setMode]=useState("koyu");const [acc,setAcc]=useState("mor");const [view,setView]=useState(null);const [q,setQ]=useState("");
+ const apps=PK_APPS.filter(a=>a.l.toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr")));
+ const list=(app==="hepsi"?PK_APPS:PK_APPS.filter(a=>a.id===app)).flatMap(a=>a.s.map(sc=>pkDesign(a,sc,mode,acc)));
+ return html`<div class="pk-kit">
+  <div class="pk-bar"><div class="pk-ms" role="radiogroup" aria-label="Tema"><button class=${mode==="koyu"?"on":""} onClick=${()=>setMode("koyu")} aria-label="Koyu">☾</button><button class=${mode==="acik"?"on":""} onClick=${()=>setMode("acik")} aria-label="Açık">☀</button></div>
+   <div class="pk-accs" role="radiogroup" aria-label="Vurgu rengi">${PK_ACC.map(([id,c])=>html`<button key=${id} class=${acc===id?"on":""} style=${{background:c}} onClick=${()=>setAcc(id)} aria-label=${id}></button>`)}</div>
+   <span class="pk-note">${PK_APPS.length} uygulama · ${PK_COUNT} ekran · ${PK_COUNT*PK_ACC.length*2} çeşit</span></div>
+  <div class="dg-b">
+   <nav class="gallery-nav pk-nav" aria-label="Panel türleri"><div class="gallery-desktop"><label>Panel türü<input type="search" placeholder="Tür ara" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
+    <button type="button" class=${"dg-sec"+(app==="hepsi"?" on":"")} onClick=${()=>setApp("hepsi")}><span>Tüm paneller</span><small>${PK_COUNT}</small></button>
+    ${apps.map(a=>html`<button key=${a.id} type="button" class=${"dg-sec"+(app===a.id?" on":"")} onClick=${()=>setApp(a.id)}><span><${Icon} n=${a.ic} s=${14}/> ${a.l}</span><small>${a.s.length}</small></button>`)}</div>
+    <label class="gallery-mobile">Panel türü<select value=${app} onChange=${e=>setApp(e.target.value)}><option value="hepsi">Tüm paneller</option>${PK_APPS.map(a=>html`<option key=${a.id} value=${a.id}>${a.l}</option>`)}</select></label></nav>
+   <div class="pk-grid">${list.map((d,i)=>html`<div key=${d.id} class=${"pk-card"+(sel===d.id?" on":"")} style=${{animationDelay:Math.min(i,8)*40+"ms"}}>
+     <button class="pk-stage" onClick=${()=>setView(d)} aria-label=${d.name+" önizle"}><${DashMock} d=${d} w=${300}/></button>
+     <div class="dg-meta"><b>${d.name}</b>${sel===d.id&&html`<span class="dg-check"><${Icon} n="check" s=${12} w=${2.6}/></span>`}</div>
+     <div class="pk-cb"><button class="btn g s" onClick=${()=>onPick(d.id)}>Tasarımı kullan</button><button class="btn s" onClick=${()=>onStart(d)}>Bununla başlat</button></div></div>`)}</div></div>
+  ${view&&html`<div class="pk-view" onClick=${()=>setView(null)}><div onClick=${e=>e.stopPropagation()}><header><b>${view.name}</b><small>${view.tag} · ${PK_ACC.find(a=>a[0]===view.acc)[0]} vurgu</small><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>{onPick(view.id);setView(null)}}>Tasarımı kullan</button><button class="btn s" onClick=${()=>{onStart(view);setView(null)}}>Bununla başlat</button><button class="ib" onClick=${()=>setView(null)} aria-label="Kapat"><${Icon} n="x" s=${16}/></button></header>
+   <div class="pk-big"><${DashMock} d=${view} w=${Math.min(1100,innerWidth-80)}/></div><p class="pk-bp"><b>Yapay zekâya gidecek düzen:</b> ${view.blueprint}</p></div></div>`}
+ </div>`;
+}
+// Mobil ve web ekran çizimi: fotoğraf yerine sektöre göre gerçek arayüz bileşenleri
+function ScreenMock({t,kind,w}){const sec=sectorById(t.sector)||{ic:"sparkles",l:""};const ic=sec.ic;const L=t.layout||0;const site=kind==="site";
+ const st={"--bg":t.bgCss||t.p.bg,"--sf":t.sfCss||t.p.sf,"--pr":t.p.pr,"--ac":t.p.ac,"--tx":t.p.tx,"--r":Math.min(t.r,18)*(w/128)+"px",fontFamily:"'"+t.font+"',system-ui,sans-serif",fontSize:w/128*10+"px"};
+ const thumb=(j,big)=>html`<span class=${"sm-th"+(big?" sm-lg":"")} style=${{background:"linear-gradient("+(135+j*40)+"deg,var(--pr),var(--ac))"}}><${Icon} n=${ic} s=${big?18:10}/></span>`;
+ const ln=(wd,o)=>html`<i class="sm-l" style=${{width:wd,...(o||{})}}></i>`;
+ const body=L===0?html`<div class="sm-hero" style=${{background:"linear-gradient(135deg,var(--pr),var(--ac))"}}><small>${sec.l}</small><b>${t.title}</b><span>Hemen keşfet →</span><span class="sm-hic"><${Icon} n=${ic} s=${22}/></span></div><div class="sm-h2"><b>Öne çıkanlar</b><small>Tümü</small></div><div class="sm-row2">${[0,1].map(j=>html`<div key=${j} class="sm-card">${thumb(j,true)}${ln("80%")}${ln("50%",{opacity:.5})}</div>`)}</div>`
+  :L===1?html`<div class="sm-search">⌕ ${t.title} ara</div><div class="sm-chips">${["Tümü","Yeni","Popüler"].map((x,j)=>html`<span key=${x} class=${j===0?"on":""}>${x}</span>`)}</div>${[0,1,2,3].map(j=>html`<div key=${j} class="sm-item">${thumb(j)}<div>${ln("70%")}${ln("40%",{opacity:.5})}</div><em>${["₺240","₺180","₺320","₺90"][j]}</em></div>`)}`
+  :L===2?html`<div class="sm-h2"><b>${t.title}</b><small>⋯</small></div><div class="sm-grid">${[0,1,2,3,4,5].map(j=>html`<div key=${j} class="sm-card">${thumb(j,true)}${ln("70%")}</div>`)}</div>`
+  :L===3?html`<div class="sm-h2"><b>${t.title}</b><small>Kasım</small></div><div class="sm-week">${["Pt","Sa","Ça","Pe","Cu","Ct","Pz"].map((x,j)=>html`<span key=${x} class=${j===2?"on":""}><small>${x}</small>${18+j}</span>`)}</div>${["09:00","11:30","14:00"].map((h,j)=>html`<div key=${h} class="sm-slot"><small>${h}</small><div style=${{borderColor:j===1?"var(--ac)":"var(--pr)"}}>${ln("70%")}${ln("40%",{opacity:.5})}</div></div>`)}`
+  :html`<div class="sm-h2"><b>${t.title}</b><small>Bu hafta</small></div><div class="sm-stat"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="none" stroke="currentColor" stroke-opacity=".12" stroke-width="7"/><circle cx="30" cy="30" r="24" fill="none" stroke="var(--pr)" stroke-width="7" stroke-dasharray="110 151" stroke-linecap="round" transform="rotate(-90 30 30)"/></svg><div><b>%72</b><small>hedefe ulaşıldı</small></div></div><div class="sm-bars">${[40,65,50,80,58,90,70].map((h,j)=>html`<i key=${j} style=${{height:h+"%",background:j===5?"var(--ac)":"var(--pr)",opacity:j===5?1:.6}}></i>`)}</div>`;
+ if(site)return html`<div class="tm tm-site sm" style=${{...st,width:w*1.7,height:w*1.2}}><div class="tm-chrome"><i></i><i></i><i></i></div><div class="sm-nav"><b style=${{color:"var(--pr)"}}><${Icon} n=${ic} s=${10}/> ${sec.l.split(" ")[0]}</b><span>Hakkında</span><span>İletişim</span><em style=${{background:"var(--pr)"}}>Başla</em></div><div class="sm-site">${body}</div></div>`;
+ return html`<div class="tm tm-phone sm" style=${{...st,width:w,height:w*1.85}}><div class="sm-top"><small>9:41</small><span>●●●</span></div>${body}<div class="sm-tab">${["home","search",ic,"user"].map((n,j)=>html`<span key=${j} style=${{color:j===0?"var(--pr)":"currentColor",opacity:j===0?1:.4}}><${Icon} n=${n} s=${11}/></span>`)}</div></div>`;
+}
+
+function DesignGallery({kind,sel,sector,onPick,onStart,close}){
+ const [sec,setSec]=useState(sector||"hepsi");const [k,setK]=useState(kind||"app");const [gm,setGm]=useState(String(sel||"").startsWith("pk-")?"panel":"ekran");
  const [page,setPage]=useState(0);
  const spec=boardSpecs.find(s=>s.sector.id===sec);
  const total=spec?300:boardCount+THEMES.length;
@@ -2755,9 +2968,11 @@ function DesignGallery({kind,sel,sector,onPick,close}){
  const changePage=value=>{setPage(value);resetScroll()};
  const category=sectorById(sec)?.l||"mobile app";
  return html`<${UiDialog} label="Tasarım galerisi" width="1180px" close=${close}><div class="dg glass" ref=${panel}>
-  <div class="dg-h"><div><div class="eyebrow">Tasarım stüdyosu</div><h2>Sektörüne uygun tasarımı seç</h2></div><span style=${{flex:1}}></span>
-   <div class="seg">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([x,ic,l])=>html`<button key=${x} aria-pressed=${k===x} class=${k===x?"on":""} onClick=${()=>setK(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+  <div class="dg-h"><div><div class="eyebrow">Tasarım stüdyosu</div><h2>${gm==="panel"?"Hazır panel şablonunu seç":"Sektörüne uygun tasarımı seç"}</h2></div><span style=${{flex:1}}></span>
+   <div class="dg-modes" role="tablist">${[["ekran","phone","Mobil ve web"],["panel","grid","Yönetim panelleri"]].map(([x,ic,l])=>html`<button key=${x} role="tab" aria-selected=${gm===x} class=${gm===x?"on":""} onClick=${()=>setGm(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   ${gm==="ekran"&&html`<div class="seg">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([x,ic,l])=>html`<button key=${x} aria-pressed=${k===x} class=${k===x?"on":""} onClick=${()=>setK(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>`}
    <button class="ib" onClick=${close} aria-label="Galeriyi kapat" title="Kapat"><${Icon} n="x" s=${16}/></button></div>
+  ${gm==="panel"?html`<${PanelKit} sel=${sel} onPick=${id=>onPick(id,null)} onStart=${d=>onStart&&onStart(d)}/>`:html`<div>
   <div class="dg-links"><b>${total.toLocaleString("tr-TR")} tasarım</b><a href=${"https://www.figma.com/community/search?query="+encodeURIComponent(category+" UI")} target="_blank" rel="noopener noreferrer">Figma Community ↗</a><a href="https://www.awwwards.com/websites/sites_of_the_day/" target="_blank" rel="noopener noreferrer">Awwwards seçkisi ↗</a><a href=${"https://www.pinterest.com/search/pins/?q="+encodeURIComponent(category+" mobile UI design")} target="_blank" rel="noopener noreferrer">Pinterest panoları ↗</a></div>
   <div class="dg-b">
    <${GalleryCategories} selected=${sec} choose=${chooseSector}/>
@@ -2768,7 +2983,8 @@ function DesignGallery({kind,sel,sector,onPick,close}){
      ${sel===t.id&&html`<span class="dg-check"><${Icon} n="check" s=${13} w=${2.6}/></span>`}
      <div class="dg-stage" style=${{background:"radial-gradient(circle at 50% 120%,"+t.p.pr+"55,transparent 65%),#0b1019"}}><${ThemeMock} t=${t} kind=${k} w=${k==="site"?104:112}/></div>
      <div class="dg-meta"><b>${t.name}</b><${Swatches} t=${t}/></div><span class="dg-tag">${t.tag} · ${t.font}</span></button>`)}</div>
-  </div></div></${UiDialog}>`;
+  </div></div>`}
+  </div></${UiDialog}>`;
 }
 
 // Stüdyo içi tasarım şeridi (otomatik öneri + seçim)
@@ -3286,7 +3502,8 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput",input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
  const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector(input||(firstUser&&firstUser.content)||"",prefs.kind);
  const sector=prefs.sector!=="auto"?prefs.sector:autoSec;const styleAtt=atts.find(a=>a.role==="style");const customTheme=styleAtt?themeFromPalette(styleAtt.pal):(st.custom||null);const effTheme=prefs.theme==="gorsel"&&customTheme?customTheme:prefs.theme==="auto"||prefs.theme==="gorsel"?suggestThemes(sector)[0]:themeById(prefs.theme);const effRef=useRef(effTheme);effRef.current=effTheme;
- const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector}));if(st.html)setPendTheme(id)};
+ const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector,kind:String(id).startsWith("pk-")?"site":p.kind}));if(st.html)setPendTheme(id);if(String(id).startsWith("pk-"))toast("Panel şablonu seçildi · tür: Web (masaüstü panel)")};
+ const startPanel=d=>{pickTheme(d.id,null);const app=PK_APPS.find(a=>a.id===d.app);setInput(app.id==="giris"?"“"+d.name+"” şablonuyla giriş, kayıt ve şifre sıfırlama ekranları olan bir hesap sayfası yap.":"“"+d.name+"” şablonuyla "+app.l+" yönetim paneli yap. Menüde "+app.nav.join(", ")+" olsun; her sayfayı gerçekçi Türkçe örnek verilerle doldur, açık/koyu tema geçişi ekle.");setTimeout(()=>{const t=document.querySelector(".gta");t&&t.focus()},120)};
  useEffect(()=>{setLocalOk(LS.set("studio",{...st,msgs:st.msgs.map(m=>({...m,anim:false}))}));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
  useEffect(()=>{if(incoming){proposedTitle.current="";const source=studioSource(incoming.html);const {openDesign,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);setSt({...project,...source});if(incoming.kind)setPrefs(p=>({...p,kind:incoming.kind}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
@@ -3503,7 +3720,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,h
   ${auth.user?html`<button type="button" class="pill pill-cr" title="Kredilerim (canlı)" onClick=${()=>dispatchEvent(new Event("gm:cr"))}><${Icon} n="gem" s=${14}/><span><${CountUp} v=${auth.user.credits??0}/></span></button>`:""} ${!workspace&&html`<button type="button" class="forme" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button>`}
  </div>`;
  const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`;
- const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} close=${()=>setGallery(false)}/>`;
+ const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} onStart=${startPanel} close=${()=>setGallery(false)}/>`;
  const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
  const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
@@ -4977,6 +5194,7 @@ function App(){
  const viewRef=useRef(view);viewRef.current=view;
  const cpStudio=a=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done}}));if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
  const cpRun=async a=>{
+  if(["tur","tema","mod","prompt","yap","sablon"].includes(a.t)&&(window.__gmStudio||{}).calisiyor){toast("Stüdyo'da süren iş bitince bu adım uygulanacak");const t0=Date.now();while((window.__gmStudio||{}).calisiyor&&Date.now()-t0<600000)await wait(800);await wait(400)}
   if(a.t==="github"){if(!a.url)throw new Error("GitHub adresi yok");setGh({url:String(a.url),auto:!!a.devral,n:Date.now()});return wait(400)}
   if(a.t==="git"){if(!CP_VIEWS[a.view])throw new Error("Bu sayfa bulunamadı");return ghostDo('.side .nav[data-v="'+a.view+'"]',()=>navGo(a.view))}
   if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp);return wait(500)}
