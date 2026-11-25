@@ -315,11 +315,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .photo-screen{box-sizing:border-box;display:flex;flex-direction:column;gap:.55em;padding:.85em;overflow:hidden;background:var(--bg);color:var(--tx);border-radius:1.65em;border:2px solid #7777;box-shadow:0 8px 18px #0003}
 .photo-screen.landscape{border-radius:.8em}.photo-screen small{font-size:.76em}.photo-screen strong{font-size:1.5em;line-height:1.05}.photo-screen>span{align-self:flex-start;border-radius:var(--r);padding:.35em .65em;background:var(--tx);color:var(--bg);font-size:.85em}
 .photo-layout{display:grid;flex:1;min-height:0;gap:3px;border-radius:var(--r);overflow:hidden}.photo-layout img{width:100%;height:100%;min-height:0;min-width:0;object-fit:cover}.layout-0 img:not(:first-child),.layout-1 img:last-child{display:none}.layout-1{grid-template-columns:1fr 1fr}.layout-2{grid-template:1fr 1fr / 3fr 2fr}.layout-2 img:first-child{grid-row:span 2}.layout-3{grid-template:2fr 1fr / 1fr 1fr}.layout-3 img:first-child{grid-column:span 2}.layout-4{grid-template-rows:repeat(3,minmax(0,1fr))}
-.dg-links{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}.dg-links a{color:inherit;text-decoration:underline}.dg-page{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:12px}
+.dg-stage .photo-screen{max-width:100%}.dg-links{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}.dg-links a{color:inherit;text-decoration:underline}.dg-page{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:12px}
 .dg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .dg-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;color:inherit;text-align:left;animation:slidein .45s cubic-bezier(.2,.8,.2,1) both;transition:transform .25s,border-color .25s,box-shadow .25s}
 .dg-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16);box-shadow:0 18px 40px -22px rgba(228,255,61,.7)}.dg-card.on{border-color:#e4ff3d;box-shadow:0 0 0 3px rgba(228,255,61,.2)}
-.dg-stage{height:236px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}.dg-stage .tm{transition:transform .5s cubic-bezier(.2,.8,.2,1)}.dg-stage.hov .tm{transform:translateY(-6px) scale(1.04) rotate(-1.5deg)}
+.dg-stage{height:236px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}.dg-stage .tm{transition:transform .5s cubic-bezier(.2,.8,.2,1)}.dg-card:hover .dg-stage .tm{transform:translateY(-6px) scale(1.04) rotate(-1.5deg)}
 .dg-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 4px}.dg-meta b{font-size:14px}.dg-tag{font-size:11.5px;color:#969690;padding:0 4px}
 .dg-badge{position:absolute;left:16px;top:16px;z-index:2;display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;box-shadow:0 4px 12px -4px #f97316}
 .dg-check{position:absolute;right:16px;top:16px;z-index:2;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#e4ff3d;color:#fff}
@@ -332,7 +332,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .sc-m:nth-child(1){transform:rotate(-8deg) translateY(10px)}.sc-m:nth-child(2){z-index:2;transform:translateY(-4px)}.sc-m:nth-child(3){transform:rotate(8deg) translateY(10px)}
 .seccard:hover .sc-m:nth-child(1){transform:rotate(-14deg) translate(-14px,6px)}.seccard:hover .sc-m:nth-child(2){transform:translateY(-12px) scale(1.05)}.seccard:hover .sc-m:nth-child(3){transform:rotate(14deg) translate(14px,6px)}
 .sc-f{display:flex;align-items:center;justify-content:space-between;color:#e4ff3d;font-size:13.5px;font-weight:500}
-@media(max-width:820px){.drawer{z-index:80}.dscene .ds-box{height:74px}.dscene>svg{display:none}.dg{padding:16px;border-radius:22px}.dscene{flex-direction:column;align-items:stretch}.dscene>svg{transform:rotate(90deg);align-self:center}.dg-b{grid-template-columns:1fr}.dg-side{position:static;flex-direction:row;overflow-x:auto}.dg-sec{flex-shrink:0}.dg-grid{grid-template-columns:1fr 1fr}.dg-stage{height:190px}}
+@media(max-width:820px){.drawer{z-index:80}.dscene .ds-box{height:74px}.dscene>svg{display:none}.dg{padding:16px;border-radius:22px}.dscene{flex-direction:column;align-items:stretch}.dscene>svg{transform:rotate(90deg);align-self:center}.dg-b{grid-template-columns:1fr}.dg-side{position:static;flex-direction:row;overflow-x:auto}.dg-sec{flex-shrink:0}.dg-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dg-card{min-width:0}.dg-stage{max-width:100%}.dg-meta{flex-wrap:wrap}.dg-stage{height:190px}}
 
 /* v3.5 — tasarım sistemi inceltmeleri (Apple HIG yaklaşımı) */
 :root{--sep:rgba(255,255,255,.08);--fill:rgba(255,255,255,.05);--fill2:rgba(255,255,255,.08);--label2:#acaca5;--label3:#767671;--r-s:10px;--r-m:14px;--r-l:20px;--r-xl:28px;--ease:cubic-bezier(.2,.8,.2,1)}
@@ -2264,7 +2264,7 @@ const THEMES=[
  {id:"neon",name:"Neon Arcade",tag:"Oyun, gece",font:"Space Grotesk",r:10,p:{bg:"#05010f",sf:"#120a2a",pr:"#00f5d4",ac:"#f72585",tx:"#e0e7ff"},style:"Neon oyun: çok koyu zemin, camgöbeği ve pembe neon parıltılar (box-shadow glow), piksel/arcade hissi, skor ve can göstergeleri belirgin."},
  {id:"cocuk",name:"Neşeli Renkler",tag:"Eğlenceli, çocuk dostu",font:"Nunito",r:26,p:{bg:"#fef9c3",sf:"#ffffff",pr:"#f97316",ac:"#8b5cf6",tx:"#1e293b"},style:"Çocuk dostu: sarı zemin, turuncu ve mor, çok yuvarlak köşeler, büyük düğmeler, emoji ve çizimler, oyunsu animasyonlar."},
 ];
-const themeById=id=>designIndex.get(id)||THEMES[0];
+const themeById=id=>lookupDesign(id)||THEMES[0];
 // Sektörler: anahtar kelimeler + önerilen temalar
 const DSECTORS=[
  {id:"guzellik",l:"Güzellik & Bakım",ic:"sparkles",g:"#ec4899,#f472b6",k:/kuaf|berber|güzellik|guzellik|salon|spa|tırnak|nail|makyaj|cilt|estetik/,th:["lux","pastel","cam"]},
@@ -2311,17 +2311,30 @@ const sectorBoards={
 };
 const compositions=["Kapak","Diptik","Mozaik","Panorama","Fotoğraf dizisi"];
 const designIndex=new Map(THEMES.map(t=>[t.id,t]));
-const designBoards=[];
-for(let n=0;n<300;n++)for(const [sectorNumber,sector] of DSECTORS.entries()){
- const variant=(n*37+sectorNumber*13)%300;
- const screen=Math.floor(variant/60),layout=Math.floor(variant/12)%5,color=variant%12;
- const [images,labels]=sectorBoards[sector.id], photos=images.split(" "), title=labels.split("|")[screen];
- const preferred=[...sector.th,...THEMES.map(t=>t.id).filter(id=>!sector.th.includes(id))];
+const boardCount=DSECTORS.length*300;
+const boardSpecs=DSECTORS.map((sector,index)=>{
+ const [images,labels]=sectorBoards[sector.id];
+ return {sector,index,photos:images.split(" "),titles:labels.split("|"),preferred:[...sector.th,...THEMES.map(t=>t.id).filter(id=>!sector.th.includes(id))]};
+});
+function makeBoard(spec,screen,layout,color){
+ const {sector,photos,titles,preferred}=spec;
  const base=designIndex.get(preferred[(color+screen+layout)%preferred.length]);
- const id=[sector.id,screen,layout,base.id].join("-");
- const design={...base,id,sector:sector.id,layout,title,photos:photos.map((_,i)=>photos[(i+screen+color)%photos.length]),
+ const title=titles[screen],id=[sector.id,screen,layout,base.id].join("-");
+ return {...base,id,sector:sector.id,layout,title,photos:photos.map((_,i)=>photos[(i+screen+color)%photos.length]),
  name:title+" · "+base.name,tag:compositions[layout],style:base.style+" "+sector.l+" için "+title+" ekranı. Fotoğraf kompozisyonu: "+compositions[layout]+"."};
- designBoards.push(design);designIndex.set(id,design);
+}
+function boardAt(spec,n){
+ const variant=(n*37+spec.index*13)%300;
+ return makeBoard(spec,Math.floor(variant/60),Math.floor(variant/12)%5,variant%12);
+}
+function lookupDesign(id){
+ if(designIndex.has(id))return designIndex.get(id);
+ const match=/^([a-z]+)-([0-4])-([0-4])-([a-z]+)$/.exec(id);
+ if(!match)return;
+ const [,sector,screen,layout,base]=match,spec=boardSpecs.find(s=>s.sector.id===sector);
+ if(!spec||!designIndex.has(base))return;
+ const color=(spec.preferred.indexOf(base)-Number(screen)-Number(layout)+12)%12;
+ return makeBoard(spec,Number(screen),Number(layout),color);
 }
 const DEFAULT_TH=["material","cam","minimal"];
 const KIND_SECTOR={game:"oyun"};
@@ -2333,14 +2346,14 @@ const suggestThemes=sec=>(sectorById(sec)?.th||DEFAULT_TH).map(themeById);
 const designPayload=t=>t&&({id:t.id,name:t.name,font:t.font,radius:t.r,palette:t.p,style:t.style});
 
 // Tema önizlemesi (telefon ya da tarayıcı çerçevesi)
-const photoExamples=new Map(THEMES.map(base=>[base.id,designBoards.find(t=>t.id.endsWith("-"+base.id))]));
+const photoExamples=new Map(THEMES.map(base=>[base.id,lookupDesign((DSECTORS.find(s=>s.th.includes(base.id))||DSECTORS[0]).id+"-0-0-"+base.id)]));
 function ThemeMock({t,kind="app",w=128}){
  t=photoExamples.get(t.id)||t;
  const st={"--bg":t.bgCss||t.p.bg,"--sf":t.sfCss||t.p.sf,"--pr":t.p.pr,"--ac":t.p.ac,"--tx":t.p.tx,"--r":Math.min(t.r,18)*(w/128)+"px",fontFamily:"'"+t.font+"',system-ui,sans-serif",fontSize:w/128*10+"px"};
  if(t.photos){
   return html`<div class=${"photo-screen "+(kind==="site"?"landscape":"")} style=${{...st,width:kind==="site"?w*1.7:w,height:kind==="site"?w*1.2:w*1.78}}>
    <small>${sectorById(t.sector).l}</small><strong>${t.title}</strong>
-   <div class=${"photo-layout layout-"+t.layout}>${t.photos.map(photo=>html`<img key=${photo} loading="lazy" alt="" src=${"brand/gallery/"+photo+".webp"}/>`)}</div>
+   <div class=${"photo-layout layout-"+t.layout}>${t.photos.slice(0,t.layout===0?1:t.layout===1?2:3).map(photo=>html`<img key=${photo} loading="lazy" alt="" src=${"brand/gallery/"+photo+".webp"}/>`)}</div>
    <span>${kind==="game"?"Başlat":kind==="site"?"Keşfet":"Görüntüle"} →</span></div>`;
  }
  const pop=t.id==="pop";const neon=t.id==="neon";const glass=t.id==="cam";
@@ -2386,19 +2399,22 @@ function GalleryCategories({selected,choose}){
  return html`<nav class="gallery-nav" aria-label="Tasarım kategorileri">
   <label class="gallery-mobile">Kategori<select value=${selected} onChange=${e=>choose(e.target.value)}><option value="hepsi">Tüm tasarımlar</option>${galleryGroups.map(([label,ids])=>html`<optgroup key=${label} label=${label}>${ids.map(id=>html`<option key=${id} value=${id}>${sectorById(id).l}</option>`)}</optgroup>`)}</select></label>
   <div class="gallery-desktop"><label>Kategoriler<input type="search" placeholder="Kategori ara" value=${query} onChange=${e=>setQuery(e.target.value)}/></label>
-  ${button("hepsi","Tüm tasarımlar",designIndex.size)}
+  ${button("hepsi","Tüm tasarımlar",boardCount+THEMES.length)}
   <div class="gallery-groups">${groups.map(([label,sectors])=>sectors.length>0&&html`<section key=${label}><h3>${label}</h3>${sectors.map(s=>button(s.id,s.l,300))}</section>`)}
   ${groups.every(([,items])=>!items.length)&&html`<p role="status">Kategori bulunamadı.</p><button onClick=${()=>setQuery("")}>Aramayı temizle</button>`}</div></div>
  </nav>`;
 }
 function DesignGallery({kind,sel,sector,onPick,close}){
- const [sec,setSec]=useState(sector||"hepsi");const [k,setK]=useState(kind||"app");const [hov,setHov]=useState(null);
+ const [sec,setSec]=useState(sector||"hepsi");const [k,setK]=useState(kind||"app");
  const [page,setPage]=useState(0);
- const list=useMemo(()=>sec==="hepsi"?[...designBoards,...THEMES]:designBoards.filter(t=>t.sector===sec),[sec]);
- const rec=useMemo(()=>{
-  const sector=sectorById(sec);
-  return sector?sector.th.map((base,i)=>list.find(t=>t.layout===i&&t.id.endsWith("-"+base))?.id):[];
- },[list,sec]);
+ const spec=boardSpecs.find(s=>s.sector.id===sec);
+ const total=spec?300:boardCount+THEMES.length;
+ const list=useMemo(()=>Array.from({length:Math.min(24,total-page*24)},(_,i)=>{
+  const n=page*24+i;
+  if(spec)return boardAt(spec,n);
+  return n<boardCount?boardAt(boardSpecs[n%boardSpecs.length],Math.floor(n/boardSpecs.length)):THEMES[n-boardCount];
+ }),[spec,total,page]);
+ const rec=spec?spec.sector.th.map((base,i)=>[spec.sector.id,0,i,base].join("-")):[];
  const panel=useRef(null);
  const resetScroll=()=>panel.current?.scrollTo({top:0});
  const chooseSector=id=>{setSec(id);setPage(0);resetScroll()};
@@ -2408,15 +2424,15 @@ function DesignGallery({kind,sel,sector,onPick,close}){
   <div class="dg-h"><div><div class="eyebrow">Tasarım stüdyosu</div><h2>Sektörüne uygun tasarımı seç</h2></div><span style=${{flex:1}}></span>
    <div class="seg">${[["app","phone","Uygulama"],["site","globe","Site"],["game","gamepad","Oyun"]].map(([x,ic,l])=>html`<button key=${x} class=${k===x?"on":""} onClick=${()=>setK(x)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <button class="ib" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button></div>
-  <div class="dg-links"><b>${list.length.toLocaleString("tr-TR")} tasarım</b><a href=${"https://www.figma.com/community/search?query="+encodeURIComponent(category+" UI")} target="_blank" rel="noopener noreferrer">Figma Community ↗</a><a href="https://www.awwwards.com/websites/sites_of_the_day/" target="_blank" rel="noopener noreferrer">Awwwards seçkisi ↗</a><a href=${"https://www.pinterest.com/search/pins/?q="+encodeURIComponent(category+" mobile UI design")} target="_blank" rel="noopener noreferrer">Pinterest panoları ↗</a></div>
+  <div class="dg-links"><b>${total.toLocaleString("tr-TR")} tasarım</b><a href=${"https://www.figma.com/community/search?query="+encodeURIComponent(category+" UI")} target="_blank" rel="noopener noreferrer">Figma Community ↗</a><a href="https://www.awwwards.com/websites/sites_of_the_day/" target="_blank" rel="noopener noreferrer">Awwwards seçkisi ↗</a><a href=${"https://www.pinterest.com/search/pins/?q="+encodeURIComponent(category+" mobile UI design")} target="_blank" rel="noopener noreferrer">Pinterest panoları ↗</a></div>
   <div class="dg-b">
    <${GalleryCategories} selected=${sec} choose=${chooseSector}/>
-   <div class="dg-grid" key=${sec+k+page}>${list.slice(page*24,(page+1)*24).map((t,i)=>html`<button key=${t.id} class=${"dg-card"+(sel===t.id?" on":"")} style=${{animationDelay:Math.min(i,8)*45+"ms"}} onMouseEnter=${()=>setHov(t.id)} onMouseLeave=${()=>setHov(null)} onClick=${()=>onPick(t.id,t.sector||null)}>
+   <div class="dg-grid" key=${sec+k+page}>${list.map((t,i)=>html`<button key=${t.id} class=${"dg-card"+(sel===t.id?" on":"")} style=${{animationDelay:Math.min(i,8)*45+"ms"}} onClick=${()=>onPick(t.id,t.sector||null)}>
      ${rec.includes(t.id)&&html`<span class="dg-badge"><${Icon} n="star" s=${11}/> ${rec.indexOf(t.id)===0?"En uygun":"Önerilen"}</span>`}
      ${sel===t.id&&html`<span class="dg-check"><${Icon} n="check" s=${13} w=${2.6}/></span>`}
-     <div class=${"dg-stage"+(hov===t.id?" hov":"")} style=${{background:"radial-gradient(circle at 50% 120%,"+t.p.pr+"55,transparent 65%),#0b1019"}}><${ThemeMock} t=${t} kind=${k} w=${k==="site"?104:112}/></div>
+     <div class="dg-stage" style=${{background:"radial-gradient(circle at 50% 120%,"+t.p.pr+"55,transparent 65%),#0b1019"}}><${ThemeMock} t=${t} kind=${k} w=${k==="site"?104:112}/></div>
      <div class="dg-meta"><b>${t.name}</b><${Swatches} t=${t}/></div><span class="dg-tag">${t.tag} · ${t.font}</span></button>`)}
-   <nav class="dg-page" aria-label="Tasarım sayfaları"><button disabled=${page===0} onClick=${()=>changePage(page-1)}>Önceki</button><span>${page+1} / ${Math.ceil(list.length/24)}</span><button disabled=${(page+1)*24>=list.length} onClick=${()=>changePage(page+1)}>Sonraki</button></nav></div>
+   <nav class="dg-page" aria-label="Tasarım sayfaları"><button disabled=${page===0} onClick=${()=>changePage(page-1)}>Önceki</button><span>${page+1} / ${Math.ceil(total/24)}</span><button disabled=${(page+1)*24>=total} onClick=${()=>changePage(page+1)}>Sonraki</button></nav></div>
   </div></div></div>`;
 }
 
@@ -3050,7 +3066,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  actRef.current=async a=>{const g=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
   if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
   if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,mode:a.deger}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
-  if(a.t==="tema"){if(!designIndex.has(a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
+  if(a.t==="tema"){if(!lookupDesign(a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
   if(a.t==="ayar"){const n={...runRef.current};if(a.sicaklik!=null&&a.sicaklik!==""&&isFinite(+a.sicaklik))n.temperature=Math.max(0,Math.min(1.5,+a.sicaklik));if(["kisa","dengeli","ayrintili"].includes(a.detay))n.detail=a.detay;if(typeof a.talimat==="string")n.instructions=a.talimat.slice(0,1500);return g('.pill[title="Çalıştırma ayarları"]',()=>{setRunSet(n);runRef.current=n;toast("Çalıştırma ayarları güncellendi")})}
   if(a.t==="prompt"){const m=String(a.metin||"").trim().slice(0,4000);if(!m)return;return g(".gta",async()=>{await typeInto(m);inputRef.current=m},{after:200})}
   if(a.t==="yap"){const m=String(a.metin||inputRef.current||"").trim();if(!m)throw new Error("İstem kutusu boş");return g(".gsend",()=>gen(m))}
@@ -4059,7 +4075,7 @@ function cpParse(text){text=String(text||"");const m=text.match(/<eylem>([\s\S]*
  const body=text.replace(/<eylem>[\s\S]*?(<\/eylem>|$)/gi,"").replace(/```(?:json)?\s*\[\s*\{"t"[\s\S]*?```/g,"").trim();
  if(m&&m[2]){try{const j=JSON.parse(m[1].trim());acts=(Array.isArray(j)?j:[j]).filter(a=>a&&typeof a==="object"&&typeof a.t==="string").slice(0,6)}catch(e){}}
  return {body,acts}}
-function cpLabel(a){const th=a.deger&&designIndex.get(a.deger);const K={app:"Uygulama",site:"Web sitesi",game:"Oyun"},M={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
+function cpLabel(a){const th=a.deger&&lookupDesign(a.deger);const K={app:"Uygulama",site:"Web sitesi",game:"Oyun"},M={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
  switch(a.t){case "git":return ["arrowRight",(CP_VIEWS[a.view]||a.view)+" sayfasını aç"];case "tur":return [KIND_ICON[a.deger]||"apps","Proje türü: "+(K[a.deger]||a.deger)];case "mod":return ["list","Mod: "+(M[a.deger]||a.deger)];
   case "tema":return ["palette","Tasarım: "+(th?th.name:a.deger)];case "ayar":return ["sliders","Çalıştırma ayarları",[a.sicaklik!=null?"yaratıcılık "+a.sicaklik:"",a.detay?"ayrıntı: "+a.detay:"",a.talimat?"talimat eklendi":""].filter(Boolean).join(" · ")];
   case "prompt":return ["edit","İstem kutusuna yaz",String(a.metin||"")];case "yap":return ["play","Geliştirmeye başla","kredi kullanır"];case "kontrol":return ["shield","Kontrol et ve düzelt","kredi kullanır"];
