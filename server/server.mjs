@@ -491,7 +491,7 @@ function adminLoginConfigured() {
   if ((CFG.gh.id && CFG.gh.secret) || (CFG.google.id && CFG.google.secret)) return true;
   return !!q("SELECT 1 FROM users WHERE email=? AND email_verified=1 AND pass IS NOT NULL").get(CFG.admin);
 }
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.5.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.6.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
