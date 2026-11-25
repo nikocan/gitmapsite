@@ -88,8 +88,19 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="3.0.0";
+const VERSION="3.1.0";
 const CHANGELOG=[
+ {v:"3.1.0",date:"2026-11-25",items:[
+  "🧠 Dil modeli seçimi: Hostinger AI Router'daki tüm modeller (Claude, GPT, Gemini, DeepSeek, Grok, Mistral…) Stüdyo'dan seçilebilir; seviye (Hızlı/Dengeli/Güçlü) ve kredi maliyeti görünür",
+  "📱🌐🎮 Proje türü: Uygulama, Web sitesi veya Oyun — her tür için ayrı üretim kuralları (oyunlarda skor, kontroller, seviyeler; sitelerde SEO ve bölümler)",
+  "🧭 Planlı mod (Codex / Claude Code tarzı): önce yapım planı yazılır, düzenleyip onaylarsınız, sonra plana göre yapılır",
+  "🔍 Kontrol et ve düzelt: yapay zekâ kodu inceler, hataları bulup düzeltir ve ne düzelttiğini listeler",
+  "💎 Gitmapp kredisi: yeni hesaplara 25 hoş geldin kredisi; Hızlı 1, Dengeli 3, Güçlü 8 kredi; kredi paketleri talebi",
+  "🔑 Kendi API anahtarını getir: Anthropic, OpenAI, Gemini, DeepSeek, OpenRouter — anahtar şifreli saklanır, Gitmapp kredisi düşmez",
+  "🧠 Dil Modelleri sayfası: aileler, güçlü yanlar, hangi işe hangi model, ücretlendirme ve abonelik kuralları",
+  "👤 Hesabım: kredi bakiyesi, kullanım geçmişi, API anahtarları ve bağlantılar (Higgsfield ve Canva yakında)",
+  "Yönetici: kullanıcıya kredi yükleme"
+ ]},
  {v:"3.0.0",date:"2026-11-25",items:[
   "✨ Gitmapp Stüdyo: fikrini Türkçe yaz, yapay zekâ çalışan uygulamayı dakikalar içinde yapsın; canlı önizleme (telefon/masaüstü), sohbetle değişiklik, geri alma, kodu görme",
   "8 hazır fikir şablonu (randevu, QR menü, bütçe, quiz oyunu, görev panosu, davetiye, stok, spor günlüğü)",
@@ -812,7 +823,7 @@ function useAuth(apiOn){
  const [user,setUser]=useState(null);
  const refresh=()=>{if(!API_ON||!TOK.get()){setUser(null);return}api("GET","/api/auth/me").then(j=>{setUser(j.user);if(!j.user)TOK.set("")}).catch(()=>{})};
  useEffect(refresh,[apiOn]);
- return {user,refresh,login:(t,u)=>{TOK.set(t);setUser(u)},logout:()=>{TOK.set("");setUser(null)}};
+ return {user,refresh,patch:p=>setUser(u=>u?{...u,...p}:u),login:(t,u)=>{TOK.set(t);setUser(u)},logout:()=>{TOK.set("");setUser(null)}};
 }
 
 function AuthBox({auth,health,toast,onDone,title,reason,initMode}){
@@ -835,14 +846,24 @@ function AuthBox({auth,health,toast,onDone,title,reason,initMode}){
 }
 const Modal=({close,children,w=440})=>html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`;
 
-const TEMPLATES=[["💇","Kuaför randevu","Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği; benim de günlük randevuları listeleyip iptal edebildiğim bir uygulama"],["🍽️","QR menü","Kafem için kategorili, fiyatlı dijital menü; ürün arama ve masa numarasıyla sipariş notu bırakma olsun"],["💰","Bütçe takibi","Aylık gelir ve giderlerimi kategorilere göre girip pasta grafikle görebileceğim kişisel bütçe uygulaması"],["🧠","Bilgi yarışması","Genel kültür soruları soran, 15 saniye süre tutan, can hakkı ve puan tablosu olan eğlenceli bir quiz oyunu"],["✅","Görev panosu","Yapılacak, Yapılıyor, Bitti sütunlu; öncelik ve son tarih etiketli kanban görev panosu"],["🎉","Düğün daveti","Düğün davetiyesi sayfası: geri sayım, tarih-yer bilgisi, harita bağlantısı ve katılım (LCV) formu"],["📦","Stok takibi","Küçük dükkanım için ürün listesi, stok adedi, kritik stok uyarısı ve günlük satış kaydı olan uygulama"],["🏋️","Antrenman günlüğü","Egzersiz, set, tekrar ve ağırlık kaydedip haftalık ilerlememi grafikle gösteren spor günlüğü"]];
+const TEMPLATES=[["💇","Kuaför randevu","Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği; benim de günlük randevuları listeleyip iptal edebildiğim bir uygulama"],["🍽️","QR menü","Kafem için kategorili, fiyatlı dijital menü; ürün arama ve masa numarasıyla sipariş notu bırakma olsun"],["💰","Bütçe takibi","Aylık gelir ve giderlerimi kategorilere göre girip pasta grafikle görebileceğim kişisel bütçe uygulaması"],["🧠","Bilgi yarışması","Genel kültür soruları soran, 15 saniye süre tutan, can hakkı ve puan tablosu olan eğlenceli bir quiz oyunu"],["✅","Görev panosu","Yapılacak, Yapılıyor, Bitti sütunlu; öncelik ve son tarih etiketli kanban görev panosu"],["🎉","Düğün daveti","Düğün davetiyesi sayfası: geri sayım, tarih-yer bilgisi, harita bağlantısı ve katılım (LCV) formu"],["📦","Stok takibi","Küçük dükkanım için ürün listesi, stok adedi, kritik stok uyarısı ve günlük satış kaydı olan uygulama"],["🏋️","Antrenman günlüğü","Egzersiz, set, tekrar ve ağırlık kaydedip haftalık ilerlememi grafikle gösteren spor günlüğü"],["🐍","Yılan oyunu","Klasik yılan oyunu: ok tuşları ve kaydırma ile kontrol, giderek hızlanan seviyeler, en yüksek skor tablosu","game"],["🧱","Blok kırma","Raket ve top ile renkli blokları kırdığın arcade oyunu; güçlendirmeler, 3 can ve seviyeler","game"],["🍕","Pizzacı sitesi","Mahalle pizzacısı için menü, kampanyalar, galeri, çalışma saatleri ve WhatsApp sipariş butonu olan tanıtım sitesi","site"],["🧑‍⚕️","Klinik sitesi","Diş kliniği için hizmetler, doktorlar, hasta yorumları, SSS ve randevu talep formu olan kurumsal web sitesi","site"]];
 const STEPS=[[0,"Fikrinizi anlıyorum"],[5,"Ekranları tasarlıyorum"],[14,"Kodu yazıyorum"],[35,"Son dokunuşları yapıyorum"],[70,"Neredeyse bitti, biraz sabır"]];
 
-function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health}){
+function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,models,go}){
  const blank={html:"",title:"",emoji:"✨",color:"#4f8cff",msgs:[],appId:null};
  const [st,setSt]=useState(()=>LS.get("studio",null)||blank);
  const [versions,setVersions]=useState([]);const [input,setInput]=useState("");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [device,setDevice]=useState("mobile");const [code,setCode]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatEnd=useRef(null);
+ const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli"},LS.get("studioPrefs",{})||{}));
+ useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);
+ const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);
+ const md=(models&&models.data)||{platform:[],byok:[]};
+ const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
+ const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
+ useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
+ const aiBody=()=>({kind:prefs.kind,provider:prefs.provider,model:curModel||undefined});
+ const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
+ const failMsg=(e,msgs)=>{setSt(s=>({...s,msgs:[...msgs,{role:"assistant",content:"⚠️ "+e.message,err:true}]}));if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
  useEffect(()=>{LS.set("studio",st)},[st]);
  useEffect(()=>{if(incoming){setSt(incoming);setVersions([]);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>setTick(x=>x+1),500);return()=>clearInterval(i)},[busy]);
@@ -850,12 +871,29 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health})
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;const stepTxt=STEPS.filter(s=>secs>=s[0]).pop()[1];
  async function gen(text){text=(text||input).trim();if(!text||busy)return;
   if(!API_ON){toast("Stüdyo sunucusu şu an kurulum aşamasında, birazdan tekrar deneyin.");return}
-  setBusy(true);setT0(Date.now());setInput("");const msgs=[...st.msgs,{role:"user",content:text}];setSt(s=>({...s,msgs}));track("studio_prompt",{query:text});
-  try{const j=await api("POST","/api/ai/generate",{prompt:text,html:st.html||undefined});const prev=st.html;
+  setInput("");const msgs=[...st.msgs,{role:"user",content:text}];setSt(s=>({...s,msgs}));track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode}});
+  if(prefs.mode==="planli"&&!st.html){setBusy(true);setT0(Date.now());
+   try{const j=await api("POST","/api/ai/plan",{prompt:text,...aiBody()});spent(j);setPlan({prompt:text,text:j.plan});setSt(s=>({...s,msgs:[...msgs,{role:"assistant",content:"🧭 Yapım planı hazır. Aşağıda inceleyip düzenleyebilir, sonra onaylayabilirsiniz."+(j.spent?" ("+j.spent+" 💎)":"")}]}))}
+   catch(e){failMsg(e,msgs)}setBusy(false);return}
+  await build(text,null,msgs)}
+ async function build(text,planText,msgs){msgs=msgs||st.msgs;setBusy(true);setT0(Date.now());
+  try{const j=await api("POST","/api/ai/generate",{prompt:text,html:st.html||undefined,plan:planText||undefined,...aiBody()});spent(j);const prev=st.html;
    if(prev)setVersions(v=>[...v.slice(-9),prev]);
-   setSt(s=>({...s,html:j.html,title:s.title||j.title||"Yeni uygulama",msgs:[...msgs,{role:"assistant",content:"✅ "+j.summary}]}))}
-  catch(e){setSt(s=>({...s,msgs:[...msgs,{role:"assistant",content:"⚠️ "+e.message,err:true}]}));if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturarak her gün 40 kez uygulama üretebilirsiniz.")}
+   setSt(s=>({...s,html:j.html,title:s.title||j.title||"Yeni uygulama",msgs:[...msgs,{role:"assistant",content:"✅ "+j.summary+"\n— "+shortModel(j.model)+(j.spent?" · "+j.spent+" 💎":j.provider&&j.provider!=="gitmapp"?" · 🔑 kendi anahtarınız":"")}]}))}
+  catch(e){failMsg(e,msgs)}
   setBusy(false)}
+ async function approvePlan(){const p=plan;setPlan(null);const msgs=[...st.msgs,{role:"user",content:"✅ Planı onayladım, uygulamayı yap."}];setSt(s=>({...s,msgs}));await build(p.prompt,p.text,msgs)}
+ async function review(){if(!st.html||busy)return;const msgs=[...st.msgs,{role:"user",content:"🔍 Kontrol et ve düzelt"}];setSt(s=>({...s,msgs}));setBusy(true);setT0(Date.now());
+  try{const j=await api("POST","/api/ai/review",{html:st.html,...aiBody()});spent(j);setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:j.html,msgs:[...msgs,{role:"assistant",content:"🔍 İnceleme tamam:\n"+j.summary+(j.spent?"\n— "+j.spent+" 💎":"")}]}))}
+  catch(e){failMsg(e,msgs)}setBusy(false)}
+ const controls=()=>html`<div style=${{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
+  <div style=${{display:"flex",background:"#0d1320",borderRadius:8,padding:2,border:"1px solid var(--line)"}}>${KINDS.map(([k,ic,l])=>html`<button type="button" class="btn g s" style=${{background:prefs.kind===k?"#1d2a45":"transparent",border:0}} onClick=${()=>setPrefs(p=>({...p,kind:k}))}>${ic} ${l}</button>`)}</div>
+  <button type="button" class="btn g s" onClick=${()=>setPicker(true)} title="Dil modeli seç">🧠 ${curModel?shortModel(curModel):"Model seç"}${curInfo?html` <span style=${{color:"var(--mut)"}}>· ${TIER_INFO[curInfo.tier].l.split(" ")[0]} ${curInfo.credits}💎</span>`:prefs.provider!=="gitmapp"?html` <span style=${{color:"var(--mut)"}}>· 🔑</span>`:""}</button>
+  <div style=${{display:"flex",background:"#0d1320",borderRadius:8,padding:2,border:"1px solid var(--line)"}}>${[["hizli","⚡ Hızlı"],["planli","🧭 Planlı"]].map(([k,l])=>html`<button type="button" class="btn g s" title=${k==="planli"?"Önce plan yazılır, onaylarsınız, sonra yapılır":"Doğrudan yap"} style=${{background:prefs.mode===k?"#1d2a45":"transparent",border:0}} onClick=${()=>setPrefs(p=>({...p,mode:k}))}>${l}</button>`)}</div>
+  ${auth.user?html`<span class="tag" style=${{cursor:"pointer"}} onClick=${()=>go&&go("hesabim")}>💎 ${auth.user.credits??0} kredi</span>`:""}</div>`;
+ const planCard=()=>plan&&html`<div class="box" style=${{margin:0,borderColor:"var(--acc)"}}><b>🧭 Yapım planı</b><textarea class="in" style=${{width:"100%",minHeight:170,marginTop:6,fontSize:13,lineHeight:1.5}} value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>
+  <div style=${{display:"flex",gap:6,marginTop:6,flexWrap:"wrap"}}><button class="btn s" disabled=${busy} onClick=${approvePlan}>✅ Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>{const p=plan.prompt;setPlan(null);gen(p)}}>↺ Yeniden planla</button><button class="btn g s" onClick=${()=>setPlan(null)}>Vazgeç</button></div></div>`;
+ const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  async function save(){
   if(!auth.user){openAuth("Uygulamanızı kaydetmek ve yayınlamak için ücretsiz hesap oluşturun. Çalışmanız kaybolmaz.");return null}
   setSaving(true);const body={title:st.title||"Adsız uygulama",html:st.html,emoji:st.emoji,color:st.color,prompt_log:st.msgs.slice(-50)};
@@ -867,21 +905,22 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health})
  const send=e=>{e.preventDefault();gen()};
  const key=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();gen()}};
 
- if(!st.html&&!busy)return html`<div style=${{maxWidth:860,margin:"0 auto",paddingTop:10}}>
+ if(!st.html&&!busy&&!plan)return html`<div style=${{maxWidth:900,margin:"0 auto",paddingTop:10}}>${pickerEl()}
   <div style=${{textAlign:"center",marginBottom:22}}><div style=${{fontSize:13,letterSpacing:".14em",color:"var(--acc)",fontWeight:700}}>GITMAPP STÜDYO</div>
    <h1 style=${{fontSize:34,margin:"10px 0",lineHeight:1.2}}>Fikrini yaz, uygulaman dakikalar içinde hazır</h1>
-   <p class="sub" style=${{fontSize:15.5,margin:0}}>Kod bilmene gerek yok. Ne istediğini anlat, yapay zekâ uygulamanı yapsın; beğenince tek tıkla yayınla.</p></div>
+   <p class="sub" style=${{fontSize:15.5,margin:0}}>Uygulama, web sitesi ya da oyun — kod bilmene gerek yok. Ne istediğini anlat, istediğin yapay zekâ modeliyle yapılsın; beğenince tek tıkla yayınla.</p></div>
+  <div style=${{display:"flex",justifyContent:"center",marginBottom:10}}>${controls()}</div>
   <form onSubmit=${send} class="box" style=${{padding:14,borderColor:"var(--acc)"}}>
-   <textarea class="in" style=${{width:"100%",minHeight:110,border:0,background:"transparent",fontSize:16,resize:"vertical"}} placeholder="Örn: Pilates stüdyom için ders programı gösteren, üyelerin ders rezervasyonu yapabildiği bir uygulama…" value=${input} onInput=${e=>setInput(e.target.value)} onKeyDown=${key}></textarea>
-   <div style=${{display:"flex",alignItems:"center",gap:8}}><span style=${{color:"var(--mut)",fontSize:12}}>${auth.user?"Günde 40 üretim hakkınız var":"Hesapsız 3 deneme hakkı · ücretsiz hesapla günde 40"}</span><span style=${{flex:1}}></span><button class="btn" style=${{padding:"11px 22px",fontSize:15}} disabled=${!input.trim()}>✨ Uygulamayı oluştur</button></div></form>
+   <textarea class="in" style=${{width:"100%",minHeight:110,border:0,background:"transparent",fontSize:16,resize:"vertical"}} placeholder=${prefs.kind==="game"?"Örn: Uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan bir oyun…":prefs.kind==="site"?"Örn: Mimarlık ofisim için projelerimizi, ekibimizi ve iletişim formunu gösteren şık bir site…":"Örn: Pilates stüdyom için ders programı gösteren, üyelerin ders rezervasyonu yapabildiği bir uygulama…"} value=${input} onInput=${e=>setInput(e.target.value)} onKeyDown=${key}></textarea>
+   <div style=${{display:"flex",alignItems:"center",gap:8}}><span style=${{color:"var(--mut)",fontSize:12}}>${auth.user?("💎 "+(auth.user.credits??0)+" krediniz var"):"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}${prefs.mode==="planli"?" · önce plan yazılır":""}</span><span style=${{flex:1}}></span><button class="btn" style=${{padding:"11px 22px",fontSize:15}} disabled=${!input.trim()}>${prefs.mode==="planli"?"🧭 Planı çıkar":"✨ "+(prefs.kind==="game"?"Oyunu":prefs.kind==="site"?"Siteyi":"Uygulamayı")+" oluştur"}</button></div></form>
   <h2 style=${{fontSize:15,color:"var(--mut)",fontWeight:500}}>Ya da bir fikirle başla:</h2>
-  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))",gap:10}}>${TEMPLATES.map(([ic,t,p])=>html`<div class="card" style=${{padding:14,gap:6}} onClick=${()=>{setSt(s=>({...s,emoji:ic}));gen(p)}}><div style=${{fontSize:26}}>${ic}</div><b>${t}</b><span style=${{color:"var(--mut)",fontSize:12,lineHeight:1.45}}>${p.slice(0,70)}…</span></div>`)}</div>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))",gap:10}}>${TEMPLATES.map(([ic,t,p,k])=>html`<div class="card" style=${{padding:14,gap:6}} onClick=${()=>{setSt(s=>({...s,emoji:ic}));if(k||prefs.kind!=="app")setPrefs(x=>({...x,kind:k||"app"}));setInput(p)}}><div style=${{fontSize:26}}>${ic}</div><b>${t}</b><span style=${{color:"var(--mut)",fontSize:12,lineHeight:1.45}}>${p.slice(0,70)}…</span></div>`)}</div>
   ${!API_ON&&html`<div class="box" style=${{marginTop:16,borderColor:"var(--warn)",color:"var(--warn)",fontSize:13}}>⚙️ Stüdyo sunucusu kurulum aşamasında. Kısa süre içinde açılacak.</div>`}
   <div class="stat" style=${{marginTop:20}}>${[["1","Anlat","Fikrini Türkçe yaz"],["2","Gör","Uygulaman anında çalışır"],["3","Düzelt","Sohbetle değişiklik iste"],["4","Yayınla","Kendi adresinle canlıya al"]].map(([n,t,d])=>html`<div class="st"><b style=${{color:"var(--acc)",fontSize:17}}>${n}. ${t}</b><span>${d}</span></div>`)}</div>
  </div>`;
 
  const frameW=device==="mobile"?390:"100%";
- return html`<div style=${{display:"flex",flexDirection:"column",height:"calc(100vh - 48px)",minHeight:560}}>
+ return html`<div style=${{display:"flex",flexDirection:"column",height:"calc(100vh - 48px)",minHeight:560}}>${pickerEl()}<div style=${{marginBottom:8}}>${controls()}</div>
   <div class="bar" style=${{alignItems:"center",marginBottom:10,padding:"8px 10px"}}>
    <select class="in" style=${{width:64,padding:"6px",fontSize:20}} value=${st.emoji} onChange=${e=>setSt(s=>({...s,emoji:e.target.value}))}>${EMOJIS.map(x=>html`<option>${x}</option>`)}</select>
    <input class="in" style=${{flex:"1 1 160px",fontWeight:700}} value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
@@ -896,16 +935,17 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health})
    <div class="box" style=${{margin:0,display:"flex",flexDirection:"column",padding:0,minHeight:0}}>
     <div style=${{flex:1,overflow:"auto",padding:12,display:"flex",flexDirection:"column",gap:8}}>
      ${st.msgs.map(m=>html`<div style=${{alignSelf:m.role==="user"?"flex-end":"flex-start",maxWidth:"90%",background:m.role==="user"?"var(--acc)":m.err?"#3b1414":"#1b2540",color:"#fff",padding:"8px 11px",borderRadius:12,fontSize:13.5,lineHeight:1.5,whiteSpace:"pre-wrap"}}>${m.content}</div>`)}
+     ${planCard()}
      ${busy&&html`<div style=${{alignSelf:"flex-start",background:"#1b2540",padding:"8px 11px",borderRadius:12,fontSize:13.5}}>⏳ ${stepTxt}… <span style=${{color:"var(--mut)"}}>${secs} sn</span></div>`}
      <div ref=${chatEnd}></div></div>
     <form onSubmit=${send} style=${{borderTop:"1px solid var(--line)",padding:10,display:"flex",gap:6}}>
      <textarea class="in" rows="2" style=${{flex:1,resize:"none"}} placeholder="Değişiklik iste: 'butonları yeşil yap', 'iletişim formu ekle'…" value=${input} onInput=${e=>setInput(e.target.value)} onKeyDown=${key} disabled=${busy}></textarea>
      <button class="btn" disabled=${busy||!input.trim()}>➤</button></form>
-    <div style=${{padding:"0 10px 10px",display:"flex",gap:6,flexWrap:"wrap"}}>${["Daha modern yap","Koyu tema ekle","Ana sayfaya istatistik ekle","Formlara doğrulama ekle"].map(t=>html`<span class="chip" style=${{fontSize:11}} onClick=${()=>!busy&&gen(t)}>${t}</span>`)}</div>
+    <div style=${{padding:"0 10px 10px",display:"flex",gap:6,flexWrap:"wrap"}}>${st.html&&html`<span class="chip on" style=${{fontSize:11}} onClick=${review}>🔍 Kontrol et ve düzelt</span>`}${(prefs.kind==="game"?["Daha zor yap","Ses efekti ekle","Güçlendirme ekle","Mobil kontrolleri büyüt"]:prefs.kind==="site"?["Daha modern yap","Yorumlar bölümü ekle","SSS ekle","İletişim formu ekle"]:["Daha modern yap","Koyu tema ekle","Ana sayfaya istatistik ekle","Formlara doğrulama ekle"]).map(t=>html`<span class="chip" style=${{fontSize:11}} onClick=${()=>!busy&&gen(t)}>${t}</span>`)}</div>
    </div>
    <div class="box" style=${{margin:0,padding:12,display:"flex",justifyContent:"center",alignItems:"stretch",background:"#0a0e16",position:"relative",minHeight:0,overflow:"auto"}}>
     ${code?html`<div style=${{width:"100%",display:"flex",flexDirection:"column"}}><div style=${{display:"flex",gap:8,marginBottom:6}}><span style=${{color:"var(--mut)",fontSize:12}}>${(st.html.length/1024).toFixed(1)} KB · tek dosya HTML</span><span style=${{flex:1}}></span><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(st.html);toast("Kod kopyalandı")}catch(e){toast("Kopyalanamadı")}}}>Kopyala</button></div><pre class="cmd" style=${{flex:1,overflow:"auto",margin:0}}>${st.html}</pre></div>`
-    :html`<iframe title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${st.html} style=${{width:frameW,maxWidth:"100%",height:"100%",minHeight:500,border:device==="mobile"?"10px solid #1d2740":"1px solid var(--line)",borderRadius:device==="mobile"?34:10,background:"#fff"}}></iframe>`}
+    :!st.html?html`<div class="empty" style=${{alignSelf:"center",border:0}}>🧭 Planı onaylayınca önizleme burada görünecek.</div>`:html`<iframe title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" srcdoc=${st.html} style=${{width:frameW,maxWidth:"100%",height:"100%",minHeight:500,border:device==="mobile"?"10px solid #1d2740":"1px solid var(--line)",borderRadius:device==="mobile"?34:10,background:"#fff"}}></iframe>`}
     ${busy&&html`<div style=${{position:"absolute",inset:0,background:"rgba(5,8,14,.65)",display:"grid",placeItems:"center",borderRadius:12}}><div style=${{textAlign:"center"}}><div class="spin"></div><b style=${{display:"block",marginTop:12}}>${stepTxt}…</b><span style=${{color:"var(--mut)"}}>${secs} sn</span></div></div>`}
    </div></div></div>`;
 }
@@ -1028,9 +1068,114 @@ function Radar({toast}){
   ${d===null?html`<div class="empty">Yükleniyor…</div>`:html`<div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${T("💡 Stüdyo'da istenen fikirler",g("fikir"))}${T("🔎 En çok aranan kelimeler",g("arama"))}${T("🗂️ En çok bakılan kategoriler",g("kategori"),catName)}${T("📱 En çok ilgi gören uygulamalar",g("uygulama"))}</div>`}</div>`;
 }
 
+
+/* ================= v3.1 — DİL MODELLERİ · KREDİ · HESABIM ================= */
+const TIER_INFO={hizli:{l:"⚡ Hızlı",c:"#22c55e",d:"Basit uygulamalar, hızlı denemeler, küçük değişiklikler"},dengeli:{l:"⚖️ Dengeli",c:"#4f8cff",d:"Çoğu uygulama, site ve oyun için en iyi denge"},guclu:{l:"🚀 Güçlü",c:"#a855f7",d:"Karmaşık mantık, büyük oyunlar, zor hatalar"}};
+const KINDS=[["app","📱","Uygulama"],["site","🌐","Web sitesi"],["game","🎮","Oyun"]];
+const FAMILY_INFO={
+ claude:{n:"Claude",by:"Anthropic",ic:"🟠",good:["Kod yazmada ve uzun, tutarlı dosyalar üretmede çok güçlü","Talimatlara sadık kalır, var olanı bozmadan düzenler","Türkçe metin ve arayüz kalitesi yüksek"],best:"İş uygulamaları, çok ekranlı uygulamalar, düzenleme turları",note:"Opus en güçlü, Sonnet dengeli, Haiku en hızlı ve ucuz sürüm."},
+ gpt:{n:"GPT",by:"OpenAI",ic:"🟢",good:["Geniş genel bilgi ve yaratıcı fikirler","Hızlı ve ucuz 'mini' sürümleri var","Oyun mekaniği ve etkileşim fikirlerinde başarılı"],best:"Hızlı prototip, oyunlar, yaratıcı içerikli siteler",note:"Pro sürümleri zor işler için, mini/nano sürümleri hızlı denemeler için."},
+ gemini:{n:"Gemini",by:"Google",ic:"🔵",good:["Çok uzun bağlamı (büyük dosyaları) işleyebilir","Flash sürümleri çok hızlı ve ekonomik","Görsel ve çok dilli içerikte güçlü"],best:"Büyük dosya düzenleme, hızlı denemeler, içerik siteleri",note:"Google AI Studio'nun kullandığı model ailesi."},
+ deepseek:{n:"DeepSeek",by:"DeepSeek",ic:"🐋",good:["Fiyatına göre çok yüksek kod başarısı","Açık ağırlıklı modeller","Akıl yürütme (reasoner) seçeneği"],best:"Bütçe dostu üretim, çok sayıda deneme",note:"En ekonomik seçeneklerden biri; yoğun saatlerde fiyat değişebilir."},
+ grok:{n:"Grok",by:"xAI",ic:"⚫",good:["Güncel ve esprili bir dil","Hızlı sürümleri var"],best:"Sosyal içerikli siteler, eğlence uygulamaları",note:""},
+ mistral:{n:"Mistral",by:"Mistral AI (Avrupa)",ic:"🟧",good:["Avrupa merkezli sağlayıcı","Codestral kod için özel sürüm"],best:"Avrupa'da veri işleme tercih edenler",note:""},
+ kimi:{n:"Kimi",by:"Moonshot AI",ic:"🌙",good:["Uzun bağlam","Ajan/araç kullanımında güçlü"],best:"Uzun içerik ve çok adımlı işler",note:""},
+ qwen:{n:"Qwen",by:"Alibaba",ic:"🟣",good:["Açık modeller","Kodlama sürümleri"],best:"Ekonomik üretim",note:""},
+ llama:{n:"Llama",by:"Meta",ic:"🦙",good:["Açık modeller"],best:"Basit işler",note:""},
+ diger:{n:"Diğer",by:"Çeşitli",ic:"✨",good:["Hostinger AI Router üzerinden sunulan diğer modeller"],best:"Deneme",note:""}};
+const fam=id=>FAMILY_INFO[id]||FAMILY_INFO.diger;
+const shortModel=id=>String(id||"").replace(/^[a-z-]+\//,"");
+const CREDIT_PACKS=[[100,149],[300,399],[1000,1190]];
+
+function useModels(apiOn,userId){
+ const [m,setM]=useState(null);
+ const load=()=>{if(!API_ON)return;api("GET","/api/ai/models").then(setM).catch(()=>setM({platform:[],byok:[],tiers:{}}))};
+ useEffect(load,[apiOn,userId]);
+ return {data:m,reload:load};
+}
+const TierBadge=({t})=>html`<span class="tag" style=${{background:TIER_INFO[t].c+"22",borderColor:TIER_INFO[t].c+"66",color:"#fff"}}>${TIER_INFO[t].l}</span>`;
+
+function ModelPicker({models,sel,setSel,close,auth,toast,go}){
+ const d=models.data||{platform:[],byok:[]};const [tab,setTab]=useState(sel.provider==="gitmapp"?"gitmapp":sel.provider);const [pm,setPm]=useState({});const [loading,setLoading]=useState(false);
+ const conn=d.byok.filter(b=>b.connected);
+ useEffect(()=>{if(tab!=="gitmapp"&&!pm[tab]){setLoading(true);api("GET","/api/keys/"+tab+"/models").then(j=>setPm(p=>({...p,[tab]:j.models}))).catch(e=>toast(e.message)).finally(()=>setLoading(false))}},[tab]);
+ const list=tab==="gitmapp"?d.platform:(pm[tab]||[]);
+ const groups={};list.forEach(m=>{(groups[m.family]=groups[m.family]||[]).push(m)});
+ const pick=m=>{setSel({provider:tab,model:m.id});close()};
+ return html`<${Modal} close=${close} w=${760}><h2 style=${{marginTop:0}}>🧠 Dil modeli seç</h2><p class="sub" style=${{margin:"0 0 12px"}}>Gitmapp kredisiyle hazır modelleri kullanın ya da kendi API anahtarınızla çalışın (kendi anahtarınızda Gitmapp kredisi düşmez).</p>
+  <div class="chips"><span class=${"chip"+(tab==="gitmapp"?" on":"")} onClick=${()=>setTab("gitmapp")}>💎 Gitmapp kredisi</span>${conn.map(b=>html`<span class=${"chip"+(tab===b.provider?" on":"")} onClick=${()=>setTab(b.provider)}>🔑 ${b.label}</span>`)}<span class="chip" onClick=${()=>{close();go("hesabim")}}>＋ Kendi anahtarımı bağla</span></div>
+  ${tab==="gitmapp"&&html`<div style=${{display:"flex",gap:8,flexWrap:"wrap",marginBottom:10}}>${Object.entries(TIER_INFO).map(([k,t])=>html`<div class="box" style=${{margin:0,padding:"8px 10px",flex:"1 1 180px"}}><b>${t.l}</b> · ${(d.tiers||{})[k]||"?"} kredi<div style=${{color:"var(--mut)",fontSize:12}}>${t.d}</div></div>`)}</div>`}
+  ${loading?html`<div class="empty">Modeller yükleniyor…</div>`:!list.length?html`<div class="empty">${tab==="gitmapp"?(d.error||"Model listesi alınamadı."):"Bu anahtarla model bulunamadı."}</div>`:
+  Object.entries(groups).map(([f,ms])=>html`<div style=${{marginBottom:12}}><b>${fam(f).ic} ${fam(f).n}</b> <span style=${{color:"var(--mut)",fontSize:12}}>· ${fam(f).by}</span>
+   <div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))",gap:8,marginTop:6}}>${ms.map(m=>{const on=sel.provider===tab&&sel.model===m.id;return html`<div class="card" style=${{padding:"10px 12px",gap:6,borderColor:on?"var(--acc)":"var(--line)",background:on?"#17244a":"var(--card)"}} onClick=${()=>pick(m)}><b style=${{fontSize:13,wordBreak:"break-all"}}>${shortModel(m.id)}${d.default===m.id&&tab==="gitmapp"?" ⭐":""}</b><div style=${{display:"flex",gap:6,alignItems:"center"}}><${TierBadge} t=${m.tier}/>${tab==="gitmapp"?html`<span style=${{fontSize:12,color:"var(--mut)"}}>💎 ${m.credits} kredi</span>`:html`<span style=${{fontSize:12,color:"var(--mut)"}}>kendi anahtarınız</span>`}</div></div>`})}</div></div>`)}
+  <p style=${{color:"var(--mut)",fontSize:12}}>⭐ = önerilen varsayılan. Ayrıntılı karşılaştırma için <a href="#modeller" onClick=${close}>Modeller</a> sayfasına bakın.</p></${Modal}>`;
+}
+
+function ModelsPage({models,go}){
+ const d=models.data||{platform:[],byok:[],tiers:{}};const fams={};d.platform.forEach(m=>{(fams[m.family]=fams[m.family]||[]).push(m)});
+ const order=Object.keys(FAMILY_INFO).filter(f=>fams[f]).concat(["claude","gpt","gemini","deepseek"].filter(f=>!fams[f]));
+ return html`<div><h1>🧠 Dil Modelleri</h1><p class="sub">Uygulamanızı, sitenizi veya oyununuzu hangi yapay zekâyla yapacağınızı seçin. Her modelin güçlü olduğu alan farklıdır; emin değilseniz önerilen (⭐) modelle başlayın.</p>
+  <h2>Nasıl ücretlendirilir?</h2>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))"}}>
+   <div class="box" style=${{margin:0,lineHeight:1.6}}><b>💎 Gitmapp kredisi</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}>Hiçbir hesap açmadan tüm hazır modelleri kullanın. Her üretimde modelin seviyesine göre kredi düşer:</p>${Object.entries(TIER_INFO).map(([k,t])=>html`<div style=${{fontSize:13}}>${t.l}: <b>${(d.tiers||{})[k]||"?"} kredi</b> / üretim</div>`)}<div style=${{fontSize:12.5,color:"var(--mut)",marginTop:6}}>Planlama adımı yaklaşık üçte bir kredi tutar. Yeni hesaplara hoş geldin kredisi verilir.</div></div>
+   <div class="box" style=${{margin:0,lineHeight:1.6}}><b>🔑 Kendi API anahtarın</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}>Anthropic, OpenAI, Google Gemini, DeepSeek veya OpenRouter anahtarınızı bağlayın; ücreti doğrudan sağlayıcıya ödersiniz, <b>Gitmapp kredisi düşmez</b>. Anahtarınız şifreli saklanır, size bile geri gösterilmez.</p><button class="btn s" onClick=${()=>go("hesabim")}>Anahtarımı bağla</button></div>
+   <div class="box" style=${{margin:0,lineHeight:1.6}}><b>📝 Abonelikler hakkında</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}><b>Claude Pro/Max</b> aboneliği Anthropic kuralları gereği başka uygulamalarda kullanılamaz; Claude için API anahtarı gerekir. <b>ChatGPT Plus/Pro</b> için OpenAI'ın "Sign in with ChatGPT" programı var; Gitmapp'in katılımı için başvuru gerekiyor, açıldığında burada duyuracağız.</p></div></div>
+  <h2>Model aileleri</h2>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(330px,1fr))"}}>${order.map(f=>{const F=fam(f);const ms=fams[f]||[];return html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}>
+   <div style=${{display:"flex",alignItems:"center",gap:10}}><span style=${{fontSize:30}}>${F.ic}</span><div><b style=${{fontSize:17}}>${F.n}</b><div style=${{color:"var(--mut)",fontSize:12}}>${F.by}</div></div><span style=${{flex:1}}></span>${ms.length?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Gitmapp'te hazır</span>`:html`<span class="tag">Kendi anahtarınla</span>`}</div>
+   <ul style=${{margin:0,paddingLeft:18,lineHeight:1.6,fontSize:13.5}}>${F.good.map(g=>html`<li>${g}</li>`)}</ul>
+   <div style=${{fontSize:13}}><b>En iyi olduğu işler:</b> ${F.best}</div>${F.note&&html`<div style=${{fontSize:12.5,color:"var(--mut)"}}>${F.note}</div>`}
+   ${ms.length?html`<div style=${{display:"flex",flexWrap:"wrap",gap:6}}>${ms.map(m=>html`<span class="tag" title=${m.id}>${shortModel(m.id)} · ${TIER_INFO[m.tier].l.split(" ")[0]} ${m.credits}💎</span>`)}</div>`:""}</div>`})}</div>
+  <h2>Hangi işe hangisi?</h2>
+  <table><thead><tr><th>Ne yapıyorsunuz?</th><th>Önerilen seviye</th><th>Neden</th></tr></thead><tbody>
+   <tr><td>Kişisel site, davetiye, basit form</td><td>⚡ Hızlı</td><td>Kısa sürede biter, en az kredi</td></tr>
+   <tr><td>Randevu, stok, CRM gibi iş uygulaması</td><td>⚖️ Dengeli</td><td>Çok ekran ve veri mantığında güvenilir</td></tr>
+   <tr><td>Arcade/puzzle oyunu</td><td>⚖️ Dengeli</td><td>Oyun döngüsü ve kontroller için yeterli</td></tr>
+   <tr><td>Fizik/yapay rakip içeren oyun, karmaşık hesaplama</td><td>🚀 Güçlü</td><td>Zor mantıkta daha az hata</td></tr>
+   <tr><td>Hata bulma, "çalışmıyor" düzeltmeleri</td><td>🚀 Güçlü + 🔍 Kontrol et</td><td>İnceleme adımı sorunları bulup düzeltir</td></tr></tbody></table>
+  <div class="box" style=${{marginTop:14,lineHeight:1.6,fontSize:13}}><b>🧭 Planlı mod (Codex / Claude Code tarzı çalışma)</b><br/>Stüdyo'da "Planlı" modu seçtiğinizde yapay zekâ önce bir <b>yapım planı</b> yazar; siz planı düzenleyip onaylarsınız, sonra uygulama bu plana göre yapılır. İsterseniz ardından <b>"Kontrol et ve düzelt"</b> adımıyla kod incelenip hatalar giderilir. Büyük işlerde sonucu çok daha öngörülebilir yapar.</div>
+ </div>`;
+}
+
+function Account({auth,health,toast,models,go}){
+ const [u,setU]=useState(null);const [keys,setKeys]=useState({});const [busy,setBusy]=useState("");
+ const load=()=>api("GET","/api/me/usage").then(j=>{setU(j);auth.patch({credits:j.credits})}).catch(e=>toast(e.message));
+ useEffect(()=>{if(auth.user)load()},[auth.user&&auth.user.id]);
+ if(!auth.user)return html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} reason="Hesabınızı, kredinizi ve API anahtarlarınızı görmek için giriş yapın."/></div>`;
+ const d=models.data||{byok:[]};
+ async function saveKey(p){setBusy(p);try{const j=await api("PUT","/api/keys/"+p,{key:(keys[p]||"").trim()});toast("Anahtar bağlandı ✓ ("+j.models+" model)");setKeys(k=>({...k,[p]:""}));models.reload()}catch(e){toast(e.message)}setBusy("")}
+ async function delKey(p){setBusy(p);try{await api("DELETE","/api/keys/"+p);toast("Anahtar kaldırıldı");models.reload()}catch(e){toast(e.message)}setBusy("")}
+ async function buy(c,p){try{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:auth.user.name||auth.user.email,email:auth.user.email,brand:"Kredi paketi",tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:c+" kredi satın alma talebi ("+p+" ₺)",type:"kredi",total:p,monthly:0});toast("Talebiniz alındı ("+id+"). Ödeme bağlantısı size iletilecek.")}catch(e){toast(e.message)}}
+ const KL={build:"Üretim",plan:"Plan",review:"Kontrol"};
+ return html`<div><h1>👤 Hesabım</h1><p class="sub">${auth.user.email}</p>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>
+   <div class="box" style=${{margin:0}}><div style=${{color:"var(--mut)",fontSize:13}}>Gitmapp krediniz</div><div style=${{fontSize:40,fontWeight:800}}>💎 ${u?u.credits:auth.user.credits}</div>
+    <div style=${{display:"flex",gap:8,flexWrap:"wrap",marginTop:8}}>${CREDIT_PACKS.map(([c,p])=>html`<button class="btn g s" onClick=${()=>buy(c,p)}>${c} kredi · ${p} ₺</button>`)}</div>
+    <p style=${{color:"var(--mut)",fontSize:12,marginTop:8}}>Online ödeme yakında; şimdilik talep oluşturulur ve ödeme bağlantısı size iletilir.</p></div>
+   <div class="box" style=${{margin:0}}><b>🔗 Bağlantılar</b><table style=${{marginTop:6}}><tbody>
+    <tr><td>🐙 GitHub</td><td>${auth.user.github?html`<span style=${{color:"var(--ok)"}}>@${auth.user.github}</span>`:health.github?"Bağlı değil (Yayın merkezinden bağlanır)":"Yakında"}</td></tr>
+    <tr><td>🎬 Higgsfield (video/görsel)</td><td><span style=${{color:"var(--mut)"}}>Yakında — 50+ video ve görsel modeli ile uygulamanıza görsel üretimi</span></td></tr>
+    <tr><td>🎨 Canva</td><td><span style=${{color:"var(--mut)"}}>Yakında — tasarımları Canva'da düzenleme (Canva onayı gerekiyor)</span></td></tr>
+    <tr><td>🟢 ChatGPT aboneliği</td><td><span style=${{color:"var(--mut)"}}>Başvuru aşamasında</span></td></tr></tbody></table></div></div>
+  <h2>🔑 Kendi API anahtarlarım</h2><p class="sub" style=${{marginTop:-4}}>Bağladığınız anahtarla yapılan üretimlerde Gitmapp kredisi düşmez; ücret doğrudan sağlayıcıya ödenir. Anahtarlar sunucuda şifreli tutulur ve bir daha gösterilmez.</p>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${d.byok.map(b=>html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}><div style=${{display:"flex",alignItems:"center",gap:8}}><b style=${{flex:1}}>${b.label}</b>${b.connected?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Bağlı ••••${b.last4}</span>`:""}</div>
+   ${b.connected?html`<button class="btn g s" disabled=${busy===b.provider} onClick=${()=>delKey(b.provider)}>Anahtarı kaldır</button>`:html`<div style=${{display:"flex",gap:6}}><input class="in" type="password" autocomplete="off" style=${{flex:1}} placeholder=${b.hint||"API anahtarı"} value=${keys[b.provider]||""} onInput=${e=>setKeys(k=>({...k,[b.provider]:e.target.value}))}/><button class="btn s" disabled=${busy===b.provider||!(keys[b.provider]||"").trim()} onClick=${()=>saveKey(b.provider)}>${busy===b.provider?"…":"Bağla"}</button></div>
+    <a href=${b.keyUrl} target="_blank" style=${{fontSize:12}}>Anahtarı nereden alırım? ↗</a>`}</div>`)}</div>
+  <h2>📊 Kullanım geçmişi</h2>
+  ${!u?html`<div class="empty">Yükleniyor…</div>`:!u.usage.length?html`<div class="empty">Henüz kullanım yok.</div>`:html`<table><thead><tr><th>Tarih</th><th>İşlem</th><th>Model</th><th>Kaynak</th><th>Kredi</th></tr></thead><tbody>${u.usage.map(x=>html`<tr><td>${new Date(x.created.replace(" ","T")+"Z").toLocaleString("tr-TR")}</td><td>${KL[x.kind]||x.kind}</td><td style=${{fontSize:12}}>${shortModel(x.model)}</td><td>${x.provider==="gitmapp"?"💎 Gitmapp":"🔑 "+x.provider}</td><td>${x.credits?"−"+x.credits:"0"}</td></tr>`)}</tbody></table>`}
+ </div>`;
+}
+
+function CreditAdmin({toast}){
+ const [e,setE]=useState("");const [a,setA]=useState(100);
+ async function go(ev){ev.preventDefault();try{const j=await api("POST","/api/admin/credits",{email:e.trim(),amount:+a,reason:"Yönetici yüklemesi"});toast("Yüklendi. Yeni bakiye: "+j.credits)}catch(er){toast(er.message)}}
+ return html`<div class="box" style=${{marginTop:16}}><b>💎 Kullanıcıya kredi yükle</b><p style=${{color:"var(--mut)",fontSize:12}}>Ödeme altyapısı açılana kadar kredi satın alma talepleri Siparişler'e düşer; ödemeyi aldıktan sonra buradan yükleyin.</p>
+  <form onSubmit=${go} style=${{display:"flex",gap:8,flexWrap:"wrap"}}><input class="in" type="email" required placeholder="Kullanıcı e-postası" value=${e} onInput=${x=>setE(x.target.value)} style=${{flex:1}}/><input class="in" type="number" style=${{width:110}} value=${a} onInput=${x=>setA(x.target.value)}/><button class="btn">Yükle</button></form></div>`;
+}
+
 /* ================= UYGULAMA ================= */
 function App(){
- const CUST=["studio","magaza","uygulamalarim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const CUST=["studio","magaza","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1);return ALL.includes(v)?v:"studio"};
  const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
  const setView=v=>{setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
@@ -1038,6 +1183,7 @@ function App(){
  const [msg,setMsg]=useState("");const toast=m=>{setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
  useEffect(()=>{if(!API)return;fetch(API+"/api/health").then(r=>r.json()).then(j=>{if(j.ok){API_ON=true;setHealth(j);setApiOn(true)}}).catch(()=>{})},[]);
  const auth=useAuth(apiOn);
+ const models=useModels(apiOn,auth.user&&auth.user.id);
  useEffect(()=>{const h=()=>{const v=location.hash.slice(1);
    if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");setView(LS.get("afterAuth","studio")||"studio");return}
    if(v==="github-baglandi"){auth.refresh();toast("GitHub hesabınız bağlandı 🐙");setView("uygulamalarim");return}
@@ -1070,7 +1216,7 @@ function App(){
  const needLogin=mode==="admin"&&apiOn&&!isAdm&&ADMIN.includes(view);
  const switchMode=m=>{setMode(m);setView(m==="admin"?"siparisler":"studio")};
  const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
- const NAVC=[["studio","✨","Uygulama Yap"],["magaza","🛍️","Mağaza"],["uygulamalarim","📱","Uygulamalarım"],["dunya","🧩","Hazır Kodlar"],["olustur","🧑‍💻","Bize Yaptır"],["paketler","💳","Paketler"],["ai-destek","🤖","Yapay Zekâ"],["siparislerim","📦","Taleplerim"],["guncel","🆕","Güncellemeler",isNew?"YENİ":0]];
+ const NAVC=[["studio","✨","Uygulama Yap"],["magaza","🛍️","Mağaza"],["uygulamalarim","📱","Uygulamalarım"],["modeller","🧠","Dil Modelleri"],["hesabim","👤","Hesabım"],["dunya","🧩","Hazır Kodlar"],["olustur","🧑‍💻","Bize Yaptır"],["paketler","💳","Paketler"],["ai-destek","🤖","Yapay Zekâ"],["siparislerim","📦","Taleplerim"],["guncel","🆕","Güncellemeler",isNew?"YENİ":0]];
  const NAVA=[["siparisler","📥","Siparişler",newOrders],...(apiOn?[["radar","📡","Talep Radarı"]]:[]),["plan","💰","İş Planı & Gelir"],["kesfet","🔎","GitHub Radar"],["kategori","🗂️","İş Kolları"],["liste","★","Listem",Object.keys(saved).length],["kuyruk","🚀","Yapım Kuyruğu",builds.length],["guncel","🆕","Güncellemeler",isNew?"YENİ":0],["ayar","⚙️","Ayarlar"]];
  const NAV=mode==="admin"?NAVA:NAVC;
  return html`<div class="app">
@@ -1078,11 +1224,13 @@ function App(){
    <div style=${{display:"flex",background:"#0d1320",borderRadius:9,padding:3,marginBottom:10,border:"1px solid var(--line)"}}>${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class="nav" style=${{justifyContent:"center",padding:"7px 6px",fontSize:12.5,background:mode===k?"#1d2a45":"none",color:mode===k?"#fff":"var(--mut)"}} onClick=${()=>switchMode(k)}>${l}</button>`)}</div>
    ${NAV.map(([k,ic,l,b])=>html`<button class=${"nav"+(view===k?" on":"")} onClick=${()=>{if(k==="dunya")setStoreCat(null);setView(k)}}>${ic} ${l}${b?html`<b>${b}</b>`:""}</button>`)}
    <div style=${{marginTop:"auto",color:"var(--mut)",fontSize:11.5,padding:"8px 12px",lineHeight:1.6}}>
-    ${apiOn?(auth.user?html`<div>👤 ${auth.user.name||auth.user.email}${isAdm?" · yönetici":""}</div><a href="#" onClick=${e=>{e.preventDefault();auth.logout();toast("Çıkış yapıldı")}}>Çıkış yap</a>`:html`<button class="btn s" style=${{width:"100%"}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span>⚙️ Sunucu bağlanıyor…</span>`}
+    ${apiOn?(auth.user?html`<div style=${{cursor:"pointer"}} onClick=${()=>setView("hesabim")}>👤 ${auth.user.name||auth.user.email}${isAdm?" · yönetici":""}<br/>💎 ${auth.user.credits??0} kredi</div><a href="#" onClick=${e=>{e.preventDefault();auth.logout();toast("Çıkış yapıldı")}}>Çıkış yap</a>`:html`<button class="btn s" style=${{width:"100%"}} onClick=${()=>openAuth("")}>Giriş yap / Kayıt ol</button>`):html`<span>⚙️ Sunucu bağlanıyor…</span>`}
     ${mode==="admin"?html`<div>GitHub limiti: ${rate.rem}/${rate.lim}</div>`:""}<div>v${VERSION}</div></div></aside>
   <main class="main">
    ${needLogin?html`<div style=${{maxWidth:440,margin:"30px auto"}} class="box"><${AuthBox} auth=${auth} health=${health} toast=${toast} initMode="giris" title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok.":"Siparişleri ve talep radarını görmek için yönetici hesabıyla giriş yapın."}/></div>`:html`<div>
-   ${view==="studio"&&html`<${Studio} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health}/>`}
+   ${view==="studio"&&html`<${Studio} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} models=${models} go=${setView}/>`}
+   ${view==="modeller"&&html`<${ModelsPage} models=${models} go=${setView}/>`}
+   ${view==="hesabim"&&html`<${Account} auth=${auth} health=${health} toast=${toast} models=${models} go=${setView}/>`}
    ${view==="magaza"&&html`<${Store} toast=${toast} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio}/>`}
    ${view==="uygulamalarim"&&html`<${MyApps} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
    ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>{track("app_want",{repo:r.full_name,category:c&&c.id});goWizard(r,null,c)}} onDetail=${r=>{track("app_view",{repo:r.full_name,category:storeCat&&storeCat.id});setCur(r)}} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
@@ -1091,7 +1239,7 @@ function App(){
    ${view==="ai-destek"&&html`<${AiGuide}/>`}
    ${view==="siparislerim"&&html`<${MyOrders} orders=${orders} toast=${toast}/>`}
    ${view==="siparisler"&&html`<${AdminOrders} orders=${adminOrders} setOrders=${setAdminOrders} toast=${toast}/>`}
-   ${view==="radar"&&apiOn&&html`<${Radar} toast=${toast}/>`}
+   ${view==="radar"&&apiOn&&html`<div><${Radar} toast=${toast}/><${CreditAdmin} toast=${toast}/></div>`}
    ${view==="plan"&&html`<${Strategy}/>`}
    ${view==="kesfet"&&html`<${Discover} results=${results} setResults=${setResults} open=${setCur} saved=${saved} toggleSave=${toggleSave} secs=${secs} toast=${toast}/>`}
    ${view==="kategori"&&html`<${Categories} results=${results} saved=${saved} open=${setCur}/>`}

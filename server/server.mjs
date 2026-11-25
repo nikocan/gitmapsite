@@ -50,7 +50,12 @@ CREATE TABLE IF NOT EXISTS events(
   type TEXT, query TEXT, category TEXT, repo TEXT, meta TEXT);
 CREATE INDEX IF NOT EXISTS events_type ON events(type, created);
 CREATE TABLE IF NOT EXISTS ai_usage(k TEXT, day TEXT, n INTEGER DEFAULT 0, PRIMARY KEY(k, day));
+CREATE TABLE IF NOT EXISTS user_keys(user_id TEXT REFERENCES users(id) ON DELETE CASCADE, provider TEXT, enc TEXT NOT NULL, last4 TEXT, created TEXT DEFAULT (datetime('now')), PRIMARY KEY(user_id, provider));
+CREATE TABLE IF NOT EXISTS usage(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, created TEXT DEFAULT (datetime('now')), kind TEXT, provider TEXT, model TEXT, tokens INTEGER, credits INTEGER);
+CREATE INDEX IF NOT EXISTS usage_user ON usage(user_id, created);
+CREATE TABLE IF NOT EXISTS credit_log(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, created TEXT DEFAULT (datetime('now')), amount INTEGER, reason TEXT);
 `);
+try { db.exec("ALTER TABLE users ADD COLUMN credits INTEGER DEFAULT " + (+(E.SIGNUP_CREDITS || 25))); } catch { }
 const q = (sql) => db.prepare(sql);
 const now = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 const rid = (n = 12) => crypto.randomBytes(n * 2).toString("base64url").replace(/[-_]/g, "").slice(0, n);
@@ -71,7 +76,7 @@ const verify = (tok) => {
 const hashPw = (pw) => { const salt = crypto.randomBytes(16).toString("hex"); return salt + ":" + crypto.scryptSync(pw, salt, 64).toString("hex"); };
 const checkPw = (pw, h) => { if (!h) return false; const [salt, hex] = h.split(":"); const a = crypto.scryptSync(pw, salt, 64); const b = Buffer.from(hex, "hex"); return a.length === b.length && crypto.timingSafeEqual(a, b); };
 const isAdmin = (u) => !!u && !!CFG.admin && u.email.toLowerCase() === CFG.admin && !!u.email_verified;
-const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, admin: isAdmin(u) });
+const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, admin: isAdmin(u), credits: u.credits ?? 0 });
 function authUser(req) {
   const h = req.headers.authorization || "";
   const t = verify(h.startsWith("Bearer ") ? h.slice(7) : "");
@@ -104,29 +109,79 @@ function useAi(key, limit, anon) {
 }
 
 // ---------- Yapay zekâ ----------
-let modelCache = null;
-async function pickModel() {
+// Sağlayıcılar: "gitmapp" (Hostinger AI Router, Gitmapp kredisiyle) + kullanıcının kendi anahtarıyla (BYOK) OpenAI uyumlu uç noktalar
+const PROVIDERS = {
+  gitmapp: { label: "Gitmapp (Hostinger AI Router)", base: () => CFG.aiBase },
+  anthropic: { label: "Anthropic Claude", base: () => "https://api.anthropic.com/v1", keyUrl: "https://platform.claude.com/settings/keys", hint: "sk-ant-…" },
+  openai: { label: "OpenAI (GPT)", base: () => "https://api.openai.com/v1", keyUrl: "https://platform.openai.com/api-keys", hint: "sk-…" },
+  gemini: { label: "Google Gemini", base: () => "https://generativelanguage.googleapis.com/v1beta/openai", keyUrl: "https://aistudio.google.com/apikey", hint: "AIza…" },
+  deepseek: { label: "DeepSeek", base: () => "https://api.deepseek.com", keyUrl: "https://platform.deepseek.com/api_keys", hint: "sk-…" },
+  openrouter: { label: "OpenRouter (yüzlerce model)", base: () => "https://openrouter.ai/api/v1", keyUrl: "https://openrouter.ai/settings/keys", hint: "sk-or-…" },
+};
+const TIER_CREDITS = { hizli: +(E.CREDITS_FAST || 1), dengeli: +(E.CREDITS_BALANCED || 3), guclu: +(E.CREDITS_STRONG || 8) };
+const tierOf = (id) => /opus|fable|mythos|ultra|reasoner|v4-pro|gpt-?\d(\.\d)?-pro|\bo3\b|-pro$|large/i.test(id) ? "guclu" : /haiku|mini|nano|flash|lite|luna|small|8b|deepseek-chat/i.test(id) ? "hizli" : "dengeli";
+const familyOf = (id) => /claude/i.test(id) ? "claude" : /gemini/i.test(id) ? "gemini" : /deepseek/i.test(id) ? "deepseek" : /grok/i.test(id) ? "grok" : /mistral|magistral|codestral|ministral/i.test(id) ? "mistral" : /kimi|moonshot/i.test(id) ? "kimi" : /qwen/i.test(id) ? "qwen" : /llama/i.test(id) ? "llama" : /gpt|^o\d|openai/i.test(id) ? "gpt" : "diger";
+const usable = (id) => !/embed|whisper|tts|dall|image|audio|moderation|transcribe|realtime|rerank|vision-preview/i.test(id);
+const modelCaches = {};
+const pbase = (p) => (p !== "gitmapp" && E.TEST_PROVIDER_BASE) ? E.TEST_PROVIDER_BASE : PROVIDERS[p].base();
+async function listModels(provider, key) {
+  const ck = provider + ":" + crypto.createHash("sha256").update(key).digest("hex").slice(0, 12);
+  const c = modelCaches[ck]; if (c && Date.now() - c.t < 10 * 60 * 1000) return c.ids;
+  const headers = { Authorization: "Bearer " + key };
+  if (provider === "anthropic") Object.assign(headers, { "x-api-key": key, "anthropic-version": "2023-06-01" });
+  const r = await fetch(pbase(provider) + "/models", { headers, signal: AbortSignal.timeout(20000) });
+  need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, r.status === 401 || r.status === 403 ? "Anahtar geçersiz ya da yetkisi yok" : "Model listesi alınamadı (" + r.status + ")");
+  const j = await r.json();
+  const ids = (j.data || j.models || []).map((m) => String(m.id || m.name || "").replace(/^models\//, "")).filter((x) => x && usable(x));
+  modelCaches[ck] = { t: Date.now(), ids }; return ids;
+}
+async function defaultModel() {
   if (CFG.aiModel) return CFG.aiModel;
-  if (modelCache) return modelCache;
-  const r = await fetch(CFG.aiBase + "/models", { headers: { Authorization: "Bearer " + CFG.aiKey } });
-  need(r.ok, 502, "Yapay zekâ model listesi alınamadı (" + r.status + ")");
-  const ids = ((await r.json()).data || []).map((m) => m.id);
-  modelCache = ids.find((i) => /sonnet/i.test(i)) || ids.find((i) => /claude/i.test(i)) || ids.find((i) => /gpt-?5|gpt-4\.1|gpt-4o/i.test(i)) || ids[0];
-  need(modelCache, 502, "Kullanılabilir yapay zekâ modeli yok");
-  return modelCache;
+  const ids = await listModels("gitmapp", CFG.aiKey);
+  const m = ids.find((i) => /sonnet/i.test(i)) || ids.find((i) => /claude/i.test(i)) || ids.find((i) => /gpt-?5|gpt-4\.1|gpt-4o/i.test(i)) || ids[0];
+  need(m, 502, "Kullanılabilir yapay zekâ modeli yok"); return m;
+}
+// Anahtar şifreleme (AES-256-GCM)
+const KEY_ENC = crypto.createHash("sha256").update(CFG.secret + ":byok").digest();
+const encKey = (plain) => { const iv = crypto.randomBytes(12); const c = crypto.createCipheriv("aes-256-gcm", KEY_ENC, iv); const e = Buffer.concat([c.update(plain, "utf8"), c.final()]); return [iv, c.getAuthTag(), e].map((b) => b.toString("base64")).join("."); };
+const decKey = (s) => { const [iv, tag, e] = s.split(".").map((x) => Buffer.from(x, "base64")); const d = crypto.createDecipheriv("aes-256-gcm", KEY_ENC, iv); d.setAuthTag(tag); return Buffer.concat([d.update(e), d.final()]).toString("utf8"); };
+// İsteği hangi sağlayıcı/modelle yapacağımızı çöz, ücreti belirle
+async function resolveRoute(user, body, req, kind) {
+  const provider = PROVIDERS[body.provider] ? body.provider : "gitmapp";
+  if (provider === "gitmapp") {
+    need(CFG.aiKey, 503, "Yapay zekâ henüz yapılandırılmadı (AI_KEY eksik)");
+    const ids = await listModels("gitmapp", CFG.aiKey);
+    const model = body.model && ids.includes(body.model) ? body.model : await defaultModel();
+    const tier = tierOf(model); const factor = kind === "plan" ? 0.34 : 1; const credits = Math.max(1, Math.round(TIER_CREDITS[tier] * factor));
+    if (!user) { need(tier !== "guclu", 403, "Güçlü modelleri kullanmak için ücretsiz hesap oluşturun."); useAi("ip:" + clientIp(req), CFG.aiDailyAnon, true); }
+    else { const u = q("SELECT credits FROM users WHERE id=?").get(user.id); need((u.credits ?? 0) >= credits, 402, `Krediniz yetersiz (gereken ${credits}, kalan ${u.credits ?? 0}). Hesabım sayfasından kredi yükleyebilir ya da kendi API anahtarınızı bağlayabilirsiniz.`); useAi("u:" + user.id, 300, false); }
+    return { provider, base: CFG.aiBase, key: CFG.aiKey, model, credits: user ? credits : 0 };
+  }
+  need(user, 401, "Kendi anahtarınızı kullanmak için giriş yapın");
+  const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider=?").get(user.id, provider);
+  need(row, 412, PROVIDERS[provider].label + " anahtarınız bağlı değil (Hesabım → API anahtarlarım)");
+  need(typeof body.model === "string" && body.model.length > 1 && body.model.length < 120, 400, "Model seçin");
+  useAi("k:" + user.id, 500, false);
+  return { provider, base: pbase(provider), key: decKey(row.enc), model: body.model, credits: 0 };
+}
+async function chatWith(rt, messages, maxTokens = 12000) {
+  const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
+  if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
+  const r = await fetch(rt.base + "/chat/completions", { method: "POST", signal: AbortSignal.timeout(240000), headers, body: JSON.stringify({ model: rt.model, messages, max_tokens: maxTokens }) });
+  const t = await r.text();
+  need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, (r.status === 401 || r.status === 403 ? "Anahtar reddedildi: " : "Yapay zekâ hatası (" + r.status + "): ") + t.slice(0, 200));
+  const j = JSON.parse(t);
+  return { text: j.choices?.[0]?.message?.content || "", model: rt.model, usage: j.usage || null };
+}
+function charge(user, rt, kind, usage) {
+  if (!user) return null;
+  if (rt.credits) { q("UPDATE users SET credits=credits-? WHERE id=?").run(rt.credits, user.id); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(user.id, -rt.credits, kind + ":" + rt.model); }
+  q("INSERT INTO usage(user_id,kind,provider,model,tokens,credits) VALUES(?,?,?,?,?,?)").run(user.id, kind, rt.provider, rt.model, usage ? usage.total_tokens || 0 : 0, rt.credits);
+  return q("SELECT credits FROM users WHERE id=?").get(user.id).credits;
 }
 async function chat(messages, maxTokens = 12000) {
   need(CFG.aiKey, 503, "Yapay zekâ henüz yapılandırılmadı (AI_KEY eksik)");
-  const model = await pickModel();
-  const r = await fetch(CFG.aiBase + "/chat/completions", {
-    method: "POST", signal: AbortSignal.timeout(240000),
-    headers: { Authorization: "Bearer " + CFG.aiKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature: 0.4 }),
-  });
-  const t = await r.text();
-  need(r.ok, 502, "Yapay zekâ hatası (" + r.status + "): " + t.slice(0, 200));
-  const j = JSON.parse(t);
-  return { text: j.choices?.[0]?.message?.content || "", model, usage: j.usage || null };
+  return chatWith({ provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model: await defaultModel() }, messages, maxTokens);
 }
 const GEN_SYSTEM = `Sen Gitmapp Stüdyo'nun uygulama üreticisisin. Kullanıcının fikrini TEK DOSYALIK, kendi içinde çalışan, gerçekten kullanılabilir bir web uygulamasına çevirirsin.
 Kurallar:
@@ -136,6 +191,12 @@ Kurallar:
 - Arayüz tamamen Türkçe, mobil öncelikli, modern ve şık olsun; boş ekran bırakma, örnek verilerle başlasın.
 - Uygulamanın adı <title> etiketinde olsun. Formlarda doğrulama, boş durum ve hata mesajları olsun.
 - Mevcut bir HTML verilirse onu kullanıcının istediği değişiklikle güncelle ve DOSYANIN TAMAMINI döndür; istenmeyen kısımları bozma.`;
+const KIND_RULES = {
+  app: "Bir UYGULAMA yap: ekranlar arası geçiş, veri ekleme/düzenleme/silme, liste ve özet görünümleri olsun.",
+  site: "Bir WEB SİTESİ yap: etkileyici bir giriş bölümü (hero), hizmetler/özellikler, referanslar, SSS, iletişim formu ve alt bilgi olsun; SEO için anlamlı başlıklar ve meta açıklaması ekle.",
+  game: "Bir OYUN yap: <canvas> veya DOM ile akıcı oynanış (requestAnimationFrame), klavye + dokunmatik kontroller, başlat/duraklat/yeniden başla, skor ve en yüksek skor (localStorage), artan zorluk ve ses kapatma düğmesi olsun. Telif hakkı olan karakter, isim veya görsel kullanma; tüm görseller kodla çizilsin.",
+};
+const kindOf = (k) => (KIND_RULES[k] ? k : "app");
 function extractHtml(text) {
   let t = text.trim().replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
   const sm = t.match(/<!--\s*ÖZET:\s*([\s\S]*?)-->/i);
@@ -198,7 +259,7 @@ route("POST", "/api/auth/register", ({ body }) => {
   const email = str(body.email, 200, "E-posta", true).trim().toLowerCase(); const pw = str(body.password, 200, "Şifre", true);
   need(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 400, "Geçerli bir e-posta girin"); need(pw.length >= 8, 400, "Şifre en az 8 karakter olmalı");
   need(!q("SELECT 1 FROM users WHERE email=?").get(email), 409, "Bu e-posta ile zaten hesap var, giriş yapın");
-  const id = rid(); q("INSERT INTO users(id,email,name,pass) VALUES(?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw));
+  const id = rid(); q("INSERT INTO users(id,email,name,pass) VALUES(?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw)); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, +(E.SIGNUP_CREDITS || 25), "Hoş geldin kredisi");
   const u = q("SELECT * FROM users WHERE id=?").get(id); return { token: sign({ uid: id }), user: pubUser(u) };
 });
 route("POST", "/api/auth/login", ({ body }) => {
@@ -245,13 +306,62 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
 
 // Yapay zekâ
 route("POST", "/api/ai/generate", async ({ body, user, req }) => {
-  const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML");
-  useAi(user ? "u:" + user.id : "ip:" + clientIp(req), user ? CFG.aiDailyUser : CFG.aiDailyAnon, !user);
-  const messages = [{ role: "system", content: GEN_SYSTEM }];
-  if (cur) messages.push({ role: "user", content: "Mevcut uygulama:\n" + cur }, { role: "user", content: "İstenen değişiklik: " + prompt });
-  else messages.push({ role: "user", content: "Uygulama fikri: " + prompt });
-  const { text, model, usage } = await chat(messages);
-  return { ...extractHtml(text), model, usage };
+  const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
+  const rt = await resolveRoute(user, body, req, "build");
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] }];
+  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: "İstenen değişiklik: " + prompt });
+  else messages.push({ role: "user", content: "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : "") });
+  const { text, model, usage } = await chatWith(rt, messages);
+  const out = extractHtml(text);
+  const credits = charge(user, rt, "build", usage);
+  return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage };
+});
+route("POST", "/api/ai/plan", async ({ body, user, req }) => {
+  const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
+  const rt = await resolveRoute(user, body, req, "plan");
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz.` }, { role: "user", content: prompt }], 1500);
+  const credits = charge(user, rt, "plan", usage);
+  return { plan: text.trim(), spent: rt.credits, credits };
+});
+route("POST", "/api/ai/review", async ({ body, user, req }) => {
+  const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
+  const rt = await resolveRoute(user, body, req, "review");
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: html }]);
+  const out = extractHtml(text); const credits = charge(user, rt, "review", usage);
+  return { ...out, spent: rt.credits, credits };
+});
+// Model kataloğu: Gitmapp'te hazır modeller + kullanıcının bağlı anahtarları
+route("GET", "/api/ai/models", async ({ user }) => {
+  let platform = [], def = null, err = null;
+  if (CFG.aiKey) { try { const ids = await listModels("gitmapp", CFG.aiKey); def = await defaultModel(); platform = ids.map((id) => ({ id, family: familyOf(id), tier: tierOf(id), credits: TIER_CREDITS[tierOf(id)] })); } catch (e) { err = e.message; } }
+  const keys = user ? q("SELECT provider,last4,created FROM user_keys WHERE user_id=?").all(user.id) : [];
+  const byok = Object.entries(PROVIDERS).filter(([k]) => k !== "gitmapp").map(([k, p]) => { const kk = keys.find((x) => x.provider === k); return { provider: k, label: p.label, keyUrl: p.keyUrl, hint: p.hint, connected: !!kk, last4: kk ? kk.last4 : null }; });
+  return { platform, default: def, tiers: TIER_CREDITS, byok, error: err };
+});
+route("GET", "/api/keys/:prov/models", async ({ user, params }) => {
+  need(user, 401, "Giriş yapın"); need(PROVIDERS[params.prov] && params.prov !== "gitmapp", 404, "Sağlayıcı bulunamadı");
+  const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider=?").get(user.id, params.prov); need(row, 412, "Anahtar bağlı değil");
+  const ids = await listModels(params.prov, decKey(row.enc));
+  return { models: ids.map((id) => ({ id, family: familyOf(id), tier: tierOf(id) })) };
+});
+route("PUT", "/api/keys/:prov", async ({ user, params, body }) => {
+  need(user, 401, "Giriş yapın"); need(PROVIDERS[params.prov] && params.prov !== "gitmapp", 404, "Sağlayıcı bulunamadı");
+  const key = (str(body.key, 400, "Anahtar", true) || "").trim(); need(key.length >= 16 && !/\s/.test(key), 400, "Anahtar biçimi geçersiz");
+  const ids = await listModels(params.prov, key);
+  q("INSERT INTO user_keys(user_id,provider,enc,last4) VALUES(?,?,?,?) ON CONFLICT(user_id,provider) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,created=datetime('now')").run(user.id, params.prov, encKey(key), key.slice(-4));
+  return { ok: true, models: ids.length };
+});
+route("DELETE", "/api/keys/:prov", ({ user, params }) => { need(user, 401, "Giriş yapın"); q("DELETE FROM user_keys WHERE user_id=? AND provider=?").run(user.id, params.prov); return { ok: true }; });
+route("GET", "/api/me/usage", ({ user }) => {
+  need(user, 401, "Giriş yapın");
+  return { credits: q("SELECT credits FROM users WHERE id=?").get(user.id).credits ?? 0, usage: q("SELECT created,kind,provider,model,tokens,credits FROM usage WHERE user_id=? ORDER BY id DESC LIMIT 50").all(user.id), log: q("SELECT created,amount,reason FROM credit_log WHERE user_id=? ORDER BY id DESC LIMIT 30").all(user.id) };
+});
+route("POST", "/api/admin/credits", ({ user, body }) => {
+  need(isAdmin(user), 403, "Yönetici yetkisi gerekli");
+  const email = (str(body.email, 200, "E-posta", true) || "").trim().toLowerCase(); const amount = Math.round(+body.amount || 0); need(amount && Math.abs(amount) <= 100000, 400, "Miktar geçersiz");
+  const u = q("SELECT id FROM users WHERE email=?").get(email); need(u, 404, "Bu e-postayla kullanıcı yok");
+  q("UPDATE users SET credits=COALESCE(credits,0)+? WHERE id=?").run(amount, u.id); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(u.id, amount, str(body.reason, 120, "Açıklama") || "Yönetici yüklemesi");
+  return { ok: true, credits: q("SELECT credits FROM users WHERE id=?").get(u.id).credits };
 });
 route("POST", "/api/ai/assist", async ({ body, user, req }) => {
   need(Array.isArray(body.messages) && body.messages.length <= 30, 400, "Mesajlar geçersiz");
