@@ -358,7 +358,8 @@ h1{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
 .runpanel textarea{width:100%;resize:vertical;font-size:13px;line-height:1.5;border-radius:12px}
 .aic{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--sep);font-size:13px}.aic>div{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center}.aic span:first-child{color:var(--label3)}
 .aic-p{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:12px}.aic-p.ok{background:rgba(34,197,94,.14);color:#86efac}.aic-p.bad{background:rgba(239,68,68,.14);color:#fca5a5}
-.aic .aic-help{display:block;grid-template-columns:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd9a0;padding:10px 12px;border-radius:12px;line-height:1.55}
+.aic .aic-help.bal{border-color:rgba(227,179,65,.45)!important;background:rgba(227,179,65,.08)!important;color:#f3d38a!important}.aic-help.bal b{color:#ffe08a}
+.aic-help{display:block;grid-template-columns:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd9a0;padding:10px 12px;border-radius:12px;line-height:1.55}
 /* Uygulama ayrıntı sayfası */
 .adp{max-width:1180px;margin:0 auto}
 .adp-back{display:inline-flex;align-items:center;gap:4px;border:0;background:none;color:#e4ff3d;cursor:pointer;font-size:15px;padding:4px 0;margin-bottom:12px}
@@ -1366,8 +1367,10 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.14.0";
+const VERSION="5.14.1";
 const CHANGELOG=[
+ {v:"5.14.1",date:"2026-11-25",items:[
+  "🩺 Yönetim › Yapay zekâ bağlantı testi, AI Router bakiyesi bittiğinde (402) “anahtarı değiştirin” yerine doğru teşhisi ve yapılacak adımı gösteriyor"]},
  {v:"5.14.0",date:"2026-11-25",items:[
   "🧾 Stüdyo'daki işlem kartı Claude Code tarzında: başlıkta çalışan yıldız, durum ve süre; altında çerçeveli adım listesi. Her adım açılıyor",
   "📤 “İstek” bloğu: tür, mod, model, tasarım, mevcut dosyanın boyutu ve nasıl düzenleneceği (tamamı mı, yalnızca değişen parçalar mı), görsel sayısı ve gönderdiğin istek",
@@ -4211,7 +4214,7 @@ function AiCheck({toast}){
    <div><span>Model listesi</span>${r.models?pill(r.models.ok,r.models.ok?"çalışıyor":"uç nokta yok ("+(r.models.status||r.models.error)+") · sabit liste kullanılıyor"):"—"}</div>
    <div><span>Modeller</span><b style=${{fontSize:12}}>${(r.list||[]).join(", ")||"—"}</b></div>
    <div><span>Örnek üretim</span>${r.chat?pill(r.chat.ok,r.chat.ok?"çalışıyor · "+r.chat.model+" → “"+r.chat.reply+"”":(r.chat.status||"")+" "+(r.chat.reply||r.chat.error||"")):"—"}</div>
-   ${r.chat&&!r.chat.ok&&html`<div class="aic-help">Anahtar reddediliyorsa: hPanel → AI Router'dan anahtarı kopyalayın (sk-hstgr- ile başlar), sunucuda <span class="mono">/etc/gitmapp/api.env</span> içindeki <span class="mono">AI_KEY</span> değerini güncelleyip <span class="mono">systemctl restart gitmapp-api</span> çalıştırın. Model adı reddediliyorsa <span class="mono">AI_MODELS=claude-sonnet-5,gpt-5.2</span> gibi doğru adları ekleyin.</div>`}
+   ${r.chat&&!r.chat.ok&&(r.chat.status===402||/insufficient|quota|credit/i.test(String(r.chat.reply||r.chat.error||"")))?html`<div class="aic-help bal"><b>Anahtar ve modeller doğru; AI Router bakiyesi bitmiş.</b> Bu yüzden sitede hiçbir üretim çalışmıyor (kullanıcıların Gitmapp kredisi düşmüyor). hPanel → AI Router → Faturalandırma/Krediler bölümünden bakiye yükleyin; yükleme sonrası bu testi tekrar çalıştırın, ayrıca sunucuyu yeniden başlatmaya gerek yok. Bu arada kullanıcılar Hesabım'dan kendi API anahtarlarını bağlayarak devam edebilir.</div>`:r.chat&&!r.chat.ok&&html`<div class="aic-help">Anahtar reddediliyorsa: hPanel → AI Router'dan anahtarı kopyalayın (sk-hstgr- ile başlar), sunucuda <span class="mono">/etc/gitmapp/api.env</span> içindeki <span class="mono">AI_KEY</span> değerini güncelleyip <span class="mono">systemctl restart gitmapp-api</span> çalıştırın. Model adı reddediliyorsa <span class="mono">AI_MODELS=claude-sonnet-5,gpt-5.2</span> gibi doğru adları ekleyin.</div>`}
   </div>`}</div>`;
 }
 
