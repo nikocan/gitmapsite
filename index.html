@@ -618,6 +618,68 @@ kbd{font:500 11px "JetBrains Mono",monospace;color:var(--label3);border:1px soli
 .authx-t{font-size:clamp(26px,3vw,38px);letter-spacing:-1px;line-height:1.1;text-align:center;margin:0}
 @media(max-width:900px){.authx{grid-template-columns:1fr}.authx-r{display:none}.authx-l{padding:24px}}
 @media(max-width:820px){.hb-row .hbi:first-child{order:0}.home{margin:0 -16px}.home-hero{min-height:560px;padding:40px 16px 100px}.home-h{margin:70px 0 24px}.home-sheet{margin:-60px 12px 0}.hb-row .seg.mini{order:9;width:100%}}
+
+/* ===== v4.2 — Siri ışıması, çok renkli ama sakin kimlik ===== */
+body::before{display:none!important}
+.hero-banner::after{display:none}
+body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(244,114,182,.07),transparent 60%),#0a0a0b}
+:root{--sx1:#5b8cff;--sx2:#a78bfa;--sx3:#f472b6;--sx4:#fb923c;--sx5:#22d3ee}
+.siri{position:absolute!important;inset:0;z-index:0!important;overflow:hidden;background:#0a0a0b}
+.siri::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,11,.55) 0,rgba(10,10,11,.05) 30%,rgba(10,10,11,.1) 70%,#0a0a0b 100%)}
+.siri i{position:absolute;width:62vmax;height:62vmax;border-radius:50%;filter:blur(100px);opacity:.5;mix-blend-mode:screen;will-change:transform}
+.siri i:nth-child(1){background:var(--sx1);left:-10%;top:-10%;animation:sr1 22s ease-in-out infinite alternate}
+.siri i:nth-child(2){background:var(--sx2);left:30%;top:12%;animation:sr2 26s ease-in-out infinite alternate}
+.siri i:nth-child(3){background:var(--sx3);right:-14%;top:-6%;animation:sr3 24s ease-in-out infinite alternate}
+.siri i:nth-child(4){background:var(--sx4);left:42%;top:38%;width:40vmax;height:40vmax;opacity:.42;animation:sr2 30s ease-in-out infinite alternate-reverse}
+.siri i:nth-child(5){background:var(--sx5);left:6%;top:34%;width:36vmax;height:36vmax;opacity:.38;animation:sr1 28s ease-in-out infinite alternate-reverse}
+@keyframes sr1{50%{transform:translate(18vmax,-8vmax) scale(1.15)}100%{transform:translate(6vmax,6vmax) scale(.92)}}
+@keyframes sr2{50%{transform:translate(-16vmax,-10vmax) scale(1.2)}100%{transform:translate(10vmax,4vmax) scale(.9)}}
+@keyframes sr3{50%{transform:translate(-12vmax,8vmax) scale(.9)}100%{transform:translate(-20vmax,-6vmax) scale(1.18)}}
+.home-hero>*:not(.siri),.authx-r>*:not(.siri){position:relative;z-index:1}
+.authx-r .siri i{opacity:.65}
+.grad-text{background:linear-gradient(95deg,#9ec5ff,#e0c3ff 40%,#ffc4e1 70%,#e4ff3d)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.hl{background:linear-gradient(90deg,#e4ff3d,#f4ffb3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.home-h .hl{background:linear-gradient(95deg,#9ec5ff,#e0c3ff 40%,#ffc4e1 70%,#e4ff3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* AI Studio tarzı çok renkli istem çerçevesi */
+.gbox{background:conic-gradient(from var(--a),#5b8cff,#a78bfa,#f472b6,#fb923c,#e4ff3d,#22d3ee,#5b8cff)!important;animation:gspin 9s linear infinite}
+.gbox::before{opacity:.22}.gbox.typing{animation-duration:3.2s}.gbox.typing::before{opacity:.5;animation:glowp 2.4s ease-in-out infinite}
+@keyframes glowp{50%{opacity:.75;filter:blur(24px)}}
+.gbox.busy{animation-duration:1.6s}
+.gbox.hg{width:min(780px,100%);border-radius:30px;padding:1.5px}.gbox.hg::before{border-radius:36px}
+.gbox.hg .home-box{width:100%;border:0;border-radius:28.5px;background:rgba(14,14,16,.94);box-shadow:none;position:relative;z-index:1}
+.gbox.hg .home-box:focus-within{box-shadow:none}
+.gin{background:#0e0e10}
+/* hayalet öneri */
+.ghw{position:relative}
+.ghx{position:absolute;inset:0;pointer-events:none;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;color:transparent!important;border-color:transparent!important;background:none!important}
+.ghx .gh-s{color:#7c7c86;transition:opacity .2s}
+.gh-k{display:inline-block;margin-left:8px;font:600 10px "JetBrains Mono",monospace;color:#e4ff3d;border:1px solid rgba(228,255,61,.4);border-radius:6px;padding:1px 6px;vertical-align:2px;animation:popin .3s}
+.ghw textarea{position:relative;background:transparent}
+.hta{display:block;width:100%;border:0;outline:0;background:none;resize:none;font-size:17px;line-height:1.5;color:#f4f4ef;min-height:56px;padding:0;font-family:inherit}.hta::placeholder{color:#8a8a84}
+.hbe{display:flex;align-items:center;gap:6px;border:1px solid #2c2c30;background:linear-gradient(135deg,rgba(167,139,250,.14),rgba(91,140,255,.10));color:#e3dcff;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}.hbe:hover:not(:disabled){border-color:#a78bfa;color:#fff}.hbe:disabled{opacity:.35;cursor:default}
+.qadd{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:14px;max-width:780px}
+.qadd button{display:inline-flex;align-items:center;gap:6px;border:1px dashed rgba(255,255,255,.22);background:rgba(14,14,16,.6);backdrop-filter:blur(8px);color:#e8e8ee;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;animation:slidein .35s both}.qadd button:hover{border-style:solid;border-color:#e4ff3d;color:#e4ff3d}
+.home-chips{transition:opacity .3s}.home-chips.dim{opacity:.45}
+.hc{background:rgba(14,14,16,.55);border-color:rgba(255,255,255,.12)}
+.home-pill{background:rgba(14,14,16,.55)}
+.hp-ic i{background:#5b8cff}.hp-ic i:nth-child(2){background:#f472b6}.hp-ic i:nth-child(3){background:#e4ff3d}
+.home-sheet{margin-top:-90px}
+/* renkli çizgi karolar */
+.tile{color:var(--tc,#e4ff3d)!important;background:color-mix(in srgb,var(--tc,#e4ff3d) 12%,#111113)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,#e4ff3d) 26%,#232326)!important}
+.nav.on .tile{background:linear-gradient(145deg,var(--tc),color-mix(in srgb,var(--tc) 65%,#ffffff))!important;color:#0a0a0b!important;box-shadow:0 6px 16px -8px var(--tc)!important}
+.nav.on::before{background:var(--tc,#e4ff3d)}
+.nav:hover .tile{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc) 55%,#232326)!important}
+.cicon{background:color-mix(in srgb,var(--t,#e4ff3d) 12%,#111113)}
+.side{background:rgba(11,11,13,.78)!important}
+.wsw-i{background:linear-gradient(135deg,#5b8cff,#a78bfa)!important;color:#fff!important}
+.avatar{background:linear-gradient(135deg,#5b8cff,#f472b6)!important;color:#fff!important}
+.refc{background:radial-gradient(140px 90px at 100% 100%,rgba(167,139,250,.35),transparent 70%),radial-gradient(120px 80px at 0 0,rgba(91,140,255,.18),transparent 70%),#131316!important}
+.refc-i{background:linear-gradient(135deg,#a78bfa,#f472b6)!important;color:#fff!important}
+.hero-banner{background:radial-gradient(600px 340px at 85% 25%,rgba(167,139,250,.38),transparent 60%),radial-gradient(500px 300px at 60% 120%,rgba(91,140,255,.32),transparent 60%),radial-gradient(400px 240px at 0 0,rgba(244,114,182,.2),transparent 60%),#0f0f12!important}
+.tp-hero{background:radial-gradient(600px 300px at 90% 0,rgba(34,211,238,.25),transparent 60%),radial-gradient(500px 300px at 0 100%,rgba(167,139,250,.28),transparent 60%),#0f0f12!important}
+.conn-art{background:radial-gradient(circle at 50% 50%,rgba(91,140,255,.3),transparent 60%),radial-gradient(circle at 80% 80%,rgba(244,114,182,.22),transparent 50%),#111113!important}
+.ca-orb{color:#cfe0ff}
+@media(prefers-reduced-motion:reduce){.siri i{animation:none}}
 </style>
 </head>
 <body>
@@ -631,8 +693,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="4.1.0";
+const VERSION="4.2.0";
 const CHANGELOG=[
+ {v:"4.2.0",date:"2026-11-25",items:[
+  "🌈 Siri tarzı canlı arka plan: mavi, mor, pembe, turuncu ve camgöbeği ışımalar yavaşça akar; ızgara çizgileri kaldırıldı, limon sarısı yalnızca marka vurgusunda",
+  "✨ AI Studio tarzı çok renkli istem çerçevesi geri geldi; yazmaya başlayınca hızlanır ve parlar",
+  "⌨️ Hayalet öneri (Codex gibi): yazarken soluk renkte tamamlanmış cümle ya da kelime belirir, Tab (veya →) ile kabul edilir — açılış ekranında ve Geliştir'de",
+  "➕ Hızlı ekler: yazdığın isteğe tek dokunuşla “Giriş sistemi”, “Yönetici paneli”, “Grafikler”, “WhatsApp”, “SSS”, “Skor tablosu” gibi özellikler eklenir (türe göre değişir)",
+  "🪄 İyileştir: kısa isteğini ekranlar, özellikler ve tasarımla ayrıntılı bir isteme çevirir (kredi harcamaz)",
+  "🎨 Renkli çizgi ikon karoları: her menü ögesinin kendi rengi var; seçilen öge renkli dolguya döner",
+ ]},
  {v:"4.1.0",date:"2026-11-25",items:[
   "🏠 Yeni açılış ekranı: “Yapmaya hazır mısın?” başlığı, limon ışıltılı arka plan, büyük istek kutusu (çizim ekle, Çalışma alanı, Uygulama/Site/Oyun, Yap/Planla/Ajan seçimi, sesle yazma) ve hazır fikir düğmeleri (Pano, Portal, Sunum, İç araç, Açılış sayfası, Satış, Oyun)",
   "➡️ İsteği gönderince proje doğrudan Geliştir'de açılır ve üretim başlar; altında projelerin, son açılanlar, en çok ziyaret edilenler ve şablonlar",
@@ -1881,10 +1951,10 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} close=${()=>setGallery(false)}/>`;
  const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
- const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
+ const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
    ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onMouseDown=${e=>{e.preventDefault();setInput(k+" ")}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
-   <textarea class="gta" rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Değişiklik iste: “butonları yeşil yap”, “iletişim formu ekle”…":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} onInput=${e=>setInput(e.target.value)} onKeyDown=${key}></textarea>
+   <${GhostTA} className="gta" rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${busy} placeholder=${st.html?"Değişiklik iste: “butonları yeşil yap”, “iletişim formu ekle”…":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
     <button type="button" class="gatt" disabled=${busy||atts.length>=3} title="Çizim, ekran görüntüsü ya da görsel ekle (sürükle-bırak ve yapıştır da olur)" onClick=${()=>fileRef.current.click()}><${Icon} n="image" s=${17}/></button>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
@@ -2031,7 +2101,10 @@ Object.assign(ICON_SVG,{
 // iOS / Material tarzı renkli ikon karoları
 const TILE={ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
-const Tile=({k,n,g,s=28,hue})=>{const t=TILE[k]||[n||"dot",g||""];return html`<span class=${"tile"+(hue?" hue":"")} style=${{width:s,height:s,borderRadius:s*.3,["--tc"]:hue?(t[1]||"").split(",")[0]:undefined}}><${Icon} n=${t[0]} s=${s*.54} c="currentColor" w=${1.6}/></span>`};
+const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
+const NAV_TONE={ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
+const toneOf=(k,n)=>NAV_TONE[k]||TONES[[...String(k||n||"x")].reduce((h,c)=>(h*31+c.charCodeAt(0))%997,0)%TONES.length];
+const Tile=({k,n,g,s=28})=>{const t=TILE[k]||[n||"dot",g||""];const tc=k?toneOf(k):(g?g.split(",")[0]:toneOf(null,n));return html`<span class="tile" style=${{width:s,height:s,borderRadius:s*.3,["--tc"]:tc}}><${Icon} n=${t[0]} s=${s*.54} c="currentColor" w=${1.7}/></span>`};
 const BrandMark=({s=34,mono})=>html`<span class="brand" style=${{width:s,height:s,borderRadius:s*.28}}><svg width=${s*.66} height=${s*.66} viewBox="0 0 24 24" fill="none" stroke=${mono?"#e4ff3d":"#0a0a0a"} stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.6" cy="10" r="4.8"/><path d="M15.4 5.6v9.6a5.6 5.6 0 0 1-10 3.5"/><circle cx="19.2" cy="4.4" r="1.5" fill=${mono?"#e4ff3d":"#0a0a0a"} stroke="none"/></svg></span>`;
 const Wordmark=({s=19})=>html`<span class="wordmark" style=${{fontSize:s}}>gitmapp<i>.</i></span>`;
 const CAT_META={is:["briefcase","#3b82f6,#6366f1"],verimlilik:["check","#22c55e,#14b8a6"],egitim:["cap","#f59e0b,#f97316"],saglik:["heart","#f43f5e,#ec4899"],eticaret:["bag","#8b5cf6,#d946ef"],yemek:["utensils","#f97316,#ef4444"],oyun:["gamepad","#6366f1,#a855f7"],finans:["wallet","#10b981,#22c55e"],sosyal:["chat","#0ea5e9,#22d3ee"],araclar:["wrench","#64748b,#94a3b8"],diger:["sparkles","#ec4899,#f59e0b"]};
@@ -2293,6 +2366,7 @@ function TemplatesPage({onUse,toast}){
 /* ================= v4.0 — BAĞLANTILAR, PROJELER, EYLEM MERKEZİ, ARAMA, OTOMASYONLAR ================= */
 Object.assign(ICON_SVG,{
  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
+ moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
  plug:'<path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0zM12 17v5"/>',
  db:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
  send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',
@@ -2462,6 +2536,60 @@ document.addEventListener("click",function(e){var t=e.target;if(!t||t===document
  if(M==="select"){document.querySelectorAll(".__gms").forEach(function(x){x.classList.remove("__gms")});t.classList.add("__gms");var h=t.outerHTML.replace(/ class="[^"]*__gm[^"]*"/g,"").slice(0,600);parent.postMessage({gm:"select",sel:path(t),html:h,text:(t.innerText||"").trim().slice(0,120),tag:t.tagName.toLowerCase()},"*")}
  else if(M==="text"&&t.children.length===0&&(t.innerText||"").trim()){var old=t.innerText;t.contentEditable="true";t.focus();t.addEventListener("blur",function b(){t.removeEventListener("blur",b);t.contentEditable="false";if(t.innerText!==old)parent.postMessage({gm:"text",old:old,now:t.innerText},"*")})}},true);})();<\/script>`;
 
+/* ================= v4.2 — AKILLI YAZIM: hayalet öneri (Tab), hızlı ekler, istem iyileştirme ================= */
+const GH_PHRASES=[
+ "Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği, benim de günlük randevuları görüp iptal edebildiğim bir uygulama",
+ "Kafem için kategorili, fiyatlı dijital QR menü; ürün arama ve masa numarasıyla sipariş notu bırakma olsun",
+ "Restoranım için menü, online rezervasyon, galeri, yorumlar ve WhatsApp sipariş düğmesi olan bir web sitesi",
+ "Emlak ofisim için filtrelenebilir ilan listesi, ilan detay galerisi, kredi hesaplama ve danışman iletişim formu olan bir web sitesi",
+ "Satış ekibim için müşteri listesi, sürükle-bırak satış hunisi, görevler ve aylık satış grafikleri olan bir CRM",
+ "Küçük dükkanım için ürün listesi, stok adedi, kritik stok uyarısı, giriş-çıkış hareketleri ve günlük satış kaydı olan stok takip uygulaması",
+ "Faturalarımı oluşturup yazdırabildiğim, KDV ve vade takibi yapan, cari hesapları ve giderleri tutan ön muhasebe uygulaması",
+ "Sigorta acentem için poliçeler, yenileme tarihleri, teklif hunisi ve hasar dosyalarını takip eden bir yönetim paneli",
+ "Diş kliniğim için hasta kartları, randevu ajandası, hizmet ve ücret listesi olan bir klinik uygulaması",
+ "Aylık gelir ve giderlerimi kategorilere göre girip grafiklerle görebileceğim kişisel bütçe uygulaması",
+ "Ekibimin yapılacak, yapılıyor ve bitti sütunlarında görevleri sürükleyebildiği kanban görev panosu",
+ "Genel kültür soruları soran, süre tutan, can hakkı ve skor tablosu olan eğlenceli bir bilgi yarışması oyunu",
+ "Uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan, giderek hızlanan bir arcade oyunu",
+ "Düğün davetiyesi sayfası: geri sayım, tarih ve yer bilgisi, harita ve katılım (LCV) formu",
+ "Spor salonum için ders programı, üyelik paketleri, eğitmenler ve deneme dersi başvuru formu olan bir web sitesi",
+ "Eczanem için nöbet bilgisi, ürün arama, reçete yükleme ve WhatsApp ile sipariş olan bir uygulama",
+ "Yeni ürünüm için başlık, özellikler, fiyat paketleri, müşteri yorumları, SSS ve e-posta kayıt formu olan bir açılış sayfası",
+ "Online kursum için ders listesi, ilerleme takibi, quizler ve sertifika sayfası olan bir eğitim uygulaması",
+ "Ailem için ortak alışveriş listesi, görevler, takvim ve harcama takibi olan bir aile uygulaması",
+ "Kendi portfolyom için projelerim, hakkımda, yeteneklerim ve iletişim formu olan şık bir kişisel web sitesi",
+];
+const GH_WORDS=["randevu","rezervasyon","uygulaması","uygulama","sitesi","müşteri","müşterilerin","yönetim","paneli","takip","stok","fatura","sipariş","menü","kategoriler","kategorili","ödeme","raporlar","grafikler","bildirim","hatırlatma","personel","hizmetler","galeri","iletişim","formu","yorumlar","fiyatlar","üyelik","giriş","kayıt","takvim","ajanda","filtreleme","arama","dashboard","oyunu","skor","seviye","kuaför","restoran","klinik","emlak","sigorta","muhasebe","eczane","otel","okul","kurs","mağaza","butik","kafe","pastane","veteriner","avukat","mimarlık","fotoğrafçı","organizasyon"];
+const GH_SECTOR_TAIL={guzellik:" için randevu, hizmet ve fiyat listesi, personel seçimi ve hatırlatma olsun",yemek:" için kategorili menü, sepet, WhatsApp sipariş ve masa rezervasyonu olsun",saglik:" için hasta kartları, randevu ajandası ve hizmet listesi olsun",spor:" için ders programı, üyelik paketleri ve ilerleme takibi olsun",finans:" için gelir-gider kaydı, kategoriler ve aylık grafikler olsun",is:" için müşteri listesi, görevler, raporlar ve yönetici paneli olsun",egitim:" için ders listesi, ilerleme takibi ve quizler olsun",eticaret:" için ürün kataloğu, sepet, ödeme bağlantısı ve sipariş takibi olsun",oyun:" ; skor tablosu, artan zorluk, dokunmatik kontroller ve ses olsun",etkinlik:" için geri sayım, program, harita ve katılım formu olsun",emlak:" için filtreli ilanlar, ilan detay galerisi ve danışman formu olsun",teknoloji:" için kullanıcı profilleri, paylaşımlar ve bildirimler olsun"};
+const trl=s=>String(s||"").toLocaleLowerCase("tr");
+function ghostFor(v,kind){
+ if(!v||v.length<3||v.startsWith("/")||v.length>400)return "";
+ const lv=trl(v);
+ for(const p of GH_PHRASES){if(trl(p).startsWith(lv)&&p.length>v.length)return p.slice(v.length)}
+ const m=v.match(/(\S+)$/);
+ if(m&&m[1].length>=3){const w=trl(m[1]);const hit=GH_WORDS.find(x=>x.startsWith(w)&&x.length>w.length);if(hit)return hit.slice(w.length)}
+ if(/\s$/.test(v)&&v.trim().length>=10&&!/olsun\.?\s*$/i.test(v)){const sec=detectSector(v,kind);if(sec&&GH_SECTOR_TAIL[sec])return GH_SECTOR_TAIL[sec].trimStart()}
+ return "";
+}
+function GhostTA({value,set,onKeyDown,className,kind,...rest}){
+ const sug=ghostFor(value,kind);
+ return html`<div class="ghw"><div class=${"ghx "+(className||"")} aria-hidden="true"><span class="gh-v">${value}</span><span class="gh-s">${sug}</span>${sug&&html`<kbd class="gh-k">Tab</kbd>`}</div>
+  <textarea ...${rest} class=${className} value=${value} onInput=${e=>set(e.target.value)} onKeyDown=${e=>{if(sug&&(e.key==="Tab"||(e.key==="ArrowRight"&&e.target.selectionStart===value.length))){e.preventDefault();set(value+sug);return}onKeyDown&&onKeyDown(e)}}></textarea></div>`;
+}
+// Hızlı ekler (Lovable / Emergent tarzı tek dokunuşla istem zenginleştirme)
+const QUICK_ADD={app:[["user","Giriş sistemi","kullanıcı girişi ve kayıt ekranı"],["grid","Yönetici paneli","yönetici için ayrı bir panel"],["chart","Grafikler","özet istatistik kartları ve grafikler"],["bell","Hatırlatmalar","hatırlatma ve bildirimler"],["chat","WhatsApp","WhatsApp ile iletişim düğmesi"],["moon","Koyu tema","açık/koyu tema geçişi"],["globe","Çok dilli","Türkçe ve İngilizce dil seçeneği"]],
+ site:[["star","Yorumlar","müşteri yorumları bölümü"],["help","SSS","sık sorulan sorular bölümü"],["mapPin","Harita","harita ve yol tarifi"],["chat","WhatsApp","sabit WhatsApp düğmesi"],["file","İletişim formu","iletişim formu"],["globe","Çok dilli","Türkçe ve İngilizce dil seçeneği"],["search","SEO","anlamlı başlıklar ve SEO meta etiketleri"]],
+ game:[["star","Skor tablosu","en yüksek skor tablosu"],["zap","Güçlendirmeler","güçlendirmeler ve bonuslar"],["layers","Seviyeler","artan zorlukta seviyeler"],["mic","Ses efektleri","ses efektleri ve sessiz düğmesi"],["phone","Dokunmatik","mobil dokunmatik kontroller"]]};
+function addTo(v,t){v=v.trim().replace(/[.,;]+$/,"");if(!v)return t.charAt(0).toLocaleUpperCase("tr")+t.slice(1);return /olsun$/i.test(v)?v+", "+t+" da olsun":v+"; "+t+" olsun"}
+function enhancePrompt(v,kind){const sec=detectSector(v,kind);const s=sectorById(sec);const k={app:"uygulama",site:"web sitesi",game:"oyun"}[kind]||"uygulama";
+ const parts=[v.trim().replace(/[.]+$/,"")+"."];
+ parts.push("Hedef: "+(s?s.l+" alanında çalışan bir işletme için":"günlük kullanım için")+" sade, hızlı ve mobil uyumlu bir "+k+".");
+ if(kind==="game")parts.push("Oynanış: başlat ekranı, net kurallar, artan zorluk, skor ve en yüksek skor, duraklat/yeniden başla, dokunmatik ve klavye kontrolleri, ses kapatma.");
+ else if(kind==="site")parts.push("Bölümler: etkileyici açılış (hero), hizmetler/özellikler, neden biz, müşteri yorumları, SSS, iletişim formu ve alt bilgi; SEO başlık ve açıklaması.");
+ else parts.push("Ekranlar: ana sayfa özeti, liste + arama/filtre, ayrıntı ekranı, ekleme/düzenleme formu ve ayarlar; veriler cihazda saklansın, boş ekran olmasın, örnek verilerle başlasın.");
+ parts.push("Tasarım: modern, ferah, tutarlı renkler, yumuşak köşeler, okunaklı tipografi ve küçük geçiş animasyonları. Tüm metinler Türkçe.");
+ return parts.join("\n")}
+
 /* ================= v4.1 — ANA SAYFA (Lovable akışı) ve GİRİŞ EKRANI ================= */
 const HOME_CHIPS=[["chart","Pano","app","Satış, sipariş ve müşteri verilerimi grafiklerle gösteren, filtrelenebilir bir yönetim panosu"],["users","Portal","app","Müşterilerimin giriş yapıp taleplerini, faturalarını ve belgelerini görebildiği bir müşteri portalı"],["layers","Sunum","site","Şirketimi anlatan, kaydırarak ilerleyen 8 slaytlık modern bir tanıtım sunumu"],["box","İç araç","app","Ekibimin stok, görev ve izin taleplerini yönettiği basit bir iç araç"],["rocket","Açılış sayfası","site","Yeni ürünüm için başlık, özellikler, fiyatlar, SSS ve e-posta kayıt formu olan bir açılış sayfası"],["target","Satış","app","Teklif hazırlama, müşteri takibi ve satış hunisi olan bir satış uygulaması"],["gamepad","Oyun","game","Dokunmatik kontrollü, skor tablolu, giderek zorlaşan bir arcade oyunu"]];
 const HOME_PH=["bir randevu uygulaması","bir emlak sitesi","müşteri paneli","bir stok takip aracı","bir restoran menüsü","bir quiz oyunu"];
@@ -2474,11 +2602,11 @@ function HomePage(props){const {auth,startTemplate,go}=props;
  const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.onresult=e=>setV(x=>(x?x+" ":"")+[...e.results].map(y=>y[0].transcript).join(" "));r.onend=()=>setListening(false);setListening(true);r.start()};
  const first=auth.user&&auth.user.name?auth.user.name.split(" ")[0]:"";
  return html`<div class="home">
-  <section class="home-hero"><div class="home-aurora"></div><div class="home-grid"></div>
+  <section class="home-hero"><div class="siri"><i></i><i></i><i></i><i></i><i></i></div>
    <button class="home-pill" onClick=${()=>go("baglantilar")}><span class="hp-ic">${["sparkles","bolt","db"].map(n=>html`<i key=${n}><${Icon} n=${n} s=${13} c="#0a0a0a" w=${2}/></i>`)}</span>Uygulamalarına yapay zekâ ve servis ekle <${Icon} n="arrowRight" s=${16}/></button>
    <h1 class="home-h">${first?html`Yapmaya hazır mısın, <span class="hl">${first}</span>?`:html`Fikrini yaz, <span class="hl">gitmapp</span> yapsın.`}</h1>
-   <form class="home-box" onSubmit=${submit}>
-    <textarea rows="2" value=${v} onInput=${e=>setV(e.target.value)} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+ph+" yapmasını iste"}></textarea>
+   <div class=${"gbox hg"+(v.trim()?" typing":"")}><form class="home-box" onSubmit=${submit}>
+    <${GhostTA} className="hta" rows="2" value=${v} set=${setV} kind=${kind} onKeyDown=${e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit()}}} placeholder=${"Gitmapp'ten "+ph+" yapmasını iste"}/>
     <div class="hb-row">
      <button type="button" class="hbi" title="Çizim ya da görsel ekle" onClick=${()=>startTemplate({sketch:"layout",kind})}><${Icon} n="plus" s=${18}/></button>
      <button type="button" class="hbw" onClick=${()=>go("baglantilar")}><${Icon} n="grid" s=${15}/> Çalışma alanı${conns?html`<em>${conns}</em>`:""}</button>
@@ -2487,9 +2615,11 @@ function HomePage(props){const {auth,startTemplate,go}=props;
      <span style=${{position:"relative"}}><button type="button" class="hbm" onClick=${()=>setModeOpen(!modeOpen)}>${{hizli:"Yap",planli:"Planla",ajan:"Ajan"}[mode]} <${Icon} n="chevDown" s=${14}/></button>
       ${modeOpen&&html`<div class="hbm-l glass" onMouseLeave=${()=>setModeOpen(false)}>${[["hizli","zap","Yap","Hemen yazmaya başlar"],["planli","compass","Planla","Önce plan çıkarır, onayınla yapar"],["ajan","list","Ajan","İşi adımlara böler, adım adım yapar"]].map(([k,ic,t,d])=>html`<button type="button" key=${k} class=${mode===k?"on":""} onClick=${()=>setM(k)}><${Icon} n=${ic} s=${16}/><div><b>${t}</b><span>${d}</span></div>${mode===k?html`<${Icon} n="check" s=${15}/>`:""}</button>`)}</div>`}</span>
      <button type="button" class=${"hbi"+(listening?" rec":"")} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${17}/></button>
-     <button class="hbs" disabled=${!v.trim()} title="Başlat"><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
-    </div></form>
-   <div class="home-chips">${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class="hc" onClick=${()=>{setV(p);setKind(k)}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>
+     <button type="button" class="hbe" disabled=${v.trim().length<6} title="İstemi yapay zekâ için ayrıntılandır (kredi harcamaz)" onClick=${()=>setV(enhancePrompt(v,kind))}><${Icon} n="wand" s=${16}/><span>İyileştir</span></button>
+     <button class="hbs" disabled=${!v.trim()} title="Başlat (Enter)"><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
+    </div></form></div>
+   ${v.trim().length>4&&html`<div class="qadd" key="qa">${QUICK_ADD[kind].map(([ic,l,t],i)=>html`<button key=${l} style=${{animationDelay:i*40+"ms"}} onClick=${()=>setV(addTo(v,t))}><${Icon} n=${ic} s=${14}/>+ ${l}</button>`)}</div>`}
+   <div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class="hc" onClick=${()=>{setV(p);setKind(k)}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>
   </section>
   <div class="home-sheet"><${ProjectsPage} ...${props}/></div>
  </div>`;
@@ -2499,7 +2629,7 @@ function AuthScreen({auth,health,toast,reason,close}){
   <div class="authx-l"><div class="authx-logo"><${BrandMark} s=${34}/><${Wordmark} s=${22}/></div>
    <div class="authx-f"><${AuthBox} auth=${auth} health=${health} toast=${toast} reason=${reason} onDone=${close}/>
     <p class="authx-legal">Devam ederek <a href="#guncel">Kullanım Koşulları</a> ve <a href="#guncel">Gizlilik Politikası</a>'nı kabul etmiş olursun.</p></div></div>
-  <div class="authx-r"><div class="home-aurora"></div><div class="home-grid"></div>
+  <div class="authx-r"><div class="siri"><i></i><i></i><i></i><i></i><i></i></div>
    <div class="authx-card glass"><div class="authx-q"><${Spark} s=${16}/><span>Kuaför salonum için randevu uygulaması yap</span></div>
     <div class="authx-prev"><div class="ap-h"><b>💇 Salon Elif</b><span>Bugün 6 boş saat</span></div>${[["Saç kesimi","45 dk","350 ₺"],["Manikür","30 dk","250 ₺"],["Cilt bakımı","60 dk","600 ₺"]].map(([a,b,c])=>html`<div class="ap-r" key=${a}><i></i><div><b>${a}</b><span>${b}</span></div><em>${c}</em></div>`)}<div class="ap-b">Randevu al</div></div></div>
    <h2 class="authx-t">Fikrinden canlı uygulamaya,<br/><span class="hl">dakikalar içinde.</span></h2></div>
