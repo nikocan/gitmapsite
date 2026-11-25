@@ -1369,6 +1369,10 @@ button.adp-mini{color:inherit;text-align:left}
 .side::-webkit-scrollbar,.side .navs::-webkit-scrollbar{width:5px}.side::-webkit-scrollbar-thumb,.side .navs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:5px}.side::-webkit-scrollbar-track,.side .navs::-webkit-scrollbar-track{background:transparent}
 .side *{min-width:0}.side .nav span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(min-width:821px){.studio-start-nav{position:fixed;top:14px;left:14px;z-index:30}}
+.bg-pill{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:85;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 12px;border-radius:99px;border:1px solid #3a3937;background:rgba(28,28,27,.94);backdrop-filter:blur(14px);color:#ecebe6;font:inherit;cursor:pointer;box-shadow:0 18px 40px -14px rgba(0,0,0,.7)}
+.bg-pill span{display:flex;flex-direction:column;text-align:left;line-height:1.25}.bg-pill b{font-size:13px}.bg-pill small{font-size:11.5px;color:#a3a29b;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bg-pill.done{border-color:rgba(48,209,88,.5)}.bg-pill.done svg{color:#30d158}.bg-pill.error svg,.bg-pill.canceled svg{color:#ffb347}
+@media(max-width:820px){.bg-pill{bottom:84px}}
 .ctl-sum{position:relative;display:flex;align-items:center;gap:6px;width:100%;min-width:0;padding:8px 12px;border:1px solid #2a2a28;border-radius:12px;background:#171716;color:#d6d5cf;font:inherit;font-size:13px;cursor:pointer;text-align:left}
 .ctl-sum:hover{border-color:#45443f;background:#1c1c1b}.ctl-sum span{flex:0 1 auto;max-width:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:2ch}.ctl-sum .k{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.ctl-sum i{width:3px;height:3px;border-radius:50%;background:#5a5954;flex:none}.ctl-sum>svg:last-child{margin-left:auto;flex:none;color:#8a8882}
 .ctl-close{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;border:0;border-radius:99px;background:transparent;color:#8a8882;font:inherit;font-size:12px;cursor:pointer}.ctl-close:hover{color:#ecebe6;background:#1f1f1e}
@@ -1543,8 +1547,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.23.0";
+const VERSION="5.24.0";
 const CHANGELOG=[
+ {v:"5.24.0",date:"2026-11-26",items:[
+  "☁️ Bulutta geliştirme: komutu gönderdikten sonra iş sunucuda sürüyor. Başka sayfaya geçsen, sayfayı yenilesen ya da sekmeyi kapatsan da iş bitiyor ve sonuç saklanıyor; Stüdyo'ya dönünce kaldığı yerden izleniyor ve sonuç önizlemeye otomatik geliyor",
+  "🟢 Diğer sayfalarda alt ortada “Bulutta üretiliyor · süre” göstergesi; iş bitince “Hazır · Stüdyo'da aç” oluyor ve bildirim çıkıyor. Bulut işi sürerken Stüdyo'dan çıkarken artık uyarı sorulmuyor",
+  "⏹️ Durdur düğmesi bulut işini de sunucuda durduruyor; kredi harcanmıyor",
+  "⏭️ Sıradaki istekler kaydediliyor: sayfa değişse de kaybolmuyor, Stüdyo'ya dönünce sırayla devam ediyor",
+  "🤝 Asistan, Stüdyo ile aynı kurallara uyuyor: iş sürerken önerdiği “Geliştir” adımı sıraya ekleniyor, kontrol/kaydet/yayınla önermiyor; işin bulutta sürdüğünü ve sırada kaç istek olduğunu biliyor"]},
  {v:"5.23.0",date:"2026-11-26",items:[
   "🎮 Oyun isteği uygulama paneline dönüşmüyor: “koşup zıplayan, parkur” gibi kelimeler oyunu “spor” sektörüne eşliyor, otomatik seçilen tasarım (“Parkurlar · Neon Arcade”) modele bir uygulama ekran düzeni (vurgu kartı, kart ızgarası) gönderiyordu. Model de oyun yerine “Oyun Durumu” kartlı bir panel yapıyordu. Artık oyunlarda sektör hep “Oyun”; tasarımdan yalnızca renk, yazı tipi ve his gidiyor",
   "✂️ Yanıtın yarıda kesilmesi düzeltildi: Ayarlar'daki ayrıntı düzeyi, büyük işler için yükseltilen yanıt sınırını geri düşürüyordu (ör. yeni oyunda 20.000 yerine 6.000). Oyunun motor kodu dosyanın sonunda olduğu için hiç gelmiyor, ekranda yalnızca düğmeler kalıyordu. Yeni üretimde sınır en az 24.000, düşünen modellerde (GPT-5 vb.) +8.000; kesilirse 3 kez otomatik devam",
@@ -1924,7 +1934,7 @@ function categorize(r){
 }
 
 /* ================= GITHUB ================= */
-const LS={get(k,d){try{const v=localStorage.getItem("gms_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("gms_"+k,JSON.stringify(v));return true}catch(e){return false}}};
+const LS={get(k,d){try{const v=localStorage.getItem("gms_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("gms_"+k,JSON.stringify(v));return true}catch(e){return false}},del(k){try{localStorage.removeItem("gms_"+k)}catch(e){}}};
 let RATE={rem:"?",lim:"?"};
 async function gh(path){
  const tok=LS.get("token","");
@@ -2887,12 +2897,12 @@ function Typewriter({text,speed=12,onDone}){
 const netErr=e=>{if(e&&e.name==="AbortError")return e;if(e instanceof TypeError||/load failed|failed to fetch|networkerror|network connection was lost/i.test(String(e&&e.message))){const x=new Error("Bağlantı koptu: internet ya da sunucuyla bağlantı kesildi. Sayfayı açık tutup tekrar dene; kredi düşmedi.");x.status=0;x.net=true;return x}return e};
 async function apiStream(path,body,onDelta,signal,onPhase){try{return await apiStream0(path,body,onDelta,signal,onPhase)}catch(e){throw netErr(e)}}
 async function apiStream0(path,body,onDelta,signal,onPhase){
- const t=TOK.get();const r=await fetch(API+path,{method:"POST",signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
+ const t=TOK.get();const r=await fetch(API+path,body===null?{method:"GET",signal,headers:t?{Authorization:"Bearer "+t}:{}}:{method:"POST",signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
  if(!r.ok){let j={};try{j=await r.json()}catch(e){}const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}
  const rd=r.body.getReader();const dec=new TextDecoder();let buf="",final=null;
  while(true){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
   while((i=buf.indexOf("\n\n"))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);const line=chunk.split("\n").find(l=>l.startsWith("data:"));if(!line)continue;let ev;try{ev=JSON.parse(line.slice(5))}catch(e){continue}
-   if(ev.t==="delta")onDelta(ev.d);else if(ev.t==="phase")onPhase?.(ev.phase);else if(ev.t==="done")final=ev;else if(ev.t==="error"){const e=new Error(ev.error);e.status=ev.status;throw e}}}
+   if(ev.t==="delta")onDelta(ev.d);else if(ev.t==="job")onPhase?.("job:"+ev.id);else if(ev.t==="phase")onPhase?.(ev.phase);else if(ev.t==="done")final=ev;else if(ev.t==="error"){const e=new Error(ev.error);e.status=ev.status;throw e}}}
  if(!final)throw new Error("Bağlantı kesildi, lütfen tekrar deneyin.");crEvent(final);return final;
 }
 function clTopic(t,kind){t=String(t||"").replace(/\s+/g," ").trim();if(kind==="review")return "Kod kontrolü değerlendiriliyor";t=t.replace(/^Yapılacaklar listesindeki /,"");const sh=t.length>46?t.slice(0,44).replace(/\s\S*$/,"")+"…":t;return sh?"“"+sh+"” isteği değerlendiriliyor":"İstek değerlendiriliyor"}
@@ -4009,12 +4019,16 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{if(resumeVersions){setGitOpen("github");clearResumeVersions()}},[resumeVersions]);
  const [saved,setSaved]=useState(null),[saveFailed,setSaveFailed]=useState(false),[localOk,setLocalOk]=useState(true);
  const blank={html:"",title:"",emoji:"✨",color:"#5e5ce6",msgs:[],appId:null};
- const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running?{...m.log,running:false,cut:true,secs:m.log.secs||0}:m.log):undefined}))}});
+ const [st,setSt]=useState(()=>{const v=LS.get("studio",null)||blank;return {...v,msgs:(v.msgs||[]).map(m=>({...m,anim:false,log:m.log?(m.log.running&&!m.log.job?{...m.log,running:false,cut:true,secs:m.log.secs||0}:m.log):undefined}))}});
  const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput","")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const [ccMenu,setCcMenu]=useState(null);const [vcSource,setVcSource]=useState(()=>LS.get("vcSource","gitmapp")==="github"?"github":"gitmapp");useEffect(()=>{LS.set("vcSource",vcSource)},[vcSource]);useEffect(()=>{if(busy)setCcMenu(null)},[busy]);
- const [queue,setQueue]=useState([]);const [ctrlOpen,setCtrlOpen]=useState(false);useEffect(()=>{if(busy)setCtrlOpen(false)},[busy]);const [qa,setQa]=useState(null);
+ const jobRef=useRef(null),detachRef=useRef(false);
+ const resumedRef=useRef(false);
+ useEffect(()=>{detachRef.current=false;return()=>{detachRef.current=true;try{abortRef.current&&abortRef.current.abort()}catch(e){}}},[]);
+ useEffect(()=>{if(resumedRef.current||!auth.user||!API_ON)return;resumedRef.current=true;const m=st.msgs.findLast(x=>x.log&&x.log.running&&x.log.job);if(m)setTimeout(()=>resumeJob(m),50)},[auth.user?.id]);
+ const [queue,setQueue]=useState(()=>LS.get("studioQueue",[])||[]);useEffect(()=>{LS.set("studioQueue",queue)},[queue]);const [ctrlOpen,setCtrlOpen]=useState(false);useEffect(()=>{if(busy)setCtrlOpen(false)},[busy]);const [qa,setQa]=useState(null);
  useEffect(()=>{const h=e=>{const d=e.data;if(!d||d.gm!=="qa"||!frameRef.current||e.source!==frameRef.current.contentWindow)return;setQa({len:(st.html||"").length,errors:Array.isArray(d.errors)?d.errors.slice(0,5).map(String):[],issues:Array.isArray(d.issues)?d.issues.slice(0,6):[]})};addEventListener("message",h);return()=>removeEventListener("message",h)},[st.html]);const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
  const [live,setLive]=useState("");const liveRef=useRef("");const liveStartRef=useRef(0);const codeEnd=useRef(null);
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput",input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
@@ -4075,6 +4089,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   };
   try{
    const result=await execute(controller.signal,onDelta,phase=>{
+    if(String(phase).startsWith("job:")){const jid=phase.slice(4);log.job=jid;jobRef.current=jid;LS.set("bgJob",{id:jid,label:String(task||userText||STUDIO_ACTIVITY[kind]?.waiting||"Üretim").slice(0,60),start});setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log}}:m)}));return}
     if(phase==="connected"||phase==="processing"||phase==="continuing")record(phase);
    });
    const message=onDone(result);
@@ -4084,6 +4099,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
    return result;
   }catch(error){
+   if(error.name==="AbortError"&&detachRef.current)return null;
    if(error.name==="AbortError")finish({stopped:true});
    else{
     const message=error.message||"Bilinmeyen hata";
@@ -4094,22 +4110,32 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    }
    return null;
   }finally{
-   abortRef.current=null;streamClock.current=null;setBusy(false);setLive("");
+   if(!detachRef.current){abortRef.current=null;streamClock.current=null;setBusy(false);setLive("");if(log.job){LS.del("bgJob");jobRef.current=null}}
   }
  }
+ // v5.20 — Bulut işine yeniden bağlan: sayfa değişip dönünce ya da yenilenince iş kaldığı yerden izlenir, sonuç uygulanır
+ async function resumeJob(m){const id=m.id,jid=m.log.job,start=m.log.start||Date.now();const controller=new AbortController();abortRef.current=controller;jobRef.current=jid;
+  setBusy(true);setT0(start);streamClock.current={id,last:Date.now()};liveRef.current="";liveStartRef.current=0;setLive("");
+  const upd=f=>setSt(s=>({...s,msgs:s.msgs.map(x=>x.id===id?{...x,...f(x)}:x)}));
+  try{const j=await apiStream("/api/ai/jobs/"+jid+"/stream",null,d=>{liveRef.current+=d;if(!liveStartRef.current)liveStartRef.current=Date.now();streamClock.current&&(streamClock.current.last=Date.now());setLive(liveRef.current)},controller.signal,ph=>{if(String(ph).startsWith("job:"))return;upd(x=>({log:{...x.log,events:(x.log.events||[]).includes(ph)?x.log.events:[...(x.log.events||[]),ph]}}))});
+   if(j.html){setSt(s=>{if(s.html)setVersions(v=>[...v.slice(-9),s.html]);return {...s,html:j.html,tokens:s.tokens||designTokens(j.html),title:s.title||j.title||"Yeni uygulama"}})}
+   upd(x=>({content:j.summary||"Hazır",log:{...x.log,running:false,resumed:true,model:j.model||x.log.model,kb:j.html?(new Blob([j.html]).size/1024).toFixed(1):"",spent:j.spent,secs:Math.floor((Date.now()-start)/1000),events:[...(x.log.events||[]),x.log.kind==="review"?"preview":"preview"],res:{summary:String(j.summary||"").slice(0,600),patched:j.patched||0,title:j.title||""}}}));
+   toast("Bulutta süren iş tamamlandı · önizleme güncellendi");
+  }catch(e){if(e.name==="AbortError"&&detachRef.current)return;const stop=/durdurdun/i.test(e.message||"");upd(x=>({content:e.message,err:!stop,log:{...x.log,running:false,error:!stop,stopped:stop,res:{error:String(e.message||"").slice(0,400)}}}))}
+  finally{if(!detachRef.current){setBusy(false);abortRef.current=null;jobRef.current=null;streamClock.current=null;setLive("");LS.del("bgJob")}}}
  function runStream(kind,userText,path,body,onDone,im={},retry,task){
   const mode=kind==="review"?"review":body.html?"update":"build";
   const legacyRetry=task?undefined:{kind,text:kind==="review"||body.plan?"":String(body.prompt||""),shown:userText||""};
-  return runActivity(mode,userText,(signal,onDelta,onPhase)=>apiStream(path,body,onDelta,signal,onPhase),onDone,{
+  return runActivity(mode,userText,(signal,onDelta,onPhase)=>apiStream(path,auth.user?{...body,job:true}:body,onDelta,signal,onPhase),onDone,{
    imgs:im.thumbs,images:im.send?.length||0,retry,legacyRetry,task,req:{text:String(body.prompt||userText||""),size:body.html?(new Blob([body.html]).size/1024).toFixed(1):0,design:body.design?.name||""},
    finalEvent:result=>result.html===body.html?"unchanged":"preview"
   });
  }
  useEffect(()=>{dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:busy||!!todo?.running}}))},[busy,todo?.running]);
  useEffect(()=>()=>{stopRef.current=true;abortRef.current?.abort();dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:false}}))},[]);
- function stopGen(){stopRef.current=true;const a=abortRef.current;if(a){try{a.abort()}catch(e){}}}
+ function stopGen(){stopRef.current=true;const jid=jobRef.current;if(jid)api("POST","/api/ai/jobs/"+jid+"/cancel",{}).catch(()=>{});const a=abortRef.current;if(a){try{a.abort()}catch(e){}}}
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
- useEffect(()=>{if(!busy)return;const h=e=>{e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
+ useEffect(()=>{if(!busy)return;const h=e=>{if(jobRef.current)return;e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
  async function gen(text){if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
@@ -4221,7 +4247,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const [plusOpen,setPlusOpen]=useState(false);useEffect(()=>{if(!plusOpen)return;const h=e=>{if(!e.target.closest(".plusw"))setPlusOpen(false)};const k=e=>{if(e.key==="Escape")setPlusOpen(false)};setTimeout(()=>document.addEventListener("click",h),0);addEventListener("keydown",k);return()=>{document.removeEventListener("click",h);removeEventListener("keydown",k)}},[plusOpen]);
  useEffect(()=>{const k=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="u"){e.preventDefault();fileRef.current&&fileRef.current.click()}};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  const inputRef=useRef("");inputRef.current=input;const actRef=useRef(null);
- window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy||!!todo?.running,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
+ window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy||!!todo?.running,bulut:!!jobRef.current,sira:queue.length,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
  useEffect(()=>{dispatchEvent(new Event("gm:studio"))},[busy,!!todo?.running]);
  actRef.current=async a=>{const g=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
   if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
@@ -5421,9 +5447,9 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
    :ai0>=0?html`<${ClSpark} s=${17}/><span class="cl-cur shimmer">Onayın değerlendiriliyor</span><span class="cl-time">${ai0+1}/${n}</span>`
    :!pend?html`<span>${nd?nd+" adım uyguladı"+(st.includes("skip")?", "+st.filter(x=>x==="skip").length+" adım atlandı":"")+(m.secs?" · "+clTime(m.secs):""):"Adımlar atlandı"}</span>`
    :html`<span>${auto?"Oto pilot":"Önerilen"} · ${n} adım${nd?" · "+nd+" tamam":""}</span>`;
-  return html`<div class="cp-acts"><div class="cl-row cp-ah">${head}<span style=${{flex:1}}></span>${pend&&!asking&&ri<0&&(sBusy?html`<span class="cp-busy">Stüdyo'da iş sürüyor · bitince uygulayabilirsin</span>`:html`<button class="cp-all" onClick=${()=>runActs(mi,true)}>Hepsini uygula</button>`)}</div>
+  return html`<div class="cp-acts"><div class="cl-row cp-ah">${head}<span style=${{flex:1}}></span>${pend&&!asking&&ri<0&&(sBusy?html`<span class="cp-busy">Stüdyo'da iş sürüyor · “Geliştir” adımı sıraya eklenir</span>`:html`<button class="cp-all" onClick=${()=>runActs(mi,true)}>Hepsini uygula</button>`)}</div>
   <div class="cl-card">${m.acts.map((a,ai)=>{const [ic,l,d]=cpLabel(a);const s=st[ai];const k=mi+"-"+ai;return html`<div key=${ai} class=${"cp-a "+s}><span class="cp-ai">${s==="done"?html`<${Icon} n="check" s=${14} w=${2.2}/>`:s==="run"?html`<${ClSpark} s=${14}/>`:s==="skip"?html`<${Icon} n="x" s=${13}/>`:html`<${Icon} n=${ic} s=${14}/>`}</span><div class="cp-at"><b class=${s==="run"?"shimmer":""}>${l}</b>${d&&html`<small class=${a.t==="prompt"?"cp-pr":""}>${d}</small>`}</div>
-   ${s==="wait"||s==="ask"?html`<span class="cp-ab">${s==="ask"&&html`<button class="cp-skip" onClick=${()=>skipAct(mi,ai)}>Atla</button>`}<button class=${"cp-ok"+(s==="ask"?" pulse":"")} data-k=${k} disabled=${sBusy&&["yap","kontrol","kaydet","yayinla","sablon","yeni"].includes(a.t)} onClick=${()=>okAct(mi,ai)}>${s==="ask"?"Onayla":"Uygula"}</button></span>`:s==="skip"?html`<span class="cp-st">atlandı</span>`:s==="done"&&typeof stepT.current[k]==="number"&&stepT.current[k]<1e9?html`<span class="cp-st">${clTime(stepT.current[k])}</span>`:""}</div>`})}</div></div>`};
+   ${s==="wait"||s==="ask"?html`<span class="cp-ab">${s==="ask"&&html`<button class="cp-skip" onClick=${()=>skipAct(mi,ai)}>Atla</button>`}<button class=${"cp-ok"+(s==="ask"?" pulse":"")} data-k=${k} disabled=${sBusy&&["kontrol","kaydet","yayinla","sablon","yeni"].includes(a.t)} onClick=${()=>okAct(mi,ai)}>${s==="ask"?"Onayla":"Uygula"}</button></span>`:s==="skip"?html`<span class="cp-st">atlandı</span>`:s==="done"&&typeof stepT.current[k]==="number"&&stepT.current[k]<1e9?html`<span class="cp-st">${clTime(stepT.current[k])}</span>`:""}</div>`})}</div></div>`};
  const thinkRow=(m,mi)=>m.think?html`<div class="cl-sec"><button type="button" class="cl-row" onClick=${()=>setOpenTh(o=>({...o,[mi]:!o[mi]}))}><span>${m.think} sn düşündü</span><${Icon} n=${openTh[mi]?"chevUp":"chevRight"} s=${14}/></button>
   ${openTh[mi]&&html`<div class="cl-think"><div class="cl-tt">${(m.ttl||"İstek değerlendiriliyor").replace(/değerlendiriliyor$/,"değerlendirildi")}</div><p>Ekran bağlamı ve önceki konuşma okundu.</p><p>${m.acts?m.acts.length+" adımlık bir plan hazırlandı"+(auto?"; oto pilot onay gereken adımlarda duracak.":"; adımlar onayınla uygulanacak."):"Yanıt hazırlandı."}</p></div>`}</div>`:"";
  return html`<aside class="cp glass" role="complementary" aria-label="Gitmapp Asistan">
@@ -5664,7 +5690,7 @@ function App(){
   }};
   window.addEventListener("keydown",toggle);return ()=>window.removeEventListener("keydown",toggle);
  },[view]);
- const canLeaveStudio=v=>view!=="studio"||v==="studio"||!window.__gmStudio?.calisiyor||confirm("Üretim sürüyor. Sayfadan ayrılmak istiyor musun?");
+ const canLeaveStudio=v=>view!=="studio"||v==="studio"||!window.__gmStudio?.calisiyor||window.__gmStudio?.bulut||confirm("Üretim sürüyor. Sayfadan ayrılmak istiyor musun?");
  const setView=v=>{if(!canLeaveStudio(v))return;if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
  const [health,setHealth]=useState({}),[apiOn,setApiOn]=useState(false),[healthError,setHealthError]=useState(false),[attempt,retry]=useState(0);
  const [,setSettingsVersion]=useState(0);
@@ -5685,6 +5711,10 @@ function App(){
  const config=useRemoteData(apiOn?"/api/settings":null);
  useEffect(()=>{if(config.data){siteSettings=config.data;setSettingsVersion(v=>v+1)}},[config.data]);
  const auth=useAuth(apiOn);
+ const [bg,setBg]=useState(null);
+ useEffect(()=>{let t,alive=true;const tick=async()=>{const b=LS.get("bgJob",null);if(!b||!auth.user||view==="studio"){alive&&setBg(null);return}
+  try{const j=await api("GET","/api/ai/jobs/"+b.id);if(!alive)return;setBg({...b,...j});if(j.status!=="running"&&!b.told){LS.set("bgJob",{...b,told:true});toast(j.status==="done"?"Bulutta süren iş bitti · Stüdyo'da aç":"Bulut işi tamamlanamadı")}}catch(e){if(e.status===404){LS.del("bgJob");alive&&setBg(null)}}};
+  tick();t=setInterval(tick,3000);return()=>{alive=false;clearInterval(t)}},[view,auth.user?.id]);
  const models=useModels(apiOn,auth.user&&auth.user.id);
  const [resumeVersions,setResumeVersions]=useState(false);
  useEffect(()=>{const h=()=>{const v=location.hash.slice(1).split("?")[0];
@@ -5826,6 +5856,7 @@ function App(){
      </div>`}</div></div></aside>
   <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} aria-current=${navOn(k)?"page":undefined} onClick=${()=>navGo(k)}><span class="bn-ic"><${NavIcon} k=${k} s=${21}/></span><span>${l}</span></button>`)}<button class=${"bnav-more"+(more?" on":"")} aria-expanded=${more} aria-controls="mobile-navigation" onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><nav class="sheet glass" id="mobile-navigation" aria-label="Mobil menü" onClick=${e=>e.stopPropagation()}><div class="sheet-close"><span>Menü</span><button class="ib sm" aria-label="Menüyü kapat" onClick=${()=>{setMore(false);document.querySelector(".bnav-more")?.focus()}}><${Icon} n="x" s=${15}/></button></div><button class="sheet-st" onClick=${()=>{setMore(false);openSettings("genel")}}><${UserAvatar} u=${auth.user||{name:"Misafir"}} s=${30}/><span><b>${auth.user?(auth.user.nickname||auth.user.name||auth.user.email):"Misafir"}</b><small>Ayarlar, profil ve kullanım</small></span><${Icon} n="chevRight" s=${16}/></button>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}${auth.user?.admin&&html`<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div>`}<div class="sheet-grid">${installButton()}${navList(true)}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></nav></div>`}
+  ${bg&&view!=="studio"&&html`<button type="button" class=${"bg-pill "+bg.status} onClick=${()=>navGo("studio")} title="Stüdyo'ya dön">${bg.status==="running"?html`<${ClSpark} s=${15}/><span><b>Bulutta üretiliyor</b><small>${bg.label} · ${clTime(bg.secs||0)}</small></span>`:bg.status==="done"?html`<${Icon} n="check" s=${15}/><span><b>Hazır</b><small>Stüdyo'da aç</small></span>`:html`<${Icon} n="alert" s=${15}/><span><b>Tamamlanamadı</b><small>Ayrıntı Stüdyo'da</small></span>`}</button>`}
   <main class=${"main"+(view==="ana"?" is-home":"")}>${view!=="ana"&&html`<div class="topbar glass noprint"><span>${TITLES[view]||""}</span>${auth.user&&html`<button class="crchip" style=${{marginLeft:"auto"}} onClick=${()=>setCrOpen(true)}><${Icon} n="gem" s=${12}/><${CountUp} v=${auth.user.credits??0}/></button>`}</div>`}
    ${needLogin?html`<section class="box adm-gate">
     ${healthError||auth.phase==="error"?html`<h1>Yönetici girişi</h1><p role="alert">Oturum sunucusuna ulaşılamadı.</p><button class="btn" onClick=${()=>apiOn?auth.refresh():retry(x=>x+1)}>Tekrar dene</button>`:
