@@ -743,6 +743,49 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 @media(max-width:720px){.ds-work{grid-template-columns:1fr;grid-template-rows:minmax(180px,1fr) minmax(120px,38%)}.ds-board{padding:5px}.ds-panel{border-top:1px solid #39393d}.ds-bar{padding:6px;gap:4px}.ds-bar small,.ds-bar label{font-size:10px}.ds-bar .btn{font-size:11px}}
 .studio-stage{display:flex;flex-direction:column;min-height:0;min-width:0}.studio-stage .ws-prev{flex:1;min-width:0}.stage-tabs,.stage-progress{display:flex;gap:4px;align-items:center;padding:4px 0 8px}.stage-tabs button{padding:6px 12px;border-radius:9px;background:transparent;border:1px solid transparent;color:#c4c4bc;cursor:pointer}.stage-tabs button[aria-pressed=true]{color:#eff3dd;background:#272925;border-color:#45483e}.stage-tabs button:disabled{opacity:.55;cursor:default}.stage-progress{justify-content:space-between;color:#e4e4d9;font-size:13px}.studio-save,.stage-progress small{font-size:12px;color:#b8b8ae}.ws-msgs .todo{flex-shrink:0;max-height:none;overflow:visible}.todo-b summary{cursor:pointer;color:#c7c7c0}.todo-r.run span{color:#c7c7c0}.sugg[hidden],.studio-shell .refc{display:none}.studio-nav-switch{align-self:flex-end}.studio-shell.nav-compact .side{width:48px;align-items:center}.studio-shell.nav-compact .side>:not(.studio-nav-switch){display:none}
 @media(max-width:820px){.studio-stage{min-height:480px}.studio-stage .ws-prev{min-height:400px}}
+/* v4.5 — Gitmapp Asistan (yan sohbet) */
+.cp{position:fixed;top:10px;right:10px;bottom:10px;width:372px;z-index:70;display:flex;flex-direction:column;border:1px solid #26262a;border-radius:22px;background:rgba(13,13,15,.94);backdrop-filter:blur(22px) saturate(1.3);box-shadow:0 30px 80px -20px rgba(0,0,0,.8);animation:cpin .28s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+@keyframes cpin{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@media(min-width:1180px){.app.cp-on .main{margin-right:384px}}
+@media(max-width:820px){.cp{top:auto;left:0;right:0;bottom:0;width:auto;height:min(84vh,720px);border-radius:22px 22px 0 0;padding-bottom:env(safe-area-inset-bottom)}}
+.cp-h{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 14px;border-bottom:1px solid #1e1e22}
+.cp-ht{display:flex;flex-direction:column;min-width:0;flex:1}.cp-ht b{font-size:15px}.cp-ht small{font-size:11.5px;color:var(--label3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-seg{display:flex;background:#18181b;border:1px solid #26262a;border-radius:99px;padding:2px}.cp-seg button{border:0;background:none;color:var(--label2);font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;cursor:pointer;display:flex;align-items:center;gap:4px}.cp-seg button.on{background:#f4f4ef;color:#0a0a0b}
+.cp-orb{position:relative;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:conic-gradient(from 0deg,#e4ff3d,#22d3ee,#a78bfa,#f472b6,#fb923c,#e4ff3d);animation:cpspin 6s linear infinite;box-shadow:0 0 18px rgba(167,139,250,.25)}
+.cp-orb i{position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a2a30,#0c0c0e 70%)}
+.cp-orb.listen{animation:cpspin 2.2s linear infinite,cppulse 1.1s ease-in-out infinite}.cp-orb.talk{animation:cpspin 1.6s linear infinite,cppulse .7s ease-in-out infinite}.cp-orb.think{animation:cpspin 1s linear infinite}
+@keyframes cpspin{to{transform:rotate(360deg)}}@keyframes cppulse{50%{box-shadow:0 0 0 6px rgba(228,255,61,.12),0 0 26px rgba(34,211,238,.45)}}
+.cp-msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin}
+.cp-hello{text-align:center;padding:14px 4px 4px}.cp-big{display:flex;justify-content:center;margin:6px 0 12px}.cp-big .cp-orb{width:64px;height:64px}.cp-big .cp-orb i{inset:5px}
+.cp-hello h3{margin:0 0 6px;font-size:19px;letter-spacing:-.3px}.cp-hello p{margin:0 0 14px;color:var(--label2);font-size:13.5px;line-height:1.55}.cp-hello p b{color:var(--txt)}
+.cp-voicebtn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:99px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer;color:#0a0a0b;background:linear-gradient(135deg,#e4ff3d,#a3e635)}
+.cp-start{display:grid;gap:6px;margin-top:16px;text-align:left}.cp-start button{display:flex;align-items:center;gap:10px;border:1px solid #232327;background:#141416;color:var(--txt);border-radius:14px;padding:10px 12px;cursor:pointer;font-size:13.5px;transition:border-color .2s}.cp-start button:hover{border-color:#3a3a40}.cp-start svg{color:#e4ff3d}
+.cp-u{align-self:flex-end;max-width:86%;background:#202024;border:1px solid #2a2a2f;border-radius:16px 16px 4px 16px;padding:8px 12px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}.cp-u svg{color:#e4ff3d;margin-right:5px;vertical-align:-1px}
+.cp-m{display:flex;flex-direction:column;gap:8px;max-width:100%}.cp-t{font-size:13.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:#e9e9e4}.cp-t.err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:8px 10px;font-size:13px}
+.cp-acts{border:1px solid #26262a;border-radius:14px;background:#111113;overflow:hidden}
+.cp-ah{display:flex;align-items:center;gap:6px;padding:8px 10px;font-size:11.5px;font-weight:600;color:var(--label3);letter-spacing:.02em;border-bottom:1px solid #1e1e22}.cp-ah svg{color:#e4ff3d}
+.cp-all{border:1px solid #2c2c30;background:#1a1a1d;color:#f4f4ef;border-radius:99px;font-size:11.5px;font-weight:600;padding:3px 10px;cursor:pointer}
+.cp-a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-top:1px solid #19191c}.cp-a:first-of-type{border-top:0}
+.cp-ai{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:#1b1b1f;color:var(--label2);flex-shrink:0}.cp-a.done .cp-ai{background:rgba(52,211,153,.14);color:#34d399}.cp-a.run .cp-ai{background:rgba(228,255,61,.12);color:#e4ff3d}.cp-a.ask{background:rgba(228,255,61,.05)}.cp-a.skip{opacity:.5}
+.cp-at{flex:1;min-width:0;display:flex;flex-direction:column}.cp-at b{font-size:13px;font-weight:600}.cp-at small{font-size:11.5px;color:var(--label3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cp-at small.cp-pr{white-space:normal;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;color:var(--label2);margin-top:2px}
+.cp-ab{display:flex;gap:4px;flex-shrink:0}.cp-ok{border:0;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;background:#f4f4ef;color:#0a0a0b}.cp-ok.pulse{background:#e4ff3d;animation:cpok 1.2s ease-in-out infinite}@keyframes cpok{50%{box-shadow:0 0 0 5px rgba(228,255,61,.18)}}
+.cp-skip{border:1px solid #2c2c30;background:none;color:var(--label2);border-radius:99px;padding:5px 10px;font-size:12px;cursor:pointer}.cp-st{font-size:11px;color:var(--label3)}
+.cp-sug{display:flex;gap:6px;flex-wrap:wrap}.cp-sug button{display:flex;align-items:center;gap:6px;border:1px solid #2a2a2f;background:#151517;color:var(--txt);border-radius:99px;padding:6px 11px;font-size:12.5px;cursor:pointer}.cp-sug svg{color:#e4ff3d}
+.cp-in{padding:10px 12px 12px;border-top:1px solid #1e1e22;display:flex;flex-direction:column;gap:8px}
+.cp-live{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:#141416;border:1px solid #26262a;font-size:13px;color:var(--label2)}.cp-live.on{border-color:rgba(228,255,61,.35);color:var(--txt)}.cp-li{flex:1;min-width:0}
+.cp-wave{display:flex;align-items:center;gap:3px;height:18px}.cp-wave i{width:3px;height:6px;border-radius:2px;background:linear-gradient(#e4ff3d,#22d3ee)}.cp-live.on .cp-wave i{animation:cpw .9s ease-in-out infinite}.cp-wave i:nth-child(2){animation-delay:.12s!important}.cp-wave i:nth-child(3){animation-delay:.24s!important}.cp-wave i:nth-child(4){animation-delay:.36s!important}.cp-wave i:nth-child(5){animation-delay:.48s!important}
+@keyframes cpw{50%{height:18px}}
+.cp-stop{border:0;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#f43f5e;color:#fff;cursor:pointer}
+.cp-box{border:1px solid #2a2a2e;border-radius:16px;background:#0f0f11;padding:8px 8px 6px 12px;transition:border-color .2s}.cp-box:focus-within{border-color:#3d3d44}
+.cp-box textarea{width:100%;border:0;background:none;outline:0;resize:none;color:var(--txt);font:inherit;font-size:14px;line-height:1.5;max-height:140px;padding:2px 0}
+.cp-bar{display:flex;align-items:center;gap:4px}.cp-bar .ib.rec{color:#0a0a0b;background:#e4ff3d}.cp-note{font-size:11px;color:var(--label3);margin-left:4px}
+.cp-send{width:30px;height:30px;border:0;border-radius:50%;display:grid;place-items:center;background:#f4f4ef;color:#0a0a0b;cursor:pointer}.cp-send:disabled{opacity:.35;cursor:default}
+.cp-fab{position:fixed;right:18px;bottom:18px;z-index:65;display:flex;align-items:center;gap:8px;border:1px solid #2c2c30;border-radius:99px;padding:6px 14px 6px 6px;background:rgba(18,18,20,.92);backdrop-filter:blur(14px);color:var(--txt);font-weight:600;font-size:13.5px;cursor:pointer;box-shadow:0 14px 40px -12px rgba(0,0,0,.8);transition:transform .2s}.cp-fab:hover{transform:translateY(-2px)}.cp-fab .cp-orb{width:28px;height:28px}
+.cp-fab kbd{font-size:10.5px;color:var(--label3);border:1px solid #2c2c30;border-radius:6px;padding:1px 5px;font-family:inherit}
+@media(max-width:820px){.cp-fab{bottom:calc(78px + env(safe-area-inset-bottom));right:12px;padding:5px}.cp-fab span.cp-fl,.cp-fab kbd{display:none}}
+#ghost.wait .gh-ring{animation:ring 1.2s ease-out infinite}
+.app.cp-on .ws-top{flex-wrap:nowrap;gap:4px}.app.cp-on .ws-title{min-width:70px;flex:1 1 100px}.app.cp-on .ws-top .clr{display:none}.app.cp-on .ws-top .ib{width:32px;height:32px}.app.cp-on .ws-top .seg button{padding:5px 7px}
+@media(max-width:1500px){.app.cp-on .ws-top>.ib[title^="Yeni sekmede"],.app.cp-on .ws-top>.ib[title^="Tam ekran"]{display:none}}
 </style>
 </head>
 <body>
@@ -756,8 +799,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="4.5.0";
+const VERSION="4.6.0";
 const CHANGELOG=[
+ {v:"4.6.0",date:"2026-11-25",items:[
+  "🎧 Gitmapp Asistan: her sayfada sağda açılan yan sohbet paneli (sol menüde “Asistan”, sağ alttaki düğme ya da Ctrl/⌘+J). Fikrini anlat, sana en fazla iki soru sorarak netleştirir",
+  "✍️ Sohbetten prompta: fikir netleşince asistan ayrıntılı geliştirme istemini kendisi yazar, istem kutusuna aktarır, uygun tür, tema ve modu seçer, “Geliştirmeye başlayayım mı?” diye sorar. “Prompta dönüştür” ve “Geliştirmeye başla” kısayolları",
+  "🗣️ Sesli sohbet: eller serbest konuşma. Asistan seni dinler (Türkçe), yanıtını sesli okur, sonra yeniden dinler. Konuşurken araya girebilir, onayları “evet” ya da “atla” diyerek verebilirsin. Tek seferlik sesle yazma ve yanıtları sesli okuma aç/kapat",
+  "🧭 Oto pilot: asistan konuşmaya göre sayfaları açar, proje türünü, modu, tasarım temasını, çalıştırma ayarlarını ve model/tasarım/beceri panellerini imleçle kendisi ayarlar. Kredi harcayan ya da geri alınamayan adımlarda (geliştir, kontrol, kaydet, yayınla, şablon aç, yeni proje) imleç Onayla düğmesini gösterir ve yalnızca senin tıklamanı bekler",
+  "📋 Sohbet modunda asistanın önerdiği her adım bir kartta listelenir: tek tek “Uygula” ya da “Hepsini uygula”",
+  "🧠 Asistan o an hangi sayfada olduğunu, Stüdyo'daki projeyi (tür, mod, tema, model, istem kutusu, ayarlar) ve kredini bilir; şablon ve tema kataloğundan yalnızca gerçek seçenekleri önerir. Asistanla sohbet ücretsizdir",
+ ]},
  {v:"4.5.0",date:"2026-11-25",items:["Stüdyoda önizleme, tasarım ve kod ayrı görünümlerde. Üretim sırasında son çalışan sürümü inceleyebilirsiniz.","Uygulama ve site şablonlarında seçtiğiniz öğeyi elle veya yapay zekâ önerisiyle düzenleyebilir, tasarımı HTML ve SVG olarak dışa aktarabilirsiniz."]},
  {v:"4.4.0",date:"2026-11-25",items:[
   "🛠️ Yapay zekâ hatası düzeltmesi: seçilen model AI Router'da reddedilirse (401/403/404) Gitmapp otomatik olarak listedeki diğer modeli dener; hata mesajları artık nedeni ve çözümü açıkça yazar (bakiye, model izni, anahtar)",
@@ -2289,6 +2340,22 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   r.onresult=e=>{const t=[...e.results].map(x=>x[0].transcript).join(" ");setInput(v=>(v?v+" ":"")+t)};r.onend=()=>setListening(false);r.onerror=()=>{setListening(false);toast("Ses anlaşılamadı, tekrar dene")};setListening(true);r.start()}
  function openTab(){const w=window.open("","_blank");if(!w){toast("Açılır pencere engellendi");return}w.opener=null;w.document.title=st.title||"Önizleme";w.document.body.style.margin="0";const f=w.document.createElement("iframe");f.setAttribute("sandbox","allow-scripts allow-forms allow-modals allow-popups");f.style.cssText="border:0;width:100vw;height:100vh;display:block";f.srcdoc=resolve(st.html);w.document.body.appendChild(f)}
  function reset(){if(!sure){setSure(true);setTimeout(()=>setSure(false),3000);return}setTodo(null);setAtts([]);setSt(blank);setVersions([]);setSure(false);setPlan(null)}
+ // Asistan köprüsü: yan paneldeki asistanın istediği adımları imleçle yapar
+ const inputRef=useRef("");inputRef.current=input;const actRef=useRef(null);
+ window.__gmStudio={acik:true,tur:prefs.kind,mod:prefs.mode,tema:effTheme.id,temaAdi:effTheme.name,sektor:sector,model:curModel||null,baslik:st.title||null,acikUygulama:!!st.html,kayitli:!!st.appId,calisiyor:busy,istemKutusu:input.slice(0,400),sonIstekler:st.msgs.filter(m=>m.role==="user"&&m.content).slice(-3).map(m=>String(m.content).slice(0,200)),ayarlar:runSet};
+ actRef.current=async a=>{const g=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
+  if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
+  if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,mode:a.deger}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
+  if(a.t==="tema"){if(!THEMES.some(t=>t.id===a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
+  if(a.t==="ayar"){const n={...runRef.current};if(a.sicaklik!=null&&a.sicaklik!==""&&isFinite(+a.sicaklik))n.temperature=Math.max(0,Math.min(1.5,+a.sicaklik));if(["kisa","dengeli","ayrintili"].includes(a.detay))n.detail=a.detay;if(typeof a.talimat==="string")n.instructions=a.talimat.slice(0,1500);return g('.pill[title="Çalıştırma ayarları"]',()=>{setRunSet(n);runRef.current=n;toast("Çalıştırma ayarları güncellendi")})}
+  if(a.t==="prompt"){const m=String(a.metin||"").trim().slice(0,4000);if(!m)return;return g(".gta",async()=>{await typeInto(m);inputRef.current=m},{after:200})}
+  if(a.t==="yap"){const m=String(a.metin||inputRef.current||"").trim();if(!m)throw new Error("İstem kutusu boş");return g(".gsend",()=>gen(m))}
+  if(a.t==="kontrol"){if(!st.html)throw new Error("Önce bir uygulama yapılmalı");return g(".sugg .chip.on",()=>review())}
+  if(a.t==="kaydet")return g('.ib[title="Kaydet"]',()=>save());
+  if(a.t==="yayinla")return g(".ws-top .btn.s",()=>publish());
+  if(a.t==="panel"){if(a.ad==="model")return g('.pill[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('.pill[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.pill[title="Çalıştırma ayarları"]',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));return}
+  if(a.t==="yeni"){setTodo(null);setAtts([]);setSt(blank);setVersions([]);setPlan(null);setInput("");return}};
+ useEffect(()=>{const h=e=>{const {a,done}=e.detail||{};if(!a)return;Promise.resolve().then(()=>actRef.current&&actRef.current(a)).then(()=>done&&done(),er=>{toast(er.message||"Adım yapılamadı");done&&done()})};addEventListener("gm:act",h);return()=>{removeEventListener("gm:act",h);window.__gmStudio={acik:false}}},[]);
  const send=e=>{e.preventDefault();gen()};
  const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();gen()}};
  const seg=(items,val,set)=>html`<div class="seg">${items.map(([k,ic,l,tip])=>html`<button type="button" data-k=${k} title=${tip||""} class=${val===k?"on":""} onClick=${()=>set(k)}><${Icon} n=${ic} s=${15}/>${l&&html`<span>${l}</span>`}</button>`)}</div>`;
@@ -2324,7 +2391,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
   <div class="hero-greet"><span class="grad-text">Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}</span>, bugün ne yapalım?</div>
   <p class="hero-sub">Uygulama, web sitesi ya da oyun. Anlat, seçtiğin yapay zekâ modeli dakikalar içinde yapsın; beğenince tek tıkla yayınla.</p>
   <div style=${{display:"flex",justifyContent:"center",margin:"18px 0 14px"}}>${controls()}</div>
-  <div class="forme-wrap"><button type="button" class="forme" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button><span>İmleç bir fikir seçer, yazar ve başlatır</span></div>
+  <div class="forme-wrap"><button type="button" class="forme" disabled=${busy} onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button><span>İmleç bir fikir seçer, yazar ve başlatır</span><button type="button" class="forme" onClick=${()=>dispatchEvent(new Event("gm:cp"))}><${Icon} n="headphones" s=${15}/> Asistanla konuş</button></div>
   ${prompt(true)}
   <${DesignStrip} custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>
   ${!API_ON&&html`<div class="gcard" style=${{marginTop:14,padding:12,color:"var(--warn)",fontSize:13}}><${Icon} n="cog" s=${14}/> Stüdyo sunucusu bağlanıyor…</div>`}
@@ -2356,6 +2423,7 @@ function Studio({auth,openAuth,toast,openPublish,incoming,clearIncoming,health,m
    <button class="ib" disabled=${!versions.length||busy} onClick=${undo} title="Önceki sürüm"><${Icon} n="undo" s=${16}/></button>
    <button class="ib" disabled=${busy||todo?.running||saving} onClick=${reset} title="Yeni proje">${sure?html`<span style=${{fontSize:12,padding:"0 4px"}}>Emin misiniz?</span>`:html`<${Icon} n="plus" s=${17}/>`}</button>
    <span class="studio-save" role="status">${saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title="Kaydet"><${Icon} n="save" s=${16}/></button>
+   <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
    <button class="btn s" disabled=${saving||busy||!st.html} onClick=${publish}><${Icon} n="rocket" s=${15}/> Yayınla</button></div>
   <div class="ws-grid studio-grid">
    <div class="ws-chat">
@@ -2461,10 +2529,10 @@ Object.assign(ICON_SVG,{
  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
 });
 // iOS / Material tarzı renkli ikon karoları
-const TILE={"$beceri":["brain",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
-const NAV_TONE={"$beceri":"#c084fc",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
+const NAV_TONE={"$beceri":"#c084fc","$asistan":"#22d3ee",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
 const toneOf=(k,n)=>NAV_TONE[k]||TONES[[...String(k||n||"x")].reduce((h,c)=>(h*31+c.charCodeAt(0))%997,0)%TONES.length];
 const Tile=({k,n,g,s=28})=>{const t=TILE[k]||[n||"dot",g||""];const tc=k?toneOf(k):(g?g.split(",")[0]:toneOf(null,n));return html`<span class="tile" style=${{width:s,height:s,borderRadius:s*.3,["--tc"]:tc}}><${Icon} n=${t[0]} s=${s*.54} c="currentColor" w=${1.7}/></span>`};
 const BrandMark=({s=34,mono})=>html`<span class="brand" style=${{width:s,height:s,borderRadius:s*.28}}><svg width=${s*.66} height=${s*.66} viewBox="0 0 24 24" fill="none" stroke=${mono?"#e4ff3d":"#0a0a0a"} stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.6" cy="10" r="4.8"/><path d="M15.4 5.6v9.6a5.6 5.6 0 0 1-10 3.5"/><circle cx="19.2" cy="4.4" r="1.5" fill=${mono?"#e4ff3d":"#0a0a0a"} stroke="none"/></svg></span>`;
@@ -3201,6 +3269,120 @@ function CreditAdmin({toast}){
 }
 
 /* ================= UYGULAMA ================= */
+// ---------- Gitmapp Asistan: yan sohbet, sesli konuşma, oto pilot ----------
+Object.assign(ICON_SVG,{headphones:'<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',volume:'<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>',volumeX:'<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/>',pilot:'<polygon points="3 11 22 2 13 21 11 13 3 11"/>',panelR:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/>'});
+const CP_VIEWS={ana:"Ana sayfa",studio:"Geliştir",magaza:"Keşfet",uygulamalarim:"Projeler",sablonlar:"Şablonlar",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",modeller:"Dil modelleri",hesabim:"Hesabım",guncel:"Güncellemeler",paketler:"Paketler",olustur:"Bize yaptır","ai-destek":"Yapay zekâ rehberi"};
+const CP_CONFIRM={yap:1,kontrol:1,kaydet:1,yayinla:1,sablon:1,yeni:1};
+const CP_START=[["sparkles","Fikrimi birlikte netleştirelim","Bir uygulama fikrim var, birlikte netleştirelim. Bana sorular sor."],["layers","Bana uygun bir şablon öner","İşime uygun hazır bir şablon öner ve aç."],["sliders","Ayarları benim için yap","Geliştirme ayarlarını benim için en uygun şekilde yap."],["rocket","Yayınlamama yardım et","Uygulamamı yayına almama adım adım yardım et."]];
+const CP_YES=/^(evet|onayla|onaylıyorum|onay|tamam|olur|başla|başlat|yap|devam|tabii|kesinlikle)\b/i,CP_NO=/^(hayır|vazgeç|iptal|atla|dur|istemiyorum|gerek yok)\b/i;
+function cpParse(text){text=String(text||"");const m=text.match(/<eylem>([\s\S]*?)(<\/eylem>|$)/i);let acts=[];
+ const body=text.replace(/<eylem>[\s\S]*?(<\/eylem>|$)/gi,"").replace(/```(?:json)?\s*\[\s*\{"t"[\s\S]*?```/g,"").trim();
+ if(m&&m[2]){try{const j=JSON.parse(m[1].trim());acts=(Array.isArray(j)?j:[j]).filter(a=>a&&typeof a==="object"&&typeof a.t==="string").slice(0,6)}catch(e){}}
+ return {body,acts}}
+function cpLabel(a){const th=a.deger&&THEMES.find(t=>t.id===a.deger);const K={app:"Uygulama",site:"Web sitesi",game:"Oyun"},M={hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
+ switch(a.t){case "git":return ["arrowRight",(CP_VIEWS[a.view]||a.view)+" sayfasını aç"];case "tur":return [KIND_ICON[a.deger]||"apps","Proje türü: "+(K[a.deger]||a.deger)];case "mod":return ["list","Mod: "+(M[a.deger]||a.deger)];
+  case "tema":return ["palette","Tasarım: "+(th?th.name:a.deger)];case "ayar":return ["sliders","Çalıştırma ayarları",[a.sicaklik!=null?"yaratıcılık "+a.sicaklik:"",a.detay?"ayrıntı: "+a.detay:"",a.talimat?"talimat eklendi":""].filter(Boolean).join(" · ")];
+  case "prompt":return ["edit","İstem kutusuna yaz",String(a.metin||"")];case "yap":return ["play","Geliştirmeye başla","kredi kullanır"];case "kontrol":return ["shield","Kontrol et ve düzelt","kredi kullanır"];
+  case "kaydet":return ["save","Projeyi kaydet"];case "yayinla":return ["rocket","Yayınla"];case "sablon":{const t=TEMPLATE_LIB.find(x=>x.id===a.id);return ["layers","Şablonu aç: "+(t?t.name:a.id),"mevcut çalışmanın yerine geçer"]}
+  case "panel":return [{model:"cpu",tasarim:"palette",beceriler:"brain",ara:"search",ayarlar:"sliders"}[a.ad]||"grid",({model:"Model seçici",tasarim:"Tasarım galerisi",beceriler:"Beceriler",ara:"Arama",ayarlar:"Ayarlar"}[a.ad]||"Panel")+" açılsın"];
+  case "yeni":return ["plus","Yeni proje başlat","açık çalışma kapanır"];default:return ["dot",a.t]}}
+function cpSpeakText(t){return String(t||"").replace(/<[^>]+>/g," ").replace(/https?:\/\/\S+/g,"bağlantı").replace(/[*_#`>|~]/g,"").replace(/^\s*[-•]\s*/gm,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/\s+/g," ").trim()}
+function ghostEnsure(){let c=document.getElementById("ghost");if(!c){c=document.createElement("div");c.id="ghost";c.innerHTML='<svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 3l7 18 2.5-7.5L21 11z" fill="#fff" stroke="#0f0f0e" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="gh-ring"></span><span class="gh-tag">Gitmapp</span>';document.body.appendChild(c);c.style.transform="translate("+(innerWidth*.6)+"px,"+(innerHeight*.8)+"px)"}return c}
+function ghostPoint(el){const c=ghostEnsure();el.scrollIntoView({block:"nearest",behavior:"smooth"});setTimeout(()=>{const r=el.getBoundingClientRect();c.classList.add("on","wait");c.style.transform="translate("+(r.left+r.width*.5)+"px,"+(r.top+r.height*.6)+"px)"},120)}
+function ghostHide(){const c=document.getElementById("ghost");if(c)c.classList.remove("on","wait")}
+// Studio dışındaki işler için: hedef varsa imleçle tıklat, yoksa doğrudan yap
+const ghostDo=(sel,fn,o)=>document.querySelector(sel)?ghostRun([{el:sel,fn,...(o||{})}]):Promise.resolve(fn());
+
+function Copilot({close,run,ctx,auth,openAuth,toast}){
+ const [msgs,setMsgs]=useState(()=>(LS.get("cpMsgs",[])||[]).map(m=>m.st?{...m,st:m.st.map(x=>x==="run"||x==="ask"?"wait":x)}:m));
+ const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
+ const [auto,setAuto]=useState(()=>LS.get("cpAuto",false)===true);const [speakOn,setSpeakOn]=useState(()=>LS.get("cpSpeak",true)!==false);
+ const [voice,setVoice]=useState(false);const [listen,setListen]=useState(false);const [interim,setInterim]=useState("");const [talking,setTalking]=useState(false);const [asking,setAsking]=useState(null);
+ const R=useRef({});Object.assign(R.current,{msgs,auto,speakOn,voice,busy,run,ctx,talking});
+ const endRef=useRef(null);const recRef=useRef(null);const waitRef=useRef(null);const emptyRef=useRef(0);const taRef=useRef(null);
+ useEffect(()=>{LS.set("cpMsgs",msgs.slice(-40))},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
+ useEffect(()=>{endRef.current&&endRef.current.scrollIntoView({block:"end"})},[msgs.length,live,busy,asking,interim]);
+ useEffect(()=>{const v=window.speechSynthesis;if(v&&v.getVoices)v.getVoices();return()=>{stopAll()}},[]);
+ useEffect(()=>{const k=e=>{if(e.key==="Escape"&&!R.current.voice)close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
+ // --- ses: okuma ---
+ function say(text){return new Promise(res=>{const s=window.speechSynthesis;const clean=cpSpeakText(text);if(!s||!clean){res();return}s.cancel();
+  const parts=[];let cur="";(clean.match(/[^.!?…]+[.!?…]*/g)||[clean]).forEach(x=>{if((cur+x).length>180&&cur){parts.push(cur);cur=x}else cur+=x});if(cur.trim())parts.push(cur);
+  const vo=(s.getVoices()||[]).filter(v=>/^tr/i.test(v.lang));const best=vo.find(v=>/google|yelda|natural|online/i.test(v.name))||vo[0];
+  let i=0;setTalking(true);R.current.talking=true;const fin=()=>{setTalking(false);R.current.talking=false;res()};
+  const next=()=>{if(i>=parts.length){fin();return}const u=new SpeechSynthesisUtterance(parts[i++].trim());u.lang="tr-TR";if(best)u.voice=best;u.rate=1.05;u.onend=next;u.onerror=fin;s.speak(u)};next()})}
+ function stopSpeak(){try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}setTalking(false);R.current.talking=false}
+ // --- ses: dinleme ---
+ function startListen(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; Chrome, Edge ya da Safari dene.");setVoice(false);R.current.voice=false;return}
+  stopSpeak();try{recRef.current&&recRef.current.abort()}catch(e){}
+  const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;r.maxAlternatives=1;recRef.current=r;let fin="";
+  r.onresult=e=>{let it="";fin="";for(const x of e.results){if(x.isFinal)fin+=x[0].transcript;else it+=x[0].transcript}setInterim((fin+" "+it).trim())};
+  r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){toast("Mikrofon izni verilmedi. Adres çubuğundaki kilit simgesinden izin verebilirsin.");setVoice(false);R.current.voice=false}};
+  r.onend=()=>{setListen(false);const txt=fin.trim();setInterim("");if(recRef.current!==r)return;recRef.current=null;
+   if(txt){emptyRef.current=0;onSpoken(txt);return}
+   if(R.current.voice&&!R.current.busy&&!R.current.talking){if(++emptyRef.current>5){toast("Bir süredir seni duyamadım, sesli sohbeti duraklattım.");setVoice(false);R.current.voice=false;emptyRef.current=0;return}setTimeout(()=>{if(R.current.voice&&!R.current.busy&&!R.current.talking&&!recRef.current)startListen()},350)}};
+  setListen(true);try{r.start()}catch(e){setListen(false);recRef.current=null}}
+ function stopListen(){const r=recRef.current;recRef.current=null;try{r&&r.abort()}catch(e){}setListen(false);setInterim("")}
+ function stopAll(){stopListen();stopSpeak();ghostHide()}
+ function onSpoken(txt){const w=waitRef.current;
+  if(w){if(CP_YES.test(txt.trim())){w.r(true);return}if(CP_NO.test(txt.trim())){w.r(false);return}}
+  if(R.current.voice&&/^(sesli sohbeti kapat|sus|kapat|görüşürüz|şimdilik bu kadar)\b/i.test(txt.trim())){setVoice(false);R.current.voice=false;say("Tamam, buradayım; istediğinde tekrar konuşabiliriz.");return}
+  send(txt,true)}
+ function toggleVoice(){if(voice){setVoice(false);R.current.voice=false;stopAll();return}setVoice(true);R.current.voice=true;emptyRef.current=0;
+  if(!msgs.length){say("Merhaba, ben Gitmapp Asistan. Ne yapmak istediğini anlat, birlikte geliştirelim.").then(()=>R.current.voice&&startListen())}else startListen()}
+ const relisten=()=>{if(R.current.voice&&!waitRef.current)setTimeout(()=>{if(R.current.voice&&!R.current.busy&&!R.current.talking&&!recRef.current)startListen()},250)};
+ // --- eylemler ---
+ const setAct=(mi,ai,s)=>setMsgs(ms=>ms.map((m,i)=>i===mi&&m.st?{...m,st:m.st.map((x,j)=>j===ai?s:x)}:m));
+ async function exec(mi,ai){const a=R.current.msgs[mi].acts[ai];setAct(mi,ai,"run");try{await R.current.run(a)}catch(e){toast(e.message||"Adım yapılamadı")}setAct(mi,ai,"done");await wait(220)}
+ async function runActs(mi,all){const m=R.current.msgs[mi];if(!m||!m.acts)return;
+  for(let ai=0;ai<m.acts.length;ai++){const cur=R.current.msgs[mi].st[ai];if(cur==="done"||cur==="skip")continue;const a=m.acts[ai];
+   if(CP_CONFIRM[a.t]&&!all){setAct(mi,ai,"ask");setAsking(mi+"-"+ai);await wait(140);const b=document.querySelector('.cp-ok[data-k="'+mi+"-"+ai+'"]');if(b)ghostPoint(b);
+    const ok=await new Promise(r=>{waitRef.current={mi,ai,r};if(R.current.voice&&!R.current.talking&&!recRef.current)startListen()});waitRef.current=null;setAsking(null);ghostHide();
+    if(!ok){setAct(mi,ai,"skip");continue}}
+   await exec(mi,ai)}
+  relisten()}
+ function okAct(mi,ai){const w=waitRef.current;if(w&&w.mi===mi&&w.ai===ai){w.r(true);return}if(w){toast("Önce bekleyen adımı onayla ya da atla");return}exec(mi,ai)}
+ function skipAct(mi,ai){const w=waitRef.current;if(w&&w.mi===mi&&w.ai===ai){w.r(false);return}setAct(mi,ai,"skip")}
+ // --- gönder ---
+ async function send(text,fromVoice){text=String(text!=null?text:t).trim();if(!text||R.current.busy)return;if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
+  if(waitRef.current){waitRef.current.r(false)}stopSpeak();setT("");
+  const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";
+  try{const j=await apiStream("/api/ai/copilot",{messages:next.filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice},d=>{acc+=d;setLive(acc)});
+   const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined};
+   const all=[...R.current.msgs,msg];const mi=all.length-1;setMsgs(all);R.current.msgs=all;setLive("");setBusy(false);R.current.busy=false;
+   const sp=(R.current.speakOn||R.current.voice)?say(msg.content):Promise.resolve();
+   if(p.acts.length&&R.current.auto){await sp;await runActs(mi,false)}else{await sp;relisten()}
+  }catch(e){setLive("");setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
+ const key=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}};
+ const lastA=[...msgs].reverse().find(m=>m.role==="assistant"&&!m.err);
+ const status=busy?"Düşünüyor…":talking?"Konuşuyor…":listen?"Dinliyor…":asking?"Onay bekliyor":auto?"Oto pilot açık":"Ücretsiz · sesli ya da yazılı";
+ const orb=html`<span class=${"cp-orb"+(listen?" listen":talking?" talk":busy?" think":"")}><i></i></span>`;
+ const actCard=(m,mi)=>{const pend=m.st.some(x=>x==="wait");return html`<div class="cp-acts"><div class="cp-ah"><${Icon} n="pilot" s=${13}/><span>${auto?"Oto pilot adımları":"Önerilen adımlar"}</span><span style=${{flex:1}}></span>${pend&&!asking&&html`<button class="cp-all" onClick=${()=>runActs(mi,true)}>Hepsini uygula</button>`}</div>
+  ${m.acts.map((a,ai)=>{const [ic,l,d]=cpLabel(a);const s=m.st[ai];const k=mi+"-"+ai;return html`<div key=${ai} class=${"cp-a "+s}><span class="cp-ai">${s==="done"?html`<${Icon} n="check" s=${13} w=${2.4}/>`:s==="run"?html`<${Spark} s=${13}/>`:html`<${Icon} n=${ic} s=${13}/>`}</span><div class="cp-at"><b>${l}</b>${d&&html`<small class=${a.t==="prompt"?"cp-pr":""}>${d}</small>`}</div>
+   ${s==="wait"||s==="ask"?html`<span class="cp-ab">${s==="ask"&&html`<button class="cp-skip" onClick=${()=>skipAct(mi,ai)}>Atla</button>`}<button class=${"cp-ok"+(s==="ask"?" pulse":"")} data-k=${k} onClick=${()=>okAct(mi,ai)}>${s==="ask"?"Onayla":"Uygula"}</button></span>`:s==="skip"?html`<span class="cp-st">atlandı</span>`:""}</div>`})}</div>`};
+ return html`<aside class="cp glass" role="complementary" aria-label="Gitmapp Asistan">
+  <div class="cp-h">${orb}<div class="cp-ht"><b>Asistan</b><small>${status}</small></div>
+   <div class="cp-seg" title="Oto pilot: asistan ekranları açar ve ayarları kendisi yapar; sen yalnızca onaylarsın"><button class=${!auto?"on":""} onClick=${()=>setAuto(false)}>Sohbet</button><button class=${auto?"on":""} onClick=${()=>{setAuto(true);toast("Oto pilot açık: ekranları ben yönetirim, sen yalnızca onaylarsın")}}><${Icon} n="pilot" s=${11}/> Oto</button></div>
+   <button class="ib sm" title=${speakOn?"Yanıtları sesli okuma: açık":"Yanıtları sesli okuma: kapalı"} onClick=${()=>{if(speakOn)stopSpeak();setSpeakOn(!speakOn)}}><${Icon} n=${speakOn?"volume":"volumeX"} s=${15}/></button>
+   ${msgs.length>0&&html`<button class="ib sm" title="Sohbeti temizle" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);setMsgs([])}}><${Icon} n="trash" s=${14}/></button>`}
+   <button class="ib sm" title="Kapat (Esc)" onClick=${()=>{stopAll();if(waitRef.current)waitRef.current.r(false);close()}}><${Icon} n="x" s=${15}/></button></div>
+  <div class="cp-msgs">
+   ${!msgs.length&&html`<div class="cp-hello"><div class="cp-big">${orb}</div><h3>Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}, ne yapalım?</h3><p>Fikrini anlat, birlikte netleştirelim. Hazır olunca istemi ben yazar, geliştirmeyi başlatırım. <b>Oto</b> modda ekranları ve ayarları ben yönetirim; sen yalnızca onaylarsın.</p>
+    <button class="cp-voicebtn" onClick=${toggleVoice}><${Icon} n="headphones" s=${17}/> Sesli konuşmaya başla</button>
+    <div class="cp-start">${CP_START.map(([ic,l,q])=>html`<button key=${l} onClick=${()=>send(q)}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}</div></div>`}
+   ${msgs.map((m,mi)=>m.role==="user"?html`<div class="cp-u" key=${mi}>${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}><div class=${"cp-t"+(m.err?" err":"")}>${m.content}</div>${m.acts&&actCard(m,mi)}</div>`)}
+   ${busy&&html`<div class="cp-m"><div class="cp-t">${cpParse(live).body||html`<span class="shimmer">Düşünüyorum…</span>`}${live&&html`<span class="caret"></span>`}</div></div>`}
+   ${msgs.length>=2&&!busy&&lastA&&!(lastA.acts||[]).some(a=>a.t==="prompt")&&html`<div class="cp-sug"><button onClick=${()=>send("Konuştuklarımızı ayrıntılı bir geliştirme istemine dönüştür, istem kutusuna yaz ve uygun tür, tema ve modu ayarla.")}><${Icon} n="wand" s=${13}/> Prompta dönüştür</button><button onClick=${()=>send("Bunu geliştirmeye başla.")}><${Icon} n="play" s=${13}/> Geliştirmeye başla</button></div>`}
+   <div ref=${endRef}></div></div>
+  <div class="cp-in">
+   ${(voice||listen)&&html`<div class=${"cp-live"+(listen?" on":"")}><span class="cp-wave"><i></i><i></i><i></i><i></i><i></i></span><span class="cp-li">${interim||(listen?"Dinliyorum… konuşabilirsin":talking?"Konuşuyorum… araya girmek için mikrofona dokun":busy?"Düşünüyorum…":asking?"“Evet” ya da “Atla” diyebilirsin":"Sesli sohbet açık")}</span>${voice&&html`<button class="cp-stop" onClick=${toggleVoice} title="Sesli sohbeti bitir"><${Icon} n="stop" s=${12}/></button>`}</div>`}
+   <div class="cp-box"><textarea ref=${taRef} rows="1" value=${t} placeholder=${voice?"Konuşabilir ya da yazabilirsin…":"Bir şey sor ya da yapmamı iste…"} onInput=${e=>{setT(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(140,e.target.scrollHeight)+"px"}} onKeyDown=${key}></textarea>
+    <div class="cp-bar"><button class=${"ib sm"+(listen&&!voice?" rec":"")} title="Bir kez sesle söyle" onClick=${()=>{if(listen){stopListen();return}startListen()}}><${Icon} n="mic" s=${16}/></button>
+     <button class=${"ib sm"+(voice?" rec":"")} title=${voice?"Sesli sohbeti bitir":"Sesli sohbet (eller serbest)"} onClick=${toggleVoice}><${Icon} n="headphones" s=${16}/></button>
+     <span class="cp-note">${auto?"Oto pilot":"Sohbet"} · Enter ile gönder</span><span style=${{flex:1}}></span>
+     <button class="cp-send" disabled=${busy||!t.trim()} onClick=${()=>send()} title="Gönder"><${Icon} n="arrowUp" s=${16} w=${2.3}/></button></div></div></div>
+ </aside>`;
+}
+
 function App(){
  const CUST=["ana","magaza","studio","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["siparisler","radar","plan","kesfet","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1);return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
@@ -3223,7 +3405,7 @@ function App(){
  const [saved,setSaved]=useState(LS.get("saved",{})||{});const [secs,setSecs]=useState(LS.get("secs",{})||{});const [builds,setBuildsS]=useState(LS.get("builds",[])||[]);
  const [orders,setOrdersS]=useState(LS.get("orders",[])||[]);const [pick,setPick]=useState(null);const [storeCat,setStoreCat]=useState(null);
  const [deck,setDeck]=useState(null);const [rate,setRate]=useState(RATE);const [busyAll,setBusyAll]=useState(false);
- const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);
+ const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState({q:"",cat:"",n:0});const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
  const openAuth=reason=>{LS.set("afterAuth",view);setAuthModal(reason||"")};
  const toggleSave=r=>{const n={...saved};if(n[r.full_name])delete n[r.full_name];else n[r.full_name]=r;setSaved(n);LS.set("saved",n)};
@@ -3235,6 +3417,7 @@ function App(){
  const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,cat:cat&&cat.id,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
  const openInStudio=(a,openDesign=false)=>{setIncoming({openDesign,kind:a.meta?.kind,html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#e4ff3d",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
  const isAdm=!!(auth.user&&auth.user.admin);
+ useEffect(()=>{const o=()=>setCp(true);addEventListener("gm:cp",o);const j=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="j"){e.preventDefault();setCpS(x=>{LS.set("cpOpen",!x);return !x})}};addEventListener("keydown",j);return()=>{removeEventListener("gm:cp",o);removeEventListener("keydown",j)}},[]);
  useEffect(()=>{const h=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCmdk(x=>!x)}};addEventListener("keydown",h);try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9]{12}$/.test(r))LS.set("ref",r)}catch(e){}return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(apiOn&&auth.user)api("GET","/api/apps").then(j=>setMyApps(j.apps)).catch(()=>{});else setMyApps([])},[apiOn,auth.user&&auth.user.id,view]);
  const [apiOrders,setApiOrders]=useState(null);
@@ -3250,15 +3433,26 @@ function App(){
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
  const goStore=(o)=>{setSq({q:"",cat:"",...o,n:Date.now()});setView("magaza")};
  const newOrders=adminOrders.filter(o=>o.status===ORDER_ST[0]).length;
- const NAVC=[["ana","Yeni"],["$ara","Ara",0,"⌘K"],["studio","Geliştir"],["magaza","Keşfet"],["uygulamalarim","Projeler"],["sablonlar","Şablonlar"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],"$recent","$more",...(moreOpen?[["oyunlar","Oyna"],["kategoriler","Kategoriler"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]]:[]),"",["guncel","Güncellemeler",isNew?"YENİ":0]];
+ const NAVC=[["ana","Yeni"],["$ara","Ara",0,"⌘K"],["studio","Geliştir"],["$asistan","Asistan",0,"⌘J"],["magaza","Keşfet"],["uygulamalarim","Projeler"],["sablonlar","Şablonlar"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],"$recent","$more",...(moreOpen?[["oyunlar","Oyna"],["kategoriler","Kategoriler"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]]:[]),"",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const NAVA=[["siparisler","Siparişler",newOrders],...(apiOn?[["radar","Talep Radarı"]]:[]),["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
- const navGo=(k,extra)=>{setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
+ const navGo=(k,extra)=>{setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){setAppSlug(k.slice(4));setViewS("detay");try{history.pushState(null,"","#"+k)}catch(e){location.hash=k}window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="kategoriler"){setSq({q:"",cat:"",n:Date.now()});setView("magaza");setTimeout(()=>{const e=document.querySelector(".cat-grid");e&&e.scrollIntoView({behavior:"smooth",block:"start"})},120);return}if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":k==="magaza"?view==="magaza"&&sq.cat!=="oyun":view===k;
  const TITLES={ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
- const navList=(cls)=>NAV.map((it,i)=>it==="$recent"?(myApps.length>0&&html`<div key="rec"><div class="nav-sec">Projeler</div>${myApps.slice(0,5).map(a=>html`<button key=${a.id} class="nav rec" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>`)}</div>`):it==="$more"?html`<button key="more" class="nav more" onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} class=${"nav "+cls+(navOn(it[0])?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[0]==="$beceri"&&skillsOn().length?html`<b>${skillsOn().length}</b>`:it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
+ const navList=(cls)=>NAV.map((it,i)=>it==="$recent"?(myApps.length>0&&html`<div key="rec"><div class="nav-sec">Projeler</div>${myApps.slice(0,5).map(a=>html`<button key=${a.id} class="nav rec" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>`)}</div>`):it==="$more"?html`<button key="more" class="nav more" onClick=${()=>{LS.set("moreOpen",!moreOpen);setMoreOpen(!moreOpen)}}><${Tile} k="$more" s=${28}/><span>Daha fazla</span><${Icon} n=${moreOpen?"chevDown":"chevRight"} s=${14} style=${{marginLeft:"auto"}}/></button>`:typeof it==="string"?(it?html`<div class="nav-sec" key=${"s"+i}>${it}</div>`:html`<div class="nav-gap" key=${"g"+i}></div>`):html`<button key=${it[0]} data-v=${it[0]} class=${"nav "+cls+(navOn(it[0])||it[0]==="$asistan"&&cp?" on":"")} onClick=${()=>navGo(it[0])}><${Tile} k=${it[0]==="kategoriler"?"kategoriler":it[0]==="oyunlar"?"oyunlar":it[0]} s=${28}/><span>${it[1]}</span>${it[0]==="$beceri"&&skillsOn().length?html`<b>${skillsOn().length}</b>`:it[2]?html`<b>${it[2]}</b>`:it[3]?html`<kbd class="kbd">${it[3]}</kbd>`:""}</button>`);
  const initials=u=>((u.name||u.email||"?").split(/[\s@]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("")||"?").toUpperCase();
  const NAV=mode==="admin"?NAVA:NAVC;
- return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")}>
+ // Asistanın eylemlerini uygula
+ const viewRef=useRef(view);viewRef.current=view;
+ const cpStudio=a=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done}}));if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
+ const cpRun=async a=>{
+  if(a.t==="git"){if(!CP_VIEWS[a.view])throw new Error("Bu sayfa bulunamadı");return ghostDo('.side .nav[data-v="'+a.view+'"]',()=>navGo(a.view))}
+  if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp);return wait(500)}
+  if(a.t==="panel"&&a.ad==="beceriler")return ghostDo('.side .nav[data-v="$beceri"]',()=>setSkills(true));
+  if(a.t==="panel"&&a.ad==="ara")return ghostDo('.side .nav[data-v="$ara"]',()=>setCmdk(true));
+  if(["tur","mod","tema","ayar","prompt","yap","kontrol","kaydet","yayinla","panel","yeni"].includes(a.t))return cpStudio(a);
+  throw new Error("Bu adımı tanımıyorum: "+a.t)};
+ const cpCtx=()=>({sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
+ return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
   <aside class="side glass noprint">${view==="studio"&&html`<button class="ib studio-nav-switch" aria-label=${compact?"Menüyü genişlet":"Menüyü daralt"} title=${compact?"Menüyü genişlet":"Menüyü daralt"} onClick=${()=>{setCompact(!compact);LS.set("compactStudio",!compact)}}><${Icon} n="menu" s=${16}/></button>`}<div class="logo"><${BrandMark} s=${32}/><${Wordmark}/></div>
    <div style=${{position:"relative"}}><button class="wsw" onClick=${()=>setWsMenu(!wsMenu)}><span class="wsw-i">${auth.user?initials(auth.user)[0]:"G"}</span><span class="wsw-t">${auth.user?(auth.user.name||"Benim").split(" ")[0]+"'in çalışma alanı":"Misafir çalışma alanı"}<small>${mode==="admin"?"Yönetici görünümü":"Kullanıcı görünümü"}</small></span><${Icon} n="chevDown" s=${14}/></button>
     ${wsMenu&&html`<div class="wsw-m glass" onMouseLeave=${()=>setWsMenu(false)}><div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setWsMenu(false);switchMode(k)}}>${l}</button>`)}</div><button onClick=${()=>navGo("hesabim")}><${Icon} n="user" s=${15}/> Hesabım</button><button onClick=${()=>navGo("modeller")}><${Icon} n="cpu" s=${15}/> Dil modelleri ve krediler</button><button onClick=${()=>navGo("baglantilar")}><${Icon} n="plug" s=${15}/> Bağlantılar</button>${auth.user?html`<button onClick=${()=>{setWsMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${15}/> Çıkış yap</button>`:html`<button onClick=${()=>{setWsMenu(false);openAuth("")}}><${Icon} n="user" s=${15}/> Giriş yap / Kayıt ol</button>`}</div>`}</div>
@@ -3304,6 +3498,7 @@ function App(){
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
   ${skills&&html`<${SkillsModal} close=${()=>setSkills(false)} toast=${toast}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
+  ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
  </div>`;
 }
