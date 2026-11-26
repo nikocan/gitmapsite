@@ -2191,8 +2191,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.54.0";
+const VERSION="5.55.0";
 const CHANGELOG=[
+ {v:"5.55.0",date:"2026-11-26",items:[
+  "🧪 Uçtan uca test: test kullanıcısı (test@gitmapp.test) ve yönetici hesabıyla 60 kontrol çalıştırıldı, hepsi geçti — kayıt/giriş, yanlış şifre, yetki sınırları, kredi yükleme, uygulama üretimi, proje kaydı, misafir/müşteri/yönetici sayfalarının tamamı (38 sayfa), mobil görünüm ve Stüdyo akışı (istem → üretim → önizleme → kaydet)",
+  "🩹 Test sırasında bulunan hata düzeltildi: açık projede “Çalışma modu” ve “Dil modeli” menüleri sağa taşıp kırpılıyordu, seçenekler tıklanamıyordu; menüler artık düğmenin sağına hizalı açılıyor",
+  "🔁 Test betiği depoya eklendi (tools/acceptance/e2e.mjs): canlı sisteme dokunmadan geçici veritabanı ve sahte yapay zekâ ile her güncellemeden önce yeniden çalıştırılabilir; rapor validation/e2e-rapor.md"
+ ]},
  {v:"5.54.0",date:"2026-11-26",items:[
   "🔐 Özel GitHub depoları: “Depo bulunamadı” hatası artık nedenini söylüyor. Sunucu, depo gerçekten yok mu yoksa özel mi ayırt ediyor; GitHub bağlı değilse “GitHub'ı bağla”, bağlı ama özel depo izni yoksa “Özel depo izni ver”, bağlantı süresi dolmuşsa “GitHub'ı yeniden bağla” düğmesi çıkıyor",
   "🧭 Tek ve doğru düğme: eskiden yan yana duran “GitHub hesabını bağla” ve “Özel depolar için bağla” birleşti; bağlantı her zaman özel depo okuma izniyle isteniyor, böylece izin verip yine hata alma döngüsü bitti",
@@ -5845,12 +5850,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const adv=(runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli");
   return html`<span class="cmp" role="group" aria-label="Model ve çalışma modu">
    <span class="ccw"><button type="button" class=${"cmp-b"+(cmpOpen==="model"?" on":"")+(prefs.autoModel?" auto":"")} title="Dil modeli seç" aria-haspopup="menu" aria-expanded=${cmpOpen==="model"} onClick=${()=>tog("model")}>${!prefs.autoModel&&curInfo?html`<${FamLogo} f=${curInfo.family} s=${14}/>`:html`<${Icon} n=${prefs.autoModel?"sparkles":"cpu"} s=${14}/>`}<span class="cmp-l">${mName}</span><${Icon} n="chevDown" s=${12} w=${2}/></button>
-    ${cmpOpen==="model"&&html`<${CcPop} cls="cmp-pop" close=${cl}><div class="ccpop-h">Dil modeli<small>${!prefs.autoModel&&curInfo?curInfo.credits+" kredi / işlem":"kodu yazan yapay zekâ"}</small></div>
+    ${cmpOpen==="model"&&html`<${CcPop} cls="r cmp-pop" close=${cl}><div class="ccpop-h">Dil modeli<small>${!prefs.autoModel&&curInfo?curInfo.credits+" kredi / işlem":"kodu yazan yapay zekâ"}</small></div>
      ${it(prefs.autoModel,"sparkles","Otomatik","Yeni projede güçlü, küçük düzenlemede hızlı model seçilir",()=>{setPrefs(p=>({...p,autoModel:true}));cl()})}
      ${it(!prefs.autoModel,"cpu",curModel?shortModel(curModel):"Sabit model",(curInfo?curInfo.credits+" kredi / işlem · ":"")+"her işte aynı model",()=>{setPrefs(p=>({...p,autoModel:false}));cl()})}
      <div class="ccpop-sep"></div>${it(false,"layers","Tüm modeller…","Karşılaştır, değiştir ya da kendi anahtarını bağla",()=>{cl();setPicker(true)})}<//>`}</span>
    <span class="ccw"><button type="button" class=${"cmp-b cmp-mode"+(cmpOpen==="mode"?" on":"")+(prefs.autoMode?" auto":"")} title="Çalışma modu" aria-haspopup="menu" aria-expanded=${cmpOpen==="mode"} onClick=${()=>tog("mode")}><${Icon} n=${MI[modeEff]} s=${14}/><span class="cmp-l">${ML[modeEff]}</span>${adv&&html`<i class="cmp-dot" title="Gelişmiş ayar değiştirildi"></i>`}<${Icon} n="chevDown" s=${12} w=${2}/></button>
-    ${cmpOpen==="mode"&&html`<${CcPop} cls="cmp-pop" close=${cl}><div class="ccpop-h">Çalışma modu</div>
+    ${cmpOpen==="mode"&&html`<${CcPop} cls="r cmp-pop" close=${cl}><div class="ccpop-h">Çalışma modu</div>
      ${it(modeEff==="oto","sparkles","Otomatik","Büyük yeni işte önce plan, düzenlemelerde doğrudan",()=>setMode("oto"))}
      ${it(modeEff==="hizli","zap","Hızlı","Komutu hemen uygular",()=>setMode("hizli"))}
      ${it(modeEff==="planli","compass","Planlı","Önce plan yazar, onaylayınca üretir",()=>setMode("planli"))}

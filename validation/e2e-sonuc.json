@@ -1,0 +1,422 @@
+[
+ {
+  "area": "API",
+  "name": "Sağlık kontrolü",
+  "ok": true,
+  "note": "durum 200",
+  "shot": ""
+ },
+ {
+  "area": "Hesap",
+  "name": "Test kullanıcısı kaydı (test@gitmapp.test)",
+  "ok": true,
+  "note": "kredi 50",
+  "shot": ""
+ },
+ {
+  "area": "Hesap",
+  "name": "Yönetici girişi",
+  "ok": true,
+  "note": "",
+  "shot": ""
+ },
+ {
+  "area": "Hesap",
+  "name": "Oturum bilgisi (/auth/me)",
+  "ok": true,
+  "note": "",
+  "shot": ""
+ },
+ {
+  "area": "Hesap",
+  "name": "Yanlış şifre reddediliyor",
+  "ok": true,
+  "note": "durum 401",
+  "shot": ""
+ },
+ {
+  "area": "Güvenlik",
+  "name": "Müşteri yönetim API'sine giremiyor",
+  "ok": true,
+  "note": "durum 403",
+  "shot": ""
+ },
+ {
+  "area": "Yönetim",
+  "name": "Yönetici test kullanıcısına 25 kredi yükledi",
+  "ok": true,
+  "note": "durum 200",
+  "shot": ""
+ },
+ {
+  "area": "Yapay zekâ",
+  "name": "Uygulama üretimi (API)",
+  "ok": true,
+  "note": "durum 200",
+  "shot": ""
+ },
+ {
+  "area": "Projeler",
+  "name": "Proje kaydetme (API)",
+  "ok": true,
+  "note": "durum 200",
+  "shot": ""
+ },
+ {
+  "area": "Projeler",
+  "name": "Proje listesi",
+  "ok": true,
+  "note": "durum 200 · 1 proje",
+  "shot": ""
+ },
+ {
+  "area": "Misafir",
+  "name": "#ana",
+  "ok": true,
+  "note": "",
+  "shot": "misafir-ana.png"
+ },
+ {
+  "area": "Misafir",
+  "name": "#dunya",
+  "ok": true,
+  "note": "",
+  "shot": "misafir-dunya.png"
+ },
+ {
+  "area": "Misafir",
+  "name": "#paketler",
+  "ok": true,
+  "note": "",
+  "shot": "misafir-paketler.png"
+ },
+ {
+  "area": "Misafir",
+  "name": "#studio",
+  "ok": true,
+  "note": "",
+  "shot": "misafir-studio.png"
+ },
+ {
+  "area": "Misafir",
+  "name": "#guncel",
+  "ok": true,
+  "note": "",
+  "shot": "misafir-guncel.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#ana",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-ana.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#magaza",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-magaza.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#studio",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-studio.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#kreator",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-kreator.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#sablonlar",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-sablonlar.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#baglantilar",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-baglantilar.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#eylem",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-eylem.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#otomasyon",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-otomasyon.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#uygulamalarim",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-uygulamalarim.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#modeller",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-modeller.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#hesabim",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-hesabim.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#dunya",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-dunya.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#olustur",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-olustur.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#paketler",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-paketler.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#ai-destek",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-ai-destek.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#siparislerim",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-siparislerim.png"
+ },
+ {
+  "area": "Müşteri",
+  "name": "#guncel",
+  "ok": true,
+  "note": "",
+  "shot": "m-teri-guncel.png"
+ },
+ {
+  "area": "Stüdyo",
+  "name": "Hızlı başlangıç hapı istemi dolduruyor",
+  "ok": true,
+  "note": "",
+  "shot": ""
+ },
+ {
+  "area": "Stüdyo",
+  "name": "İstem gönderildi, uygulama üretildi ve önizlemede açıldı",
+  "ok": true,
+  "note": "",
+  "shot": "studio-uretim.png"
+ },
+ {
+  "area": "Stüdyo",
+  "name": "Kaydet düğmesi projeyi hesaba kaydetti",
+  "ok": true,
+  "note": "2 proje",
+  "shot": ""
+ },
+ {
+  "area": "Stüdyo",
+  "name": "Dil modeli menüsü açılıyor",
+  "ok": true,
+  "note": "",
+  "shot": ""
+ },
+ {
+  "area": "Stüdyo",
+  "name": "Çalışma modu değiştirilebiliyor",
+  "ok": true,
+  "note": "Planlı",
+  "shot": "studio-mod-menusu.png"
+ },
+ {
+  "area": "Stüdyo",
+  "name": "Tab tamamlama önerisi",
+  "ok": true,
+  "note": "“Ren” → “Renkleri daha modern ve uyumlu yap”",
+  "shot": ""
+ },
+ {
+  "area": "Hesap",
+  "name": "Arayüzden yönetici girişi (#yonetim)",
+  "ok": true,
+  "note": "",
+  "shot": ""
+ },
+ {
+  "area": "Yönetici",
+  "name": "#yonetim",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-yonetim.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#yapay-zeka",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-yapay-zeka.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#eposta",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-eposta.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#github-ayar",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-github-ayar.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#maliyetler",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-maliyetler.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#kullanicilar",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-kullanicilar.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#yonetim-projeler",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-yonetim-projeler.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#siparisler",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-siparisler.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#radar",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-radar.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#plan",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-plan.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#kesfet",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-kesfet.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#uretim-ajani",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-uretim-ajani.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#kategori",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-kategori.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#liste",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-liste.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#kuyruk",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-kuyruk.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#ayar",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-ayar.png"
+ },
+ {
+  "area": "Mobil",
+  "name": "#ana",
+  "ok": true,
+  "note": "",
+  "shot": "mobil-ana.png"
+ },
+ {
+  "area": "Mobil",
+  "name": "#studio",
+  "ok": true,
+  "note": "",
+  "shot": "mobil-studio.png"
+ },
+ {
+  "area": "Mobil",
+  "name": "#uygulamalarim",
+  "ok": true,
+  "note": "",
+  "shot": "mobil-uygulamalarim.png"
+ },
+ {
+  "area": "Mobil",
+  "name": "#hesabim",
+  "ok": true,
+  "note": "",
+  "shot": "mobil-hesabim.png"
+ },
+ {
+  "area": "Mobil",
+  "name": "Stüdyoda yatay taşma yok",
+  "ok": true,
+  "note": "0 px",
+  "shot": ""
+ }
+]
