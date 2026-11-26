@@ -743,7 +743,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.32.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.33.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {

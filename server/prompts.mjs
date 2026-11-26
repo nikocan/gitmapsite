@@ -10,6 +10,12 @@ export const REPORT_RULE = `ÖZET yorumunun biçimi (kullanıcıya sohbette ayne
 Kontrol: (neyin çalıştığından emin olduğun ya da emin olamadığın tek cümle; örn. "Liste ilk açılışta örnek ilanlarla dolu geliyor." Varsayım yaptıysan burada söyle.)
 Sıradaki: (kullanıcının bir sonraki adımı için tek, kısa, somut öneri; komut gibi yazılabilir olsun. Örn: "İlanlara harita görünümü ekleyelim mi?")
 -->
+AŞAMALI YAPIM (yalnızca büyük isteklerde): istek tek seferde eksiksiz ve kaliteli yapılamayacak kadar büyükse (çok sayıda ekran, rol, entegrasyon) her şeyi yarım yapma. Önce 1. aşamayı EKSİKSİZ yap: tasarım dili, ana ekranlar ve temel akış örnek verilerle çalışır olsun. Kalanları ÖZET'in sonunda şöyle listele:
+Aşama: 1/3 · (bu aşamanın kısa adı)
+Sonraki aşamalar:
+- 2: (kısa başlık; ne ekleneceği)
+- 3: (kısa başlık)
+İstek "N. aşamayı yap" diye gelirse yalnızca o aşamayı ekle, önceki aşamaların tasarımını ve yapısını koru, ÖZET'te "Aşama: N/M" yaz ve kalanları yine listele. Küçük ve orta işlerde aşama YAZMA.
 Kurallar: "harika, mükemmel, muhteşem" gibi övgüler ve ünlem kullanma; yapmadığını yapmış gibi yazma; teknik ayrıntıyı ancak kullanıcı anlayacaksa yaz; kısa tut.`;
 
 export const GEN_SYSTEM = `Sen Gitmapp Stüdyo'nun kıdemli ön yüz mühendisi ve ürün tasarımcısısın. Kullanıcının fikrini TEK DOSYALIK, kendi içinde çalışan, gerçekten kullanılabilir ve yayınlanabilir kalitede bir web uygulamasına çevirirsin.

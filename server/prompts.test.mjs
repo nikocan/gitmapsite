@@ -75,3 +75,8 @@ test("anlatım düzeyi: deneyimliye kısa/teknik, yeni başlayana sade; rapor i�
   assert.match(levelRule({ tahmin: "yeni" }, true), /teknik terim kullanmadan/);
   assert.equal(levelRule(null), "");
 });
+test("aşamalı yapım: büyük işte önce 1. aşama eksiksiz, kalanlar listelenir; küçük işte aşama yok", () => {
+  assert.match(GEN_SYSTEM, /AŞAMALI YAPIM/);
+  assert.match(GEN_SYSTEM, /Sonraki aşamalar:/);
+  assert.match(GEN_SYSTEM, /Küçük ve orta işlerde aşama YAZMA/);
+});
