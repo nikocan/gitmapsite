@@ -76,3 +76,15 @@ test("seçkin sette takma ad ve :batch varyantları atlanır", async (t) => {
   const ids = (await (await fetch("http://127.0.0.1:" + api.port + "/api/ai/models")).json()).platform.map((m) => m.id);
   assert.deepEqual(ids, ["anthropic/claude-sonnet-4.5", "openai/gpt-5"]);
 });
+
+test("tarayıcıda kalmış eski model adı (ör. claude-sonnet-4.5) hata vermez; en yakın açık modele geçilir", async (t) => {
+  const seen = [];
+  const primary = await fake((url, body) => { if (body) seen.push(body.model); return url.endsWith("/models") ? [200, { data: [{ id: "anthropic/claude-sonnet-5.5" }, { id: "anthropic/claude-opus-5.5" }, { id: "openai/gpt-5.4-mini" }] }] : [200, { choices: [{ message: { content: "Plan hazır" } }], usage: { total_tokens: 5 } }]; });
+  t.after(() => primary.close());
+  const api = await start(t, { AI_BASE: primary.base, AI_KEY: "k", AI_MODELS: "", AI_MODEL: "anthropic/claude-sonnet-5.5" });
+  const u = await (await fetch("http://127.0.0.1:" + api.port + "/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "m@example.test", password: "sifre-12345", name: "M" }) })).json();
+  const r = await fetch("http://127.0.0.1:" + api.port + "/api/ai/plan", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + u.token }, body: JSON.stringify({ prompt: "takvim uygulaması", model: "claude-sonnet-4.5" }) });
+  const j = await r.json();
+  assert.equal(r.status, 200, JSON.stringify(j));
+  assert.equal(seen.at(-1), "anthropic/claude-sonnet-5.5");
+});
