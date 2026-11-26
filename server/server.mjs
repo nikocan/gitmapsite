@@ -95,7 +95,8 @@ const hashPw = (pw) => { const salt = crypto.randomBytes(16).toString("hex"); re
 const checkPw = (pw, h) => { if (!h) return false; const [salt, hex] = h.split(":"); const a = crypto.scryptSync(pw, salt, 64); const b = Buffer.from(hex, "hex"); return a.length === b.length && crypto.timingSafeEqual(a, b); };
 const isAdmin = (u) => !!u && !!CFG.admin && u.email.toLowerCase() === CFG.admin && !!u.email_verified;
 const jsonObj = (t) => { try { const v = JSON.parse(t || "{}"); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; } catch { return {}; } };
-const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, admin: isAdmin(u), credits: u.credits ?? 0, nickname: u.nickname || "", role: u.role || "", instructions: u.instructions || "", avatar: u.avatar || "", prefs: jsonObj(u.prefs), created: u.created });
+const hostingerLast4 = (id) => { try { return q("SELECT last4 FROM user_keys WHERE user_id=? AND provider='hostinger'").get(id)?.last4 || null; } catch { return null; } };
+const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, google: !!u.google_sub, hostinger: hostingerLast4(u.id), admin: isAdmin(u), credits: u.credits ?? 0, nickname: u.nickname || "", role: u.role || "", instructions: u.instructions || "", avatar: u.avatar || "", prefs: jsonObj(u.prefs), created: u.created });
 // Kullanıcının Ayarlar > Profil'de yazdıkları: her yapay zekâ isteğine veri olarak eklenir; güvenlik kurallarını değiştiremez
 const PROFILE_ROLES = ["Restoran ve kafe", "Sağlık ve klinik", "Eğitim", "E-ticaret ve mağaza", "Emlak", "Hizmet işletmesi", "Pazarlama ve ajans", "Yazılım ve teknoloji", "Finans", "Öğrenci", "Diğer"];
 function userRule(user, before = false, kind = null) {
@@ -658,7 +659,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.24.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.25.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -730,6 +731,7 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
       const tok = (await tr.json()).access_token; if (!tok) return back("auth-hata");
       const info = await (await fetch("https://openidconnect.googleapis.com/v1/userinfo", { headers: { Authorization: "Bearer " + tok } })).json();
       if (!info.email || !info.email_verified) return back("auth-eposta-yok");
+      if (st.uid) { if (!q("SELECT 1 FROM users WHERE id=? AND session_version=?").get(st.uid, st.version ?? 0)) return back("auth-hata"); const other = q("SELECT id FROM users WHERE google_sub=? AND id<>?").get(info.sub, st.uid); if (other) return back("google-baska-hesap"); q("UPDATE users SET google_sub=? WHERE id=?").run(info.sub, st.uid); return back("google-baglandi"); }
       u = upsertOAuthUser({ email: info.email, name: info.name, google_sub: info.sub });
     }
     return back("auth=" + sign({ uid: u.id, version:u.session_version }));
@@ -748,7 +750,8 @@ route("POST", "/api/ai/generate", async (ctx) => {
   rt.maxTokens = buildBudget(rt.maxTokens, { model: rt.model, strong: tierOf(rt.model) === "guclu", cur, patch, kind });
   rt.autoContinue = !patch;
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design, kind) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur }) + scopeRule(kind) + opts + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
-  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages("İstenen değişiklik: " + prompt, img) });
+  const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
+  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages((history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
@@ -839,6 +842,25 @@ route("PUT", "/api/keys/:prov", async ({ user, params, body }) => {
   return { ok: true, models: ids.length };
 });
 route("DELETE", "/api/keys/:prov", ({ user, params }) => { need(user, 401, "Giriş yapın"); q("DELETE FROM user_keys WHERE user_id=? AND provider=?").run(user.id, params.prov); return { ok: true }; });
+// Bağdaştırıcılar: hesap düzeyinde GitHub / Google / Hostinger bağlantıları
+route("PUT", "/api/connect/hostinger", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın");
+  const token = (str(body.token, 400, "Anahtar", true) || "").trim(); need(token.length >= 20 && !/\s/.test(token), 400, "Hostinger API anahtarı biçimi geçersiz");
+  const r = await fetch("https://developers.hostinger.com/api/billing/v1/subscriptions", { headers: { Authorization: "Bearer " + token, Accept: "application/json" }, signal: AbortSignal.timeout(15000) }).catch(() => null);
+  need(r, 502, "Hostinger'a ulaşılamadı, biraz sonra tekrar deneyin");
+  need(r.status !== 401, 400, "Hostinger anahtarı geçersiz ya da süresi dolmuş (hPanel › Hesap › API)");
+  q("INSERT INTO user_keys(user_id,provider,enc,last4) VALUES(?,?,?,?) ON CONFLICT(user_id,provider) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,created=datetime('now')").run(user.id, "hostinger", encKey(token), token.slice(-4));
+  let plans = null; if (r.ok) { try { const j = await r.json(); plans = Array.isArray(j) ? j.length : Array.isArray(j?.data) ? j.data.length : null; } catch { } }
+  return { ok: true, last4: token.slice(-4), plans };
+});
+route("DELETE", "/api/connect/:prov", ({ user, params }) => {
+  need(user, 401, "Giriş yapın");
+  if (params.prov === "hostinger") q("DELETE FROM user_keys WHERE user_id=? AND provider='hostinger'").run(user.id);
+  else if (params.prov === "github") { need(user.pass || user.google_sub, 400, "Bu hesaba yalnızca GitHub ile giriliyor; bağlantı kesilirse giriş yapamazsın. Önce şifre belirle ya da Google bağla."); q("UPDATE users SET github_login=NULL, github_token=NULL WHERE id=?").run(user.id); }
+  else if (params.prov === "google") { need(user.pass || user.github_login, 400, "Bu hesaba yalnızca Google ile giriliyor; bağlantı kesilirse giriş yapamazsın."); q("UPDATE users SET google_sub=NULL WHERE id=?").run(user.id); }
+  else throw new HttpErr(404, "Bilinmeyen bağlantı");
+  return { ok: true, user: pubUser(q("SELECT * FROM users WHERE id=?").get(user.id)) };
+});
 route("GET", "/api/me/usage", ({ user }) => {
   need(user, 401, "Giriş yapın");
   const sum = (since) => q("SELECT COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=?").get(user.id, since);
