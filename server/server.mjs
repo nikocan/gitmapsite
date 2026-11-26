@@ -420,7 +420,7 @@ const kindOf = (k) => (KIND_RULES[k] ? k : "app");
 const PATCH_MIN = 9000;
 const PATCH_RULE = `
 BU BİR DÜZENLEME İSTEĞİ VE DOSYA BÜYÜK: yukarıdaki "DOSYANIN TAMAMINI döndür" kuralı yerine şu biçimi kullan.
-- İlk satır: <!-- ÖZET: (yaptığın değişikliği 1-2 cümleyle Türkçe anlat) -->
+- İlk satır: ÖZET yorumu (yukarıdaki biçimle: sonuç cümlesi, değişiklik maddeleri, Kontrol, Sıradaki)
 - Sonra yalnızca değişen yerleri bir ya da daha fazla blokla ver:
 <<<ARA
 (mevcut dosyadan BİREBİR kopyalanmış, dosyada tek geçen, 2-12 satırlık parça)
@@ -521,6 +521,14 @@ Eylem türleri:
 - {"t":"yeni"} yeni boş proje başlatır (onay ister).
 - {"t":"github","url":"<GitHub adresi>","devral":false} GitHub deposunu/dosya yolunu içe aktarır ve önizler; "devral":true ise bağımlılıkları kontrol edip projeyi Gitmapp'e alır ve yayınlar (onay ister). Kullanıcı bir GitHub adresi verirse bu eylemi kullan.
 Sadece sohbet ediyorsan eylem bloğu ekleme.
+
+İLETİŞİM ÜSLUBU (deneyimli bir yazılımcı arkadaş gibi; Claude Code tarzı):
+- Önce sonucu ya da cevabı söyle, açıklama sonra gelsin. İlk cümle tek başına okunduğunda yeterli olsun.
+- Bir iş başlatacaksan tek cümleyle ne yapacağını söyle: "Projeyi kaydedip Yayınla panelini açıyorum." Uzun giriş, özür ya da tekrar yapma.
+- Bir iş bittiyse (durumda son istekler/sonuçlar) ne değiştiğini, neyin kontrol edildiğini ve ne kaldığını kısa söyle. Emin olmadığın şeyi "kontrol ettim" diye sunma; "henüz denemedim" demekten çekinme.
+- Seçenek sunarken tavsiyeni söyle ve nedenini bir cümleyle ver; kararı kullanıcıya bırakman gerekiyorsa tek net soru sor.
+- Övgü, abartı ve dolgu yok ("harika soru", "mükemmel" demek yok); sıcak ama sade ol. Teknik terimi ancak kullanıcı anlayacaksa kullan, yoksa günlük dille anlat.
+- Bir sorunun sebebini açıklarken önce sebebi tek cümleyle söyle ("Resimler bozuk çünkü model var olmayan dosya yolları yazmış."), sonra ne yapılacağını.
 
 GÖRSEL VE DOSYA EKLENDİĞİNDE (ChatGPT gibi davran):
 - Önce kullanıcının NİYETİNİ anla. “bakar mısın, nasıl olmuş, ne düşünüyorsun, değerlendir, sorun ne” → görseli/dosyayı gerçekten incele, ne gördüğünü somut anlat (ekran, bileşenler, hatalar, tasarım), görüşünü ve önerilerini söyle; eylem EKLEME.
@@ -681,7 +689,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.28.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.29.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -826,7 +834,7 @@ route("POST", "/api/ai/review", async (ctx) => {
   const { body, user, req } = ctx;
   const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "review");
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user, false, kind) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: projectBrief(body) + html }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user, false, kind) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda ilk cümlede kaç sorun bulup düzelttiğini söyle, sonra sorunları madde madde (kullanıcının anlayacağı dille) yaz; Kontrol satırında düzeltemediğin ya da emin olmadığın bir şey varsa belirt." }, { role: "user", content: projectBrief(body) + html }];
   const fin = ({ text, model, usage, finish }) => { const out = extractHtml(text, { model, finish }); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
   if (body.stream === true && body.job === true && ctx.user) return aiJob(ctx, rt, messages, fin, "review", "Kontrol et ve düzelt");
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
