@@ -26,12 +26,18 @@ test("GitHub kurulumu: yönetici OAuth uygulamasını panelden kaydeder (yanlı�
   const req = async (m, p, body, tok) => { const r = await fetch("http://127.0.0.1:" + port + "/api/" + p, { method: m, headers: { "Content-Type": "application/json", ...(tok ? { Authorization: "Bearer " + tok } : {}) }, body: body ? JSON.stringify(body) : undefined }); return { status: r.status, ...(await r.json()) }; };
   const admin = (await req("POST", "auth/login", { email: "owner@example.test", password: pw })).token;
   assert.equal((await req("GET", "health")).github, false);
+  const loc = async (p) => (await fetch("http://127.0.0.1:" + port + p, { redirect: "manual" })).headers.get("location") || "";
+  assert.match(await loc("/api/auth/oauth/github/start"), /#baglanti-kapali\?p=github$/, "ayar yokken ham JSON yerine uygulamaya döner");
+  assert.match(await loc("/api/auth/oauth/github/start?link=sahte"), /#github-anahtar$/);
+  assert.match(await loc("/api/auth/oauth/google/start"), /#baglanti-kapali\?p=google$/);
+  assert.match(await loc("/api/auth/canva/start?link=x"), /#baglanti-kapali\?p=canva$/);
   let s = await req("GET", "admin/github", null, admin); assert.equal(s.configured, false); assert.match(s.callback, /\/api\/auth\/oauth\/github\/callback$/);
   assert.equal((await req("PUT", "admin/github", { id: "Ov23liABCDEFGHIJ", secret: "b".repeat(40) }, admin)).status, 400);
   assert.equal((await req("PUT", "admin/github", { id: "yanlis", secret: SECRET_OK }, admin)).status, 400);
   s = await req("PUT", "admin/github", { id: "Ov23liABCDEFGHIJ", secret: SECRET_OK }, admin); assert.equal(s.configured, true); assert.equal(s.verified, true); assert.equal(s.source, "panel");
   assert.equal((await req("GET", "health")).github, true);
   const st = await fetch("http://127.0.0.1:" + port + "/api/auth/oauth/github/start", { redirect: "manual" }); assert.match(st.headers.get("location"), /client_id=Ov23liABCDEFGHIJ/);
+  assert.match(await loc("/api/auth/oauth/github/start?link=suresi-dolmus"), /#oturum-sona-erdi$/);
   const u = await req("POST", "auth/register", { email: "u@example.test", password: "sifre-12345", name: "U" });
   assert.equal((await req("GET", "admin/github", null, u.token)).status, 403);
   assert.equal((await req("PUT", "connect/github-token", { token: "ghp_bozukbozukbozukbozukbozuk" }, u.token)).status, 400);

@@ -2118,8 +2118,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.50.0";
+const VERSION="5.51.0";
 const CHANGELOG=[
+ {v:"5.51.0",date:"2026-11-26",items:[
+  "🛡️ “GitHub girişi henüz yapılandırılmadı” ham hata sayfası giderildi: sunucuda GitHub OAuth kurulu değilken bağlanmaya çalışınca artık uygulamada “GitHub'ı bağla” penceresi açılıyor ve erişim anahtarıyla (ghp_…) tek adımda bağlanabiliyorsun",
+  "🔒 Önleyici kontrol: Radar, Oturum paneli, Sürüm kontrolü, GitHub içe aktarma, Yayınla ve asistan eylemlerindeki bütün GitHub/Google “Bağla” düğmeleri önce sunucu ayarını kontrol ediyor; yapılandırılmamış bir bağlantı için tarayıcı hiçbir zaman hata sayfasına gitmiyor",
+  "↩️ Sunucu tarafı güvence: GitHub, Google ve Canva bağlantı adresleri hata durumunda (ayar yok, oturum süresi dolmuş) ham JSON göstermek yerine uygulamaya anlamlı bir mesajla geri dönüyor"
+ ]},
  {v:"5.50.0",date:"2026-11-26",items:[
   "🧩 Stüdyo'nun sohbet sütununun üstüne “Proje ayarları” paneli geldi: Dil modeli, Şablon, Eklentiler ve Çalışma modu artık ayrı, okunur kartlar. Her kartta ne olduğu ve şu anki seçim kısa açıklamayla yazıyor; karta tıklayınca ilgili seçici açılıyor",
   "🐿️ Her kartta minik yuvarlak sincap: o bölümün ne işe yaradığını, Oto'nun ne yaptığını anlatıyor; “Benim yerime seç” ve “Elle değiştir” düğmeleri var",
@@ -4878,6 +4883,10 @@ function changedBlock(previous, current) {
  while(lastOld>start && lastNew>start && oldLines[lastOld-1]===newLines[lastNew-1]){lastOld--;lastNew--}
  return {start,old:oldLines.slice(start,lastOld),next:newLines.slice(start,lastNew)};
 }
+// Bağlantı ön kontrolü: sunucuda OAuth açık değilse tarayıcı ham hata sayfasına gönderilmez
+const oauthOk=p=>!!(window.__gmHealth||{})[p];
+function ghNeedToken(){if(oauthOk("github"))return false;dispatchEvent(new Event("gm:ghtoken"));return true}
+function oauthBlocked(p){if(oauthOk(p))return false;if(p==="github"){dispatchEvent(new Event("gm:ghtoken"));return true}dispatchEvent(new CustomEvent("gm:toast",{detail:(p==="google"?"Google":p==="canva"?"Canva":p)+" bağlantısı bu sunucuda henüz açılmadı; yönetici ayarladığında kullanılabilir."}));return true}
 // GitHub'a erişim anahtarıyla bağlan (sunucuda OAuth uygulaması olmasa da çalışır)
 function GhTokenForm({auth,onDone,compact}){
  const [tok,setTok]=useState(""),[busy,setBusy]=useState(false),[err,setErr]=useState("");
@@ -4977,6 +4986,7 @@ function VersionPanel({appId,content,active,initialSource,auth,health,close,save
   });
  }
  async function connectGitHub(privateRepos=false){
+  if(ghNeedToken())return;
   const j=await api("POST","/api/auth/link");
   location.href=API+"/api/auth/oauth/github/start?return_to=versions&link="+encodeURIComponent(j.link)+(privateRepos?"&scope=private":"");
  }
@@ -5040,7 +5050,7 @@ function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
    if(r.status!=="completed"||!r.url)throw new Error(r.status==="nsfw"?"İçerik güvenlik filtresine takıldı; istemi değiştir":r.status==="canceled"?"İptal edildi":"Üretim başarısız: "+(r.error||r.status));
    setResult({url:r.url,kind:r.kind,from:"Higgsfield"})}catch(er){setErr(er.message)}finally{setBusy("");setJob(null)}}
  async function cancel(){if(job)await api("POST","/api/media/higgsfield/"+job.id+"/cancel").catch(()=>{});alive.current&&setJob(null)}
- async function linkCanva(){if(!u){openAuth("Canva'yı bağlamak için giriş yap.");return}try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/canva/start?link="+encodeURIComponent(j.link)}catch(e){setErr(e.message)}}
+ async function linkCanva(){if(!u){openAuth("Canva'yı bağlamak için giriş yap.");return}if(oauthBlocked("canva"))return;try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/canva/start?link="+encodeURIComponent(j.link)}catch(e){setErr(e.message)}}
  async function openCanva(){setErr("");setResult(null);setBusy("design");try{const [w,h]=size.split("x").map(Number);const j=await api("POST","/api/media/canva/design",{width:w,height:h,title:(context||"Gitmapp tasarımı").slice(0,80)});setDesign(j);setCstate("edit");
    pop.current=window.open(j.edit_url,"canva","width=1280,height=860");if(!pop.current)setErr("Açılır pencere engellendi; aşağıdaki bağlantıyla aç")}catch(e){setErr(e.message)}finally{setBusy("")}}
  async function exportCanva(){if(!design)return;setErr("");setCstate("export");try{const j=await api("POST","/api/media/canva/export",{design_id:design.id});
@@ -5861,7 +5871,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(html0&&issues&&!errs)out.push({k:"qa",lv:1,ic:"eye",t:issues+" tasarım uyarısı",d:"Kontrast, taşma ya da boş alan",a:["İncele",()=>{setCode(false);chatRef.current?.querySelector(".dq-card")?.scrollIntoView({block:"center",behavior:"smooth"})}]});
   if(prefs.provider==="gitmapp"&&!prefs.autoModel&&weakModel(curModel,curInfo))out.push({k:"model",lv:1,ic:"zap",t:"Küçük model seçili",d:shortModel(curModel)+" büyük işlerde hata yapabilir",a:["Otomatik seç",()=>{setPrefs(p=>({...p,autoModel:true}));toast("Model işe göre otomatik seçilecek")}]});
   if(html0&&st.appId&&!dirty&&!busy)out.push({k:"pub",lv:0,ic:"rocket",t:"Yayına hazır",d:"Kendi adresinle canlıya al",a:["Yayınla",publish]});
-  if(u&&!u.github)out.push({k:"gh",lv:0,ic:"github",t:"GitHub bağlı değil",d:"Dal, commit ve PR için",a:["Bağla",async()=>{try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)}catch(e){toast(e.message)}}]});
+  if(u&&!u.github)out.push({k:"gh",lv:0,ic:"github",t:"GitHub bağlı değil",d:"Dal, commit ve PR için",a:["Bağla",async()=>{if(ghNeedToken())return;try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)}catch(e){toast(e.message)}}]});
   for(const x of (cHealth?.items||[]).filter(x=>x.status==="error"))out.push({k:"acct:"+x.id,lv:3,ic:"plug",t:x.name+" bağlantısı arızalı",d:x.msg.slice(0,70),a:["Kokpit",()=>setKokOpen(true)]});
   {const ci=connChecks(html0,connState()).filter(i=>i.lv>=2&&!rdrMem.muted(i.k));if(ci.length)out.push({k:"conn",lv:2,ic:"plug",t:ci.length===1?ci[0].t:ci.length+" bağlantı/çıktı sorunu",d:ci.length===1?ci[0].d.slice(0,70):ci.map(i=>i.t).slice(0,2).join(" · "),a:[ci.every(i=>i.fix?.free)?"Düzelt":"Kokpit",()=>{if(ci.every(i=>i.fix?.free)){let h=st.html;for(const i of ci){h=i.fix.run(h);rdrMem.bump(i.k,"f")}applyFix(()=>h,ci.length+" sorun")}else setKokOpen(true)}]})}
   if(!u)out.push({k:"login",lv:1,ic:"user",t:"Giriş yapılmadı",d:"Kayıt, dal ve yayın için hesap gerekir",a:["Giriş yap",()=>openAuth("")]});
@@ -5893,7 +5903,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const parts=[["Sistem talimatları",2600],["Uygulama dosyası (index.html)",Math.round(html0.length/3.2)],["Önceki istekler",Math.round(st.msgs.filter(m=>m.role==="user").slice(-5).reduce((n,m)=>n+Math.min(300,String(m.content||"").length),0)/3.4)],["Tasarım sistemi ve tema",(st.tokens?350:0)+300],["Profil talimatları",Math.round(ins.length/3.4)],["Bağlantılar",activeIntegrations().length*70],["Görseller",atts.length*1600],["Yanıt için ayrılan",html0.length>=9000?10000:24000]].filter(([,n])=>n>0);
   const used=parts.reduce((n,[,v])=>n+v,0),pct=Math.min(100,Math.round(used/win*100));
   const conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);
-  const link=async(prov)=>{if(!u){openAuth("Hesap bağlamak için giriş yap.");return}try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+(prov==="canva"?"/api/auth/canva/start?link=":"/api/auth/oauth/"+prov+"/start?link=")+encodeURIComponent(j.link)}catch(e){toast(e.message)}};
+  const link=async(prov)=>{if(!u){openAuth("Hesap bağlamak için giriş yap.");return}if(oauthBlocked(prov))return;try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+(prov==="canva"?"/api/auth/canva/start?link=":"/api/auth/oauth/"+prov+"/start?link=")+encodeURIComponent(j.link)}catch(e){toast(e.message)}};
   const unlink=async prov=>{if(!confirm(({hostinger:"Hostinger",github:"GitHub",google:"Google",higgsfield:"Higgsfield",canva:"Canva"}[prov]||prov)+" bağlantısı kesilsin mi?"))return;setSpBusy(prov);try{const j=await api("DELETE","/api/connect/"+prov);j.user&&auth.patch(j.user);if(["hostinger","higgsfield","canva"].includes(prov))auth.patch({[prov]:prov==="canva"?false:null});toast("Bağlantı kesildi")}catch(e){toast(e.message)}finally{setSpBusy("")}};
   const saveHost=async e=>{e.preventDefault();setSpBusy("hostinger");try{const j=await api("PUT","/api/connect/hostinger",{token:hostTok.trim()});auth.patch({hostinger:j.last4});setHostTok("");setHostForm(false);toast("Hostinger bağlandı"+(j.plans!=null?" · "+j.plans+" hizmet bulundu":""))}catch(er){toast(er.message)}finally{setSpBusy("")}};
   const acct=(key,logo,name,on,sub,prov,cfgOk)=>html`<div class="sp-row" key=${key}>${logo}<span class="sp-t"><b>${name}</b>${sub&&html`<small>${sub}</small>`}</span>${on?html`<span class="sp-ok" title="Bağlı"></span><button type="button" class="sp-ib" title="Bağlantıyı kes" aria-label=${name+" bağlantısını kes"} disabled=${spBusy===prov} onClick=${()=>unlink(prov)}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${cfgOk===false&&prov!=="github"} title=${cfgOk===false?(prov==="github"?"Erişim anahtarıyla bağlan":"Bu sunucuda yapılandırılmamış"):""} onClick=${()=>prov==="hostinger"?setHostForm(!hostForm):prov==="github"&&cfgOk===false?setGitOpen("github"):link(prov)}>Bağla</button>`}</div>`;
@@ -6112,7 +6122,7 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
  const approve=body=>run("review",async()=>{const j=await api("POST","/api/admin/radar-review/"+a.id,body);upd({...a,...j.app});setNotice({text:"Yayın incelemesi onaylandı"})});
  const pub=()=>run("pub",async()=>{const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed:a.status==="published"||a.published_at?a.listed:listedOnPublish,price:a.price});upd({...a,...j.app});setNotice({text:"Uygulama yayında"})});
  const toGh=()=>run("gh",async()=>{const j=await api("POST","/api/apps/"+a.id+"/github");setGh(j);toast("GitHub'a kaydedildi")});
- const linkGh=()=>run("ghl",async()=>{const j=await api("POST","/api/auth/link");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)});
+ const linkGh=()=>run("ghl",async()=>{if(ghNeedToken())return;const j=await api("POST","/api/auth/link");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)});
  const chk=()=>run("dom",async()=>{const j=await api("GET","/api/domain/check?name="+encodeURIComponent(dom));setDomRes(j.results)});
  const askDomain=d=>run("ask",async()=>{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:auth.user.name||auth.user.email,email:auth.user.email,brand:a.title,domain:d,tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:"Alan adı alımı ve bağlama: "+d+" → "+(a.url||"(henüz yayınlanmadı)"),type:"alan-adi",total:0,monthly:0});toast("Talebiniz alındı ("+id+"). Ekibimiz size ulaşacak.")});
  const toStore=listed=>run("store",async()=>{if(!listed&&a.meta?.radarOrigin&&auth.user?.admin){await api("PATCH","/api/admin/projects/"+a.id,{listed:false});upd({...a,listed:false});setNotice({text:"Uygulama Keşfet’ten kaldırıldı"});return}await api("PUT","/api/apps/"+a.id,{category:cat,description:desc});const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed,price:+price||0});upd({...a,...j.app,category:cat,description:desc});setNotice({text:listed?"Uygulama Keşfet’te listelendi":"Uygulama Keşfet’ten kaldırıldı"})});
@@ -7583,7 +7593,7 @@ const ST_IC={ok:["check","#34d399"],warn:["alert","#facc15"],fail:["circleX","#f
 function GhImport({url,auto,review,close,auth,openAuth,toast,onStudio,models,go}){
  const [info,setInfo]=useState(null);const infoS=info;const [err,setErr]=useState(null);const [busy,setBusy]=useState("inspect");const [res,setRes]=useState(null);const [dev,setDev]=useState("desktop");
  const [entry,setEntry]=useState(null);const [live,setLive]=useState(null);const [conv,setConv]=useState("");const [take,setTake]=useState(null);const [showDeps,setShowDeps]=useState(false);const autoRef=useRef(!!auto);
- const linkGh=async(priv)=>{if(!auth.user){openAuth("GitHub hesabını bağlamak için önce ücretsiz hesap oluştur.");return}try{const j=await api("POST","/api/auth/link");LS.set("ghPending",{url,review:!!review});location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)+(priv?"&scope=private":"")}catch(e){toast(e.message)}};
+ const linkGh=async(priv)=>{if(!auth.user){openAuth("GitHub hesabını bağlamak için önce ücretsiz hesap oluştur.");return}if(ghNeedToken())return;try{const j=await api("POST","/api/auth/link");LS.set("ghPending",{url,review:!!review});location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)+(priv?"&scope=private":"")}catch(e){toast(e.message)}};
  async function inspect(){setBusy("inspect");setErr(null);setInfo(null);setRes(null);
   try{const j=await api("POST","/api/github/inspect",{url});setInfo(j);setEntry(j.entry);track("github_inspect",{repo:j.repo.full,meta:{kind:j.kind}});
    const fail=j.checks.some(c=>c.st==="fail");
@@ -7826,6 +7836,9 @@ function App(){
    if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v==="github-dallar"){auth.refresh();setResumeVersions(true);setView("studio");return}
    if(v==="github-baglandi"||v==="google-baglandi"){auth.refresh();toast(v==="github-baglandi"?"GitHub hesabınız bağlandı 🐙":"Google hesabınız bağlandı");const d=LS.get("afterLink","");LS.set("afterLink","");setView(d==="studio"?"studio":"uygulamalarim");return}
+   if(v==="github-anahtar"){history.replaceState(null,"","#"+(LS.get("afterLink","")==="studio"?"studio":"ana"));setViewS(LS.get("afterLink","")==="studio"?"studio":"ana");setGhTok(true);return}
+   if(v==="baglanti-kapali"){const pr=new URLSearchParams(location.hash.split("?")[1]||"").get("p")||"";history.replaceState(null,"","#ana");setViewS("ana");if(pr==="github")setGhTok(true);else toast((pr==="google"?"Google":pr==="canva"?"Canva":"Bu")+" bağlantısı bu sunucuda henüz açılmadı.");return}
+   if(v==="oturum-sona-erdi"){history.replaceState(null,"","#ana");setViewS("ana");toast("Bağlantı için oturum süresi doldu; tekrar dene.");return}
    if(v==="eposta-dogrulandi"){auth.refresh();toast("E-posta adresin doğrulandı ✓");history.replaceState(null,"","#ana");setViewS("ana");return}
    if(v==="eposta-hata"){toast("Doğrulama bağlantısı geçersiz ya da süresi dolmuş; yeniden gönder");history.replaceState(null,"","#ana");setViewS("ana");return}
    if(v==="sifre-sifirla"){const t=new URLSearchParams(location.hash.split("?")[1]||"").get("t");history.replaceState(null,"","#ana");setViewS("ana");if(t)setResetTok(t);return}
@@ -7847,6 +7860,7 @@ function App(){
   addEventListener("gm:settings-open",o);addEventListener("gm:busy",b);addEventListener("keydown",k);return()=>{removeEventListener("gm:settings-open",o);removeEventListener("gm:busy",b);removeEventListener("keydown",k)}},[]);
  useEffect(()=>{if(auth.user)gsFromUser(auth.user)},[auth.user&&auth.user.id]);
  const togglePin=id=>{const p=GS.pins||[];gsSet({pins:p.includes(id)?p.filter(x=>x!==id):[id,...p].slice(0,30)})};
+ const [ghTok,setGhTok]=useState(false);useEffect(()=>{const o=()=>setGhTok(true),t=e=>toast(e.detail);addEventListener("gm:ghtoken",o);addEventListener("gm:toast",t);return()=>{removeEventListener("gm:ghtoken",o);removeEventListener("gm:toast",t)}},[]);
  const [resetTok,setResetTok]=useState(null),[vbarOff,setVbarOff]=useState(()=>LS.get("vbarOff","")===new Date().toDateString()); const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState(()=>storeRoute(location.hash));const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
  useEffect(()=>{const h=()=>setMore(false);addEventListener("hashchange",h);return()=>removeEventListener("hashchange",h)},[]);
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
@@ -7947,7 +7961,7 @@ function App(){
   if(["tur","tema","mod","prompt","yap","sablon"].includes(a.t)&&(window.__gmStudio||{}).calisiyor){toast("Stüdyo'da süren iş bitince bu adım uygulanacak");const t0=Date.now();while((window.__gmStudio||{}).calisiyor&&Date.now()-t0<600000)await wait(800);await wait(400)}
   if(!active())return;
   if(a.t==="baglan"){const c=CONN.find(x=>x.id===a.id&&!x.soon);if(!c)throw new Error("Bu bağlantı bulunamadı");const v=a.alanlar&&typeof a.alanlar==="object"?a.alanlar:{};const cfg={};for(const [k] of c.f){if(v[k]!=null)cfg[k]=String(v[k]).slice(0,300)}const miss=c.f.filter(([k])=>!cfg[k]);if(miss.length&&!a.kapat){navGo("baglantilar");throw new Error(c.n+" için şu bilgi gerekli: "+miss.map(x=>x[1]).join(", "))}const st0=connState();const n={...st0,[c.id]:a.kapat?{...(st0[c.id]||{}),on:false}:{on:true,cfg}};LS.set("conns",n);dispatchEvent(new Event("gm:conns"));toast(c.n+(a.kapat?" kapatıldı":" bağlandı"));return wait(200)}
-  if(a.t==="hesap"){if(!auth.user){openAuth("Hesap bağlamak için giriş yap.");return wait(200)}if(a.ad==="hostinger"){navGo("studio");setTimeout(()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a:{t:"panel",ad:"oturum"}}})),500);toast("Oturum panelinde Hostinger › Bağla ile API anahtarını gir");return wait(600)}if(a.ad==="github"||a.ad==="google"){const j=await api("POST","/api/auth/link");LS.set("afterLink",viewRef.current==="studio"?"studio":"");location.href=API+"/api/auth/oauth/"+a.ad+"/start?link="+encodeURIComponent(j.link);return wait(2000)}throw new Error("Bilinmeyen hesap")}
+  if(a.t==="hesap"){if(!auth.user){openAuth("Hesap bağlamak için giriş yap.");return wait(200)}if(a.ad==="hostinger"){navGo("studio");setTimeout(()=>window.dispatchEvent(new CustomEvent("gm:act",{detail:{a:{t:"panel",ad:"oturum"}}})),500);toast("Oturum panelinde Hostinger › Bağla ile API anahtarını gir");return wait(600)}if(a.ad==="github"||a.ad==="google"){if(oauthBlocked(a.ad))return wait(300);const j=await api("POST","/api/auth/link");LS.set("afterLink",viewRef.current==="studio"?"studio":"");location.href=API+"/api/auth/oauth/"+a.ad+"/start?link="+encodeURIComponent(j.link);return wait(2000)}throw new Error("Bilinmeyen hesap")}
   if(a.t==="github"){if(!a.url)throw new Error("GitHub adresi yok");setGh({url:String(a.url),auto:!!a.devral,n:Date.now()});return wait(400)}
   if(a.t==="git"){if(!CP_VIEWS[a.view])throw new Error("Bu sayfa bulunamadı");return ghostDo('.side .nav[data-v="'+a.view+'"]',()=>navGo(a.view))}
   if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp,active);return wait(500)}
@@ -8024,6 +8038,7 @@ function App(){
   </main>
   ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} initialTab=${radarTab} close=${()=>{setCur(null);setRadarTab("genel")}} sec=${mode==="admin"?radarScan(cur,secs[cur.full_name]):secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}} onWant=${mode==="musteri"?(r=>{setCur(null);goWizard(r)}):null}/>`}
   ${deck&&html`<${Deck} repos=${deck} secs=${secs} close=${()=>setDeck(null)}/>`}
+  ${ghTok&&html`<${Modal} close=${()=>setGhTok(false)} w=${480}><h2 class="auth-h"><${Icon} n="github" s=${20}/> GitHub'ı bağla</h2><p class="auth-s">${auth.user?"Dallar, commitler ve GitHub'a yayın için hesabını erişim anahtarıyla bağla. Bir kez yapman yeterli.":"Önce giriş yapmalısın."}</p>${auth.user?html`<${GhTokenForm} auth=${auth} onDone=${login=>{setGhTok(false);auth.refresh();toast("GitHub bağlandı · @"+login)}}/>`:html`<button class="btn" onClick=${()=>{setGhTok(false);openAuth("GitHub bağlamak için giriş yap.")}}>Giriş yap</button>`}${auth.user?.admin&&html`<p class="sub" style=${{marginTop:12}}>Yönetici: tek tıkla bağlanma için <a href="#github-ayar" onClick=${()=>setGhTok(false)}>Yönetim › GitHub bağlantısı</a>.</p>`}<//>`}
   ${resetTok&&html`<${Modal} close=${()=>setResetTok(null)}><${ResetBox} token=${resetTok} auth=${auth} toast=${toast} close=${()=>setResetTok(null)}/><//>`}
   ${authModal!==null&&html`<${AuthScreen} auth=${auth} health=${health} toast=${toast} reason=${authModal} close=${()=>setAuthModal(null)}/>`}
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
