@@ -1,6 +1,6 @@
 const SOURCES = [
-  { host: "developer.mozilla.org", name: "MDN", url: "https://developer.mozilla.org/en-US/blog/rss.xml" },
-  { host: "www.smashingmagazine.com", name: "Smashing Magazine", url: "https://www.smashingmagazine.com/feed/" },
+  { hosts: ["developer.mozilla.org"], name: "MDN", url: "https://developer.mozilla.org/en-US/blog/rss.xml" },
+  { hosts: ["www.smashingmagazine.com", "smashingmagazine.com"], name: "Smashing Magazine", url: "https://www.smashingmagazine.com/feed/" },
 ];
 const TOPICS = ["dashboard-template", "design-system", "icon-pack", "portfolio-template"];
 const HOURS = [6, 12, 24, 48, 168];
@@ -17,7 +17,7 @@ export function feedEntries(xml, source) {
     const title = field(item, "title").slice(0, 180);
     try {
       const url = new URL(field(item, "link"));
-      if (!title || url.protocol !== "https:" || url.hostname !== source.host || url.username || url.password) return [];
+      if (!title || url.protocol !== "https:" || !source.hosts.includes(url.hostname) || url.username || url.password) return [];
       return [{ id: url.href, url: url.href, title, source: source.name, kind: "web" }];
     } catch { return []; }
   });
@@ -37,7 +37,9 @@ async function readFeed(source) {
     }
   } finally { await reader.cancel().catch(() => {}); }
   if (!/<rss\b/i.test(xml)) throw new Error("RSS biçimi okunamadı");
-  return feedEntries(xml, source);
+  const entries = feedEntries(xml, source);
+  if (!entries.length && /<item\b/i.test(xml)) throw new Error("RSS bağlantıları okunamadı");
+  return entries;
 }
 
 export function registerRadar({ db, route, need, ghRead, githubToken, createDesign }) {
