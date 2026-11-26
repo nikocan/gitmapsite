@@ -769,7 +769,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.36.1" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.37.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1631,11 +1631,15 @@ function setAi(name, value) { return setAi0(name, value); }
 // Panelden girilen değer veritabanında şifreli saklanır ve sunucu dosyasındaki (ortam) değerin önüne geçer.
 db.exec("CREATE TABLE IF NOT EXISTS ai_secrets(name TEXT PRIMARY KEY, enc TEXT NOT NULL, last4 TEXT, updated TEXT DEFAULT (datetime('now')))");
 const AI_FIELDS = { AI_BASE: 0, AI_KEY: 1, AI_MODEL: 0, AI_MODELS: 0, COPILOT_MODEL: 0, VISION_MODEL: 0, AI_FALLBACKS: 0, HOSTINGER_AI_KEY: 1, HOSTINGER_AI_MODELS: 0, OPENROUTER_API_KEY: 1, ANTHROPIC_API_KEY: 1, OPENAI_API_KEY: 1, GEMINI_API_KEY: 1, DEEPSEEK_API_KEY: 1 }; // 1 = gizli
+let AI_NOTE = "";
 const AI_ENV0 = Object.fromEntries(Object.keys(AI_FIELDS).map((k) => [k, E[k] || ""]));
 function applyAiOverrides() {
   const o = {}; for (const r of q("SELECT name,enc FROM ai_secrets").all()) { try { o[r.name] = decKey(r.enc); } catch { } }
   for (const k of Object.keys(AI_FIELDS)) E[k] = o[k] ?? AI_ENV0[k];
   CFG.aiKey = E.AI_KEY || ""; CFG.aiBase = (E.AI_BASE || "https://router.hostinger.com/v1").replace(/\/+$/, ""); CFG.aiModel = E.AI_MODEL || "";
+  // Anahtar ile adres uyuşmazlığı: OpenRouter anahtarı yalnızca OpenRouter'da çalışır; adres başka yeri gösterse de OpenRouter kullanılır
+  AI_NOTE = "";
+  if (/^sk-or-/.test(CFG.aiKey) && !/openrouter\.ai/.test(CFG.aiBase)) { AI_NOTE = "Ana anahtar OpenRouter'a ait ama adres " + CFG.aiBase.replace(/^https?:\/\//, "") + " idi; OpenRouter kullanılıyor."; CFG.aiBase = "https://openrouter.ai/api/v1"; }
   for (const k of Object.keys(modelCaches)) delete modelCaches[k];
 }
 applyAiOverrides();
@@ -1645,7 +1649,7 @@ function aiAdminState() {
     const v = E[name] || ""; const src = rows[name] ? "panel" : AI_ENV0[name] ? "sunucu" : "yok";
     return { name, secret: !!secret, source: src, set: !!v, value: secret ? null : v, last4: secret && v ? v.slice(-4) : null, updated: rows[name]?.updated || null };
   });
-  return { fields, fallbacks: fallbackChain(), base: CFG.aiBase };
+  return { fields, fallbacks: fallbackChain(), base: CFG.aiBase, note: AI_NOTE };
 }
 const adminByok = (user) => q("SELECT provider,last4 FROM user_keys WHERE user_id=?").all(user.id).filter((r) => FALLBACK_ENV[r.provider] && r.provider !== "hostinger").map((r) => ({ provider: r.provider, last4: r.last4 }));
 route("GET", "/api/admin/ai", ({ user }) => ({ ...aiAdminState(), byok: adminByok(user) }));
@@ -1666,6 +1670,16 @@ route("PUT", "/api/admin/ai", ({ body, user }) => {
   if (name === "AI_FALLBACKS") need(value.split(",").every((p) => FALLBACK_ENV[p.trim()]), 400, "Sıra yalnızca şu adları içerebilir: " + Object.keys(FALLBACK_ENV).join(", "));
   if (["AI_MODEL", "AI_MODELS", "COPILOT_MODEL", "VISION_MODEL", "HOSTINGER_AI_MODELS"].includes(name)) need(/^[\w.\/:@,\- ]+$/.test(value), 400, "Model adlarında yalnızca harf, rakam ve . / - : , kullanılabilir");
   q("INSERT INTO ai_secrets(name,enc,last4) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,updated=datetime('now')").run(name, encKey(value), AI_FIELDS[name] ? value.slice(-4) : null);
+  applyAiOverrides(); return { ...aiAdminState(), byok: adminByok(user) };
+});
+// Hostinger AI Router'ı tamamen bırak: ana sağlayıcı OpenRouter (anahtarı varsa), Hostinger yedek listesinden de çıkar
+route("POST", "/api/admin/ai/remove-hostinger", ({ user }) => {
+  const orKey = E.OPENROUTER_API_KEY || (/^sk-or-/.test(E.AI_KEY || "") ? E.AI_KEY : "");
+  need(orKey || !/router\.hostinger\.com/.test(CFG.aiBase), 400, "Önce OpenRouter anahtarını kaydet; Hostinger kaldırılınca ana sağlayıcı o olacak");
+  if (/router\.hostinger\.com/.test(CFG.aiBase) || /openrouter\.ai/.test(CFG.aiBase)) { setAi("AI_BASE", "https://openrouter.ai/api/v1"); setAi("AI_KEY", orKey); }
+  setAi("HOSTINGER_AI_KEY", ""); setAi("HOSTINGER_AI_MODELS", "");
+  const order = String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => p && p !== "hostinger");
+  setAi("AI_FALLBACKS", (order.length ? order : ["openrouter", "anthropic", "openai", "gemini", "deepseek"]).join(","));
   applyAiOverrides(); return { ...aiAdminState(), byok: adminByok(user) };
 });
 // Tek tıkla: OpenRouter ana sağlayıcı, Hostinger AI Router yedek. Model adları OpenRouter biçimine çevrilir.
