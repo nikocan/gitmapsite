@@ -35,7 +35,8 @@ Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Rou
 | --- | --- |
 | `OPENROUTER_API_KEY` | OpenRouter anahtarı (tek anahtarla Claude, GPT, Gemini, DeepSeek, Qwen) |
 | `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY` | Doğrudan sağlayıcı anahtarları |
-| `AI_FALLBACKS` | Deneme sırası (varsayılan `openrouter,anthropic,openai,gemini,deepseek`) |
+| `AI_FALLBACKS` | Deneme sırası (varsayılan `hostinger,openrouter,anthropic,openai,gemini,deepseek`; ana sağlayıcı kendi yedeği olmaz) |
+| `HOSTINGER_AI_KEY` | Hostinger AI Router yedeği; tanımlı değilse sunucu dosyasındaki Hostinger `AI_KEY` kullanılır |
 | `PROMPT_CACHE` | `0` yapılırsa Claude istem önbelleği kapanır (varsayılan açık) |
 | `COPILOT_MODEL`, `VISION_MODEL` | Asistan ve görsel okuma için sabit model |
 
