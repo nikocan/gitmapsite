@@ -800,7 +800,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.49.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.50.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -894,7 +894,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const opts = runOpts(rt, body); // önce kullanıcının ayrıntı ayarı; aşağıdaki alt sınırlar bunu düşüremez
   rt.maxTokens = buildBudget(rt.maxTokens, { model: rt.model, strong: tierOf(rt.model) === "guclu", cur, patch, kind });
   rt.autoContinue = !patch;
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design, kind) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur }) + scopeRule(kind) + opts + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design, kind) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur || body.connExplicit === true }) + scopeRule(kind) + opts + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages(projectBrief(body) + (history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages(projectBrief(body) + "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
