@@ -1662,6 +1662,45 @@ button.adp-mini{color:inherit;text-align:left}
 .rdr-th{width:18px;height:18px;border-radius:4px;object-fit:cover;flex:none}.rdr-m{margin-left:auto;color:#77756f;font-size:11.5px;flex:none}
 .rdr-mute{color:#8a8882!important}.rdr-diff{font-style:normal;font-size:12px}.rdr-diff .a{color:#3ecf8e;font-style:normal}.rdr-diff .d{color:#ff6b5b;font-style:normal}
 .ccpop.rdr .ccpop-i>.sp-ok{margin-left:auto}
+/* v5.39 Kokpit — neon gösterge paneli */
+.rdr-kok{margin-left:8px;display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:999px;border:1px solid #3de8ff55;background:#3de8ff12;color:#7ff3ff;font-size:11.5px;cursor:pointer;box-shadow:0 0 12px #3de8ff22}.rdr-kok:hover{background:#3de8ff22}
+.kok-bg{position:fixed;inset:0;z-index:300;background:#04040acc;backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px;overflow:auto;animation:kokIn .2s ease}
+@keyframes kokIn{from{opacity:0}to{opacity:1}}
+.kok{width:min(1100px,100%);background:radial-gradient(120% 80% at 50% -10%,#16162a 0%,#08080e 60%);border:1px solid #2a2a40;border-radius:22px;box-shadow:0 0 0 1px #3de8ff14,0 30px 80px #000a,inset 0 1px 0 #ffffff0d;color:#e9e8f0;padding:16px 18px 20px;font-feature-settings:"tnum"}
+.kok-h{display:flex;align-items:center;gap:10px;padding:2px 2px 12px;border-bottom:1px solid #ffffff0f}.kok-h b{font-size:16px;letter-spacing:.02em}.kok-h small{color:#8a8aa0;font-size:12px}.kok-h .ib{margin-left:6px}
+.kok-pulse{width:9px;height:9px;border-radius:50%;background:#39ff88;box-shadow:0 0 10px #39ff88;animation:kokP 1.8s infinite}@keyframes kokP{50%{box-shadow:0 0 2px #39ff88;opacity:.6}}
+.kok-auto{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:#a9a9bd;cursor:pointer;user-select:none}.kok-auto input{display:none}.kok-auto i{width:34px;height:19px;border-radius:99px;background:#26263a;position:relative;transition:.2s}.kok-auto i:after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#8a8aa0;transition:.2s}.kok-auto.on{color:#7ff3ff}.kok-auto.on i{background:#3de8ff44;box-shadow:0 0 10px #3de8ff55}.kok-auto.on i:after{left:17px;background:#3de8ff}
+.kok-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 0 8px}
+.kg{display:flex;flex-direction:column;align-items:center;background:linear-gradient(180deg,#ffffff07,#ffffff02);border:1px solid #ffffff0d;border-radius:16px;padding:8px 8px 12px}.kg svg{max-width:150px}.kg b{font-size:12.5px;font-weight:500;color:#d8d7e4;margin-top:-6px}.kg small{font-size:11px;color:#7d7d92;margin-top:2px;text-align:center}
+.kg-v{font-size:17px;font-weight:600}.kg-arc{transition:stroke-dasharray .9s cubic-bezier(.2,.8,.2,1)}.kg-n{transition:all .9s cubic-bezier(.2,.8,.2,1)}
+.kok-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kok-card{background:#0d0d16;border:1px solid #ffffff0f;border-radius:16px;padding:12px 14px;min-width:0}.kok-wide{grid-column:1/-1}
+.kok-card h4{display:flex;align-items:center;gap:7px;margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#9d9db4}.kok-card h4 small{text-transform:none;letter-spacing:0;font-weight:400;color:#6d6d82}
+.kok-mini{margin-left:auto;display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:7px;border:1px solid #ffffff1a;background:transparent;color:#bdbdd0;font-size:11px;cursor:pointer;text-transform:none;letter-spacing:0}.kok-mini:hover{border-color:#3de8ff66;color:#7ff3ff}.kok-mini.hot{border-color:#39ff8866;color:#7dffb0;box-shadow:0 0 10px #39ff8822}
+.kok-lamps{display:flex;flex-wrap:wrap;gap:6px}.kok-lamp{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 10px;border-radius:9px;border:1px solid #ffffff12;background:#ffffff05;color:#d4d3e0;font-size:12px;cursor:pointer}.kok-lamp.sel{border-color:#3de8ff77}
+.kok-lamp i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c),0 0 2px var(--c)}.kok-lamp.error i{animation:kokP 1s infinite}.kok-lamp.off i{box-shadow:none}
+.kok-det{margin-top:10px;padding:10px;border-radius:10px;background:#ffffff06;font-size:12.5px}.kok-det p{margin:4px 0 8px;color:#bcbccc}.kok-det small{color:#7d7d92}
+.kok-btn{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:8px;border:1px solid #3de8ff55;background:#3de8ff14;color:#9ff6ff;font-size:12px;cursor:pointer;white-space:nowrap}.kok-btn:hover{background:#3de8ff26}.kok-btn:disabled{opacity:.4;cursor:default}
+.kok-link{background:none;border:0;color:#8a8aa0;font-size:11.5px;cursor:pointer;text-decoration:underline;padding:0}
+.kok-now{font-size:12px;color:#8a8aa0;margin-bottom:8px}.kok-now b{color:#c77dff;font-weight:500}
+.kok-bar{display:grid;grid-template-columns:minmax(0,1.2fr) 1fr auto;grid-template-rows:auto auto;column-gap:8px;align-items:center;margin:6px 0;font-size:12px}.kok-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d4d3e0}.kok-bar em{font-style:normal;color:#6d6d82;margin-left:6px;font-size:10.5px}
+.kok-bar i{height:6px;border-radius:9px;background:#ffffff0d;overflow:hidden}.kok-bar u{display:block;height:100%;background:linear-gradient(90deg,#c77dff,#3de8ff);box-shadow:0 0 10px #c77dff88;border-radius:9px}.kok-bar b{color:#e9e8f0;font-weight:500}.kok-bar small{grid-column:3;color:#6d6d82;font-size:10.5px;text-align:right}
+.kok-spark{display:flex;gap:6px;align-items:flex-end;height:90px;padding:4px 0}.kok-spark div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}.kok-spark i{width:100%;max-width:22px;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,#3de8ff,#3de8ff33);box-shadow:0 0 10px #3de8ff55;transition:height .8s}.kok-spark i.pk{background:linear-gradient(180deg,#ff3bd4,#ff3bd433);box-shadow:0 0 12px #ff3bd477}.kok-spark small{font-size:10px;color:#6d6d82}
+.kok-kv{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.kok-kv span{display:flex;flex-direction:column;font-size:10.5px;color:#7d7d92;background:#ffffff05;border-radius:8px;padding:6px 8px}.kok-kv b{font-size:15px;color:#e9e8f0;font-weight:500}
+.kok-issues{display:flex;flex-direction:column;gap:6px}.kok-iss{border:1px solid #ffffff0f;border-radius:11px;background:#ffffff04}.kok-iss summary{display:flex;align-items:center;gap:10px;padding:8px 10px;cursor:pointer;list-style:none}.kok-iss summary::-webkit-details-marker{display:none}
+.kok-iss summary>i{width:4px;align-self:stretch;border-radius:4px;background:#5b5a63}.kok-iss.lv3 summary>i{background:#ff3b6b;box-shadow:0 0 10px #ff3b6b}.kok-iss.lv2 summary>i{background:#ffc53d;box-shadow:0 0 8px #ffc53d88}.kok-iss.lv1 summary>i{background:#3de8ff}.kok-iss.lv0 summary>i{background:#39ff88}
+.kok-iss summary span{flex:1;min-width:0;display:flex;flex-direction:column}.kok-iss summary b{font-size:13px;font-weight:500}.kok-iss summary small{font-size:11.5px;color:#8a8aa0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kok-tag{font-style:normal;font-size:10px;color:#7dffb0;border:1px solid #39ff8855;border-radius:99px;padding:1px 7px}
+.kok-why{padding:0 12px 10px 24px;font-size:12.5px;color:#bcbccc}.kok-why p{margin:4px 0}.kok-why b{color:#e9e8f0;font-weight:500}
+.kok-mute{color:#6d6d82;font-size:12px;margin:4px 0}.kok-ok{color:#7dffb0;font-size:13px;margin:4px 0}.kok-err{color:#ff7d9a;font-size:12.5px}
+.kok-ai{background:linear-gradient(180deg,#120f22,#0b0b14);border-color:#c77dff2a}
+.kok-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.kok-chips button{height:28px;padding:0 11px;border-radius:99px;border:1px solid #c77dff44;background:#c77dff10;color:#dcc2ff;font-size:12px;cursor:pointer}.kok-chips button:hover{background:#c77dff22}.kok-chips button:disabled{opacity:.5}
+.kok-ans{border:1px solid #ffffff10;border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#00000040;font-size:13px}.kok-ans>small{display:block;color:#8a8aa0;margin-bottom:6px}
+.kok-think{display:flex;align-items:center;gap:4px;color:#a9a9bd}.kok-think i{width:6px;height:6px;border-radius:50%;background:#c77dff;animation:kokP 1s infinite}.kok-think i:nth-child(2){animation-delay:.2s}.kok-think i:nth-child(3){animation-delay:.4s}
+.kok-q{display:flex;gap:8px}.kok-q input{flex:1;min-width:0;height:36px;border-radius:10px;border:1px solid #ffffff1a;background:#ffffff06;color:#e9e8f0;padding:0 12px;font-size:13px;outline:none}.kok-q input:focus{border-color:#c77dff88;box-shadow:0 0 0 3px #c77dff22}.kok-q .kok-btn{height:36px;border-color:#c77dff66;background:#c77dff22;color:#e6d3ff}
+.kok-learn{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:#8a8aa0}.kok-learn b{color:#d8d7e4;font-weight:500}.kok-learn svg{color:#c77dff}
+@media(max-width:900px){.kok-gauges{grid-template-columns:repeat(2,1fr)}.kok-grid{grid-template-columns:1fr}.kok-h small{display:none}}
+@media(max-width:520px){.kok-bg{padding:8px}.kok{padding:12px;border-radius:16px}.kok-kv{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -1675,8 +1714,19 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.38.0";
+const VERSION="5.39.0";
 const CHANGELOG=[
+ {v:"5.39.0",date:"2026-11-26",items:[
+  "🛰️ Kokpit (Radar › Kokpit): araba gösterge paneli gibi neon göstergeler. Bağlantı sağlığı yüzdesi, bugünkü harcama, kalan kredi ve açık arıza sayısı tek bakışta görünüyor",
+  "🔌 Bağlayıcı lambaları: GitHub, Google, Hostinger, Higgsfield, Canva ve uygulamaya açtığın her bağlantı yeşil (sağlam), sarı (dikkat), kırmızı (arıza) ya da gri (kapalı) yanıyor. Lambaya tıklayınca nedeni ve ilişkisi (uygulamada kullanılıyor mu) açılıyor",
+  "🩺 Hesap bağlantıları artık gerçekten doğrulanıyor: sunucu her sağlayıcıya sorup iptal edilmiş anahtarı, süresi dolmuş oturumu, eksik GitHub depo iznini, azalan istek hakkını, biten bakiyeyi ve tek giriş yolu riskini buluyor",
+  "🧩 Uygulama bağlantı denetimi: hatalı biçimli ayarlar (WhatsApp numarası, Analytics kimliği, form adresi, Supabase…), açık ama uygulamada kullanılmayan bağlantılar, sayfadaki WhatsApp numarasının ya da Analytics kimliğinin bağlantıdakinden farklı olması, hedefsiz formlar, http (güvensiz) kaynaklar, kırık göreli görsel yolları ve yedeği olmayan görseller",
+  "🛠️ Her bulguda Neden? ve Önleme açıklaması ile düzeltme düğmesi var. Ücretsiz ve geri alınabilir düzeltmeler (numarayı eşitle, https'e çevir, formu bağla, görsel yedeği…) tek tıkla ya da “Ücretsizleri düzelt” ile hepsi birden uygulanıyor; önceki hâl sürümlerde duruyor",
+  "🤖 Otomatik mod: açıkken ücretsiz düzeltmeler her üretimden sonra kendiliğinden uygulanıyor. Öğrenen sistem: 3 kez düzelttiğin sorun türü otomatik moda geçiyor, 2 kez yoksaydığın tür susturuluyor; Kokpit'te öğrenme istatistikleri ve sıfırlama var",
+  "🧠 Kokpit zekâsı: panelin bütün verileri (bağlantılar, modeller, harcama, bulgular) yapay zekâya veriliyor; “Harcamamı nasıl düşürürüm?”, “Bağlantılarımı nasıl güçlendiririm?” gibi sorulara yalnızca bu verilere dayanarak teşhis ve öncelikli öneri yazıyor",
+  "📊 Dil modelleri ve harcama: son 30 günde hangi modelin kaç istek ve kaç kredi harcadığı neon çubuklarla, son 7 günün günlük harcaması grafikle gösteriliyor",
+  "📡 Radar artık bağlantı arızalarını ve bağlantı/çıktı sorunlarını da listeliyor; ücretsiz düzeltilebilenler doğrudan Radar'dan düzeltilebiliyor"
+ ]},
  {v:"5.38.0",date:"2026-11-26",items:[
   "📡 Radar (Stüdyo üst çubuğundaki ☰): projeni sürekli tarıyor ve bulguları önem sırasıyla gösteriyor: önizlemedeki kod hataları (kırmızı), kaydedilmemiş ya da dala commit edilmemiş değişiklikler (turuncu), sıradaki aşama, tasarım uyarıları, küçük model seçimi, bağlanmamış GitHub ve yayına hazır olma. Her bulgunun yanında tek tıkla doğru yere götüren düğme var: Düzelt, Kaydet, Commit, Başlat, Otomatik seç, Bağla, Yayınla",
   "🔴 Dikkat isteyen bulgu sayısı ☰ düğmesinin üstünde rozet olarak görünüyor; her şey yolundaysa radarda yeşil nabız atıyor",
@@ -4392,6 +4442,98 @@ function speechText(results,finalOnly=false){
  }
  return parts.filter(p=>!finalOnly||p.final).map(p=>p.text).join(" ");
 }
+/* ================= v5.39 — BAĞLANTI ZEKÂSI + KOKPİT ================= */
+// Uygulama bağlantılarının ayar, ilişki ve çıktı denetimi. Her sorun: k (kalıcı tür anahtarı), lv 0-3, t, d, why (neden), pre (önleme), fix {l, free, run(html)→html | prompt | go}
+const waNum=p=>{let d=String(p||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.length===11&&d[0]==="0")d="9"+d;if(d.length===10&&d[0]==="5")d="90"+d;return d};
+const CONN_FMT={whatsapp:c=>/^\d{10,15}$/.test(waNum(c.phone)),form:c=>/^https:\/\/\S+$/.test(c.url||""),analytics:c=>/^G-[A-Z0-9]{4,}$/i.test((c.id||"").trim()),pixel:c=>/^\d{8,20}$/.test((c.id||"").trim()),
+ supabase:c=>/^https:\/\/[\w-]+\.supabase\.co\/?$/.test(c.url||"")&&/^(eyJ|sb_publishable_)/.test(c.anon||""),firebase:c=>/projectId/.test(c.config||""),sheets:c=>/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(c.url||""),
+ calendly:c=>/^https:\/\/\S+$/.test(c.url||""),youtube:c=>/^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(c.url||""),payment:c=>/^https:\/\/\S+$/.test(c.url||""),email:c=>/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(c.email||""),
+ instagram:c=>/^@?[\w.]{2,30}$/.test(c.user||""),telegram:c=>/^@?\w{4,32}$/.test(c.user||""),livechat:c=>/^\w+\/\w+$/.test((c.id||"").trim())};
+const CONN_USE={whatsapp:/wa\.me\//,form:/<form/i,analytics:/googletagmanager|gtag\(/,pixel:/fbq\(/,supabase:/supabase/i,firebase:/firebase/i,sheets:/script\.google\.com/,calendly:/calendly|<iframe/i,youtube:/youtube\.com|youtu\.be/,payment:/iyzi|stripe|shopier|paytr|ödeme/i,email:/mailto:/,instagram:/instagram\.com/,telegram:/t\.me\//,livechat:/tawk\.to/,maps:/google\.com\/maps|maps\.google/,gmdb:/GitmappDB/};
+function connChecks(html,cs){const out=[];html=html||"";const on=CONN.filter(c=>!c.soon&&(cs[c.id]||{}).on);
+ for(const c of on){const cfg=(cs[c.id]||{}).cfg||(cs[c.id]||{});const fmt=CONN_FMT[c.id];
+  if(fmt&&!fmt(cfg))out.push({k:"fmt:"+c.id,lv:2,ic:"plug",t:c.n+" ayarı geçersiz",d:"Biçim hatalı ya da eksik alan var",why:"Yanlış biçimli bilgiyle üretilen bağlantılar yayında çalışmaz (ör. WhatsApp numarası ülke kodu olmadan).",pre:"Bağlantıyı kaydetmeden önce önerilen örnek biçimi kullan.",fix:{l:"Ayarı düzelt",go:"baglantilar"}});
+  const use=CONN_USE[c.id];if(html&&use&&!use.test(html))out.push({k:"unused:"+c.id,lv:1,ic:"link",t:c.n+" açık ama uygulamada yok",d:"Bağlantı tanımlı, sayfada kullanılmıyor",why:"Bağlantı açık olduğu hâlde yapay zekâ bu uygulamaya uygun görmediği için eklememiş olabilir.",pre:"Kullanmayacağın bağlantıyı kapat; yapay zekâya gereksiz kural gitmez, çıktı sadeleşir.",fix:{l:"Uygulamaya ekle",prompt:c.n+" bağlantısını uygulamanın amacına uygun, doğal bir yere ekle. Mevcut tasarımı ve diğer bölümleri değiştirme."}})}
+ if(!html)return out;
+ const wa=(cs.whatsapp||{});const want=wa.on&&waNum((wa.cfg||wa).phone);const nums=[...new Set([...html.matchAll(/wa\.me\/(\d{8,15})/g)].map(m=>m[1]))];
+ if(want&&nums.some(n=>n!==want))out.push({k:"wa-mis",lv:3,ic:"phone",t:"WhatsApp numarası uyuşmuyor",d:"Sayfada "+nums.filter(n=>n!==want).join(", ")+" · bağlantıda "+want,why:"Uygulamadaki düğme eski ya da uydurma bir numaraya gidiyor; müşteri mesajları sana ulaşmaz.",pre:"Numara değişince Radar'ı aç; otomatik modda kendiliğinden eşitlenir.",fix:{l:"Numarayı eşitle",free:1,run:h=>h.replace(/wa\.me\/\d{8,15}/g,"wa.me/"+want)}});
+ if(!wa.on&&nums.length)out.push({k:"wa-off",lv:1,ic:"phone",t:"Sayfada WhatsApp var, bağlantı kapalı",d:nums.length+" wa.me bağlantısı",why:"Numara bağlantılar bölümünde tanımlı değil; yapay zekâ örnek numara yazmış olabilir.",pre:"Gerçek numaranı WhatsApp bağlantısına gir.",fix:{l:"Bağla",go:"baglantilar"}});
+ const ga=(cs.analytics||{});const gid=ga.on&&((ga.cfg||ga).id||"").trim().toUpperCase();const gids=[...new Set([...html.matchAll(/\bG-[A-Z0-9]{4,}\b/g)].map(m=>m[0]))];
+ if(gid&&gids.some(x=>x!==gid))out.push({k:"ga-mis",lv:2,ic:"chart",t:"Analytics kimliği farklı",d:gids.join(", ")+" → "+gid,why:"Ziyaretçi verisi başka bir mülke gidiyor ya da hiç ölçülmüyor.",pre:"Kimliği yalnızca bağlantılar bölümünden değiştir.",fix:{l:"Kimliği eşitle",free:1,run:h=>h.replace(/\bG-[A-Z0-9]{4,}\b/g,gid)}});
+ const fm=(cs.form||{});const furl=fm.on&&(fm.cfg||fm).url;if(furl&&/^https:/.test(furl)&&/<form(?![^>]*action=)/i.test(html))out.push({k:"form-act",lv:2,ic:"file",t:"Form gönderimi bağlantına gitmiyor",d:"Hedefsiz form var",why:"action adresi olmayan form gönderildiğinde veri hiçbir yere ulaşmaz.",pre:"Form bağlantısı açıkken yeni formlar otomatik bağlanır.",fix:{l:"Formu bağla",free:1,run:h=>h.replace(/<form(?![^>]*action=)/gi,'<form action="'+furl.replace(/"/g,"")+'" method="POST"')}});
+ const mixed=(html.match(/(src|href)=["']http:\/\//gi)||[]).length;if(mixed)out.push({k:"mixed",lv:2,ic:"lock",t:mixed+" güvensiz (http) kaynak",d:"Yayında tarayıcı engeller",why:"Site https ile açılır; http:// görsel ve betikler engellenir ya da “güvenli değil” uyarısı çıkar.",pre:"Her dış kaynak https ile başlamalı.",fix:{l:"https'e çevir",free:1,run:h=>h.replace(/((?:src|href)=["'])http:\/\//gi,"$1https://")}});
+ const rel=[...html.matchAll(/<img\b[^>]*\bsrc=["'](?!https?:|data:|blob:|\{\{|\/\/)([^"']+)["']/gi)].length;if(rel)out.push({k:"relimg",lv:2,ic:"image",t:rel+" görsel kırık olacak",d:"Göreli yol kullanılmış (ör. images/x.jpg)",why:"Yayında bu dosyalar yok; görsel alanı boş kalır.",pre:"Kendi görselini Çıktılar'dan sahneye yerleştir.",fix:{l:"Yer tutucu koy",free:1,run:h=>{let n=0;return h.replace(/(<img\b[^>]*\bsrc=["'])(?!https?:|data:|blob:|\{\{|\/\/)([^"']+)(["'])/gi,(m,a,b,c)=>a+"https://picsum.photos/seed/gm"+(++n)+"/800/600"+c)}}});
+ const nofb=[...html.matchAll(/<img\b(?![^>]*onerror)[^>]*src=["']https?:/gi)].length;if(nofb>=2)out.push({k:"imgfb",lv:0,ic:"shield",t:nofb+" görselin yedeği yok",d:"Kaynak düşerse boş kutu görünür",why:"Dış görsel servisleri zaman zaman yanıt vermez.",pre:"Her görsele onerror yedeği eklemek kırık görünümü önler.",fix:{l:"Yedek ekle",free:1,run:h=>h.replace(/<img\b(?![^>]*onerror)/gi,'<img onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/yedek/800/600\'"')}});
+ return out}
+// Öğrenen hafıza: tür başına görüldü / düzeltildi / yoksayıldı
+const rdrMem={get:()=>LS.get("rdrMem",{})||{},bump(k,f){const m=rdrMem.get(),t=k.split(":")[0],x=m[t]||{s:0,f:0,d:0,a:0};x[f]=(x[f]||0)+1;x.at=Date.now();m[t]=x;LS.set("rdrMem",m)},of:k=>rdrMem.get()[k.split(":")[0]]||{s:0,f:0,d:0,a:0},
+ muted:k=>{const x=rdrMem.of(k);return x.d>=2&&x.d>x.f},learned:k=>rdrMem.of(k).f>=3};
+const KOK_ST={ok:["#39ff88","Sağlam"],warn:["#ffc53d","Dikkat"],error:["#ff3b6b","Arıza"],off:["#5b5a63","Kapalı"]};
+function Gauge({v,max,label,sub,tone="#39ff88"}){const p=Math.max(0,Math.min(1,max?v/max:0)),R=52,L=Math.PI*R*4/3,a0=150,rad=d=>d*Math.PI/180;
+ const pt=d=>[60+R*Math.cos(rad(d)),60+R*Math.sin(rad(d))];const [x0,y0]=pt(a0),[x1,y1]=pt(a0+240);const nd=a0+240*p,[nx,ny]=[60+40*Math.cos(rad(nd)),60+40*Math.sin(rad(nd))];
+ return html`<div class="kg"><svg viewBox="0 0 120 108" width="100%"><defs><filter id="kglow"><feGaussianBlur stdDeviation="2.2"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <path d=${`M${x0} ${y0}A${R} ${R} 0 1 1 ${x1} ${y1}`} fill="none" stroke="#ffffff12" stroke-width="8" stroke-linecap="round"/>
+  ${[0,1,2,3,4,5,6,7,8].map(i=>{const d=a0+30*i,[ax,ay]=[60+(R-11)*Math.cos(rad(d)),60+(R-11)*Math.sin(rad(d))],[bx,by]=[60+(R-6)*Math.cos(rad(d)),60+(R-6)*Math.sin(rad(d))];return html`<line x1=${ax} y1=${ay} x2=${bx} y2=${by} stroke="#ffffff30" stroke-width="1"/>`})}
+  <path d=${`M${x0} ${y0}A${R} ${R} 0 1 1 ${x1} ${y1}`} fill="none" stroke=${tone} stroke-width="8" stroke-linecap="round" pathLength="1" stroke-dasharray=${p+" 1"} filter="url(#kglow)" class="kg-arc"/>
+  <line x1="60" y1="60" x2=${nx} y2=${ny} stroke=${tone} stroke-width="2.4" stroke-linecap="round" filter="url(#kglow)" class="kg-n"/><circle cx="60" cy="60" r="4.5" fill="#0b0b10" stroke=${tone} stroke-width="2"/>
+  <text x="60" y="88" text-anchor="middle" class="kg-v" fill="#f2f1ec">${v}</text></svg><b>${label}</b><small>${sub}</small></div>`}
+function Kokpit({close,user,html:h,model,radar,health,reHealth,applyFix,buildFix,go,toast}){
+ const [use,setUse]=useState(null),[sel,setSel]=useState(null),[auto,setAuto]=useState(()=>!!LS.get("rdrAuto",false)),[q,setQ]=useState(""),[ans,setAns]=useState(null),[thinking,setThinking]=useState(false),[,tick]=useState(0);
+ useEffect(()=>{LS.set("rdrAuto",auto)},[auto]);
+ useEffect(()=>{if(user)api("GET","/api/me/usage").then(setUse).catch(()=>setUse({err:1}));reHealth&&reHealth(false)},[]);
+ useEffect(()=>{const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
+ const cs=connState(),app=connChecks(h,cs).filter(i=>!rdrMem.muted(i.k)),mutedN=connChecks(h,cs).filter(i=>rdrMem.muted(i.k)).length;
+ const acct=(health?.items||[]);const lamps=[...acct.map(a=>({id:"a:"+a.id,n:a.name,st:a.status,msg:a.msg,fix:a.fix,acct:1})),...CONN.filter(c=>!c.soon&&(cs[c.id]||{}).on).map(c=>{const p=connChecks(h,cs).filter(i=>i.k.endsWith(":"+c.id)||(c.id==="whatsapp"&&/^wa-/.test(i.k))||(c.id==="analytics"&&i.k==="ga-mis")||(c.id==="form"&&i.k==="form-act"));const lv=Math.max(-1,...p.map(i=>i.lv));return {id:"c:"+c.id,n:c.n,st:lv>=2?"error":lv>=1?"warn":"ok",msg:p[0]?p[0].t:"Ayar geçerli ve uygulamada kullanılıyor",c,issues:p}})];
+ const okN=lamps.filter(l=>l.st==="ok").length,liveN=lamps.filter(l=>l.st!=="off").length,score=liveN?Math.round(okN/liveN*100):100;
+ const S=use?.summary||{},credits=use?.credits??user?.credits??0,today=S.today?.s||0,week=S.week?.s||0,recv=Math.max(S.received||0,credits+(S.month?.s||0),1);
+ const days=Array.from({length:7},(_,i)=>{const d=new Date(Date.now()-(6-i)*864e5).toISOString().slice(0,10);const r=(S.daily||[]).find(x=>x.d===d);return {d,s:r?r.s:0,n:r?r.n:0}}),dmax=Math.max(1,...days.map(d=>d.s));
+ const models=S.byModel||[],mmax=Math.max(1,...models.map(m=>m.s));
+ const all=[...acct.filter(a=>a.status==="error"||a.status==="warn").map(a=>({k:"acct:"+a.id,lv:a.status==="error"?3:2,ic:"plug",t:a.name+": "+KOK_ST[a.status][1],d:a.msg,why:a.msg,pre:a.cause==="token"?"İzinleri kaldırınca ya da şifreni değiştirince bağlantıyı yenile.":a.cause==="scope"?"Bağlarken depo iznini onayla.":"Düzenli aralıkla Radar'ı aç; sorun yayına çıkmadan yakalanır.",fix:a.fix==="retry"?{l:"Yeniden dene",retry:1}:a.fix?{l:a.fix==="billing"?"Bakiye":"Yeniden bağla",go:"baglantilar"}:null})),...app].sort((a,b)=>b.lv-a.lv);
+ const memo=rdrMem.get(),mt=Object.values(memo).reduce((o,x)=>({s:o.s+(x.s||0),f:o.f+(x.f||0),d:o.d+(x.d||0),a:o.a+(x.a||0)}),{s:0,f:0,d:0,a:0});
+ const doFix=(i,isAuto)=>{const f=i.fix;if(!f)return;if(f.retry){reHealth(true);return}if(f.go){close();go&&go(f.go);return}if(f.run){applyFix(f.run,i.t);rdrMem.bump(i.k,isAuto?"a":"f");tick(x=>x+1);return}if(f.prompt){close();buildFix(f.prompt,i.t);rdrMem.bump(i.k,"f")}};
+ const dismiss=i=>{rdrMem.bump(i.k,"d");tick(x=>x+1);toast(rdrMem.muted(i.k)?"Bu tür uyarıyı öğrendim; artık göstermeyeceğim":"Yoksayıldı · bir kez daha yoksayarsan bu türü susturacağım")};
+ const freeN=all.filter(i=>i.fix?.free).length;
+ const fixAll=()=>{const fx=all.filter(i=>i.fix?.free);if(!fx.length)return toast("Ücretsiz düzeltilecek sorun yok");applyFix(x=>fx.reduce((y,i)=>i.fix.run(y),x),fx.length+" sorun");fx.forEach(i=>rdrMem.bump(i.k,"f"));tick(x=>x+1)};
+ const summary=()=>({kredi:credits,bugun:today,hafta:week,gunluk:days.map(d=>d.d.slice(5)+":"+d.s).join(" "),modeller:models.map(m=>m.model+" "+m.s+"kr/"+m.n+"istek").join("; "),secili_model:model,hesap_baglantilari:acct.map(a=>a.name+"="+a.status+(a.status!=="ok"?" ("+a.msg+")":"")).join("; "),uygulama_baglantilari:lamps.filter(l=>!l.acct).map(l=>l.n+"="+l.st).join("; "),sorunlar:all.slice(0,8).map(i=>"["+i.lv+"] "+i.t+" — "+i.d).join("; "),saglik:score+"%",ogrenme:"görüldü "+mt.s+", düzeltildi "+mt.f+", otomatik "+mt.a+", susturulan "+mt.d,uygulama_boyutu:Math.round((h||"").length/1024)+"KB"});
+ const ask=async(text)=>{const t=(text||q).trim();if(!t||thinking)return;setQ("");setThinking(true);setAns({q:t,a:""});
+  try{const j=await api("POST","/api/ai/copilot",{messages:[{role:"user",content:t}],context:{gorev:"KOKPİT ANALİZİ: Kullanıcı Gitmapp kokpit panelinden soruyor. YALNIZCA aşağıdaki kokpit verilerine dayan, uydurma. Önce tek cümle teşhis, sonra öncelik sırasıyla en fazla 4 kısa madde (ne yapmalı + neden), en sonda 'Önleme:' satırı. Eylem bloğu, kod ve bağlantı yazma.",kokpit:summary()}});
+   setAns({q:t,a:String(j.reply||"").replace(/```[\s\S]*?```/g,"").replace(/^\s*(EYLEM|ACTION)[\s\S]*$/m,"").trim()||"Yanıt boş döndü.",m:j.model})}catch(e){setAns({q:t,a:"",err:e.message})}setThinking(false)};
+ const L=sel&&lamps.find(l=>l.id===sel);
+ return html`<div class="kok-bg" onClick=${e=>{if(e.target===e.currentTarget)close()}}><div class="kok" role="dialog" aria-label="Kokpit">
+  <header class="kok-h"><span class="kok-pulse"></span><b>Kokpit</b><small>bağlantılar · modeller · harcama · sağlık</small>
+   <label class=${"kok-auto"+(auto?" on":"")} title="Ücretsiz ve geri alınabilir düzeltmeleri kendiliğinden uygular"><input type="checkbox" checked=${auto} onChange=${e=>setAuto(e.target.checked)}/><i></i>Otomatik mod</label>
+   <button type="button" class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${18}/></button></header>
+  <div class="kok-gauges">
+   <${Gauge} v=${score+"%"} max=${100} label="Bağlantı sağlığı" sub=${okN+"/"+liveN+" sağlam"} tone=${score>=80?"#39ff88":score>=50?"#ffc53d":"#ff3b6b"} />
+   <${Gauge} v=${today} max=${Math.max(50,week/7*2)} label="Bugünkü harcama" sub=${"7 gün: "+week+" kr"} tone="#3de8ff" />
+   <${Gauge} v=${credits} max=${recv} label="Kalan kredi" sub=${use?"toplam "+recv:"yükleniyor…"} tone=${credits<50?"#ff3b6b":"#c77dff"} />
+   <${Gauge} v=${all.filter(i=>i.lv>=2).length} max=${Math.max(5,all.length)} label="Açık arıza" sub=${freeN+" ücretsiz düzeltilebilir"} tone=${all.some(i=>i.lv>=3)?"#ff3b6b":"#ffc53d"} />
+  </div>
+  <div class="kok-grid">
+   <section class="kok-card"><h4><${Icon} n="plug" s=${14}/>Bağlayıcılar<button type="button" class="kok-mini" onClick=${()=>reHealth(true)}><${Icon} n="refresh" s=${12}/>Tara</button></h4>
+    <div class="kok-lamps">${lamps.map(l=>html`<button type="button" key=${l.id} class=${"kok-lamp "+l.st+(sel===l.id?" sel":"")} onClick=${()=>setSel(sel===l.id?null:l.id)} title=${l.msg}><i style=${{"--c":KOK_ST[l.st][0]}}></i><span>${l.n}</span></button>`)}
+     ${!lamps.length&&html`<p class="kok-mute">${user?"Taranıyor…":"Giriş yapınca hesap bağlantıların görünür."}</p>`}</div>
+    ${L&&html`<div class="kok-det"><b style=${{color:KOK_ST[L.st][0]}}>${KOK_ST[L.st][1]} · ${L.n}</b><p>${L.msg}</p>${L.acct&&L.fix&&L.st!=="ok"&&html`<button type="button" class="kok-btn" onClick=${()=>L.fix==="retry"?reHealth(true):(close(),go&&go("baglantilar"))}>${L.fix==="retry"?"Yeniden dene":L.fix==="connect"?"Bağla":"Yeniden bağla"}</button>`}${!L.acct&&html`<small>İlişki: ${L.c&&CONN_USE[L.c.id]?(CONN_USE[L.c.id].test(h||"")?"uygulamada kullanılıyor":"uygulamada kullanılmıyor"):"uygulamaya kural olarak gider"}</small>`}</div>`}
+   </section>
+   <section class="kok-card"><h4><${Icon} n="cpu" s=${14}/>Dil modelleri <small>30 gün</small></h4>
+    <div class="kok-now">Seçili: <b>${shortModel(model||"")||"otomatik"}</b></div>
+    ${models.length?models.map(m=>html`<div class="kok-bar" key=${m.model+m.provider}><span title=${m.model}>${shortModel(m.model)}<em>${m.provider==="gitmapp"?"platform":m.provider||""}</em></span><i><u style=${{width:Math.max(3,m.s/mmax*100)+"%"}}></u></i><b>${m.s} kr</b><small>${m.n} istek</small></div>`):html`<p class="kok-mute">${use?"Son 30 günde kullanım yok.":"Yükleniyor…"}</p>`}
+   </section>
+   <section class="kok-card"><h4><${Icon} n="wallet" s=${14}/>Harcama · 7 gün</h4>
+    <div class="kok-spark">${days.map(d=>html`<div key=${d.d} title=${d.d+" · "+d.s+" kredi · "+d.n+" istek"}><i style=${{height:Math.max(4,d.s/dmax*100)+"%"}} class=${d.s===dmax&&d.s>0?"pk":""}></i><small>${["Pz","Pt","Sa","Ça","Pe","Cu","Ct"][new Date(d.d).getDay()]}</small></div>`)}</div>
+    <div class="kok-kv"><span>Bugün<b>${today}</b></span><span>Hafta<b>${week}</b></span><span>Ay<b>${S.month?.s||0}</b></span><span>Ort./istek<b>${S.month?.n?Math.round(S.month.s/S.month.n*10)/10:0}</b></span></div>
+   </section>
+   <section class="kok-card kok-wide"><h4><${Icon} n="radar" s=${14}/>Teşhis ve çözüm <small>${all.length} bulgu${mutedN?" · "+mutedN+" susturuldu":""}</small>${freeN>0&&html`<button type="button" class="kok-mini hot" onClick=${fixAll}><${Icon} n="wand" s=${12}/>Ücretsizleri düzelt (${freeN})</button>`}</h4>
+    ${all.length?html`<div class="kok-issues">${all.map(i=>html`<details class=${"kok-iss lv"+i.lv} key=${i.k}><summary><i></i><span><b>${i.t}</b><small>${i.d}</small></span>${rdrMem.learned(i.k)&&html`<em class="kok-tag">öğrenildi</em>`}${i.fix&&html`<button type="button" class="kok-btn" onClick=${e=>{e.preventDefault();doFix(i)}}>${i.fix.l}${i.fix.free?"":i.fix.prompt?" · kredi":""}</button>`}</summary>
+     <div class="kok-why"><p><b>Neden?</b> ${i.why}</p><p><b>Önleme:</b> ${i.pre}</p>${i.fix?.free&&html`<p class="kok-mute">Ücretsiz ve geri alınabilir${auto||rdrMem.learned(i.k)?" · otomatik modda kendiliğinden uygulanır":""}.</p>`}<button type="button" class="kok-link" onClick=${()=>dismiss(i)}>Yoksay</button></div></details>`)}</div>`:html`<p class="kok-ok">Bağlantılar ve çıktılar sağlam görünüyor.</p>`}
+   </section>
+   <section class="kok-card kok-wide kok-ai"><h4><${Icon} n="brain" s=${14}/>Kokpit zekâsı <small>panel verilerini okuyarak yanıtlar</small></h4>
+    <div class="kok-chips">${["Neden sorun var, öncelik ne?","Harcamamı nasıl düşürürüm?","Bağlantılarımı nasıl güçlendiririm?","Yayından önce ne yapmalıyım?"].map(c=>html`<button type="button" key=${c} onClick=${()=>ask(c)} disabled=${thinking}>${c}</button>`)}</div>
+    ${ans&&html`<div class="kok-ans"><small>${ans.q}</small>${thinking?html`<p class="kok-think"><i></i><i></i><i></i> veriler okunuyor…</p>`:ans.err?html`<p class="kok-err">${ans.err}</p>`:html`<${ReportText} text=${ans.a}/>`}</div>`}
+    <form class="kok-q" onSubmit=${e=>{e.preventDefault();ask()}}><input value=${q} onInput=${e=>setQ(e.target.value)} placeholder="Kokpite sor: ör. WhatsApp bağlantım neden çalışmıyor?" aria-label="Kokpite sor"/><button type="submit" class="kok-btn" disabled=${!q.trim()||thinking}><${Icon} n="send" s=${14}/></button></form>
+    <div class="kok-learn"><${Icon} n="sparkles" s=${13}/><span>Öğrenen sistem: <b>${mt.s}</b> görüldü · <b>${mt.f}</b> sen düzelttin · <b>${mt.a}</b> otomatik · <b>${mt.d}</b> yoksayıldı. 3 kez düzelttiğin tür kendiliğinden düzelir; 2 kez yoksaydığın susturulur.</span>${mt.s+mt.f+mt.d>0&&html`<button type="button" class="kok-link" onClick=${()=>{LS.set("rdrMem",{});tick(x=>x+1);toast("Öğrenilenler sıfırlandı")}}>Sıfırla</button>`}</div>
+   </section>
+  </div></div></div>`}
 function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
@@ -4431,6 +4573,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  function undoStage(){toFrame({gm:"stage-undo"});setStagePend(null)}
  const [zoom,setZoom]=useState(null);useEffect(()=>{if(!zoom)return;const k=e=>{if(e.key==="Escape")setZoom(null)};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[zoom]);
  const [esc,setEsc]=useState(null);const [mediaOpen,setMediaOpen]=useState(false);const escOk=useRef(false);const genRef=useRef(null);
+ const [kokOpen,setKokOpen]=useState(false),[cHealth,setCHealth]=useState(null);
+ const reHealth=fresh=>{if(!auth.user)return;api("GET","/api/me/connectors/health"+(fresh?"?fresh=1":"")).then(j=>{setCHealth(j);if(fresh)toast("Bağlantılar tarandı · "+j.items.filter(i=>i.status==="error").length+" arıza")}).catch(()=>{})};
  const [ccMenu,setCcMenu]=useState(null);const [vcSource,setVcSource]=useState(()=>LS.get("vcSource","gitmapp")==="github"?"github":"gitmapp");useEffect(()=>{LS.set("vcSource",vcSource)},[vcSource]);useEffect(()=>{if(busy)setCcMenu(null)},[busy]);
  const jobRef=useRef(null),detachRef=useRef(false);
 
@@ -4804,6 +4948,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{if(!autoFix||busy||todo?.running||!qa||!st.html||qa.source!==st.html||!qa.errors.length||autoFixed.current===qa.len)return;autoFixed.current=qa.len;
   const t=setTimeout(()=>{toast("Önizlemede JavaScript hatası bulundu · otomatik düzeltiliyor");build("OTOMATİK HATA DÜZELTME — önizlemede şu JavaScript hataları oluştu, nedenini bulup düzelt:\n- "+qa.errors.join("\n- ")+"\n\nKurallar: başka hiçbir şeyi değiştirme; tasarım, içerik ve özellikler aynen kalsın.",null,"Otomatik düzeltme: "+qa.errors.length+" hata")},900);return()=>clearTimeout(t)},[qa,autoFix,busy,scope,st.html,todo?.running]);
  // ---------- Radar: projeyi sürekli tarar, bulguları önem sırasıyla gösterir ve tek tıkla doğru yere yönlendirir ----------
+ const applyFix=(run,label)=>{const prev=st.html||"";const next=run(prev);if(!next||next===prev)return false;setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:next}));toast(label+" düzeltildi · sürümlerden geri alabilirsin");return true};
+ useEffect(()=>{if(ccMenu==="radar"&&auth.user&&!cHealth)reHealth(false)},[ccMenu]);
+ // Otomatik mod + öğrenen düzeltme: ücretsiz ve geri alınabilir düzeltmeler kendiliğinden uygulanır
+ useEffect(()=>{if(busy||!st.html)return;const t=setTimeout(()=>{const auto=!!LS.get("rdrAuto",false);const seen=window.__rdrSeen||(window.__rdrSeen=new Set());let h=st.html,done=[];
+  for(const i of connChecks(h,connState())){if(!seen.has(i.k)){seen.add(i.k);rdrMem.bump(i.k,"s")}if(i.fix?.free&&!rdrMem.muted(i.k)&&(auto||rdrMem.learned(i.k))){const n=i.fix.run(h);if(n&&n!==h){h=n;done.push(i.t);rdrMem.bump(i.k,"a")}}}
+  if(done.length){setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:h}));toast("Otomatik düzeltme: "+done.join(", "))}},1500);return()=>clearTimeout(t)},[st.html,busy]);
  const radarScan=()=>{const u=auth.user,html0=st.html||"",out=[];
   const base=saved&&saved.appId===st.appId&&saved.html!=null?saved.html:versions[0]??"";const diff=lineStat(base,html0),dirty=(!!st.appId||versions.length>0)&&diff.add+diff.del>0;
   const lastRep=st.msgs.findLast(m=>m.role==="assistant"&&m.content&&!m.err)?.content||"";
@@ -4819,6 +4969,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(prefs.provider==="gitmapp"&&!prefs.autoModel&&weakModel(curModel,curInfo))out.push({k:"model",lv:1,ic:"zap",t:"Küçük model seçili",d:shortModel(curModel)+" büyük işlerde hata yapabilir",a:["Otomatik seç",()=>{setPrefs(p=>({...p,autoModel:true}));toast("Model işe göre otomatik seçilecek")}]});
   if(html0&&st.appId&&!dirty&&!busy)out.push({k:"pub",lv:0,ic:"rocket",t:"Yayına hazır",d:"Kendi adresinle canlıya al",a:["Yayınla",publish]});
   if(u&&!u.github)out.push({k:"gh",lv:0,ic:"github",t:"GitHub bağlı değil",d:"Dal, commit ve PR için",a:["Bağla",async()=>{try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)}catch(e){toast(e.message)}}]});
+  for(const x of (cHealth?.items||[]).filter(x=>x.status==="error"))out.push({k:"acct:"+x.id,lv:3,ic:"plug",t:x.name+" bağlantısı arızalı",d:x.msg.slice(0,70),a:["Kokpit",()=>setKokOpen(true)]});
+  {const ci=connChecks(html0,connState()).filter(i=>i.lv>=2&&!rdrMem.muted(i.k));if(ci.length)out.push({k:"conn",lv:2,ic:"plug",t:ci.length===1?ci[0].t:ci.length+" bağlantı/çıktı sorunu",d:ci.length===1?ci[0].d.slice(0,70):ci.map(i=>i.t).slice(0,2).join(" · "),a:[ci.every(i=>i.fix?.free)?"Düzelt":"Kokpit",()=>{if(ci.every(i=>i.fix?.free)){let h=st.html;for(const i of ci){h=i.fix.run(h);rdrMem.bump(i.k,"f")}applyFix(()=>h,ci.length+" sorun")}else setKokOpen(true)}]})}
   if(!u)out.push({k:"login",lv:1,ic:"user",t:"Giriş yapılmadı",d:"Kayıt, dal ve yayın için hesap gerekir",a:["Giriş yap",()=>openAuth("")]});
   return {items:out.sort((a,b)=>b.lv-a.lv),diff,dirty};
  };
@@ -4826,7 +4978,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const outs=[...(st.html?[{ic:"codeXml",n:"index.html",d:((st.html.length/1024).toFixed(1))+" KB",go:()=>{cl();setCode(true);setCompare(false)}}]:[]),...tray.slice(0,3).map(m=>({img:m.thumb||m.url,n:m.name||"görsel",d:m.src,go:()=>{cl();setPlaceSel(m.id)}}))];
   const srcs=[["github","GitHub",!!u?.github,html`<${Icon} n="github" s=${16}/>`],["google","Google",!!u?.google,html`<${BrandG} s=${16}/>`],["hostinger","Hostinger",!!u?.hostinger,html`<${BrandH} s=${16}/>`],["higgsfield","Higgsfield",!!u?.higgsfield,html`<${Icon} n="video" s=${16}/>`],["canva","Canva",!!u?.canva,html`<${Icon} n="palette" s=${16}/>`]];
   const on=srcs.filter(x=>x[2]),conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);
-  return html`<${CcPop} close=${cl} cls="r dn rdr"><div class="rdr-h"><span class="rdr-dot"></span><b>Radar</b><small>${R.items.filter(i=>i.lv>=2).length?R.items.filter(i=>i.lv>=2).length+" dikkat":"her şey yolunda"}</small></div>
+  return html`<${CcPop} close=${cl} cls="r dn rdr"><div class="rdr-h"><span class="rdr-dot"></span><b>Radar</b><small>${R.items.filter(i=>i.lv>=2).length?R.items.filter(i=>i.lv>=2).length+" dikkat":"her şey yolunda"}</small><button type="button" class="rdr-kok" onClick=${()=>{cl();setKokOpen(true)}}><${Icon} n="radar" s=${13}/>Kokpit</button></div>
    ${R.items.length?html`<div class="rdr-list">${R.items.slice(0,5).map(i=>html`<div class=${"rdr-i lv"+i.lv} key=${i.k}><${Icon} n=${i.ic} s=${15}/><span><b>${i.t}</b><small>${i.d}</small></span>${i.a&&html`<button type="button" class="rdr-go" onClick=${()=>{cl();i.a[1]()}}>${i.a[0]}</button>`}</div>`)}</div>`:html`<p class="rdr-empty">Bekleyen iş yok.</p>`}
    <div class="ccpop-sep"></div>
    <div class="rdr-sec"><span>Değişiklikler</span></div>
@@ -5016,7 +5168,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     ${stagePend&&!code&&html`<div class="stg-bar" role="dialog" aria-label="Görsel yerleştirme"><img src=${stagePend.item.thumb||stagePend.item.url} alt=""/><span><b>Görsel yerleştirildi</b><small>→ ${stagePend.target.alt||"<"+stagePend.target.tag+">"} · sahnede böyle görünecek</small></span><button type="button" class="btn s" onClick=${confirmStage}>Onayla</button><button type="button" class="btn g s" onClick=${undoStage}>Geri al</button></div>`}
     ${placeSel&&!code&&html`<div class="stg-hint"><${Icon} n="pointer" s=${14}/><span>Görseli koymak istediğin öğeye önizlemede dokun</span><button type="button" class="ib sm" aria-label="Vazgeç" onClick=${()=>setPlaceSel(null)}><${Icon} n="x" s=${12}/></button></div>`}
     ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
-   </div></section>${sessOpen&&sessPanel()}</div>
+   </div></section>${sessOpen&&sessPanel()}${kokOpen&&html`<${Kokpit} close=${()=>setKokOpen(false)} user=${auth.user} html=${st.html} model=${curModel} health=${cHealth} reHealth=${reHealth} applyFix=${applyFix} buildFix=${(p,l)=>build(p,null,"Bağlantı düzeltme: "+l)} go=${go} toast=${toast}/>`}</div>
   ${zoom&&html`<div class="zoom-bg" role="dialog" aria-label="Görsel" onClick=${()=>setZoom(null)}><img src=${zoom} alt="Eklenen görsel"/></div>`}
   ${mediaOpen&&html`<${MediaStudio} close=${()=>setMediaOpen(false)} auth=${auth} health=${health} toast=${toast} openAuth=${openAuth} context=${[st.title,picked?.text].filter(Boolean).join(" · ")} onAdd=${m=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{...m,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);toast("Önizlemede görselin gideceği öğeye dokun")}}/>`}
   ${full&&st.html&&html`<div class="fullprev" onClick=${()=>setFull(false)}><div class="fp-bar glass" onClick=${e=>e.stopPropagation()}><b style=${{marginRight:8}}>${st.title||"Önizleme"}</b>${seg([["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]],stage,setStage)}<span style=${{flex:1}}></span><button class="ib" onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button><button class="ib" onClick=${()=>setFull(false)} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div><div class="fp-stage" onClick=${e=>e.stopPropagation()}>${frameEl(stage)}</div></div>`}
