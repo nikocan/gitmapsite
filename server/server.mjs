@@ -163,23 +163,29 @@ const tierOf = (id) => /opus|fable|mythos|ultra|reasoner|v4-pro|gpt-?\d(\.\d)?-p
 const familyOf = (id) => /claude/i.test(id) ? "claude" : /gemini/i.test(id) ? "gemini" : /deepseek/i.test(id) ? "deepseek" : /grok/i.test(id) ? "grok" : /mistral|magistral|codestral|ministral/i.test(id) ? "mistral" : /kimi|moonshot/i.test(id) ? "kimi" : /qwen/i.test(id) ? "qwen" : /llama/i.test(id) ? "llama" : /gpt|^o\d|openai/i.test(id) ? "gpt" : "diger";
 const usable = (id) => !/embed|whisper|tts|dall|image|audio|moderation|transcribe|realtime|rerank|vision-preview/i.test(id);
 const modelCaches = {};
-const pbase = (p) => (p !== "gitmapp" && E.TEST_PROVIDER_BASE) ? E.TEST_PROVIDER_BASE : PROVIDERS[p].base();
+// Yalnızca sunucunun kullandığı sağlayıcılar (kullanıcıların kendi anahtar listesinde görünmez)
+const SERVER_PROVIDERS = { hostinger: { label: "Hostinger AI Router", base: () => "https://router.hostinger.com/v1" } };
+const pbase = (p) => (p !== "gitmapp" && E.TEST_PROVIDER_BASE) ? E.TEST_PROVIDER_BASE : (SERVER_PROVIDERS[p] || PROVIDERS[p]).base();
 async function listModels(provider, key) {
   const ck = provider + ":" + crypto.createHash("sha256").update(key).digest("hex").slice(0, 12);
   const c = modelCaches[ck]; if (c && Date.now() - c.t < 10 * 60 * 1000) return c.ids;
   const headers = { Authorization: "Bearer " + key };
   if (provider === "anthropic") Object.assign(headers, { "x-api-key": key, "anthropic-version": "2023-06-01" });
   let r;
-  try { r = await fetch(pbase(provider) + "/models", { headers, signal: AbortSignal.timeout(20000) }); } catch (e) { if (provider !== "gitmapp") throw e; r = { ok: false, status: 0 }; }
+  const routerLike = provider === "gitmapp" || provider === "hostinger";
+  try { r = await fetch(pbase(provider) + "/models", { headers, signal: AbortSignal.timeout(20000) }); } catch (e) { if (!routerLike) throw e; r = { ok: false, status: 0 }; }
   // Hostinger AI Router /models uç noktasını sunmayabilir: yapılandırılmış/varsayılan listeye düş
-  if (!r.ok && provider === "gitmapp") {
-    const ids = [...new Set([CFG.aiModel, ...(E.AI_MODELS || "claude-sonnet-5,gpt-5.2").split(",")].map((x) => (x || "").trim()).filter(Boolean))];
+  if (!r.ok && routerLike) {
+    const ids = provider === "hostinger" ? [...new Set((E.HOSTINGER_AI_MODELS || AI_ENV0.AI_MODELS || "claude-sonnet-4.5,gpt-5.2").split(",").map((x) => x.trim()).filter(Boolean))]
+      : [...new Set([CFG.aiModel, ...(E.AI_MODELS || "claude-sonnet-5,gpt-5.2").split(",")].map((x) => (x || "").trim()).filter(Boolean))];
     console.warn(new Date().toISOString(), "AI Router /models kullanılamadı (" + r.status + "), sabit liste:", ids.join(","));
     modelCaches[ck] = { t: Date.now(), ids, fallback: r.status }; return ids;
   }
   need(r.ok, r.status === 401 || r.status === 403 ? 400 : 502, r.status === 401 || r.status === 403 ? "Anahtar geçersiz ya da yetkisi yok" : "Model listesi alınamadı (" + r.status + ")");
   const j = await r.json();
-  const ids = (j.data || j.models || []).map((m) => String(m.id || m.name || "").replace(/^models\//, "")).filter((x) => x && usable(x));
+  let ids = (j.data || j.models || []).map((m) => String(m.id || m.name || "").replace(/^models\//, "")).filter((x) => x && usable(x));
+  // Ana sağlayıcı yüzlerce model listeliyorsa (OpenRouter) kullanıcıya yalnızca AI_MODELS'te seçilenler gösterilir
+  if (provider === "gitmapp" && E.AI_MODELS) { const want = E.AI_MODELS.split(",").map((x) => x.trim()).filter(Boolean); const only = ids.filter((i) => want.includes(i)); if (only.length) ids = [...new Set([...only, ...(CFG.aiModel && ids.includes(CFG.aiModel) ? [CFG.aiModel] : [])])]; }
   modelCaches[ck] = { t: Date.now(), ids }; return ids;
 }
 async function defaultModel() {
@@ -215,9 +221,9 @@ async function resolveRoute(user, body, req, kind) {
 // ---------- Yedek sağlayıcı zinciri ----------
 // Platform sağlayıcısı (varsayılan Hostinger AI Router) bakiye bitti (402), model yok (404), kota (429), yetki (403) ya da
 // sunucu/ağ hatası (5xx) döndürürse istek, anahtarı sunucuda tanımlı bir sonraki sağlayıcıya aynı ya da en yakın modelle gider.
-const FALLBACK_ENV = { openrouter: "OPENROUTER_API_KEY", anthropic: "ANTHROPIC_API_KEY", openai: "OPENAI_API_KEY", gemini: "GEMINI_API_KEY", deepseek: "DEEPSEEK_API_KEY" };
+const FALLBACK_ENV = { hostinger: "HOSTINGER_AI_KEY", openrouter: "OPENROUTER_API_KEY", anthropic: "ANTHROPIC_API_KEY", openai: "OPENAI_API_KEY", gemini: "GEMINI_API_KEY", deepseek: "DEEPSEEK_API_KEY" };
 const FALLBACK_KEYS = new Proxy({}, { get: (_, p) => E[FALLBACK_ENV[p]] || "" }); // panelden değişince anında geçerli
-const fallbackChain = () => String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => PROVIDERS[p] && p !== "gitmapp" && FALLBACK_KEYS[p]);
+const fallbackChain = () => String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => (PROVIDERS[p] || SERVER_PROVIDERS[p]) && p !== "gitmapp" && FALLBACK_KEYS[p] && (SERVER_PROVIDERS[p] || PROVIDERS[p]).base().replace(/\/+$/, "") !== CFG.aiBase); // ana sağlayıcı kendi yedeği olmaz
 const normId = (id) => String(id || "").toLowerCase().replace(/^.*\//, "").replace(/[^a-z0-9]/g, "");
 async function mapModel(provider, key, model) {
   let ids = []; try { ids = await listModels(provider, key); } catch { return null; }
@@ -744,7 +750,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.34.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.35.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1601,10 +1607,11 @@ route("POST", "/api/events", ({ body, user }) => {
   return { ok: true };
 });
 // Yönetici: yapay zekâ bağlantı testi
+function setAi(name, value) { return setAi0(name, value); }
 // ---------- Yönetim › Yapay zekâ sağlayıcıları: anahtarları SSH'sız, yeniden başlatmadan yönet ----------
 // Panelden girilen değer veritabanında şifreli saklanır ve sunucu dosyasındaki (ortam) değerin önüne geçer.
 db.exec("CREATE TABLE IF NOT EXISTS ai_secrets(name TEXT PRIMARY KEY, enc TEXT NOT NULL, last4 TEXT, updated TEXT DEFAULT (datetime('now')))");
-const AI_FIELDS = { AI_BASE: 0, AI_KEY: 1, AI_MODEL: 0, AI_MODELS: 0, COPILOT_MODEL: 0, VISION_MODEL: 0, AI_FALLBACKS: 0, OPENROUTER_API_KEY: 1, ANTHROPIC_API_KEY: 1, OPENAI_API_KEY: 1, GEMINI_API_KEY: 1, DEEPSEEK_API_KEY: 1 }; // 1 = gizli
+const AI_FIELDS = { AI_BASE: 0, AI_KEY: 1, AI_MODEL: 0, AI_MODELS: 0, COPILOT_MODEL: 0, VISION_MODEL: 0, AI_FALLBACKS: 0, HOSTINGER_AI_KEY: 1, HOSTINGER_AI_MODELS: 0, OPENROUTER_API_KEY: 1, ANTHROPIC_API_KEY: 1, OPENAI_API_KEY: 1, GEMINI_API_KEY: 1, DEEPSEEK_API_KEY: 1 }; // 1 = gizli
 const AI_ENV0 = Object.fromEntries(Object.keys(AI_FIELDS).map((k) => [k, E[k] || ""]));
 function applyAiOverrides() {
   const o = {}; for (const r of q("SELECT name,enc FROM ai_secrets").all()) { try { o[r.name] = decKey(r.enc); } catch { } }
@@ -1621,18 +1628,47 @@ function aiAdminState() {
   });
   return { fields, fallbacks: fallbackChain(), base: CFG.aiBase };
 }
-route("GET", "/api/admin/ai", () => aiAdminState());
-route("PUT", "/api/admin/ai", ({ body }) => {
+const adminByok = (user) => q("SELECT provider,last4 FROM user_keys WHERE user_id=?").all(user.id).filter((r) => FALLBACK_ENV[r.provider] && r.provider !== "hostinger").map((r) => ({ provider: r.provider, last4: r.last4 }));
+route("GET", "/api/admin/ai", ({ user }) => ({ ...aiAdminState(), byok: adminByok(user) }));
+// Yöneticinin Hesabım › API anahtarlarım'daki anahtarını sunucu yedeğine kopyalar (anahtar tarayıcıya hiç gelmez)
+route("POST", "/api/admin/ai/import-byok", ({ user, body }) => {
+  const prov = String(body.provider || ""); need(FALLBACK_ENV[prov] && prov !== "hostinger", 400, "Bilinmeyen sağlayıcı");
+  const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider=?").get(user.id, prov); need(row, 404, "Hesabında bu sağlayıcının anahtarı yok");
+  setAi(FALLBACK_ENV[prov], decKey(row.enc)); applyAiOverrides();
+  return { ...aiAdminState(), byok: adminByok(user) };
+});
+route("PUT", "/api/admin/ai", ({ body, user }) => {
   const name = String(body.name || ""); need(Object.hasOwn(AI_FIELDS, name), 400, "Bilinmeyen ayar");
   const value = String(body.value ?? "").trim();
-  if (!value) { q("DELETE FROM ai_secrets WHERE name=?").run(name); applyAiOverrides(); return aiAdminState(); }
+  if (!value) { q("DELETE FROM ai_secrets WHERE name=?").run(name); applyAiOverrides(); return { ...aiAdminState(), byok: adminByok(user) }; }
   need(value.length <= 2000 && !/[\r\n]/.test(value), 400, "Değer tek satır olmalı");
   if (AI_FIELDS[name]) need(value.length >= 16 && !/\s|["']/.test(value), 400, "Anahtar biçimi geçersiz: boşluk ya da tırnak olmamalı");
   if (name === "AI_BASE") need(/^https:\/\/[^\s"'<>]+$/.test(value), 400, "Adres https:// ile başlamalı");
   if (name === "AI_FALLBACKS") need(value.split(",").every((p) => FALLBACK_ENV[p.trim()]), 400, "Sıra yalnızca şu adları içerebilir: " + Object.keys(FALLBACK_ENV).join(", "));
-  if (["AI_MODEL", "AI_MODELS", "COPILOT_MODEL", "VISION_MODEL"].includes(name)) need(/^[\w.\/:@,\- ]+$/.test(value), 400, "Model adlarında yalnızca harf, rakam ve . / - : , kullanılabilir");
+  if (["AI_MODEL", "AI_MODELS", "COPILOT_MODEL", "VISION_MODEL", "HOSTINGER_AI_MODELS"].includes(name)) need(/^[\w.\/:@,\- ]+$/.test(value), 400, "Model adlarında yalnızca harf, rakam ve . / - : , kullanılabilir");
   q("INSERT INTO ai_secrets(name,enc,last4) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,updated=datetime('now')").run(name, encKey(value), AI_FIELDS[name] ? value.slice(-4) : null);
-  applyAiOverrides(); return aiAdminState();
+  applyAiOverrides(); return { ...aiAdminState(), byok: adminByok(user) };
+});
+// Tek tıkla: OpenRouter ana sağlayıcı, Hostinger AI Router yedek. Model adları OpenRouter biçimine çevrilir.
+const setAi0 = (name, value) => value ? q("INSERT INTO ai_secrets(name,enc,last4) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,updated=datetime('now')").run(name, encKey(value), AI_FIELDS[name] ? value.slice(-4) : null) : q("DELETE FROM ai_secrets WHERE name=?").run(name);
+route("POST", "/api/admin/ai/openrouter-primary", async () => {
+  const orKey = E.OPENROUTER_API_KEY; need(orKey, 400, "Önce OpenRouter anahtarını yedek sağlayıcılar bölümüne kaydet");
+  const OR = "https://openrouter.ai/api/v1"; need(CFG.aiBase !== OR, 400, "OpenRouter zaten ana sağlayıcı");
+  let ids = []; try { ids = await listModels("openrouter", orKey); } catch (e) { throw new HttpErr(502, "OpenRouter model listesi alınamadı: " + e.message); }
+  const prevBase = CFG.aiBase, prevKey = CFG.aiKey, prevModels = (E.AI_MODELS || "").split(",").map((x) => x.trim()).filter(Boolean);
+  const mapped = []; for (const m of prevModels) { const x = await mapModel("openrouter", orKey, m); if (x && !mapped.includes(x)) mapped.push(x); }
+  const want = [[/claude-sonnet/i, "dengeli"], [/claude-opus/i, "güçlü"], [/gemini.*flash|deepseek-chat|gpt-.*mini/i, "hızlı"]];
+  for (const [re] of want) if (!mapped.some((x) => re.test(x))) { const pick = ids.filter((i) => re.test(i) && !/:free|beta|preview|thinking|online/i.test(i)).sort().pop(); if (pick) mapped.push(pick); }
+  need(mapped.length, 502, "OpenRouter'da uygun model bulunamadı");
+  const def = mapped.find((x) => /claude-sonnet/i.test(x)) || mapped[0];
+  const fromHostinger = (/router\.hostinger\.com/.test(prevBase) || E.TEST_PRIMARY_IS_HOSTINGER === "1") && prevKey;
+  if (fromHostinger) { setAi("HOSTINGER_AI_KEY", prevKey); if (prevModels.length) setAi("HOSTINGER_AI_MODELS", prevModels.join(",")); }
+  setAi("AI_BASE", OR); setAi("AI_KEY", orKey); setAi("AI_MODELS", mapped.join(",")); setAi("AI_MODEL", def);
+  if (E.COPILOT_MODEL) { const c = await mapModel("openrouter", orKey, E.COPILOT_MODEL); setAi("COPILOT_MODEL", c || ""); }
+  const order = ["hostinger", ...String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => p && p !== "hostinger")];
+  setAi("AI_FALLBACKS", order.join(","));
+  applyAiOverrides();
+  return { ...aiAdminState(), swapped: { models: mapped, default: def, hostingerBackup: !!fromHostinger } };
 });
 // Bağlantı testi: model listesi + tek kelimelik deneme isteği (yedeğe geçmeden, gerçek durumu gösterir)
 route("POST", "/api/admin/ai/test", async ({ body }) => {
