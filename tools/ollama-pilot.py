@@ -58,13 +58,29 @@ with sync_playwright() as p:
         page = browser.new_page(java_script_enabled=True)
         page.route("**/*", lambda route: route.abort())
         try:
-            page.set_content(html)
-            page.get_by_text(heading, exact=False).first.wait_for(timeout=2500)
-            page.get_by_role("button", name=action).first.click(timeout=2500)
-            page.get_by_text(result, exact=True).first.wait_for(timeout=2500)
+            visual = """() => ['body','h1','button'].map(tag => {
+                const element = document.querySelector(tag);
+                if (!element) return null;
+                const style = getComputedStyle(element);
+                return [style.color, style.backgroundColor, style.fontFamily, style.fontSize,
+                        style.padding, style.margin, style.borderRadius, style.textAlign];
+            })"""
+            record["viewports"] = []
+            for width in (390, 1440):
+                page.set_viewport_size({"width": width, "height": 900})
+                page.set_content("<h1>Başlık</h1><button>Eylem</button>")
+                original = page.evaluate(visual)
+                page.set_content(html)
+                page.get_by_text(heading, exact=False).first.wait_for(timeout=2500)
+                button = page.get_by_role("button", name=action).first
+                button.click(timeout=2500)
+                page.get_by_text(result, exact=True).first.wait_for(timeout=2500)
+                assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                assert page.evaluate(visual) != original
+                record["viewports"].append(width)
             record["ok"] = True
         except Exception:
-            record["error"] = "Özgün başlık, eylem veya tıklama sonucu doğrulanamadı."
+            record["error"] = "Başlık, eylem, stil veya ekran genişliği kontrolü geçmedi."
         finally:
             page.close()
     browser.close()

@@ -1,0 +1,106 @@
+{
+  "model": "qwen2.5-coder:1.5b",
+  "hardware": "GPU kullanmayan yerel Docker test ortamı",
+  "baseline_edits": [
+    {
+      "project": "Restoran",
+      "first_delta_s": 36.46,
+      "ok": false,
+      "error": "Model kod yerine şunu yazdı: «AŞAMALI YAPIM (yalnızca büyük isteklerde): istek tek seferde eksiksiz ve kaliteli yapılamayacak kadar büyükse (çok sayıda ekran, rol, entegrasyon) her şeyi yarım yapma. Önce 1. aşamayı EKSİXSİZ yap: tasarım dili, ana ekranlar ve temel akış örnek verilerle çalışır olsun. Kalanları ÖZET'te \"Aşama: N/M\" yaz ve kalanları yine listele. Aşama: 1/3 · Anaekran yap Sonraki aşamalar: - 2: Menü - 3: Rezervas…» · Soruyu yanıtlayıp tekrar gönderebilir ya da isteği netleştirebilirsin; kredin düşmedi.",
+      "seconds": 69.02
+    },
+    {
+      "project": "Okul",
+      "first_delta_s": 70.72,
+      "ok": false,
+      "error": "Model kod yerine şunu yazdı: «AŞAMALI YAPIM (yalnızca büyük isteklerde): istek tek seferde eksiksiz ve kaliteli yapılamayacak kadar büyükse (çok sayıda ekran, rol, entegrasyon) her şeyi yarım yapma. önce 1. aşamayı EKSİXSİZ yap: tasarım dili, ana ekranlar ve temel akış örnek verilerle çalışır olsun. Kalanları ÖZET'te \"Aşama: N/M\" yaz ve kalanları yine listele. Aşama: 1/3 · (bu aşamanın kısa adı) Sonraki aşamalar: - 2: (kısa ba…» · Soruyu yanıtlayıp tekrar gönderebilir ya da isteği netleştirebilirsin; kredin düşmedi.",
+      "seconds": 103.34
+    }
+  ],
+  "compact_edits": [
+    {
+      "project": "Restoran",
+      "first_delta_s": 6.36,
+      "ok": true,
+      "model": "qwen2.5-coder:1.5b",
+      "seconds": 21.69
+    },
+    {
+      "project": "Okul",
+      "first_delta_s": 22.93,
+      "ok": true,
+      "model": "qwen2.5-coder:1.5b",
+      "seconds": 40.27
+    }
+  ],
+  "compact_edits_repeat": [
+    {
+      "project": "Restoran",
+      "first_delta_s": 2.41,
+      "ok": true,
+      "model": "qwen2.5-coder:1.5b",
+      "seconds": 14.0,
+      "viewports": [
+        390,
+        1440
+      ]
+    },
+    {
+      "project": "Okul",
+      "first_delta_s": 15.09,
+      "ok": true,
+      "model": "qwen2.5-coder:1.5b",
+      "seconds": 29.73,
+      "viewports": [
+        390,
+        1440
+      ]
+    }
+  ],
+  "original_questions": [
+    {
+      "case": "restoran",
+      "seconds": 60.66,
+      "ok": false,
+      "reply": "\"Yayınla panelini açıyorum.\""
+    },
+    {
+      "case": "okul",
+      "seconds": 1.54,
+      "ok": false,
+      "reply": "İşlemler > Odev Yükle"
+    },
+    {
+      "case": "eksik bilgi",
+      "seconds": 1.15,
+      "ok": true,
+      "reply": "Bilinmiyor"
+    }
+  ],
+  "compact_questions": [
+    {
+      "case": "restoran",
+      "seconds": 1.83,
+      "ok": true,
+      "reply": "Masa ayırt"
+    },
+    {
+      "case": "okul",
+      "seconds": 0.76,
+      "ok": true,
+      "reply": "Ödev yükle"
+    },
+    {
+      "case": "eksik bilgi",
+      "seconds": 0.74,
+      "ok": true,
+      "reply": "Bilinmiyor"
+    }
+  ],
+  "functional_edit": {
+    "task": "İş emrini aç düğmesini koru ve Sayaç düğmesi ekle",
+    "seconds": 32.2,
+    "ok": false,
+    "bodyText": "İş emri / Açılış Sayısı / 0"
+  }
+}

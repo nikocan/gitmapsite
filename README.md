@@ -57,3 +57,11 @@ python tools/ollama-pilot.py http://127.0.0.1:8791
 ```
 
 Kredi tarifesi uygulamanın mevcut tarifesidir. Gerçek barındırma birim maliyeti için aynı dönemin modele ayrılan sunucu giderini kabul testini geçen düzenleme sayısına bölün. Pilot ayrı süreçte çalıştığı için durdurulması ana API yapılandırmasına dokunmaz.
+
+Küçük belgelerin metin tabanlı düzenlemelerinde Ollama'ya mevcut dosya ve proje bağlamıyla kısa bir düzenleme talimatı gönderilir. Planlı işler, yama biçimi kullanan büyük dosyalar ve entegrasyonlar mevcut kapsamlı talimatı kullanır. Kısa yanıt isteyen soruları ayrı deneyebilirsiniz:
+
+```sh
+python tools/ollama-questions.py http://127.0.0.1:8791
+```
+
+Soru testi iki projede düğme etiketini doğru söylemeyi ve eksik veri karşısında bilgi uydurmamayı ölçer. Düzenleme testi iki eşzamanlı isteğin ilk metin ve tamamlama sürelerini kaydeder. 390 ve 1440 px'de düğmeleri tıklar, sonuç metnini, görünen stil değişikliğini ve yatay taşmayı kontrol eder.

@@ -76,3 +76,18 @@ test("Ollama pilotu eski router ayarları ve yedek anahtarlar varken yalnızca y
   assert.equal(primary.seen[0].auth, "Bearer ollama");
   assert.equal(backup.seen.length, 0);
 });
+
+test("Ollama kısa sorusunda proje bilgisi korunur, açık uçlu soruda tam asistan kullanılır", async (t) => {
+  const local = await fake(() => [200, { choices: [{ message: { content: "Ödev yükle" } }] }]);
+  t.after(local.close);
+  const api = await start(t, { AI_BACKEND: "ollama", OLLAMA_BASE: local.base, OLLAMA_MODEL: "test" });
+  for (const question of ["Hangi işlem? Kısa cevap ver.", "Bu ekranda ne yapabilirim?"]) {
+    const response = await fetch("http://127.0.0.1:" + api.port + "/api/ai/copilot", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ context: { proje: "Okul" }, messages: [{ role: "user", content: question }] })
+    });
+    assert.equal(response.status, 200);
+  }
+  assert.deepEqual(local.seen.map(call => call.body.max_tokens), [128, 1400]);
+  for (const call of local.seen) assert.match(call.body.messages[0].content, /Okul/);
+});
