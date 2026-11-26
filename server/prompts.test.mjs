@@ -55,3 +55,9 @@ test("dönüşüm isteklerinde eski yerleşim zorunlu değil, özet dürüst olm
   assert.match(GEN_SYSTEM, /bambaşka bir şeye dönüştürüyorsa/);
   assert.match(GEN_SYSTEM, /yapmadığın özelliği yazma/);
 });
+test("görseller: göreli yol yasak, güvenilir kaynak ve yedek zorunlu; tema adı uygulama adı olmaz", () => {
+  assert.match(GEN_SYSTEM, /göreli yol/);
+  assert.match(GEN_SYSTEM, /picsum\.photos\/seed/);
+  assert.match(GEN_SYSTEM, /onerror/);
+  assert.match(GEN_SYSTEM, /tasarım temasının adını uygulama adı yapma/);
+});
