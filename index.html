@@ -2074,6 +2074,8 @@ button.adp-mini{color:inherit;text-align:left}
 @media(prefers-reduced-motion:reduce){.ao *,.sqg2,.sqg2-wave i,.sqg2-mic:after{animation:none!important}}
 @media(max-width:640px){.sqg2{padding:12px 14px 14px;border-radius:20px}.sqg2-acts{flex-direction:column}}
 .st-voice{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.st-voice select{max-width:240px}
+
+.ai-credit{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid #ffffff14;background:#ffffff06}.ai-credit span{display:flex;flex-direction:column;min-width:120px}.ai-credit small{font-size:11.5px;color:var(--mut)}.ai-credit b{font-size:16px}.ai-credit .btn{margin-left:auto}.ai-credit p{width:100%;margin:0;font-size:13px;color:#fca5a5}.ai-credit.bad{border-color:#f8717155;background:#f871710a}
 </style>
 </head>
 <body>
@@ -2087,8 +2089,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.47.0";
+const VERSION="5.48.0";
 const CHANGELOG=[
+ {v:"5.48.0",date:"2026-11-26",items:[
+  "🧹 Hostinger AI Router yedekten tamamen çıkarıldı: sunucu dosyasındaki eski Hostinger anahtarı artık kendiliğinden yedek olmuyor, paneldeki Hostinger anahtarı ve yedek sırası bir kez temizlendi. İleride gerekirse Yönetim › Yapay zekâ'dan Hostinger anahtarı girilerek yeniden eklenebilir",
+  "💳 OpenRouter bakiye teşhisi: “Bağlantıyı test et” artık hesap bakiyesini (yüklenen / harcanan) ve anahtarın harcama limitini gösteriyor; kredi yoksa açıkça “anahtardaki Credit limit bakiye değil, yalnızca üst sınırdır” diyor ve doğrudan “Kredi yükle” bağlantısı veriyor",
+  "🩹 402 hata mesajı OpenRouter için netleşti: “openrouter.ai › Settings › Credits'ten kredi satın al (anahtardaki harcama limiti bakiye değildir)”"
+ ]},
  {v:"5.47.0",date:"2026-11-26",items:[
   "✨ Rehber artık “Gitmapp Asistan”: sincap yerine Asistan'ın renkli halka simgesi; dinlerken dalgalanıyor, düşünürken hızlanıyor, konuşurken nabız gibi atıyor",
   "🪟 Yeni yerleşim: başlıkta asistan adı ve canlı durum (Hazır / Dinliyor / Düşünüyor / Konuşuyor), ses aç-kapat ve kapat düğmeleri; kapat düğmesi artık mesajın üstüne binmiyor. Açılışta büyük halka, net mesaj ve yan yana iki seçenek: “Konuşarak anlat” ve “Yazarak devam et”",
@@ -3508,7 +3515,7 @@ function AdminAI({toast}){
  const src=x=>html`<span class=${"ai-src "+x.source}>${x.source==="panel"?"panelden":x.source==="sunucu"?"sunucu dosyasından":"tanımlı değil"}</span>`;
  const field=(name,label,ph,{secret,area}={})=>{const x=f(name);const v=vals[name];const dirty=v!==undefined;return html`<div class="ai-f"><label for=${"ai-"+name}>${label} ${src(x)}</label><div class="ai-row">${area?html`<textarea id=${"ai-"+name} class="in" rows="2" placeholder=${ph} value=${dirty?v:(x.value||"")} onInput=${e=>setVals(o=>({...o,[name]:e.target.value}))}></textarea>`:html`<input id=${"ai-"+name} class="in" type=${secret?"password":"text"} autocomplete="off" spellcheck="false" placeholder=${secret&&x.set?"••••"+x.last4+" · değiştirmek için yeni anahtarı yapıştır":ph} value=${dirty?v:(secret?"":(x.value||""))} onInput=${e=>setVals(o=>({...o,[name]:e.target.value}))}/>`}<button class="btn s" disabled=${!dirty||busy===name} onClick=${()=>save(name,(v||"").trim())}>${busy===name?"…":"Kaydet"}</button>${x.source==="panel"&&html`<button class="btn g s" title="Panel değerini sil, sunucu dosyasındakine dön" disabled=${busy===name} onClick=${()=>save(name,"")}>Sıfırla</button>`}</div></div>`};
  const result=id=>{const t=tests[id];if(!t)return null;if(t.run)return html`<div class="ai-res"><span class="ccspin"></span> Deneniyor…</div>`;
-  return html`<div class=${"ai-res "+(t.ok?"ok":"bad")}><${Icon} n=${t.ok?"checkCircle":"alert"} s=${15}/><span>${t.ok?html`<b>Çalışıyor</b> · ${shortModel(t.model)} yanıt verdi (“${t.reply}”) · ${(t.ms/1000).toFixed(1)} sn`:html`<b>Çalışmıyor</b> · ${t.message}`}</span></div>${t.models?.length>0&&id==="primary"&&html`<details class="ai-models"><summary>${t.models.length} model listelendi · AI_MODELS'e eklemek için tıkla</summary><div>${t.models.map(m=>html`<button type="button" key=${m} onClick=${()=>setVals(o=>{const cur=(o.AI_MODELS??f("AI_MODELS").value??"").split(",").map(x=>x.trim()).filter(Boolean);return {...o,AI_MODELS:[...new Set([...cur,m])].join(",")}})}>${m}</button>`)}</div></details>`}`};
+  return html`<div class=${"ai-res "+(t.ok?"ok":"bad")}><${Icon} n=${t.ok?"checkCircle":"alert"} s=${15}/><span>${t.ok?html`<b>Çalışıyor</b> · ${shortModel(t.model)} yanıt verdi (“${t.reply}”) · ${(t.ms/1000).toFixed(1)} sn`:html`<b>Çalışmıyor</b> · ${t.message}`}</span></div>${t.credits&&html`<div class=${"ai-credit"+(t.credits.note?" bad":"")}><span><small>Hesap bakiyesi</small><b>${t.credits.balance!=null?"$"+t.credits.balance.toFixed(2):"—"}</b></span><span><small>Yüklenen / harcanan</small><b>${t.credits.total!=null?"$"+(+t.credits.total).toFixed(2)+" / $"+(+t.credits.used).toFixed(2):"—"}</b></span><span><small>Anahtar harcama limiti</small><b>${t.credits.keyLimit!=null?"$"+t.credits.keyLimit:"sınırsız"}</b></span><a class="btn s" href="https://openrouter.ai/settings/credits" target="_blank" rel="noopener"><${Icon} n="wallet" s=${14}/> Kredi yükle</a>${t.credits.note&&html`<p>${t.credits.note}</p>`}</div>`}${t.models?.length>0&&id==="primary"&&html`<details class="ai-models"><summary>${t.models.length} model listelendi · AI_MODELS'e eklemek için tıkla</summary><div>${t.models.map(m=>html`<button type="button" key=${m} onClick=${()=>setVals(o=>{const cur=(o.AI_MODELS??f("AI_MODELS").value??"").split(",").map(x=>x.trim()).filter(Boolean);return {...o,AI_MODELS:[...new Set([...cur,m])].join(",")}})}>${m}</button>`)}</div></details>`}`};
  const fbs=st.fallbacks;
  return html`<section class="ai-adm">
   <header><h1>Yapay zekâ sağlayıcıları</h1><p>Anahtarları buradan yönet; kaydettiğin an geçerli olur, SSH ve yeniden başlatma gerekmez. Anahtarlar sunucuda şifreli saklanır ve bir daha gösterilmez. Panel değeri sunucu dosyasındaki (.env) değerin önüne geçer.</p>

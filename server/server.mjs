@@ -247,9 +247,10 @@ async function resolveRoute(user, body, req, kind) {
 const FALLBACK_ENV = { hostinger: "HOSTINGER_AI_KEY", openrouter: "OPENROUTER_API_KEY", anthropic: "ANTHROPIC_API_KEY", openai: "OPENAI_API_KEY", gemini: "GEMINI_API_KEY", deepseek: "DEEPSEEK_API_KEY" };
 // Panelden değişince anında geçerli. Hostinger için ayrı anahtar yoksa sunucu dosyasındaki (.env) Hostinger anahtarı kullanılır:
 // ana sağlayıcı OpenRouter'a çevrildiğinde Hostinger kendiliğinden yedek olur.
-const envHostingerKey = () => { const b = AI_ENV0.AI_BASE || "https://router.hostinger.com/v1"; return /router\.hostinger\.com/.test(b) ? AI_ENV0.AI_KEY : ""; };
+// Sunucu dosyasındaki eski Hostinger anahtarı yalnızca açıkça istenirse (HOSTINGER_FALLBACK=1) yedek olur; panelden HOSTINGER_AI_KEY girilirse her zaman kullanılabilir
+const envHostingerKey = () => { if (E.HOSTINGER_FALLBACK !== "1") return ""; const b = AI_ENV0.AI_BASE || "https://router.hostinger.com/v1"; return /router\.hostinger\.com/.test(b) ? AI_ENV0.AI_KEY : ""; };
 const FALLBACK_KEYS = new Proxy({}, { get: (_, p) => E[FALLBACK_ENV[p]] || (p === "hostinger" ? envHostingerKey() : "") });
-const fallbackChain = () => String(E.AI_FALLBACKS || "hostinger,openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => (PROVIDERS[p] || SERVER_PROVIDERS[p]) && p !== "gitmapp" && FALLBACK_KEYS[p] && (SERVER_PROVIDERS[p] || PROVIDERS[p]).base().replace(/\/+$/, "") !== CFG.aiBase); // ana sağlayıcı kendi yedeği olmaz
+const fallbackChain = () => String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek,hostinger").split(",").map((x) => x.trim()).filter((p) => (PROVIDERS[p] || SERVER_PROVIDERS[p]) && p !== "gitmapp" && FALLBACK_KEYS[p] && (SERVER_PROVIDERS[p] || PROVIDERS[p]).base().replace(/\/+$/, "") !== CFG.aiBase); // ana sağlayıcı kendi yedeği olmaz
 const normId = (id) => String(id || "").toLowerCase().replace(/^.*\//, "").replace(/[^a-z0-9]/g, "");
 async function mapModel(provider, key, model) {
   let ids = []; try { ids = await listModels(provider, key); } catch { return null; }
@@ -321,7 +322,7 @@ function aiErr(rt, status, t) {
     if (status === 403) return primaryName() + " isteği reddetti (403). Olası nedenler: bakiye bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. Sağlayıcı panelinden bakiye ve modelleri kontrol edin" + tail;
     if (status === 404) return "“" + rt.model + "” modeli " + primaryName() + " sağlayıcısında bulunamadı (404). Yönetici AI_MODELS listesini doğru model adlarıyla güncellemeli" + tail;
     if (status === 402 || /insufficient_quota|insufficient credits|afford/i.test(String(t))) { const tried = (rt.tried || []).map((x) => x.p + (x.status ? " (" + x.status + ")" : " (atlandı)")).join(" → ");
-      return `Gitmapp'in yapay zekâ sağlayıcısında (${primaryName()}) bakiye yetmedi (402)${/afford|fewer max_tokens/i.test(String(t)) ? "; bu kadar uzun yanıt için bakiye az" : ""}. Bu senin Gitmapp kredinle ilgili değil; kredin düşmedi.${tried ? " Denenenler: " + tried + "." : ""} Yönetici ${primaryName() === "OpenRouter" ? "openrouter.ai › Credits" : "sağlayıcı panelinden"} bakiye yüklemeli ya da Yönetim › Yapay zekâ'dan çalışan bir yedek anahtar eklemeli. Bu arada Hesabım'dan kendi API anahtarını bağlayarak devam edebilirsin`; }
+      return `Gitmapp'in yapay zekâ sağlayıcısında (${primaryName()}) bakiye yetmedi (402)${/afford|fewer max_tokens/i.test(String(t)) ? "; bu kadar uzun yanıt için bakiye az" : ""}. Bu senin Gitmapp kredinle ilgili değil; kredin düşmedi.${tried ? " Denenenler: " + tried + "." : ""} Yönetici ${primaryName() === "OpenRouter" ? "openrouter.ai › Settings › Credits'ten kredi satın almalı (anahtardaki harcama limiti bakiye değildir)" : "sağlayıcı panelinden bakiye yüklemeli"} ya da Yönetim › Yapay zekâ'dan çalışan bir yedek anahtar eklemeli. Bu arada Hesabım'dan kendi API anahtarını bağlayarak devam edebilirsin`; }
     if (status === 429) return "Yapay zekâ şu an yoğun ya da kota doldu (429), biraz sonra tekrar deneyin" + tail;
   }
   if (status === 402 || /insufficient_quota|insufficient credits/i.test(String(t))) return "Bağladığın API anahtarının sağlayıcı bakiyesi bitti (402). Sağlayıcının panelinden bakiye yükle ya da Gitmapp kredisiyle devam etmek için anahtarı kaldır";
@@ -799,7 +800,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.47.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.48.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1943,6 +1944,13 @@ function applyAiOverrides() {
   for (const k of Object.keys(modelCaches)) delete modelCaches[k];
 }
 applyAiOverrides();
+// v5.48: Hostinger AI Router yedekten kalıcı olarak çıkarıldı (bir kez çalışır; ana sağlayıcı Hostinger ise dokunulmaz). Gerekirse panelden yeniden eklenebilir.
+if (!q("SELECT 1 FROM server_settings WHERE k='hostinger_off_548'").get() && !/router\.hostinger\.com/.test(CFG.aiBase)) {
+  q("DELETE FROM ai_secrets WHERE name IN ('HOSTINGER_AI_KEY','HOSTINGER_AI_MODELS')").run();
+  const fb = q("SELECT enc FROM ai_secrets WHERE name='AI_FALLBACKS'").get();
+  if (fb) { let v = ""; try { v = decKey(fb.enc); } catch { } const n = v.split(",").map((x) => x.trim()).filter((x) => x && x !== "hostinger").join(","); if (n) q("UPDATE ai_secrets SET enc=? WHERE name='AI_FALLBACKS'").run(encKey(n)); else q("DELETE FROM ai_secrets WHERE name='AI_FALLBACKS'").run(); }
+  q("INSERT OR IGNORE INTO server_settings(k,v) VALUES('hostinger_off_548','1')").run(); applyAiOverrides();
+}
 function aiAdminState() {
   const rows = Object.fromEntries(q("SELECT name,last4,updated FROM ai_secrets").all().map((r) => [r.name, r]));
   const fields = Object.entries(AI_FIELDS).map(([name, secret]) => {
@@ -2004,6 +2012,20 @@ route("POST", "/api/admin/ai/openrouter-primary", async () => {
   return { ...aiAdminState(), swapped: { models: mapped, default: def, hostingerBackup: !!fromHostinger } };
 });
 // Bağlantı testi: model listesi + tek kelimelik deneme isteği (yedeğe geçmeden, gerçek durumu gösterir)
+// OpenRouter hesap bakiyesi ve anahtar limiti: 402'nin gerçek nedenini gösterir (anahtar limiti bakiye değildir)
+async function orCredits(key, base = "https://openrouter.ai/api/v1") {
+  const h = { Authorization: "Bearer " + key }; const get = (p) => fetch(base + p, { headers: h, signal: AbortSignal.timeout(10000) }).then((r) => r.ok ? r.json() : null).catch(() => null);
+  const [c, k] = await Promise.all([get("/credits"), get("/key")]); if (!c && !k) return null;
+  const total = c?.data?.total_credits ?? null, used = c?.data?.total_usage ?? null; const kd = k?.data || {};
+  const balance = total != null && used != null ? Math.round((total - used) * 100) / 100 : null;
+  const keyRemaining = kd.limit_remaining ?? (kd.limit != null && kd.usage != null ? kd.limit - kd.usage : null);
+  let note = "";
+  if (balance != null && balance <= 0.05) note = "OpenRouter hesabında kredi yok (yüklenen $" + (total || 0).toFixed(2) + ", harcanan $" + (used || 0).toFixed(2) + "). openrouter.ai › Settings › Credits'ten kredi satın al. Anahtardaki “Credit limit” bir bakiye değil, yalnızca harcama üst sınırıdır.";
+  else if (keyRemaining != null && keyRemaining <= 0.05) note = "Anahtarın harcama limiti doldu ($" + kd.limit + "). openrouter.ai › Keys'ten limiti artır ya da boş bırak.";
+  else if (kd.is_free_tier) note = "Hesap ücretsiz katmanda; ücretli modeller için kredi gerekir.";
+  return { balance, total, used, keyLimit: kd.limit ?? null, keyRemaining, freeTier: !!kd.is_free_tier, note };
+}
+const isOR = (base) => /openrouter\.ai/.test(base || "") || E.TEST_OR_CREDITS === "1";
 route("POST", "/api/admin/ai/test", async ({ body }) => {
   const target = String(body.target || "primary"); const t0 = Date.now();
   const provider = target === "primary" ? "gitmapp" : target; need(provider === "gitmapp" || FALLBACK_ENV[provider], 400, "Bilinmeyen sağlayıcı");
@@ -2015,9 +2037,10 @@ route("POST", "/api/admin/ai/test", async ({ body }) => {
   const rt = { provider, base: provider === "gitmapp" ? CFG.aiBase : pbase(provider), key, model, noFallback: true, noFailover: true };
   try {
     const r = await postChat(rt, { messages: [{ role: "user", content: "Sadece OK yaz." }], max_tokens: 10 }, AbortSignal.timeout(30000)); const t = await r.text();
-    if (!r.ok) return { ok: false, step: "chat", status: r.status, message: aiErr(rt, r.status, t), model, models: ids.slice(0, 80), ms: Date.now() - t0 };
+    const credits = isOR(rt.base) || provider === "openrouter" ? await orCredits(key, isOR(rt.base) ? rt.base : pbase("openrouter")) : null;
+    if (!r.ok) return { ok: false, step: "chat", status: r.status, message: credits?.note && r.status === 402 ? credits.note : aiErr(rt, r.status, t), model, models: ids.slice(0, 80), credits, ms: Date.now() - t0 };
     let reply = ""; try { reply = partText(JSON.parse(t).choices?.[0]?.message?.content).slice(0, 40); } catch { }
-    return { ok: true, model, reply, models: ids.slice(0, 80), ms: Date.now() - t0 };
+    return { ok: true, model, reply, models: ids.slice(0, 80), credits, ms: Date.now() - t0 };
   } catch (e) { return { ok: false, step: "chat", message: "Bağlantı kurulamadı: " + e.message, model, ms: Date.now() - t0 }; }
 });
 route("GET", "/api/admin/ai-check", async ({ user }) => {
