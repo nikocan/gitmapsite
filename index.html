@@ -2112,6 +2112,79 @@ button.adp-mini{color:inherit;text-align:left}
 .ghb-t{min-width:0;color:#c9c8c2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px}.ghb-p{display:flex;gap:4px}.ghb-p i{width:16px;height:4px;border-radius:4px;background:#ffffff1f;transition:background .3s}.ghb-p i.d{background:#e4ff3d88}.ghb-p i.a{background:#e4ff3d}
 .ghb-x{height:26px;padding:0 10px;border-radius:99px;border:1px solid #ffffff22;background:transparent;color:#ecebe6;font-size:12px;cursor:pointer}.ghb-x:hover{background:#ffffff12}
 @media(max-width:560px){#ghbar b{display:none}.ghb-t{max-width:160px}}
+/* v5.52 — sade Stüdyo açılışı */
+.hero.studio-start.sx{position:relative;max-width:780px;margin:0 auto;padding:0 0 64px;text-align:center}
+.sx-glow{position:fixed;left:50%;bottom:-38vh;width:min(1100px,120vw);height:70vh;transform:translateX(-50%);pointer-events:none;z-index:-1;opacity:.5;filter:blur(70px);
+ background:radial-gradient(40% 55% at 30% 60%,rgba(79,140,255,.35),transparent 70%),radial-gradient(38% 50% at 70% 55%,rgba(244,114,182,.28),transparent 70%),radial-gradient(30% 40% at 50% 40%,rgba(167,139,250,.25),transparent 70%)}
+.sx-main{min-height:calc(100dvh - 40px);display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,22vh,240px) 0 40px;box-sizing:border-box}
+.studio-start.sx .start-type{margin:0 0 14px}
+.studio-start.sx .seg{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.07);border-radius:999px;padding:3px}
+.studio-start.sx .seg button{border-radius:999px;padding:6px 14px}
+.studio-start.sx .seg button.on{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.sx-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:22px auto 0;max-width:720px}
+.sx-chip{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;cursor:pointer;font:inherit;font-size:14px;color:#e9e9ef;
+ background:linear-gradient(180deg,rgba(40,44,66,.55),rgba(22,24,38,.55));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+ transition:background .2s var(--ease),border-color .2s,transform .15s}
+.sx-chip svg{opacity:.85}
+.sx-chip:hover{border-color:rgba(255,255,255,.26);background:linear-gradient(180deg,rgba(56,62,94,.65),rgba(30,32,52,.65))}
+.sx-chip:active{transform:scale(.97)}
+.sx-acts{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin-top:16px}
+.sx-act{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--label3);font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:color .2s,background .2s}
+.sx-act:hover:not(:disabled){color:#ecebe6;background:rgba(255,255,255,.05)}.sx-act:disabled{opacity:.45;cursor:default}
+.sx-act .sw i{border-radius:50%}
+.sx-dot{width:3px;height:3px;border-radius:50%;background:#3d3d3b}
+.studio-start.sx .dstrip{margin-top:14px;background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);border-radius:16px;animation:sxin .35s var(--ease)}
+.sx-status{margin:14px auto 0;font-size:12.5px;color:var(--label3)}
+.sx-status button{border:0;background:none;color:#8fb4ff;font:inherit;cursor:pointer;padding:0 2px}
+.sx-ideas{text-align:left;padding-top:8px}
+.sx-ideas-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 12px}
+.sx-ideas-h h2{margin:0;font-size:13px;font-weight:500;color:#cfcfc8;letter-spacing:0}
+.sx-ideas-h span{font-size:12px;color:var(--label3)}
+.sx-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sx-idea{min-width:0;max-width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);color:inherit;font:inherit;text-align:left;cursor:pointer;transition:background .2s,border-color .2s}
+.sx-idea:hover{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.12)}
+.sx-idea-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sx-idea-t b{font-size:13.5px;font-weight:500;color:#ecebe6}
+.sx-idea-t small{font-size:12px;color:var(--label3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sx-idea>svg{flex:none;color:var(--label3);transform:rotate(45deg);opacity:0;transition:opacity .2s}
+.sx-idea:hover>svg{opacity:1}
+@keyframes sxin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:820px){.sx-main{min-height:0;padding:28px 0 28px}.sx-grid{grid-template-columns:minmax(0,1fr)}.sx-chips{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:0 16px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent)}.sx-chips::-webkit-scrollbar{display:none}.sx-chip{flex:none;height:36px;padding:0 13px;font-size:13px}.sx-glow{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.studio-start.sx .dstrip{animation:none}}
+/* v5.53 — giriş kutusu: ışık kuralları, gönder, model/mod, öneri şeridi */
+.ws-in .gbox,.studio-start .gbox{background:rgba(255,255,255,.1)!important;animation:none!important;transition:box-shadow .4s}
+.ws-in .gbox::before,.studio-start .gbox::before{opacity:0!important}
+.ws-in .gbox:focus-within,.studio-start .gbox:focus-within,.ws-in .gbox.busy,.studio-start .gbox.busy,.ws-in .gbox.sent,.studio-start .gbox.sent{background:conic-gradient(from var(--a),#4f8cff,#8b7bff 25%,#f472b6 45%,rgba(255,255,255,.12) 62%,rgba(255,255,255,.12) 88%,#4f8cff)!important;animation:gspin 14s linear infinite!important}
+.ws-in .gbox:focus-within::before,.studio-start .gbox:focus-within::before{opacity:.16!important}
+.ws-in .gbox.busy,.studio-start .gbox.busy{animation-duration:2.6s!important}
+.ws-in .gbox.busy::before,.studio-start .gbox.busy::before{opacity:.3!important}
+.ws-in .gbox.sent::before,.studio-start .gbox.sent::before{animation:gsent .9s ease-out!important}
+@keyframes gsent{0%{opacity:.6}100%{opacity:.2}}
+.gbox .gin{position:relative;z-index:1}
+.gbox .gbar{gap:4px;margin-top:6px;min-width:0}
+.gbox .gnote{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.gbox .gsend{width:34px!important;height:34px!important;border-radius:50%!important;flex:none;margin-left:4px;transition:background .2s,color .2s,transform .15s,box-shadow .2s!important}
+.gbox .gsend:not(:disabled):not(.stop){background:#f2f1ec!important;color:#141413!important;box-shadow:0 2px 10px -2px rgba(255,255,255,.25)!important}
+.gbox .gsend:not(:disabled):not(.stop):hover{transform:translateY(-1px)}.gbox .gsend:not(:disabled):not(.stop):active{transform:scale(.94)}
+.gbox .gsend:disabled{background:transparent!important;color:#5c5b56!important;box-shadow:inset 0 0 0 1px #3a3a37!important}
+.gbox .gsend.stop{border-radius:50%!important}
+.cmp{display:inline-flex;align-items:center;gap:2px;flex:none}
+.cmp-b{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 8px;border:0;border-radius:9px;background:none;color:#b4b2ab;font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.cmp-b:hover,.cmp-b.on{background:rgba(255,255,255,.06);color:#f2f1ec}.cmp-b>svg:last-child{opacity:.6}
+.cmp-b.auto>svg:first-child{color:#8fb4ff}
+.cmp-l{max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.cmp-dot{width:6px;height:6px;border-radius:50%;background:#8fb4ff}
+.ccpop.cmp-pop{left:auto;right:0;min-width:280px}
+@container (max-width:520px){.gbox .gnote{display:none}}
+@container (max-width:340px){.cmp-l{display:none}.cmp-b{padding:0 6px}}
+@media(max-width:380px){.cmp-l{display:none}.cmp-b{padding:0 6px}}
+.ghx{z-index:2}.gh-k{pointer-events:auto;cursor:pointer;color:#8fb4ff!important;border-color:rgba(143,180,255,.4)!important}
+.nx-sugg{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:2px 0;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.nx-sugg::-webkit-scrollbar{display:none}
+.nx-chip{flex:none;scroll-snap-align:start;max-width:260px}
+.nx-chip.hot{border-color:rgba(143,180,255,.45);background:rgba(79,140,255,.1);color:#e6ecff}.nx-chip.hot svg{color:#8fb4ff}
+@media(prefers-reduced-motion:reduce){.ws-in .gbox,.studio-start .gbox{animation:none!important}}
+.ghi-err small{display:block;margin-top:4px;color:#a3a29b;font-size:12px;line-height:1.45;font-weight:400}
 </style>
 </head>
 <body>
@@ -2125,15 +2198,41 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.52.0";
+const VERSION="5.56.0";
 const CHANGELOG=[
- {v:"5.52.0",date:"2026-11-26",items:[
+ {v:"5.56.0",date:"2026-11-26",items:[
   "🔌 “Stüdyo sunucusuna ulaşılamadı” sonrası uygulama artık takılı kalmıyor: bağlantı koparsa kendiliğinden artan aralıklarla (1,5 sn → 30 sn) yeniden bağlanıyor; ağ geri gelince ya da pencereye dönünce hemen deniyor",
   "📨 Bağlantı beklerken gönderilen istek kaybolmuyor: yazı alanında kalıyor, “bağlanınca başlatacağım” deniyor ve bağlantı gelir gelmez üretim kendiliğinden başlıyor",
   "⚡ Benim için yap daha hızlı ve anlaşılır: altta adım adım ilerleyen rehber çubuğu (Proje türü → Fikir seçildi → Komut yazıldı → Üretim başlatılıyor), ilerleme çizgileri ve “Durdur” düğmesi; imleç hareketleri yaklaşık %40 hızlandı",
   "🤝 Benim için yap bağlantı yokken de çalışıyor: fikri yazı alanına yazıp bağlantı gelince başlatıyor",
   "🩹 Asistan rehberinde “Bununla başlat” çalışmıyordu (ilk adımda sessizce duruyordu): düzeltildi; komut yazı alanına konup üretim hemen başlıyor. Bir sorun olursa rehberde nedeni yazıyor",
   "🧷 Bağlantı gelince Stüdyo yeniden kurulsa bile bekleyen istek kaybolmuyor ve kendiliğinden başlıyor"
+ ]},
+ {v:"5.55.0",date:"2026-11-26",items:[
+  "🧪 Uçtan uca test: test kullanıcısı (test@gitmapp.test) ve yönetici hesabıyla 60 kontrol çalıştırıldı, hepsi geçti — kayıt/giriş, yanlış şifre, yetki sınırları, kredi yükleme, uygulama üretimi, proje kaydı, misafir/müşteri/yönetici sayfalarının tamamı (38 sayfa), mobil görünüm ve Stüdyo akışı (istem → üretim → önizleme → kaydet)",
+  "🩹 Test sırasında bulunan hata düzeltildi: açık projede “Çalışma modu” ve “Dil modeli” menüleri sağa taşıp kırpılıyordu, seçenekler tıklanamıyordu; menüler artık düğmenin sağına hizalı açılıyor",
+  "🔁 Test betiği depoya eklendi (tools/acceptance/e2e.mjs): canlı sisteme dokunmadan geçici veritabanı ve sahte yapay zekâ ile her güncellemeden önce yeniden çalıştırılabilir; rapor validation/e2e-rapor.md"
+ ]},
+ {v:"5.54.0",date:"2026-11-26",items:[
+  "🔐 Özel GitHub depoları: “Depo bulunamadı” hatası artık nedenini söylüyor. Sunucu, depo gerçekten yok mu yoksa özel mi ayırt ediyor; GitHub bağlı değilse “GitHub'ı bağla”, bağlı ama özel depo izni yoksa “Özel depo izni ver”, bağlantı süresi dolmuşsa “GitHub'ı yeniden bağla” düğmesi çıkıyor",
+  "🧭 Tek ve doğru düğme: eskiden yan yana duran “GitHub hesabını bağla” ve “Özel depolar için bağla” birleşti; bağlantı her zaman özel depo okuma izniyle isteniyor, böylece izin verip yine hata alma döngüsü bitti",
+  "🩹 Hata sırasında başlıkta hâlâ “GitHub deposu okunuyor…” yazması ve altta “önizleme kendiliğinden açılır” notu düzeltildi; artık “Özel depo · izin gerekiyor” ve “yukarıdaki adımı tamamlayınca otomatik yeniden denenir” yazıyor. Bağlantıdan dönünce depo kendiliğinden yeniden okunuyor"
+ ]},
+ {v:"5.53.0",date:"2026-11-26",items:[
+  "🎛️ Dil modeli ve Çalışma modu (Hızlı / Planlı / Ajan) Proje ayarları panelinden giriş kutusunun alt çubuğuna, gönder düğmesinin yanına taşındı. Her biri tek dokunuşla açılan sade bir menü: Otomatik seçeneği, açıklamalar, “Tüm modeller…” ve “Gelişmiş ayarlar…”. Proje ayarları panelinde yalnızca Şablon ve Eklentiler kaldı",
+  "💡 Işık kuralları: giriş kutusunun çevresindeki ışık artık boştayken dönmüyor (ince sabit çizgi). Kutuya tıklayınca yavaşça dönmeye başlıyor, gönderdiğin anda bir kez parlıyor, iş sürerken hızlı dönüyor, iş bitince duruyor. Renkler sadeleşti (mavi-mor-pembe tek kuyruk)",
+  "⬆️ Gönder düğmesi yenilendi: yuvarlak, yazı varken açık renk ve belirgin; boşken yalnızca ince çerçeve. Model ve mod seçicileri hemen solunda hizalı",
+  "⌨️ Akıllı tamamlama: daha önce yazdığın istekleri hatırlıyor, açık projede sık kullanılan düzenleme cümlelerini öneriyor. Tab ile tamamını, Alt/Ctrl+→ ile kelime kelime kabul edersin; Esc öneriyi gizler. Mobilde gri “Tab” etiketine dokunarak kabul edilir. İmleç metnin sonunda değilken öneri gösterilmez",
+  "🔁 Yarım kalan işler için öneri: son iş yarıda kaldıysa “Yarım kalanı sürdür”, bekleyen plan varsa “Planı onayla ve başla”, yapılacaklar listesi varsa “Yapılacakları başlat / Kalan N adımı sürdür” önerileri en başta, mavi vurguyla çıkıyor",
+  "↔️ Öneriler artık üst üste dizilmiyor: tek satırda yana kaydırılabilir şerit (fare tekerleğiyle de kayar)"
+ ]},
+ {v:"5.52.0",date:"2026-11-26",items:[
+  "🧘 Stüdyo açılışı sadeleşti: büyük renkli “Merhaba…, bugün ne yapalım?” başlığı ve alt yazısı kaldırıldı; giriş alanı ekranın ortasına, daha aşağıya alındı (Claude Code tarzı sade yerleşim). Giriş alanının neon çizgisi aynen korundu",
+  "💊 Yardımcı hap düğmeleri: giriş alanının altında proje türüne göre değişen hızlı başlangıçlar — Uygulama: Randevu, Dashboard, Müşteri portalı, Dahili araç, Stok & sipariş · Web sitesi: Landing page, Kurumsal site, Portfolyo, Blog, Satış sayfası · Oyun: Arcade, Bilgi yarışması, Bulmaca, Platform. Tıklayınca hazır istek yazılır, düzenleyip gönderirsin",
+  "🧹 Büyük “Tasarım” kutusu, “Çizimden uygulama” kartı ve “Benim için yap” düğmesi tek satırlık sade bağlantılara dönüştü (Benim için yap · Çizimden uygulama · Tasarım teması). Sektöre uygun tasarım önerileri artık fikrini yazmaya başlayınca beliriyor",
+  "🗂️ “Bir fikirle başla” kartları ince, iki sütunlu listeye dönüştü ve seçili proje türüne uygun fikirler önce geliyor; alttaki 4 adımlı tanıtım satırı kaldırıldı",
+  "🌌 Sayfanın altına hafif mavi-pembe ışık efekti; mobilde hap düğmeleri tek satırda yana kayıyor",
+  "📂 Sol menü Stüdyo'da artık açık geliyor (geniş ekranlarda); ⌘/Ctrl+B ile kapatılabilir"
  ]},
  {v:"5.51.0",date:"2026-11-26",items:[
   "🛡️ “GitHub girişi henüz yapılandırılmadı” ham hata sayfası giderildi: sunucuda GitHub OAuth kurulu değilken bağlanmaya çalışınca artık uygulamada “GitHub'ı bağla” penceresi açılıyor ve erişim anahtarıyla (ghp_…) tek adımda bağlanabiliyorsun",
@@ -3798,7 +3897,7 @@ async function api(method,path,body,signal){
  if(!r.ok){
   if(path.startsWith("/api/admin/") && (r.status===401||r.status===403) && t && t===TOK.get())
    dispatchEvent(new CustomEvent("gm:admin-session",{detail:r.status}));
-  const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}if(path!=="/api/admin/credits")crEvent(j);return j;
+  const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;if(j.reason)e.reason=j.reason;throw e}if(path!=="/api/admin/credits")crEvent(j);return j;
 }
 function crEvent(j){if(j&&typeof j==="object"&&j.credits!=null&&isFinite(+j.credits))dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:+j.credits,spent:+(j.spent||0)}}))}
 // ---------- v5.11 — Ayarlar: cihazda anında uygulanır, giriş yapılmışsa hesaba da kaydedilir ----------
@@ -3941,6 +4040,10 @@ function ResetBox({token,auth,toast,close}){const [pw,setPw]=useState(""),[pw2,s
   ${error&&html`<p role="alert">${error}</p>`}<button class="btn" disabled=${busy}>${busy?"Kaydediliyor…":"Şifreyi değiştir"}</button></form></div>`}
 const Modal=({close,children,w=440})=>html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`;
 
+const START_CHIPS={
+ app:[["calendar","Randevu","Müşterilerin hizmet ve saat seçip randevu alabildiği, benim de günlük randevuları yönetebildiğim bir uygulama"],["chart","Dashboard","Satış, sipariş ve müşteri verilerini KPI kartları, grafikler ve filtrelenebilir tabloyla gösteren bir yönetim paneli"],["userRound","Müşteri portalı","Müşterilerin giriş yapıp siparişlerini, faturalarını ve destek taleplerini takip ettiği bir müşteri portalı"],["wrench","Dahili araç","Ekibimin iş taleplerini oluşturup atadığı, durumunu güncellediği ve raporladığı bir dahili iş takip aracı"],["package","Stok & sipariş","Ürün listesi, stok adedi, kritik stok uyarısı ve günlük satış kaydı olan bir stok uygulaması"]],
+ site:[["rocket","Landing page","Ürünüm için güçlü bir başlık, özellikler, fiyatlandırma, müşteri yorumları ve kayıt formu olan bir tanıtım sayfası"],["globe","Kurumsal site","Şirketim için hizmetler, ekip, referanslar, SSS ve iletişim formu olan kurumsal bir web sitesi"],["image","Portfolyo","İşlerimi galeri halinde sergilediğim, hakkımda ve iletişim bölümü olan şık bir portfolyo sitesi"],["book","Blog","Kategorili yazılar, arama ve öne çıkan içerikler olan sade bir blog sitesi"],["card","Satış sayfası","Tek ürün için fayda odaklı anlatım, sık sorulan sorular ve satın al düğmesi olan bir satış sayfası"]],
+ game:[["zap","Arcade","Giderek hızlanan seviyeleri, puan ve can sistemi olan renkli bir arcade oyunu"],["brain","Bilgi yarışması","Süre tutan, can hakkı ve puan tablosu olan eğlenceli bir bilgi yarışması"],["grid","Bulmaca","Eşleştirme ve kaydırma mekaniği olan, seviyeleri zorlaşan bir bulmaca oyunu"],["gamepad","Platform","Zıplama, toplanabilir altınlar ve engeller içeren yan kaydırmalı bir platform oyunu"]]};
 const TEMPLATES=[["💇","Kuaför randevu","Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği; benim de günlük randevuları listeleyip iptal edebildiğim bir uygulama"],["🍽️","QR menü","Kafem için kategorili, fiyatlı dijital menü; ürün arama ve masa numarasıyla sipariş notu bırakma olsun"],["💰","Bütçe takibi","Aylık gelir ve giderlerimi kategorilere göre girip pasta grafikle görebileceğim kişisel bütçe uygulaması"],["🧠","Bilgi yarışması","Genel kültür soruları soran, 15 saniye süre tutan, can hakkı ve puan tablosu olan eğlenceli bir quiz oyunu"],["✅","Görev panosu","Yapılacak, Yapılıyor, Bitti sütunlu; öncelik ve son tarih etiketli kanban görev panosu"],["🎉","Düğün daveti","Düğün davetiyesi sayfası: geri sayım, tarih-yer bilgisi, harita bağlantısı ve katılım (LCV) formu"],["📦","Stok takibi","Küçük dükkanım için ürün listesi, stok adedi, kritik stok uyarısı ve günlük satış kaydı olan uygulama"],["🏋️","Antrenman günlüğü","Egzersiz, set, tekrar ve ağırlık kaydedip haftalık ilerlememi grafikle gösteren spor günlüğü"],["🐍","Yılan oyunu","Klasik yılan oyunu: ok tuşları ve kaydırma ile kontrol, giderek hızlanan seviyeler, en yüksek skor tablosu","game"],["🧱","Blok kırma","Raket ve top ile renkli blokları kırdığın arcade oyunu; güçlendirmeler, 3 can ve seviyeler","game"],["🍕","Pizzacı sitesi","Mahalle pizzacısı için menü, kampanyalar, galeri, çalışma saatleri ve WhatsApp sipariş butonu olan tanıtım sitesi","site"],["🧑‍⚕️","Klinik sitesi","Diş kliniği için hizmetler, doktorlar, hasta yorumları, SSS ve randevu talep formu olan kurumsal web sitesi","site"]];
 const STEPS=[[0,"Fikrinizi anlıyorum"],[5,"Ekranları tasarlıyorum"],[14,"Kodu yazıyorum"],[35,"Son dokunuşları yapıyorum"],[70,"Neredeyse bitti, biraz sabır"]];
 
@@ -5623,7 +5726,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(!API_ON){dispatchEvent(new Event("gm:api-retry"));toast("Sunucuya bağlanıyorum · bağlanınca başlatacağım");window.__gmPendingGen=input.trim()||null;if(!input.trim()){const o=TEMPLATES.filter(t=>(t[3]||"app")===k);const t=o[Math.floor(Math.random()*o.length)];if(t){typeInto(t[2]);window.__gmPendingGen=t[2]}}return 1}
   if(input.trim()){return await ghostRun([{el:".gsend",t:"Yazdığın komutla üretim başlatılıyor",fn:()=>gen()}])}
   const opts=TEMPLATES.map((t,i)=>[t,i]).filter(([t])=>(t[3]||"app")===k);if(!opts.length)return 0;const [t,i]=opts[Math.floor(Math.random()*opts.length)];
-  return await ghostRun([{el:'.seg [data-k="'+k+'"]',t:"Proje türü: "+(CX_KIND[k]||k),fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.tpl[data-i="'+i+'"]',t:"Fikir seçildi: "+t[1],fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",t:"Komut yazıldı · istersen sonra düzenleyebilirsin",fn:()=>typeInto(t[2]),after:200},{el:".gsend",t:"Üretim başlatılıyor",fn:()=>gen(t[2])}]);}
+  return await ghostRun([{el:'.seg [data-k="'+k+'"]',t:"Proje türü: "+(CX_KIND[k]||k),fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.sx-idea[data-i="'+i+'"]',t:"Fikir seçildi: "+t[1],fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",t:"Komut yazıldı · istersen sonra düzenleyebilirsin",fn:()=>typeInto(t[2]),after:200},{el:".gsend",t:"Üretim başlatılıyor",fn:()=>gen(t[2])}]);}
  const seedActions=useRef(null);seedActions.current={gen,doForMe};
  // bağlantı gelince (ya da Stüdyo bağlantı sonrası yeniden kurulunca) bekleyen isteği başlat
  useEffect(()=>{let tm;const h=()=>{if(!API_ON||!window.__gmPendingGen)return;clearTimeout(tm);tm=setTimeout(()=>{const t=window.__gmPendingGen;if(!t||!API_ON)return;window.__gmPendingGen=null;toast("Bağlantı geri geldi · isteğin başlatılıyor");seedActions.current.gen(t)},700)};h();addEventListener("gm:api-on",h);return()=>{clearTimeout(tm);removeEventListener("gm:api-on",h)}},[]);
@@ -5697,19 +5800,20 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  actRef.current=async (a,active=()=>true)=>{const ticket=epoch.current;
   const g=(sel,fn,o)=>{const apply=()=>{if(active()&&ticket===epoch.current&&!detachRef.current)return fn()};return document.querySelector(sel)?ghostRun([{el:sel,fn:apply,...o}]):Promise.resolve(apply())};
   if(a.t==="tur"){if(!KINDS.some(k=>k[0]===a.deger))throw new Error("Tür tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,kind:a.deger}));prefsRef.current={...prefsRef.current,kind:a.deger}})}
-  if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.seg [data-k="'+a.deger+'"]',()=>{setPrefs(p=>({...p,mode:a.deger}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
-  if(a.t==="tema"){if(!lookupDesign(a.deger))throw new Error("Tema bulunamadı");return g('.pill[title="Tasarım teması"]',()=>pickTheme(a.deger))}
+  if(a.t==="mod"){if(!["hizli","planli","ajan"].includes(a.deger))throw new Error("Mod tanınmadı");return g('.cmp-mode',()=>{setPrefs(p=>({...p,mode:a.deger,autoMode:false}));prefsRef.current={...prefsRef.current,mode:a.deger}})}
+  if(a.t==="tema"){if(!lookupDesign(a.deger))throw new Error("Tema bulunamadı");return g('[title="Tasarım teması"]',()=>pickTheme(a.deger))}
   if(a.t==="ayar"){const n={...runRef.current};if(a.sicaklik!=null&&a.sicaklik!==""&&isFinite(+a.sicaklik))n.temperature=Math.max(0,Math.min(1.5,+a.sicaklik));if(["kisa","dengeli","ayrintili"].includes(a.detay))n.detail=a.detay;if(typeof a.talimat==="string")n.instructions=a.talimat.slice(0,1500);return g('.pill[title="Çalıştırma ayarları"]',()=>{setRunSet(n);runRef.current=n;toast("Çalıştırma ayarları güncellendi")})}
   if(a.t==="prompt"){const m=String(a.metin||"").trim().slice(0,4000);if(!m)return;return g(".gta",async()=>{await typeInto(m);inputRef.current=m},{after:200})}
   if(a.t==="yap"){const m=String(a.metin||inputRef.current||"").trim();if(!m)throw new Error("İstem kutusu boş");return g(".gsend",()=>gen(m))}
   if(a.t==="kontrol"){if(!st.html)throw new Error("Önce bir uygulama yapılmalı");return g(".sugg .chip.on",()=>review())}
   if(a.t==="kaydet")return g('.ib[title="Kaydet"]',()=>save());
   if(a.t==="yayinla")return g(".ws-top .btn.s",()=>publish());
-  if(a.t==="panel"){if(a.ad==="model")return g('.pill[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('.pill[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.pill[title="Çalıştırma ayarları"]',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));if(a.ad==="oturum"){setSessOpen(true);return}return}
+  if(a.t==="panel"){if(a.ad==="model")return g('[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.cmp-mode',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));if(a.ad==="oturum"){setSessOpen(true);return}return}
   if(a.t==="yeni"){setTodo(null);setAtts([]);switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setVersions([]);setPlan(null);setInput("");return}};
  useEffect(()=>{const h=e=>{const {a,done,active}=e.detail||{};if(!a)return;Promise.resolve().then(()=>actRef.current&&actRef.current(a,active)).then(()=>done&&done(),er=>{toast(er.message||"Adım yapılamadı");done&&done()})};addEventListener("gm:act",h);return()=>{removeEventListener("gm:act",h);window.__gmStudio={acik:false}}},[]);
- const send=e=>{e.preventDefault();gen()};
- const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent?.isComposing&&e.keyCode!==229){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();gen()}};
+ const [flash,setFlash]=useState(0);const fire=()=>{ghRemember(input);setFlash(Date.now());setTimeout(()=>setFlash(0),900)};
+ const send=e=>{e.preventDefault();fire();gen()};
+ const key=e=>{if(e.key==="Tab"&&input.startsWith("/")&&!input.includes(" ")){const o=SLASH.find(([k])=>k.startsWith(input.toLowerCase()));if(o){e.preventDefault();setInput(o[0]+" ")}return}if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent?.isComposing&&e.keyCode!==229){if(GS.sendKey==="mod"&&!(e.metaKey||e.ctrlKey))return;e.preventDefault();fire();gen()}};
  const seg=(items,val,set,label)=>html`<div class="seg" role="group" aria-label=${label}>${items.map(([k,ic,l,tip])=>html`<button type="button" data-k=${k} aria-label=${l||tip} aria-pressed=${val===k} title=${tip||""} class=${val===k?"on":""} onClick=${()=>set(k)}><${Icon} n=${ic} s=${15}/>${l&&html`<span>${l}</span>`}</button>`)}</div>`;
  const typeSwitch=()=>seg(KINDS.map(([k,,l])=>[k,KIND_ICON[k],l]),prefs.kind,k=>setPrefs(p=>({...p,kind:k})),"Proje türü");
  const controls=(workspace=false)=>html`<div class="ctrls" role="group" aria-label="Üretim seçenekleri">
@@ -5737,6 +5841,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    {k:"mod",ic:html`<${Icon} n=${modeEff==="oto"?"sparkles":{hizli:"zap",planli:"compass",ajan:"list"}[prefs.mode]} s=${17}/>`,l:"Çalışma modu",v:modeEff==="oto"?"Otomatik":MODE_TR[prefs.mode],d:modeEff==="oto"?"Büyük yeni işte plan, diğerlerinde hızlı":{hizli:"Doğrudan üretir",planli:"Önce plan, onaylayınca üretir",ajan:"Adım adım, onaylı"}[prefs.mode],
     auto:!!prefs.autoMode,setAuto:v=>setPrefs(p=>({...p,autoMode:v})),open:()=>setSuHelp(h=>h==="mod-pick"?null:"mod-pick"),
     help:"Hızlı: komutu hemen uygular. Planlı: önce ne yapılacağını yazar, onaylarsan üretir. Ajan: işi görevlere böler, her adımı onayınla uygular.",autoTxt:"Oto açıkken uzun ve yeni bir proje anlatırsan önce plan gösterilir; düzenlemeler doğrudan uygulanır."}];
+  T.splice(0,T.length,...T.filter(t=>t.k==="tema"||t.k==="ek"));
   const mods=(runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli");
   if(suMin)return html`<button type="button" class="su-mini" onClick=${()=>setSuMin(false)} title="Proje ayarlarını aç">${T.map(t=>html`<span key=${t.k} class=${t.auto?"a":""}>${t.ic}<b>${t.v}</b></span>`)}<${Icon} n="chevDown" s=${13}/></button>`;
   return html`<section class="su" aria-label="Proje ayarları">
@@ -5753,13 +5858,34 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    </div>`)}</div></section>`};
  const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`;
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} onStart=${startPanel} close=${()=>setGallery(false)}/>`;
- const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
+ const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x,...(x.model?{autoModel:false}:{})}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
+ const [cmpOpen,setCmpOpen]=useState(null);
+ const cmpBar=()=>{const cl=()=>setCmpOpen(null),tog=k=>setCmpOpen(x=>x===k?null:k);
+  const it=(on,ic,t,d,fn)=>html`<button type="button" role="menuitemradio" aria-checked=${!!on} class="ccpop-i two" onClick=${fn}><${Icon} n=${ic} s=${16}/><span><b>${t}</b><small>${d}</small></span>${on?html`<${Icon} n="check" s=${15} w=${2.2} c="#8fb4ff"/>`:""}</button>`;
+  const modeEff=prefs.autoMode?"oto":prefs.mode,MI={oto:"sparkles",hizli:"zap",planli:"compass",ajan:"list"},ML={oto:"Otomatik",hizli:"Hızlı",planli:"Planlı",ajan:"Ajan"};
+  const setMode=k=>{setPrefs(p=>k==="oto"?{...p,autoMode:true}:{...p,mode:k,autoMode:false});cl()};
+  const mName=prefs.autoModel?"Otomatik":curModel?shortModel(curModel):"Model seç";
+  const adv=(runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli");
+  return html`<span class="cmp" role="group" aria-label="Model ve çalışma modu">
+   <span class="ccw"><button type="button" class=${"cmp-b"+(cmpOpen==="model"?" on":"")+(prefs.autoModel?" auto":"")} title="Dil modeli seç" aria-haspopup="menu" aria-expanded=${cmpOpen==="model"} onClick=${()=>tog("model")}>${!prefs.autoModel&&curInfo?html`<${FamLogo} f=${curInfo.family} s=${14}/>`:html`<${Icon} n=${prefs.autoModel?"sparkles":"cpu"} s=${14}/>`}<span class="cmp-l">${mName}</span><${Icon} n="chevDown" s=${12} w=${2}/></button>
+    ${cmpOpen==="model"&&html`<${CcPop} cls="r cmp-pop" close=${cl}><div class="ccpop-h">Dil modeli<small>${!prefs.autoModel&&curInfo?curInfo.credits+" kredi / işlem":"kodu yazan yapay zekâ"}</small></div>
+     ${it(prefs.autoModel,"sparkles","Otomatik","Yeni projede güçlü, küçük düzenlemede hızlı model seçilir",()=>{setPrefs(p=>({...p,autoModel:true}));cl()})}
+     ${it(!prefs.autoModel,"cpu",curModel?shortModel(curModel):"Sabit model",(curInfo?curInfo.credits+" kredi / işlem · ":"")+"her işte aynı model",()=>{setPrefs(p=>({...p,autoModel:false}));cl()})}
+     <div class="ccpop-sep"></div>${it(false,"layers","Tüm modeller…","Karşılaştır, değiştir ya da kendi anahtarını bağla",()=>{cl();setPicker(true)})}<//>`}</span>
+   <span class="ccw"><button type="button" class=${"cmp-b cmp-mode"+(cmpOpen==="mode"?" on":"")+(prefs.autoMode?" auto":"")} title="Çalışma modu" aria-haspopup="menu" aria-expanded=${cmpOpen==="mode"} onClick=${()=>tog("mode")}><${Icon} n=${MI[modeEff]} s=${14}/><span class="cmp-l">${ML[modeEff]}</span>${adv&&html`<i class="cmp-dot" title="Gelişmiş ayar değiştirildi"></i>`}<${Icon} n="chevDown" s=${12} w=${2}/></button>
+    ${cmpOpen==="mode"&&html`<${CcPop} cls="r cmp-pop" close=${cl}><div class="ccpop-h">Çalışma modu</div>
+     ${it(modeEff==="oto","sparkles","Otomatik","Büyük yeni işte önce plan, düzenlemelerde doğrudan",()=>setMode("oto"))}
+     ${it(modeEff==="hizli","zap","Hızlı","Komutu hemen uygular",()=>setMode("hizli"))}
+     ${it(modeEff==="planli","compass","Planlı","Önce plan yazar, onaylayınca üretir",()=>setMode("planli"))}
+     ${it(modeEff==="ajan","list","Ajan","İşi adımlara böler, her adımı onayınla uygular",()=>setMode("ajan"))}
+     <div class="ccpop-sep"></div><button type="button" class="ccpop-i two" title="Çalıştırma ayarları" onClick=${()=>{cl();setRunOpen(true)}}><${Icon} n="sliders" s=${16}/><span><b>Gelişmiş ayarlar…</b><small>Yaratıcılık, ayrıntı düzeyi, özel talimat</small></span>${adv&&html`<em>değişti</em>`}</button><//>`}</span>
+  </span>`};
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
- const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
+ const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(flash?" sent":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
    ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
    ${slashOpts.length>0&&html`<${ComposerMenu} commands=${true}>${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onClick=${()=>{setInput(k+" ");document.querySelector(".gta")?.focus()}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}<//>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>a.loading?html`<div class="att ld" key=${a.id} aria-label=${a.name+" yükleniyor"}><span class="att-sk"></span><span class="att-ldt">Görsel hazırlanıyor…</span></div>`:html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
-   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${!!todo?.running} placeholder=${busy?"Yazmaya devam et · Enter ile sıraya eklenir":st.html?"Ne değiştirmek istersin?":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
+   <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${!!todo?.running} placeholder=${busy?"Yazmaya devam et · Enter ile sıraya eklenir":st.html?"Ne değiştirmek istersin?":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind} edit=${!!st.html}/>
    ${!busy&&input.trim()&&GS.engine&&html`<div id="composer-request-info" class="flow-preview" hidden=${!requestInfo}>
     <b>${promptIntent(input,{html:!!st.html,plan:!!plan,todo:!!todo?.awaiting,last:lastAsk(),kind:prefs.kind,mode:prefs.mode,picked:!!picked}).l}</b>
     <span>${st.title||"Yeni proje"} · ${st.gitContext?.name||"Yerel taslak"} · ${MODE_TR[prefs.mode]}</span></div>`}
@@ -5778,8 +5904,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new Event("gm:cp"))}}><${Icon} n="headphones" s=${18}/><span>Asistanla konuş</span><kbd>⌘J</kbd></button>
      <//>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
-    <span class="gnote">${busy?html`<button type="button" class="pe-chip run" aria-label="İşlem adımlarını göster veya gizle" aria-expanded=${!!(latestWork&&flowOpen[flowId(latestWork)])} onClick=${()=>toggleFlow(latestWork,true)}><${ClSpark} s=${13}/> ${clTime(secs)}</button>`:input.trim()&&GS.engine?html`<${PromptEngine} open=${requestInfo} toggle=${()=>setRequestInfo(v=>!v)} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
-    ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/> Sıraya ekle</button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
+    <span class="gnote">${busy?html`<button type="button" class="pe-chip run" aria-label="İşlem adımlarını göster veya gizle" aria-expanded=${!!(latestWork&&flowOpen[flowId(latestWork)])} onClick=${()=>toggleFlow(latestWork,true)}><${ClSpark} s=${13}/> ${clTime(secs)}</button>`:input.trim()&&GS.engine?html`<${PromptEngine} open=${requestInfo} toggle=${()=>setRequestInfo(v=>!v)} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>${cmpBar()}
+    ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/> Sıraya ekle</button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}><${Icon} n="arrowUp" s=${17} w=${2.4}/></button>`}</div></div></form>`;
  const escCard=()=>esc&&!busy&&html`<div class="esc" role="alertdialog" aria-label="Model önerisi"><div class="esc-h"><${Icon} n="zap" s=${15}/><b>Bu iş için daha güçlü bir model önerilir</b></div>
   <p><b>${shortModel(curModel)}</b> hızlı ama küçük bir model; ${st.html?"büyük değişikliklerde":"sıfırdan uygulama yazarken"} kod hatası ve yarıda kesilme riski yüksek. <b>${shortModel(esc.best)}</b> ile yapmanı öneririm (${esc.credits} kredi).</p>
   <div class="esc-a"><button type="button" class="btn s" onClick=${()=>{const t=esc.text;setPrefs(p=>({...p,model:esc.best}));escOk.current=true;setEsc(null);setTimeout(()=>genRef.current&&genRef.current(t),60)}}>${shortModel(esc.best)} ile yap</button><button type="button" class="btn g s" onClick=${()=>{const t=esc.text;escOk.current=true;setEsc(null);genRef.current&&genRef.current(t)}}>Seçili modelle devam et</button><button type="button" class="btn g s" title="Her işte en uygun modeli Gitmapp seçsin: yeni uygulamada güçlü, küçük düzenlemede dengeli" onClick=${()=>{const t=esc.text;setPrefs(p=>({...p,autoModel:true}));escOk.current=true;setEsc(null);setTimeout(()=>genRef.current&&genRef.current(t),60)}}>Hep otomatik seç</button><button type="button" class="ib sm" aria-label="Kapat" onClick=${()=>setEsc(null)}><${Icon} n="x" s=${13}/></button></div></div>`;
@@ -5995,20 +6121,30 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
 
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
  const hasWork=st.html||busy||plan||st.msgs.length;
- if(!hasWork)return html`<div class="hero studio-start"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
-  <h1 class="hero-greet"><span class="grad-text">Merhaba${auth.user&&(auth.user.nickname||auth.user.name)?" "+(auth.user.nickname||auth.user.name.split(" ")[0]):""}</span>, bugün ne yapalım?</h1>
-  <p class="hero-sub">Bir proje türü seç ve ne yapmak istediğini yaz.</p>
-  <div class="start-type">${typeSwitch()}</div>
-  ${escCard()}${prompt(true)}${ccFoot()}
-  <div class="start-options"><button type="button" class="forme" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button></div>
-  <${DesignStrip} custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>
-  ${!API_ON&&html`<div class="gcard" role="status" style=${{marginTop:12,padding:10,color:"var(--label2)"}}>${healthError?html`<span class="ccspin"></span> Sunucuya yeniden bağlanılıyor; yazmaya devam edebilirsin, bağlanınca gönderdiğin istek kendiliğinden başlar. <button class="btn g s" onClick=${retry}>Şimdi dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
-  <div class="skpromo"><div class="skp-art"><svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="#5b616c" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="34" height="50" rx="5" fill="#fbfaf6"/><path d="M11 14h24M11 20l10 10M21 20L11 30M11 36h24M11 42h16"/><rect x="30" y="22" width="28" height="38" rx="6" fill="#151514" stroke="#e4ff3d"/><rect x="34" y="28" width="20" height="8" rx="2" fill="#e4ff3d" stroke="none"/><path d="M34 42h20M34 48h14" stroke="#e4ff3d"/></svg></div><div style=${{flex:1}}><b>Çizimden uygulama</b><span>Çiziminin fotoğrafını yükle, yerleşimi uygulamaya dönüştür.</span></div><button type="button" class="hb-btn ghost sm sketch-upload" disabled=${atts.length>=3} onClick=${()=>{roleRef.current="layout";fileRef.current.click()}}><${Icon} n="camera" s=${15}/> Çizim yükle</button></div>
-  <div class="tpl-h">Bir fikirle başla</div>
-  <div class="tpl-grid">${TEMPLATES.map(([ic,t,p,k],i)=>html`<button type="button" class="tpl" data-i=${i} key=${t} onClick=${()=>{setSt(s=>({...s,emoji:ic}));setPrefs(x=>({...x,kind:k||"app"}));setInput(p);document.querySelector(".gta")?.focus()}}>
-   <span class="tpl-ic"><${AppIcon2} emoji=${ic} color=${APP_COLORS[i%9]} size=${34}/></span><span class="tpl-t">${t}</span><span class="tpl-d">${p.slice(0,64)}…</span><span class="tpl-k"><${Icon} n=${KIND_ICON[k||"app"]} s=${12}/></span></button>`)}</div>
-  <div class="steps4">${[["sparkles","Anlat","Fikrini Türkçe yaz"],["eye","Gör","Canlı önizlemede çalışır"],["wand","Düzelt","Sohbetle değişiklik iste"],["rocket","Yayınla","Kendi adresinle canlıya al"]].map(([ic,t,d],i)=>html`<div class="st4"><${Icon} n=${ic} s=${18} c="#e4ff3d"/><div><b>${t}</b><span>${d}</span></div></div>`)}</div>
- </div>`;
+ if(!hasWork){const kind=prefs.kind||"app";const starters=START_CHIPS[kind]||START_CHIPS.app;const ideas=TEMPLATES.map((t,i)=>[t,i]).sort((a,b)=>((a[0][3]||"app")===kind?0:1)-((b[0][3]||"app")===kind?0:1)).slice(0,6);
+  const fill=(p,ic)=>{if(ic)setSt(s=>({...s,emoji:ic}));setInput(p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}})};
+  return html`<div class="hero studio-start sx"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
+  <div class="sx-glow" aria-hidden="true"></div>
+  <section class="sx-main" aria-label="Yeni proje">
+   <div class="start-type">${typeSwitch()}</div>
+   ${escCard()}${prompt(true)}${ccFoot()}
+   <div class="sx-chips" role="group" aria-label="Hızlı başlangıç">${starters.map(([ic,l,p])=>html`<button type="button" class="sx-chip" key=${kind+l} onClick=${()=>fill(p)}><${Icon} n=${ic} s=${16}/><span>${l}</span></button>`)}</div>
+   <div class="sx-acts">
+    <button type="button" class="sx-act" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${14}/> Benim için yap</button>
+    <span class="sx-dot" aria-hidden="true"></span>
+    <button type="button" class="sx-act sketch-upload" disabled=${atts.length>=3} title="Çiziminin fotoğrafını yükle, yerleşimi uygulamaya dönüştür" onClick=${()=>{roleRef.current="layout";fileRef.current.click()}}><${Icon} n="camera" s=${14}/> Çizimden uygulama</button>
+    <span class="sx-dot" aria-hidden="true"></span>
+    <button type="button" class="sx-act" title="Tasarım teması" onClick=${()=>setGallery(true)}><${Swatches} t=${effTheme} s=${8}/> ${prefs.theme==="auto"?"Otomatik tasarım":effTheme.name}</button>
+   </div>
+   ${input.trim().length>8&&html`<${DesignStrip} compact custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>`}
+   ${!API_ON&&html`<div class="sx-status" role="status">${healthError?html`<span class="ccspin"></span> <span>Sunucuya yeniden bağlanılıyor; yazmaya devam edebilirsin, bağlanınca gönderdiğin istek kendiliğinden başlar.</span> <button type="button" onClick=${retry}>Şimdi dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
+  </section>
+  <section class="sx-ideas" aria-labelledby="sx-ideas-h">
+   <div class="sx-ideas-h"><h2 id="sx-ideas-h">Bir fikirle başla</h2><span>Seç, düzenle, gönder</span></div>
+   <div class="sx-grid">${ideas.map(([[ic,t,p,k],i])=>html`<button type="button" class="sx-idea" data-i=${i} key=${t} onClick=${()=>{setPrefs(x=>({...x,kind:k||"app"}));fill(p,ic)}}>
+    <${AppIcon2} emoji=${ic} color=${APP_COLORS[i%9]} size=${30}/><span class="sx-idea-t"><b>${t}</b><small>${p}</small></span><${Icon} n="arrowUp" s=${14}/></button>`)}</div>
+  </section>
+ </div>`}
 
  const synced=saved&&saved.userId===auth.user?.id&&saved.prefs===prefs&&["appId","html","title","emoji","color","msgs","assets"].every(k=>saved[k]===st[k]);
  const saveLabel=saving?"Kaydediliyor…":saveFailed?"Hesaba kaydedilemedi":synced?"Hesaba kaydedildi":localOk?"Yerel taslak":"Cihaza kaydedilemedi";
@@ -6068,8 +6204,10 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map(msgEl)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
   const fix=()=>build("TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun.",null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   return html`<div class=${"dq-card"+(probs.length?" warn":"")} role="status"><div class="dq-h"><${Icon} n=${probs.length?"alert":"check"} s=${14}/><b>Tasarım ajanı</b><span>${probs.length?probs.length+" sorun buldu":"önizlemeyi denetledi · sorun yok"}</span>${st.tokens&&html`<em title=${st.tokens}>tasarım sistemi kayıtlı</em>`}</div>${probs.length>0&&html`<ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Ajan düzeltsin</button>`}</div>`})()}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
-    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const nx=nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked});
-  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
+    <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const lw=latestWork,canRetry=lw&&!busy&&(lw.log?.cut||lw.err)&&(lastRetry.current?.id===lw.id&&lastRetry.current.run||lw.retry&&(lw.retry.text||lw.retry.kind==="review"));
+  const resume=[...(canRetry?[{ic:"refresh",l:"Yarım kalanı sürdür",p:"Son iş yarıda kaldı; kaldığı yerden yeniden çalıştırır",act:"retry",hot:1}]:[]),...(plan&&!busy?[{ic:"check",l:"Planı onayla ve başla",p:"onayla",act:"send",hot:1}]:[]),...(todo?.awaiting?[{ic:"play",l:"Yapılacakları başlat",p:"başla",act:"send",hot:1}]:[]),...(todo&&!todo.running&&!todo.awaiting&&todo.items?.some(t=>t.state!=="done")?[{ic:"list",l:"Kalan "+todo.items.filter(t=>t.state!=="done").length+" adımı sürdür",p:"Yapılacaklar listesinde kalan adımlara devam et: "+todo.items.filter(t=>t.state!=="done").map(t=>t.title).join(", "),hot:1}]:[])];
+  const nx=[...resume,...nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked})];
+  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri" onWheel=${e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.currentTarget.scrollLeft+=e.deltaY}}}>${nx.map(x=>html`<button type="button" role="listitem" class=${"nx-chip"+(x.hot?" hot":"")} key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}if(x.act==="retry"){retryMsg(lw);return}if(x.act==="send"){genRef.current&&genRef.current(x.p);return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
@@ -7071,10 +7209,24 @@ function ghostFor(v,kind){
  if(/\s$/.test(v)&&v.trim().length>=10&&!/olsun\.?\s*$/i.test(v)){const sec=detectSector(v,kind);if(sec&&GH_SECTOR_TAIL[sec])return GH_SECTOR_TAIL[sec].trimStart()}
  return "";
 }
-function GhostTA({value,set,onKeyDown,className,kind,...rest}){
- const sug=ghostFor(value,kind);
- return html`<div class="ghw"><div class=${"ghx "+(className||"")} aria-hidden="true"><span class="gh-v">${value}</span><span class="gh-s">${sug}</span>${sug&&html`<kbd class="gh-k">Tab</kbd>`}</div>
-  <textarea ...${rest} class=${className} value=${value} onInput=${e=>set(e.target.value)} onKeyDown=${e=>{if(sug&&(e.key==="Tab"||(e.key==="ArrowRight"&&e.target.selectionStart===value.length))){e.preventDefault();set(value+sug);return}onKeyDown&&onKeyDown(e)}}></textarea></div>`;
+const GH_EDIT=["Renkleri daha modern ve uyumlu yap","Ana sayfaya özet istatistik kartları ekle","Menüyü sadeleştir, mobilde alttan açılsın","Yazıları büyüt ve okunaklı yap","Koyu tema ekle, açık/koyu geçişi olsun","Düğmeleri daha belirgin yap","Boş ekranlara örnek veriler ekle","Formlara doğrulama ve hata mesajları ekle","Listeye arama ve filtre ekle","Giriş ve kayıt ekranı ekle","Animasyonları yumuşat ve geçişleri hızlandır","Mobil görünümü düzelt, taşmaları gider","Ayarlar ekranı ekle","Kaldığın yerden devam et","Hataları bul ve düzelt"];
+function ghRemember(t){t=String(t||"").trim();if(t.length<8||t.length>300||t.startsWith("/"))return;const h=LS.get("ghHist",[])||[];LS.set("ghHist",[t,...h.filter(x=>x!==t)].slice(0,40))}
+function ghostSmart(v,kind,edit){if(!v||v.length<2||v.startsWith("/")||v.length>400)return "";const lv=trl(v);
+ if(v.length>=3)for(const p of LS.get("ghHist",[])||[])if(p.length>v.length&&trl(p).startsWith(lv))return p.slice(v.length);
+ if(edit&&v.length>=2&&!/\s{2}$/.test(v))for(const p of GH_EDIT)if(p.length>v.length&&trl(p).startsWith(lv))return p.slice(v.length);
+ const g=ghostFor(v,kind);return g&&!/\s/.test(g)&&g.length<3?"":g}
+function GhostTA({value,set,onKeyDown,className,kind,edit,...rest}){
+ const [off,setOff]=useState(null);const [atEnd,setAtEnd]=useState(true);
+ const raw=off===value?"":ghostSmart(value,kind,edit);const sug=atEnd?raw:"";
+ const take=n=>{set(value+(n==null?sug:sug.slice(0,n)))};
+ const word=()=>{const m=sug.match(/^\s*\S+\s?/);return m?m[0].length:sug.length};
+ return html`<div class="ghw"><div class=${"ghx "+(className||"")} aria-hidden="true"><span class="gh-v">${value}</span><span class="gh-s">${sug}</span>${sug&&html`<kbd class="gh-k" title="Öneriyi kabul et" onMouseDown=${e=>{e.preventDefault();take()}}>Tab</kbd>`}</div>
+  <textarea ...${rest} class=${className} value=${value} onInput=${e=>{set(e.target.value);setAtEnd(e.target.selectionStart===e.target.value.length)}} onSelect=${e=>setAtEnd(e.target.selectionStart===e.target.value.length&&e.target.selectionEnd===e.target.value.length)} onKeyDown=${e=>{
+   if(sug&&e.key==="Tab"&&!e.shiftKey){e.preventDefault();take();return}
+   if(sug&&e.key==="ArrowRight"&&(e.altKey||e.ctrlKey||e.metaKey)&&e.target.selectionStart===value.length){e.preventDefault();take(word());return}
+   if(sug&&e.key==="ArrowRight"&&e.target.selectionStart===value.length){e.preventDefault();take();return}
+   if(sug&&e.key==="Escape"){e.preventDefault();e.stopPropagation();setOff(value);return}
+   onKeyDown&&onKeyDown(e)}}></textarea></div>`;
 }
 // Hızlı ekler (Lovable / Emergent tarzı tek dokunuşla istem zenginleştirme)
 const QUICK_ADD={app:[["user","Giriş sistemi","kullanıcı girişi ve kayıt ekranı"],["grid","Yönetici paneli","yönetici için ayrı bir panel"],["chart","Grafikler","özet istatistik kartları ve grafikler"],["bell","Hatırlatmalar","hatırlatma ve bildirimler"],["chat","WhatsApp","WhatsApp ile iletişim düğmesi"],["moon","Koyu tema","açık/koyu tema geçişi"],["globe","Çok dilli","Türkçe ve İngilizce dil seçeneği"]],
@@ -7642,9 +7794,10 @@ function GhImport({url,auto,review,close,auth,openAuth,toast,onStudio,models,go}
  useEffect(()=>{const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  const R=info&&info.repo;const rep=res&&res.report;const per=(models&&models.data&&models.data.platform||[]).find(m=>m.id===(models.data.default))||null;
  const studio=design=>{const r=res;onStudio({html:r.html,...(review?{radarOrigin:r.radarOrigin||(r.mode==="live"?"live":"import"),source:"github:"+R.full+(r.mode==="live"?"":"@"+(r.repo?.sha||R.sha))}:{}),title:r.title||R.name,emoji:"🐙",color:"#24292f",kind:info.kind==="build"||r.radarOrigin==="prototype"?"app":"site",openDesign:design,appId:take&&take.app?take.app.id:null,msgs:[{role:"assistant",content:"“"+R.full+"” GitHub'dan içe aktarıldı ve sağda çalışıyor ("+R.ref+" · "+R.sha+"). Şimdi sohbetle değiştirebilir, Tasarım'da öğe öğe düzenleyebilir ya da yayınlayabilirsin."+(rep&&rep.warnings.length?"\n\nNotlar:\n• "+rep.warnings.join("\n• "):"")}]});close()};
- const errBox=err&&html`<div class="ghi-err"><${Icon} n="alert" s=${16}/><div><b>${err.message}</b>${(err.status===404||err.status===429)&&html`<div class="ghi-act">${!(info&&info.github&&info.github.connected)&&html`<button class="btn s" onClick=${()=>linkGh(false)}><${Icon} n="github" s=${14}/> GitHub hesabını bağla</button><button class="btn g s" onClick=${()=>linkGh(true)}>Özel depolar için bağla</button>`}<button class="btn g s" onClick=${inspect}><${Icon} n="refresh" s=${14}/> Tekrar dene</button></div>`}</div></div>`;
+ const ghConn=!!(info&&info.github&&info.github.connected),why=err&&(err.reason||(err.status===404?(ghConn?"scope":"link"):""));
+ const errBox=err&&html`<div class="ghi-err"><${Icon} n=${why==="link"||why==="scope"?"lock":"alert"} s=${16}/><div><b>${err.message}</b>${why==="link"&&html`<small>Gitmapp yalnızca depoyu okur; kodun GitHub'da kalır. İzni istediğin zaman GitHub › Settings › Applications'tan kaldırabilirsin.</small>`}${(err.status===404||err.status===429)&&html`<div class="ghi-act">${why==="missing"?"":html`<button class="btn s" onClick=${()=>linkGh(true)}><${Icon} n="github" s=${14}/> ${why==="scope"?"Özel depo izni ver":why==="expired"?"GitHub'ı yeniden bağla":"GitHub'ı bağla"}</button>`}<button class="btn g s" onClick=${inspect}><${Icon} n="refresh" s=${14}/> Tekrar dene</button></div>`}</div></div>`;
  return html`<div class="drawer ghi-bg" onClick=${close}><div class="ghi glass" onClick=${e=>e.stopPropagation()} role="dialog" aria-label="GitHub'dan içe aktar">
-  <div class="ghi-h"><span class="ghi-logo"><${Icon} n="github" s=${20}/></span><div class="ghi-ht"><b>${R?R.full:ghShort(url)}</b><small>${R?html`<${Icon} n="branch" s=${11}/> ${R.ref} · ${R.sha}${R.private?" · özel":""}${R.lang?" · "+R.lang:""}${R.stars?" · ★ "+R.stars:""}`:"GitHub deposu okunuyor…"}</small></div>
+  <div class="ghi-h"><span class="ghi-logo"><${Icon} n="github" s=${20}/></span><div class="ghi-ht"><b>${R?R.full:ghShort(url)}</b><small>${R?html`<${Icon} n="branch" s=${11}/> ${R.ref} · ${R.sha}${R.private?" · özel":""}${R.lang?" · "+R.lang:""}${R.stars?" · ★ "+R.stars:""}`:err?(why==="link"||why==="scope"?"Özel depo · izin gerekiyor":"Okunamadı"):"GitHub deposu okunuyor…"}</small></div>
    ${info&&html`<span class=${"ghi-kind k-"+info.kind} title=${GH_KIND[info.kind][1]}>${GH_KIND[info.kind][0]}${info.framework?" · "+info.framework:""}</span>`}
    ${info&&!info.github.connected&&html`<button class="btn g s" title="Özel depolar ve daha yüksek GitHub sınırı" onClick=${()=>linkGh(false)}><${Icon} n="github" s=${14}/> Bağla</button>`}
    <button class="ib" onClick=${close} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div>
@@ -7678,7 +7831,7 @@ function GhImport({url,auto,review,close,auth,openAuth,toast,onStudio,models,go}
    ${take?html`<div class="ghi-take">${take.st.map(([k,l],i)=>html`<span key=${k} class=${i<take.step||take.step===2?"done":i===take.step&&!take.error?"run":""}>${i<take.step||take.step===2?html`<${Icon} n="check" s=${13} w=${2.4}/>`:i===take.step&&!take.error?html`<${Spark} s=${13}/>`:html`<i></i>`}${l}</span>`)}
      ${take.step===2&&take.app&&take.app.url&&html`<a class="btn s" href=${take.app.url} target="_blank" rel="noopener"><${Icon} n="external" s=${14}/> ${take.app.url.replace(/^https?:\/\//,"")}</a><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(take.app.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="copy" s=${14}/></button>`}
      ${take.error&&html`<span class="ghi-terr">${take.error}</span>`}</div>`
-   :html`<span class="ghi-note">${res?(review?"Tasarım’da açılan çalışma taslak olarak kaydedilir. Yayın Merkezi inceleme durumunu gösterir.":"Önizleme ücretsiz. Devraldığında site Gitmapp’e kopyalanır ve kendi adresinde yayınlanır; mağazada listelenmez."):review?"İçe aktarma kaynağını seçin. Ardından Tasarım’da düzenleyin.":"Depo okunduktan sonra önizleme kendiliğinden açılır."}</span>`}
+   :html`<span class="ghi-note">${res?(review?"Tasarım’da açılan çalışma taslak olarak kaydedilir. Yayın Merkezi inceleme durumunu gösterir.":"Önizleme ücretsiz. Devraldığında site Gitmapp’e kopyalanır ve kendi adresinde yayınlanır; mağazada listelenmez."):err?"Depo okunamadı · yukarıdaki adımı tamamlayınca otomatik yeniden denenir":review?"İçe aktarma kaynağını seçin. Ardından Tasarım’da düzenleyin.":"Depo okunduktan sonra önizleme kendiliğinden açılır."}</span>`}
    <span style=${{flex:1}}></span>
    <button class="btn g s" disabled=${!res} onClick=${()=>studio(true)}><${Icon} n="layers" s=${14}/> Tasarımda aç</button>
    <button class="btn g s" disabled=${!res} onClick=${()=>studio(false)}><${Icon} n="hammer" s=${14}/> Geliştir'de aç</button>
@@ -7821,7 +7974,7 @@ function App(){
  const hv=()=>{const v=location.hash.slice(1).split("?")[0];if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(true);const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
  useEffect(()=>{if(view!=="studio")return;
-  setCompact(true);
+  setCompact(!matchMedia("(min-width:1100px)").matches);
   const toggle=e=>{if((e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey&&e.key.toLowerCase()==="b"&&matchMedia("(min-width:821px)").matches&&!e.target.closest?.("input,textarea,[contenteditable=true],[role=dialog]")){
    e.preventDefault();setCompact(v=>!v);
   }};
