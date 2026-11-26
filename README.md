@@ -40,3 +40,20 @@ Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Rou
 | `COPILOT_MODEL`, `VISION_MODEL` | Asistan ve görsel okuma için sabit model |
 
 `/api/health` yanıtındaki `aiFallbacks` alanı etkin yedekleri listeler. Yedek testleri: `node --test server/failover.test.mjs`.
+
+### Ollama ile ayrı bir Stüdyo pilotu
+
+Ayrı bir Gitmapp API sürecinde `AI_BACKEND=ollama`, `OLLAMA_MODEL=qwen2.5-coder:1.5b` ve pilota özel `DB_PATH` ile başlatın. Pilot API ve Ollama yalnızca localhost üzerinde dinleyebilir. Yerel Ollama servisine modeli önce `ollama pull qwen2.5-coder:1.5b` ile yükleyin. API varsayılan olarak `http://127.0.0.1:11434/v1` kullanır. Farklı bir özel adreste çalışıyorsa `OLLAMA_BASE` değerini tam /v1 adresine ayarlayın. Bu etiket küçük CPU denemesi için seçilmiştir.
+
+```sh
+AI_BACKEND=ollama OLLAMA_MODEL=qwen2.5-coder:1.5b PORT=8791 \
+  DB_PATH=./pilot-data/gitmapp.sqlite node server/server.mjs
+```
+
+Model kataloğunda seçilen etiketin göründüğünü `GET /api/ai/models` ile kontrol edin. Platformdaki metin istekleri pilota gider ve yerel model hata verdiğinde dış sağlayıcıya geçilmez. Kullanıcının ayrıca seçtiği kişisel sağlayıcılar kendi bağlantılarını kullanır. Karşılaştırma için Python Playwright ve Chromium kurulu ortamda aşağıdaki testi çalıştırın. İki örnek projede ilk metin süresini, toplam yanıt süresini ve mevcut eylemin tarayıcıda korunmasını ölçer. Canlı bir API’ye karşı çalıştırmak üretim isteği oluşturur ve kota tüketebilir.
+
+```sh
+python tools/ollama-pilot.py http://127.0.0.1:8791
+```
+
+Kredi tarifesi uygulamanın mevcut tarifesidir. Gerçek barındırma birim maliyeti için aynı dönemin modele ayrılan sunucu giderini kabul testini geçen düzenleme sayısına bölün. Pilot ayrı süreçte çalıştığı için durdurulması ana API yapılandırmasına dokunmaz.

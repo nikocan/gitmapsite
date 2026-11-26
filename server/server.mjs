@@ -10,6 +10,8 @@ import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
 const E = process.env;
+const ollamaPilot = E.AI_BACKEND === "ollama";
+if (ollamaPilot && !E.OLLAMA_MODEL?.trim()) throw new Error("Ollama pilotu için OLLAMA_MODEL gerekli");
 const CFG = {
   port: +(E.PORT || 8787),
   db: E.DB_PATH || "./data.db",
@@ -18,9 +20,9 @@ const CFG = {
   site: E.SITE_URL || "https://gitmapp.com",
   api: E.API_URL || "https://api.gitmapp.com",
   appHost: E.APP_HOST || "app.gitmapp.com",
-  aiBase: E.AI_BASE || "https://router.hostinger.com/v1",
-  aiKey: E.AI_KEY || "",
-  aiModel: E.AI_MODEL || "",
+  aiBase: ollamaPilot ? (E.OLLAMA_BASE || "http://127.0.0.1:11434/v1").replace(/\/+$/, "") : E.AI_BASE || "https://router.hostinger.com/v1",
+  aiKey: ollamaPilot ? "ollama" : E.AI_KEY || "",
+  aiModel: ollamaPilot ? E.OLLAMA_MODEL.trim() : E.AI_MODEL || "",
   hostingerToken: E.HOSTINGER_API_TOKEN || "",
   gh: { id: E.GITHUB_CLIENT_ID || "", secret: E.GITHUB_CLIENT_SECRET || "" },
   google: { id: E.GOOGLE_CLIENT_ID || "", secret: E.GOOGLE_CLIENT_SECRET || "" },
@@ -151,7 +153,7 @@ function useAi(key, limit, anon) {
 // ---------- Yapay zekâ ----------
 // Sağlayıcılar: "gitmapp" (Hostinger AI Router, Gitmapp kredisiyle) + kullanıcının kendi anahtarıyla (BYOK) OpenAI uyumlu uç noktalar
 const PROVIDERS = {
-  gitmapp: { label: "Gitmapp (Hostinger AI Router)", base: () => CFG.aiBase },
+  gitmapp: { label: ollamaPilot ? "Gitmapp (Ollama)" : "Gitmapp (Hostinger AI Router)", base: () => CFG.aiBase },
   anthropic: { label: "Anthropic Claude", base: () => "https://api.anthropic.com/v1", keyUrl: "https://platform.claude.com/settings/keys", hint: "sk-ant-…" },
   openai: { label: "OpenAI (GPT)", base: () => "https://api.openai.com/v1", keyUrl: "https://platform.openai.com/api-keys", hint: "sk-…" },
   gemini: { label: "Google Gemini", base: () => "https://generativelanguage.googleapis.com/v1beta/openai", keyUrl: "https://aistudio.google.com/apikey", hint: "AIza…" },
@@ -172,6 +174,12 @@ async function listModels(provider, key) {
   let r;
   try { r = await fetch(pbase(provider) + "/models", { headers, signal: AbortSignal.timeout(20000) }); } catch (e) { if (provider !== "gitmapp") throw e; r = { ok: false, status: 0 }; }
   // Hostinger AI Router /models uç noktasını sunmayabilir: yapılandırılmış/varsayılan listeye düş
+  if (ollamaPilot && provider === "gitmapp") {
+    need(r.ok, 503, "Ollama model listesine ulaşılamadı");
+    const { data } = await r.json();
+    need(data?.some((m) => m.id === CFG.aiModel), 503, "Ollama pilot modeli yüklü değil: " + CFG.aiModel);
+    return [CFG.aiModel];
+  }
   if (!r.ok && provider === "gitmapp") {
     const ids = [...new Set([CFG.aiModel, ...(E.AI_MODELS || "claude-sonnet-5,gpt-5.2").split(",")].map((x) => (x || "").trim()).filter(Boolean))];
     console.warn(new Date().toISOString(), "AI Router /models kullanılamadı (" + r.status + "), sabit liste:", ids.join(","));
@@ -216,7 +224,7 @@ async function resolveRoute(user, body, req, kind) {
 // Platform sağlayıcısı (varsayılan Hostinger AI Router) bakiye bitti (402), model yok (404), kota (429), yetki (403) ya da
 // sunucu/ağ hatası (5xx) döndürürse istek, anahtarı sunucuda tanımlı bir sonraki sağlayıcıya aynı ya da en yakın modelle gider.
 const FALLBACK_KEYS = { openrouter: E.OPENROUTER_API_KEY || "", anthropic: E.ANTHROPIC_API_KEY || "", openai: E.OPENAI_API_KEY || "", gemini: E.GEMINI_API_KEY || "", deepseek: E.DEEPSEEK_API_KEY || "" };
-const fallbackChain = () => String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => PROVIDERS[p] && p !== "gitmapp" && FALLBACK_KEYS[p]);
+const fallbackChain = () => ollamaPilot ? [] : String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => PROVIDERS[p] && p !== "gitmapp" && FALLBACK_KEYS[p]);
 const normId = (id) => String(id || "").toLowerCase().replace(/^.*\//, "").replace(/[^a-z0-9]/g, "");
 async function mapModel(provider, key, model) {
   let ids = []; try { ids = await listModels(provider, key); } catch { return null; }
@@ -235,6 +243,7 @@ function withPromptCache(p, base, body) {
 }
 const FAILOVER_STATUS = (st) => st === 402 || st === 403 || st === 404 || st === 408 || st === 429 || st >= 500;
 async function postChat(rt, payload, signal) {
+  if (ollamaPilot && rt.provider === "gitmapp" && payload.messages.some((m) => Array.isArray(m.content) && m.content.some((part) => part.type === "image_url"))) throw new HttpErr(400, "Ollama pilotu metin isteklerini destekliyor.");
   const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
   if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
   const body = { model: rt.model, ...payload, ...(rt.temperature != null ? { temperature: rt.temperature } : {}) };
@@ -271,6 +280,7 @@ async function postChat(rt, payload, signal) {
 function aiErr(rt, status, t) {
   const tail = t ? ": " + String(t).replace(/\s+/g, " ").slice(0, 180) : "";
   if (rt.provider === "gitmapp") {
+    if (ollamaPilot) return "Ollama pilotu isteği tamamlayamadı (" + status + ")";
     if (status === 401) return "Gitmapp yapay zekâ anahtarı geçersiz (401). Yönetici, hPanel › AI Router'dan anahtarı kopyalayıp sunucudaki AI_KEY değerini güncellemeli" + tail;
     if (status === 403) return "Hostinger AI Router isteği reddetti (403). Olası nedenler: AI Router kredi bakiyesi bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. hPanel › AI Router'dan bakiye ve modelleri kontrol edin" + tail;
     if (status === 404) return "“" + rt.model + "” modeli AI Router'da bulunamadı (404). Yönetici AI_MODELS listesini doğru model adlarıyla güncellemeli" + tail;
@@ -592,12 +602,14 @@ GÖRSEL VE DOSYA EKLENDİĞİNDE (ChatGPT gibi davran):
 - Görsel gerçekten mesajda yoksa “göremiyorum” de; varsa “göremiyorum” DEME.`;
 // Görsel okuyabilen bir model: Claude, GPT-4o/4.1/5, Gemini, Pixtral, Llama 4, Qwen-VL…
 async function visionModel() {
+  if (ollamaPilot) throw new HttpErr(400, "Ollama pilotu metin isteklerini destekliyor.");
   if (E.VISION_MODEL) return E.VISION_MODEL;
   let ids = []; try { ids = await listModels("gitmapp", CFG.aiKey); } catch { }
   const vis = ids.filter((i) => /claude|sonnet|opus|haiku|gpt-4o|gpt-4\.1|gpt-5|gemini|pixtral|vision|-vl\b|vl-|llama-4|qwen.*vl|grok-.*vision/i.test(i));
   return vis.find((i) => tierOf(i) === "dengeli") || vis.find((i) => tierOf(i) !== "guclu") || vis[0] || await copilotModel();
 }
 async function copilotModel() {
+  if (ollamaPilot) return CFG.aiModel;
   if (E.COPILOT_MODEL) return E.COPILOT_MODEL;
   const ids = await listModels("gitmapp", CFG.aiKey); const def = await defaultModel();
   return ids.find((i) => tierOf(i) === "dengeli" && !/mini|nano|haiku|flash-lite/i.test(i)) || def;

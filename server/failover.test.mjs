@@ -57,3 +57,22 @@ test("yedek tanımlı değilse birincilin anlaşılır hatası döner", async (t
   assert.notEqual(r.status, 200);
   assert.match(j.error, /bakiye bitti \(402\)/);
 });
+
+test("Ollama pilotu eski router ayarları ve yedek anahtarlar varken yalnızca yerel modeli çağırır", async (t) => {
+  const model = "qwen2.5-coder:1.5b";
+  const primary = await fake(() => [503, {}]);
+  const backup = await fake(() => [200, {}]);
+  t.after(() => { primary.close(); backup.close(); });
+  const api = await start(t, { AI_BACKEND: "ollama", OLLAMA_MODEL: model,
+    OLLAMA_BASE: primary.base, AI_BASE: backup.base, AI_KEY: "eski-anahtar",
+    COPILOT_MODEL: "eski-model", OPENROUTER_API_KEY: "yedek", TEST_PROVIDER_BASE: backup.base });
+  const r = await fetch("http://127.0.0.1:" + api.port + "/api/ai/copilot", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: [{role: "user", content: "Ana ekranı iyileştir"}] })
+  });
+  assert.notEqual(r.status, 200);
+  assert.match((await r.json()).error, /Ollama/);
+  assert.equal(primary.seen[0].body.model, model);
+  assert.equal(primary.seen[0].auth, "Bearer ollama");
+  assert.equal(backup.seen.length, 0);
+});
