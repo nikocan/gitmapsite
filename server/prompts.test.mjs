@@ -80,3 +80,4 @@ test("aşamalı yapım: büyük işte önce 1. aşama eksiksiz, kalanlar listele
   assert.match(GEN_SYSTEM, /Sonraki aşamalar:/);
   assert.match(GEN_SYSTEM, /Küçük ve orta işlerde aşama YAZMA/);
 });
+test("üst menü ve düğme metinleri iki satıra bölünmez; sığmayınca ☰ menüsü", () => { assert.match(GEN_SYSTEM, /white-space:nowrap/); assert.match(GEN_SYSTEM, /☰ menüsüne/); });

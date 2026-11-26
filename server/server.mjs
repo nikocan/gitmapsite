@@ -266,6 +266,12 @@ function withPromptCache(p, base, body) {
   const msgs = body.messages.map((m, i) => i === 0 && m.role === "system" && typeof m.content === "string" && m.content.length > 3000 ? { ...m, content: [{ type: "text", text: m.content, cache_control: { type: "ephemeral" } }] } : m);
   return { ...body, messages: msgs };
 }
+// Bakiye yetmediğinde OpenRouter "You requested up to X tokens, but can only afford N" der: N'nin biraz altıyla tekrar denenir
+const affordable = (t, cur) => { const m = String(t).match(/can only afford (\d+)/i); if (!m) return 0; const n = Math.floor(+m[1] * 0.9); return n >= 1500 && n < cur ? n : 0; };
+const shortWhy = (t) => { let j = null; try { j = JSON.parse(t); } catch { } return String(j?.error?.message || j?.error || j?.message || t || "").replace(/\s+/g, " ").slice(0, 160); };
+const PROVIDER_BREAK = new Map(); // yedek sağlayıcı → bu zamana kadar atla (bakiye/anahtar hatası)
+const FALLBACK_NAMES = { hostinger: "Hostinger AI Router", openrouter: "OpenRouter", anthropic: "Anthropic", openai: "OpenAI", gemini: "Google Gemini", deepseek: "DeepSeek" };
+const primaryName = () => /openrouter\.ai/.test(CFG.aiBase) ? "OpenRouter" : /router\.hostinger\.com/.test(CFG.aiBase) ? "Hostinger AI Router" : /anthropic\.com/.test(CFG.aiBase) ? "Anthropic" : /openai\.com/.test(CFG.aiBase) ? "OpenAI" : CFG.aiBase.replace(/^https?:\/\//, "").split("/")[0];
 const FAILOVER_STATUS = (st) => st === 402 || st === 403 || st === 404 || st === 408 || st === 429 || st >= 500;
 async function postChat(rt, payload, signal) {
   const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
@@ -274,6 +280,8 @@ async function postChat(rt, payload, signal) {
   let r;
   try { r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(rt.provider === "gitmapp" ? withPromptCache("gitmapp", rt.base, body) : body) }); }
   catch (e) { if (rt.provider !== "gitmapp" || signal?.aborted) throw e; r = new Response(JSON.stringify({ error: "ağ hatası: " + e.message }), { status: 503 }); }
+  // OpenRouter: bakiye istenen uzunluğu karşılamıyorsa ("can only afford N") karşılanabilen uzunlukla tekrar dene
+  if (r.status === 402 && body.max_tokens) { const n = affordable(await r.clone().text(), body.max_tokens); if (n) { console.warn(new Date().toISOString(), "max_tokens bakiyeye göre düşürüldü:", body.max_tokens, "→", n); body.max_tokens = n; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(rt.provider === "gitmapp" ? withPromptCache("gitmapp", rt.base, body) : body) }); } }
   // Bazı modeller sıcaklık ayarını kabul etmez: ayarsız tekrar dene
   if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
   // Model bu kadar uzun yanıtı desteklemiyorsa (max_tokens sınırı) desteklediği güvenli bir sınırla tekrar dene
@@ -289,13 +297,18 @@ async function postChat(rt, payload, signal) {
     }
   }
   if (rt.provider === "gitmapp" && !r.ok && FAILOVER_STATUS(r.status) && !rt.noFailover && !signal?.aborted) {
+    rt.tried = [{ p: primaryName(), status: r.status, why: shortWhy(await r.clone().text()) }];
     for (const p of fallbackChain()) {
+      if ((PROVIDER_BREAK.get(p) || 0) > Date.now()) { rt.tried.push({ p: FALLBACK_NAMES[p] || p, status: 0, why: "son 10 dakikada bakiye/anahtar hatası verdiği için atlandı" }); continue; }
       const key = FALLBACK_KEYS[p]; const m = await mapModel(p, key, body.model); if (!m) continue;
       const b2 = withPromptCache(p, pbase(p), { ...body, model: m }); if (p !== "openai" && p !== "openrouter") delete b2.stream_options;
       try {
-        const r2 = await fetch(pbase(p) + "/chat/completions", { method: "POST", signal, headers: providerHeaders(p, key), body: JSON.stringify(b2) });
+        let r2 = await fetch(pbase(p) + "/chat/completions", { method: "POST", signal, headers: providerHeaders(p, key), body: JSON.stringify(b2) });
+        if (r2.status === 402 && b2.max_tokens) { const n = affordable(await r2.clone().text(), b2.max_tokens); if (n) { b2.max_tokens = n; r2 = await fetch(pbase(p) + "/chat/completions", { method: "POST", signal, headers: providerHeaders(p, key), body: JSON.stringify(b2) }); } }
         if (r2.ok) { console.warn(new Date().toISOString(), "sağlayıcı yedeğe geçti:", "gitmapp/" + body.model, "→", p + "/" + m, "(", r.status, ")"); rt.servedBy = p; rt.model = m; return r2; }
         console.warn(new Date().toISOString(), "yedek sağlayıcı başarısız:", p + "/" + m, r2.status);
+        rt.tried.push({ p: FALLBACK_NAMES[p] || p, status: r2.status, why: shortWhy(await r2.text()) });
+        if ([401, 402].includes(r2.status)) PROVIDER_BREAK.set(p, Date.now() + 10 * 60000);
       } catch (e) { if (signal?.aborted) throw e; }
     }
   }
@@ -304,10 +317,11 @@ async function postChat(rt, payload, signal) {
 function aiErr(rt, status, t) {
   const tail = t ? ": " + String(t).replace(/\s+/g, " ").slice(0, 180) : "";
   if (rt.provider === "gitmapp") {
-    if (status === 401) return "Gitmapp yapay zekâ anahtarı geçersiz (401). Yönetici, hPanel › AI Router'dan anahtarı kopyalayıp sunucudaki AI_KEY değerini güncellemeli" + tail;
-    if (status === 403) return "Hostinger AI Router isteği reddetti (403). Olası nedenler: AI Router kredi bakiyesi bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. hPanel › AI Router'dan bakiye ve modelleri kontrol edin" + tail;
-    if (status === 404) return "“" + rt.model + "” modeli AI Router'da bulunamadı (404). Yönetici AI_MODELS listesini doğru model adlarıyla güncellemeli" + tail;
-    if (status === 402 || /insufficient_quota|insufficient credits/i.test(String(t))) return "Gitmapp'in yapay zekâ sağlayıcısındaki (Hostinger AI Router) bakiye bitti (402). Bu senin Gitmapp kredinle ilgili değil; kredin düşmedi. Yönetici hPanel › AI Router'dan bakiye yüklemeli. Bu arada Hesabım'dan kendi API anahtarını bağlayarak devam edebilirsin";
+    if (status === 401) return "Gitmapp yapay zekâ anahtarı geçersiz (401, " + primaryName() + "). Yönetici, Yönetim › Yapay zekâ sayfasından ana anahtarı güncellemeli" + tail;
+    if (status === 403) return primaryName() + " isteği reddetti (403). Olası nedenler: bakiye bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. Sağlayıcı panelinden bakiye ve modelleri kontrol edin" + tail;
+    if (status === 404) return "“" + rt.model + "” modeli " + primaryName() + " sağlayıcısında bulunamadı (404). Yönetici AI_MODELS listesini doğru model adlarıyla güncellemeli" + tail;
+    if (status === 402 || /insufficient_quota|insufficient credits|afford/i.test(String(t))) { const tried = (rt.tried || []).map((x) => x.p + (x.status ? " (" + x.status + ")" : " (atlandı)")).join(" → ");
+      return `Gitmapp'in yapay zekâ sağlayıcısında (${primaryName()}) bakiye yetmedi (402)${/afford|fewer max_tokens/i.test(String(t)) ? "; bu kadar uzun yanıt için bakiye az" : ""}. Bu senin Gitmapp kredinle ilgili değil; kredin düşmedi.${tried ? " Denenenler: " + tried + "." : ""} Yönetici ${primaryName() === "OpenRouter" ? "openrouter.ai › Credits" : "sağlayıcı panelinden"} bakiye yüklemeli ya da Yönetim › Yapay zekâ'dan çalışan bir yedek anahtar eklemeli. Bu arada Hesabım'dan kendi API anahtarını bağlayarak devam edebilirsin`; }
     if (status === 429) return "Yapay zekâ şu an yoğun ya da kota doldu (429), biraz sonra tekrar deneyin" + tail;
   }
   if (status === 402 || /insufficient_quota|insufficient credits/i.test(String(t))) return "Bağladığın API anahtarının sağlayıcı bakiyesi bitti (402). Sağlayıcının panelinden bakiye yükle ya da Gitmapp kredisiyle devam etmek için anahtarı kaldır";
@@ -785,7 +799,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.44.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.45.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {

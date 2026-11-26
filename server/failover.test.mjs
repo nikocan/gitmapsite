@@ -55,7 +55,7 @@ test("yedek tanımlı değilse birincilin anlaşılır hatası döner", async (t
   const r = await fetch("http://127.0.0.1:" + api.port + "/api/ai/copilot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: "merhaba" }] }) });
   const j = await r.json();
   assert.notEqual(r.status, 200);
-  assert.match(j.error, /bakiye bitti \(402\)/);
+  assert.match(j.error, /bakiye yetmedi \(402\)/);
 });
 
 test("çok modelli ana sağlayıcıda kullanıcıya yalnızca seçilen modeller gösterilir, Hostinger adları eşlenir", async (t) => {
@@ -87,4 +87,23 @@ test("tarayıcıda kalmış eski model adı (ör. claude-sonnet-4.5) hata vermez
   const j = await r.json();
   assert.equal(r.status, 200, JSON.stringify(j));
   assert.equal(seen.at(-1), "anthropic/claude-sonnet-5.5");
+});
+
+test("OpenRouter 'can only afford' 402: aynı sağlayıcıda karşılanabilen uzunlukla tekrar denenir; olmazsa hata gerçek sağlayıcıyı ve denenenleri söyler", async (t) => {
+  const seen = [];
+  const primary = await fake((url, body) => { if (body) seen.push(body.max_tokens); return url.endsWith("/models") ? [200, { data: [{ id: "anthropic/claude-sonnet-5.5" }] }] : body.max_tokens > 2000 ? [402, { error: { message: "This request requires more credits, or fewer max_tokens. You requested up to 2200 tokens, but can only afford 2000." } }] : [200, { choices: [{ message: { content: JSON.stringify({ baslik: "a", metinler: { x: "kısa" } }) } }], usage: { total_tokens: 5 } }]; });
+  const dead = await fake((url) => url.endsWith("/models") ? [200, { data: [{ id: "anthropic/claude-sonnet-5.5" }] }] : [402, { error: { message: "insufficient credits" } }]);
+  t.after(() => { primary.close(); dead.close(); });
+  const api = await start(t, { AI_BASE: primary.base, AI_KEY: "k", AI_MODELS: "", AI_MODEL: "anthropic/claude-sonnet-5.5", COPILOT_MODEL: "anthropic/claude-sonnet-5.5" });
+  const reg = async (e) => (await (await fetch("http://127.0.0.1:" + api.port + "/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: e, password: "sifre-12345", name: "M" }) })).json()).token;
+  const tok = await reg("a@example.test");
+  const r = await fetch("http://127.0.0.1:" + api.port + "/api/creator/compose", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok }, body: JSON.stringify({ topic: "kahve tanıtımı", platforms: ["x"] }) });
+  assert.equal(r.status, 200, JSON.stringify(await r.clone().json()));
+  assert.deepEqual(seen.filter(Boolean).slice(-2), [2200, 1800]);
+  const api2 = await start(t, { AI_BASE: dead.base, AI_KEY: "k", AI_MODELS: "", AI_MODEL: "anthropic/claude-sonnet-5.5", OPENROUTER_API_KEY: "k2", AI_FALLBACKS: "openrouter", TEST_PROVIDER_BASE: dead.base, ANTHROPIC_API_KEY: "", OPENAI_API_KEY: "", GEMINI_API_KEY: "", DEEPSEEK_API_KEY: "", HOSTINGER_AI_KEY: "" });
+  const tok2 = (await (await fetch("http://127.0.0.1:" + api2.port + "/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "b@example.test", password: "sifre-12345", name: "B" }) })).json()).token;
+  const j = await (await fetch("http://127.0.0.1:" + api2.port + "/api/ai/plan", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok2 }, body: JSON.stringify({ prompt: "takvim" }) })).json();
+  assert.match(j.error, /bakiye yetmedi \(402\)/);
+  assert.match(j.error, /Denenenler: .*OpenRouter \(402\)/);
+  assert.doesNotMatch(j.error, /Hostinger AI Router\) bakiye/);
 });

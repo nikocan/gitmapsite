@@ -2048,8 +2048,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.44.0";
+const VERSION="5.45.0";
 const CHANGELOG=[
+ {v:"5.45.0",date:"2026-11-26",items:[
+  "🩹 “Hostinger AI Router bakiye bitti (402)” mesajı yanlış sağlayıcıyı gösteriyordu: ana sağlayıcı OpenRouter olsa da Hostinger yazıyordu. Artık hatayı veren gerçek sağlayıcının adı ve denenen tüm yedekler (ör. “OpenRouter (402) → Hostinger AI Router (402)”) yazıyor",
+  "💸 OpenRouter bakiyesi uzun yanıtı karşılamadığında (“can only afford N tokens”) istek reddedilmiyor; bakiyenin yettiği uzunlukla aynı sağlayıcıda kendiliğinden tekrar deneniyor",
+  "🧯 Bakiyesi biten ya da anahtarı geçersiz yedek sağlayıcı 10 dakika atlanıyor; her istekte boşuna beklenmiyor",
+  "🧭 Üretilen sitelerde üst menü düzeni: logo, menü bağlantıları ve düğme metinleri artık iki satıra bölünmüyor (“Teklif / al” gibi); menü sığmazsa ☰ menüsüne geçiyor"
+ ]},
  {v:"5.44.0",date:"2026-11-26",items:[
   "🧭 Pilot: Stüdyo'da çıktı bitince sağ üst köşeye süzülerek yerleşen cam, ince neon çerçeveli mini GitHub paneli. Şu an hangi dalda çalışıldığını, kaydedilmemiş +/− satırları ve dalın durumunu gösteriyor",
   "🌿 Tüm dallar kart olarak: Başladı (mavi), Devam ediyor (sarı), Tamamlandı (yeşil), Hata (kırmızı). Çalışılan dalın durumu üretim, hata ve kaydedilmemiş değişikliklere göre kendiliğinden güncelleniyor; etikete tıklayarak elle de değiştirebilirsin",
