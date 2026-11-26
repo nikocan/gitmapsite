@@ -2105,6 +2105,13 @@ button.adp-mini{color:inherit;text-align:left}
 .su-tx small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:62px;font-size:10px;letter-spacing:.03em}
 .su-side{position:absolute;top:7px;right:8px;flex-direction:row;padding:0;gap:5px;align-items:center}.su-side .su-help{width:18px;height:18px}.su-side .su-help .brand{width:13px;height:13px}.su-side .su-sw span{display:none}
 .su-tx b{font-size:13.5px}.su-g{gap:6px}
+
+/* v5.52 Benim için yap rehber çubuğu */
+#ghbar{position:fixed;left:50%;bottom:22px;z-index:96;display:flex;align-items:center;gap:10px;padding:9px 10px 9px 14px;border-radius:99px;background:rgba(22,22,24,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid #ffffff1a;box-shadow:0 18px 40px -16px #000c;color:#ecebe6;font-size:13px;transform:translate(-50%,24px);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.2,.9,.2,1),opacity .25s;max-width:calc(100vw - 24px)}
+#ghbar.on{transform:translate(-50%,0);opacity:1;pointer-events:auto}#ghbar b{font-weight:600;white-space:nowrap}.ghb-dot{width:8px;height:8px;border-radius:50%;background:#e4ff3d;box-shadow:0 0 8px #e4ff3d;animation:kokP 1.2s infinite}
+.ghb-t{min-width:0;color:#c9c8c2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px}.ghb-p{display:flex;gap:4px}.ghb-p i{width:16px;height:4px;border-radius:4px;background:#ffffff1f;transition:background .3s}.ghb-p i.d{background:#e4ff3d88}.ghb-p i.a{background:#e4ff3d}
+.ghb-x{height:26px;padding:0 10px;border-radius:99px;border:1px solid #ffffff22;background:transparent;color:#ecebe6;font-size:12px;cursor:pointer}.ghb-x:hover{background:#ffffff12}
+@media(max-width:560px){#ghbar b{display:none}.ghb-t{max-width:160px}}
 /* v5.52 — sade Stüdyo açılışı */
 .hero.studio-start.sx{position:relative;max-width:780px;margin:0 auto;padding:0 0 64px;text-align:center}
 .sx-glow{position:fixed;left:50%;bottom:-38vh;width:min(1100px,120vw);height:70vh;transform:translateX(-50%);pointer-events:none;z-index:-1;opacity:.5;filter:blur(70px);
@@ -2191,8 +2198,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.55.0";
+const VERSION="5.56.0";
 const CHANGELOG=[
+ {v:"5.56.0",date:"2026-11-26",items:[
+  "🔌 “Stüdyo sunucusuna ulaşılamadı” sonrası uygulama artık takılı kalmıyor: bağlantı koparsa kendiliğinden artan aralıklarla (1,5 sn → 30 sn) yeniden bağlanıyor; ağ geri gelince ya da pencereye dönünce hemen deniyor",
+  "📨 Bağlantı beklerken gönderilen istek kaybolmuyor: yazı alanında kalıyor, “bağlanınca başlatacağım” deniyor ve bağlantı gelir gelmez üretim kendiliğinden başlıyor",
+  "⚡ Benim için yap daha hızlı ve anlaşılır: altta adım adım ilerleyen rehber çubuğu (Proje türü → Fikir seçildi → Komut yazıldı → Üretim başlatılıyor), ilerleme çizgileri ve “Durdur” düğmesi; imleç hareketleri yaklaşık %40 hızlandı",
+  "🤝 Benim için yap bağlantı yokken de çalışıyor: fikri yazı alanına yazıp bağlantı gelince başlatıyor",
+  "🩹 Asistan rehberinde “Bununla başlat” çalışmıyordu (ilk adımda sessizce duruyordu): düzeltildi; komut yazı alanına konup üretim hemen başlıyor. Bir sorun olursa rehberde nedeni yazıyor",
+  "🧷 Bağlantı gelince Stüdyo yeniden kurulsa bile bekleyen istek kaybolmuyor ve kendiliğinden başlıyor"
+ ]},
  {v:"5.55.0",date:"2026-11-26",items:[
   "🧪 Uçtan uca test: test kullanıcısı (test@gitmapp.test) ve yönetici hesabıyla 60 kontrol çalıştırıldı, hepsi geçti — kayıt/giriş, yanlış şifre, yetki sınırları, kredi yükleme, uygulama üretimi, proje kaydı, misafir/müşteri/yönetici sayfalarının tamamı (38 sayfa), mobil görünüm ve Stüdyo akışı (istem → üretim → önizleme → kaydet)",
   "🩹 Test sırasında bulunan hata düzeltildi: açık projede “Çalışma modu” ve “Dil modeli” menüleri sağa taşıp kırpılıyordu, seçenekler tıklanamıyordu; menüler artık düğmenin sağına hizalı açılıyor",
@@ -5632,7 +5647,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    if(it.k==="approve"){setInput("");if(plan)return approvePlan();if(todo&&todo.awaiting){setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text}]}));return runTodos()}}
    if(it.k==="ask"){window.__cpPending={text,att:atts.map(a=>({id:a.id,kind:"img",name:a.name,thumb:a.thumb,data:a.small}))};setInput("");setAtts([]);dispatchEvent(new Event("gm:cp-open"));setTimeout(()=>dispatchEvent(new Event("gm:cp-pending")),400);toast("Bu bir soru · Asistan yanıtlıyor, kredi harcanmaz");return}
    if(it.k==="chat"&&!atts.length){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
-  if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}
+  if(!API_ON){window.__gmPendingGen=text;setInput(text);dispatchEvent(new Event("gm:api-retry"));toast("Sunucuya yeniden bağlanıyorum · bağlanınca isteğin kendiliğinden başlayacak");return}
   if(!escOk.current&&!prefs.autoModel&&prefs.provider==="gitmapp"&&weakModel(curModel,curInfo)&&(!st.html||prefs.mode==="ajan"||text.length>140)){const best=pickModel(md.platform,"guclu");if(best&&best.id!==curModel){setEsc({text,best:best.id,credits:best.credits});return}}
   escOk.current=false;setEsc(null);
   setInput("");track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode,images:atts.length}});
@@ -5707,11 +5722,14 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const t0=Date.now();setTimeout(()=>{const g=window.__gmStudio||{};if(ran&&(g.calisiyor||g.acikUygulama))return;const lt=window.__gmLastToast;
    sincap("nostart",/hesabim/.test(location.hash)?"Kredin yetmediği için başlayamadım. Hesabım'dan kredi ekleyebilirsin; bu arada fikrini konuşarak netleştirelim, komutu ben hazır edeyim.":lt&&lt.t>=t0&&lt.m?"Hmm, hiçbir şey başlamadı: “"+lt.m.replace(/[.!]+$/,"")+"”. Merak etme, birlikte çözelim. Ne yapmak istediğini bana anlatır mısın?":"")},ran?1800:0)}
  async function doForMe0(kind){const k=kind||prefsRef.current.kind;
-  if(st.html){const chips=[...document.querySelectorAll(".sugg .chip:not(.gm)")];const el=chips[Math.floor(Math.random()*chips.length)];return el?await ghostRun([{el,slow:true,fn:()=>el.click()}]):0}
-  if(input.trim()){return await ghostRun([{el:".gsend",slow:true,fn:()=>gen()}])}
+  if(st.html){const chips=[...document.querySelectorAll(".sugg .chip:not(.gm)")];const el=chips[Math.floor(Math.random()*chips.length)];return el?await ghostRun([{el,t:"Öneri uygulanıyor: "+(el.textContent||"").trim().slice(0,40),fn:()=>el.click()}]):0}
+  if(!API_ON){dispatchEvent(new Event("gm:api-retry"));toast("Sunucuya bağlanıyorum · bağlanınca başlatacağım");window.__gmPendingGen=input.trim()||null;if(!input.trim()){const o=TEMPLATES.filter(t=>(t[3]||"app")===k);const t=o[Math.floor(Math.random()*o.length)];if(t){typeInto(t[2]);window.__gmPendingGen=t[2]}}return 1}
+  if(input.trim()){return await ghostRun([{el:".gsend",t:"Yazdığın komutla üretim başlatılıyor",fn:()=>gen()}])}
   const opts=TEMPLATES.map((t,i)=>[t,i]).filter(([t])=>(t[3]||"app")===k);if(!opts.length)return 0;const [t,i]=opts[Math.floor(Math.random()*opts.length)];
-  return await ghostRun([{el:'.seg [data-k="'+k+'"]',fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.sx-idea[data-i="'+i+'"]',slow:true,fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",fn:()=>typeInto(t[2]),after:250},{el:".gsend",fn:()=>gen(t[2])}]);}
+  return await ghostRun([{el:'.seg [data-k="'+k+'"]',t:"Proje türü: "+(CX_KIND[k]||k),fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.sx-idea[data-i="'+i+'"]',t:"Fikir seçildi: "+t[1],fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",t:"Komut yazıldı · istersen sonra düzenleyebilirsin",fn:()=>typeInto(t[2]),after:200},{el:".gsend",t:"Üretim başlatılıyor",fn:()=>gen(t[2])}]);}
  const seedActions=useRef(null);seedActions.current={gen,doForMe};
+ // bağlantı gelince (ya da Stüdyo bağlantı sonrası yeniden kurulunca) bekleyen isteği başlat
+ useEffect(()=>{let tm;const h=()=>{if(!API_ON||!window.__gmPendingGen)return;clearTimeout(tm);tm=setTimeout(()=>{const t=window.__gmPendingGen;if(!t||!API_ON)return;window.__gmPendingGen=null;toast("Bağlantı geri geldi · isteğin başlatılıyor");seedActions.current.gen(t)},700)};h();addEventListener("gm:api-on",h);return()=>{clearTimeout(tm);removeEventListener("gm:api-on",h)}},[]);
  useEffect(()=>{if(!seed)return;const sd=seed;clearSeed&&clearSeed();
   if(sd.templateRequest){
    if(!st.html)return;
@@ -6119,7 +6137,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     <button type="button" class="sx-act" title="Tasarım teması" onClick=${()=>setGallery(true)}><${Swatches} t=${effTheme} s=${8}/> ${prefs.theme==="auto"?"Otomatik tasarım":effTheme.name}</button>
    </div>
    ${input.trim().length>8&&html`<${DesignStrip} compact custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>`}
-   ${!API_ON&&html`<div class="sx-status" role="status">${healthError?html`<span>Stüdyo sunucusuna ulaşılamadı.</span> <button type="button" onClick=${retry}>Tekrar dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
+   ${!API_ON&&html`<div class="sx-status" role="status">${healthError?html`<span class="ccspin"></span> <span>Sunucuya yeniden bağlanılıyor; yazmaya devam edebilirsin, bağlanınca gönderdiğin istek kendiliğinden başlar.</span> <button type="button" onClick=${retry}>Şimdi dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
   </section>
   <section class="sx-ideas" aria-labelledby="sx-ideas-h">
    <div class="sx-ideas-h"><h2 id="sx-ideas-h">Bir fikirle başla</h2><span>Seç, düzenle, gönder</span></div>
@@ -6332,15 +6350,20 @@ function IconPick({emoji,color,set}){const [o,setO]=useState(false);useEffect(()
 
 // ---------- Hayalet imleç: "Benim için yap" ----------
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-async function ghostRun(steps){
- if(!GS.ghost){let ran=0;for(const st of steps){const el=typeof st.el==="string"?document.querySelector(st.el):st.el;if(!el)continue;ran++;if(st.fn)await st.fn(el);await wait(st.after||60)}return ran}
+// Benim için yap: adımları gösteren rehber çubuğu (adım n/N, ne yapılıyor, durdur)
+function ghostBar(steps){let b=document.getElementById("ghbar");if(!b){b=document.createElement("div");b.id="ghbar";b.setAttribute("role","status");document.body.appendChild(b)}
+ b.innerHTML='<span class="ghb-dot"></span><b>Benim için yap</b><span class="ghb-t"></span><span class="ghb-p"></span><button type="button" class="ghb-x">Durdur</button>';b.querySelector(".ghb-x").onclick=()=>{window.__ghostStop=true;b.classList.remove("on")};b.classList.add("on");
+ return {set:(i,t)=>{b.querySelector(".ghb-t").textContent=t||"";b.querySelector(".ghb-p").innerHTML=steps.map((_,k)=>'<i class="'+(k<i?"d":k===i?"a":"")+'"></i>').join("")},done:()=>{setTimeout(()=>b.classList.remove("on"),900)}}}
+async function ghostRun(steps){window.__ghostStop=false;const bar=steps.some(s=>s.t)?ghostBar(steps):null;try{return await ghostRun0(steps,bar)}finally{bar&&bar.done()}}
+async function ghostRun0(steps,bar){
+ if(!GS.ghost){let ran=0,i=0;for(const st of steps){if(window.__ghostStop)break;const el=typeof st.el==="string"?document.querySelector(st.el):st.el;bar&&bar.set(i++,st.t);if(!el)continue;ran++;if(st.fn)await st.fn(el);await wait(st.after||(bar?260:60))}return ran}
  let c=document.getElementById("ghost");
  if(!c){c=document.createElement("div");c.id="ghost";c.innerHTML='<svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 3l7 18 2.5-7.5L21 11z" fill="#fff" stroke="#0f0f0e" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="gh-ring"></span><span class="gh-tag">Gitmapp</span>';document.body.appendChild(c);c.style.transform="translate("+(innerWidth*.6)+"px,"+(innerHeight*.8)+"px)"}
  c.classList.add("on");await wait(60);let ran=0;
- for(const st of steps){const el=typeof st.el==="string"?document.querySelector(st.el):st.el;if(!el)continue;ran++;
-  el.scrollIntoView({block:"center",inline:"nearest",behavior:"smooth"});await wait(380);const r=el.getBoundingClientRect();
-  c.style.transform="translate("+(r.left+Math.min(r.width*.5,r.width-14))+"px,"+(r.top+r.height*.55)+"px)";await wait(st.slow?950:720);
-  c.classList.add("click");el.classList.add("gh-hit");await wait(200);c.classList.remove("click");setTimeout(()=>el.classList.remove("gh-hit"),500);
+ let si=0;for(const st of steps){if(window.__ghostStop)break;const el=typeof st.el==="string"?document.querySelector(st.el):st.el;bar&&bar.set(si++,st.t);if(!el)continue;ran++;
+  el.scrollIntoView({block:"center",inline:"nearest",behavior:"smooth"});await wait(220);const r=el.getBoundingClientRect();
+  c.style.transform="translate("+(r.left+Math.min(r.width*.5,r.width-14))+"px,"+(r.top+r.height*.55)+"px)";await wait(st.slow?620:440);
+  c.classList.add("click");el.classList.add("gh-hit");await wait(150);c.classList.remove("click");setTimeout(()=>el.classList.remove("gh-hit"),450);
   if(st.fn){const pr=st.fn(el);if(pr&&pr.then)await Promise.race([pr,wait(1500)])}await wait(st.after||120)}
  await wait(400);c.classList.remove("on");return ran;
 }
@@ -7900,7 +7923,7 @@ function SquirrelGuide({run,toast}){
   upd();const i=setInterval(upd,350);addEventListener("resize",upd);addEventListener("scroll",upd,true);return()=>{clearInterval(i);removeEventListener("resize",upd);removeEventListener("scroll",upd,true);clearTimeout(tm)}},[perch]);
  async function useCmd(start){if(!res||!res.komut)return;const steps=[{t:"tur",deger:res.tur||"app"},{t:"prompt",metin:res.komut}];if(start)steps.push({t:"yap"});
   setPhase("fly");stopL();VOX.stop();
-  try{if(!start){await fly()}for(const a of steps)await run(a);if(start)close()}catch(e){toast(e.message||"Yapılamadı")}}
+  try{if(!start){await fly()}for(const a of steps)await run(a,()=>true);if(start)close()}catch(e){setPhase("talk");setMsgs(m=>[...m,{role:"assistant",content:"Başlatamadım: "+(e.message||"bilinmeyen hata")+". Komutu yazı alanına koyup kendin gönderebilirsin.",err:true}]);toast(e.message||"Yapılamadı")}}
  if(!open)return null;
  if(phase==="perch"&&pos)return html`<div class="sq-ripple" style=${{left:pos.l-4,top:pos.t-4,width:pos.w+8,height:pos.h+8}} aria-hidden="true"></div>
   <div class=${"sq-perch "+pos.side} style=${{left:pos.x,top:pos.y}}><div class="sq-pb">${note?html`<${SqHL} text=${note} words=${sqWords(note)}/>`:"Seni bekliyorum ✍️"}</div><button class="sq-px" title="Asistanı kapat" onClick=${close}><${Icon} n="x" s=${11}/></button><${AsstOrb} s=${48} state=${note?"listen":""}/></div>`;
@@ -7961,12 +7984,15 @@ function App(){
  const setView=v=>{if(!canLeaveStudio(v))return;if(ADMIN.includes(v))setMode("admin");else if(CUST.includes(v))setMode("musteri");setViewS(v);try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}if(v==="guncel")LS.set("seenVer",VERSION);window.scrollTo(0,0)};
  const [health,setHealth]=useState({}),[apiOn,setApiOn]=useState(false),[healthError,setHealthError]=useState(false),[attempt,retry]=useState(0);
  const [,setSettingsVersion]=useState(0);
+ // bağlantı koparsa: ağ geri gelince, pencereye dönünce ya da bir iş bağlantı beklerken hemen yeniden dene
+ useEffect(()=>{const kick=()=>{if(!API_ON)retry(x=>x+1)};addEventListener("online",kick);addEventListener("focus",kick);addEventListener("gm:api-retry",kick);return()=>{removeEventListener("online",kick);removeEventListener("focus",kick);removeEventListener("gm:api-retry",kick)}},[]);
  const [msg,setMsg]=useState("");const toast=m=>{window.__gmToast=toast;window.__gmLastToast={m:String(m||""),t:Date.now()};setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
  useEffect(()=>{
   let current=true;setHealthError(false);const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),10000);
-  api("GET","/api/health",undefined,controller.signal).then(j=>{if(!j.ok)throw new Error();if(current){API_ON=true;window.__gmHealth=j;setHealth(j);setApiOn(true)}})
-   .catch(()=>{if(current){API_ON=false;setApiOn(false);setHealthError(true)}}).finally(()=>clearTimeout(timer));
-  return ()=>{current=false;clearTimeout(timer);controller.abort()};
+  let again=null;
+  api("GET","/api/health",undefined,controller.signal).then(j=>{if(!j.ok)throw new Error();if(current){API_ON=true;window.__gmHealth=j;window.__gmFails=0;setHealth(j);setApiOn(true);dispatchEvent(new Event("gm:api-on"))}})
+   .catch(()=>{if(current){API_ON=false;setApiOn(false);setHealthError(true);const n=(window.__gmFails=(window.__gmFails||0)+1);again=setTimeout(()=>retry(x=>x+1),Math.min(30000,1500*2**Math.min(n,5)))}}).finally(()=>clearTimeout(timer));
+  return ()=>{current=false;clearTimeout(timer);clearTimeout(again);controller.abort()};
  },[attempt]);
  // v5.15 — Sunucuda daha yeni bir sürüm varsa (önbellekte eski sayfa kaldıysa) bunu fark et ve yenilemeyi öner
  const [newBuild,setNewBuild]=useState(null);
@@ -8109,8 +8135,8 @@ function App(){
  const NAV=mode==="admin"&&isAdm?NAVA:NAVC;
  // Asistanın eylemlerini uygula
  const viewRef=useRef(view);viewRef.current=view;
- const cpStudio=(a,active)=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>active()?window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done,active}})):done();if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
- const cpRun=async (a,active)=>{
+ const cpStudio=(a,active=()=>true)=>new Promise(res=>{let ok=false;const done=()=>{if(!ok){ok=true;res()}};const fire=()=>active()?window.dispatchEvent(new CustomEvent("gm:act",{detail:{a,done,active}})):done();if(viewRef.current!=="studio"){navGo("studio");setTimeout(fire,600)}else fire();setTimeout(done,a.t==="yap"||a.t==="kontrol"?600000:20000)});
+ const cpRun=async (a,active=()=>true)=>{
   if(["tur","tema","mod","prompt","yap","sablon"].includes(a.t)&&(window.__gmStudio||{}).calisiyor){toast("Stüdyo'da süren iş bitince bu adım uygulanacak");const t0=Date.now();while((window.__gmStudio||{}).calisiyor&&Date.now()-t0<600000)await wait(800);await wait(400)}
   if(!active())return;
   if(a.t==="baglan"){const c=CONN.find(x=>x.id===a.id&&!x.soon);if(!c)throw new Error("Bu bağlantı bulunamadı");const v=a.alanlar&&typeof a.alanlar==="object"?a.alanlar:{};const cfg={};for(const [k] of c.f){if(v[k]!=null)cfg[k]=String(v[k]).slice(0,300)}const miss=c.f.filter(([k])=>!cfg[k]);if(miss.length&&!a.kapat){navGo("baglantilar");throw new Error(c.n+" için şu bilgi gerekli: "+miss.map(x=>x[1]).join(", "))}const st0=connState();const n={...st0,[c.id]:a.kapat?{...(st0[c.id]||{}),on:false}:{on:true,cfg}};LS.set("conns",n);dispatchEvent(new Event("gm:conns"));toast(c.n+(a.kapat?" kapatıldı":" bağlandı"));return wait(200)}
