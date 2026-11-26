@@ -1,8 +1,8 @@
 # Uçtan uca test raporu
 
-2026-11-26 18:44 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
+2026-11-26 19:07 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
 
-**60 / 60 kontrol geçti.**
+**68 / 68 kontrol geçti.**
 
 | Alan | Kontrol | Sonuç | Not |
 |---|---|---|---|
@@ -45,6 +45,7 @@
 | Stüdyo | [Çalışma modu değiştirilebiliyor](screens/e2e/studio-mod-menusu.png) | ✅ | Planlı |
 | Stüdyo | Tab tamamlama önerisi | ✅ | “Ren” → “Renkleri daha modern ve uyumlu yap” |
 | Hesap | Arayüzden yönetici girişi (#yonetim) | ✅ |  |
+| Yönetici | [#odemeler](screens/e2e/y-netici-odemeler.png) | ✅ |  |
 | Yönetici | [#yonetim](screens/e2e/y-netici-yonetim.png) | ✅ |  |
 | Yönetici | [#yapay-zeka](screens/e2e/y-netici-yapay-zeka.png) | ✅ |  |
 | Yönetici | [#eposta](screens/e2e/y-netici-eposta.png) | ✅ |  |
@@ -61,6 +62,13 @@
 | Yönetici | [#liste](screens/e2e/y-netici-liste.png) | ✅ |  |
 | Yönetici | [#kuyruk](screens/e2e/y-netici-kuyruk.png) | ✅ |  |
 | Yönetici | [#ayar](screens/e2e/y-netici-ayar.png) | ✅ |  |
+| Ödeme | Yönetici IBAN ve Stripe anahtarlarını panelden kaydetti | ✅ | TR33 0006 1005 1978 6457 8413 26 · Stripe test |
+| Ödeme | [Kredi ve ödemeler sayfası](screens/e2e/odeme-yonetici.png) | ✅ |  |
+| Ödeme | [Kredi yükle penceresi paketleri gösteriyor](screens/e2e/odeme-paketler.png) | ✅ |  |
+| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMXXCW9Q6255 |
+| Ödeme | Yönetici havaleyi onayladı, 330 kredi yüklendi | ✅ | 66 → 396 |
+| Ödeme | [Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi](screens/e2e/odeme-kart-sonuc.png) | ✅ | 396 → 496 |
+| Ödeme | [Hesabım › Ödemelerim geçmişi](screens/e2e/odeme-gecmis.png) | ✅ | 2 ödeme |
 | Mobil | [#ana](screens/e2e/mobil-ana.png) | ✅ |  |
 | Mobil | [#studio](screens/e2e/mobil-studio.png) | ✅ |  |
 | Mobil | [#uygulamalarim](screens/e2e/mobil-uygulamalarim.png) | ✅ |  |

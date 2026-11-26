@@ -25,6 +25,14 @@ Gitmapp sekmesi geçmişi proje sahibinin hesabında, SQLite üzerinde tutar. Gi
 
 Bir dalı Gitmapp projesinde kullanmak için **Çalışmayı proje taslağına aktar** seçeneğini kullanıp projeyi kaydedin. Yayın işlemini Stüdyo’nun **Yayınla** düğmesinden başlatabilirsiniz. Sürüm kontrolü testleri Node.js üzerinde `node --test server/version-control.test.mjs` komutuyla çalışır.
 
+## Kredi ve ödemeler
+
+Kullanıcılar **Kredi yükle** penceresinden paket seçer, kartla (Stripe Checkout) ya da Havale/EFT ile öder. Yönetim → **Kredi ve ödemeler** sayfası gelirleri, bekleyen ödemeleri, havale onayını, iptali ve iadeyi; paket fiyatlarını, hoş geldin kredisini, davet bonusunu ve işlem başı krediyi yönetir.
+
+Stripe kurulumu: dashboard.stripe.com › Developers › API keys sayfasındaki **Secret key**'i panele girin. Webhooks › Add endpoint adresi `https://api.gitmapp.com/api/payments/stripe/webhook`, olaylar `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`. Webhook'un **Signing secret** değerini (`whsec_…`) panele girin. Anahtarlar sunucuda şifreli saklanır; isterseniz `STRIPE_SECRET_KEY` ve `STRIPE_WEBHOOK_SECRET` ortam değişkenleri paneldeki değerin önüne geçer. Webhook gelmese de ödeme, kullanıcı Stripe'tan döndüğünde doğrulanır. Bir ödeme yalnızca bir kez krediye dönüşür.
+
+Testler: `node --test server/payments.test.mjs` (sahte Stripe ile) ve uçtan uca `node tools/acceptance/e2e.mjs`.
+
 ## Yapay zekâ sağlayıcıları ve maliyet
 
 Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Router) üzerinden yapılır. `AI_BASE` OpenAI uyumlu herhangi bir uç nokta olabilir; örneğin doğrudan OpenRouter için `AI_BASE=https://openrouter.ai/api/v1`, `AI_KEY=sk-or-…` ve `AI_MODELS` içinde OpenRouter model adları (`anthropic/claude-sonnet-4.5,openai/gpt-5.2`).
