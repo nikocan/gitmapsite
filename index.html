@@ -1642,6 +1642,26 @@ button.adp-mini{color:inherit;text-align:left}
 .ai-models summary{cursor:pointer;font-size:12.5px;color:var(--mut);padding:4px 0}.ai-models div{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.ai-models button{border:1px solid var(--line);background:none;color:inherit;border-radius:7px;padding:3px 8px;font:12px ui-monospace,monospace;cursor:pointer}.ai-models button:hover{border-color:#d97757}
 .ai-prov{padding:12px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:8px}.ai-ph{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ai-ph a{font-size:12.5px;color:#f0b49d}.ai-prov>small{color:var(--mut)}
 .pill-ok{font-size:11.5px;padding:1px 8px;border-radius:99px;background:rgba(62,207,142,.14);color:#3ecf8e}.pill-no{font-size:11.5px;padding:1px 8px;border-radius:99px;background:rgba(245,165,36,.12);color:#f5a524}
+
+/* v5.38 — Radar (Claude Code tarzı kompakt panel) */
+.rdr-w{position:relative}.rdr-w .ib{position:relative}
+.rdr-badge{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:#d97757;color:#fff;font:600 10px/16px Inter,system-ui;font-style:normal;box-shadow:0 0 0 2px #121211}
+.ccpop.rdr{width:340px;padding:8px;border-radius:18px;background:#232322;border-color:#363633}
+.rdr-h{display:flex;align-items:center;gap:8px;padding:6px 10px 8px}.rdr-h b{font-size:14px;color:#f2f1ec;font-weight:500}.rdr-h small{margin-left:auto;color:#8a8882;font-size:12px}
+.rdr-dot{position:relative;width:9px;height:9px;border-radius:50%;background:#3ecf8e;flex:none}.rdr-dot::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1.5px solid #3ecf8e;opacity:0;animation:rdrPing 2s ease-out infinite}
+@keyframes rdrPing{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.rdr-list{display:flex;flex-direction:column;gap:2px}
+.rdr-i{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;border-radius:11px;border-left:2px solid transparent;animation:attIn .25s ease-out}
+.rdr-i>svg{flex:none;color:#a3a19a}.rdr-i span{flex:1;min-width:0;display:flex;flex-direction:column}.rdr-i b{font-size:13.5px;font-weight:500;color:#ecebe6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rdr-i small{font-size:12px;color:#8a8882;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rdr-i.lv3{background:rgba(255,107,91,.07);border-left-color:#ff6b5b}.rdr-i.lv3>svg{color:#ff6b5b}
+.rdr-i.lv2{background:rgba(245,165,36,.06);border-left-color:#f5a524}.rdr-i.lv2>svg{color:#f5a524}
+.rdr-i.lv1>svg{color:#d97757}
+.rdr-go{flex:none;border:1px solid #3a3a37;background:#2b2b29;color:#f2f1ec;border-radius:8px;padding:4px 10px;font:inherit;font-size:12px;font-weight:500;cursor:pointer}.rdr-go:hover{border-color:#d97757;background:#31312e}
+.rdr-empty{margin:2px 10px 6px!important}
+.rdr-sec{display:flex;align-items:center;justify-content:space-between;padding:6px 10px 2px;font-size:14px;color:#c9c7c0}.rdr-plus{border:0;background:none;color:#8a8882;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;cursor:pointer}.rdr-plus:hover{background:#2f2f2d;color:#f2f1ec}
+.rdr-th{width:18px;height:18px;border-radius:4px;object-fit:cover;flex:none}.rdr-m{margin-left:auto;color:#77756f;font-size:11.5px;flex:none}
+.rdr-mute{color:#8a8882!important}.rdr-diff{font-style:normal;font-size:12px}.rdr-diff .a{color:#3ecf8e;font-style:normal}.rdr-diff .d{color:#ff6b5b;font-style:normal}
+.ccpop.rdr .ccpop-i>.sp-ok{margin-left:auto}
 </style>
 </head>
 <body>
@@ -1655,8 +1675,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.37.0";
+const VERSION="5.38.0";
 const CHANGELOG=[
+ {v:"5.38.0",date:"2026-11-26",items:[
+  "📡 Radar (Stüdyo üst çubuğundaki ☰): projeni sürekli tarıyor ve bulguları önem sırasıyla gösteriyor: önizlemedeki kod hataları (kırmızı), kaydedilmemiş ya da dala commit edilmemiş değişiklikler (turuncu), sıradaki aşama, tasarım uyarıları, küçük model seçimi, bağlanmamış GitHub ve yayına hazır olma. Her bulgunun yanında tek tıkla doğru yere götüren düğme var: Düzelt, Kaydet, Commit, Başlat, Otomatik seç, Bağla, Yayınla",
+  "🔴 Dikkat isteyen bulgu sayısı ☰ düğmesinin üstünde rozet olarak görünüyor; her şey yolundaysa radarda yeşil nabız atıyor",
+  "🗂️ Claude Code tarzı kompakt bölümler: Değişiklikler (proje · dal, +/− satır; tıklayınca dal menüsü), Çıktılar (index.html ve medya; ＋ ile yeni görsel/video üret), Kaynaklar (bağlı hesaplar ve bağlantılar; ＋ ile yönet). “Tümünü görüntüle” ayrıntılı oturum panelini açıyor"]},
  {v:"5.37.0",date:"2026-11-26",items:[
   "🧩 Adres–anahtar uyuşmazlığı kendiliğinden düzeliyor: ana anahtar OpenRouter'a aitse (sk-or-…) adres başka yeri gösterse bile OpenRouter kullanılıyor ve sayfada not çıkıyor. Önceden her istek önce Hostinger'dan 401 alıp sonra yedeğe geçiyor, boşuna gecikiyordu",
   "🧹 “Hostinger'ı kaldır”: tek tıkla Hostinger AI Router hem ana sağlayıcıdan hem yedek listesinden çıkıyor, ana sağlayıcı OpenRouter oluyor",
@@ -4779,6 +4803,43 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  </div>`};
  useEffect(()=>{if(!autoFix||busy||todo?.running||!qa||!st.html||qa.source!==st.html||!qa.errors.length||autoFixed.current===qa.len)return;autoFixed.current=qa.len;
   const t=setTimeout(()=>{toast("Önizlemede JavaScript hatası bulundu · otomatik düzeltiliyor");build("OTOMATİK HATA DÜZELTME — önizlemede şu JavaScript hataları oluştu, nedenini bulup düzelt:\n- "+qa.errors.join("\n- ")+"\n\nKurallar: başka hiçbir şeyi değiştirme; tasarım, içerik ve özellikler aynen kalsın.",null,"Otomatik düzeltme: "+qa.errors.length+" hata")},900);return()=>clearTimeout(t)},[qa,autoFix,busy,scope,st.html,todo?.running]);
+ // ---------- Radar: projeyi sürekli tarar, bulguları önem sırasıyla gösterir ve tek tıkla doğru yere yönlendirir ----------
+ const radarScan=()=>{const u=auth.user,html0=st.html||"",out=[];
+  const base=saved&&saved.appId===st.appId&&saved.html!=null?saved.html:versions[0]??"";const diff=lineStat(base,html0),dirty=(!!st.appId||versions.length>0)&&diff.add+diff.del>0;
+  const lastRep=st.msgs.findLast(m=>m.role==="assistant"&&m.content&&!m.err)?.content||"";
+  const ph=/Aşama:\s*(\d+)\s*\/\s*(\d+)/i.exec(lastRep);const nextPh=ph&&new RegExp("^[-•*]\\s*"+(+ph[1]+1)+"\\s*[:.)-]\\s*(.+)$","im").exec(lastRep);
+  const errs=qa&&qa.len===html0.length?qa.errors.length:0,issues=qa&&qa.len===html0.length?qa.issues.length:0;
+  if(busy||todo?.running)out.push({k:"run",lv:0,ic:"refresh",t:"Üretim sürüyor",d:clTime(secs)+" · istersen başka sayfaya geçebilirsin",a:null});
+  if(html0&&errs)out.push({k:"err",lv:3,ic:"alert",t:"Önizlemede "+errs+" kod hatası",d:"Sayfa düzgün çalışmayabilir",a:["Düzelt",()=>build("OTOMATİK HATA DÜZELTME — önizlemede şu JavaScript hataları oluştu, nedenini bulup düzelt:\n- "+qa.errors.join("\n- ")+"\n\nBaşka hiçbir şeyi değiştirme.",null,"Hata düzeltme: "+errs)]});
+  if(html0&&!st.appId)out.push({k:"save",lv:2,ic:"save",t:"Proje hesabına kaydedilmedi",d:"Cihaz değişirse kaybolabilir",a:["Kaydet",save]});
+  else if(dirty&&st.gitContext)out.push({k:"commit",lv:2,ic:"branch",t:diff.add+diff.del+" satır dalda bekliyor",d:"“"+st.gitContext.name+"” dalına commit edilmedi",a:["Commit",()=>setGitOpen(st.gitContext.source==="github"?"github":true)]});
+  else if(dirty)out.push({k:"dirty",lv:2,ic:"file",t:"+"+diff.add+" −"+diff.del+" kaydedilmedi",d:"Son kayıttan bu yana",a:["Kaydet",save]});
+  if(nextPh&&!busy)out.push({k:"phase",lv:1,ic:"layers",t:"Sıradaki aşama "+(+ph[1]+1)+"/"+ph[2],d:nextPh[1].slice(0,60),a:["Başlat",()=>genRef.current&&genRef.current((+ph[1]+1)+". aşamayı yap: "+nextPh[1]+". Önceki aşamaların tasarım dilini ve yapısını aynen koru.")]});
+  if(html0&&issues&&!errs)out.push({k:"qa",lv:1,ic:"eye",t:issues+" tasarım uyarısı",d:"Kontrast, taşma ya da boş alan",a:["İncele",()=>{setCode(false);chatRef.current?.querySelector(".dq-card")?.scrollIntoView({block:"center",behavior:"smooth"})}]});
+  if(prefs.provider==="gitmapp"&&!prefs.autoModel&&weakModel(curModel,curInfo))out.push({k:"model",lv:1,ic:"zap",t:"Küçük model seçili",d:shortModel(curModel)+" büyük işlerde hata yapabilir",a:["Otomatik seç",()=>{setPrefs(p=>({...p,autoModel:true}));toast("Model işe göre otomatik seçilecek")}]});
+  if(html0&&st.appId&&!dirty&&!busy)out.push({k:"pub",lv:0,ic:"rocket",t:"Yayına hazır",d:"Kendi adresinle canlıya al",a:["Yayınla",publish]});
+  if(u&&!u.github)out.push({k:"gh",lv:0,ic:"github",t:"GitHub bağlı değil",d:"Dal, commit ve PR için",a:["Bağla",async()=>{try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)}catch(e){toast(e.message)}}]});
+  if(!u)out.push({k:"login",lv:1,ic:"user",t:"Giriş yapılmadı",d:"Kayıt, dal ve yayın için hesap gerekir",a:["Giriş yap",()=>openAuth("")]});
+  return {items:out.sort((a,b)=>b.lv-a.lv),diff,dirty};
+ };
+ const radarPop=()=>{const R=radarScan(),u=auth.user,cl=()=>setCcMenu(null);
+  const outs=[...(st.html?[{ic:"codeXml",n:"index.html",d:((st.html.length/1024).toFixed(1))+" KB",go:()=>{cl();setCode(true);setCompare(false)}}]:[]),...tray.slice(0,3).map(m=>({img:m.thumb||m.url,n:m.name||"görsel",d:m.src,go:()=>{cl();setPlaceSel(m.id)}}))];
+  const srcs=[["github","GitHub",!!u?.github,html`<${Icon} n="github" s=${16}/>`],["google","Google",!!u?.google,html`<${BrandG} s=${16}/>`],["hostinger","Hostinger",!!u?.hostinger,html`<${BrandH} s=${16}/>`],["higgsfield","Higgsfield",!!u?.higgsfield,html`<${Icon} n="video" s=${16}/>`],["canva","Canva",!!u?.canva,html`<${Icon} n="palette" s=${16}/>`]];
+  const on=srcs.filter(x=>x[2]),conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);
+  return html`<${CcPop} close=${cl} cls="r dn rdr"><div class="rdr-h"><span class="rdr-dot"></span><b>Radar</b><small>${R.items.filter(i=>i.lv>=2).length?R.items.filter(i=>i.lv>=2).length+" dikkat":"her şey yolunda"}</small></div>
+   ${R.items.length?html`<div class="rdr-list">${R.items.slice(0,5).map(i=>html`<div class=${"rdr-i lv"+i.lv} key=${i.k}><${Icon} n=${i.ic} s=${15}/><span><b>${i.t}</b><small>${i.d}</small></span>${i.a&&html`<button type="button" class="rdr-go" onClick=${()=>{cl();i.a[1]()}}>${i.a[0]}</button>`}</div>`)}</div>`:html`<p class="rdr-empty">Bekleyen iş yok.</p>`}
+   <div class="ccpop-sep"></div>
+   <div class="rdr-sec"><span>Değişiklikler</span></div>
+   <button type="button" class="ccpop-i" onClick=${()=>setCcMenu("sp-br")}><${Icon} n="branch" s=${16}/><span>${(st.title||"Yeni proje")+" · "+(st.gitContext?.name||"main")}</span>${R.dirty?html`<em class="rdr-diff"><i class="a">+${R.diff.add}</i> <i class="d">−${R.diff.del}</i></em>`:""}</button>
+   <div class="ccpop-sep"></div>
+   <div class="rdr-sec"><span>Çıktılar</span><button type="button" class="rdr-plus" aria-label="Çıktı oluştur" title="Görsel ya da video üret" onClick=${()=>{cl();setMediaOpen(true)}}><${Icon} n="plus" s=${15}/></button></div>
+   ${outs.length?outs.map((o,k)=>html`<button type="button" key=${k} class="ccpop-i" onClick=${o.go}>${o.img?html`<img class="rdr-th" src=${o.img} alt=""/>`:html`<${Icon} n=${o.ic} s=${16}/>`}<span>${o.n}</span><small class="rdr-m">${o.d}</small></button>`):html`<button type="button" class="ccpop-i rdr-mute" onClick=${()=>{cl();setMediaOpen(true)}}><span>Çıktı oluştur</span></button>`}
+   <div class="ccpop-sep"></div>
+   <div class="rdr-sec"><span>Kaynaklar</span><button type="button" class="rdr-plus" aria-label="Kaynak ekle" title="Bağlantıları yönet" onClick=${()=>{cl();go&&go("baglantilar")}}><${Icon} n="plus" s=${15}/></button></div>
+   ${on.map(x=>html`<button type="button" key=${x[0]} class="ccpop-i" onClick=${()=>{cl();setSessOpen(true)}}>${x[3]}<span>${x[1]}</span><i class="sp-ok"></i></button>`)}
+   ${conns.slice(0,3).map(c=>html`<button type="button" key=${c.id} class="ccpop-i" onClick=${()=>{cl();go&&go("baglantilar")}}><${ConnIcon} c=${c} s=${16}/><span>${c.n}</span><i class="sp-ok"></i></button>`)}
+   <button type="button" class="ccpop-i rdr-mute" onClick=${()=>{cl();setSessOpen(true)}}><${Icon} n="layers" s=${16}/><span>Tümünü görüntüle</span></button>
+  <//>`};
  const sessPanel=()=>{
   const u=auth.user,html0=st.html||"";
   const base=saved&&saved.appId===st.appId&&saved.html!=null?saved.html:versions[0]??"";
@@ -4925,7 +4986,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    <button class="ib" disabled=${busy||todo?.running||saving} onClick=${reset} title="Yeni proje">${sure?html`<span style=${{fontSize:12,padding:"0 4px"}}>Emin misiniz?</span>`:html`<${Icon} n="plus" s=${17}/>`}</button>
    <button class="btn g s vc-trigger" disabled=${saving||!st.html} onClick=${()=>setGitOpen(true)} title="Sürüm kontrolü" aria-label="Sürüm kontrolü"><${Icon} n="branch" s=${16}/><span>${st.gitContext?.name||"Dallar"}</span></button>
    <span class="studio-save" role="status">${st.gitContext?(localOk?"Dal taslağı":"Cihaza kaydedilemedi"):saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${save} title=${st.gitContext?"Dala commit kaydet":"Kaydet"}><${Icon} n="save" s=${16}/></button>
-   <button class=${"ib"+(sessOpen?" on":"")} aria-pressed=${sessOpen} onClick=${()=>setSessOpen(!sessOpen)} title="Oturum paneli: ortam, bağlam, bağdaştırıcılar, çıktılar, değişiklikler"><${Icon} n="list" s=${16}/></button>
+   <span class="ccw rdr-w">${(()=>{const n=radarScan().items.filter(i=>i.lv>=2).length;return html`<button class=${"ib"+(ccMenu==="radar"||sessOpen?" on":"")} aria-haspopup="menu" aria-expanded=${ccMenu==="radar"} onClick=${()=>setCcMenu(m=>m==="radar"?null:"radar")} title="Radar: değişiklikler, çıktılar, kaynaklar ve bekleyen işler"><${Icon} n="list" s=${16}/>${n>0&&html`<i class="rdr-badge">${n}</i>`}</button>`})()}${ccMenu==="radar"&&radarPop()}${ccMenu==="sp-br"&&!sessOpen&&html`<${BranchMenu} appId=${st.appId} source=${vcSource} setSource=${setVcSource} active=${st.gitContext} content=${resolve(st.html)} auth=${auth} openAuth=${openAuth} toast=${toast} close=${()=>setCcMenu(null)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch} openPanel=${()=>{setCcMenu(null);setGitOpen(vcSource==="github"?"github":true)}}/>`}</span>
    <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
    <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
   <div class=${"ws-grid studio-grid"+(sessOpen?" sp-on":"")}>
