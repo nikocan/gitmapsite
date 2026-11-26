@@ -7,6 +7,7 @@ models = {
     "tiers": {"hizli": 1, "dengeli": 3, "guclu": 8},
     "byok": [],
     "platform": [
+        {"id": "claude-pro-test", "family": "claude", "tier": "guclu", "credits": 8},
         {"id": "gpt-test", "family": "gpt", "tier": "hizli", "credits": 1},
         {"id": "claude-sonnet-test", "family": "claude", "tier": "dengeli", "credits": 3},
     ],
@@ -45,6 +46,18 @@ with sync_playwright() as runtime:
         if width == 390:
             page.screenshot(path=str(ROOT / "validation/screens/model-secimi-390.png"))
         page.keyboard.press("Escape")
+        page.evaluate("""() => {
+          const prefs = JSON.parse(localStorage.gms_studioPrefs || '{}');
+          localStorage.gms_studioPrefs = JSON.stringify({...prefs, autoModel:true});
+        }""")
+        page.reload(wait_until="domcontentloaded")
+        model_button = page.locator(".resource-model").first
+        expect(model_button).to_contain_text("Otomatik · claude-pro-test")
+        model_button.click()
+        expect(picker.locator(".mp-m").first).to_contain_text("claude-pro-test")
+        picker.locator(".mp-m").filter(has_text="gpt-test").click()
+        expect(model_button).to_have_text("Model · gpt-test")
+        assert not page.evaluate("JSON.parse(localStorage.gms_studioPrefs).autoModel")
         page.evaluate("location.hash='sablonlar'")
         query = page.get_by_label("Ne yapmak istiyorsun?", exact=True)
         query.fill("rezervasyon")

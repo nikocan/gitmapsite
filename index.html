@@ -4497,12 +4497,12 @@ function Studio({compact,setSidebarClosed,createTemplate,auth,openAuth,toast,ope
  }
  useEffect(()=>{codeEnd.current?.parentElement&& (codeEnd.current.parentElement.scrollTop=codeEnd.current.parentElement.scrollHeight)},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
  const md=(models&&models.data)||{platform:[],byok:[]};
- const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
+ const selectedModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
+ const curModel=prefs.autoModel&&prefs.provider==="gitmapp"
+  ?pickModel(md.platform,!st.html||prefs.mode==="ajan"?"guclu":"dengeli")?.id||selectedModel:selectedModel;
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const effectiveModel=prefs.autoModel&&prefs.provider==="gitmapp"
-  ?pickModel(md.platform,!st.html||prefs.mode==="ajan"?"guclu":"dengeli")?.id||curModel:curModel;
- const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:effectiveModel||undefined});
+ const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:curModel||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -4767,12 +4767,12 @@ function Studio({compact,setSidebarClosed,createTemplate,auth,openAuth,toast,ope
  </div>`;
  const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`;
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} onStart=${startPanel} close=${()=>setGallery(false)}/>`;
- const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:effectiveModel}} setSel=${x=>setPrefs(p=>({...p,...x,autoModel:false}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
+ const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x,autoModel:false}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  const preserveProject=!!(st.appId||st.html||st.title||st.msgs.length||input.trim()||atts.length||busy||plan||todo||hasLocalDraft(account,st));
  const resourceBar=()=>html`<div class="studio-resources" role="group" aria-label="Stüdyo kaynakları">
   <button type="button" aria-haspopup="dialog" onClick=${()=>setResources(true)}><${Icon} n="layers" s=${15}/> Şablon ve örnekler</button>
   <button type="button" aria-haspopup="dialog" onClick=${()=>setGallery(true)}><${Icon} n="palette" s=${15}/> Tasarım</button>
-  <button type="button" class="resource-model" aria-haspopup="dialog" title=${effectiveModel?"Dil modeli: "+effectiveModel:"Dil modeli seç"} onClick=${()=>setPicker(true)}><${Icon} n="cpu" s=${15}/><span>${effectiveModel?(prefs.autoModel?"Otomatik · ":"Model · ")+shortModel(effectiveModel):"Dil modeli seç"}</span></button>
+  <button type="button" class="resource-model" aria-haspopup="dialog" title=${curModel?"Dil modeli: "+curModel:"Dil modeli seç"} onClick=${()=>setPicker(true)}><${Icon} n="cpu" s=${15}/><span>${curModel?(prefs.autoModel?"Otomatik · ":"Model · ")+shortModel(curModel):"Dil modeli seç"}</span></button>
  </div>`;
  const resourceEl=()=>resources&&html`<${StudioResources} key=${scope} close=${()=>setResources(false)} separate=${preserveProject} append=${text=>{setResources(false);appendPrompt(text)}} create=${(t,active)=>createTemplate(t,()=>active()&&!detachRef.current&&epoch.current===renderEpoch,preserveProject?account:null)}/>`;
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
