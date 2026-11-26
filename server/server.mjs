@@ -4,6 +4,7 @@ import http from "node:http";
 import { MAX_PROJECT_HTML, linkedRepo, registerVersions } from "./version-control.mjs";
 import { GEN_SYSTEM, KIND_RULES, connRules, scopeRule, profileRelevant, buildBudget, levelRule } from "./prompts.mjs";
 import { scriptErrors } from "./quality.mjs";
+import { sendMail, layout } from "./mail.mjs";
 import { registerRadar } from "./radar.mjs";
 import { registerStoreSales } from "./store-sales.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
@@ -103,7 +104,7 @@ const isAdmin = (u) => !!u && !!CFG.admin && u.email.toLowerCase() === CFG.admin
 const jsonObj = (t) => { try { const v = JSON.parse(t || "{}"); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; } catch { return {}; } };
 const keyLast4 = (id, prov) => { try { return q("SELECT last4 FROM user_keys WHERE user_id=? AND provider=?").get(id, prov)?.last4 || null; } catch { return null; } };
 const hostingerLast4 = (id) => { try { return q("SELECT last4 FROM user_keys WHERE user_id=? AND provider='hostinger'").get(id)?.last4 || null; } catch { return null; } };
-const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, google: !!u.google_sub, hostinger: hostingerLast4(u.id), higgsfield: keyLast4(u.id, "higgsfield"), canva: !!keyLast4(u.id, "canva"), admin: isAdmin(u), credits: u.credits ?? 0, nickname: u.nickname || "", role: u.role || "", instructions: u.instructions || "", avatar: u.avatar || "", prefs: jsonObj(u.prefs), created: u.created });
+const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, verified: !!u.email_verified, github: u.github_login || null, google: !!u.google_sub, hostinger: hostingerLast4(u.id), higgsfield: keyLast4(u.id, "higgsfield"), canva: !!keyLast4(u.id, "canva"), admin: isAdmin(u), credits: u.credits ?? 0, nickname: u.nickname || "", role: u.role || "", instructions: u.instructions || "", avatar: u.avatar || "", prefs: jsonObj(u.prefs), created: u.created });
 // Kullanıcının Ayarlar > Profil'de yazdıkları: her yapay zekâ isteğine veri olarak eklenir; güvenlik kurallarını değiştiremez
 const PROFILE_ROLES = ["Restoran ve kafe", "Sağlık ve klinik", "Eğitim", "E-ticaret ve mağaza", "Emlak", "Hizmet işletmesi", "Pazarlama ve ajans", "Yazılım ve teknoloji", "Finans", "Öğrenci", "Diğer"];
 function userRule(user, before = false, kind = null) {
@@ -224,12 +225,14 @@ async function resolveRoute(user, body, req, kind) {
   if (provider === "gitmapp") {
     need(CFG.aiKey, 503, "Yapay zekâ henüz yapılandırılmadı (AI_KEY eksik)");
     const ids = await listModels("gitmapp", CFG.aiKey);
-    need(!body.model || ids.includes(body.model), 400, "“" + String(body.model).slice(0, 60) + "” modeli şu an Gitmapp'in yapay zekâ sağlayıcısında açık değil. Model listesinden başka bir model seç; kredin düşmedi.");
-    const model = body.model || await defaultModel(); const picked = !!body.model;
+    // Eski ya da kapanmış model adı (ör. tarayıcıda kalmış "claude-sonnet-4.5") işi durdurmaz: en yakın açık modele, yoksa varsayılana geçilir
+    let model = body.model && ids.includes(body.model) ? body.model : null, swapped = null;
+    if (body.model && !model) { model = await mapModel("gitmapp", CFG.aiKey, body.model).catch(() => null) || await defaultModel(); swapped = { from: String(body.model).slice(0, 80), to: model }; }
+    if (!model) model = await defaultModel(); const picked = !!body.model && !swapped;
     const tier = tierOf(model); const factor = kind === "plan" ? 0.34 : 1; const credits = Math.max(1, Math.round(TIER_CREDITS[tier] * factor));
     if (!user) { need(tier !== "guclu", 403, "Güçlü modelleri kullanmak için ücretsiz hesap oluşturun."); useAi("ip:" + clientIp(req), CFG.aiDailyAnon, true); }
     else { const u = q("SELECT credits FROM users WHERE id=?").get(user.id); need((u.credits ?? 0) >= credits, 402, `Krediniz yetersiz (gereken ${credits}, kalan ${u.credits ?? 0}). Hesabım sayfasından kredi yükleyebilir ya da kendi API anahtarınızı bağlayabilirsiniz.`); useAi("u:" + user.id, 300, false); }
-    return { kind, provider, base: CFG.aiBase, key: CFG.aiKey, model, picked, credits: user ? credits : 0 };
+    return { kind, provider, base: CFG.aiBase, key: CFG.aiKey, model, picked, swapped, credits: user ? credits : 0 };
   }
   need(user, 401, "Kendi anahtarınızı kullanmak için giriş yapın");
   const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider=?").get(user.id, provider);
@@ -782,7 +785,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.41.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.42.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -791,7 +794,7 @@ route("POST", "/api/auth/register", ({ body }) => {
   need(email !== CFG.admin, 409, "Bu adres için giriş yapın.");
   need(!q("SELECT 1 FROM users WHERE email=?").get(email), 409, "Bu e-posta ile zaten hesap var, giriş yapın");
   const id = rid(); const ref = /^[A-Za-z0-9]{12}$/.test(body.ref || "") && q("SELECT 1 FROM users WHERE id=?").get(body.ref) ? body.ref : null; q("INSERT INTO users(id,email,name,pass,ref_by) VALUES(?,?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw), ref); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, +(E.SIGNUP_CREDITS || 25), "Hoş geldin kredisi");
-  const u = q("SELECT * FROM users WHERE id=?").get(id); return { token: sign({ uid: id, version:u.session_version }), user: pubUser(u) };
+  const u = q("SELECT * FROM users WHERE id=?").get(id); sendVerify(u); return { token: sign({ uid: id, version:u.session_version }), user: pubUser(u) };
 });
 route("POST", "/api/auth/login", ({ body }) => {
   const email = (str(body.email, 200, "E-posta", true) || "").trim().toLowerCase(); const u = q("SELECT * FROM users WHERE email=?").get(email);
@@ -880,7 +883,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages(projectBrief(body) + (history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages(projectBrief(body) + "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
-  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
+  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage, swapped: rt.swapped || undefined }; };
   if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
@@ -928,7 +931,7 @@ route("POST", "/api/ai/review", async (ctx) => {
   const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "review");
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user, false, kind) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda ilk cümlede kaç sorun bulup düzelttiğini söyle, sonra sorunları madde madde (kullanıcının anlayacağı dille) yaz; Kontrol satırında düzeltemediğin ya da emin olmadığın bir şey varsa belirt." }, { role: "user", content: projectBrief(body) + html }];
-  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, extractHtml(text, { model, finish })); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
+  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, extractHtml(text, { model, finish })); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, swapped: rt.swapped || undefined }; };
   if (body.stream === true && body.job === true && ctx.user) return aiJob(ctx, rt, messages, fin, "review", "Kontrol et ve düzelt");
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
@@ -1245,6 +1248,7 @@ async function crDispatch(r) {
   const user = q("SELECT * FROM users WHERE id=?").get(r.user_id); if (!user) return;
   q("UPDATE creator_posts SET status='gonderiliyor', updated=datetime('now') WHERE id=?").run(r.id);
   let out; try { out = await sendHook(user, crPayload(crRow(r))); } catch (e) { out = { ok: false, status: 0, err: e.message }; }
+  if (!out.ok) mailTo(user.email, "kreator-hata", { title: "Planlı gönderin paylaşılamadı", intro: `“${r.title}” otomasyona iletilemedi (${out.err || "HTTP " + out.status}). Webhook adresini ve Make/Zapier senaryonun açık olduğunu kontrol edip “Şimdi gönder” ile yeniden dene.`, button: "Takvimi aç", url: CFG.site + "/#kreator" });
   q("UPDATE creator_posts SET status=?, result=?, updated=datetime('now') WHERE id=?").run(out.ok ? "gonderildi" : "hata", out.ok ? "Otomasyona iletildi (" + out.status + ")" : "Gönderilemedi: " + (out.err || "HTTP " + out.status), r.id);
   return out;
 }
@@ -1699,6 +1703,7 @@ route("POST", "/api/apps/:id/publish", ({ user, body, params }) => {
     db.exec("ROLLBACK");
     throw e;
   }
+  if (!a.slug) mailTo(user.email, "yayin", { title: "Uygulaman yayında", subject: "Gitmapp: “" + String(a.title || "Uygulaman").slice(0, 60) + "” yayında", intro: `“${a.title || "Uygulaman"}” artık herkese açık. Bağlantıyı paylaşabilir, Stüdyo'dan değiştirip yeniden yayınlayabilirsin.`, rows: [["Adres", CFG.appHost + "/" + slug]], button: "Uygulamayı aç", url: "https://" + CFG.appHost + "/" + slug });
   // Davet ödülü: davet edilen kişi ilk uygulamasını yayınlayınca davet edene kredi
   const me = q("SELECT ref_by, ref_paid FROM users WHERE id=?").get(user.id);
   if (me && me.ref_by && !me.ref_paid) { const bonus = +(E.REF_CREDITS || 50); q("UPDATE users SET ref_paid=1 WHERE id=?").run(user.id); q("UPDATE users SET credits=credits+? WHERE id=?").run(bonus, me.ref_by); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(me.ref_by, bonus, "Davet ödülü"); }
@@ -1761,7 +1766,10 @@ route("POST", "/api/orders", ({ body, user }) => {
   const data = JSON.stringify(body); need(data.length < 20000, 400, "Talep çok büyük");
   need(!q("SELECT 1 FROM orders WHERE id=?").get(id), 409, "Bu sipariş zaten kayıtlı");
   q("INSERT INTO orders(id,user_id,data,customer_name,phone,email,brand,total,monthly) VALUES(?,?,?,?,?,?,?,?,?)").run(id, user ? user.id : null, data, name, phone, email, str(body.brand, 120, "Marka") || "", +body.total || 0, +body.monthly || 0);
-  return { ok: true, id };
+  const rows = [["Talep no", id], ["Ad", name], ...(str(body.brand, 120, "Marka") ? [["Marka", str(body.brand, 120, "Marka")]] : []), ...(+body.total ? [["Tutar", (+body.total).toLocaleString("tr-TR") + " ₺"]] : []), ...(+body.monthly ? [["Aylık", (+body.monthly).toLocaleString("tr-TR") + " ₺"]] : [])];
+  const mailed = !!(email && mailTo(email, "siparis", { title: "Talebin bize ulaştı", subject: "Gitmapp: " + id + " numaralı talebin alındı", intro: `Merhaba ${name}, talebini aldık. Ekibimiz inceleyip en kısa sürede ${phone ? "telefon ya da " : ""}e-posta ile dönüş yapacak. Talep numaranı saklaman yeterli.`, rows, button: "Taleplerimi gör", url: CFG.site + "/#siparislerim" }));
+  if (CFG.admin) mailTo(CFG.admin, "siparis-yonetici", { title: "Yeni talep: " + id, intro: `${name} yeni bir talep gönderdi.${phone ? " Telefon: " + phone + "." : ""}${email ? " E-posta: " + email + "." : ""}`, rows, button: "Siparişleri aç", url: CFG.site + "/#siparisler" });
+  return { ok: true, id, mailed: mailed && mailReady() };
 });
 route("GET", "/api/orders/status", ({ url }) => {
   const id = (url.searchParams.get("id") || "").trim().toUpperCase(); const c = (url.searchParams.get("contact") || "").trim(); need(id && c, 400, "Sipariş no ve iletişim bilgisi gerekli");
@@ -2031,4 +2039,95 @@ if (["create-admin","reset-admin"].includes(process.argv[2])) {
   console.log(`Yönetici hesabı hazır: ${CFG.admin}\nŞifre: ${pw}\n(Bu şifreyi güvenli bir yere kaydedin.)`);
   process.exit(0);
 }
+// ---------- E-posta: doğrulama, şifre sıfırlama, sipariş, yayın ve otomasyon bildirimleri ----------
+db.exec("CREATE TABLE IF NOT EXISTS mail_log(id INTEGER PRIMARY KEY AUTOINCREMENT, created TEXT DEFAULT (datetime('now')), to_addr TEXT, kind TEXT, subject TEXT, status TEXT, error TEXT, tries INTEGER DEFAULT 0, via TEXT, body TEXT, sent TEXT)");
+const MAIL_KINDS = { dogrulama: "E-posta doğrulama", sifre: "Şifre sıfırlama", "sifre-degisti": "Şifre değişti", siparis: "Talep alındı", "siparis-yonetici": "Yeni talep (yönetici)", yayin: "Uygulama yayında", "kreator-hata": "Otomatik paylaşım hatası", test: "Deneme" };
+function mailPanel() { const r = q("SELECT v FROM server_settings WHERE k='mail_cfg'").get(); if (!r) return null; try { return JSON.parse(decKey(r.v)); } catch { return null; } }
+function mailCfg() {
+  const p = mailPanel(); if (p && (p.host || p.resend)) return { ...p, source: "panel" };
+  return { host: E.SMTP_HOST || "", port: +E.SMTP_PORT || 465, user: E.SMTP_USER || "", pass: E.SMTP_PASS || "", from: E.MAIL_FROM || "", resend: E.RESEND_API_KEY || "", outbox: E.MAIL_OUTBOX_DIR || "", source: E.SMTP_HOST || E.RESEND_API_KEY || E.MAIL_OUTBOX_DIR ? "sunucu" : "yok" };
+}
+const mailReady = () => { const c = mailCfg(); return !!(c.outbox || c.resend || c.host); };
+const mailErrTr = (m) => /ENOTFOUND|getaddrinfo/.test(m) ? "SMTP sunucu adı bulunamadı (" + m.slice(0, 80) + ")" : /ECONNREFUSED|ETIMEDOUT|zaman aşımı/.test(m) ? "SMTP sunucusuna bağlanılamadı; port (465/587) ve güvenlik duvarını kontrol et" : m.slice(0, 240);
+async function deliverMail(id) {
+  const row = q("SELECT * FROM mail_log WHERE id=?").get(id); if (!row || row.status === "gonderildi" || !row.body) return;
+  let msg; try { msg = JSON.parse(decKey(row.body)); } catch { q("UPDATE mail_log SET status='hata', error='İçerik okunamadı', body=NULL WHERE id=?").run(id); return; }
+  try { const r = await sendMail(mailCfg(), msg); q("UPDATE mail_log SET status='gonderildi', via=?, error=NULL, body=NULL, sent=datetime('now'), tries=tries+1 WHERE id=?").run(r.via, id); }
+  catch (e) { const t = row.tries + 1; q("UPDATE mail_log SET status=?, error=?, tries=? WHERE id=?").run(t >= 4 ? "hata" : "bekliyor", mailErrTr(String(e.message || e)), t, id); }
+}
+// Kuyruğa al ve hemen göndermeyi dene; içerik (bağlantılar dahil) şifreli saklanır, gönderilince silinir
+function mailTo(to, kind, tpl) {
+  to = String(to || "").trim().toLowerCase(); if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(to)) return null;
+  const { html, text } = layout(tpl); const subject = tpl.subject || tpl.title;
+  const id = Number(q("INSERT INTO mail_log(to_addr,kind,subject,status,body) VALUES(?,?,?,?,?)").run(to, kind, subject.slice(0, 200), "bekliyor", encKey(JSON.stringify({ to, subject, html, text }))).lastInsertRowid);
+  if (mailReady()) deliverMail(id).catch(() => { });
+  return id;
+}
+setInterval(() => { if (!mailReady()) return; for (const r of q("SELECT id FROM mail_log WHERE status='bekliyor' AND created>=datetime('now','-2 days') ORDER BY id LIMIT 20").all()) deliverMail(r.id).catch(() => { }); }, +E.MAIL_RETRY_MS || 120000).unref();
+q("DELETE FROM mail_log WHERE created<datetime('now','-90 days')").run();
+const pwPrint = (u) => crypto.createHash("sha256").update(String(u.pass || "yok") + u.session_version).digest("base64url").slice(0, 16);
+function sendVerify(u) {
+  const t = sign({ uid: u.id, purpose: "verify", e: u.email }, 3 * 86400);
+  return mailTo(u.email, "dogrulama", { title: "Hoş geldin! E-postanı doğrula", subject: "Gitmapp: e-posta adresini doğrula", intro: `Merhaba${u.name ? " " + u.name : ""}, Gitmapp hesabın hazır ve 25 kredin yüklendi. Hesabını güvene almak, şifreni unutursan geri alabilmek ve bildirimleri alabilmek için e-posta adresini doğrula.`, button: "E-postamı doğrula", url: CFG.api + "/api/auth/verify?t=" + encodeURIComponent(t), foot: "Bu hesabı sen oluşturmadıysan bu e-postayı yok sayabilirsin. Bağlantı 3 gün geçerli." });
+}
+route("GET", "/api/auth/verify", ({ url, res }) => {
+  const back = (h) => { res.writeHead(302, { Location: CFG.site + "/#" + h }); res.end(); return null; };
+  const t = verify(url.searchParams.get("t") || ""); if (t?.purpose !== "verify") return back("eposta-hata");
+  const u = q("SELECT * FROM users WHERE id=?").get(t.uid); if (!u || u.email !== t.e) return back("eposta-hata");
+  q("UPDATE users SET email_verified=1 WHERE id=?").run(u.id); return back("eposta-dogrulandi");
+});
+route("POST", "/api/auth/verify/resend", ({ user }) => {
+  need(user, 401, "Giriş yapın"); need(!user.email_verified, 400, "E-posta adresin zaten doğrulanmış");
+  const day = new Date().toISOString().slice(0, 10); const r = q("SELECT n FROM ai_usage WHERE k=? AND day=?").get("vr:" + user.id, day); need(!r || r.n < 5, 429, "Bugün en fazla 5 doğrulama e-postası gönderilebilir");
+  q("INSERT INTO ai_usage(k,day,n) VALUES(?,?,1) ON CONFLICT(k,day) DO UPDATE SET n=n+1").run("vr:" + user.id, day);
+  need(mailReady(), 503, "E-posta gönderimi henüz yapılandırılmadı; yönetici ayarladığında doğrulama e-postası otomatik gidecek");
+  sendVerify(user); return { ok: true };
+});
+// Şifremi unuttum: hesap var olsun olmasın aynı yanıt (hesap varlığı sızdırılmaz); bağlantı 1 saat ve tek kullanımlık
+route("POST", "/api/auth/forgot", ({ body, req }) => {
+  const email = (str(body.email, 200, "E-posta", true) || "").trim().toLowerCase(); need(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 400, "Geçerli bir e-posta girin");
+  const day = new Date().toISOString().slice(0, 10); const lim = (k, n) => { const r = q("SELECT n FROM ai_usage WHERE k=? AND day=?").get(k, day); if (r && r.n >= n) return false; q("INSERT INTO ai_usage(k,day,n) VALUES(?,?,1) ON CONFLICT(k,day) DO UPDATE SET n=n+1").run(k, day); return true; };
+  const u = q("SELECT * FROM users WHERE email=?").get(email);
+  if (u && lim("fg:" + email, 5) && lim("fgip:" + clientIp(req), 30)) {
+    const t = sign({ uid: u.id, purpose: "reset", h: pwPrint(u) }, 3600);
+    mailTo(u.email, "sifre", { title: "Şifreni sıfırla", subject: "Gitmapp: şifre sıfırlama bağlantın", intro: "Gitmapp hesabın için şifre sıfırlama istendi. Yeni şifreni belirlemek için aşağıdaki düğmeye bas. Bağlantı 1 saat geçerli ve yalnızca bir kez kullanılabilir.", button: "Yeni şifre belirle", url: CFG.site + "/#sifre-sifirla?t=" + encodeURIComponent(t), foot: "Bu isteği sen yapmadıysan bu e-postayı yok say; şifren değişmez." });
+  }
+  return { ok: true, mail: mailReady() };
+});
+route("POST", "/api/auth/reset", ({ body }) => {
+  const t = verify(String(body.token || "")); need(t?.purpose === "reset", 400, "Bağlantının süresi dolmuş ya da geçersiz; yeniden şifre sıfırlama iste");
+  const u = q("SELECT * FROM users WHERE id=?").get(t.uid); need(u && pwPrint(u) === t.h, 400, "Bu bağlantı zaten kullanılmış; yeniden şifre sıfırlama iste");
+  const pw = str(body.password, 200, "Şifre", true); need(pw.length >= 8, 400, "Şifre en az 8 karakter olmalı");
+  q("UPDATE users SET pass=?, email_verified=1, session_version=session_version+1 WHERE id=?").run(hashPw(pw), u.id);
+  const n = q("SELECT * FROM users WHERE id=?").get(u.id);
+  mailTo(n.email, "sifre-degisti", { title: "Şifren değiştirildi", intro: "Gitmapp hesabının şifresi az önce değiştirildi ve diğer cihazlardaki oturumlar kapatıldı. Bunu sen yapmadıysan hemen yeniden şifre sıfırla.", button: "Gitmapp'i aç", url: CFG.site });
+  return { token: sign({ uid: n.id, version: n.session_version }), user: pubUser(n) };
+});
+// Yönetici: e-posta ayarları, deneme, gönderim kaydı
+const mailState = () => { const c = mailCfg(); const s = q("SELECT status, COUNT(*) n FROM mail_log WHERE created>=datetime('now','-30 days') GROUP BY status").all();
+  return { configured: !!(c.host || c.resend || c.outbox), source: c.source, via: c.outbox ? "outbox" : c.resend ? "resend" : c.host ? "smtp" : null, host: c.host || "", port: c.port || 465, user: c.user || "", from: c.from || "", passSet: !!c.pass, resendSet: !!c.resend,
+    stats: Object.fromEntries(s.map((r) => [r.status, r.n])), log: q("SELECT id,created,to_addr,kind,subject,status,error,tries,via,sent FROM mail_log ORDER BY id DESC LIMIT 60").all().map((r) => ({ ...r, kindTr: MAIL_KINDS[r.kind] || r.kind })) }; };
+route("GET", "/api/admin/mail", () => mailState());
+route("PUT", "/api/admin/mail", ({ body }) => {
+  const old = mailPanel() || {};
+  const host = String(body.host ?? old.host ?? "").trim().toLowerCase(); need(!host || /^[a-z0-9.-]{3,200}$/.test(host), 400, "SMTP sunucu adı geçersiz");
+  const port = +body.port || old.port || 465; need([465, 587, 25, 2525].includes(port), 400, "Port 465, 587, 2525 ya da 25 olmalı");
+  const user = String(body.user ?? old.user ?? "").trim().slice(0, 200); const from = String(body.from ?? old.from ?? "").trim().slice(0, 200);
+  need(!from || /^([^<>\r\n]{0,80}<)?[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+>?$/.test(from), 400, "Gönderen biçimi: Gitmapp <bildirim@alanadin.com>");
+  const pass = body.pass ? String(body.pass).slice(0, 300) : old.pass || ""; const resend = body.resend === "" ? "" : body.resend ? String(body.resend).trim().slice(0, 200) : old.resend || "";
+  need(host || resend, 400, "SMTP sunucusu ya da Resend anahtarı gir");
+  q("INSERT INTO server_settings(k,v) VALUES('mail_cfg',?) ON CONFLICT(k) DO UPDATE SET v=excluded.v").run(encKey(JSON.stringify({ host, port, user, pass, from, resend })));
+  for (const r of q("SELECT id FROM mail_log WHERE status='bekliyor' AND created>=datetime('now','-2 days') ORDER BY id LIMIT 50").all()) deliverMail(r.id).catch(() => { });
+  return mailState();
+});
+route("DELETE", "/api/admin/mail", () => { q("DELETE FROM server_settings WHERE k='mail_cfg'").run(); return mailState(); });
+route("POST", "/api/admin/mail/test", async ({ user, body }) => {
+  need(mailReady(), 400, "Önce e-posta ayarlarını kaydet");
+  const to = String(body.to || user.email).trim(); need(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to), 400, "Alıcı e-postası geçersiz");
+  const { html, text } = layout({ title: "Gitmapp e-posta denemesi", intro: "Bu e-postayı görüyorsan Gitmapp'in e-posta gönderimi çalışıyor: doğrulama, şifre sıfırlama, talep ve yayın bildirimleri bu yoldan gidecek.", button: "Gitmapp'i aç", url: CFG.site });
+  const t0 = Date.now();
+  try { const r = await sendMail(mailCfg(), { to, subject: "Gitmapp e-posta denemesi", html, text }); q("INSERT INTO mail_log(to_addr,kind,subject,status,via,tries,sent) VALUES(?,?,?,?,?,1,datetime('now'))").run(to, "test", "Gitmapp e-posta denemesi", "gonderildi", r.via); return { ok: true, via: r.via, ms: Date.now() - t0, ...mailState() }; }
+  catch (e) { const m = mailErrTr(String(e.message || e)); q("INSERT INTO mail_log(to_addr,kind,subject,status,error,tries) VALUES(?,?,?,?,?,1)").run(to, "test", "Gitmapp e-posta denemesi", "hata", m); throw new HttpErr(502, "Gönderilemedi: " + m); }
+});
+route("POST", "/api/admin/mail/retry", () => { q("UPDATE mail_log SET status='bekliyor', tries=0 WHERE status='hata' AND body IS NOT NULL").run(); for (const r of q("SELECT id FROM mail_log WHERE status='bekliyor' ORDER BY id LIMIT 50").all()) deliverMail(r.id).catch(() => { }); return mailState(); });
 server.listen(CFG.port, "127.0.0.1", () => { startRadar(); console.log(`Gitmapp API :${server.address().port} — AI:${!!CFG.aiKey} GitHub:${!!CFG.gh.id} Google:${!!CFG.google.id} Alan adı:${!!CFG.hostingerToken}`); });
