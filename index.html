@@ -2177,6 +2177,7 @@ button.adp-mini{color:inherit;text-align:left}
 .nx-chip{flex:none;scroll-snap-align:start;max-width:260px}
 .nx-chip.hot{border-color:rgba(143,180,255,.45);background:rgba(79,140,255,.1);color:#e6ecff}.nx-chip.hot svg{color:#8fb4ff}
 @media(prefers-reduced-motion:reduce){.ws-in .gbox,.studio-start .gbox{animation:none!important}}
+.ghi-err small{display:block;margin-top:4px;color:#a3a29b;font-size:12px;line-height:1.45;font-weight:400}
 </style>
 </head>
 <body>
@@ -2190,8 +2191,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.53.0";
+const VERSION="5.54.0";
 const CHANGELOG=[
+ {v:"5.54.0",date:"2026-11-26",items:[
+  "🔐 Özel GitHub depoları: “Depo bulunamadı” hatası artık nedenini söylüyor. Sunucu, depo gerçekten yok mu yoksa özel mi ayırt ediyor; GitHub bağlı değilse “GitHub'ı bağla”, bağlı ama özel depo izni yoksa “Özel depo izni ver”, bağlantı süresi dolmuşsa “GitHub'ı yeniden bağla” düğmesi çıkıyor",
+  "🧭 Tek ve doğru düğme: eskiden yan yana duran “GitHub hesabını bağla” ve “Özel depolar için bağla” birleşti; bağlantı her zaman özel depo okuma izniyle isteniyor, böylece izin verip yine hata alma döngüsü bitti",
+  "🩹 Hata sırasında başlıkta hâlâ “GitHub deposu okunuyor…” yazması ve altta “önizleme kendiliğinden açılır” notu düzeltildi; artık “Özel depo · izin gerekiyor” ve “yukarıdaki adımı tamamlayınca otomatik yeniden denenir” yazıyor. Bağlantıdan dönünce depo kendiliğinden yeniden okunuyor"
+ ]},
  {v:"5.53.0",date:"2026-11-26",items:[
   "🎛️ Dil modeli ve Çalışma modu (Hızlı / Planlı / Ajan) Proje ayarları panelinden giriş kutusunun alt çubuğuna, gönder düğmesinin yanına taşındı. Her biri tek dokunuşla açılan sade bir menü: Otomatik seçeneği, açıklamalar, “Tüm modeller…” ve “Gelişmiş ayarlar…”. Proje ayarları panelinde yalnızca Şablon ve Eklentiler kaldı",
   "💡 Işık kuralları: giriş kutusunun çevresindeki ışık artık boştayken dönmüyor (ince sabit çizgi). Kutuya tıklayınca yavaşça dönmeye başlıyor, gönderdiğin anda bir kez parlıyor, iş sürerken hızlı dönüyor, iş bitince duruyor. Renkler sadeleşti (mavi-mor-pembe tek kuyruk)",
@@ -3871,7 +3877,7 @@ async function api(method,path,body,signal){
  if(!r.ok){
   if(path.startsWith("/api/admin/") && (r.status===401||r.status===403) && t && t===TOK.get())
    dispatchEvent(new CustomEvent("gm:admin-session",{detail:r.status}));
-  const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}if(path!=="/api/admin/credits")crEvent(j);return j;
+  const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;if(j.reason)e.reason=j.reason;throw e}if(path!=="/api/admin/credits")crEvent(j);return j;
 }
 function crEvent(j){if(j&&typeof j==="object"&&j.credits!=null&&isFinite(+j.credits))dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:+j.credits,spent:+(j.spent||0)}}))}
 // ---------- v5.11 — Ayarlar: cihazda anında uygulanır, giriş yapılmışsa hesaba da kaydedilir ----------
@@ -7760,9 +7766,10 @@ function GhImport({url,auto,review,close,auth,openAuth,toast,onStudio,models,go}
  useEffect(()=>{const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  const R=info&&info.repo;const rep=res&&res.report;const per=(models&&models.data&&models.data.platform||[]).find(m=>m.id===(models.data.default))||null;
  const studio=design=>{const r=res;onStudio({html:r.html,...(review?{radarOrigin:r.radarOrigin||(r.mode==="live"?"live":"import"),source:"github:"+R.full+(r.mode==="live"?"":"@"+(r.repo?.sha||R.sha))}:{}),title:r.title||R.name,emoji:"🐙",color:"#24292f",kind:info.kind==="build"||r.radarOrigin==="prototype"?"app":"site",openDesign:design,appId:take&&take.app?take.app.id:null,msgs:[{role:"assistant",content:"“"+R.full+"” GitHub'dan içe aktarıldı ve sağda çalışıyor ("+R.ref+" · "+R.sha+"). Şimdi sohbetle değiştirebilir, Tasarım'da öğe öğe düzenleyebilir ya da yayınlayabilirsin."+(rep&&rep.warnings.length?"\n\nNotlar:\n• "+rep.warnings.join("\n• "):"")}]});close()};
- const errBox=err&&html`<div class="ghi-err"><${Icon} n="alert" s=${16}/><div><b>${err.message}</b>${(err.status===404||err.status===429)&&html`<div class="ghi-act">${!(info&&info.github&&info.github.connected)&&html`<button class="btn s" onClick=${()=>linkGh(false)}><${Icon} n="github" s=${14}/> GitHub hesabını bağla</button><button class="btn g s" onClick=${()=>linkGh(true)}>Özel depolar için bağla</button>`}<button class="btn g s" onClick=${inspect}><${Icon} n="refresh" s=${14}/> Tekrar dene</button></div>`}</div></div>`;
+ const ghConn=!!(info&&info.github&&info.github.connected),why=err&&(err.reason||(err.status===404?(ghConn?"scope":"link"):""));
+ const errBox=err&&html`<div class="ghi-err"><${Icon} n=${why==="link"||why==="scope"?"lock":"alert"} s=${16}/><div><b>${err.message}</b>${why==="link"&&html`<small>Gitmapp yalnızca depoyu okur; kodun GitHub'da kalır. İzni istediğin zaman GitHub › Settings › Applications'tan kaldırabilirsin.</small>`}${(err.status===404||err.status===429)&&html`<div class="ghi-act">${why==="missing"?"":html`<button class="btn s" onClick=${()=>linkGh(true)}><${Icon} n="github" s=${14}/> ${why==="scope"?"Özel depo izni ver":why==="expired"?"GitHub'ı yeniden bağla":"GitHub'ı bağla"}</button>`}<button class="btn g s" onClick=${inspect}><${Icon} n="refresh" s=${14}/> Tekrar dene</button></div>`}</div></div>`;
  return html`<div class="drawer ghi-bg" onClick=${close}><div class="ghi glass" onClick=${e=>e.stopPropagation()} role="dialog" aria-label="GitHub'dan içe aktar">
-  <div class="ghi-h"><span class="ghi-logo"><${Icon} n="github" s=${20}/></span><div class="ghi-ht"><b>${R?R.full:ghShort(url)}</b><small>${R?html`<${Icon} n="branch" s=${11}/> ${R.ref} · ${R.sha}${R.private?" · özel":""}${R.lang?" · "+R.lang:""}${R.stars?" · ★ "+R.stars:""}`:"GitHub deposu okunuyor…"}</small></div>
+  <div class="ghi-h"><span class="ghi-logo"><${Icon} n="github" s=${20}/></span><div class="ghi-ht"><b>${R?R.full:ghShort(url)}</b><small>${R?html`<${Icon} n="branch" s=${11}/> ${R.ref} · ${R.sha}${R.private?" · özel":""}${R.lang?" · "+R.lang:""}${R.stars?" · ★ "+R.stars:""}`:err?(why==="link"||why==="scope"?"Özel depo · izin gerekiyor":"Okunamadı"):"GitHub deposu okunuyor…"}</small></div>
    ${info&&html`<span class=${"ghi-kind k-"+info.kind} title=${GH_KIND[info.kind][1]}>${GH_KIND[info.kind][0]}${info.framework?" · "+info.framework:""}</span>`}
    ${info&&!info.github.connected&&html`<button class="btn g s" title="Özel depolar ve daha yüksek GitHub sınırı" onClick=${()=>linkGh(false)}><${Icon} n="github" s=${14}/> Bağla</button>`}
    <button class="ib" onClick=${close} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div>
@@ -7796,7 +7803,7 @@ function GhImport({url,auto,review,close,auth,openAuth,toast,onStudio,models,go}
    ${take?html`<div class="ghi-take">${take.st.map(([k,l],i)=>html`<span key=${k} class=${i<take.step||take.step===2?"done":i===take.step&&!take.error?"run":""}>${i<take.step||take.step===2?html`<${Icon} n="check" s=${13} w=${2.4}/>`:i===take.step&&!take.error?html`<${Spark} s=${13}/>`:html`<i></i>`}${l}</span>`)}
      ${take.step===2&&take.app&&take.app.url&&html`<a class="btn s" href=${take.app.url} target="_blank" rel="noopener"><${Icon} n="external" s=${14}/> ${take.app.url.replace(/^https?:\/\//,"")}</a><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(take.app.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="copy" s=${14}/></button>`}
      ${take.error&&html`<span class="ghi-terr">${take.error}</span>`}</div>`
-   :html`<span class="ghi-note">${res?(review?"Tasarım’da açılan çalışma taslak olarak kaydedilir. Yayın Merkezi inceleme durumunu gösterir.":"Önizleme ücretsiz. Devraldığında site Gitmapp’e kopyalanır ve kendi adresinde yayınlanır; mağazada listelenmez."):review?"İçe aktarma kaynağını seçin. Ardından Tasarım’da düzenleyin.":"Depo okunduktan sonra önizleme kendiliğinden açılır."}</span>`}
+   :html`<span class="ghi-note">${res?(review?"Tasarım’da açılan çalışma taslak olarak kaydedilir. Yayın Merkezi inceleme durumunu gösterir.":"Önizleme ücretsiz. Devraldığında site Gitmapp’e kopyalanır ve kendi adresinde yayınlanır; mağazada listelenmez."):err?"Depo okunamadı · yukarıdaki adımı tamamlayınca otomatik yeniden denenir":review?"İçe aktarma kaynağını seçin. Ardından Tasarım’da düzenleyin.":"Depo okunduktan sonra önizleme kendiliğinden açılır."}</span>`}
    <span style=${{flex:1}}></span>
    <button class="btn g s" disabled=${!res} onClick=${()=>studio(true)}><${Icon} n="layers" s=${14}/> Tasarımda aç</button>
    <button class="btn g s" disabled=${!res} onClick=${()=>studio(false)}><${Icon} n="hammer" s=${14}/> Geliştir'de aç</button>
