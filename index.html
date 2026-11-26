@@ -1587,6 +1587,28 @@ button.adp-mini{color:inherit;text-align:left}
 .rp{white-space:normal}.rp p{margin:0 0 6px}.rp ul{margin:2px 0 8px;padding-left:18px}.rp li{margin:3px 0;line-height:1.55}.rp li::marker{color:#8a8882}
 .rp-check{display:flex;gap:8px;align-items:flex-start;margin:6px 0 2px;color:#a3a19a;font-size:13px;line-height:1.5}.rp-check svg{color:#3ecf8e;margin-top:3px;flex:none}
 .rp-next{display:inline-flex;align-items:center;gap:7px;margin-top:8px;max-width:100%;padding:7px 12px;border-radius:10px;border:1px solid #3a3a37;background:#232322;color:#e8e6e1;font:inherit;font-size:13px;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}.rp-next:hover:not(:disabled){background:#2b2b29;border-color:#d97757}.rp-next svg{color:#d97757;flex:none}.rp-next:disabled{opacity:.6;cursor:default}
+
+.esc{margin:0 2px 10px;padding:12px 14px;border-radius:14px;background:linear-gradient(180deg,rgba(245,165,36,.10),rgba(245,165,36,.04));border:1px solid rgba(245,165,36,.35);font-size:13.5px;color:#e8e6e1;animation:ccIn .2s ease-out}
+.esc-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}.esc-h svg{color:#f5a524}.esc p{margin:0 0 10px;line-height:1.55;color:#d6d4ce}.esc-a{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.esc-a .ib{margin-left:auto}
+
+.stg-bar{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 8px;border-radius:14px;background:rgba(28,28,27,.94);border:1px solid #3a3a37;box-shadow:0 16px 40px -10px #000;backdrop-filter:blur(10px);animation:ccIn .2s ease-out;max-width:calc(100% - 24px)}
+.stg-bar img{width:40px;height:40px;border-radius:9px;object-fit:cover;flex:none}.stg-bar span{display:flex;flex-direction:column;min-width:0;font-size:13px}.stg-bar small{color:#a3a19a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stg-hint{position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border-radius:99px;background:#d97757;color:#fff;font-size:13px;font-weight:500;box-shadow:0 10px 30px -8px rgba(217,119,87,.6);animation:ccIn .2s ease-out}.stg-hint .ib{color:#fff}
+.sp-mh{display:flex;align-items:center;gap:6px;margin-bottom:4px}.sp-mh h3{flex:1;margin:0}
+.sp-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.sp-mi{position:relative;aspect-ratio:1;padding:0;border:1px solid #33332f;border-radius:10px;overflow:hidden;background:#262624;cursor:grab;transition:transform .15s,border-color .15s}.sp-mi:hover{transform:translateY(-1px);border-color:#5a5955}.sp-mi:active{cursor:grabbing}.sp-mi.on{border-color:#d97757;box-shadow:0 0 0 2px rgba(217,119,87,.45)}
+.sp-mi img{width:100%;height:100%;object-fit:cover;display:block}.sp-mi em{position:absolute;left:4px;bottom:4px;font-style:normal;font-size:10px;padding:1px 5px;border-radius:5px;background:rgba(0,0,0,.6);color:#e8e6e1}
+
+.ms{display:flex;flex-direction:column;max-height:calc(100dvh - 40px);background:#1c1c1b;border:1px solid #33332f;border-radius:20px;overflow:hidden;color:#e8e6e1;animation:msIn .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes msIn{from{opacity:0;transform:translateY(14px) scale(.97)}}
+.ms header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #2c2c2a}.ms header b{font-size:15px}.ms header .seg{margin-left:auto}
+.ms-body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.ms-gen label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#a3a19a}.ms-gen textarea{resize:vertical;min-height:80px}
+.ms-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}.ms-note{color:#8a8882;font-size:12.5px;line-height:1.5;margin:0}.ms-note a{color:#f0b49d}
+.ms-form{display:flex;flex-direction:column;gap:8px}.ms-err{color:#ff8a80;font-size:13px;margin:0}
+.ms-wait{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:12px;background:#232322;border:1px solid #33332f;font-size:13px}.ms-wait>span:nth-child(2){flex:1;min-width:200px}
+.ms-prog{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#a3a19a}.ms-bar{height:3px;border-radius:3px;background:#2c2c2a;overflow:hidden}.ms-bar i{display:block;width:30%;height:100%;background:linear-gradient(90deg,#4f8cff,#a78bfa,#f472b6,#fb923c);animation:bsind 1.6s ease-in-out infinite}
+.ms-res{animation:msIn .35s cubic-bezier(.2,.8,.2,1)}.ms-stage{border-radius:14px;overflow:hidden;background:#111;display:grid;place-items:center;max-height:52vh}.ms-stage img,.ms-stage video{max-width:100%;max-height:52vh;display:block}
 </style>
 </head>
 <body>
@@ -1600,8 +1622,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.29.0";
+const VERSION="5.30.0";
 const CHANGELOG=[
+ {v:"5.30.0",date:"2026-11-26",items:[
+  "🛡️ Kod hatası kullanıcıya ulaşmadan onarılıyor: sunucu, modelin yazdığı JavaScript'i yayına vermeden önce derleyip denetliyor; “Unexpected identifier” gibi sözdizimi hatası varsa (çoğu zaman Türkçe kesme işaretli metin: Ankara'nda) aynı istek içinde, ek kredi düşmeden bir kez onarıyor. İşlem kartında “1 kod hatası otomatik onarıldı” yazıyor",
+  "🧠 Model önerisi: hızlı/küçük bir model (ör. mistral-small) seçiliyken sıfırdan uygulama ya da büyük iş istenirse, işe başlamadan önce “Bu iş için daha güçlü bir model önerilir” kartı çıkıyor: güçlü modelle yap · seçili modelle devam et · hep otomatik seç",
+  "⚙️ Otomatik model: model menüsünde “Otomatik seç” açıkken yeni uygulamada ve Ajan modunda güçlü (Opus vb.), küçük düzenlemelerde dengeli model kullanılıyor",
+  "✍️ Model kuralları: JavaScript metinleri çift tırnak/ters tırnakla yazılıyor (kesme işareti sayfayı bozmasın), metin kontrastı en az 4.5:1",
+  "🎬 Medya stüdyosu (Oturum paneli › Medya › Üret): Higgsfield ile görsel (Ideogram 4.0) ve video (HappyHorse 1.1) üretme; kendi Higgsfield anahtarınla bağlanıyor, ilerleme canlı görünüyor, iptal edilebiliyor",
+  "🎨 Canva'da tasarla: Canva hesabını bağla, seçtiğin boyutta (kapak, kare, hikâye, logo) yeni tasarım ayrı pencerede açılıyor; işin bitince pencereyi kapat ya da Canva'daki “geri dön”e bas, tasarım otomatik PNG olarak alınıyor",
+  "👆 Sahneye yerleştir: üretilen, yüklenen ya da eklenen görseli önizlemedeki bir öğenin üzerine sürükle (dokunmatikte: görsele dokun, sonra öğeye dokun). Hedef öğe turuncu çerçeveyle vurgulanıyor, bırakınca görsel anında yerinde görünüyor; “Onayla” ile koda kredisiz yazılıyor, “Geri al” ile eski hâline dönüyor. Kodla üretilen öğelerde yerleştirmeyi yapay zekâ yapıyor"]},
  {v:"5.29.0",date:"2026-11-26",items:[
   "🗣️ Yapay zekâ artık deneyimli bir yazılımcı gibi raporluyor (Claude Code üslubu): her üretimin sonunda önce sonuç cümlesi (“Emlak ilanlarına fiyat filtresi ekledim.”), ardından yapılan değişiklikler madde madde, “Kontrol” satırında neyin çalıştığından emin olduğu ya da olamadığı, en altta tek bir “Sıradaki” önerisi",
   "➡️ “Sıradaki” önerisi tıklanabilir: dokununca istem kutusuna yazılıyor, istersen düzenleyip gönderiyorsun",
@@ -3045,7 +3075,7 @@ function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
  const elapsed=log.running?Math.max(0,Math.floor((Date.now()-log.start)/1000)):log.secs||0;
  const rq=log.req||{};const ev=log.events||[];const tail=(log.running?live:log.res?.tail)||"";
  const reqLines=[["tür",CX_KIND[rq.tur]||rq.tur],["mod",MODE_TR[rq.mod]||rq.mod],["model",log.model&&shortModel(log.model)],["tasarım",rq.design],["profil",rq.profil?rq.profil+" (Ayarlar › Profil)":""],["görsel",log.images?log.images+" görsel eklendi · model içeriğini bağlam olarak kullanır":""],["dosya",rq.size?"index.html ("+rq.size+" KB) — "+(Number(rq.size)>=9?"yalnızca değişen parçalar istendi":"tamamı yeniden yazılacak"):""]].filter(x=>x[1]);
- const meta=[log.kb&&log.kb+" KB",log.res?.patched?log.res.patched+" parça değiştirildi":"",log.model&&shortModel(log.model),log.spent?log.spent+" kredi":"",clTime(log.secs||0)].filter(Boolean);
+ const meta=[log.kb&&log.kb+" KB",log.res?.patched?log.res.patched+" parça değiştirildi":"",log.res?.fixed?log.res.fixed+" kod hatası otomatik onarıldı":"",log.model&&shortModel(log.model),log.spent?log.spent+" kredi":"",clTime(log.secs||0)].filter(Boolean);
  const steps=[];
  steps.push(html`<${ClStepRow} key="req" title=${kind?.sending||"İstek gönderildi"} state="ok"><${ClIO} label="İstek"><div class="cx-kv">${reqLines.map(([k,v])=>html`<div key=${k}><b>${k}</b> ${v}</div>`)}</div>${rq.text&&html`<div class="cx-prompt">${rq.text}</div>`}<//><//>`);
  if(ev.includes("connected"))steps.push(html`<${ClStepRow} key="con" title=${STUDIO_EVENTS.connected} state="ok"/>`);
@@ -4012,6 +4042,55 @@ function StudioChanges({before,after}){
 }
 // Asistan için uygulamanın kısa özeti: başlık ve ekran/bölüm başlıkları (asistan hangi projede olduğunu bilsin)
 function outlineOf(h){if(!h)return null;const t=(/<title[^>]*>([^<]{1,80})/i.exec(h)||[])[1]||"";const hs=[...h.matchAll(/<h[1-3][^>]*>([\s\S]{1,120}?)<\/h[1-3]>/gi)].map(m=>m[1].replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim()).filter(Boolean);return {baslik:t.trim(),bolumler:[...new Set(hs)].slice(0,10),boyutKB:+(h.length/1024).toFixed(1),oyun:/<canvas|requestAnimationFrame/i.test(h)}}
+// ---------- Medya Stüdyosu: Higgsfield ile üret, Canva'da tasarla → önizle → sahneye ekle ----------
+function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
+ const [tab,setTab]=useState(LS.get("mediaTab","higgsfield")||"higgsfield");useEffect(()=>{LS.set("mediaTab",tab)},[tab]);
+ const u=auth.user;const [key,setKey]=useState("");const [busy,setBusy]=useState("");const [err,setErr]=useState("");
+ const [prompt,setPrompt]=useState(context||"");const [type,setType]=useState("image");const [aspect,setAspect]=useState("16:9");
+ const [job,setJob]=useState(null);const [secs,setSecs]=useState(0);const [result,setResult]=useState(null);
+ const [size,setSize]=useState("1200x628");const [design,setDesign]=useState(null);const [cstate,setCstate]=useState("");const pop=useRef(null);const alive=useRef(true);
+ useEffect(()=>()=>{alive.current=false},[]);
+ useEffect(()=>{if(!job)return;const t0=Date.now();const i=setInterval(()=>setSecs(Math.round((Date.now()-t0)/1000)),500);return()=>clearInterval(i)},[job]);
+ const poll=async(fn,done,ms=2500,max=240)=>{for(let k=0;k<max&&alive.current;k++){const j=await fn();if(done(j))return j;await wait(ms)}throw new Error("İşlem çok uzun sürdü, sonra tekrar dene")};
+ async function connectHf(e){e.preventDefault();setBusy("key");setErr("");try{const j=await api("PUT","/api/connect/higgsfield",{key:key.trim()});auth.patch({higgsfield:j.last4});setKey("");toast("Higgsfield bağlandı")}catch(er){setErr(er.message)}finally{setBusy("")}}
+ async function generate(){setErr("");setResult(null);setBusy("gen");try{const j=await api("POST","/api/media/higgsfield",{prompt,type,aspect});setJob({id:j.id,status:j.status});
+   const r=await poll(()=>api("GET","/api/media/higgsfield/"+j.id),r=>{if(alive.current)setJob({id:j.id,status:r.status});return ["completed","failed","nsfw","canceled"].includes(r.status)});
+   if(r.status!=="completed"||!r.url)throw new Error(r.status==="nsfw"?"İçerik güvenlik filtresine takıldı; istemi değiştir":r.status==="canceled"?"İptal edildi":"Üretim başarısız: "+(r.error||r.status));
+   setResult({url:r.url,kind:r.kind,from:"Higgsfield"})}catch(er){setErr(er.message)}finally{setBusy("");setJob(null)}}
+ async function cancel(){if(job)await api("POST","/api/media/higgsfield/"+job.id+"/cancel").catch(()=>{});alive.current&&setJob(null)}
+ async function linkCanva(){if(!u){openAuth("Canva'yı bağlamak için giriş yap.");return}try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/canva/start?link="+encodeURIComponent(j.link)}catch(e){setErr(e.message)}}
+ async function openCanva(){setErr("");setResult(null);setBusy("design");try{const [w,h]=size.split("x").map(Number);const j=await api("POST","/api/media/canva/design",{width:w,height:h,title:(context||"Gitmapp tasarımı").slice(0,80)});setDesign(j);setCstate("edit");
+   pop.current=window.open(j.edit_url,"canva","width=1280,height=860");if(!pop.current)setErr("Açılır pencere engellendi; aşağıdaki bağlantıyla aç")}catch(e){setErr(e.message)}finally{setBusy("")}}
+ async function exportCanva(){if(!design)return;setErr("");setCstate("export");try{const j=await api("POST","/api/media/canva/export",{design_id:design.id});
+   const r=await poll(()=>api("GET","/api/media/canva/export/"+j.id),r=>r.status!=="in_progress",2000,90);
+   if(r.status!=="success"||!r.url)throw new Error(r.error==="license_required"?"Tasarımda Canva Pro öğesi var; dışa aktarmak için lisans gerekiyor":"Dışa aktarma başarısız");
+   setResult({url:r.url,kind:"image",from:"Canva"});setCstate("done")}catch(e){setErr(e.message);setCstate("edit")}}
+ useEffect(()=>{const h=e=>{if(e.data?.gm==="canva-return"&&design){toast("Canva'dan dönüldü · tasarım dışa aktarılıyor");exportCanva()}};addEventListener("message",h);
+  const t=setInterval(()=>{if(cstate==="edit"&&pop.current&&pop.current.closed){pop.current=null;exportCanva()}},1200);return()=>{removeEventListener("message",h);clearInterval(t)}},[design,cstate]);
+ async function addToStage(){if(!result)return;if(result.kind==="video"){window.open(result.url,"_blank","noopener");toast("Videolar şimdilik indirilip yüklenerek ekleniyor");return}
+  setBusy("add");try{const j=await api("POST","/api/media/fetch",{url:result.url});onAdd({url:j.data,thumb:j.data,name:result.from+" görseli",src:result.from});close()}catch(e){setErr(e.message)}finally{setBusy("")}}
+ const seg=(items,val,set)=>html`<div class="seg">${items.map(([k,l])=>html`<button type="button" key=${k} class=${val===k?"on":""} aria-pressed=${val===k} onClick=${()=>set(k)}>${l}</button>`)}</div>`;
+ const hf=html`${!u?html`<p class="ms-note">Higgsfield ile görsel ve video üretmek için giriş yap.</p><button class="btn" onClick=${()=>openAuth("")}>Giriş yap</button>`:!u.higgsfield?html`<form class="ms-form" onSubmit=${connectHf}><p class="ms-note">Higgsfield hesabını bağla: <a href="https://open.higgsfield.ai/api-keys" target="_blank" rel="noopener">open.higgsfield.ai › API Keys</a> sayfasından anahtar oluştur, “anahtar kimliği:gizli anahtar” biçiminde yapıştır. Anahtar sunucuda şifreli saklanır; üretimler Higgsfield bakiyenden düşer.</p><input class="in" type="password" autocomplete="off" required placeholder="hf_kid:hf_secret" value=${key} onInput=${e=>setKey(e.target.value)}/><button class="btn" disabled=${busy==="key"||key.trim().length<16}>${busy==="key"?"Doğrulanıyor…":"Bağla"}</button></form>`
+  :html`<div class="ms-gen"><label>Ne üretelim?<textarea class="in" rows="3" maxlength="2000" value=${prompt} onInput=${e=>setPrompt(e.target.value)} placeholder="Ör: gece şehir ışıklarında video dublaj yapan bir yayıncı, neon mor tonlar, sinematik"></textarea></label>
+   <div class="ms-row">${seg([["image","Görsel"],["video","Video"]],type,setType)}${seg([["1:1","1:1"],["16:9","16:9"],["9:16","9:16"],["4:3","4:3"]],aspect,setAspect)}<span style=${{flex:1}}></span>${job?html`<button class="btn g s" onClick=${cancel}>İptal</button>`:""}<button class="btn" disabled=${!!busy||prompt.trim().length<3} onClick=${generate}><${Icon} n="sparkles" s=${15}/> ${busy==="gen"?"Üretiliyor…":"Üret"}</button></div>
+   <small class="ms-note">Model: ${type==="image"?"Ideogram 4.0":"HappyHorse 1.1 (5 sn, 720p)"} · Higgsfield ••••${u.higgsfield}</small></div>`}`;
+ const cv=html`${!health.canva?html`<p class="ms-note">Canva bağlantısı bu sunucuda henüz yapılandırılmadı (Canva Developer Portal'da entegrasyon oluşturulup CANVA_CLIENT_ID / CANVA_CLIENT_SECRET tanımlanmalı).</p>`:!u?.canva?html`<p class="ms-note">Canva hesabını bağla; Gitmapp senin adına yeni tasarım açar, işin bitince PNG olarak geri alır.</p><button class="btn" onClick=${linkCanva}>Canva'yı bağla</button>`
+  :html`<div class="ms-gen"><label>Boyut</label><div class="ms-row">${seg([["1200x628","Kart / kapak"],["1080x1080","Kare"],["1080x1920","Hikâye"],["500x500","Logo"]],size,setSize)}<span style=${{flex:1}}></span><button class="btn" disabled=${!!busy||cstate==="export"} onClick=${openCanva}>${busy==="design"?"Açılıyor…":"Canva'da tasarla"}</button></div>
+   ${design&&cstate==="edit"&&html`<div class="ms-wait"><span class="ccspin"></span><span>Canva'da düzenliyorsun. Bitince Canva'daki “Gitmapp'e dön” düğmesine bas ya da pencereyi kapat; tasarım otomatik alınır.</span><a class="btn g s" href=${design.edit_url} target="canva">Pencereyi aç</a><button class="btn s" onClick=${exportCanva}>Bitti, al</button></div>`}
+   ${cstate==="export"&&html`<div class="ms-wait"><span class="ccspin"></span><span>Tasarım PNG olarak dışa aktarılıyor…</span></div>`}</div>`}`;
+ return html`<${UiDialog} label="Medya stüdyosu" width="760px" close=${close}><div class="ms glass">
+  <header><b>Medya stüdyosu</b><div class="seg">${[["higgsfield","Higgsfield ile üret"],["canva","Canva'da tasarla"]].map(([k,l])=>html`<button type="button" key=${k} class=${tab===k?"on":""} onClick=${()=>{setTab(k);setErr("")}}>${l}</button>`)}</div><button class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></header>
+  <div class="ms-body">${tab==="higgsfield"?hf:cv}
+   ${job&&html`<div class="ms-prog"><div class="ms-bar"><i></i></div><span><span class="shim">${job.status==="in_progress"?"Üretiliyor":"Sırada bekliyor"}…</span> ${clTime(secs)}</span></div>`}
+   ${err&&html`<p class="ms-err" role="alert">${err}</p>`}
+   ${result&&html`<div class="ms-res"><div class="ms-stage">${result.kind==="video"?html`<video src=${result.url} controls autoplay muted loop playsinline></video>`:html`<img src=${result.url} alt="Üretilen görsel"/>`}</div>
+    <div class="ms-row"><small class="ms-note">${result.from} · ${result.kind==="video"?"video":"görsel"} hazır</small><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>tab==="higgsfield"?generate():openCanva()}>Yeniden</button><button class="btn" disabled=${busy==="add"} onClick=${addToStage}><${Icon} n="pointer" s=${15}/> ${busy==="add"?"Hazırlanıyor…":"Sahneye ekle"}</button></div></div>`}
+  </div></div><//>`;
+}
+// Model stratejisi: zayıf modeli tanı, işe göre en uygun modeli seç
+const weakModel=(id,info)=>!!id&&(info?.tier==="hizli"||/small|mini|nano|haiku|flash|lite|\b[1-9]b\b|8x7b/i.test(id));
+const MODEL_PREF={guclu:[/opus/i,/fable/i,/gpt-?5(?!.*(mini|nano))/i,/sonnet/i,/gemini.*pro/i,/large|pro/i],dengeli:[/sonnet/i,/gpt-?5/i,/gemini/i,/mistral-large|large/i,/./]};
+function pickModel(list,tier){const pool=(list||[]).filter(m=>m.tier===tier);for(const re of MODEL_PREF[tier]||[/./]){const m=pool.find(x=>re.test(x.id));if(m)return m}return pool[0]||null}
 // Sonuç raporu (Claude Code gibi): sonuç cümlesi, değişiklik maddeleri, Kontrol ve tıklanabilir Sıradaki önerisi
 function ReportText({text,onNext}){
  const lines=String(text||"").split(/\n+/).map(l=>l.trim()).filter(Boolean);
@@ -4189,6 +4268,28 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const [sessOpen,setSessOpen]=useState(()=>LS.get("sessOpen",innerWidth>1280)!==false&&innerWidth>820);useEffect(()=>{LS.set("sessOpen",sessOpen)},[sessOpen]);const [spMore,setSpMore]=useState(false),[spCtx,setSpCtx]=useState(false),[hostForm,setHostForm]=useState(false),[hostTok,setHostTok]=useState(""),[spBusy,setSpBusy]=useState(""),[spDiff,setSpDiff]=useState(false);const [autoFix,setAutoFix]=useState(()=>LS.get("autoFix",false)===true);useEffect(()=>{LS.set("autoFix",autoFix)},[autoFix]);const autoFixed=useRef(0);
+ const [placeSel,setPlaceSel]=useState(null),[stagePend,setStagePend]=useState(null);const mediaIn=useRef(null);
+ const tray=useMemo(()=>[...(st.media||[]).map(m=>({...m,id:"media:"+m.id})),...atts.map(a=>({id:"att:"+a.id,url:a.full||a.small,thumb:a.thumb,name:a.name,src:"Eklenen"})),...Object.entries(st.assets||{}).map(([k,v])=>({id:"asset:"+k,url:v,thumb:v,name:k.toLowerCase(),src:"Uygulamada"}))],[st.media,atts,st.assets]);
+ const trayRef=useRef(tray);trayRef.current=tray;const placeRef=useRef(null);placeRef.current=placeSel;
+ const toFrame=msg=>{try{frameRef.current?.contentWindow?.postMessage(msg,"*")}catch(e){}};
+ async function addMedia(files,from="Yüklenen"){const out=[];for(const f of [...(files||[])].slice(0,6)){try{const a=await prepImage(f);out.push({id:a.id,url:a.small,thumb:a.thumb,name:f.name,src:from})}catch(e){toast(e.message)}}if(out.length){setSt(s=>({...s,media:[...out,...(s.media||[])].slice(0,8)}));toast(out.length+" görsel medya tepsisine eklendi · önizlemeye sürükle ya da dokun")}return out}
+ useEffect(()=>{const h=async e=>{const d=e.data;if(!d||d.gm!=="stage-drop"||!frameRef.current||e.source!==frameRef.current.contentWindow)return;
+   let item=null;if(d.file){const [m]=await addMedia([d.file],"Sürüklenen");item=m&&{...m,id:"media:"+m.id}}else{const id=d.asset==="__place__"?placeRef.current:d.asset;item=trayRef.current.find(x=>x.id===id)}
+   setPlaceSel(null);if(!item){toast("Bu görsel bulunamadı");return}
+   toFrame({gm:"stage-apply",url:item.url});setStagePend({item,target:d.target})};
+  addEventListener("message",h);return()=>removeEventListener("message",h)},[]);
+ useEffect(()=>{toFrame({gm:"stage-place",on:!!placeSel})},[placeSel]);
+ function confirmStage(){const {item,target}=stagePend;setStagePend(null);
+  const keys=Object.keys(st.assets||{});let key=item.id.startsWith("asset:")?item.id.slice(6):null;
+  if(!key){const n=keys.reduce((m,k)=>Math.max(m,+(/IMG_(\d+)/.exec(k)||[0,0])[1]),0)+1;key="IMG_"+n}
+  const ph="{{"+key+"}}",prev=st.html;let html=null;
+  const needle=target.src||target.bg;if(needle&&!needle.startsWith("data:")||needle&&prev.includes(needle)){let at=-1,from=0;for(let i=0;i<=(target.src?target.idx:0);i++){at=prev.indexOf(needle,from);if(at<0)break;from=at+needle.length}if(at>=0)html=prev.slice(0,at)+ph+prev.slice(at+needle.length)}
+  setSt(s=>({...s,assets:{...(s.assets||{}),[key]:item.url}}));
+  if(html){setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html,assets:{...(s.assets||{}),[key]:item.url},msgs:[...s.msgs,{role:"assistant",content:"Görseli “"+(target.alt||target.tag)+"” öğesine yerleştirdim.\nKontrol: Önizlemede yerinde görünüyor; kredi harcanmadı."}]}));return}
+  toast("Bu görsel kodla üretiliyor · yapay zekâ kalıcı olarak yerleştiriyor");
+  build("Kullanıcı önizlemede bir görseli sürükleyip şu öğeye bıraktı: <"+target.tag+">"+(target.alt?" (metin/alt: “"+target.alt+"”)":"")+(target.src?" mevcut görsel adresi: "+String(target.src).slice(0,200):"")+". Bu öğenin görseli artık "+ph+" olsun: <img> ise src değerini aynen "+ph+" yaz; arka plan görseliyse background-image: url("+ph+") kullan; listeden/veriden üretiliyorsa ilgili kaydın görselini "+ph+" yap. Başka hiçbir şeyi değiştirme.",null,"Görseli yerleştir: "+(target.alt||target.tag))}
+ function undoStage(){toFrame({gm:"stage-undo"});setStagePend(null)}
+ const [esc,setEsc]=useState(null);const [mediaOpen,setMediaOpen]=useState(false);const escOk=useRef(false);const genRef=useRef(null);
  const [ccMenu,setCcMenu]=useState(null);const [vcSource,setVcSource]=useState(()=>LS.get("vcSource","gitmapp")==="github"?"github":"gitmapp");useEffect(()=>{LS.set("vcSource",vcSource)},[vcSource]);useEffect(()=>{if(busy)setCcMenu(null)},[busy]);
  const jobRef=useRef(null),detachRef=useRef(false);
 
@@ -4234,7 +4335,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:curModel||undefined});
+ const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -4280,7 +4381,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    spent(result);
    const endEvent=typeof finalEvent==="function"?finalEvent(result):finalEvent;
    if(endEvent)record(endEvent);
-   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
+   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,fixed:result.autoFixed||0,jsErr:result.scriptErrors||null,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
    return result;
   }catch(error){
    if(!valid())return null;
@@ -4333,10 +4434,13 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    if(it.k==="ask"){window.__cpPending={text,att:atts.map(a=>({id:a.id,kind:"img",name:a.name,thumb:a.thumb,data:a.small}))};setInput("");setAtts([]);dispatchEvent(new Event("gm:cp-open"));setTimeout(()=>dispatchEvent(new Event("gm:cp-pending")),400);toast("Bu bir soru · Asistan yanıtlıyor, kredi harcanmaz");return}
    if(it.k==="chat"&&!atts.length){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
   if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}
+  if(!escOk.current&&!prefs.autoModel&&prefs.provider==="gitmapp"&&weakModel(curModel,curInfo)&&(!st.html||prefs.mode==="ajan"||text.length>140)){const best=pickModel(md.platform,"guclu");if(best&&best.id!==curModel){setEsc({text,best:best.id,credits:best.credits});return}}
+  escOk.current=false;setEsc(null);
   setInput("");track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode,images:atts.length}});
   if(prefs.mode==="ajan")return agent(text);
   if(prefs.mode==="planli"&&!st.html)return requestPlan(text,takeImages());
   await build(text,null,text,false,takeImages())}
+ genRef.current=gen;
  useEffect(()=>{if(busy||todo?.running||!queue.length||plan)return;const t=setTimeout(()=>{const [n,...rest]=queue;setQueue(rest);gen(n)},600);return()=>clearTimeout(t)},[scope,busy,todo?.running,queue,plan]);
  function lastAsk(){if(st.html)return "";const u=st.msgs.filter(m=>m.role==="user"&&m.content&&!isGo(m.content)&&!GREET.test(m.content.trim())&&m.content.trim().length>=14).pop();return u?u.content.trim():""}
  function requestPlan(text,im,retrying=false){
@@ -4523,6 +4627,9 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
     <span class="gnote">${busy?html`<button type="button" class="pe-chip run" aria-label="İşlem adımlarını göster veya gizle" aria-expanded=${!!(latestWork&&flowOpen[flowId(latestWork)])} onClick=${()=>toggleFlow(latestWork,true)}><${ClSpark} s=${13}/> ${clTime(secs)}</button>`:input.trim()&&GS.engine?html`<${PromptEngine} open=${requestInfo} toggle=${()=>setRequestInfo(v=>!v)} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
     ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/> Sıraya ekle</button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
+ const escCard=()=>esc&&!busy&&html`<div class="esc" role="alertdialog" aria-label="Model önerisi"><div class="esc-h"><${Icon} n="zap" s=${15}/><b>Bu iş için daha güçlü bir model önerilir</b></div>
+  <p><b>${shortModel(curModel)}</b> hızlı ama küçük bir model; ${st.html?"büyük değişikliklerde":"sıfırdan uygulama yazarken"} kod hatası ve yarıda kesilme riski yüksek. <b>${shortModel(esc.best)}</b> ile yapmanı öneririm (${esc.credits} kredi).</p>
+  <div class="esc-a"><button type="button" class="btn s" onClick=${()=>{const t=esc.text;setPrefs(p=>({...p,model:esc.best}));escOk.current=true;setEsc(null);setTimeout(()=>genRef.current&&genRef.current(t),60)}}>${shortModel(esc.best)} ile yap</button><button type="button" class="btn g s" onClick=${()=>{const t=esc.text;escOk.current=true;setEsc(null);genRef.current&&genRef.current(t)}}>Seçili modelle devam et</button><button type="button" class="btn g s" title="Her işte en uygun modeli Gitmapp seçsin: yeni uygulamada güçlü, küçük düzenlemede dengeli" onClick=${()=>{const t=esc.text;setPrefs(p=>({...p,autoModel:true}));escOk.current=true;setEsc(null);setTimeout(()=>genRef.current&&genRef.current(t),60)}}>Hep otomatik seç</button><button type="button" class="ib sm" aria-label="Kapat" onClick=${()=>setEsc(null)}><${Icon} n="x" s=${13}/></button></div></div>`;
  const ccFoot=()=>{const m=ccMenu,tog=k=>setCcMenu(x=>x===k?null:k),cl=()=>setCcMenu(null);
   const branch=st.gitContext?.name||"main",onBranch=!!st.gitContext;const det=runSet.detail||"dengeli";const effort={kisa:"Düşük",dengeli:"Orta",ayrintili:"Yüksek"}[det]||"Orta";
   const kb=(st.html||"").length/1024,pct=Math.min(1,kb/240),C=2*Math.PI*7;
@@ -4539,9 +4646,10 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   <span class="ccw k-br">${trig("br",html`<${Icon} n="branch" s=${15}/>`,branch,onBranch?"Çalışma dalı: "+branch+" ("+(st.gitContext.source==="github"?"GitHub":"Gitmapp")+")":"Dal seç, değiştir ya da yeni dal aç",onBranch?html`<i class="ccf-dot" aria-hidden="true"></i>`:"")}
    ${m==="br"&&html`<${BranchMenu} appId=${st.appId} source=${vcSource} setSource=${setVcSource} active=${st.gitContext} content=${resolve(st.html)} auth=${auth} openAuth=${openAuth} toast=${toast} close=${cl} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch} openPanel=${()=>{cl();setGitOpen(vcSource==="github"?"github":true)}}/>`}</span>
   <span class="sp"></span>
-  <span class="ccw k-model">${trig("model",curInfo?html`<${FamLogo} f=${curInfo.family} s=${15}/>`:html`<${Icon} n="cpu" s=${15}/>`,curModel?shortModel(curModel):"Model seç","Dil modeli ve efor",html`<span class="dim">${effort}</span>`)}
+  <span class="ccw k-model">${trig("model",curInfo?html`<${FamLogo} f=${curInfo.family} s=${15}/>`:html`<${Icon} n="cpu" s=${15}/>`,prefs.autoModel?"Otomatik model":curModel?shortModel(curModel):"Model seç","Dil modeli ve efor",html`<span class="dim">${effort}</span>`)}
    ${m==="model"&&html`<${CcPop} close=${cl} cls="r"><div class="ccpop-h">Dil modeli<small>${curInfo?curInfo.credits+" kredi / işlem":prefs.provider!=="gitmapp"?"kendi anahtarın":""}</small></div>
     ${item(true,null,curModel?shortModel(curModel):"Model seçilmedi",null,()=>{cl();setPicker(true)})}
+    ${item(!!prefs.autoModel,"sparkles","Otomatik seç","Yeni uygulamada güçlü, küçük düzenlemede dengeli model",()=>{setPrefs(p=>({...p,autoModel:!p.autoModel}));cl()})}
     ${item(false,"cpu","Modeli değiştir…",null,()=>{cl();setPicker(true)})}
     <div class="ccpop-sep"></div><div class="ccpop-h">Efor</div>
     ${[["kisa","Düşük","Kısa ve hızlı yanıt, daha az ayrıntı"],["dengeli","Orta","Dengeli: çoğu iş için önerilen"],["ayrintili","Yüksek","Ayrıntılı, daha uzun ve titiz üretim"]].map(([k,t,d])=>item(det===k,null,t,d,()=>{const n={...runSet,detail:k};setRunSet(n);runRef.current=n;cl()}))}
@@ -4561,8 +4669,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const parts=[["Sistem talimatları",2600],["Uygulama dosyası (index.html)",Math.round(html0.length/3.2)],["Önceki istekler",Math.round(st.msgs.filter(m=>m.role==="user").slice(-5).reduce((n,m)=>n+Math.min(300,String(m.content||"").length),0)/3.4)],["Tasarım sistemi ve tema",(st.tokens?350:0)+300],["Profil talimatları",Math.round(ins.length/3.4)],["Bağlantılar",activeIntegrations().length*70],["Görseller",atts.length*1600],["Yanıt için ayrılan",html0.length>=9000?10000:24000]].filter(([,n])=>n>0);
   const used=parts.reduce((n,[,v])=>n+v,0),pct=Math.min(100,Math.round(used/win*100));
   const conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);
-  const link=async(prov)=>{if(!u){openAuth("Hesap bağlamak için giriş yap.");return}try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/oauth/"+prov+"/start?link="+encodeURIComponent(j.link)}catch(e){toast(e.message)}};
-  const unlink=async prov=>{if(!confirm((prov==="hostinger"?"Hostinger":prov==="github"?"GitHub":"Google")+" bağlantısı kesilsin mi?"))return;setSpBusy(prov);try{const j=await api("DELETE","/api/connect/"+prov);j.user&&auth.patch(j.user);if(prov==="hostinger")auth.patch({hostinger:null});toast("Bağlantı kesildi")}catch(e){toast(e.message)}finally{setSpBusy("")}};
+  const link=async(prov)=>{if(!u){openAuth("Hesap bağlamak için giriş yap.");return}try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+(prov==="canva"?"/api/auth/canva/start?link=":"/api/auth/oauth/"+prov+"/start?link=")+encodeURIComponent(j.link)}catch(e){toast(e.message)}};
+  const unlink=async prov=>{if(!confirm(({hostinger:"Hostinger",github:"GitHub",google:"Google",higgsfield:"Higgsfield",canva:"Canva"}[prov]||prov)+" bağlantısı kesilsin mi?"))return;setSpBusy(prov);try{const j=await api("DELETE","/api/connect/"+prov);j.user&&auth.patch(j.user);if(["hostinger","higgsfield","canva"].includes(prov))auth.patch({[prov]:prov==="canva"?false:null});toast("Bağlantı kesildi")}catch(e){toast(e.message)}finally{setSpBusy("")}};
   const saveHost=async e=>{e.preventDefault();setSpBusy("hostinger");try{const j=await api("PUT","/api/connect/hostinger",{token:hostTok.trim()});auth.patch({hostinger:j.last4});setHostTok("");setHostForm(false);toast("Hostinger bağlandı"+(j.plans!=null?" · "+j.plans+" hizmet bulundu":""))}catch(er){toast(er.message)}finally{setSpBusy("")}};
   const acct=(key,logo,name,on,sub,prov,cfgOk)=>html`<div class="sp-row" key=${key}>${logo}<span class="sp-t"><b>${name}</b>${sub&&html`<small>${sub}</small>`}</span>${on?html`<span class="sp-ok" title="Bağlı"></span><button type="button" class="sp-ib" title="Bağlantıyı kes" aria-label=${name+" bağlantısını kes"} disabled=${spBusy===prov} onClick=${()=>unlink(prov)}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${cfgOk===false} title=${cfgOk===false?"Bu sunucuda yapılandırılmamış":""} onClick=${()=>prov==="hostinger"?setHostForm(!hostForm):link(prov)}>Bağla</button>`}</div>`;
   const dl=(name,data,type="text/html")=>{const b=new Blob([data],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
@@ -4581,10 +4689,15 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    ${acct("gh",html`<${Icon} n="github" s=${18}/>`,"GitHub",!!u?.github,u?.github?"@"+u.github+" · depo ve dallar":"Depo, dal ve commit","github",health.github)}
    ${acct("gg",html`<${BrandG} s=${18}/>`,"Google",!!u?.google,u?.google?"Hesap bağlı":"Google ile giriş","google",health.google)}
    ${acct("hs",html`<${BrandH} s=${18}/>`,"Hostinger",!!u?.hostinger,u?.hostinger?"API anahtarı ••••"+u.hostinger:"Alan adı ve barındırma","hostinger")}
+   <div class="sp-row"><${Icon} n="video" s=${18}/><span class="sp-t"><b>Higgsfield</b><small>${u?.higgsfield?"Anahtar ••••"+u.higgsfield+" · görsel ve video":"Yapay zekâ görsel ve video"}</small></span>${u?.higgsfield?html`<span class="sp-ok"></span><button type="button" class="sp-ib" aria-label="Higgsfield bağlantısını kes" onClick=${()=>unlink("higgsfield")}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" onClick=${()=>setMediaOpen(true)}>Bağla</button>`}</div>
+   <div class="sp-row"><${Icon} n="palette" s=${18}/><span class="sp-t"><b>Canva</b><small>${u?.canva?"Hesap bağlı · tasarım":health.canva?"Tasarım ve şablonlar":"Sunucuda yapılandırılmamış"}</small></span>${u?.canva?html`<span class="sp-ok"></span><button type="button" class="sp-ib" aria-label="Canva bağlantısını kes" onClick=${()=>unlink("canva")}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${!health.canva} onClick=${()=>link("canva")}>Bağla</button>`}</div>
    ${hostForm&&!u?.hostinger&&html`<form class="sp-form" onSubmit=${u?saveHost:e=>{e.preventDefault();openAuth("Hostinger bağlamak için giriş yap.")}}><label>Hostinger API anahtarı<input class="in" type="password" autocomplete="off" required minlength="20" placeholder="hPanel › Hesap › API › Yeni anahtar" value=${hostTok} onInput=${e=>setHostTok(e.target.value)}/></label><small>Anahtar sunucuda şifreli saklanır; tarayıcıda tutulmaz.</small><div><button class="btn s" disabled=${spBusy==="hostinger"||hostTok.trim().length<20}>${spBusy==="hostinger"?"Doğrulanıyor…":"Bağla"}</button><a class="btn g s" href="https://hpanel.hostinger.com/profile/api" target="_blank" rel="noopener">Anahtar al</a></div></form>`}
    ${(spMore?conns:conns.slice(0,3)).map(c=>html`<div class="sp-row" key=${c.id}><${ConnIcon} c=${c} s=${18}/><span class="sp-t"><b>${c.n}</b><small>Uygulamaya eklenebilir</small></span><span class="sp-ok" title="Açık"></span></div>`)}
    ${conns.length>3&&html`<button type="button" class="sp-more" onClick=${()=>setSpMore(!spMore)}>${spMore?"Daha az göster":"Daha fazla göster ("+(conns.length-3)+")"}</button>`}
    <button type="button" class="sp-more" onClick=${()=>go&&go("baglantilar")}>Bağlantıları yönet</button>
+  </section>
+  <section><div class="sp-mh"><h3>Medya</h3><button type="button" class="sp-link" onClick=${()=>setMediaOpen(true)}><${Icon} n="sparkles" s=${13}/> Üret</button><button type="button" class="sp-link" onClick=${()=>mediaIn.current?.click()}>Yükle</button><input type="file" hidden ref=${mediaIn} accept="image/*" multiple onChange=${e=>{addMedia(e.target.files);e.target.value=""}}/></div>
+   ${tray.length?html`<p class="sp-empty">Önizlemedeki bir öğenin üzerine sürükle ya da dokunup öğeyi seç.</p><div class="sp-tray">${tray.map(m=>html`<button type="button" key=${m.id} class=${"sp-mi"+(placeSel===m.id?" on":"")} draggable="true" title=${(m.name||"görsel")+" · "+(m.src||"")} onDragStart=${e=>{e.dataTransfer.setData("text/gm-asset",m.id);e.dataTransfer.effectAllowed="copy";e.dataTransfer.setDragImage(e.currentTarget.querySelector("img"),30,30)}} onClick=${()=>{if(!st.html){toast("Önce bir uygulama üret");return}setPlaceSel(placeSel===m.id?null:m.id)}}><img src=${m.thumb||m.url} alt=${m.name||""}/><em>${m.src}</em></button>`)}</div>`:html`<p class="sp-empty">Görsel yükle ya da üret; sonra önizlemeye sürükleyip yerleştir.</p>`}
   </section>
   <section><h3>Çıktılar</h3>
    ${!st.html&&!assets.length&&!atts.length?html`<p class="sp-empty">Üretim yapınca dosyalar burada görünür.</p>`:""}
@@ -4634,7 +4747,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   <h1 class="hero-greet"><span class="grad-text">Merhaba${auth.user&&(auth.user.nickname||auth.user.name)?" "+(auth.user.nickname||auth.user.name.split(" ")[0]):""}</span>, bugün ne yapalım?</h1>
   <p class="hero-sub">Bir proje türü seç ve ne yapmak istediğini yaz.</p>
   <div class="start-type">${typeSwitch()}</div>
-  ${prompt(true)}${ccFoot()}
+  ${escCard()}${prompt(true)}${ccFoot()}
   <div class="start-options"><button type="button" class="forme" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button></div>
   <${DesignStrip} custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>
   ${!API_ON&&html`<div class="gcard" role="status" style=${{marginTop:12,padding:10,color:"var(--label2)"}}>${healthError?html`Stüdyo sunucusuna ulaşılamadı. <button class="btn g s" onClick=${retry}>Tekrar dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
@@ -4677,7 +4790,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   switchProject({...st,gitContext:null,msgs:[]});
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
- const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
+ const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
  return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
@@ -4704,7 +4817,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const fix=()=>build("TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun.",null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   return html`<div class=${"dq-card"+(probs.length?" warn":"")} role="status"><div class="dq-h"><${Icon} n=${probs.length?"alert":"check"} s=${14}/><b>Tasarım ajanı</b><span>${probs.length?probs.length+" sorun buldu":"önizlemeyi denetledi · sorun yok"}</span>${st.tokens&&html`<em title=${st.tokens}>tasarım sistemi kayıtlı</em>`}</div>${probs.length>0&&html`<ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Ajan düzeltsin</button>`}</div>`})()}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const nx=nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked});
-  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
+  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
@@ -4721,8 +4834,11 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     :busy&&!code?html`<${LiveBuild} code=${live} stage=${stage} base=${st.html?resolve(st.html):""} resolve=${resolve} phase=${live?"Kod yazılıyor":st.html?"Değişiklik hazırlanıyor":"Uygulaman kuruluyor"}/>`
     :!st.html?html`<div class="prev-empty">${busy?html`<${Spark} s=${34}/><span style=${{marginTop:12}}>${code?"Kod akışı bekleniyor":"İlk çalışan sürüm burada görünecek"}</span>`:html`<${Icon} n=${plan?"compass":"sparkles"} s=${30} c="#4a5470"/><span style=${{marginTop:10}}>${code?"Projenin kaynak kodu burada görünecek":plan?"Planı onaylayınca önizleme burada görünecek":"Önizleme burada görünecek"}</span>`}</div>`
     :frameEl(stage,true)}
+    ${stagePend&&!code&&html`<div class="stg-bar" role="dialog" aria-label="Görsel yerleştirme"><img src=${stagePend.item.thumb||stagePend.item.url} alt=""/><span><b>Görsel yerleştirildi</b><small>→ ${stagePend.target.alt||"<"+stagePend.target.tag+">"} · sahnede böyle görünecek</small></span><button type="button" class="btn s" onClick=${confirmStage}>Onayla</button><button type="button" class="btn g s" onClick=${undoStage}>Geri al</button></div>`}
+    ${placeSel&&!code&&html`<div class="stg-hint"><${Icon} n="pointer" s=${14}/><span>Görseli koymak istediğin öğeye önizlemede dokun</span><button type="button" class="ib sm" aria-label="Vazgeç" onClick=${()=>setPlaceSel(null)}><${Icon} n="x" s=${12}/></button></div>`}
     ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
    </div></section>${sessOpen&&sessPanel()}</div>
+  ${mediaOpen&&html`<${MediaStudio} close=${()=>setMediaOpen(false)} auth=${auth} health=${health} toast=${toast} openAuth=${openAuth} context=${[st.title,picked?.text].filter(Boolean).join(" · ")} onAdd=${m=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{...m,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);toast("Önizlemede görselin gideceği öğeye dokun")}}/>`}
   ${full&&st.html&&html`<div class="fullprev" onClick=${()=>setFull(false)}><div class="fp-bar glass" onClick=${e=>e.stopPropagation()}><b style=${{marginRight:8}}>${st.title||"Önizleme"}</b>${seg([["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]],stage,setStage)}<span style=${{flex:1}}></span><button class="ib" onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button><button class="ib" onClick=${()=>setFull(false)} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div><div class="fp-stage" onClick=${e=>e.stopPropagation()}>${frameEl(stage)}</div></div>`}
   </div>`;
 }
@@ -5361,6 +5477,26 @@ function previewPicker(nodePath){
  },true);
 }
 const VE_SCRIPT='<script>('+previewPicker.toString()+')('+elementPath.toString()+');<\/script>';
+// Sahneye yerleştirme: görsel önizlemedeki bir öğenin üzerine sürüklenir ya da (dokunmatikte) dokunularak yerleştirilir.
+// Hedef vurgulanır, bırakınca görsel anında yerinde gösterilir; kalıcı değişiklik ebeveyn pencerede onayla yapılır.
+function stageDrop(){
+ let over=null,place=false,label=null,undo=[];
+ const st=document.createElement("style");st.textContent="[data-gm-drop]{outline:3px solid #d97757!important;outline-offset:-3px!important;box-shadow:0 0 0 9999px rgba(10,10,12,.28) inset;transition:outline-color .15s}.gm-drop-l{position:fixed;z-index:2147483647;pointer-events:none;padding:5px 10px;border-radius:99px;background:#d97757;color:#fff;font:600 12px/1.2 system-ui;box-shadow:0 6px 18px rgba(0,0,0,.35)}@keyframes gmPop{0%{transform:scale(.96);filter:brightness(1.25)}100%{transform:none;filter:none}}.gm-placed{animation:gmPop .45s cubic-bezier(.2,.8,.2,1)}";document.head.append(st);
+ const bgOf=el=>{const m=/url\(["']?([^"')]+)["']?\)/.exec(getComputedStyle(el).backgroundImage||"");return m?m[1]:null};
+ function targetAt(x,y){let el=document.elementFromPoint(x,y);for(let i=0;el&&i<6;i++,el=el.parentElement){if(el.tagName==="IMG"||bgOf(el))return el;const im=el.querySelector&&el.querySelector("img");if(im&&el.getBoundingClientRect().height<480)return im}return document.elementFromPoint(x,y)}
+ function show(el,x,y){if(over!==el){over?.removeAttribute("data-gm-drop");over=el;el?.setAttribute("data-gm-drop","")}if(!label){label=document.createElement("div");label.className="gm-drop-l";document.body.append(label)}const kind=el?.tagName==="IMG"?"Görseli değiştir":el&&bgOf(el)?"Arka planı değiştir":"Görsel olarak ekle";label.textContent=kind+(el?.alt?" · "+el.alt.slice(0,30):"");label.style.left=Math.min(innerWidth-180,x+14)+"px";label.style.top=Math.max(6,y-34)+"px"}
+ function hide(){over?.removeAttribute("data-gm-drop");over=null;label?.remove();label=null}
+ function info(el){const imgs=[...document.images];const src=el.tagName==="IMG"?el.getAttribute("src"):null;const bg=!src&&bgOf(el);const same=src?imgs.filter(i=>i.getAttribute("src")===src):[];return {tag:el.tagName.toLowerCase(),src,bg:bg||null,idx:src?same.indexOf(el):0,alt:(el.alt||el.getAttribute("aria-label")||el.textContent||"").trim().slice(0,60)}}
+ function apply(el,url){undo.push({el,src:el.tagName==="IMG"?el.getAttribute("src"):null,bg:el.style.backgroundImage});if(el.tagName==="IMG"){el.removeAttribute("srcset");el.src=url;el.style.objectFit=el.style.objectFit||"cover"}else if(bgOf(el)){el.style.backgroundImage="url("+url+")";el.style.backgroundSize="cover"}else{const im=document.createElement("img");im.src=url;im.alt="";im.style.cssText="display:block;width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin:8px 0";el.prepend(im);undo[undo.length-1].added=im}el.classList.remove("gm-placed");void el.offsetWidth;el.classList.add("gm-placed")}
+ let pending=null;
+ addEventListener("dragover",e=>{e.preventDefault();e.dataTransfer.dropEffect="copy";show(targetAt(e.clientX,e.clientY),e.clientX,e.clientY)},true);
+ addEventListener("dragleave",e=>{if(!e.relatedTarget)hide()},true);
+ addEventListener("drop",e=>{e.preventDefault();const el=targetAt(e.clientX,e.clientY);hide();if(!el)return;pending=el;const f=e.dataTransfer.files&&e.dataTransfer.files[0];parent.postMessage({gm:"stage-drop",asset:e.dataTransfer.getData("text/gm-asset")||null,file:f||null,target:info(el)},"*")},true);
+ addEventListener("pointermove",e=>{if(place)show(targetAt(e.clientX,e.clientY),e.clientX,e.clientY)},true);
+ addEventListener("click",e=>{if(!place)return;e.preventDefault();e.stopPropagation();const el=targetAt(e.clientX,e.clientY);hide();place=false;pending=el;parent.postMessage({gm:"stage-drop",asset:"__place__",target:info(el)},"*")},true);
+ addEventListener("message",e=>{if(e.source!==parent||!e.data)return;const d=e.data;if(d.gm==="stage-place"){place=!!d.on;if(!place)hide()}if(d.gm==="stage-apply"&&pending){apply(pending,d.url);pending=null}if(d.gm==="stage-undo"){const u=undo.pop();if(u){if(u.added)u.added.remove();else if(u.src!=null)u.el.setAttribute("src",u.src);else u.el.style.backgroundImage=u.bg}}});
+}
+const DROP_SCRIPT='<script>('+stageDrop.toString()+')();<\/script>';
 /* ================= v4.2 — AKILLI YAZIM: hayalet öneri (Tab), hızlı ekler, istem iyileştirme ================= */
 const GH_PHRASES=[
  "Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği, benim de günlük randevuları görüp iptal edebildiğim bir uygulama",
@@ -6075,6 +6211,7 @@ function App(){
    if(v.startsWith("auth=")){TOK.set(v.slice(5));auth.refresh();toast("Giriş yapıldı 👋");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v==="github-dallar"){auth.refresh();setResumeVersions(true);setView("studio");return}
    if(v==="github-baglandi"||v==="google-baglandi"){auth.refresh();toast(v==="github-baglandi"?"GitHub hesabınız bağlandı 🐙":"Google hesabınız bağlandı");const d=LS.get("afterLink","");LS.set("afterLink","");setView(d==="studio"?"studio":"uygulamalarim");return}
+   if(v==="canva-baglandi"){auth.refresh();toast("Canva hesabın bağlandı");LS.set("afterLink","");setView("studio");return}
    if(v==="google-baska-hesap"){toast("Bu Google hesabı başka bir Gitmapp hesabına bağlı");LS.get("afterLink","")==="studio"&&setView("studio");LS.set("afterLink","");return}
    if(v==="auth-hata"||v==="auth-eposta-yok"){toast(v==="auth-hata"?"Giriş tamamlanamadı, tekrar deneyin":"Hesabınızda doğrulanmış e-posta bulunamadı");const dest=LS.get("afterAuth","studio");LS.set("afterAuth","");setView(ALL.includes(dest)?dest:"studio");return}
    if(v.startsWith("app/")){setAppSlug(decodeURIComponent(v.slice(4)));setViewS("detay");setMode("musteri");return}

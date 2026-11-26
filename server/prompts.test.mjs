@@ -67,3 +67,4 @@ test("sonuç raporu: sonuç önce, maddeler, Kontrol ve Sıradaki; övgü yok", 
   assert.match(GEN_SYSTEM, /Sıradaki:/);
   assert.match(GEN_SYSTEM, /övgüler ve ünlem kullanma/);
 });
+test("JS metin kuralı: tek tırnak yerine çift/ters tırnak", () => { assert.match(GEN_SYSTEM, /ters tırnak \(`\)/); });

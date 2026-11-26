@@ -3,6 +3,7 @@
 import http from "node:http";
 import { MAX_PROJECT_HTML, linkedRepo, registerVersions } from "./version-control.mjs";
 import { GEN_SYSTEM, KIND_RULES, connRules, scopeRule, profileRelevant, buildBudget } from "./prompts.mjs";
+import { scriptErrors } from "./quality.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -23,6 +24,7 @@ const CFG = {
   hostingerToken: E.HOSTINGER_API_TOKEN || "",
   gh: { id: E.GITHUB_CLIENT_ID || "", secret: E.GITHUB_CLIENT_SECRET || "" },
   google: { id: E.GOOGLE_CLIENT_ID || "", secret: E.GOOGLE_CLIENT_SECRET || "" },
+  canva: { id: E.CANVA_CLIENT_ID || "", secret: E.CANVA_CLIENT_SECRET || "" },
   cors: [E.SITE_URL || "https://gitmapp.com", "https://www.gitmapp.com", "https://nikocan.github.io", ...(E.CORS_EXTRA ? E.CORS_EXTRA.split(",") : [])],
   aiDailyAnon: +(E.AI_DAILY_ANON || 3),
   aiDailyUser: +(E.AI_DAILY_USER || 40),
@@ -95,8 +97,9 @@ const hashPw = (pw) => { const salt = crypto.randomBytes(16).toString("hex"); re
 const checkPw = (pw, h) => { if (!h) return false; const [salt, hex] = h.split(":"); const a = crypto.scryptSync(pw, salt, 64); const b = Buffer.from(hex, "hex"); return a.length === b.length && crypto.timingSafeEqual(a, b); };
 const isAdmin = (u) => !!u && !!CFG.admin && u.email.toLowerCase() === CFG.admin && !!u.email_verified;
 const jsonObj = (t) => { try { const v = JSON.parse(t || "{}"); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; } catch { return {}; } };
+const keyLast4 = (id, prov) => { try { return q("SELECT last4 FROM user_keys WHERE user_id=? AND provider=?").get(id, prov)?.last4 || null; } catch { return null; } };
 const hostingerLast4 = (id) => { try { return q("SELECT last4 FROM user_keys WHERE user_id=? AND provider='hostinger'").get(id)?.last4 || null; } catch { return null; } };
-const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, google: !!u.google_sub, hostinger: hostingerLast4(u.id), admin: isAdmin(u), credits: u.credits ?? 0, nickname: u.nickname || "", role: u.role || "", instructions: u.instructions || "", avatar: u.avatar || "", prefs: jsonObj(u.prefs), created: u.created });
+const pubUser = (u) => u && ({ id: u.id, email: u.email, name: u.name, github: u.github_login || null, google: !!u.google_sub, hostinger: hostingerLast4(u.id), higgsfield: keyLast4(u.id, "higgsfield"), canva: !!keyLast4(u.id, "canva"), admin: isAdmin(u), credits: u.credits ?? 0, nickname: u.nickname || "", role: u.role || "", instructions: u.instructions || "", avatar: u.avatar || "", prefs: jsonObj(u.prefs), created: u.created });
 // Kullanıcının Ayarlar > Profil'de yazdıkları: her yapay zekâ isteğine veri olarak eklenir; güvenlik kurallarını değiştiremez
 const PROFILE_ROLES = ["Restoran ve kafe", "Sağlık ve klinik", "Eğitim", "E-ticaret ve mağaza", "Emlak", "Hizmet işletmesi", "Pazarlama ve ajans", "Yazılım ve teknoloji", "Finans", "Öğrenci", "Diğer"];
 function userRule(user, before = false, kind = null) {
@@ -319,7 +322,7 @@ async function aiJob({ res, cors, user }, rt, messages, finish, kind, label) {
       const out = await start();
       await continueHtml(rt, messages, out, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal, () => { j.phases.push("continuing"); emit({ t: "phase", phase: "continuing" }); });
       j.phases.push("processing"); emit({ t: "phase", phase: "processing" });
-      j.result = finish(out); j.status = "done"; emit({ t: "done", ...j.result });
+      j.result = await finish(out); j.status = "done"; emit({ t: "done", ...j.result });
     } catch (e) {
       j.status = ctl.signal.aborted ? "canceled" : "error"; j.code = e.code || 500;
       j.error = ctl.signal.aborted ? "İşi durdurdun · kredi harcanmadı" : e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.";
@@ -356,7 +359,7 @@ async function aiStream({ res, cors }, rt, messages, finish) {
   ev({ t: "phase", phase: "connected" }); const hb = setInterval(() => { if (!res.writableEnded) res.write(": ping\n\n"); }, 15000);
   try { const out = await start();
     await continueHtml(rt, messages, out, (d) => ev({ t: "delta", d }), signal, () => ev({ t: "phase", phase: "continuing" }), () => res.destroyed);
-    if (!signal.aborted && !res.destroyed) { ev({ t: "phase", phase: "processing" }); ev({ t: "done", ...finish(out) }); } }
+    if (!signal.aborted && !res.destroyed) { ev({ t: "phase", phase: "processing" }); ev({ t: "done", ...(await finish(out)) }); } }
   catch (e) { if (!signal.aborted) { if (!(e instanceof HttpErr)) console.error(new Date().toISOString(), "stream", e); ev({ t: "error", error: e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.", status: e.code || 500 }); } }
   finally { clearInterval(hb); res.end(); }
   return null;
@@ -442,6 +445,20 @@ function findLoose(hay, needle) {
     if (ok) { const a = starts[s]; const e = s + nl.length < lines.length ? starts[s + nl.length] - 1 : hay.length; return [a, e - a]; }
   }
   return null;
+}
+// Sözdizimi hatası varsa kullanıcıya göstermeden bir kez onarır (ek kredi düşmez). Onarım başarısızsa ilk sonuç döner.
+async function repairScripts(rt, out) {
+  const errs = scriptErrors(out.html); if (!errs.length) return out;
+  try {
+    const r2 = { ...rt, maxTokens: 6000, autoContinue: false };
+    const ask = "Bu dosyadaki <script> içinde JavaScript SÖZDİZİMİ hatası var, sayfa hiç çalışmıyor:\n" + errs.map((e) => "- " + e.message + " (dosyanın yaklaşık " + e.line + ". satırı)\n  Çevresi:\n" + e.snippet).join("\n") + "\nYalnızca bu hata(lar)ı düzelt (ör. kapanmayan tırnak, metin içindeki kesme işareti, eksik parantez). Başka hiçbir şeyi değiştirme.";
+    const { text } = await chatWith(r2, [{ role: "system", content: "Sen dikkatli bir JavaScript düzelticisisin." + PATCH_RULE }, { role: "user", content: "Mevcut dosya:\n" + out.html }, { role: "user", content: ask }], 6000);
+    let html = null;
+    if (/<<<\s*ARA/.test(text)) { const r = applyPatches(out.html, text); if (r.ok > 0) html = r.html; }
+    else if (/<!DOCTYPE html|<html/i.test(text)) { try { html = extractHtml(text, {}).html; } catch { } }
+    if (html && scriptErrors(html).length < errs.length) return { ...out, html, autoFixed: errs.length };
+  } catch (e) { console.warn(new Date().toISOString(), "otomatik onarım başarısız:", e.message); }
+  return { ...out, scriptErrors: errs.map((e) => e.message) };
 }
 function applyPatches(cur, text) {
   const re = /<<<\s*ARA[^\n]*\n([\s\S]*?)\n={3,}[^\n]*\n([\s\S]*?)\n?>>>\s*YAZ/g;
@@ -689,7 +706,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.29.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.30.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -787,7 +804,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages(projectBrief(body) + (history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages(projectBrief(body) + "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
-  const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
+  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
@@ -835,7 +852,7 @@ route("POST", "/api/ai/review", async (ctx) => {
   const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "review");
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user, false, kind) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda ilk cümlede kaç sorun bulup düzelttiğini söyle, sonra sorunları madde madde (kullanıcının anlayacağı dille) yaz; Kontrol satırında düzeltemediğin ya da emin olmadığın bir şey varsa belirt." }, { role: "user", content: projectBrief(body) + html }];
-  const fin = ({ text, model, usage, finish }) => { const out = extractHtml(text, { model, finish }); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
+  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, extractHtml(text, { model, finish })); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
   if (body.stream === true && body.job === true && ctx.user) return aiJob(ctx, rt, messages, fin, "review", "Kontrol et ve düzelt");
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
@@ -889,11 +906,109 @@ route("PUT", "/api/connect/hostinger", async ({ user, body }) => {
 });
 route("DELETE", "/api/connect/:prov", ({ user, params }) => {
   need(user, 401, "Giriş yapın");
-  if (params.prov === "hostinger") q("DELETE FROM user_keys WHERE user_id=? AND provider='hostinger'").run(user.id);
+  if (["hostinger", "higgsfield", "canva"].includes(params.prov)) q("DELETE FROM user_keys WHERE user_id=? AND provider=?").run(user.id, params.prov);
   else if (params.prov === "github") { need(user.pass || user.google_sub, 400, "Bu hesaba yalnızca GitHub ile giriliyor; bağlantı kesilirse giriş yapamazsın. Önce şifre belirle ya da Google bağla."); q("UPDATE users SET github_login=NULL, github_token=NULL WHERE id=?").run(user.id); }
   else if (params.prov === "google") { need(user.pass || user.github_login, 400, "Bu hesaba yalnızca Google ile giriliyor; bağlantı kesilirse giriş yapamazsın."); q("UPDATE users SET google_sub=NULL WHERE id=?").run(user.id); }
   else throw new HttpErr(404, "Bilinmeyen bağlantı");
   return { ok: true, user: pubUser(q("SELECT * FROM users WHERE id=?").get(user.id)) };
+});
+// ---------- Medya stüdyosu: Higgsfield (görsel/video üretimi) ve Canva (tasarım) ----------
+const HF = "https://api.higgsfield.ai";
+const HF_MODELS = { image: { path: "/ideogram/v4.0", body: (b) => ({ prompt: b.prompt, aspect_ratio: b.aspect, rendering_speed: "DEFAULT" }) }, video: { path: "/alibaba/happy-horse/v1.1/text-to-video", body: (b) => ({ prompt: b.prompt, aspect_ratio: b.aspect, duration: 5, resolution: "720p" }) } };
+const MEDIA_URLS = new Map(); // kullanıcı → bu sunucunun döndürdüğü çıktı adresleri (yalnızca bunlar vekille indirilebilir)
+const rememberMedia = (uid, url) => { if (!url) return; const set = MEDIA_URLS.get(uid) || new Set(); set.add(url); if (set.size > 60) set.delete(set.values().next().value); MEDIA_URLS.set(uid, set); };
+const hfKey = (user) => { const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider='higgsfield'").get(user.id); need(row, 400, "Önce Higgsfield API anahtarını bağla"); return decKey(row.enc); };
+const hfFetch = (key, path, opt = {}) => fetch(HF + path, { ...opt, headers: { Authorization: "Key " + key, "Content-Type": "application/json", Accept: "application/json", ...(opt.headers || {}) }, signal: AbortSignal.timeout(30000) });
+route("PUT", "/api/connect/higgsfield", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın");
+  const key = (str(body.key, 300, "Anahtar", true) || "").trim(); need(key.length >= 16 && !/\s/.test(key), 400, "Higgsfield anahtarı biçimi geçersiz (anahtar kimliği:gizli anahtar)");
+  const r = await hfFetch(key, "/requests/00000000-0000-0000-0000-000000000000/status").catch(() => null);
+  need(r, 502, "Higgsfield'e ulaşılamadı, biraz sonra tekrar deneyin");
+  need(r.status !== 401 && r.status !== 403, 400, "Higgsfield anahtarı geçersiz (open.higgsfield.ai › API Keys)");
+  q("INSERT INTO user_keys(user_id,provider,enc,last4) VALUES(?,?,?,?) ON CONFLICT(user_id,provider) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,created=datetime('now')").run(user.id, "higgsfield", encKey(key), key.slice(-4));
+  return { ok: true, last4: key.slice(-4) };
+});
+route("POST", "/api/media/higgsfield", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın"); const key = hfKey(user);
+  const type = body.type === "video" ? "video" : "image"; const prompt = (str(body.prompt, 2000, "İstem", true) || "").trim(); need(prompt.length >= 3, 400, "Ne üretileceğini yaz");
+  const aspect = ["1:1", "16:9", "9:16", "4:3", "3:4"].includes(body.aspect) ? body.aspect : "1:1"; const m = HF_MODELS[type];
+  const r = await hfFetch(key, m.path, { method: "POST", headers: { "Idempotency-Key": crypto.randomUUID() }, body: JSON.stringify(m.body({ prompt, aspect })) });
+  const j = await r.json().catch(() => ({}));
+  need(r.ok, r.status === 401 ? 400 : 502, r.status === 401 ? "Higgsfield anahtarı geçersiz; yeniden bağla" : r.status === 402 ? "Higgsfield bakiyen yetersiz (open.higgsfield.ai › Billing)" : "Higgsfield isteği kabul etmedi: " + String(j.detail || j.error || r.status).slice(0, 160));
+  need(j.request_id, 502, "Higgsfield iş kimliği döndürmedi");
+  return { id: j.request_id, status: j.status || "queued", type };
+});
+route("GET", "/api/media/higgsfield/:id", async ({ user, params }) => {
+  need(user, 401, "Giriş yapın"); need(/^[\w-]{8,80}$/.test(params.id), 400, "Geçersiz iş");
+  const r = await hfFetch(hfKey(user), "/requests/" + params.id + "/status"); const j = await r.json().catch(() => ({}));
+  need(r.ok, 502, "Higgsfield durumu alınamadı");
+  const url = j.images?.[0]?.url || j.video?.url || null; if (url) rememberMedia(user.id, url);
+  return { status: j.status, url, kind: j.video?.url ? "video" : "image", error: j.error || null };
+});
+route("POST", "/api/media/higgsfield/:id/cancel", async ({ user, params }) => { need(user, 401, "Giriş yapın"); need(/^[\w-]{8,80}$/.test(params.id), 400, "Geçersiz iş"); await hfFetch(hfKey(user), "/requests/" + params.id + "/cancel", { method: "POST" }).catch(() => null); return { ok: true }; });
+// Üretilen görseli uygulamaya gömülebilir veri adresine çevirir (sağlayıcı adresleri birkaç gün sonra silinir)
+route("POST", "/api/media/fetch", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın"); const url = String(body.url || "");
+  need(/^https:\/\//.test(url) && MEDIA_URLS.get(user.id)?.has(url), 403, "Bu adres medya stüdyosundan gelmiyor");
+  const r = await fetch(url, { signal: AbortSignal.timeout(30000) }); need(r.ok, 502, "Görsel indirilemedi");
+  const type = (r.headers.get("content-type") || "").split(";")[0]; need(/^image\/(png|jpeg|webp|gif)$/.test(type), 415, "Yalnızca görseller uygulamaya gömülebilir");
+  const buf = Buffer.from(await r.arrayBuffer()); need(buf.length <= 6_000_000, 413, "Görsel çok büyük");
+  return { data: "data:" + type + ";base64," + buf.toString("base64") };
+});
+// Canva Connect: OAuth (PKCE) → tasarım oluştur → Canva'da düzenle → geri dön → PNG dışa aktar
+const CANVA = "https://api.canva.com/rest/v1"; const CANVA_PKCE = new Map();
+const b64url = (b) => Buffer.from(b).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+route("GET", "/api/auth/canva/start", ({ url, res }) => {
+  need(CFG.canva.id && CFG.canva.secret, 503, "Canva bağlantısı bu sunucuda yapılandırılmadı");
+  const t = verify(url.searchParams.get("link")); const account = t?.purpose === "link" && q("SELECT session_version FROM users WHERE id=?").get(t.uid);
+  need(account && account.session_version === (t.version ?? 0), 401, "Oturum sona erdi. Yeniden giriş yapın.");
+  const verifier = b64url(crypto.randomBytes(48)); const nonce = rid(12); CANVA_PKCE.set(nonce, { verifier, uid: t.uid, at: Date.now() });
+  for (const [k, v] of CANVA_PKCE) if (Date.now() - v.at > 600000) CANVA_PKCE.delete(k);
+  const challenge = b64url(crypto.createHash("sha256").update(verifier).digest());
+  const loc = "https://www.canva.com/api/oauth/authorize?" + new URLSearchParams({ client_id: CFG.canva.id, response_type: "code", redirect_uri: CFG.api + "/api/auth/canva/callback", scope: "design:content:write design:content:read design:meta:read asset:read asset:write", state: nonce, code_challenge: challenge, code_challenge_method: "s256" });
+  res.writeHead(302, { Location: loc }); res.end(); return null;
+});
+async function canvaTokens(body) {
+  const r = await fetch(CANVA + "/oauth/token", { method: "POST", headers: { Authorization: "Basic " + Buffer.from(CFG.canva.id + ":" + CFG.canva.secret).toString("base64"), "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(body), signal: AbortSignal.timeout(20000) });
+  const j = await r.json().catch(() => ({})); need(r.ok && j.access_token, 502, "Canva oturumu alınamadı"); return { access: j.access_token, refresh: j.refresh_token, exp: Date.now() + ((j.expires_in || 3600) - 60) * 1000 };
+}
+const saveCanva = (uid, tok) => q("INSERT INTO user_keys(user_id,provider,enc,last4) VALUES(?,?,?,?) ON CONFLICT(user_id,provider) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,created=datetime('now')").run(uid, "canva", encKey(JSON.stringify(tok)), "oauth");
+route("GET", "/api/auth/canva/callback", async ({ url, res }) => {
+  const back = (h) => { res.writeHead(302, { Location: CFG.site + "/#" + h }); res.end(); return null; };
+  const st = CANVA_PKCE.get(url.searchParams.get("state") || ""); CANVA_PKCE.delete(url.searchParams.get("state") || "");
+  if (!st || !url.searchParams.get("code")) return back("auth-hata");
+  try { saveCanva(st.uid, await canvaTokens({ grant_type: "authorization_code", code: url.searchParams.get("code"), code_verifier: st.verifier, redirect_uri: CFG.api + "/api/auth/canva/callback" })); return back("canva-baglandi"); }
+  catch (e) { console.error(e); return back("auth-hata"); }
+});
+async function canvaFetch(user, path, opt = {}) {
+  const row = q("SELECT enc FROM user_keys WHERE user_id=? AND provider='canva'").get(user.id); need(row, 400, "Önce Canva hesabını bağla");
+  let tok = JSON.parse(decKey(row.enc));
+  if (Date.now() > tok.exp) { tok = await canvaTokens({ grant_type: "refresh_token", refresh_token: tok.refresh }); saveCanva(user.id, tok); } // yenileme anahtarı tek kullanımlık: hemen sakla
+  const r = await fetch(CANVA + path, { ...opt, headers: { Authorization: "Bearer " + tok.access, "Content-Type": "application/json", ...(opt.headers || {}) }, signal: AbortSignal.timeout(30000) });
+  const j = await r.json().catch(() => ({})); need(r.ok, r.status === 401 ? 400 : 502, r.status === 401 ? "Canva oturumu sona erdi; yeniden bağla" : "Canva isteği başarısız: " + String(j.message || j.code || r.status).slice(0, 160)); return j;
+}
+route("POST", "/api/media/canva/design", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın");
+  const w = Math.round(+body.width), h = Math.round(+body.height); need(w >= 40 && h >= 40 && w <= 8000 && h <= 8000 && w * h <= 25000000, 400, "Geçersiz boyut");
+  const j = await canvaFetch(user, "/designs", { method: "POST", body: JSON.stringify({ design_type: { type: "custom", width: w, height: h }, title: String(body.title || "Gitmapp tasarımı").replace(/[<>]/g, "").slice(0, 120) }) });
+  const id = j.design?.id; need(id, 502, "Canva tasarım kimliği döndürmedi");
+  const edit = j.design.urls?.edit_url; need(edit, 502, "Canva düzenleme bağlantısı döndürmedi");
+  return { id, edit_url: edit + (edit.includes("?") ? "&" : "?") + "correlation_state=" + encodeURIComponent(id.slice(0, 50)) };
+});
+route("POST", "/api/media/canva/export", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın"); need(/^[\w-]{4,80}$/.test(body.design_id || ""), 400, "Geçersiz tasarım");
+  const j = await canvaFetch(user, "/exports", { method: "POST", body: JSON.stringify({ design_id: body.design_id, format: { type: "png" } }) }); return { id: j.job?.id, status: j.job?.status };
+});
+route("GET", "/api/media/canva/export/:id", async ({ user, params }) => {
+  need(user, 401, "Giriş yapın"); need(/^[\w-]{4,80}$/.test(params.id), 400, "Geçersiz iş");
+  const j = await canvaFetch(user, "/exports/" + params.id); const url = j.job?.urls?.[0] || null; if (url) rememberMedia(user.id, url);
+  return { status: j.job?.status, url, error: j.job?.error?.code || null };
+});
+// Canva'dan geri dönüş (Developer Portal › Return navigation › Return URL bu adres olmalı): açılan pencereyi kapatıp Stüdyo'ya haber verir
+route("GET", "/api/media/canva/return", ({ res, url }) => {
+  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+  res.end(`<!doctype html><meta charset="utf-8"><title>Canva</title><body style="font-family:system-ui;background:#111;color:#eee;display:grid;place-items:center;height:100vh"><p>Tasarım Gitmapp'e aktarılıyor…</p><script>try{opener&&opener.postMessage({gm:"canva-return"},${JSON.stringify(CFG.site)})}catch(e){}setTimeout(()=>{window.close();location.href=${JSON.stringify(CFG.site + "/#studio")}},600)</script>`);
+  return null;
 });
 route("GET", "/api/me/usage", ({ user }) => {
   need(user, 401, "Giriş yapın");
