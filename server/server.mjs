@@ -611,6 +611,7 @@ route("GET", "/api/ai/jobs/:id/stream", ({ user, params, res, cors }) => { jobSu
 route("POST", "/api/ai/jobs/:id/cancel", ({ user, params }) => { const j = jobFor(user, params.id); if (j.ctl && j.status === "running") j.ctl.abort(); return { ok: true }; });
 route("GET", "/api/ai/jobs", ({ user }) => { need(user, 401, "Giriş yapın"); return { jobs: [...JOBS.values()].filter((j) => j.uid === user.id && j.status === "running").map(jobPublic) }; });
 const cleanMeta = (m, old) => { let o = {}; try { o = JSON.parse(old || "{}"); } catch { } if (!m || typeof m !== "object") return JSON.stringify(o);
+  if (typeof m.purpose === "string") o.purpose=m.purpose.slice(0,220);
   if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; if (/^github:[\w.-]{1,60}\/[\w.-]{1,100}(@[\w./-]{1,80})?$/.test(m.source || "")) o.source = m.source; return JSON.stringify(o); };
 const metaOf = (a) => { let m = {}; try { m = JSON.parse(a.meta || "{}"); } catch { } let n = 0; try { n = JSON.parse(a.prompt_log || "[]").filter((x) => x.role === "user").length; } catch { } return { ...m, steps: n }; };
 const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, slug: a.slug, description: a.description, category: a.category, emoji: a.emoji, color: a.color, status: a.status, listed: !!a.listed, price: a.price, downloads: a.downloads, opens: a.opens, github_repo: a.github_repo, pages_url: a.pages_url, created: a.created, updated: a.updated, published_at: a.published_at, url: a.slug && a.status === "published" ? `https://${CFG.appHost}/${a.slug}` : null, ...(withHtml ? { html: a.html, prompt_log: JSON.parse(a.prompt_log || "[]") } : {}) });
@@ -680,7 +681,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.27.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.28.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -760,6 +761,10 @@ route("GET", "/api/auth/oauth/:prov/callback", async ({ params, url, res }) => {
 });
 
 // Yapay zekâ
+function projectBrief(body) {
+  if (!body.projectContext || typeof body.projectContext !== "object") return "";
+  return "\nProjenin çalışma durumu (veri): " + JSON.stringify(body.projectContext).slice(0, 3200) + "\n";
+}
 route("POST", "/api/ai/generate", async (ctx) => {
   const { body, user, req } = ctx;
   const prompt = str(body.prompt, 4000, "İstek", true); const cur = str(body.html, 400000, "HTML"); const plan = str(body.plan, 6000, "Plan"); const kind = kindOf(body.kind);
@@ -772,8 +777,8 @@ route("POST", "/api/ai/generate", async (ctx) => {
   rt.autoContinue = !patch;
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design, kind) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur }) + scopeRule(kind) + opts + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
-  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages((history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
-  else messages.push({ role: "user", content: withImages("Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
+  if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages(projectBrief(body) + (history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
+  else messages.push({ role: "user", content: withImages(projectBrief(body) + "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
   const fin = ({ text, model, usage, finish }) => { const out = patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish }); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage }; };
   if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
@@ -794,7 +799,7 @@ route("POST", "/api/ai/design", async ({ body, user, req }) => {
   const system = "Seçilen arayüz öğesinin tasarımını iyileştir. Yalnız değişen özellikleri tek bir JSON nesnesinde döndür. " +
     "color, backgroundColor: #RRGGBB. padding, gap, borderRadius: 0-96 arasında tamsayı piksel. fontSize: 1-96. " +
     (body.leaf === true ? "text: en çok 500 karakter düz metin. " : "") + "Diğer seçenekler: " + JSON.stringify(designChoices);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: system }, { role: "user", content: JSON.stringify({ target, prompt, skill, instructions }) }], 700);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: system }, { role: "user", content: projectBrief(body) + JSON.stringify({ target, prompt, skill, instructions }) }], 700);
   let raw;
   try { raw = JSON.parse(text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "")); } catch {}
   need(raw && typeof raw === "object" && !Array.isArray(raw), 502, "Tasarım önerisi okunamadı");
@@ -812,7 +817,7 @@ route("POST", "/api/ai/plan", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
   const signal = responseSignal(res);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz. Kullanıcının istemediği WhatsApp düğmesi, iletişim formu, sosyal medya bağlantısı gibi öğeleri plana koyma${kind === "game" ? "; bu bir oyun, plan yalnızca oynanışı, kontrolleri, seviyeleri ve görselliği kapsasın" : ""}.` + (designRule(body.design, kind) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design, kind) : "") }, { role: "user", content: withImages(prompt, img) }], 1500, signal);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz. Kullanıcının istemediği WhatsApp düğmesi, iletişim formu, sosyal medya bağlantısı gibi öğeleri plana koyma${kind === "game" ? "; bu bir oyun, plan yalnızca oynanışı, kontrolleri, seviyeleri ve görselliği kapsasın" : ""}.` + (designRule(body.design, kind) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design, kind) : "") }, { role: "user", content: withImages(projectBrief(body) + prompt, img) }], 1500, signal);
   if (signal.aborted || res.destroyed) return null;
   const credits = charge(user, rt, "plan", usage);
   return { plan: text.trim(), spent: rt.credits, credits };
@@ -821,7 +826,7 @@ route("POST", "/api/ai/review", async (ctx) => {
   const { body, user, req } = ctx;
   const html = str(body.html, 400000, "HTML", true); const kind = kindOf(body.kind);
   const rt = await resolveRoute(user, body, req, "review");
-  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user, false, kind) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: html }];
+  const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + userRule(ctx.user, false, kind) + "\nŞimdi bir KOD İNCELEMECİSİSİN: verilen dosyadaki hataları, çalışmayan butonları, eksik doğrulamaları, mobil görünüm sorunlarını ve erişilebilirlik eksiklerini bul ve DÜZELT. ÖZET yorumunda bulduğun ve düzelttiğin sorunları madde madde, Türkçe yaz." }, { role: "user", content: projectBrief(body) + html }];
   const fin = ({ text, model, usage, finish }) => { const out = extractHtml(text, { model, finish }); const credits = charge(user, rt, "review", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits }; };
   if (body.stream === true && body.job === true && ctx.user) return aiJob(ctx, rt, messages, fin, "review", "Kontrol et ve düzelt");
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
@@ -832,7 +837,7 @@ route("POST", "/api/ai/todos", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind); const cur = !!body.has_html;
   const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
   const signal = responseSignal(res);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen bir yazılım ajanısın. Kullanıcının isteğini tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} için ${cur ? "mevcut dosya üzerinde yapılacak" : "sıfırdan yapılacak"} 2-5 adımlık bir YAPILACAKLAR LİSTESİNE böl. İlk adım ${cur ? "en önemli değişiklik" : "ana ekranları, veri modelini ve temel özellikleri eksiksiz kuran, tek başına kullanılabilir kapsamlı bir ilk sürüm (boş iskelet DEĞİL)"} olsun; sonraki her adım öncekine tek bir anlamlı özellik eklesin. Kullanıcının istemediği WhatsApp, iletişim formu, sosyal medya gibi adımlar ekleme${kind === "game" ? "; bu bir oyun, adımlar yalnızca oynanışla ilgili olsun" : ""}. SADECE JSON döndür: [{"baslik":"kısa Türkçe başlık (en fazla 8 kelime)","detay":"modelin uygulayacağı net talimat (1-2 cümle)"}]` }, { role: "user", content: withImages(prompt, img) }], 1200, signal);
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen bir yazılım ajanısın. Kullanıcının isteğini tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} için ${cur ? "mevcut dosya üzerinde yapılacak" : "sıfırdan yapılacak"} 2-5 adımlık bir YAPILACAKLAR LİSTESİNE böl. İlk adım ${cur ? "en önemli değişiklik" : "ana ekranları, veri modelini ve temel özellikleri eksiksiz kuran, tek başına kullanılabilir kapsamlı bir ilk sürüm (boş iskelet DEĞİL)"} olsun; sonraki her adım öncekine tek bir anlamlı özellik eklesin. Kullanıcının istemediği WhatsApp, iletişim formu, sosyal medya gibi adımlar ekleme${kind === "game" ? "; bu bir oyun, adımlar yalnızca oynanışla ilgili olsun" : ""}. SADECE JSON döndür: [{"baslik":"kısa Türkçe başlık (en fazla 8 kelime)","detay":"modelin uygulayacağı net talimat (1-2 cümle)"}]` }, { role: "user", content: withImages(projectBrief(body) + prompt, img) }], 1200, signal);
   if (signal.aborted || res.destroyed) return null;
   let todos = [];
   try { const m = text.match(/\[[\s\S]*\]/); todos = JSON.parse(m ? m[0] : text); } catch { todos = text.split("\n").map((l) => l.replace(/^[\s\-*\d.)]+/, "").trim()).filter((l) => l.length > 3).map((l) => ({ baslik: l.slice(0, 60), detay: l })); }

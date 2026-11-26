@@ -1,0 +1,18 @@
+{
+  "main": "e69b12d545d2f4c02c9c2103dca1b5bad816a79e",
+  "ortam": "390 px dokunmatik Chromium",
+  "sesli_yazma_girdisi": "Uygulamayı Uygulamayı uçtan Uygulamayı uçtan uca çalışır hale getir",
+  "baslangic_ikonu_secenekleri": [
+    "Seçin",
+    "★",
+    "→",
+    "✓",
+    "◆",
+    "✦",
+    "●"
+  ],
+  "alan_yuksekligi_px": 31,
+  "okul_acilinca_mesajlar": [
+    "Restoran geçmişi"
+  ]
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kıyı Pansiyon</title><meta name="description" content="Giriş ve çıkış günlerini seçin, konaklama ücretini görün ve oda talebi bırakın.">
+<!-- Gitmapp hazır şablonu · Copyright (c) 2026 Gitmapp · MIT
+2025 tasarım referansı: https://github.com/ilhammeidi/boxperia-starter
+MIT License
+
+Copyright (c) 2025 Ilham Meidi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<style>
+:root{--pr:#204c63;--bg:#f6f5f0;--tx:#20251f;--panel:white;font-family:system-ui,sans-serif;color:var(--tx);background:var(--bg)}
+*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1120px;margin:auto;padding:20px clamp(16px,4vw,48px)}
+header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #bdbeb6;font-weight:700}
+a{color:var(--pr);padding:10px 0}h1{font-size:clamp(38px,6vw,78px);line-height:1.02;letter-spacing:-.045em;margin:16px 0}h2{font-size:22px;margin:0 0 20px}
+.hero{padding:30px 0}.hero p{max-width:64ch;line-height:1.6}.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px}
+article,form,.history{background:var(--panel);padding:clamp(16px,3vw,32px);border:1px solid #c3c6bc;border-radius:14px;min-width:0}
+label{display:grid;gap:5px;font-weight:600;font-size:14px;margin:0 0 14px}
+input,select,textarea,button{font:inherit;min-height:44px;width:100%;min-width:0;border:1px solid #767a70;border-radius:6px;padding:9px;background:white;color:#20251f}
+textarea{resize:vertical}button{font-weight:650;background:var(--pr);color:white;border:0;cursor:pointer}
+:focus-visible{outline:3px solid #145ac5;outline-offset:3px}
+.history{margin-top:24px}.history ul{padding-left:22px}.history li{padding:8px 0;white-space:pre-line;overflow-wrap:anywhere}.history img{display:block;max-height:100px;max-width:100%;margin-top:6px}footer{font-size:13px}
+@media(max-width:680px){.grid{grid-template-columns:minmax(0,1fr)}header,main,footer{padding:15px}.hero{padding:16px 0}.grid{gap:16px}}
+article{background:#e3eff0}article p{margin:22px 0}output{font-weight:bold}.hero h1{font-family:Georgia,serif}</style></head>
+<body><header><strong>Kıyı Pansiyon</strong><a href="#task">Oda talebi bırak</a></header><main>
+<div class="hero"><h1>Kıyıda konaklama</h1><p>Giriş ve çıkış günlerini seçin, konaklama ücretini görün ve oda talebi bırakın.</p></div><div class="grid"><article><h2>Oda seçenekleri</h2><p><b>Avlu oda</b><br>İki kişi · 1.900 ₺ / gece</p><p><b>Deniz oda</b><br>İki kişi · 2.600 ₺ / gece</p><output id="quote">Tarihlerinizi seçin.</output></article>
+<form id="task"><h2>Oda talebi bırak</h2><label>Oda sınıfı<select name="room" required><option value="">Seçin</option><option>Avlu oda</option><option>Deniz oda</option></select></label><label>Giriş<input name="arrival" type="date" required ></label><label>Çıkış<input name="departure" type="date" required ></label><label>Misafir<input name="guest" type="text" required ></label><button type="submit">Oda talebi bırak</button></form></div>
+<section class="history"><h2>Konaklama talepleri</h2><p id="empty">Henüz kayıt yok.</p><ul id="records"></ul><p role="status" id="status"></p></section>
+</main><footer>Bu cihazdaki örnek çalışma alanı</footer>
+<script>
+const form=document.querySelector("form"),list=document.querySelector("#records"),statusLine=document.querySelector("#status");
+const key="gitmapp-konak";let rows=[];
+try{rows=JSON.parse(localStorage.getItem(key)||"[]")}catch{}
+/* gitmapp-task-records */
+function render(){
+ list.replaceChildren();document.querySelector("#empty").hidden=rows.length>0;
+ for(const row of rows){
+  const item=document.createElement("li");item.textContent=row.text;
+  if(row.photo){const image=new Image();image.src=row.photo;image.alt="İş emri fotoğrafı";item.append(image)}
+  list.append(item);
+ }
+}
+const money=n=>new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY"}).format(n);
+function quote(){const nights=(form.departure.valueAsNumber-form.arrival.valueAsNumber)/86400000;form.departure.setCustomValidity(nights<=0?"Çıkış tarihi girişten sonra olmalı.":"");document.querySelector("#quote").textContent=nights>0&&form.room.value?nights+" gece · "+money(nights*(form.room.value==="Avlu oda"?1900:2600)):"Tarihlerinizi seçin."}form.oninput=quote;form.addEventListener("reset",()=>setTimeout(quote));
+form.addEventListener("submit",async event=>{
+ event.preventDefault();const data=new FormData(form);
+ const entries=[...form.querySelectorAll("[name]")].filter(el=>el.type!=="file").map(el=>el.closest("label").firstChild.textContent.trim()+" · "+String(data.get(el.name)).trim());
+ entries.push(document.querySelector("#quote").textContent);const row={text:entries.join("\n")};const file=data.get("photo");
+ if(file?.size){
+  if(file.size>350000||!["image/png","image/jpeg","image/webp"].includes(file.type)){statusLine.textContent="350 KB altında PNG, JPEG veya WebP seçin.";return}
+  try{row.photo=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})}catch{statusLine.textContent="Fotoğraf okunamadı.";return}
+ }
+ rows.unshift(row);render();form.reset();
+ try{localStorage.setItem(key,JSON.stringify(rows));form.dispatchEvent(new Event("gitmapp-save"));statusLine.textContent="Kaydedildi."}
+ catch{statusLine.textContent="Bu önizlemede kayıt oluşturuldu. Cihaz depolaması kullanılamıyor."}
+});render();
+</script></body></html>
