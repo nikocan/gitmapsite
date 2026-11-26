@@ -212,11 +212,35 @@ async function resolveRoute(user, body, req, kind) {
   useAi("k:" + user.id, 500, false);
   return { kind, provider, base: pbase(provider), key: decKey(row.enc), model: body.model, credits: 0 };
 }
+// ---------- Yedek sağlayıcı zinciri ----------
+// Platform sağlayıcısı (varsayılan Hostinger AI Router) bakiye bitti (402), model yok (404), kota (429), yetki (403) ya da
+// sunucu/ağ hatası (5xx) döndürürse istek, anahtarı sunucuda tanımlı bir sonraki sağlayıcıya aynı ya da en yakın modelle gider.
+const FALLBACK_KEYS = { openrouter: E.OPENROUTER_API_KEY || "", anthropic: E.ANTHROPIC_API_KEY || "", openai: E.OPENAI_API_KEY || "", gemini: E.GEMINI_API_KEY || "", deepseek: E.DEEPSEEK_API_KEY || "" };
+const fallbackChain = () => String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => PROVIDERS[p] && p !== "gitmapp" && FALLBACK_KEYS[p]);
+const normId = (id) => String(id || "").toLowerCase().replace(/^.*\//, "").replace(/[^a-z0-9]/g, "");
+async function mapModel(provider, key, model) {
+  let ids = []; try { ids = await listModels(provider, key); } catch { return null; }
+  const n = normId(model); const pool = ids.filter(usable);
+  return pool.find((i) => normId(i) === n) || pool.find((i) => normId(i).startsWith(n) || (normId(i).length > 6 && n.startsWith(normId(i))))
+    || pool.find((i) => familyOf(i) === familyOf(model) && tierOf(i) === tierOf(model))
+    || pool.find((i) => tierOf(i) === tierOf(model) && /claude|gpt|gemini|deepseek|qwen/i.test(i)) || null;
+}
+const providerHeaders = (p, key) => ({ Authorization: "Bearer " + key, "Content-Type": "application/json", ...(p === "openrouter" ? { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" } : {}), ...(p === "anthropic" ? { "x-api-key": key, "anthropic-version": "2023-06-01" } : {}) });
+// İstem önbelleği: Claude modellerinde uzun ve her istekte aynı olan sistem talimatı önbelleğe alınır (tekrar eden girdi çok daha ucuz)
+function withPromptCache(p, base, body) {
+  const viaOr = p === "openrouter" || /openrouter\.ai/.test(base || ""); const claude = /claude|anthropic/i.test(body.model || "");
+  if (!(claude && (viaOr || p === "anthropic")) || E.PROMPT_CACHE === "0") return body;
+  const msgs = body.messages.map((m, i) => i === 0 && m.role === "system" && typeof m.content === "string" && m.content.length > 3000 ? { ...m, content: [{ type: "text", text: m.content, cache_control: { type: "ephemeral" } }] } : m);
+  return { ...body, messages: msgs };
+}
+const FAILOVER_STATUS = (st) => st === 402 || st === 403 || st === 404 || st === 408 || st === 429 || st >= 500;
 async function postChat(rt, payload, signal) {
   const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
   if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
   const body = { model: rt.model, ...payload, ...(rt.temperature != null ? { temperature: rt.temperature } : {}) };
-  let r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) });
+  let r;
+  try { r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(rt.provider === "gitmapp" ? withPromptCache("gitmapp", rt.base, body) : body) }); }
+  catch (e) { if (rt.provider !== "gitmapp" || signal?.aborted) throw e; r = new Response(JSON.stringify({ error: "ağ hatası: " + e.message }), { status: 503 }); }
   // Bazı modeller sıcaklık ayarını kabul etmez: ayarsız tekrar dene
   if (r.status === 400 && body.temperature != null) { const t = await r.clone().text(); if (/temperature/i.test(t)) { delete body.temperature; r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(body) }); } }
   // Model bu kadar uzun yanıtı desteklemiyorsa (max_tokens sınırı) desteklediği güvenli bir sınırla tekrar dene
@@ -229,6 +253,17 @@ async function postChat(rt, payload, signal) {
     for (const alt of ids.filter((x) => x !== body.model).slice(0, 3)) {
       const r2 = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify({ ...body, model: alt }) });
       if (r2.ok) { console.warn(new Date().toISOString(), "model yedeğe geçti:", body.model, "→", alt, "(", r.status, ")"); rt.model = alt; return r2; }
+    }
+  }
+  if (rt.provider === "gitmapp" && !r.ok && FAILOVER_STATUS(r.status) && !rt.noFailover && !signal?.aborted) {
+    for (const p of fallbackChain()) {
+      const key = FALLBACK_KEYS[p]; const m = await mapModel(p, key, body.model); if (!m) continue;
+      const b2 = withPromptCache(p, pbase(p), { ...body, model: m }); if (p !== "openai" && p !== "openrouter") delete b2.stream_options;
+      try {
+        const r2 = await fetch(pbase(p) + "/chat/completions", { method: "POST", signal, headers: providerHeaders(p, key), body: JSON.stringify(b2) });
+        if (r2.ok) { console.warn(new Date().toISOString(), "sağlayıcı yedeğe geçti:", "gitmapp/" + body.model, "→", p + "/" + m, "(", r.status, ")"); rt.servedBy = p; rt.model = m; return r2; }
+        console.warn(new Date().toISOString(), "yedek sağlayıcı başarısız:", p + "/" + m, r2.status);
+      } catch (e) { if (signal?.aborted) throw e; }
     }
   }
   return r;
@@ -708,7 +743,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.31.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.32.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {

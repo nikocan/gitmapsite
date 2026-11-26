@@ -1622,8 +1622,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.31.0";
+const VERSION="5.32.0";
 const CHANGELOG=[
+ {v:"5.32.0",date:"2026-11-26",items:[
+  "🔁 Yapay zekâ kesintisiz: Gitmapp'in ana sağlayıcısı (Hostinger AI Router) bakiye bitti, model bulunamadı, yoğunluk ya da sunucu hatası verirse istek otomatik olarak yedek sağlayıcıya (OpenRouter, Anthropic, OpenAI, Gemini ya da DeepSeek) aynı ya da en yakın modelle gidiyor; sen hata görmüyorsun. Yedekler yönetici tarafından sunucuda tanımlanır",
+  "💸 Daha düşük maliyet: Claude modellerinde her istekte tekrar eden uzun sistem talimatı önbelleğe alınıyor; tekrar eden girdi çok daha ucuza geliyor",
+  "❓ “ai router ne işe yarar”, “api nedir”, “bu nasıl çalışır” gibi sorular artık uygulama üretimine gitmiyor, kredi harcamıyor; Asistan yanıtlıyor"]},
  {v:"5.31.0",date:"2026-11-26",items:[
   "🧑‍🏫 Yapay zekâ seni tanıyor: yazışından deneyim düzeyini anlıyor. Teknik terimler kullanıyorsan (state, API, component, deploy…) kısa ve teknik konuşuyor, temelleri tekrar etmiyor; yeni başlıyorsan sade Türkçe, gerekirse parantez içinde kısa açıklama ve bir seferde tek adım",
   "🔄 Konuşma ilerledikçe uyum: sen teknik terim kullandıkça o da kullanıyor; “bu ne demek?” dersen sadeleşiyor",
@@ -3150,7 +3154,7 @@ const GO_W=new Set("başla basla başlat baslat başlayalım baslayalim devam et
 const isGo=t=>{const w=String(t||"").toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);return w.length>0&&w.length<=4&&w.every(x=>GO_W.has(x)||ACK_W.has(x))&&w.some(x=>GO_W.has(x))};
 const GREET=/^(merhaba|selam(lar)?|hey|hi|hello|günaydın|iyi (akşamlar|günler|geceler)|nasılsın)[\s!.?]*$/iu;
 // Soru mu, iş isteği mi? “bakar mısın, ne düşünüyorsun, neden…” → Asistan'a; “yap, ekle, değiştir…” → üretim
-const Q_RE=/(\?\s*$|\b(bakar m[ıi]s[ıi]n|bak(abilir) m[ıi]s[ıi]n|ne düşün|ne dusun|değerlendir|degerlendir|yorumla|yorumun|nas[ıi]l (olmuş|olmus|duruyor|görünüyor|gorunuyor)|sence|fikrin|neden|niye|niçin|ne demek|anlat(ır|ir) m[ıi]s[ıi]n|açıkla|acikla)\b)/i;
+const Q_RE=/(\?\s*$|\b(bakar m[ıi]s[ıi]n|bak(abilir) m[ıi]s[ıi]n|ne düşün|ne dusun|değerlendir|degerlendir|yorumla|yorumun|nas[ıi]l (olmuş|olmus|duruyor|görünüyor|gorunuyor)|sence|fikrin|neden|niye|niçin|ne demek|anlat(ır|ir) m[ıi]s[ıi]n|açıkla|acikla|ne i[şs]e yarar|nedir|ne demek|nas[ıi]l [çc]al[ıi][şs][ıi]r|nas[ıi]l kullan[ıi]l[ıi]r|ne fark|hangisi)\b)/i;
 const DO_RE=/\b(yap|yapar m|yapın|uygula|ekle|değiştir|degistir|dönüştür|donustur|çevir|cevir|tasarla|oluştur|olustur|benzet|düzelt|duzelt|kaldır|kaldir|sil|güncelle|guncelle|yaz|koy|getir|taşı|tasi|büyüt|küçült)/i;
 const isQuestion=t=>{t=String(t||"").trim();return t.length>2&&t.length<400&&Q_RE.test(t)&&!DO_RE.test(t)};
 function promptIntent(text,ctx){const t=String(text||"").trim();ctx=ctx||{};if(!t)return {k:"idle"};
