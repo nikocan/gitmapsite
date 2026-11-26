@@ -107,3 +107,17 @@ test("OpenRouter 'can only afford' 402: aynı sağlayıcıda karşılanabilen uz
   assert.match(j.error, /Denenenler: .*OpenRouter \(402\)/);
   assert.doesNotMatch(j.error, /Hostinger AI Router\) bakiye/);
 });
+
+test("doğal ses: OpenAI anahtarı varsa /api/ai/tts mp3 döner ve Türkçe talimat gönderir; yoksa 503 ve health.tts=false", async (t) => {
+  const seen = [];
+  const prov = await fake((url, body) => { if (url.endsWith("/audio/speech")) seen.push(body); return [200, { ok: 1 }]; });
+  t.after(() => prov.close());
+  const api = await start(t, { AI_BASE: prov.base, AI_KEY: "k", OPENAI_API_KEY: "sk-test", TEST_PROVIDER_BASE: prov.base });
+  const h = await (await fetch("http://127.0.0.1:" + api.port + "/api/health")).json(); assert.equal(h.tts, true);
+  const r = await fetch("http://127.0.0.1:" + api.port + "/api/ai/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "Merhaba, fikrini dinliyorum.", voice: "kotu-ses" }) });
+  assert.equal(r.status, 200); assert.equal(r.headers.get("content-type"), "audio/mpeg");
+  assert.equal(seen[0].voice, "nova"); assert.match(seen[0].instructions, /Türkçe/); assert.equal(seen[0].input, "Merhaba, fikrini dinliyorum.");
+  const api2 = await start(t, { AI_BASE: prov.base, AI_KEY: "k", OPENAI_API_KEY: "", TTS_API_KEY: "" });
+  assert.equal((await (await fetch("http://127.0.0.1:" + api2.port + "/api/health")).json()).tts, false);
+  assert.equal((await fetch("http://127.0.0.1:" + api2.port + "/api/ai/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "x" }) })).status, 503);
+});
