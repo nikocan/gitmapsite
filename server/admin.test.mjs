@@ -128,3 +128,24 @@ test("manager cost ledger validates tariffs and updates an integration without d
   assert.equal(summary.integrations.length,1);
   assert.equal((await request("GET","admin/costs?month=2026-12",null,admin)).total,0);
 });
+
+test("yapay zekâ sağlayıcıları panelden yönetilir: yalnızca yönetici, anahtar gizli kalır, anında geçerli, sıfırlanabilir", async t => {
+  const {request,admin,member}=await fixture(t);
+  assert.equal((await request("GET","admin/ai",null,member.token)).status,403);
+  const st=await request("GET","admin/ai",null,admin);
+  assert.equal(st.status,200);
+  assert.ok(st.fields.find(f=>f.name==="OPENROUTER_API_KEY"));
+  const key="sk-or-v1-"+randomBytes(16).toString("hex");
+  const saved=await request("PUT","admin/ai",{name:"OPENROUTER_API_KEY",value:key},admin);
+  const f=saved.fields.find(x=>x.name==="OPENROUTER_API_KEY");
+  assert.equal(f.source,"panel"); assert.equal(f.value,null); assert.equal(f.last4,key.slice(-4));
+  assert.doesNotMatch(JSON.stringify(saved),new RegExp(key));
+  assert.deepEqual(saved.fallbacks,["openrouter"]);
+  const health=await request("GET","health");
+  assert.deepEqual(health.aiFallbacks,["openrouter"]);
+  assert.equal((await request("PUT","admin/ai",{name:"OPENROUTER_API_KEY",value:"bozuk anahtar"},admin)).status,400);
+  assert.equal((await request("PUT","admin/ai",{name:"AI_BASE",value:"http://insecure"},admin)).status,400);
+  assert.equal((await request("PUT","admin/ai",{name:"BASKA",value:"x"},admin)).status,400);
+  const reset=await request("PUT","admin/ai",{name:"OPENROUTER_API_KEY",value:""},admin);
+  assert.notEqual(reset.fields.find(x=>x.name==="OPENROUTER_API_KEY").source,"panel");
+});

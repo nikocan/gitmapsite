@@ -215,7 +215,8 @@ async function resolveRoute(user, body, req, kind) {
 // ---------- Yedek sağlayıcı zinciri ----------
 // Platform sağlayıcısı (varsayılan Hostinger AI Router) bakiye bitti (402), model yok (404), kota (429), yetki (403) ya da
 // sunucu/ağ hatası (5xx) döndürürse istek, anahtarı sunucuda tanımlı bir sonraki sağlayıcıya aynı ya da en yakın modelle gider.
-const FALLBACK_KEYS = { openrouter: E.OPENROUTER_API_KEY || "", anthropic: E.ANTHROPIC_API_KEY || "", openai: E.OPENAI_API_KEY || "", gemini: E.GEMINI_API_KEY || "", deepseek: E.DEEPSEEK_API_KEY || "" };
+const FALLBACK_ENV = { openrouter: "OPENROUTER_API_KEY", anthropic: "ANTHROPIC_API_KEY", openai: "OPENAI_API_KEY", gemini: "GEMINI_API_KEY", deepseek: "DEEPSEEK_API_KEY" };
+const FALLBACK_KEYS = new Proxy({}, { get: (_, p) => E[FALLBACK_ENV[p]] || "" }); // panelden değişince anında geçerli
 const fallbackChain = () => String(E.AI_FALLBACKS || "openrouter,anthropic,openai,gemini,deepseek").split(",").map((x) => x.trim()).filter((p) => PROVIDERS[p] && p !== "gitmapp" && FALLBACK_KEYS[p]);
 const normId = (id) => String(id || "").toLowerCase().replace(/^.*\//, "").replace(/[^a-z0-9]/g, "");
 async function mapModel(provider, key, model) {
@@ -743,7 +744,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.33.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.34.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1600,6 +1601,56 @@ route("POST", "/api/events", ({ body, user }) => {
   return { ok: true };
 });
 // Yönetici: yapay zekâ bağlantı testi
+// ---------- Yönetim › Yapay zekâ sağlayıcıları: anahtarları SSH'sız, yeniden başlatmadan yönet ----------
+// Panelden girilen değer veritabanında şifreli saklanır ve sunucu dosyasındaki (ortam) değerin önüne geçer.
+db.exec("CREATE TABLE IF NOT EXISTS ai_secrets(name TEXT PRIMARY KEY, enc TEXT NOT NULL, last4 TEXT, updated TEXT DEFAULT (datetime('now')))");
+const AI_FIELDS = { AI_BASE: 0, AI_KEY: 1, AI_MODEL: 0, AI_MODELS: 0, COPILOT_MODEL: 0, VISION_MODEL: 0, AI_FALLBACKS: 0, OPENROUTER_API_KEY: 1, ANTHROPIC_API_KEY: 1, OPENAI_API_KEY: 1, GEMINI_API_KEY: 1, DEEPSEEK_API_KEY: 1 }; // 1 = gizli
+const AI_ENV0 = Object.fromEntries(Object.keys(AI_FIELDS).map((k) => [k, E[k] || ""]));
+function applyAiOverrides() {
+  const o = {}; for (const r of q("SELECT name,enc FROM ai_secrets").all()) { try { o[r.name] = decKey(r.enc); } catch { } }
+  for (const k of Object.keys(AI_FIELDS)) E[k] = o[k] ?? AI_ENV0[k];
+  CFG.aiKey = E.AI_KEY || ""; CFG.aiBase = (E.AI_BASE || "https://router.hostinger.com/v1").replace(/\/+$/, ""); CFG.aiModel = E.AI_MODEL || "";
+  for (const k of Object.keys(modelCaches)) delete modelCaches[k];
+}
+applyAiOverrides();
+function aiAdminState() {
+  const rows = Object.fromEntries(q("SELECT name,last4,updated FROM ai_secrets").all().map((r) => [r.name, r]));
+  const fields = Object.entries(AI_FIELDS).map(([name, secret]) => {
+    const v = E[name] || ""; const src = rows[name] ? "panel" : AI_ENV0[name] ? "sunucu" : "yok";
+    return { name, secret: !!secret, source: src, set: !!v, value: secret ? null : v, last4: secret && v ? v.slice(-4) : null, updated: rows[name]?.updated || null };
+  });
+  return { fields, fallbacks: fallbackChain(), base: CFG.aiBase };
+}
+route("GET", "/api/admin/ai", () => aiAdminState());
+route("PUT", "/api/admin/ai", ({ body }) => {
+  const name = String(body.name || ""); need(Object.hasOwn(AI_FIELDS, name), 400, "Bilinmeyen ayar");
+  const value = String(body.value ?? "").trim();
+  if (!value) { q("DELETE FROM ai_secrets WHERE name=?").run(name); applyAiOverrides(); return aiAdminState(); }
+  need(value.length <= 2000 && !/[\r\n]/.test(value), 400, "Değer tek satır olmalı");
+  if (AI_FIELDS[name]) need(value.length >= 16 && !/\s|["']/.test(value), 400, "Anahtar biçimi geçersiz: boşluk ya da tırnak olmamalı");
+  if (name === "AI_BASE") need(/^https:\/\/[^\s"'<>]+$/.test(value), 400, "Adres https:// ile başlamalı");
+  if (name === "AI_FALLBACKS") need(value.split(",").every((p) => FALLBACK_ENV[p.trim()]), 400, "Sıra yalnızca şu adları içerebilir: " + Object.keys(FALLBACK_ENV).join(", "));
+  if (["AI_MODEL", "AI_MODELS", "COPILOT_MODEL", "VISION_MODEL"].includes(name)) need(/^[\w.\/:@,\- ]+$/.test(value), 400, "Model adlarında yalnızca harf, rakam ve . / - : , kullanılabilir");
+  q("INSERT INTO ai_secrets(name,enc,last4) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,updated=datetime('now')").run(name, encKey(value), AI_FIELDS[name] ? value.slice(-4) : null);
+  applyAiOverrides(); return aiAdminState();
+});
+// Bağlantı testi: model listesi + tek kelimelik deneme isteği (yedeğe geçmeden, gerçek durumu gösterir)
+route("POST", "/api/admin/ai/test", async ({ body }) => {
+  const target = String(body.target || "primary"); const t0 = Date.now();
+  const provider = target === "primary" ? "gitmapp" : target; need(provider === "gitmapp" || FALLBACK_ENV[provider], 400, "Bilinmeyen sağlayıcı");
+  const key = provider === "gitmapp" ? CFG.aiKey : FALLBACK_KEYS[provider]; need(key, 400, "Önce anahtarı kaydet");
+  for (const k of Object.keys(modelCaches)) if (k.startsWith(provider + ":")) delete modelCaches[k];
+  let ids = []; try { ids = await listModels(provider, key); } catch (e) { return { ok: false, step: "models", message: e.message, ms: Date.now() - t0 }; }
+  const model = provider === "gitmapp" ? await defaultModel().catch(() => ids[0]) : (ids.find((i) => /haiku|mini|flash|deepseek-chat|small/i.test(i)) || ids[0]);
+  if (!model) return { ok: false, step: "models", message: "Kullanılabilir model bulunamadı", ms: Date.now() - t0 };
+  const rt = { provider, base: provider === "gitmapp" ? CFG.aiBase : pbase(provider), key, model, noFallback: true, noFailover: true };
+  try {
+    const r = await postChat(rt, { messages: [{ role: "user", content: "Sadece OK yaz." }], max_tokens: 10 }, AbortSignal.timeout(30000)); const t = await r.text();
+    if (!r.ok) return { ok: false, step: "chat", status: r.status, message: aiErr(rt, r.status, t), model, models: ids.slice(0, 80), ms: Date.now() - t0 };
+    let reply = ""; try { reply = partText(JSON.parse(t).choices?.[0]?.message?.content).slice(0, 40); } catch { }
+    return { ok: true, model, reply, models: ids.slice(0, 80), ms: Date.now() - t0 };
+  } catch (e) { return { ok: false, step: "chat", message: "Bağlantı kurulamadı: " + e.message, model, ms: Date.now() - t0 }; }
+});
 route("GET", "/api/admin/ai-check", async ({ user }) => {
   need(isAdmin(user), 403, "Yetkisiz"); const out = { base: CFG.aiBase, key: CFG.aiKey ? "sk-…" + CFG.aiKey.slice(-4) : null, models: null, chat: null };
   if (!CFG.aiKey) return out;
