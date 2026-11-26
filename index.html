@@ -1561,6 +1561,20 @@ button.adp-mini{color:inherit;text-align:left}
 @media(max-width:1280px){.ws-grid.sp-on{grid-template-columns:minmax(300px,380px) minmax(0,1fr)}.ws-grid.sp-on .sp{position:fixed;right:16px;top:70px;bottom:16px;width:310px;z-index:70;box-shadow:0 24px 60px -16px rgba(0,0,0,.85)}}
 @media(max-width:820px){.ws-grid.sp-on .sp{left:12px;right:12px;width:auto;top:auto;max-height:78dvh;bottom:84px}}
 @media(max-width:600px){.ds-panel .ds-fields{grid-template-columns:minmax(0,1fr)}.ds-panel .ds-fields input,.ds-panel .ds-fields select{min-height:44px;width:100%;box-sizing:border-box}}
+.amenu.compose-menu,.slashm.compose-menu{position:fixed;inset:auto;margin:0;width:min(300px,calc(100vw - 16px));box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain;z-index:1000}
+/* Inline disclosure keeps the composer in its own layout row. */
+.flow-trigger,.flow-detail summary{cursor:pointer;color:inherit}
+.flow-trigger{display:inline-flex;align-items:center;gap:5px;background:transparent;border:0;font:inherit;padding:4px}
+.flow-panel{min-width:0;overflow-wrap:anywhere}.flow-panel[hidden]{display:none}
+.flow-preview{border-block-start:1px solid var(--line);padding:8px 4px;font-size:12px;overflow-wrap:anywhere}.flow-preview span{display:block;color:var(--mut)}button.pe-chip{cursor:pointer}.flow-update{margin:8px 4px 8px 12px;line-height:1.5;font-size:14px}.flow-list{list-style:none;padding:0;margin:4px 0 8px 9px}
+.flow-list li{position:relative;display:grid;grid-template-columns:9px minmax(0,1fr) auto;align-items:baseline;gap:9px;padding:6px 4px;color:var(--txt);font-size:13px}
+.flow-dot{height:7px;width:7px;border-radius:50%;background:currentColor;opacity:.7}
+.flow-list li:not(:last-child)::after{content:"";position:absolute;left:7px;top:21px;bottom:-9px;border-left:1px solid var(--line)}
+.flow-list time{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums}
+.flow-detail summary{padding:9px;font-size:12px}.flow-credit{border-collapse:collapse;width:100%;font-size:12px;color:var(--mut);margin-top:4px}
+.flow-credit th,.flow-credit td{padding:6px 8px;border-top:1px solid var(--line)}.flow-credit th{text-align:left;font-weight:500}.flow-credit th svg{vertical-align:middle}.flow-credit td{text-align:right;font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:no-preference){.flow-list li{animation:flow-appear .22s ease-out}.flow-credit{animation:credit-settle 1.6s ease-out}.flow-credit.flash{animation:flow-credit-fade 4.2s ease-out forwards}@keyframes flow-credit-fade{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}@keyframes flow-appear{from{opacity:0;transform:translateY(3px)}}@keyframes credit-settle{from{background-color:rgba(176,145,232,.24)}to{background-color:transparent}}}
+@media(max-width:640px){.flow-trigger,.flow-detail summary,.cx-head{min-height:44px}.bs-l1{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -1574,8 +1588,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.25.0";
+const VERSION="5.26.0";
 const CHANGELOG=[
+ {v:"5.26.0",date:"2026-11-26",items:["Stüdyo ilerleme satırına dokunarak isteğin adımlarını, zamanlarını ve işlemde kullanılan krediyi görebilirsiniz."]},
  {v:"5.25.0",date:"2026-11-26",items:[
   "🗂️ Stüdyo'da Claude Code tarzı Oturum paneli (üst çubuktaki ☰ düğmesi): Ortam, Bağlam, Bağdaştırıcılar, Çıktılar ve Değişiklikler tek yerde; geniş ekranda sağda sabit, dar ekranda açılır pencere. Açık/kapalı durumu hatırlanıyor",
   "🌍 Ortam: kaynak (Gitmapp bulutu / GitHub) ve ⚙ ile sürüm kontrolü ayarları; proje adı, türü, boyutu ve ＋ ile proje değiştirme; dal adına tıklayınca dal menüsü",
@@ -2982,11 +2997,21 @@ const CX_KIND={app:"Uygulama",site:"Web sitesi",game:"Oyun"},MODE_TR={hizli:"Hı
 function ClIO({label,children,mono=true}){return html`<div class="cx-io"><small>${label}</small><div class=${mono?"cx-pre":"cx-txt"}>${children}</div></div>`}
 function ClStepRow({title,state,children,open0=false,live}){const [o,setO]=useState(open0);const has=!!children;
  return html`<div class=${"cx-step "+(state||"")}><button type="button" class="cx-row" disabled=${!has} aria-expanded=${has?o:undefined} onClick=${()=>has&&setO(!o)}><span class="cx-ic">${state==="run"?html`<${ClSpark} s=${13}/>`:state==="err"?html`<${Icon} n="alert" s=${13}/>`:html`<${Icon} n="check" s=${13} w=${2.4}/>`}</span><span class=${state==="run"&&!live?"shimmer":""}>${title}</span>${has&&html`<${Icon} n=${o?"chevDown":"chevRight"} s=${14}/>`}</button>${o&&has&&html`<div class="cx-body">${children}</div>`}</div>`}
-function WorkLog({log,lastAt,retry,onToggle,live}){
+function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
  const status=studioStatus(log,lastAt);
+ const [creditFlash,setCreditFlash]=useState(false);
+ const wasRunning=useRef(log.running);
+ useEffect(()=>{
+  const finished=wasRunning.current&&!log.running;
+  wasRunning.current=log.running;
+  if(!finished||!Number.isFinite(log.spent))return;
+  setCreditFlash(true);
+  const timer=setTimeout(()=>setCreditFlash(false),4200);
+  return ()=>clearTimeout(timer);
+ },[log.running,log.spent]);
  const kind=STUDIO_ACTIVITY[log.kind];
  const failed=log.error||log.cut||log.stopped;
- const [open,setOpen]=useState(null);const isOpen=open==null?!!log.running:open;
+
  const elapsed=log.running?Math.max(0,Math.floor((Date.now()-log.start)/1000)):log.secs||0;
  const rq=log.req||{};const ev=log.events||[];const tail=(log.running?live:log.res?.tail)||"";
  const reqLines=[["tür",CX_KIND[rq.tur]||rq.tur],["mod",MODE_TR[rq.mod]||rq.mod],["model",log.model&&shortModel(log.model)],["tasarım",rq.design],["profil",rq.profil?rq.profil+" (Ayarlar › Profil)":""],["görsel",log.images?log.images+" görsel eklendi · model içeriğini bağlam olarak kullanır":""],["dosya",rq.size?"index.html ("+rq.size+" KB) — "+(Number(rq.size)>=9?"yalnızca değişen parçalar istendi":"tamamı yeniden yazılacak"):""]].filter(x=>x[1]);
@@ -3004,10 +3029,17 @@ function WorkLog({log,lastAt,retry,onToggle,live}){
  if(failed)steps.push(html`<${ClStepRow} key="err" title=${log.stopped?"Durdurdun · kredi harcanmadı":log.cut?"Sayfa yenilendiği ya da kapandığı için yarıda kaldı · Yeniden dene ile devam et":"Hata"} state="err">${log.res?.error&&html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`}<//>`);
  return html`<div class="studio-activity cx">
   ${log.task&&html`<h3>${log.task}</h3>`}
-  <button type="button" class="cx-head" aria-expanded=${isOpen} onClick=${()=>{setOpen(!isOpen);if(!isOpen)onToggle&&onToggle()}}>
+  <button type="button" class="cx-head" aria-expanded=${isOpen} aria-controls=${flowId} onClick=${onToggle}>
    <span class=${"cx-hic"+(failed?" issue":log.running?"":" ok")}>${log.running?html`<${ClSpark} s=${17}/>`:html`<${Icon} n=${failed?log.stopped?"stop":"alert":"check"} s=${15} w=${2.4}/>`}</span>
    <span class="cx-status" role="status">${status}</span>${!log.running&&log.start<PAGE_T0-60000&&failed&&html`<em class="cx-old" title=${new Date(log.start).toLocaleString("tr-TR")}>önceki oturum · ${new Date(log.start).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</em>`}<time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time><${Icon} n=${isOpen?"chevDown":"chevRight"} s=${15}/></button>
-  ${isOpen&&html`<div class="cx-card">${steps}</div>`}
+  <div id=${flowId} hidden=${!isOpen} class="flow-panel">
+   ${isOpen&&html`${log.running&&html`<p class="flow-update" role="status">${ev.includes("processing")?"Yanıt geldi. Sonuç hazırlanıyor.":ev.includes("receiving")?(log.kind==="plan"||log.kind==="agent"?"Planın adımları geliyor.":"Yanıt geliyor. Aşağıda tamamlanan adımları görebilirsin."):ev.includes("connected")?"İstek modele ulaştı. İlk yanıt bekleniyor.":"İsteğin gönderiliyor."}</p>`}<ol class="flow-list" aria-label="İşlem akışı">
+    ${[{key:"sent",label:kind?.sending||"İstek gönderildi"},...ev.filter(k=>STUDIO_EVENTS[k]).map(k=>({key:k,label:STUDIO_EVENTS[k]})),...(!log.running&&(failed||log.asked)?[{key:"end",label:status}]:[])].map(({key,label},i)=>{
+      const t=key==="sent"?0:key==="end"?elapsed:log.at?.[key];
+      return html`<li key=${i}><span class="flow-dot" aria-hidden="true"></span><span>${label}</span>${Number.isFinite(t)&&html`<time>${clTime(t)}</time>`}</li>`})}
+   </ol><details class="flow-detail"><summary>İstek ve yanıt ayrıntıları</summary><div class="cx-card">${steps}</div></details>`}
+  </div>
+  ${Number.isFinite(log.spent)&&(isOpen||creditFlash)&&html`<table class=${"flow-credit"+(creditFlash&&!isOpen?" flash":"")} aria-label="İşlem maliyeti"><tbody><tr><th scope="row"><${Icon} n="gem" s=${13}/> Harcanan kredi</th><td>${log.spent} kredi</td></tr></tbody></table>`}
   ${failed&&retry&&html`<button type="button" class="btn g s studio-activity-retry" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button>`}
  </div>`;
 }
@@ -3070,11 +3102,13 @@ function chatReply(text,hasHtml){const t=String(text).toLocaleLowerCase("tr");
  if(GREET.test(String(text).trim()))return "Merhaba! Ne yapmak istediğini bir iki cümleyle anlat, hemen başlayayım. Örneğin “pilates stüdyom için ders programı ve rezervasyon”.";
  return hasHtml?"Tamam 👍 Uygulama önizlemede hazır. Değiştirmek istediğin bir şey varsa yaz, yalnızca onu güncelleyeyim. Beğendiysen sağ üstteki Yayınla ile canlıya alabilirsin."
   :"Tamam 👍 Ne yapmak istediğini bir iki cümleyle anlat, hemen başlayayım. Örneğin “kafem için menü ve QR sipariş”."}
-function PromptEngine({text,ctx}){const [typing,setTyping]=useState(false);
+function PromptEngine({text,ctx,open,toggle}){
+ const [typing,setTyping]=useState(false);
  useEffect(()=>{setTyping(true);const t=setTimeout(()=>setTyping(false),650);return()=>clearTimeout(t)},[text]);
- if(typing)return html`<span class="pe-chip typing" aria-live="polite"><i></i><i></i><i></i> Okuyor</span>`;
- const it=promptIntent(text,ctx);if(it.k==="idle")return null;const paid=["build","edit","pick"].includes(it.k)&&ctx.credits;
- return html`<span class=${"pe-chip "+it.k} aria-live="polite" title="Gönderince olacak olan"><${Icon} n=${it.ic} s=${12}/> ${it.l}${paid?" · "+ctx.credits+" kredi":""}</span>`}
+ const it=promptIntent(text,ctx);if(it.k==="idle")return null;
+ const estimate=["build","edit","pick"].includes(it.k)&&ctx.credits;
+ return html`<button type="button" class=${"pe-chip "+(typing?"typing":it.k)} aria-label="İstek bilgisi" aria-expanded=${open} aria-controls="composer-request-info" onClick=${toggle}>${typing?html`<i></i><i></i><i></i> Okuyor`:html`<${Icon} n=${it.ic} s=${12}/> ${it.l}${estimate?" · ~"+estimate+" kredi":""}`}<${Icon} n=${open?"chevUp":"chevDown"} s=${12}/></button>`;
+}
 
 const KIND_ICON={app:"phone",site:"globe",game:"gamepad"};
 const TPL_GRAD=["#4f8cff,#9b6bff","#ff7a59,#ffb347","#22c55e,#14b8a6","#a855f7,#ec4899","#06b6d4,#3b82f6","#f59e0b,#ef4444","#64748b,#94a3b8","#10b981,#84cc16","#22c55e,#16a34a","#f43f5e,#fb923c","#eab308,#f97316","#0ea5e9,#6366f1"];
@@ -3946,7 +3980,6 @@ const BrandG=({s=18})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" aria
 const BrandH=({s=18})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#673DE6"/><path fill="#fff" d="M7 5l3 1.7v4.1h4V6.7L17 5v14l-3-1.7v-4.3h-4v4.3L7 19z"/></svg>`;
 
 /* ================= v5.21 — CANLI YAPIM: Claude Code / Codex tarzı durum satırı + önizlemede canlı taslak ================= */
-const THINK_VERBS=["Düşünüyor","Kurguluyor","Tasarlıyor","Ekranları çiziyor","Bileşenleri diziyor","Renkleri seçiyor","Örnek veriyi hazırlıyor","Akışı bağlıyor"];
 function ghostDoc(code){
  let h=String(code||"");const i=h.search(/<!doctype|<html|<head|<body|<style|<main|<header|<div/i);if(i<0)return null;h=h.slice(i);
  h=h.replace(/<script\b[\s\S]*?(<\/script>|$)/gi,"").replace(/<[^>]*$/,"").replace(/```[\s\S]*$/,"");
@@ -3963,14 +3996,32 @@ function LiveBuild({code,stage,phase,resolve,base}){
   <div class="lb-badge"><${ClSpark} s=${14}/><span class="shim">${doc?"Canlı taslak · kod yazıldıkça şekilleniyor":phase}</span></div>
  </div>`;
 }
-function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,queue}){
- const [vi,setVi]=useState(0);useEffect(()=>{const t=setInterval(()=>setVi(x=>x+1),2600);return()=>clearInterval(t)},[]);
+function ComposerMenu({children,commands=false}){
+ const menu=useRef(null);
+ React.useLayoutEffect(()=>{
+  const el=menu.current,anchor=el.parentElement;
+  el.showPopover?.();
+  function place(){
+   const b=anchor.getBoundingClientRect(),vv=window.visualViewport;
+   const top=vv?.offsetTop||0,bottom=top+(vv?.height||innerHeight);
+   const above=b.top-top-12,below=bottom-b.bottom-12,up=above>below;
+   el.style.maxHeight=Math.min(440,Math.max(44,up?above:below))+"px";
+   el.style.left=Math.max(8,Math.min(b.left,innerWidth-el.offsetWidth-8))+"px";
+   el.style.top=(up?Math.max(top+4,b.top-el.offsetHeight-6):b.bottom+6)+"px";
+  }
+  place();window.addEventListener("scroll",place,true);window.addEventListener("resize",place);window.visualViewport?.addEventListener("resize",place);
+  return ()=>{window.removeEventListener("scroll",place,true);window.removeEventListener("resize",place);window.visualViewport?.removeEventListener("resize",place)};
+ },[]);
+ return html`<div ref=${menu} class=${(commands?"slashm":"amenu")+" compose-menu"} popover="manual" role="menu">${children}</div>`;
+}
+function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,queue,flowId,isOpen,onFlow}){
+
  const ev=log?.events||[],kind=log?.kind||"build",len=live.length,writing=len>0;
  const full=/<!doctype|<html/i.test(live.slice(0,3000));const patch=writing&&hasHtml&&!full&&len>1500;
  let verb;
  if(ev.includes("processing"))verb="Önizleme hazırlanıyor";
  else if(ev.includes("continuing"))verb="Kalan kısım yazılıyor";
- else if(!writing)verb=kind==="review"?"Kod inceleniyor":kind==="plan"?"Plan düşünülüyor":THINK_VERBS[vi%THINK_VERBS.length];
+ else if(!writing)verb=kind==="review"?"Kod inceleniyor":kind==="plan"?"Plan düşünülüyor":ev.includes("connected")?"İlk yanıt bekleniyor":"İstek gönderiliyor";
  else if(kind==="plan"||kind==="agent")verb="Plan yazılıyor";else if(kind==="review")verb="Rapor yazılıyor";
  else if(patch)verb="Değişiklikler yazılıyor";
  else verb=/<script[\s>]/i.test(live)?"Etkileşimler yazılıyor":/<\/style>[\s\S]*<(body|main|div|header|section)/i.test(live)?"Ekranlar yazılıyor":/<style[\s>]/i.test(live)?"Tasarım yazılıyor":"Kod yazılıyor";
@@ -3980,9 +4031,9 @@ function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,queue
  const tail=writing?(live.replace(/\s+$/,"").split("\n").reverse().find(l=>l.trim()&&l.trim().length>2)||"").trim().slice(0,140):"";
  const meta=[clTime(secs),writing&&"↓ "+(len/1024).toFixed(1)+" KB",tps>0&&tps+" token/sn",eta!=null&&eta>2&&"~"+clTime(eta)+" kaldı"].filter(Boolean);
  const slow=secs>45&&(!writing||eta>60);
- return html`<div class="bs" role="status" aria-live="polite">
+ return html`<div class="bs">
   <div class=${"bs-bar"+(pct?"":" ind")}><i style=${pct?{width:(pct*100).toFixed(1)+"%"}:undefined}></i></div>
-  <div class="bs-l1"><${ClSpark} s=${15}/>${todo?.running&&html`<span class="bs-step">Adım ${Math.min(todo.items.length,todo.items.filter(t=>t.state==="done").length+1)}/${todo.items.length}</span>`}<span class="shim">${verb}…</span><span class="bs-meta">(${meta.join(" · ")} · <button type="button" onClick=${onStop}>esc ile durdur</button>)</span></div>
+  <div class="bs-l1"><${ClSpark} s=${15}/>${todo?.running&&html`<span class="bs-step">Adım ${Math.min(todo.items.length,todo.items.filter(t=>t.state==="done").length+1)}/${todo.items.length}</span>`}<button type="button" class="flow-trigger" aria-label="İşlem akışı" aria-controls=${flowId} aria-expanded=${isOpen} onClick=${onFlow}><span class="shim">${verb}…</span><${Icon} n=${isOpen?"chevUp":"chevDown"} s=${13}/></button><span class="bs-meta">(${meta.join(" · ")} · <button type="button" onClick=${onStop}>esc ile durdur</button>)</span></div>
   ${tail?html`<div class="bs-l2"><span class="bs-elb">⎿</span><code>${tail}</code><span class="caret"></span></div>`:html`<div class="bs-l2 dim"><span class="bs-elb">⎿</span><span>${ev.includes("connected")?"Model isteği aldı, ilk satırı yazmadan önce düşünüyor":"Model bağlantısı kuruluyor"}</span></div>`}
   ${slow&&html`<div class="bs-tip"><${Icon} n="zap" s=${13}/><span>Model büyük bir dosya yazıyor. Daha hızlı sonuç için Hızlı mod ya da daha hızlı bir model seçebilirsin.</span><button type="button" onClick=${onFaster}>Hızlandır</button></div>`}
   ${queue>0&&html`<div class="bs-l2 dim"><span class="bs-elb">⎿</span><span>Sırada ${queue} istek var · bu iş bitince başlayacak</span></div>`}
@@ -4126,12 +4177,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{
   const chat=chatRef.current;
   if(chat&&followChat.current)chat.scrollTop=chat.scrollHeight;
- },[st.msgs,busy,plan,todo,editPlan]);
+ },[st.msgs,busy,plan,todo,editPlan,live]);
  function chatScrolled(e){
   const chat=e.currentTarget;
   followChat.current=chat.scrollHeight-chat.clientHeight-chat.scrollTop<44;
  }
- useEffect(()=>{codeEnd.current&&codeEnd.current.scrollIntoView({block:"end"})},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
+ useEffect(()=>{codeEnd.current?.parentElement&& (codeEnd.current.parentElement.scrollTop=codeEnd.current.parentElement.scrollHeight)},[live]);useEffect(()=>{if(!full)return;const h=e=>{if(e.key==="Escape")setFull(false)};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[full]);
  const md=(models&&models.data)||{platform:[],byok:[]};
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
@@ -4144,6 +4195,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   if(abortRef.current||detachRef.current||renderEpoch!==epoch.current)return null;
   const ticket=epoch.current;const valid=()=>ticket===epoch.current&&!detachRef.current;
   const id=Date.now()+Math.random();
+  if(requestInfo){setFlowOpen(prev=>({...prev,["activity-"+id]:true}));setRequestInfo(false)}
   const start=Date.now(),controller=new AbortController();
   abortRef.current=controller;
   lastRetry.current={id,run:retry};
@@ -4157,7 +4209,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const record=(key)=>{
    log.last=Date.now();streamClock.current.last=log.last;
    if(log.events.includes(key))return;
-   log.events=[...log.events,key];
+   log.events=[...log.events,key];log.at={...log.at,[key]:Math.floor((Date.now()-start)/1000)};
    if(key==="processing")log.phase=key;
    setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log,secs:Math.floor((Date.now()-start)/1000)}}:m)}));
   };
@@ -4180,7 +4232,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    const message=onDone(result);
    spent(result);
    const endEvent=typeof finalEvent==="function"?finalEvent(result):finalEvent;
-   if(endEvent)log.events=[...log.events,endEvent];
+   if(endEvent)record(endEvent);
    finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
    return result;
   }catch(error){
@@ -4400,12 +4452,15 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
  const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
    ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
-   ${slashOpts.length>0&&html`<div class="slashm glass">${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onClick=${()=>{setInput(k+" ");document.querySelector(".gta")?.focus()}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}</div>`}
+   ${slashOpts.length>0&&html`<${ComposerMenu} commands=${true}>${slashOpts.map(([k,ic,d])=>html`<button type="button" key=${k} onClick=${()=>{setInput(k+" ");document.querySelector(".gta")?.focus()}}><${Icon} n=${ic} s=${15}/><b>${k}</b><span>${d}</span></button>`)}<//>`}
    ${atts.length>0&&html`<div class="tray">${atts.map(a=>html`<div class="att" key=${a.id}><img src=${a.thumb} alt=${a.name}/><div class="att-b"><div class="att-roles">${Object.entries(ROLES).map(([k,[ic,l,d]])=>html`<button type="button" key=${k} title=${l+" — "+d} class=${a.role===k?"on":""} onClick=${()=>{setAtts(x=>x.map(y=>y.id===a.id?{...y,role:k}:y));if(k==="style")setPrefs(p=>({...p,theme:"gorsel"}))}}><${Icon} n=${ic} s=${13}/></button>`)}</div><span class="att-l">${ROLES[a.role][1]}</span><span class="sw">${a.pal.slice(0,5).map(c=>html`<i key=${c} style=${{width:9,height:9,background:c}}></i>`)}</span></div><button type="button" class="att-x" onClick=${()=>setAtts(x=>x.filter(y=>y.id!==a.id))} title="Kaldır"><${Icon} n="x" s=${11} w=${2.4}/></button></div>`)}</div>`}
    <${GhostTA} className="gta" aria-label=${st.html?"Değişiklik isteği":"Proje fikri"} rows=${big?3:2} style=${{minHeight:big?96:52}} disabled=${!!todo?.running} placeholder=${busy?"Yazmaya devam et · Enter ile sıraya eklenir":st.html?"Ne değiştirmek istersin?":prefs.kind==="game"?"Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…":prefs.kind==="site"?"Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…":"Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…"} value=${input} set=${setInput} onKeyDown=${key} kind=${prefs.kind}/>
+   ${!busy&&input.trim()&&GS.engine&&html`<div id="composer-request-info" class="flow-preview" hidden=${!requestInfo}>
+    <b>${promptIntent(input,{html:!!st.html,plan:!!plan,todo:!!todo?.awaiting,last:lastAsk(),kind:prefs.kind,mode:prefs.mode,picked:!!picked}).l}</b>
+    <span>${st.title||"Yeni proje"} · ${st.gitContext?.name||"Yerel taslak"} · ${MODE_TR[prefs.mode]}</span></div>`}
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
-     ${plusOpen&&html`<div class="amenu plusm" role="menu">
+     ${plusOpen&&html`<${ComposerMenu}>
       <button type="button" role="menuitem" disabled=${atts.length>=3} onClick=${()=>{setPlusOpen(false);fileRef.current.click()}}><${Icon} n="paperclip" s=${18}/><span>Görsel ya da çizim ekle</span><kbd>⌘U</kbd></button>
       <div class="amenu-sep"></div>
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);setGallery(true)}}><${Icon} n="palette" s=${18}/><span>Tasarım teması</span><${Icon} n="chevRight" s=${15} c="#8e8e93"/></button>
@@ -4416,9 +4471,9 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new CustomEvent("gm:gh",{detail:{url:""}}))}}><${Icon} n="github" s=${18}/><span>GitHub'dan içe aktar</span></button>
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);setInput("/");const t=document.querySelector(".gta");t&&t.focus()}}><${Icon} n="slash" s=${18}/><span>Komutlar</span><kbd>/</kbd></button>
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new Event("gm:cp"))}}><${Icon} n="headphones" s=${18}/><span>Asistanla konuş</span><kbd>⌘J</kbd></button>
-     </div>`}</span>
+     <//>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
-    <span class="gnote">${busy?html`<span class="pe-chip run"><${ClSpark} s=${13}/> ${clTime(secs)}</span>`:input.trim()&&GS.engine?html`<${PromptEngine} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
+    <span class="gnote">${busy?html`<button type="button" class="pe-chip run" aria-label="İşlem adımlarını göster veya gizle" aria-expanded=${!!(latestWork&&flowOpen[flowId(latestWork)])} onClick=${()=>toggleFlow(latestWork,true)}><${ClSpark} s=${13}/> ${clTime(secs)}</button>`:input.trim()&&GS.engine?html`<${PromptEngine} open=${requestInfo} toggle=${()=>setRequestInfo(v=>!v)} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>
     ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/> Sıraya ekle</button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}>${html`<${Icon} n="arrowUp" s=${18} w=${2.2}/>`}</button>`}</div></div></form>`;
  const ccFoot=()=>{const m=ccMenu,tog=k=>setCcMenu(x=>x===k?null:k),cl=()=>setCcMenu(null);
   const branch=st.gitContext?.name||"main",onBranch=!!st.gitContext;const det=runSet.detail||"dengeli";const effort={kisa:"Düşük",dengeli:"Orta",ayrintili:"Yüksek"}[det]||"Orta";
@@ -4503,12 +4558,24 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   <div class="studio-plan-actions"><button class="btn s" disabled=${busy||!plan.text.trim()} onClick=${approvePlan}>Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>requestPlan(plan.prompt,plan.im,true)}>Yeniden planla</button><button class="btn g s" disabled=${busy} onClick=${()=>setPlan(null)}>Vazgeç</button></div>
  </section>`;
  const latestWork=st.msgs.findLast(m=>m.log);
+ const [flowOpen,setFlowOpen]=useState({});
+ const [requestInfo,setRequestInfo]=useState(false);
+ const flowId=m=>"activity-"+(m.id??m.log.start);
+ function toggleFlow(m,reveal=false){
+  if(!m)return;
+  const id=flowId(m),opening=!flowOpen[id];
+  setFlowOpen(prev=>({...prev,[id]:!prev[id]}));
+  if(opening&&reveal)requestAnimationFrame(()=>{
+   const chat=chatRef.current,header=document.getElementById(id)?.previousElementSibling;
+   if(chat&&header)chat.scrollTop+=header.getBoundingClientRect().top-chat.getBoundingClientRect().top-8;
+  });
+ }
  const msgEl=(m,i)=>m.role==="user"?html`<article class="studio-user-message" aria-label="Sen" key=${"user-"+i}>
   <span class="studio-user-label">Sen</span>
   ${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<img key=${j} src=${u} alt=${"Eklenen görsel "+(j+1)}/>`)}</div>`}
   <div class="studio-message-text">${m.content}</div>
  </article>`:html`<article class="studio-response" key=${m.id||i}>
-  ${m.log&&html`<${WorkLog} log=${m.log} live=${streamClock.current?.id===m.id?liveRef.current:""} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} onToggle=${()=>{followChat.current=false}} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
+  ${m.log&&html`<${WorkLog} log=${m.log} live=${streamClock.current?.id===m.id?liveRef.current:""} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} flowId=${flowId(m)} isOpen=${!!flowOpen[flowId(m)]} onToggle=${()=>toggleFlow(m)} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
   ${m.content&&(()=>{const stale=m.err&&(m.log?(m.log.start<PAGE_T0-60000||m!==latestWork):true);const txt=m.err?String(m.content).replace(/[:\s]*\{"error"[\s\S]*$/,"").trim():m.content;
    return html`<div class=${"studio-message-text"+(m.err?" studio-error":"")+(stale?" stale":"")} role=${m.err&&!stale?"alert":undefined} title=${stale?"Bu hata önceki bir denemeden kaldı":undefined}>${txt}</div>`})()}
  </article>`;
@@ -4541,7 +4608,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     LS.set(indexKey,[{id:st.draftId,title:st.title||"Adsız proje"},...index.filter(entry=>entry.id!==st.draftId)]);
    }else toast("Önceki yerel taslak için cihazda yeterli alan yok.");
   }
-  epoch.current++;autoFixed.current=null;setSaved(null);setSpDiff(false);setCcMenu(null);abortRef.current?.abort();abortRef.current=null;jobRef.current=null;
+  epoch.current++;setFlowOpen({});setRequestInfo(false);autoFixed.current=null;setSaved(null);setSpDiff(false);setCcMenu(null);abortRef.current?.abort();abortRef.current=null;jobRef.current=null;
   stopRef.current=true;recRef.current?.abort?.();recRef.current=null;
   const next={...project,draftId:project.draftId||crypto.randomUUID()};
   const key=studioScope(account,next);
@@ -4589,7 +4656,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const fix=()=>build("TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun.",null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   return html`<div class=${"dq-card"+(probs.length?" warn":"")} role="status"><div class="dq-h"><${Icon} n=${probs.length?"alert":"check"} s=${14}/><b>Tasarım ajanı</b><span>${probs.length?probs.length+" sorun buldu":"önizlemeyi denetledi · sorun yok"}</span>${st.tokens&&html`<em title=${st.tokens}>tasarım sistemi kayıtlı</em>`}</div>${probs.length>0&&html`<ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Ajan düzeltsin</button>`}</div>`})()}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const nx=nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked});
-  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${busy&&html`<${BuildStatus} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
+  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
