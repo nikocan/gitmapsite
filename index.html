@@ -2076,6 +2076,8 @@ button.adp-mini{color:inherit;text-align:left}
 .st-voice{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.st-voice select{max-width:240px}
 
 .ai-credit{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid #ffffff14;background:#ffffff06}.ai-credit span{display:flex;flex-direction:column;min-width:120px}.ai-credit small{font-size:11.5px;color:var(--mut)}.ai-credit b{font-size:16px}.ai-credit .btn{margin-left:auto}.ai-credit p{width:100%;margin:0;font-size:13px;color:#fca5a5}.ai-credit.bad{border-color:#f8717155;background:#f871710a}
+
+.cp-t.err.stale{opacity:.6;border-style:dashed}.cp-stale{display:block;margin-bottom:4px;font-size:11px;opacity:.85;letter-spacing:.01em}
 </style>
 </head>
 <body>
@@ -2089,8 +2091,11 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.48.0";
+const VERSION="5.49.0";
 const CHANGELOG=[
+ {v:"5.49.0",date:"2026-11-26",items:[
+  "🗂️ Asistan panelinde önceki oturumlardan kalan hata mesajları artık soluk ve kesik çerçeveli, “Önceki oturumdan · artık geçerli olmayabilir” etiketiyle görünüyor; eski “model bulunamadı (404)” gibi mesajlar güncel sorun sanılmıyor. Hata metnindeki ham JSON kısmı da gizlendi"
+ ]},
  {v:"5.48.0",date:"2026-11-26",items:[
   "🧹 Hostinger AI Router yedekten tamamen çıkarıldı: sunucu dosyasındaki eski Hostinger anahtarı artık kendiliğinden yedek olmuyor, paneldeki Hostinger anahtarı ve yedek sırası bir kez temizlendi. İleride gerekirse Yönetim › Yapay zekâ'dan Hostinger anahtarı girilerek yeniden eklenebilir",
   "💳 OpenRouter bakiye teşhisi: “Bağlantıyı test et” artık hesap bakiyesini (yüklenen / harcanan) ve anahtarın harcama limitini gösteriyor; kredi yoksa açıkça “anahtardaki Credit limit bakiye değil, yalnızca üst sınırdır” diyor ve doğrudan “Kredi yükle” bağlantısı veriyor",
@@ -7468,7 +7473,7 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]
    const all=[...R.current.msgs,msg];const mi=all.length-1;setMsgs(all);R.current.msgs=all;setLive("");setRun0(null);setBusy(false);R.current.busy=false;
    const sp=(R.current.speakOn||R.current.voice)?say(msg.content):Promise.resolve();
    if(p.acts.length&&R.current.auto){await sp;await runActs(mi,false)}else{await sp;relisten()}
-  }catch(e){if(!active())return;setLive("");setRun0(null);setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
+  }catch(e){if(!active())return;setLive("");setRun0(null);setBusy(false);R.current.busy=false;setMsgs(ms=>[...ms,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true,at:Date.now()}]);if(e.status===429&&!auth.user)openAuth("Asistanla sınırsız konuşmak için ücretsiz hesap oluştur.");if(R.current.voice){setVoice(false);R.current.voice=false}}}
  const key=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent?.isComposing&&e.keyCode!==229){e.preventDefault();send()}};
  const lastA=[...msgs].reverse().find(m=>m.role==="assistant"&&!m.err);
  const status=busy?"Düşünüyor…":talking?"Konuşuyor…":listen?"Dinliyor…":asking?"Onay bekliyor":auto?"Oto pilot açık":"Ücretsiz · sesli ya da yazılı";
@@ -7497,7 +7502,7 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]
    ${!msgs.length&&html`<div class="cp-hello"><div class="cp-big">${orb}</div><h3>Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}, ne yapalım?</h3><p>Fikrini anlat, birlikte netleştirelim. Hazır olunca istemi ben yazar, geliştirmeyi başlatırım. <b>Oto</b> modda ekranları ve ayarları ben yönetirim; sen yalnızca onaylarsın.</p>
     <button class="cp-voicebtn" onClick=${toggleVoice}><${Icon} n="headphones" s=${17}/> Sesli konuşmaya başla</button>
     <div class="cp-start">${CP_START.map(([ic,l,q])=>html`<button key=${l} onClick=${()=>send(q)}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}</div></div>`}
-   ${msgs.map((m,mi)=>m.role==="user"?html`${m.pj&&m.pj!==(msgs.slice(0,mi).findLast(x=>x.role==="user")||{}).pj&&mi>0?html`<div class="cp-div" key=${"d"+mi}><span>${m.pjAd?"Proje: "+m.pjAd:"Yeni konu"}</span></div>`:""}<div class="cp-u" key=${mi}>${(m.imgs?.length||m.files?.length)?html`<div class="cp-ua">${(m.imgs||[]).map((u,j)=>html`<img key=${j} src=${u} alt=${"Eklenen görsel "+(j+1)}/>`)}${(m.files||[]).map(f=>html`<span key=${f}><${Icon} n="file" s=${13}/>${f}</span>`)}</div>`:""}${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}>${!m.err&&thinkRow(m,mi)}<div class=${"cp-t"+(m.err?" err":"")}>${m.err?m.content:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
+   ${msgs.map((m,mi)=>m.role==="user"?html`${m.pj&&m.pj!==(msgs.slice(0,mi).findLast(x=>x.role==="user")||{}).pj&&mi>0?html`<div class="cp-div" key=${"d"+mi}><span>${m.pjAd?"Proje: "+m.pjAd:"Yeni konu"}</span></div>`:""}<div class="cp-u" key=${mi}>${(m.imgs?.length||m.files?.length)?html`<div class="cp-ua">${(m.imgs||[]).map((u,j)=>html`<img key=${j} src=${u} alt=${"Eklenen görsel "+(j+1)}/>`)}${(m.files||[]).map(f=>html`<span key=${f}><${Icon} n="file" s=${13}/>${f}</span>`)}</div>`:""}${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}>${!m.err&&thinkRow(m,mi)}<div class=${"cp-t"+(m.err?" err":"")+(m.err&&!(m.at>=PAGE_T0)?" stale":"")}>${m.err?html`${!(m.at>=PAGE_T0)&&html`<small class="cp-stale">Önceki oturumdan · artık geçerli olmayabilir</small>`}${String(m.content).replace(/[:\s]*\{"error"[\s\S]*$/,"").trim()}`:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
    ${busy&&html`<div class="cp-m">${run0&&run0.think==null?html`<div class="cl-sec"><div class="cl-row"><${ClSpark} s=${17}/><span class="shimmer">${run0.ttl}</span></div><div class="cl-think"><div class="cl-tt">Düşünüyor… ${Math.floor((Date.now()-run0.t0)/1000)} sn</div><p>Ekran bağlamı ve önceki konuşma okunuyor.</p></div></div>`:html`${run0&&html`<div class="cl-row"><span>${run0.think} sn düşündü</span></div>`}<div class="cp-t">${cpParse(live).body?html`<${CopilotReply} text=${cpParse(live).body}/>`:html`<span class="shimmer">Yanıt yazılıyor…</span>`}<span class="caret"></span></div>`}</div>`}
    ${msgs.length>=2&&!busy&&!window.__gmStudio?.calisiyor&&lastA&&!lastA.acts&&html`<div class="cp-sug"><button onClick=${()=>send("Konuştuklarımızı ayrıntılı bir geliştirme istemine dönüştür, istem kutusuna yaz ve uygun tür, tema ve modu ayarla.")}><${Icon} n="wand" s=${13}/> Prompta dönüştür</button><button onClick=${()=>send("Bunu geliştirmeye başla.")}><${Icon} n="play" s=${13}/> Geliştirmeye başla</button></div>`}
    <div ref=${endRef}></div></div>
