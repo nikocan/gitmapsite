@@ -1441,7 +1441,20 @@ async function ghInspect(user, input) {
   const tok = ghTok(user);
   const ck = JSON.stringify([g.owner.toLowerCase(), g.repo.toLowerCase(), g.ref, g.path, user?.github_token ? user.id : tok ? "server" : "public"]); const hit = cacheGet(ck); if (hit) return hit;
   const meta = await ghRead(tok, `/repos/${g.owner}/${g.repo}`);
-  need(meta.status !== 404, 404, user && user.github_token ? "Depo bulunamadı ya da erişim iznin yok." : "Depo bulunamadı. Özel bir depoysa önce GitHub hesabını bağla.");
+  if (meta.status === 404) {
+    // Özel depo mu, gerçekten yok mu? Kullanıcının bağlı GitHub anahtarının "repo" izni olup olmadığına bakarak ayırt et.
+    let reason = user && user.github_token ? "scope" : "link";
+    if (user && user.github_token) {
+      try { const r = await fetch("https://api.github.com/user", { headers: { "User-Agent": "gitmapp", Authorization: "Bearer " + user.github_token }, signal: AbortSignal.timeout(8000) });
+        const sc = (r.headers.get("x-oauth-scopes") || "").split(",").map((x) => x.trim()).filter(Boolean);
+        if (r.status === 401) reason = "expired"; else if (sc.includes("repo")) reason = "missing"; } catch { /* sessiz */ }
+    }
+    const msg = { link: "Bu depo özel olabilir. Okuyabilmem için GitHub hesabını özel depo izniyle bağla.",
+      scope: "Bu depo özel; GitHub bağlantında özel depo okuma izni yok. “Özel depo izni ver” ile bir kez yeniden bağla.",
+      expired: "GitHub bağlantının süresi dolmuş. GitHub'ı yeniden bağla.",
+      missing: "Depo bulunamadı. Adresi kontrol et ya da depoya erişimi olan GitHub hesabını bağla." }[reason];
+    const e = new HttpErr(404, msg); e.extra = { reason }; throw e;
+  }
   need(meta.ok, 502, "GitHub deposu okunamadı (" + meta.status + ")");
   const R = meta.data; const ref = g.ref || R.default_branch;
   const br = await ghRead(tok, `/repos/${g.owner}/${g.repo}/commits/${encodeURIComponent(ref)}`);
@@ -2096,7 +2109,7 @@ const server = http.createServer(async (req, res) => {
     if (out !== null && out !== undefined) send(200, out);
   } catch (e) {
     if (res.destroyed) return;
-    if (e instanceof HttpErr) send(e.code, { error: e.message });
+    if (e instanceof HttpErr) send(e.code, { error: e.message, ...(e.extra || {}) });
     else { console.error(new Date().toISOString(), req.method, url.pathname, e); send(e.name === "TimeoutError" ? 504 : 500, { error: e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Sunucu hatası" }); }
   }
 });
