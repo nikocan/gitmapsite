@@ -1583,6 +1583,10 @@ button.adp-mini{color:inherit;text-align:left}
 .flow-credit th,.flow-credit td{padding:6px 8px;border-top:1px solid var(--line)}.flow-credit th{text-align:left;font-weight:500}.flow-credit th svg{vertical-align:middle}.flow-credit td{text-align:right;font-variant-numeric:tabular-nums}
 @media(prefers-reduced-motion:no-preference){.flow-list li{animation:flow-appear .22s ease-out}.flow-credit{animation:credit-settle 1.6s ease-out}.flow-credit.flash{animation:flow-credit-fade 4.2s ease-out forwards}@keyframes flow-credit-fade{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}@keyframes flow-appear{from{opacity:0;transform:translateY(3px)}}@keyframes credit-settle{from{background-color:rgba(176,145,232,.24)}to{background-color:transparent}}}
 @media(max-width:640px){.flow-trigger,.flow-detail summary,.cx-head{min-height:44px}.bs-l1{flex-wrap:wrap}}
+
+.rp{white-space:normal}.rp p{margin:0 0 6px}.rp ul{margin:2px 0 8px;padding-left:18px}.rp li{margin:3px 0;line-height:1.55}.rp li::marker{color:#8a8882}
+.rp-check{display:flex;gap:8px;align-items:flex-start;margin:6px 0 2px;color:#a3a19a;font-size:13px;line-height:1.5}.rp-check svg{color:#3ecf8e;margin-top:3px;flex:none}
+.rp-next{display:inline-flex;align-items:center;gap:7px;margin-top:8px;max-width:100%;padding:7px 12px;border-radius:10px;border:1px solid #3a3a37;background:#232322;color:#e8e6e1;font:inherit;font-size:13px;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}.rp-next:hover:not(:disabled){background:#2b2b29;border-color:#d97757}.rp-next svg{color:#d97757;flex:none}.rp-next:disabled{opacity:.6;cursor:default}
 </style>
 </head>
 <body>
@@ -1596,8 +1600,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.28.0";
+const VERSION="5.29.0";
 const CHANGELOG=[
+ {v:"5.29.0",date:"2026-11-26",items:[
+  "🗣️ Yapay zekâ artık deneyimli bir yazılımcı gibi raporluyor (Claude Code üslubu): her üretimin sonunda önce sonuç cümlesi (“Emlak ilanlarına fiyat filtresi ekledim.”), ardından yapılan değişiklikler madde madde, “Kontrol” satırında neyin çalıştığından emin olduğu ya da olamadığı, en altta tek bir “Sıradaki” önerisi",
+  "➡️ “Sıradaki” önerisi tıklanabilir: dokununca istem kutusuna yazılıyor, istersen düzenleyip gönderiyorsun",
+  "🤝 Asistan aynı üslupla konuşuyor: önce cevabı/sonucu söylüyor; bir iş başlatırken tek cümleyle ne yapacağını, iş bitince ne değiştiğini ve ne kaldığını anlatıyor; emin olmadığını “kontrol ettim” diye sunmuyor; seçenek sunarken tavsiyesini nedeniyle veriyor",
+  "🧹 Övgü ve dolgu yok: “harika, mükemmel” gibi sözler ve ünlemler yerine sade, sıcak ve somut bir dil; teknik terimler yerine günlük Türkçe. Kod kontrolü raporu da kaç sorun bulup düzelttiğini ilk cümlede söylüyor"]},
  {v:"5.28.0",date:"2026-11-26",items:["Stüdyo asistanı açık proje ve dal oturumuna bağlandı; 20 sektörel şablon doğrulandı.","Stüdyo ilerleme satırına dokunarak isteğin adımlarını, zamanlarını ve işlemde kullanılan krediyi görebilirsiniz."]},
  {v:"5.27.0",date:"2026-11-26",items:[
   "📎 Asistan'a görsel ve dosya ekleme: ＋ düğmesi, yapıştırma (⌘V) ya da sürükle-bırak ile en fazla 4 ek (görsel; .txt, .md, .csv, .json, .html, .css, .js). Ekler gönderilmeden önce küçük resim olarak görünüyor, mesaj balonunda da kalıyor",
@@ -4003,6 +4012,14 @@ function StudioChanges({before,after}){
 }
 // Asistan için uygulamanın kısa özeti: başlık ve ekran/bölüm başlıkları (asistan hangi projede olduğunu bilsin)
 function outlineOf(h){if(!h)return null;const t=(/<title[^>]*>([^<]{1,80})/i.exec(h)||[])[1]||"";const hs=[...h.matchAll(/<h[1-3][^>]*>([\s\S]{1,120}?)<\/h[1-3]>/gi)].map(m=>m[1].replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim()).filter(Boolean);return {baslik:t.trim(),bolumler:[...new Set(hs)].slice(0,10),boyutKB:+(h.length/1024).toFixed(1),oyun:/<canvas|requestAnimationFrame/i.test(h)}}
+// Sonuç raporu (Claude Code gibi): sonuç cümlesi, değişiklik maddeleri, Kontrol ve tıklanabilir Sıradaki önerisi
+function ReportText({text,onNext}){
+ const lines=String(text||"").split(/\n+/).map(l=>l.trim()).filter(Boolean);
+ if(lines.length<2&&!/^(Kontrol|Sıradaki):/i.test(lines[0]||""))return html`<div class="studio-message-text">${text}</div>`;
+ const head=[],items=[];let check="",next="";
+ for(const l of lines){let m;if(m=/^[-•*]\s+(.*)$/.exec(l))items.push(m[1]);else if(m=/^Kontrol:\s*(.*)$/i.exec(l))check=m[1];else if(m=/^Sıradaki:\s*(.*)$/i.exec(l))next=m[1];else head.push(l)}
+ return html`<div class="studio-message-text rp">${head.map((h,i)=>html`<p key=${i}>${h}</p>`)}${items.length>0&&html`<ul>${items.map((x,i)=>html`<li key=${i}>${x}</li>`)}</ul>`}${check&&html`<div class="rp-check"><${Icon} n="checkCircle" s=${14}/><span>${check}</span></div>`}${next&&html`<button type="button" class="rp-next" disabled=${!onNext} title="İstem kutusuna yaz" onClick=${()=>onNext&&onNext(next.replace(/\s*(mı|mi|mu|mü)\?$/i,"").trim())}><${Icon} n="arrowRight" s=${13}/><span>${next}</span></button>`}</div>`;
+}
 /* ================= v5.25 — OTURUM PANELİ (Claude Code tarzı): Ortam · Bağlam · Bağdaştırıcılar · Çıktılar · Değişiklikler ================= */
 function lineStat(a,b){const A=String(a||"").split("\n"),B=String(b||"").split("\n");const m=new Map();for(const l of A)m.set(l,(m.get(l)||0)+1);let add=0;for(const l of B){const n=m.get(l);if(n)m.set(l,n-1);else add++}let del=0;for(const n of m.values())del+=n;return {add,del}}
 const ctxWindow=id=>/gpt-?5|gemini|claude|opus|sonnet|fable|haiku/i.test(id||"")?(/gpt-?5|gemini/i.test(id)?400000:200000):128000;
@@ -4608,7 +4625,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  </article>`:html`<article class="studio-response" key=${m.id||i}>
   ${m.log&&html`<${WorkLog} log=${m.log} live=${streamClock.current?.id===m.id?liveRef.current:""} lastAt=${streamClock.current?.id===m.id?streamClock.current.last:null} flowId=${flowId(m)} isOpen=${!!flowOpen[flowId(m)]} onToggle=${()=>toggleFlow(m)} retry=${!busy&&!todo?.running&&m===latestWork&&(lastRetry.current?.id===m.id&&lastRetry.current.run||m.retry&&(m.retry.text||m.retry.kind==="review"))?()=>retryMsg(m):null}/>`}
   ${m.content&&(()=>{const stale=m.err&&(m.log?(m.log.start<PAGE_T0-60000||m!==latestWork):true);const txt=m.err?String(m.content).replace(/[:\s]*\{"error"[\s\S]*$/,"").trim():m.content;
-   return html`<div class=${"studio-message-text"+(m.err?" studio-error":"")+(stale?" stale":"")} role=${m.err&&!stale?"alert":undefined} title=${stale?"Bu hata önceki bir denemeden kaldı":undefined}>${txt}</div>`})()}
+   return m.err?html`<div class=${"studio-message-text studio-error"+(stale?" stale":"")} role=${!stale?"alert":undefined} title=${stale?"Bu hata önceki bir denemeden kaldı":undefined}>${txt}</div>`:html`<${ReportText} text=${txt} onNext=${busy?null:t=>{setInput(t);requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus())}}/>`})()}
  </article>`;
 
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;

@@ -61,3 +61,9 @@ test("görseller: göreli yol yasak, güvenilir kaynak ve yedek zorunlu; tema ad
   assert.match(GEN_SYSTEM, /onerror/);
   assert.match(GEN_SYSTEM, /tasarım temasının adını uygulama adı yapma/);
 });
+test("sonuç raporu: sonuç önce, maddeler, Kontrol ve Sıradaki; övgü yok", () => {
+  assert.match(GEN_SYSTEM, /İlk cümle sonucu söyler/);
+  assert.match(GEN_SYSTEM, /Kontrol:/);
+  assert.match(GEN_SYSTEM, /Sıradaki:/);
+  assert.match(GEN_SYSTEM, /övgüler ve ünlem kullanma/);
+});
