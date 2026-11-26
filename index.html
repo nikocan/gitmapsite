@@ -1633,7 +1633,7 @@ button.adp-mini{color:inherit;text-align:left}
 .ph-go{border:0;border-radius:8px;background:#d97757;color:#fff;font:inherit;font-size:12.5px;font-weight:600;padding:5px 12px;cursor:pointer;transition:transform .12s}.ph-go:hover{transform:translateY(-1px)}
 
 .ai-adm{display:flex;flex-direction:column;gap:14px;max-width:860px}.ai-adm header h1{margin:0 0 6px}.ai-adm header p{color:var(--mut);margin:0;line-height:1.55}
-.ai-sum{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13.5px}.ai-sum span{display:inline-flex;gap:6px;align-items:center}.ai-sum em{flex-basis:100%;font-style:normal;color:#f5a524;font-size:13px}
+.ai-sum{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13.5px}.ai-sum span{display:inline-flex;gap:6px;align-items:center}.ai-swap{margin-left:auto}.ai-sum em{flex-basis:100%;font-style:normal;color:#f5a524;font-size:13px}
 .ai-card{display:flex;flex-direction:column;gap:12px}.ai-h{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}.ai-h h2{margin:0 0 4px;font-size:17px}.ai-h p{margin:0;color:var(--mut);font-size:13px;line-height:1.5}
 .ai-f{display:flex;flex-direction:column;gap:5px}.ai-f label{font-size:13px;color:var(--mut);display:flex;gap:8px;align-items:center}.ai-row{display:flex;gap:6px;align-items:flex-start}.ai-row .in{flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace;font-size:13px}
 .ai-src{font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line)}.ai-src.panel{color:#3ecf8e;border-color:rgba(62,207,142,.4)}.ai-src.sunucu{color:#a3a19a}.ai-src.yok{color:#f5a524;border-color:rgba(245,165,36,.4)}
@@ -1655,8 +1655,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.34.0";
+const VERSION="5.35.0";
 const CHANGELOG=[
+ {v:"5.35.0",date:"2026-11-26",items:[
+  "🔀 Tek tıkla “OpenRouter'ı ana, Hostinger'ı yedek yap”: ana sağlayıcı OpenRouter oluyor, model adları OpenRouter biçimine çevriliyor (claude-sonnet-4.5 → anthropic/claude-sonnet-4.5), eksikse güçlü/dengeli/hızlı birer model ekleniyor; mevcut Hostinger anahtarı ve model listesi otomatik olarak yedeğe taşınıyor",
+  "🗝️ Hesabım › API anahtarlarım'da Anthropic ya da OpenAI anahtarın varsa, sağlayıcı sayfasında “Hesabımdaki anahtarı kullan” düğmesi çıkıyor; anahtar sunucu içinde kopyalanıyor, tarayıcıya hiç gelmiyor",
+  "🧭 Ana sağlayıcı artık kendi yedeği olarak listelenmiyor; OpenRouter ana olduğunda yüzlerce model yerine yalnızca model listesinde seçtiklerin kullanıcıya gösteriliyor"]},
  {v:"5.34.0",date:"2026-11-26",items:[
   "🔑 Yönetim › Yapay zekâ sağlayıcıları: API anahtarlarını artık SSH'a girip sunucu dosyası düzenlemeden, panelden yönetiyorsun. Anahtarı yapıştırıp Kaydet'e bastığın an geçerli oluyor; sunucuyu yeniden başlatmak gerekmiyor",
   "🧪 Her sağlayıcı için “Test et”: model listesini çekip tek kelimelik deneme isteği atıyor; “Çalışıyor · model yanıt verdi · 1,4 sn” ya da “Çalışmıyor · bakiye bitti (402)” gibi net sonuç gösteriyor. Ana sağlayıcı testinde listelenen modellere tıklayıp model listesine ekleyebiliyorsun",
@@ -2724,6 +2728,7 @@ function AdminHome({go,request}){
 // ---------- Yönetim › Yapay zekâ sağlayıcıları: SSH'sız anahtar yönetimi, anında geçerli ----------
 const AI_PROVS=[
  {id:"primary",env:"AI_KEY",n:"Ana sağlayıcı",d:"Tüm üretimler önce buradan geçer. Hostinger AI Router ya da OpenAI uyumlu başka bir adres.",keyUrl:"https://hpanel.hostinger.com"},
+ {id:"hostinger",env:"HOSTINGER_AI_KEY",n:"Hostinger AI Router",d:"OpenRouter ana sağlayıcı olduğunda yedek olarak Hostinger. Bakiyesi bitse de sorun olmaz, sıradaki yedeğe geçilir.",keyUrl:"https://hpanel.hostinger.com"},
  {id:"openrouter",env:"OPENROUTER_API_KEY",n:"OpenRouter",d:"Tek anahtarla Claude, GPT, Gemini, DeepSeek, Qwen. Yedek olarak önerilir.",keyUrl:"https://openrouter.ai/settings/keys"},
  {id:"anthropic",env:"ANTHROPIC_API_KEY",n:"Anthropic",d:"Claude modelleri doğrudan.",keyUrl:"https://platform.claude.com/settings/keys"},
  {id:"openai",env:"OPENAI_API_KEY",n:"OpenAI",d:"GPT modelleri doğrudan.",keyUrl:"https://platform.openai.com/api-keys"},
@@ -2734,7 +2739,10 @@ function AdminAI({toast}){
  const [st,setSt]=useState(null),[err,setErr]=useState(""),[vals,setVals]=useState({}),[busy,setBusy]=useState(""),[tests,setTests]=useState({});
  const load=()=>api("GET","/api/admin/ai").then(setSt).catch(e=>setErr(e.message));useEffect(()=>{load()},[]);
  const f=name=>st?.fields.find(x=>x.name===name)||{};
- async function save(name,value){setBusy(name);try{const j=await api("PUT","/api/admin/ai",{name,value});setSt(j);setVals(v=>({...v,[name]:undefined}));toast(value?"Kaydedildi · hemen geçerli":"Sunucu dosyasındaki değere dönüldü")}catch(e){toast(e.message)}finally{setBusy("")}}
+ const keep=j=>setSt(o=>({...j,byok:j.byok||o?.byok||[]}));
+ async function swap(){if(!confirm("OpenRouter ana sağlayıcı, Hostinger AI Router yedek olsun mu? Model adları OpenRouter biçimine çevrilecek."))return;setBusy("swap");try{const j=await api("POST","/api/admin/ai/openrouter-primary");keep(j);toast("OpenRouter ana sağlayıcı oldu · Hostinger yedekte · "+j.swapped.models.length+" model")}catch(e){toast(e.message)}finally{setBusy("")}}
+ async function importKey(prov){setBusy("imp:"+prov);try{const j=await api("POST","/api/admin/ai/import-byok",{provider:prov});keep(j);toast("Hesabındaki anahtar yedeğe eklendi")}catch(e){toast(e.message)}finally{setBusy("")}}
+ async function save(name,value){setBusy(name);try{const j=await api("PUT","/api/admin/ai",{name,value});keep(j);setVals(v=>({...v,[name]:undefined}));toast(value?"Kaydedildi · hemen geçerli":"Sunucu dosyasındaki değere dönüldü")}catch(e){toast(e.message)}finally{setBusy("")}}
  async function test(target){setBusy("t:"+target);setTests(t=>({...t,[target]:{run:true}}));try{const j=await api("POST","/api/admin/ai/test",{target});setTests(t=>({...t,[target]:j}))}catch(e){setTests(t=>({...t,[target]:{ok:false,message:e.message}}))}finally{setBusy("")}}
  if(err)return html`<p class="ms-err" role="alert">${err}</p>`;if(!st)return html`<p role="status">Yükleniyor…</p>`;
  const src=x=>html`<span class=${"ai-src "+x.source}>${x.source==="panel"?"panelden":x.source==="sunucu"?"sunucu dosyasından":"tanımlı değil"}</span>`;
@@ -2744,13 +2752,13 @@ function AdminAI({toast}){
  const fbs=st.fallbacks;
  return html`<section class="ai-adm">
   <header><h1>Yapay zekâ sağlayıcıları</h1><p>Anahtarları buradan yönet; kaydettiğin an geçerli olur, SSH ve yeniden başlatma gerekmez. Anahtarlar sunucuda şifreli saklanır ve bir daha gösterilmez. Panel değeri sunucu dosyasındaki (.env) değerin önüne geçer.</p>
-   <div class="ai-sum"><span><${Icon} n="cpu" s=${15}/> Ana: <b>${(AI_BASES.find(b=>b[0]===st.base)||[0,st.base.replace(/^https:\/\//,"")])[1]}</b></span><span><${Icon} n="refresh" s=${15}/> Yedek: <b>${fbs.length?fbs.map(p=>AI_PROVS.find(x=>x.id===p)?.n||p).join(" → "):"yok"}</b></span>${!fbs.length&&html`<em>Yedek yokken ana sağlayıcının bakiyesi bitince üretim durur. En az bir yedek ekle.</em>`}</div></header>
+   <div class="ai-sum"><span><${Icon} n="cpu" s=${15}/> Ana: <b>${(AI_BASES.find(b=>b[0]===st.base)||[0,st.base.replace(/^https:\/\//,"")])[1]}</b></span><span><${Icon} n="refresh" s=${15}/> Yedek: <b>${fbs.length?fbs.map(p=>AI_PROVS.find(x=>x.id===p)?.n||p).join(" → "):"yok"}</b></span>${!fbs.length&&html`<em>Yedek yokken ana sağlayıcının bakiyesi bitince üretim durur. En az bir yedek ekle.</em>`}${!/openrouter\.ai/.test(st.base)&&f("OPENROUTER_API_KEY").set&&html`<button class="btn s ai-swap" disabled=${busy==="swap"} onClick=${swap}>${busy==="swap"?"Ayarlanıyor…":"OpenRouter'ı ana, Hostinger'ı yedek yap"}</button>`}</div></header>
   <div class="box ai-card"><div class="ai-h"><div><h2>Ana sağlayıcı</h2><p>${AI_PROVS[0].d}</p></div><button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test("primary")}>Bağlantıyı test et</button></div>
    <div class="ai-presets">${AI_BASES.map(([u,l])=>html`<button type="button" key=${u} class=${"chip"+(st.base===u?" on":"")} onClick=${()=>save("AI_BASE",u)}>${l}</button>`)}</div>
    ${field("AI_BASE","Adres","https://…/v1")}${field("AI_KEY","API anahtarı","sk-…",{secret:true})}${field("AI_MODELS","Model listesi (virgülle)","claude-sonnet-5,gpt-5.2",{area:true})}${field("AI_MODEL","Varsayılan model","boş bırakılırsa listeden seçilir")}
    ${result("primary")}</div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Yedek sağlayıcılar</h2><p>Ana sağlayıcı bakiye bitti, model yok, yoğunluk ya da hata verirse istek sırayla bunlara gider; kullanıcı hata görmez.</p></div></div>
-   ${AI_PROVS.slice(1).map(pv=>{const x=f(pv.env);return html`<div class="ai-prov" key=${pv.id}><div class="ai-ph"><b>${pv.n}</b>${x.set?html`<span class="pill-ok">anahtar var · ••••${x.last4}</span>`:html`<span class="pill-no">anahtar yok</span>`}<a href=${pv.keyUrl} target="_blank" rel="noopener">Anahtar al</a><span style=${{flex:1}}></span>${x.set&&html`<button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test(pv.id)}>Test et</button>`}</div><small>${pv.d}</small>${field(pv.env,"API anahtarı","",{secret:true})}${result(pv.id)}</div>`})}
+   ${AI_PROVS.slice(1).filter(pv=>!(pv.id==="hostinger"&&/router\.hostinger\.com/.test(st.base)&&!f(pv.env).set)).map(pv=>{const x=f(pv.env);return html`<div class="ai-prov" key=${pv.id}><div class="ai-ph"><b>${pv.n}</b>${x.set?html`<span class="pill-ok">anahtar var · ••••${x.last4}</span>`:html`<span class="pill-no">anahtar yok</span>`}<a href=${pv.keyUrl} target="_blank" rel="noopener">Anahtar al</a>${(st.byok||[]).find(b=>b.provider===pv.id)&&!x.set?html`<button class="btn s" disabled=${busy==="imp:"+pv.id} onClick=${()=>importKey(pv.id)}>Hesabımdaki anahtarı kullan (••••${(st.byok||[]).find(b=>b.provider===pv.id).last4})</button>`:""}<span style=${{flex:1}}></span>${x.set&&html`<button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test(pv.id)}>Test et</button>`}</div><small>${pv.d}</small>${field(pv.env,"API anahtarı","",{secret:true})}${result(pv.id)}</div>`})}
    ${field("AI_FALLBACKS","Deneme sırası","openrouter,anthropic,openai,gemini,deepseek")}</div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Asistan</h2><p>Asistan ücretsiz; maliyeti düşük, hızlı bir model önerilir. Görsel ekli mesajlarda görsel okuyan model kullanılır.</p></div></div>
    ${field("COPILOT_MODEL","Asistan modeli","boş: listeden dengeli bir model")}${field("VISION_MODEL","Görsel okuyan model","boş: otomatik")}</div>

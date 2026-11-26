@@ -9,10 +9,10 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const server = fileURLToPath(new URL("server.mjs", import.meta.url));
-async function fixture(t) {
+async function fixture(t, extra = {}) {
   const dir = mkdtempSync(join(tmpdir(), "gitmapp-admin-"));
   const env = { ...process.env, PORT:"0", DB_PATH:join(dir,"db"), ADMIN_EMAIL:"owner@example.test",
-    SECRET:randomBytes(32).toString("hex"), GITHUB_CLIENT_ID:"", GOOGLE_CLIENT_ID:"" };
+    SECRET:randomBytes(32).toString("hex"), GITHUB_CLIENT_ID:"", GOOGLE_CLIENT_ID:"", ...extra };
   const cli = command => execFileSync(process.execPath,[server,command],{env,encoding:"utf8"});
   const password = cli("create-admin").match(/Şifre: (\S+)/)[1];
   const child = spawn(process.execPath,[server],{env,stdio:["ignore","pipe","inherit"]});
@@ -148,4 +148,33 @@ test("yapay zekâ sağlayıcıları panelden yönetilir: yalnızca yönetici, an
   assert.equal((await request("PUT","admin/ai",{name:"BASKA",value:"x"},admin)).status,400);
   const reset=await request("PUT","admin/ai",{name:"OPENROUTER_API_KEY",value:""},admin);
   assert.notEqual(reset.fields.find(x=>x.name==="OPENROUTER_API_KEY").source,"panel");
+});
+
+import http from "node:http";
+async function fakeOpenRouter() {
+  const s = http.createServer(async (req, res) => { for await (const _ of req); res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(req.url.endsWith("/models") ? { data: [{ id: "anthropic/claude-sonnet-4.5" }, { id: "anthropic/claude-opus-4.5" }, { id: "google/gemini-2.5-flash" }, { id: "openai/gpt-5.2" }] } : { choices: [{ message: { content: "OK" } }] })); });
+  s.listen(0, "127.0.0.1"); await once(s, "listening"); return { base: "http://127.0.0.1:" + s.address().port, close: () => s.close() };
+}
+test("tek tıkla OpenRouter ana, Hostinger yedek; yöneticinin kendi anahtarı yedeğe aktarılır", async t => {
+  const or = await fakeOpenRouter(); t.after(() => or.close());
+  const {request,admin}=await fixture(t,{AI_BASE:"https://router.hostinger.com/v1",AI_KEY:"hostinger-key-0123456789",AI_MODELS:"claude-sonnet-4.5",TEST_PROVIDER_BASE:or.base,TEST_PRIMARY_IS_HOSTINGER:"1",OPENROUTER_API_KEY:"",ANTHROPIC_API_KEY:"",OPENAI_API_KEY:"",GEMINI_API_KEY:"",DEEPSEEK_API_KEY:"",AI_FALLBACKS:""});
+  await request("PUT","admin/ai",{name:"OPENROUTER_API_KEY",value:"sk-or-v1-0123456789abcdef"},admin);
+  const sw=await request("POST","admin/ai/openrouter-primary",null,admin);
+  assert.equal(sw.status,200,JSON.stringify(sw));
+  const val=n=>sw.fields.find(f=>f.name===n);
+  assert.equal(val("AI_BASE").value,"https://openrouter.ai/api/v1");
+  assert.match(val("AI_MODELS").value,/anthropic\/claude-sonnet-4\.5/);
+  assert.equal(val("AI_MODEL").value,"anthropic/claude-sonnet-4.5");
+  assert.equal(val("HOSTINGER_AI_KEY").last4,"6789");
+  assert.equal(sw.fallbacks[0],"hostinger");
+  assert.ok(!sw.fallbacks.includes("openrouter"), "ana sağlayıcı kendi yedeği olmamalı");
+  // yöneticinin Hesabım › API anahtarlarım'daki Anthropic anahtarı sunucu yedeğine aktarılır
+  assert.equal((await request("PUT","keys/anthropic",{key:"sk-ant-0123456789abcdef0123"},admin)).status,200);
+  const st=await request("GET","admin/ai",null,admin);
+  assert.deepEqual(st.byok.map(b=>b.provider),["anthropic"]);
+  const imp=await request("POST","admin/ai/import-byok",{provider:"anthropic"},admin);
+  assert.equal(imp.fields.find(f=>f.name==="ANTHROPIC_API_KEY").last4,"0123");
+  assert.ok(imp.fallbacks.includes("anthropic"));
+  assert.doesNotMatch(JSON.stringify(imp),/sk-ant-0123456789abcdef0123/);
 });
