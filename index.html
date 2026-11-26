@@ -1622,8 +1622,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.30.0";
+const VERSION="5.31.0";
 const CHANGELOG=[
+ {v:"5.31.0",date:"2026-11-26",items:[
+  "🧑‍🏫 Yapay zekâ seni tanıyor: yazışından deneyim düzeyini anlıyor. Teknik terimler kullanıyorsan (state, API, component, deploy…) kısa ve teknik konuşuyor, temelleri tekrar etmiyor; yeni başlıyorsan sade Türkçe, gerekirse parantez içinde kısa açıklama ve bir seferde tek adım",
+  "🔄 Konuşma ilerledikçe uyum: sen teknik terim kullandıkça o da kullanıyor; “bu ne demek?” dersen sadeleşiyor",
+  "⚙️ Ayarlar › Genel › Anlatım düzeyi: Otomatik (yazışından anlar) · Yeni başlıyorum · Deneyimliyim",
+  "📝 Üretim raporu da düzeye göre: yeni başlayana ekranda gördüğü şeylerle (düğme, liste, ekran), deneyimliye bölüm/bileşen ve veri yapısı adlarıyla",
+  "⌨️ Yazım hatası ve Türkçe karakter eksikliği (degisiklik, uygulmaya) dert edilmiyor: niyet anlaşılıyor, düzeltme yapılmıyor ve bundan söz edilmiyor; gerçekten iki türlü okunabiliyorsa tek kısa soru soruluyor"]},
  {v:"5.30.0",date:"2026-11-26",items:[
   "🛡️ Kod hatası kullanıcıya ulaşmadan onarılıyor: sunucu, modelin yazdığı JavaScript'i yayına vermeden önce derleyip denetliyor; “Unexpected identifier” gibi sözdizimi hatası varsa (çoğu zaman Türkçe kesme işaretli metin: Ankara'nda) aynı istek içinde, ek kredi düşmeden bir kez onarıyor. İşlem kartında “1 kod hatası otomatik onarıldı” yazıyor",
   "🧠 Model önerisi: hızlı/küçük bir model (ör. mistral-small) seçiliyken sıfırdan uygulama ya da büyük iş istenirse, işe başlamadan önce “Bu iş için daha güçlü bir model önerilir” kartı çıkıyor: güçlü modelle yap · seçili modelle devam et · hep otomatik seç",
@@ -2857,7 +2863,7 @@ async function api(method,path,body,signal){
 }
 function crEvent(j){if(j&&typeof j==="object"&&j.credits!=null&&isFinite(+j.credits))dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:+j.credits,spent:+(j.spent||0)}}))}
 // ---------- v5.11 — Ayarlar: cihazda anında uygulanır, giriş yapılmışsa hesaba da kaydedilir ----------
-const GS_DEF={reduceMotion:false,sendKey:"enter",voice:true,guide:true,engine:true,listed:true,analytics:true,ghost:true,pins:[]};
+const GS_DEF={level:"auto",reduceMotion:false,sendKey:"enter",voice:true,guide:true,engine:true,listed:true,analytics:true,ghost:true,pins:[]};
 let GS={...GS_DEF,...(LS.get("gmSettings",null)||{})};
 function applyGS(){try{document.documentElement.classList.toggle("rm",!!GS.reduceMotion)}catch(e){}}
 applyGS();
@@ -2889,6 +2895,7 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
  const needLogin=html`<div class="st-login"><p>Bu bölüm hesabına bağlı. Giriş yaptığında ayarların tüm cihazlarında aynı olur.</p><${AuthBox} auth=${auth} health=${health||{}} toast=${toast} reason=""/></div>`;
  const body=()=>{switch(tab){
   case "genel":return html`
+   <${StRow} t="Anlatım düzeyi" d="Yapay zekânın seninle nasıl konuşacağı. Otomatik: yazışından anlar; teknik terimler kullanıyorsan kısa ve teknik, yeni başlıyorsan sade ve adım adım anlatır."><div class="st-seg">${[["auto","Otomatik"],["yeni","Yeni başlıyorum"],["deneyimli","Deneyimliyim"]].map(([k,l])=>html`<button key=${k} class=${(gs.level||"auto")===k?"on":""} onClick=${()=>gsSet({level:k})}>${l}</button>`)}</div><//>
    <${StRow} t="Gönderme tuşu" d="Uzun istekler yazarken yanlışlıkla göndermemek için ⌘/Ctrl+Enter'ı seçebilirsin. Shift+Enter her zaman yeni satır açar."><div class="st-seg">${[["enter","Enter"],["mod","⌘/Ctrl + Enter"]].map(([k,l])=>html`<button key=${k} class=${gs.sendKey===k?"on":""} onClick=${()=>gsSet({sendKey:k})}>${l}</button>`)}</div><//>
    <${StRow} t="Hareketleri azalt" d="Uçan sincap, dönen yıldız, renk dalgası ve sayaç animasyonları durur. Baş dönmesi ya da yavaş cihazlar için."><${StSw} on=${gs.reduceMotion} set=${v=>gsSet({reduceMotion:v})} label="Hareketleri azalt"/><//>
    <${StRow} t="Klavye kısayolları" d="Her sayfada çalışır." col=${true}><div class="st-keys">${[["⌘K","Ara ve komutlar"],["⌘J","Asistan panelini aç/kapat"],["⌘,","Ayarlar"],["⌘U","Görsel ya da dosya ekle"],["Esc","Kod yazımını durdur"],["/","Stüdyo komutları"]].map(([k,l])=>html`<span key=${k}><kbd>${k}</kbd>${l}</span>`)}</div><//>
@@ -4087,6 +4094,11 @@ function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
     <div class="ms-row"><small class="ms-note">${result.from} · ${result.kind==="video"?"video":"görsel"} hazır</small><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>tab==="higgsfield"?generate():openCanva()}>Yeniden</button><button class="btn" disabled=${busy==="add"} onClick=${addToStage}><${Icon} n="pointer" s=${15}/> ${busy==="add"?"Hazırlanıyor…":"Sahneye ekle"}</button></div></div>`}
   </div></div><//>`;
 }
+// Kullanıcıya göre anlatım: kullanıcının yazışından deneyim düzeyi tahmini (teknik terim yoğunluğu)
+const TECH_RE=/\b(api|endpoint|json|css|html|javascript|js|react|vue|component|bileşen|state|props|deploy|commit|branch|merge|pull request|pr|oauth|token|webhook|sdk|regex|refactor|responsive|flexbox|flex|grid|localstorage|backend|frontend|veritaban\w*|sql|cdn|build|lint|typescript|node|npm|framework|cache|async|fetch|dom|iframe|modal|z-index|padding|margin|breakpoint|figma|repo|depo|env|ortam değişkeni|ci|pipeline|docker|ssl|dns)\b/gi;
+function inferLevel(texts){const t=(texts||[]).join(" ");const hits=[...new Set((t.match(TECH_RE)||[]).map(x=>x.toLowerCase()))];const words=t.split(/\s+/).filter(Boolean).length;
+ return {tahmin:hits.length>=4||(words>0&&hits.length/words>.04&&hits.length>=2)?"deneyimli":"yeni",ipucu:hits.slice(0,8),mesaj:texts.length}}
+function levelHint(texts){const sec=GS.level||"auto";return sec==="auto"?{secim:"otomatik",...inferLevel(texts)}:{secim:sec,tahmin:sec}}
 // Model stratejisi: zayıf modeli tanı, işe göre en uygun modeli seç
 const weakModel=(id,info)=>!!id&&(info?.tier==="hizli"||/small|mini|nano|haiku|flash|lite|\b[1-9]b\b|8x7b/i.test(id));
 const MODEL_PREF={guclu:[/opus/i,/fable/i,/gpt-?5(?!.*(mini|nano))/i,/sonnet/i,/gemini.*pro/i,/large|pro/i],dengeli:[/sonnet/i,/gpt-?5/i,/gemini/i,/mistral-large|large/i,/./]};
@@ -4335,7 +4347,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
+ const aiBody=()=>({projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -5916,6 +5928,7 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]
  async function send(text,fromVoice,extAtt){const att=extAtt||cpAtt;text=String(text!=null?text:t).trim();if(!text&&att.length)text=att.some(a=>a.kind==="img")?"Eklediğim görsele bak.":"Eklediğim dosyaya bak.";if(!active()||!text||R.current.busy)return;if(!extAtt)setCpAtt([]);if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
   if(waitRef.current){waitRef.current.r(false)}stopSpeak();setT("");
   const gs0=window.__gmStudio||{};const pj=gs0.acik?gs0.projeId||"taslak":"genel";const pjAd=gs0.acik?(gs0.baslik||gs0.icerik?.baslik||"Yeni proje"):"";
+  LS.set("cpLast",[...(LS.get("cpLast",[])||[]),text.slice(0,300)].slice(-12));
   const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice,pj,pjAd,imgs:att.filter(a=>a.kind==="img").map(a=>a.thumb),files:att.filter(a=>a.kind==="file").map(a=>a.name)}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";const t0=Date.now();let first=0;const ttl=clTopic(text);setRun0({t0,ttl,think:null});const thk=()=>Math.max(1,Math.round(((first||Date.now())-t0)/1000));
   try{const j=await apiStream("/api/ai/copilot",{messages:(()=>{let k=next.length-1;for(let i=next.length-2;i>=0;i--){if(next[i].role!=="user")continue;if(next[i].pj===pj)k=i;else break}return next.slice(k)})().filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice,images:att.filter(a=>a.kind==="img").map(a=>a.data),files:att.filter(a=>a.kind==="file").map(a=>({name:a.name,text:a.text}))},d=>{if(!active())return;if(!first){first=Date.now();setRun0(r=>r&&{...r,think:thk()})}acc+=d;setLive(acc)},controller.signal);
    if(!active())return;const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined,think:thk(),ttl};
@@ -6328,7 +6341,7 @@ function App(){
   if(a.t==="panel"&&a.ad==="ara")return ghostDo('.side .nav[data-v="$ara"]',()=>setCmdk(true));
   if(["tur","mod","tema","ayar","prompt","yap","kontrol","kaydet","yayinla","panel","yeni"].includes(a.t))return cpStudio(a,active);
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
- const cpCtx=()=>({hesaplar:auth.user?{github:auth.user.github?"@"+auth.user.github:false,google:!!auth.user.google,hostinger:!!auth.user.hostinger}:null,baglantilar:{acik:Object.entries(connState()).filter(([,v])=>v&&v.on).map(([k])=>k),katalog:CONN.filter(c=>!c.soon).map(c=>c.id+(c.f.length?"("+c.f.map(x=>x[0]).join(",")+")":"")+": "+c.n)},sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
+ const cpCtx=()=>({seviye:levelHint([...(LS.get("cpLast",[])||[]),...((window.__gmStudio||{}).sonIstekler||[])].slice(-12)),hesaplar:auth.user?{github:auth.user.github?"@"+auth.user.github:false,google:!!auth.user.google,hostinger:!!auth.user.hostinger}:null,baglantilar:{acik:Object.entries(connState()).filter(([,v])=>v&&v.on).map(([k])=>k),katalog:CONN.filter(c=>!c.soon).map(c=>c.id+(c.f.length?"("+c.f.map(x=>x[0]).join(",")+")":"")+": "+c.n)},sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
   <aside id="workspace-navigation" class="side cc-side glass noprint"><div class="side-top">${view==="studio"&&html`<button type="button" class="cc-tg" aria-controls="workspace-navigation" aria-label="Sol menüyü kapat" title="Sol menüyü kapat (⌘/Ctrl+B)" onClick=${()=>setCompact(true)}><${Icon} n="panelR" s=${18}/></button>`}<div class="logo"><${BrandMark} s=${28} label="Gitmapp"/><${Wordmark} s=${19}/></div>
     <div class="cc-seg" role="group" aria-label="Çalışma görünümü"><button type="button" class=${cp?"on":""} aria-pressed=${cp} title="Asistan: sohbet ve sesli konuşma (⌘J)" aria-label="Asistan" onClick=${()=>setCp(!cp)}><${Icon} n="msgSpark" s=${16}/>${stBusy&&view!=="studio"&&html`<i class="cc-badge"></i>`}</button><button type="button" class=${view==="studio"?"on":""} aria-pressed=${view==="studio"} title="Geliştir: kod stüdyosu" aria-label="Geliştir" onClick=${()=>navGo("studio")}><${Icon} n="codeXml" s=${16}/></button></div></div>

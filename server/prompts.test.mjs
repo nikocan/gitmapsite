@@ -68,3 +68,10 @@ test("sonuç raporu: sonuç önce, maddeler, Kontrol ve Sıradaki; övgü yok", 
   assert.match(GEN_SYSTEM, /övgüler ve ünlem kullanma/);
 });
 test("JS metin kuralı: tek tırnak yerine çift/ters tırnak", () => { assert.match(GEN_SYSTEM, /ters tırnak \(`\)/); });
+import { levelRule } from "./prompts.mjs";
+test("anlatım düzeyi: deneyimliye kısa/teknik, yeni başlayana sade; rapor için ayrı ton", () => {
+  assert.match(levelRule({ secim: "otomatik", tahmin: "deneyimli", ipucu: ["api", "state"] }), /DENEYİMLİ[\s\S]*Kısa ve teknik/);
+  assert.match(levelRule({ secim: "yeni", tahmin: "yeni" }), /YENİ BAŞLAYAN[\s\S]*Sade, günlük Türkçe/);
+  assert.match(levelRule({ tahmin: "yeni" }, true), /teknik terim kullanmadan/);
+  assert.equal(levelRule(null), "");
+});
