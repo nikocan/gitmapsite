@@ -143,3 +143,19 @@ export function buildBudget(base, { model = "", strong = false, cur = "", patch 
   if (/gpt-?5|\bo[134](-|$)|reason|think|r1\b/i.test(model)) n += 8000;
   return Math.min(n, 40000);
 }
+
+// Kullanıcıya göre anlatım: deneyimli → kısa ve teknik; yeni başlayan → sade, nedenli, adım adım.
+// level: {secim:"otomatik"|"yeni"|"deneyimli", tahmin:"yeni"|"deneyimli", ipucu:[...]}
+export function levelRule(level, forReport = false) {
+  const lv = level && typeof level === "object" ? level : {};
+  const t = lv.tahmin === "deneyimli" ? "deneyimli" : lv.tahmin === "yeni" ? "yeni" : null;
+  if (!t) return "";
+  const why = lv.secim === "otomatik" ? " (kullanıcının yazışından tahmin edildi" + (Array.isArray(lv.ipucu) && lv.ipucu.length ? ": " + lv.ipucu.slice(0, 6).map((x) => String(x).replace(/[^\p{L}\p{N} .-]/gu, "").slice(0, 20)).join(", ") : "") + "; konuşma ilerledikçe kullanıcının diline göre güncelle)" : " (kullanıcı ayarlardan seçti)";
+  const yeni = forReport
+    ? "ÖZET'i teknik terim kullanmadan, kullanıcının ekranda gördüğü şeylerle anlat (\"kod\", \"fonksiyon\", \"state\" deme; \"ekran\", \"düğme\", \"liste\" de). Sıradaki önerisi tek, kolay ve somut bir adım olsun."
+    : "Sade, günlük Türkçe kullan; teknik bir kavram geçerse parantez içinde tek cümleyle ne olduğunu söyle. Bir seferde tek adım öner ve nedenini kısaca açıkla. Kullanıcının bilmediği bir şeyi bildiğini varsayma; ama küçümseme, uzatma.";
+  const den = forReport
+    ? "ÖZET kısa ve teknik olabilir: değişen bölüm/bileşen adlarını, veri yapısını ya da kütüphaneyi açıkça yaz; temel kavramları açıklama."
+    : "Kısa ve teknik konuş; terimleri açıklama, temelleri tekrar etme. Doğrudan sonuca ve gerekiyorsa teknik ayrıntıya (dosya, bileşen, veri yapısı, API) geç. Seçenekleri artı/eksileriyle tek cümlede karşılaştır.";
+  return "\n- KULLANICIYA GÖRE ANLATIM: kullanıcı " + (t === "deneyimli" ? "DENEYİMLİ" : "YENİ BAŞLAYAN") + why + ". " + (t === "deneyimli" ? den : yeni);
+}
