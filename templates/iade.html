@@ -32,6 +32,23 @@ small,footer{color:#454d46}#status{margin-top:8px}.history button,.surface butto
 @media(max-width:700px){.work{grid-template-columns:minmax(0,1fr)}header,main,footer{padding:13px 16px}.work{gap:15px}.hero{padding:22px 0}.surface,form,.history{padding:16px}.history{margin-top:15px}}
 main{max-width:1040px}.hero h1{font-size:clamp(36px,5vw,58px)}.work{border:1px solid #839487;background:white;border-radius:12px;overflow:hidden}.surface,#task{border:0;border-radius:0}.surface{background:#e0ebe3}.history{border-radius:0}.item span{font-variant-numeric:tabular-nums}
 @media(min-width:701px){.work{grid-template-columns:.85fr 1.4fr;gap:0;align-items:stretch}.surface{border-right:1px solid #839487}.history li{display:block;border-left:4px solid var(--pr);padding-left:14px}}
+
+/* Şablonun düzenlenebilir tema ve yerleşim kuralları */
+:root{--bg:#ebefed;--tx:#182321;--line:color-mix(in srgb,var(--pr) 16%,white);font-family:"Inter",system-ui,sans-serif}
+header{max-width:none;padding-block:14px;padding-inline:max(20px,calc((100vw - 1120px)/2 + 32px));background:#fff;border-color:var(--line);gap:12px}
+header strong{display:flex;align-items:center;gap:10px;letter-spacing:-.025em}
+header strong::before{content:"";width:20px;height:20px;flex:none;border-radius:7px;background:var(--pr);box-shadow:inset 0 0 0 5px #fff5}
+header a{padding:8px 13px;background:#f3f5f4;border-radius:20px;text-decoration:none;text-align:center;font-size:13px}
+main{padding-top:24px}.hero{position:relative;overflow:hidden;isolation:isolate;display:flex;justify-content:center;flex-direction:column;padding:clamp(22px,4.4vw,62px);margin:0 0 24px;border-radius:26px;background:var(--pr);color:#fff}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-radial-gradient(ellipse at 100% 0%,transparent 0 26px,#fff2 27px 28px,transparent 29px 49px);mask-image:linear-gradient(90deg,transparent 45%,black)}
+.hero h1{font-size:clamp(34px,5.1vw,67px);margin:0;letter-spacing:-.06em;line-height:1.05;text-wrap:balance}
+.hero p{color:inherit;font-size:clamp(14px,1.4vw,17px);margin:12px 0 0;max-width:51ch;line-height:1.48}
+article,form,.history{border-color:var(--line);border-radius:20px;box-shadow:0 10px 32px -26px var(--pr)}
+article h2,form h2,.history h2{letter-spacing:-.035em}
+input,select,textarea{border-radius:10px;border-color:color-mix(in srgb,var(--pr) 39%,white)}
+button{border-radius:10px}button:hover{filter:brightness(.9)}
+article>ul{padding-left:20px}footer{color:var(--pr)}
+@media(max-width:680px){header{padding:11px 15px}header strong{font-size:15px}main{padding-top:14px}.hero{margin-bottom:16px;border-radius:20px}.hero h1{font-size:clamp(30px,9vw,44px)}.hero p{margin-top:9px}article,form,.history{border-radius:16px}}
 </style></head><body>
 <header><b>İade Tezgâhı</b><a href="#task">İadeyi kaydet</a></header><main><div class="hero"><h1>Ürün iadesi</h1><p class="lead">Sipariş kalemini seçin, iade edilebilir adedi kontrol edip tutarı hesaplayın.</p></div>
 <div class="work"><section class="surface"><h2>Sipariş K-104</h2><div class="item"><strong>Keten havlu</strong><span>3 adet · 180 ₺</span></div><div class="item"><strong>Cam sürahi</strong><span>2 adet · 325 ₺</span></div><div class="readout"><span>Seçili üründe kalan iade hakkı</span><output id="remaining">—</output></div></section><form id="task"><h2>İadeyi kaydet</h2><label>Sipariş kalemi<select name="product" required><option value="">Seçin</option><option value="havlu">Keten havlu</option><option value="surahi">Cam sürahi</option></select></label><label>İade adedi<input type="number" name="qty" required min="1" max="3"></label><label>İade gerekçesi<input type="text" name="reason" required ></label><button type="submit">İadeyi kaydet</button></form></div>
