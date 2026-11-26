@@ -5656,7 +5656,7 @@ function SkillsModal({close,toast}){
  const base=tab==="yuklu"?SKILLS.filter(x=>on.includes(x.id)):SKILLS;
  const list=base.filter(x=>(!src||x.src===src)&&(!q||(x.n+x.d).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
  return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="skm" onClick=${e=>e.stopPropagation()}>
-  <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><p>Yapay zekâya kalıcı uzmanlık kazandır. Yüklediğin beceriler her yeni üretimde otomatik uygulanır.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><a href="./skills/index.html" target="_blank" rel="noopener">Yayıncıların beceri kaynaklarını incele ↗</a><p>Yapay zekâya kalıcı uzmanlık kazandır. Yüklediğin beceriler her yeni üretimde otomatik uygulanır.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
   <div class="skm-tabs"><button class=${tab==="yuklu"?"on":""} onClick=${()=>setTab("yuklu")}>Yüklü <em>${on.length}</em></button><button class=${tab==="kesfet"?"on":""} onClick=${()=>setTab("kesfet")}>Keşfet <em>${SKILLS.length}</em></button></div>
   <label class="skm-q"><${Icon} n="search" s=${16}/><input placeholder="Beceri ara…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
   <div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>

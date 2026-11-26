@@ -1,0 +1,72 @@
+[
+  {
+    "name": "webapp-testing",
+    "title": "Form ve işlem akışını test et",
+    "publisher": "anthropics",
+    "task": "Restoranda adisyon bölme, mağazada iade ve okulda yoklama gibi tarayıcı işlerini Playwright ile denetler.",
+    "license": "Apache-2.0",
+    "source": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/webapp-testing/SKILL.md",
+    "licenseSource": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/webapp-testing/LICENSE.txt",
+    "evidence": "Gitmapp şablonlarında tarayıcı testi · 3 görev, 2 ekran genişliği."
+  },
+  {
+    "name": "frontend-design",
+    "title": "Bir ekran tasarla",
+    "publisher": "anthropics",
+    "task": "Restoran menüsü veya okul panosu için uygulanabilir bir web arayüzü üretmeye rehberlik eder.",
+    "license": "Apache-2.0",
+    "source": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/frontend-design/SKILL.md",
+    "licenseSource": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/frontend-design/LICENSE.txt",
+    "evidence": "Kaynak ve lisans kontrol edildi. Gitmapp görev testi bekliyor."
+  },
+  {
+    "name": "theme-factory",
+    "title": "Renk ve yazı stilini seç",
+    "publisher": "anthropics",
+    "task": "Afiş, rapor veya açılış sayfasında tutarlı tema ve yazı tipi seçmeye yardım eder.",
+    "license": "Apache-2.0",
+    "source": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/theme-factory/SKILL.md",
+    "licenseSource": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/theme-factory/LICENSE.txt",
+    "evidence": "Kaynak ve lisans kontrol edildi. Gitmapp görev testi bekliyor."
+  },
+  {
+    "name": "skill-creator",
+    "title": "Kendi becerini değerlendir",
+    "publisher": "anthropics",
+    "task": "Aynı görevi örnek girdilerle beceri açık ve kapalıyken karşılaştırıp talimatları iyileştirmeye yardım eder.",
+    "license": "Apache-2.0",
+    "source": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/skill-creator/SKILL.md",
+    "licenseSource": "https://github.com/anthropics/skills/blob/e4bb5d960d87126ff3b3a8af1a104b7db67560ba/skills/skill-creator/LICENSE.txt",
+    "evidence": "Kaynak ve lisans kontrol edildi. Gitmapp görev testi bekliyor."
+  },
+  {
+    "name": "expo-design-system",
+    "title": "Mobil tasarım sistemini düzenle",
+    "publisher": "expo",
+    "task": "Expo projesinde farklılaşan bileşenleri, renkleri ve aralıkları ortak kurallarda birleştirmeye rehberlik eder.",
+    "license": "MIT",
+    "source": "https://github.com/expo/skills/blob/c5e536273b6b4a7a3ad5dd9d74b6098c15138b21/plugins/expo/skills/expo-design-system/SKILL.md",
+    "licenseSource": "https://github.com/expo/skills/blob/c5e536273b6b4a7a3ad5dd9d74b6098c15138b21/plugins/expo/LICENSE",
+    "evidence": "Kaynak ve lisans kontrol edildi. Gitmapp görev testi bekliyor."
+  },
+  {
+    "name": "expo-data-fetching",
+    "title": "Çevrimdışı ve hata durumlarını tasarla",
+    "publisher": "expo",
+    "task": "Expo kullanan saha servisinde bağlantı kesildiğinde veri yükleme, önbellek ve yeniden deneme davranışını tasarlamaya yardım eder.",
+    "license": "MIT",
+    "source": "https://github.com/expo/skills/blob/c5e536273b6b4a7a3ad5dd9d74b6098c15138b21/plugins/expo/skills/expo-data-fetching/SKILL.md",
+    "licenseSource": "https://github.com/expo/skills/blob/c5e536273b6b4a7a3ad5dd9d74b6098c15138b21/plugins/expo/LICENSE",
+    "evidence": "Kaynak ve lisans kontrol edildi. Gitmapp görev testi bekliyor."
+  },
+  {
+    "name": "expo-native-ui",
+    "title": "Telefona uygun ekran tasarla",
+    "publisher": "expo",
+    "task": "Expo ile geliştirilen rezervasyon ve randevu uygulamalarında yerel denetimleri ve uyarlanabilir yerleşimleri seçmeye yardım eder.",
+    "license": "MIT",
+    "source": "https://github.com/expo/skills/blob/c5e536273b6b4a7a3ad5dd9d74b6098c15138b21/plugins/expo/skills/expo-native-ui/SKILL.md",
+    "licenseSource": "https://github.com/expo/skills/blob/c5e536273b6b4a7a3ad5dd9d74b6098c15138b21/plugins/expo/LICENSE",
+    "evidence": "Kaynak ve lisans kontrol edildi. Gitmapp görev testi bekliyor."
+  }
+]
