@@ -4,6 +4,9 @@ import http from "node:http";
 import { MAX_PROJECT_HTML, linkedRepo, registerVersions } from "./version-control.mjs";
 import { GEN_SYSTEM, KIND_RULES, connRules, scopeRule, profileRelevant, buildBudget, levelRule } from "./prompts.mjs";
 import { scriptErrors } from "./quality.mjs";
+import { registerRadar } from "./radar.mjs";
+import { registerStoreSales } from "./store-sales.mjs";
+import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -664,7 +667,8 @@ function serveApp(req, res, url) {
   const inject = `<link rel="apple-touch-icon" href="/${slug}/icon-180.png"><link rel="manifest" href="/${slug}/manifest.webmanifest"><link rel="icon" href="/${slug}/icon.svg"><meta name="theme-color" content="${color}"><meta name="apple-mobile-web-app-capable" content="yes">`;
   const dbLib = `<script>window.GitmappDB={async get(k){const r=await fetch("/${slug}/_data/"+encodeURIComponent(k));if(r.status===404)return null;if(!r.ok)throw new Error("Okunamadı");return (await r.json()).value},async set(k,v){const r=await fetch("/${slug}/_data/"+encodeURIComponent(k),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({value:v})});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||"Kaydedilemedi");return true},async keys(){const r=await fetch("/${slug}/_data/");return (await r.json()).keys}};</script>`;
   const badge = `<a href="${CFG.site}/#magaza" target="_blank" style="position:fixed;right:10px;bottom:10px;z-index:2147483647;background:#0b0f17;color:#fff;font:600 11px/1 system-ui,sans-serif;padding:7px 10px;border-radius:999px;text-decoration:none;opacity:.85">⚡ Gitmapp ile yapıldı</a>`;
-  let html = a.html;
+  let html = fromRadar(a) ? radarRelease.release(a.id)?.html : a.html;
+  if (!html) { res.writeHead(404); return res.end(); }
   html = /<\/head>/i.test(html) ? html.replace(/<\/head>/i, inject + dbLib + "</head>") : inject + dbLib + html;
   html = /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, badge + "</body>") : html + badge;
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", "Cache-Control": "no-cache" });
@@ -698,12 +702,20 @@ route("GET", "/api/ai/jobs/:id", ({ user, params }) => jobPublic(jobFor(user, pa
 route("GET", "/api/ai/jobs/:id/stream", ({ user, params, res, cors }) => { jobSubscribe(res, cors, jobFor(user, params.id)); return null; });
 route("POST", "/api/ai/jobs/:id/cancel", ({ user, params }) => { const j = jobFor(user, params.id); if (j.ctl && j.status === "running") j.ctl.abort(); return { ok: true }; });
 route("GET", "/api/ai/jobs", ({ user }) => { need(user, 401, "Giriş yapın"); return { jobs: [...JOBS.values()].filter((j) => j.uid === user.id && j.status === "running").map(jobPublic) }; });
-const cleanMeta = (m, old) => { let o = {}; try { o = JSON.parse(old || "{}"); } catch { } if (!m || typeof m !== "object") return JSON.stringify(o);
+const cleanMeta = (m, old, allowRadar = false) => { let o = {}; try { o = JSON.parse(old || "{}"); } catch { } if (!m || typeof m !== "object") return JSON.stringify(o);
   if (typeof m.purpose === "string") o.purpose=m.purpose.slice(0,220);
-  if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; if (/^github:[\w.-]{1,60}\/[\w.-]{1,100}(@[\w./-]{1,80})?$/.test(m.source || "")) o.source = m.source; return JSON.stringify(o); };
+  if (/^[\w.\-/:]{1,80}$/.test(m.model || "")) o.model = m.model; if (["app", "site", "game"].includes(m.kind)) o.kind = m.kind; if (/^[a-z]{2,20}$/.test(m.theme || "")) o.theme = m.theme; if (/^[a-z]{2,20}$/.test(m.provider || "")) o.provider = m.provider; if (!o.source && /^github:[\w.-]{1,60}\/[\w.-]{1,100}(@[\w./-]{1,80})?$/.test(m.source || "")) o.source = m.source;
+  if (allowRadar && !o.radarOrigin && o.source && ["import","live","conversion","prototype"].includes(m.radarOrigin)) o.radarOrigin=m.radarOrigin;
+  return JSON.stringify(o); };
 const metaOf = (a) => { let m = {}; try { m = JSON.parse(a.meta || "{}"); } catch { } let n = 0; try { n = JSON.parse(a.prompt_log || "[]").filter((x) => x.role === "user").length; } catch { } return { ...m, steps: n }; };
-const appRow = (a, withHtml) => ({ meta: metaOf(a), id: a.id, title: a.title, slug: a.slug, description: a.description, category: a.category, emoji: a.emoji, color: a.color, status: a.status, listed: !!a.listed, price: a.price, downloads: a.downloads, opens: a.opens, github_repo: a.github_repo, pages_url: a.pages_url, created: a.created, updated: a.updated, published_at: a.published_at, url: a.slug && a.status === "published" ? `https://${CFG.appHost}/${a.slug}` : null, ...(withHtml ? { html: a.html, prompt_log: JSON.parse(a.prompt_log || "[]") } : {}) });
+const appRow = (a, withHtml) => ({ meta: metaOf(a), review:radarRelease.review(a), id: a.id, title: a.title, slug: a.slug, description: a.description, category: a.category, emoji: a.emoji, color: a.color, status: a.status, listed: !!a.listed, price: a.price, downloads: a.downloads, opens: a.opens, github_repo: a.github_repo, pages_url: a.pages_url, created: a.created, updated: a.updated, published_at: a.published_at, url: a.slug && a.status === "published" ? `https://${CFG.appHost}/${a.slug}` : null, ...(withHtml ? { html: a.html, prompt_log: JSON.parse(a.prompt_log || "[]") } : {}) });
 const ownApp = (u, id) => { const a = q("SELECT * FROM apps WHERE id=?").get(id); need(a, 404, "Uygulama bulunamadı"); need(a.owner_id === u.id || isAdmin(u), 403, "Bu uygulama size ait değil"); return a; };
+const radarRelease = registerRadarRelease({ db, route, need, isAdmin, ownApp, appRow });
+const listedApp = a => {
+  const result = appRow(a);
+  const release = fromRadar(a) && radarRelease.release(a.id);
+  return { ...result, review:release ? JSON.parse(release.review) : null, author:a.author || "Gitmapp kullanıcısı" };
+};
 const CATS = ["is", "egitim", "saglik", "eticaret", "yemek", "oyun", "verimlilik", "finans", "sosyal", "araclar", "diger"];
 
 function adminLoginConfigured() {
@@ -769,7 +781,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.39.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.40.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1281,7 +1293,7 @@ const SERVER_DEP = ["express", "fastify", "koa", "@nestjs/core", "hapi", "mongoo
 async function ghInspect(user, input) {
   const g = parseGh(input); need(g, 400, "GitHub bağlantısı tanınmadı. Örnek: github.com/kullanici/depo ya da kullanici/depo");
   const tok = ghTok(user);
-  const ck = [g.owner, g.repo, g.ref, g.path, tok ? "t" : ""].join("|").toLowerCase(); const hit = cacheGet(ck); if (hit) return hit;
+  const ck = JSON.stringify([g.owner.toLowerCase(), g.repo.toLowerCase(), g.ref, g.path, user?.github_token ? user.id : tok ? "server" : "public"]); const hit = cacheGet(ck); if (hit) return hit;
   const meta = await ghRead(tok, `/repos/${g.owner}/${g.repo}`);
   need(meta.status !== 404, 404, user && user.github_token ? "Depo bulunamadı ya da erişim iznin yok." : "Depo bulunamadı. Özel bir depoysa önce GitHub hesabını bağla.");
   need(meta.ok, 502, "GitHub deposu okunamadı (" + meta.status + ")");
@@ -1508,13 +1520,53 @@ route("POST", "/api/github/convert", async (ctx) => {
   return fin(await chatWith(rt, messages, 20000));
 });
 
+// Üretim ajanı: tarayıcı kodu taslağa kaydedilir, yayın için yönetici incelemesi uygulanır.
+async function radarDesign(settings, started) {
+  const user = q("SELECT * FROM users WHERE email=? AND email_verified=1").get(CFG.admin);
+  need(user, 409, "Tasarım üretimi için doğrulanmış yönetici hesabı gerekiyor.");
+  const day = new Date(started).toISOString().slice(0, 10);
+  const month = day.slice(0, 7) + "-01";
+  const today = q("SELECT 1 FROM usage WHERE user_id=? AND kind='radar-design' AND created>=? LIMIT 1").get(user.id, day);
+  if (today) return null;
+  const consumed = q("SELECT COALESCE(SUM(credits),0) n FROM usage WHERE user_id=? AND kind='radar-design' AND created>=?").get(user.id, month).n;
+  if (consumed >= settings.monthlyCredits) return null;
+  const rt = await resolveRoute(user, { provider:"gitmapp" }, null, "build");
+  if (consumed + rt.credits > settings.monthlyCredits) return null;
+  const ideas = [
+    ["Stok ve sipariş paneli", "Stok, sipariş, ürün detayları ve filtreler için özgün, tıklanabilir bir iş uygulaması şablonu."],
+    ["Operasyon ikon seti", "Arama ve kopyalama özellikli bir galeride 12 özgün çizgi SVG ikon. Her ikon için SVG kodunu ayrı kopyalat. Dış kaynağa bağlanma."],
+    ["Rezervasyon stüdyosu", "Takvim, hizmet, müşteri ve randevu akışı içeren özgün bir iş uygulaması şablonu."],
+    ["Portfolyo bileşenleri", "Bir tasarım galerisi oluştur. İçinde modüler portfolyo kartları, proje detayları ve iletişim bileşenleri olsun."],
+  ];
+  const [title, brief] = ideas[Math.floor(started / 86400000) % ideas.length];
+  const messages = [{ role:"system", content:GEN_SYSTEM + "\nTürkçe, erişilebilir, mobil uyumlu ve özgün bir demo üret. Harici görsel veya kütüphane kullanma. Birden fazla ekranı hash ile gezilebilir yap. Yalnızca örnek veri kullan." },
+    { role:"user", content:brief }];
+  const out = await chatWith(rt, messages, 8000, AbortSignal.timeout(90_000));
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    need(q("SELECT credits FROM users WHERE id=?").get(user.id)?.credits >= rt.credits, 402, "Taslak için yönetici kredisi yetersiz.");
+    charge(user, rt, "radar-design", out.usage);
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
+  const { html } = extractHtml(out.text, out);
+  need(/<\/html\s*>/i.test(html) && !scriptErrors(html).length, 502, "Üretilen taslak HTML veya JavaScript kontrolünü geçemedi.");
+  const id = rid();
+  q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,meta) VALUES(?,?,?,?,?,?,?,?,?)").run(
+    id,user.id,title,brief,"araclar","✨","#5e5ce6",html,JSON.stringify({ kind:"app", radarOrigin:"agent", model:out.model }));
+  return { id, title, credits:rt.credits };
+}
+const startRadar = registerRadar({ db, route, need, ghRead, githubToken:GH_TOKEN_ENV, createDesign:radarDesign });
+
 // Uygulamalar (kullanıcının kendi)
 route("GET", "/api/apps", ({ user }) => { need(user, 401, "Giriş yapın"); return { apps: q("SELECT * FROM apps WHERE owner_id=? ORDER BY updated DESC").all(user.id).map((a) => appRow(a)) }; });
 route("GET", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); return { app: appRow(ownApp(user, params.id), true) }; });
 route("POST", "/api/apps", ({ user, body }) => {
   need(user, 401, "Kaydetmek için giriş yapın");
   const id = rid(); const html = str(body.html, MAX_PROJECT_HTML, "HTML", true);
-  q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,prompt_log,meta) VALUES(?,?,?,?,?,?,?,?,?,?)").run(id, user.id, str(body.title, 80, "Ad") || "Adsız uygulama", str(body.description, 400, "Açıklama"), CATS.includes(body.category) ? body.category : "diger", str(body.emoji, 8, "Simge") || "✨", /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : "#4f8cff", html, JSON.stringify((Array.isArray(body.prompt_log) ? body.prompt_log : []).slice(-50)), cleanMeta(body.meta, "{}"));
+  q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,prompt_log,meta) VALUES(?,?,?,?,?,?,?,?,?,?)").run(id, user.id, str(body.title, 80, "Ad") || "Adsız uygulama", str(body.description, 400, "Açıklama"), CATS.includes(body.category) ? body.category : "diger", str(body.emoji, 8, "Simge") || "✨", /^#[0-9a-f]{6}$/i.test(body.color || "") ? body.color : "#4f8cff", html, JSON.stringify((Array.isArray(body.prompt_log) ? body.prompt_log : []).slice(-50)), cleanMeta(body.meta, "{}", true));
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(id), true) };
 });
 route("PUT", "/api/apps/:id", ({ user, body, params }) => {
@@ -1527,19 +1579,29 @@ route("PUT", "/api/apps/:id", ({ user, body, params }) => {
 route("DELETE", "/api/apps/:id", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("DELETE FROM apps WHERE id=?").run(a.id); return { ok: true }; });
 route("POST", "/api/apps/:id/publish", ({ user, body, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
+  const approved = radarRelease.requireApproval(a);
   let slug = a.slug;
   if (!slug) { const base = slugify(body.slug || a.title); slug = base; let i = 2; while (q("SELECT 1 FROM apps WHERE slug=?").get(slug)) slug = base + "-" + i++; }
   const listed = body.listed ? 1 : 0; const price = Math.max(0, Math.min(100000, Math.round(+body.price || 0)));
-  q("UPDATE apps SET slug=?, status='published', listed=?, price=?, published_at=COALESCE(published_at,?), updated=? WHERE id=?").run(slug, listed, price, now(), now(), a.id);
+  db.exec("BEGIN");
+  try {
+    radarRelease.snapshot(a, approved);
+    q("UPDATE apps SET slug=?, status='published', listed=?, price=?, published_at=COALESCE(published_at,?), updated=? WHERE id=?").run(slug, listed, price, now(), now(), a.id);
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
   // Davet ödülü: davet edilen kişi ilk uygulamasını yayınlayınca davet edene kredi
   const me = q("SELECT ref_by, ref_paid FROM users WHERE id=?").get(user.id);
   if (me && me.ref_by && !me.ref_paid) { const bonus = +(E.REF_CREDITS || 50); q("UPDATE users SET ref_paid=1 WHERE id=?").run(user.id); q("UPDATE users SET credits=credits+? WHERE id=?").run(bonus, me.ref_by); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(me.ref_by, bonus, "Davet ödülü"); }
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id)) };
 });
 route("POST", "/api/apps/:id/unpublish", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("UPDATE apps SET status='draft', listed=0 WHERE id=?").run(a.id); return { ok: true }; });
-registerVersions({ db, route, ownApp, need, ghApi, slugify });
+registerVersions({ db, route, ownApp, need, ghApi, slugify, confirmRemoteCommit: (app, html) => radarRelease.requireApproval({ ...app, html }) });
 route("POST", "/api/apps/:id/github", async ({ user, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
+  radarRelease.requireApproval(a);
   need(user.github_token, 412, "Önce GitHub hesabınızı bağlayın");
   const login = user.github_login;
   const name = a.github_repo ? linkedRepo(a, user, need).split("/")[1] : "gitmapp-" + (a.slug || slugify(a.title));
@@ -1556,19 +1618,20 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 });
 
 // Mağaza
+const ownsSale = registerStoreSales({ db, route, need });
 route("GET", "/api/store", ({ url }) => {
   const cat = url.searchParams.get("cat"); const s = (url.searchParams.get("q") || "").trim().slice(0, 60); const sort = url.searchParams.get("sort") === "yeni" ? "a.published_at DESC" : "a.downloads DESC, a.opens DESC";
   let sql = "SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.status='published' AND a.listed=1"; const args = [];
   if (cat && CATS.includes(cat)) { sql += " AND a.category=?"; args.push(cat); }
   if (s) { sql += " AND (a.title LIKE ? OR a.description LIKE ?)"; args.push("%" + s + "%", "%" + s + "%"); }
-  return { apps: q(sql + ` ORDER BY ${sort} LIMIT 100`).all(...args).map((a) => ({ ...appRow(a), author: a.author || "Gitmapp kullanıcısı" })) };
+  return { apps: q(sql + ` ORDER BY ${sort} LIMIT 100`).all(...args).map(listedApp) };
 });
-route("GET", "/api/store/:slug", ({ params }) => { const a = q("SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.slug=? AND a.status='published' AND a.listed=1").get(params.slug); need(a, 404, "Uygulama bulunamadı"); return { app: { ...appRow(a), author: a.author || "Gitmapp kullanıcısı" } }; });
+route("GET", "/api/store/:slug", ({ params }) => { const a = q("SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.slug=? AND a.status='published' AND a.listed=1").get(params.slug); need(a, 404, "Uygulama bulunamadı"); return { app: listedApp(a) }; });
 route("POST", "/api/store/:slug/download", ({ params }) => { q("UPDATE apps SET downloads=downloads+1 WHERE slug=? AND status='published'").run(params.slug); return { ok: true }; });
 route("POST", "/api/store/:slug/remix", ({ user, params }) => {
   need(user, 401, "Kopyalamak için giriş yapın"); const a = q("SELECT * FROM apps WHERE slug=? AND status='published' AND listed=1").get(params.slug); need(a, 404, "Uygulama bulunamadı");
-  need(!a.price || a.owner_id === user.id, 402, "Bu ücretli bir uygulama; kopyalamak için satın alma yakında açılacak.");
-  const id = rid(); q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,meta) VALUES(?,?,?,?,?,?,?,?,?)").run(id, user.id, (a.title + " (kopya)").slice(0, 80), a.description, a.category, a.emoji, a.color, a.html, a.meta || "{}");
+  need(!a.price || a.owner_id === user.id || ownsSale(a.id, user.id), 402, "Düzenlenebilir kopya için ödeme teyidi gerekiyor.");
+  const id = rid(); q("INSERT INTO apps(id,owner_id,title,description,category,emoji,color,html,meta) VALUES(?,?,?,?,?,?,?,?,?)").run(id, user.id, (a.title + " (kopya)").slice(0, 80), a.description, a.category, a.emoji, a.color, fromRadar(a) ? radarRelease.release(a.id).html : a.html, a.meta || "{}");
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(id), true) };
 });
 
@@ -1682,8 +1745,9 @@ route("GET", "/api/admin/projects", ({url}) => {
 });
 route("PATCH", "/api/admin/projects/:id", ({params,body}) => {
   need(typeof body.listed==="boolean",400,"Mağaza görünürlüğü gerekli");
-  const app=q("SELECT status FROM apps WHERE id=?").get(params.id);
+  const app=q("SELECT * FROM apps WHERE id=?").get(params.id);
   need(app,404,"Proje bulunamadı");need(app.status==="published",409,"Proje yayında olmalı");
+  if (body.listed && fromRadar(app)) need(radarRelease.release(app.id),409,"Önce onaylı Radar sürümünü yayınlayın.");
   q("UPDATE apps SET listed=?,updated=? WHERE id=? AND status='published'").run(body.listed?1:0,now(),params.id);
   return {ok:true};
 });
@@ -1860,4 +1924,4 @@ if (["create-admin","reset-admin"].includes(process.argv[2])) {
   console.log(`Yönetici hesabı hazır: ${CFG.admin}\nŞifre: ${pw}\n(Bu şifreyi güvenli bir yere kaydedin.)`);
   process.exit(0);
 }
-server.listen(CFG.port, "127.0.0.1", () => console.log(`Gitmapp API :${server.address().port} — AI:${!!CFG.aiKey} GitHub:${!!CFG.gh.id} Google:${!!CFG.google.id} Alan adı:${!!CFG.hostingerToken}`));
+server.listen(CFG.port, "127.0.0.1", () => { startRadar(); console.log(`Gitmapp API :${server.address().port} — AI:${!!CFG.aiKey} GitHub:${!!CFG.gh.id} Google:${!!CFG.google.id} Alan adı:${!!CFG.hostingerToken}`); });

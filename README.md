@@ -41,3 +41,13 @@ Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Rou
 | `COPILOT_MODEL`, `VISION_MODEL` | Asistan ve görsel okuma için sabit model |
 
 `/api/health` yanıtındaki `aiFallbacks` alanı etkin yedekleri listeler. Yedek testleri: `node --test server/failover.test.mjs`.
+
+## GitHub Radar ve üretim ajanı
+
+**Yönetim → GitHub Radar** proje türü, iş kolu, Stüdyo yolu ve güvenlik ön taramasına göre filtrelenir. Keşif skoru GitHub verilerinden hesaplanır. Ayrıntıdaki güvenlik ön taraması mevcut bağımlılık ve bakım sinyallerini gösterir. Depo incelemesi içe aktarılabilir HTML, derleme ihtiyacı ve yapay zekâ prototipi seçeneklerini belirler. **Tasarımda aç** ile Stüdyo’da bölüm ve öğe seçilebilir.
+
+Radar’dan gelen taslaklarda **Yayın Merkezi** lisans ve güvenlik doğrulaması ile editör puanı ister. Ağırlıklar işlevler %50, kullanılabilirlik %30 ve sunum %20. Yayın eşiği 70/100. Yeni düzenlemeler ayrı bir yayın onayı alana kadar canlı adres ve mağaza kopyası önceki onaylı HTML’i sunar.
+
+**Yönetim → Üretim ajanı** varsayılan olarak GitHub, MDN ve Smashing Magazine’i 24 saatte bir tarar. Aralık ve zamanlama panelden değiştirilebilir. Yapay zekâ üretimi panelden açılır. Günde en fazla bir özgün taslak üretir, aylık kredi sınırını kullanır ve sonucu yönetici projelerine kaydeder.
+
+Mağazada ücretli ürünler için alıcı talep açar. Ödeme dış sağlayıcıda tamamlandığında yönetici **Üretim ajanı → Mağaza satışları** ekranında işlem referansını kaydeder. Teyit, alıcının düzenlenebilir kopyasına erişim verir.

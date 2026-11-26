@@ -20,7 +20,7 @@ export function linkedRepo(app, user, need) {
   return match[1] + "/" + match[2];
 }
 
-export function registerVersions({ db, route, ownApp, need, ghApi, slugify }) {
+export function registerVersions({ db, route, ownApp, need, ghApi, slugify, confirmRemoteCommit }) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS project_git_remotes (
       app_id TEXT PRIMARY KEY REFERENCES apps(id) ON DELETE CASCADE, url TEXT NOT NULL);
@@ -224,6 +224,7 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify }) {
         return { head: next };
       });
     }
+    confirmRemoteCommit?.(app, body.html);
     const base = target(app, ctx);
     const head = await remoteHead(ctx.user, base, name);
     need(head === body.head, 409, changed);
