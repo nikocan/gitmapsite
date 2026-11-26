@@ -67,3 +67,12 @@ test("çok modelli ana sağlayıcıda kullanıcıya yalnızca seçilen modeller 
   assert.deepEqual(j.platform.map((m) => m.id), ["anthropic/claude-sonnet-4.5", "anthropic/claude-opus-4.5"]);
   assert.equal(j.default, "anthropic/claude-sonnet-4.5");
 });
+
+test("seçkin sette takma ad ve :batch varyantları atlanır", async (t) => {
+  const many = Array.from({ length: 50 }, (_, i) => ({ id: "v" + i + "/m-" + i })).concat([{ id: "~anthropic/claude-sonnet-latest" }, { id: "anthropic/claude-sonnet-4.5" }, { id: "openai/gpt-5:batch" }, { id: "openai/gpt-5" }]);
+  const primary = await fake((url) => url.endsWith("/models") ? [200, { data: many }] : [200, { choices: [{ message: { content: "ok" } }] }]);
+  t.after(() => primary.close());
+  const api = await start(t, { AI_BASE: primary.base, AI_KEY: "k", AI_MODELS: "", AI_MODEL: "" });
+  const ids = (await (await fetch("http://127.0.0.1:" + api.port + "/api/ai/models")).json()).platform.map((m) => m.id);
+  assert.deepEqual(ids, ["anthropic/claude-sonnet-4.5", "openai/gpt-5"]);
+});

@@ -175,7 +175,7 @@ function curateModels(ids) {
   for (const w of want) { const n = normId(w); add(ids.find((i) => i === w) || ids.find((i) => normId(i) === n) || ids.find((i) => normId(i).startsWith(n))); }
   if (CFG.aiModel) add(ids.find((i) => i === CFG.aiModel || normId(i) === normId(CFG.aiModel)));
   if (!out.length && ids.length > 40) for (const re of [/anthropic\/claude-sonnet/i, /anthropic\/claude-opus/i, /openai\/gpt-5(?!.*(mini|nano|pro))/i, /google\/gemini-[\d.]+-pro/i, /google\/gemini-[\d.]+-flash(?!-lite)/i, /deepseek\/deepseek-(chat|v3)/i, /anthropic\/claude-haiku/i])
-    add(ids.filter((i) => re.test(i) && !/:free|beta|preview|thinking|online|exp/i.test(i)).sort().pop());
+    add(ids.filter((i) => re.test(i) && !/^~|:|beta|preview|thinking|online|exp|latest/i.test(i)).sort().pop()); // takma ad (~…-latest) ve :batch/:free gibi varyantlar atlanır
   return out.length ? out : ids;
 }
 async function listModels(provider, key) {
@@ -769,7 +769,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.36.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.36.1" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1677,7 +1677,7 @@ route("POST", "/api/admin/ai/openrouter-primary", async () => {
   const prevBase = CFG.aiBase, prevKey = CFG.aiKey, prevModels = (E.AI_MODELS || "").split(",").map((x) => x.trim()).filter(Boolean);
   const mapped = []; for (const m of prevModels) { const x = await mapModel("openrouter", orKey, m); if (x && !mapped.includes(x)) mapped.push(x); }
   const want = [[/claude-sonnet/i, "dengeli"], [/claude-opus/i, "güçlü"], [/gemini.*flash|deepseek-chat|gpt-.*mini/i, "hızlı"]];
-  for (const [re] of want) if (!mapped.some((x) => re.test(x))) { const pick = ids.filter((i) => re.test(i) && !/:free|beta|preview|thinking|online/i.test(i)).sort().pop(); if (pick) mapped.push(pick); }
+  for (const [re] of want) if (!mapped.some((x) => re.test(x))) { const pick = ids.filter((i) => re.test(i) && !/^~|:|beta|preview|thinking|online|latest/i.test(i)).sort().pop(); if (pick) mapped.push(pick); }
   need(mapped.length, 502, "OpenRouter'da uygun model bulunamadı");
   const def = mapped.find((x) => /claude-sonnet/i.test(x)) || mapped[0];
   const fromHostinger = (/router\.hostinger\.com/.test(prevBase) || E.TEST_PRIMARY_IS_HOSTINGER === "1") && prevKey;

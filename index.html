@@ -1655,8 +1655,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.36.0";
+const VERSION="5.36.1";
 const CHANGELOG=[
+ {v:"5.36.1",date:"2026-11-26",items:["🎯 Model seçicideki seçkin sette OpenRouter'ın takma adları (~…-latest) ve toplu işleme sürümleri (:batch) yerine doğrudan kullanılabilen model sürümleri gösteriliyor"]},
  {v:"5.36.0",date:"2026-11-26",items:[
   "🛟 Ana sağlayıcı OpenRouter'a elle çevrildiğinde de Hostinger AI Router kendiliğinden yedek oluyor: sunucu dosyasındaki Hostinger anahtarı yedek olarak kullanılıyor; varsayılan yedek sırası Hostinger → OpenRouter → Anthropic → OpenAI → Gemini → DeepSeek (ana sağlayıcı kendi yedeği olmaz)",
   "🎯 Model seçicide yüzlerce rastgele model görünmesi düzeltildi: OpenRouter ana sağlayıcıyken yalnızca model listesindekiler gösteriliyor; Hostinger biçimindeki adlar (claude-sonnet-4.5) OpenRouter karşılıklarına (anthropic/claude-sonnet-4.5) kendiliğinden eşleniyor, eşleşme yoksa seçkin bir set (Sonnet, Opus, GPT, Gemini, DeepSeek) gösteriliyor",
