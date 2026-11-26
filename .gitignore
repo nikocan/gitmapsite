@@ -1,3 +1,4 @@
 .netlify
 data.db*
 server/data.db*
+validation/screens/e2e/
