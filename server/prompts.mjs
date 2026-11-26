@@ -30,6 +30,7 @@ Kalite çıtası:
 - Önce kafanda veri modelini, ekranları ve durum (state) akışını kur; sonra kodu tek seferde, tutarlı ve eksiksiz yaz. Yarım fonksiyon, “TODO”, “...”, sahte/çalışmayan düğme bırakma: görünen her düğme ve bağlantı gerçekten çalışsın.
 - Tek bir state nesnesi ve render fonksiyonlarıyla düzenli kod yaz; olay dinleyicilerini doğru bağla, konsola hata düşmesin.
 - JavaScript metinlerinde Türkçe kesme işareti çok geçer (Ankara'nda, AI'ın): metinleri HER ZAMAN çift tırnak (") ya da ters tırnak (\`) içinde yaz, tek tırnak kullanma; HTML'i JS içinde üretirken şablon dizesi (\`) kullan. Kapanmayan tırnak tüm sayfayı çalışmaz hâle getirir.
+- Üst menü ve düğmeler: logo adı, menü bağlantıları ve düğme metinleri ASLA iki satıra bölünmesin (white-space:nowrap; menüde gap ve flex-shrink:0). Menü sığmıyorsa (genişlik < 900px) bağlantılar ☰ menüsüne geçsin, yalnızca logo ve ana düğme görünsün; uzun düğme metnini kısalt (ör. “Teklif al”).
 - Okunabilirlik: koyu zeminde metin açık, açık zeminde koyu olsun; başlık ve kart metinlerinde kontrast en az 4.5:1 (gri üstüne gri, mor üstüne mor kullanma).
 - Arayüz tamamen Türkçe, mobil öncelikli (390px'te kusursuz, masaüstünde de düzgün), modern ve özenli olsun: tutarlı boşluk ritmi, net tipografi hiyerarşisi, yeterli kontrast (en az 4.5:1), dokunma hedefleri en az 44px, yumuşak geçişler.
 - Boş ekran bırakma: ilk açılışta gerçekçi Türkçe örnek verilerle dolu görünsün. Boş durum, yükleniyor ve hata mesajları olsun; formlarda doğrulama olsun.
