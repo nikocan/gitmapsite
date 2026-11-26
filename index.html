@@ -1850,6 +1850,7 @@ button.adp-mini{color:inherit;text-align:left}
 .radar-content-top h2{font-size:25px;letter-spacing:-.04em;line-height:1.15;margin:0 0 3px}
 .radar-content-top [role=status]{font-size:12px;color:var(--radar-muted)}
 .radar-sort select.in{min-height:36px;padding-block:6px}
+.radar-mobile-filter{display:none}
 .radar-view{gap:2px;border:1px solid var(--radar-edge);background:#131512;border-radius:9px;padding:3px}
 .radar-view button,.radar-icon-button{display:inline-grid;place-items:center;background:transparent;border:1px solid transparent;color:var(--radar-muted,#a8afa1);border-radius:7px;width:30px;height:29px;padding:0;cursor:pointer;flex:none}
 .radar-view button:hover,.radar-icon-button:hover{color:#f4f7e9;background:#292e25}
@@ -1911,6 +1912,7 @@ button.adp-mini{color:inherit;text-align:left}
  .radar-mast{min-height:0;padding:17px}.radar-mast-content{margin-top:43px}.radar-agent-link{top:13px;right:13px}.radar-hero-art{width:75%;opacity:.42}.radar-mast h1{font-size:clamp(30px,9cqw,44px)}
  .radar-path-grid{gap:7px;margin-bottom:18px}.radar-path-button{padding:8px;gap:5px;grid-template-columns:27px minmax(0,1fr) auto}.radar-path-icon{width:27px;height:27px;border-radius:7px}.radar-path-icon svg{width:15px;height:15px}.radar-path-button b{font-size:11px}.radar-path-button small{display:none}
  .radar-content-top{align-items:flex-start;flex-wrap:wrap;gap:7px}.radar-content-top h2{font-size:21px}.radar-filter-panel>.radar-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .radar-mobile-filter{display:inline-flex;align-items:center;min-height:36px;border:1px solid #3a4235;border-radius:9px;background:#191e17;color:#e5ebdd;padding:0 8px;font:inherit;font-size:12px;cursor:pointer}.radar-filter-panel[data-expanded=false]{display:none}
  .radar-trend{margin-left:0}.radar-grid-list .radar-card{grid-template-columns:1fr}.radar-grid-list .radar-card-head{padding-bottom:3px}.radar-grid-list .radar-card-body{display:flex}.radar-grid-list .radar-card-actions{margin-top:auto}
  .radar-compare-bar{gap:6px;bottom:calc(74px + env(safe-area-inset-bottom))}.radar-tray-notice{flex-basis:100%;order:4}.radar-compare-dialog{padding:12px}
 }
@@ -1961,8 +1963,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.41.0";
+const VERSION="5.42.0";
 const CHANGELOG=[
+ {v:"5.42.0",date:"2026-11-26",items:["GitHub Radar’da Stüdyo yollarına göre keşif, kart ve liste görünümü, üç projeye kadar yan yana karşılaştırma.","Proje ayrıntısında görseller, teknoloji, lisans, güvenlik ve Stüdyo’ya geçiş için yeni düzen."]},
  {v:"5.41.0",date:"2026-11-26",items:[
   "🎬 Kreatör Stüdyosu (sol menü › Kreatör Stüdyosu): influencer ve içerik üreticileri için yapay zekâ destekli içerik stüdyosu",
   "🎞️ 10 hazır sahne: Reels/TikTok, UGC reklam, Nasıl yapılır, Kare gönderi, Kaydırmalı gönderi, Hikâye, YouTube kapağı, Ürün çekimi, Kampanya/duyuru, Podcast. Her sahne doğru en-boy oranını, platformları ve hedefi kendisi ayarlıyor",
@@ -2558,9 +2561,12 @@ function readmeImages(md,o,n,br,max=14){const out=[];if(!md)return out;const re=
   if(u.startsWith("//"))u="https:"+u;else if(!/^https?:/i.test(u)){u=u.replace(/^\.?\//,"");u=`https://raw.githubusercontent.com/${o}/${n}/${br}/${u}`}
   u=u.replace(/github\.com\/([^/]+)\/([^/]+)\/blob\//,"raw.githubusercontent.com/$1/$2/").replace(/\?raw=true$/,"");
   if(seen.has(u))continue;seen.add(u);out.push(u);if(out.length>=max)break}return out}
-const RIMG={get:k=>{const m=LS.get("rimg",{})||{};return m[k]},set:(k,v)=>{const m=LS.get("rimg",{})||{};m[k]=v;const ks=Object.keys(m);if(ks.length>400)delete m[ks[0]];LS.set("rimg",m)}};
-async function repoImage(r){const k=r.full_name;const c=RIMG.get(k);if(c!==undefined)return c;const [o,n]=k.split("/");const br=r.default_branch||"main";
- let md=null;for(const f of["README.md","readme.md"]){md=await raw(o,n,br,f);if(md)break}const u=readmeImages(md,o,n,br,1)[0]||"";RIMG.set(k,u);return u}
+const RIMG={
+ get:r=>{const entry=LS.get("rimg",{})?.[r.full_name];return entry?.updated===r.pushed_at?entry?.url:undefined},
+ set:(r,url)=>{const m=LS.get("rimg",{})||{};delete m[r.full_name];m[r.full_name]={url,updated:r.pushed_at};const keys=Object.keys(m);if(keys.length>400)delete m[keys[0]];LS.set("rimg",m)}
+};
+async function repoImage(r){const k=r.full_name;const c=RIMG.get(r);if(c!==undefined)return c;const [o,n]=k.split("/");const br=r.default_branch||"main";
+ let md=null;for(const f of["README.md","readme.md"]){md=await raw(o,n,br,f);if(md)break}const u=readmeImages(md,o,n,br,1)[0]||"";RIMG.set(r,u);return u}
 
 function ProtoTab({repo,toast,radar=false}){const K="proto:"+repo.full_name;const [html_,setHtml]=useState(()=>{try{return sessionStorage.getItem(K)||""}catch(e){return ""}});const [busy,setBusy]=useState(false);const [live,setLive]=useState("");const [err,setErr]=useState(null);const [dev,setDev]=useState("desktop");const [sum,setSum]=useState("");const [source,setSource]=useState(()=>{try{return sessionStorage.getItem(K+":sha")||""}catch{return ""}});
  async function make(){setBusy(true);setErr(null);setLive("");let acc="";
@@ -2626,7 +2632,7 @@ function RadarCard({entry,onOpen,saved,onSave,compare,onCompare,images}){
     <div class="radar-identity"><button type="button" class="radar-title" title=${r.full_name} onClick=${()=>onOpen(r)}>${r.name}</button><small>${r.owner?.login||r.full_name.split("/")[0]}</small></div>
     <button class="radar-icon-button" type="button" aria-label=${r.name+(saved?" listemden çıkar":" listeme ekle")} aria-pressed=${saved} title=${saved?"Listemden çıkar":"Listeme ekle"} onClick=${()=>onSave(r)}><${Icon} n=${saved?"bookmarkOn":"bookmark"} s=${17}/></button>
    </div>
-   ${images&&html`<button class="radar-card-media" aria-label=${r.name+" görsellerini aç"} type="button" onClick=${()=>onOpen(r,"ekran")}><${RepoShot} r=${r} readmeOnly=${true}/></button>`}
+   ${images&&html`<button class="radar-card-media" aria-label=${r.name+" görsellerini aç"} type="button" onClick=${()=>onOpen(r,"ekran")}><${RepoShot} key=${r.pushed_at} r=${r} readmeOnly=${true}/></button>`}
    <div class="radar-card-body">
     <div class="radar-tags"><span>${category.name}</span><span>${RADAR_TYPES[type]}</span></div>
     <p class="radar-description">${r.description||"GitHub açıklaması bulunmuyor."}</p>
@@ -2664,7 +2670,8 @@ function Discover({results,setResults,open,saved,toggleSave,secs,go}){
  const [filters,setFilters]=useState(()=>radarPreferences.filters||{sector:"",kind:"",path:"",scan:"",license:false});
  const [remote,setRemote]=useState(()=>radarPreferences.remote||{lang:"",stars:"",owner:""});
  const [sort,setSort]=useState(()=>radarPreferences.sort||"score");
- const [view,setView]=useState(()=>LS.get("radarView","cards"));
+ const [view,setView]=useState(()=>LS.get("radarView","cards")==="list"?"list":"cards");
+ const [mobileFilters,setMobileFilters]=useState(false);
  const [images,setImages]=useState(()=>LS.get("radarImages",true));
  const [compare,setCompare]=useState(()=>radarPreferences.compare||[]),[compareOpen,setCompareOpen]=useState(false),[notice,setNotice]=useState("");
  const {sector,kind,path,scan,license}=filters;
@@ -2744,6 +2751,7 @@ function Discover({results,setResults,open,saved,toggleSave,secs,go}){
     <div><h2 id="radar-results-title">Projeler</h2><span role="status">${loading&&!results.length?"GitHub’dan yükleniyor…":radarNumber.format(shown.length)+" gösteriliyor"+(search?" · "+radarNumber.format(search.total)+" GitHub sonucu":"")}</span></div>
     <div class="radar-toolbar">
      <label class="radar-sort"><select class="in" aria-label="Sırala" value=${sort} onChange=${e=>setSort(e.target.value)}><option value="score">Gitmapp skoru</option><option value="stars">GitHub yıldızı</option><option value="recent">Son güncelleme</option></select></label>
+     <button type="button" class="radar-mobile-filter" aria-controls="radar-catalog-filters" aria-expanded=${mobileFilters} onClick=${()=>setMobileFilters(v=>!v)}>Filtreler${hasFilters?" · "+Object.values(filters).filter(Boolean).length:""}</button>
      <div class="radar-view" aria-label="Görünüm">
       <button type="button" title="Kart görünümü" aria-label="Kart görünümü" aria-pressed=${view==="cards"} onClick=${()=>changeView("cards")}><${Icon} n="grid" s=${17}/></button>
       <button type="button" title="Liste görünümü" aria-label="Liste görünümü" aria-pressed=${view==="list"} onClick=${()=>changeView("list")}><${Icon} n="layers" s=${17}/></button>
@@ -2754,7 +2762,7 @@ function Discover({results,setResults,open,saved,toggleSave,secs,go}){
     ${[["","Tümü"],["crm","CRM"],["eticaret","E-ticaret"],["egitim","Eğitim"],["oyun","Oyun"],["dev","Geliştirici araçları"]].map(([id,label])=>html`<button key=${id} type="button" aria-pressed=${sector===id&&!search?.trend} disabled=${loading} onClick=${()=>browse(id)}>${label}</button>`)}
     <button type="button" class="radar-trend" aria-pressed=${!!search?.trend} disabled=${loading} onClick=${()=>{updateFilter("sector","");run({trend:true,nextSector:""})}}><${Icon} n="flame" s=${15}/> Son 30 gün</button>
    </div>
-   <div class="radar-filter-panel">
+   <div class="radar-filter-panel" id="radar-catalog-filters" data-expanded=${mobileFilters?"true":"false"}>
     <div class="radar-filters">
      <label>İş kolu<select class="in" aria-label="İş kolu" value=${sector} onChange=${e=>updateFilter("sector",e.target.value)}><option value="">Tümü</option>${SECTORS.map(s=>html`<option key=${s.id} value=${s.id}>${s.name}</option>`)}</select></label>
      <label>Proje türü<select class="in" aria-label="Proje türü" value=${kind} onChange=${e=>updateFilter("kind",e.target.value)}><option value="">Tümü</option>${Object.entries(RADAR_TYPES).map(([k,v])=>html`<option key=${k} value=${k}>${v}</option>`)}</select></label>
@@ -3062,7 +3070,7 @@ const licLabel=li=>li.txt;
 const STATIC_LANG=["HTML","CSS","JavaScript","TypeScript","Vue","Svelte"];
 function RepoAvatar({r,size=60}){const [bad,setBad]=useState(false);const o=(r.owner&&r.owner.login)||r.full_name.split("/")[0];
  return bad?html`<${AppIcon2} emoji="box" color=${LANG_COL[r.language]||"#5e5ce6"} size=${size}/>`:html`<img class="hk-av" style=${{width:size,height:size,borderRadius:size*.2237}} src=${"https://github.com/"+o+".png?size="+size*2} alt="" loading="lazy" onError=${()=>setBad(true)}/>`}
-function RepoShot({r,onClick,readmeOnly=false}){const fallback=readmeOnly?"":og(r.full_name);const [src,setSrc]=useState(()=>{const c=RIMG.get(r.full_name);return c===undefined?null:(c||fallback)});const [st,setSt]=useState("load");const ref=useRef(null);
+function RepoShot({r,onClick,readmeOnly=false}){const fallback=readmeOnly?"":og(r.full_name);const [src,setSrc]=useState(()=>{const c=RIMG.get(r);return c===undefined?null:(c||fallback)});const [st,setSt]=useState("load");const ref=useRef(null);
  useEffect(()=>{if(src!==null)return;const el=ref.current;if(!el)return;let gone=false;const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();repoImage(r).then(u=>{if(!gone)setSrc(u||fallback)}).catch(()=>{if(!gone)setSrc(fallback)})}},{rootMargin:"300px"});io.observe(el);return()=>{gone=true;io.disconnect()}},[r.full_name]);
  const isOg=src&&/opengraph/.test(src);
  return html`<div ref=${ref} class=${"hk-shot "+(src===""?"bad":st)+(isOg?" og":" real")} onClick=${onClick}>${src&&st!=="bad"&&html`<img loading="lazy" src=${src} referrerPolicy="no-referrer" alt=${r.name+(isOg?" GitHub proje kartı":" README görseli")} onLoad=${()=>setSt("ok")} onError=${()=>{if(!isOg&&!readmeOnly){setSrc(fallback);setSt("load")}else setSt("bad")}}/>`}${(st==="bad"||src==="")&&html`<div class="hk-ph"><${Icon} n="image" s=${18}/><span>README görseli yok</span></div>`}${src&&!isOg&&st==="ok"&&html`<span class="hk-real">README görseli</span>`}</div>`}
