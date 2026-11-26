@@ -800,7 +800,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.50.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.51.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -838,12 +838,17 @@ route("PATCH", "/api/me/profile", ({ user, body }) => {
   return { user: pubUser(q("SELECT * FROM users WHERE id=?").get(user.id)) };
 });
 route("POST", "/api/auth/link", ({ user }) => { need(user, 401, "Giriş yapın"); return { link: sign({ uid: user.id, version:user.session_version, purpose: "link" }, 600) }; });
+// Tarayıcıyla açılan bağlantı adresleri: hata olursa ham JSON yerine uygulamaya anlamlı bir yönlendirme yapılır
+const authBack = (res, h) => { res.writeHead(302, { Location: CFG.site + "/#" + h }); res.end(); return null; };
 route("GET", "/api/auth/oauth/:prov/start", ({ params, url, res }) => {
   const prov = params.prov; const link = url.searchParams.get("link"); let uid = null, version = null;
+  if (!["github", "google"].includes(prov)) return authBack(res, "baglanti-kapali?p=" + encodeURIComponent(String(prov).slice(0, 20)));
+  if (prov === "github" && !(CFG.gh.id && CFG.gh.secret)) return authBack(res, link ? "github-anahtar" : "baglanti-kapali?p=github");
+  if (prov === "google" && !(CFG.google.id && CFG.google.secret)) return authBack(res, "baglanti-kapali?p=google");
   if (link) {
     const t = verify(link);
     const account = t?.purpose === "link" && q("SELECT session_version FROM users WHERE id=?").get(t.uid);
-    need(account && account.session_version === (t.version ?? 0), 401, "Oturum sona erdi. Yeniden giriş yapın.");
+    if (!(account && account.session_version === (t.version ?? 0))) return authBack(res, "oturum-sona-erdi");
     uid = t.uid; version = account.session_version;
   }
   const state = sign({ prov, uid, version, versions: prov === "github" && !!uid && url.searchParams.get("return_to") === "versions", n: rid(6) }, 600);
@@ -1054,9 +1059,9 @@ route("POST", "/api/media/fetch", async ({ user, body }) => {
 const CANVA = "https://api.canva.com/rest/v1"; const CANVA_PKCE = new Map();
 const b64url = (b) => Buffer.from(b).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 route("GET", "/api/auth/canva/start", ({ url, res }) => {
-  need(CFG.canva.id && CFG.canva.secret, 503, "Canva bağlantısı bu sunucuda yapılandırılmadı");
+  if (!(CFG.canva.id && CFG.canva.secret)) return authBack(res, "baglanti-kapali?p=canva");
   const t = verify(url.searchParams.get("link")); const account = t?.purpose === "link" && q("SELECT session_version FROM users WHERE id=?").get(t.uid);
-  need(account && account.session_version === (t.version ?? 0), 401, "Oturum sona erdi. Yeniden giriş yapın.");
+  if (!(account && account.session_version === (t.version ?? 0))) return authBack(res, "oturum-sona-erdi");
   const verifier = b64url(crypto.randomBytes(48)); const nonce = rid(12); CANVA_PKCE.set(nonce, { verifier, uid: t.uid, at: Date.now() });
   for (const [k, v] of CANVA_PKCE) if (Date.now() - v.at > 600000) CANVA_PKCE.delete(k);
   const challenge = b64url(crypto.createHash("sha256").update(verifier).digest());
