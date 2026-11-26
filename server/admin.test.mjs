@@ -185,3 +185,20 @@ test("ana sağlayıcı OpenRouter'a çevrilince sunucu dosyasındaki Hostinger a
   await request("PUT","admin/ai",{name:"AI_KEY",value:"sk-or-v1-0123456789abcdef"},admin);
   assert.deepEqual((await request("GET","health")).aiFallbacks,["hostinger"]);
 });
+test("adres Hostinger, anahtar OpenRouter ise OpenRouter kullanılır; Hostinger tek tıkla tamamen kaldırılır", async t => {
+  const {request,admin}=await fixture(t,{AI_BASE:"https://router.hostinger.com/v1",AI_KEY:"hostinger-key-0123456789",OPENROUTER_API_KEY:"",ANTHROPIC_API_KEY:"",OPENAI_API_KEY:"",GEMINI_API_KEY:"",DEEPSEEK_API_KEY:"",AI_FALLBACKS:"",HOSTINGER_AI_KEY:""});
+  const or="sk-or-v1-0123456789abcdef4f55";
+  await request("PUT","admin/ai",{name:"OPENROUTER_API_KEY",value:or},admin);
+  await request("PUT","admin/ai",{name:"AI_BASE",value:"https://router.hostinger.com/v1"},admin);
+  const mixed=await request("PUT","admin/ai",{name:"AI_KEY",value:or},admin);
+  assert.equal(mixed.base,"https://openrouter.ai/api/v1");
+  assert.match(mixed.note,/OpenRouter'a ait/);
+  assert.deepEqual(mixed.fallbacks,["hostinger"]);
+  const rm=await request("POST","admin/ai/remove-hostinger",null,admin);
+  assert.equal(rm.status,200,JSON.stringify(rm));
+  assert.equal(rm.base,"https://openrouter.ai/api/v1");
+  assert.equal(rm.note,"");
+  assert.ok(!rm.fallbacks.includes("hostinger"));
+  assert.equal(rm.fields.find(f=>f.name==="AI_BASE").value,"https://openrouter.ai/api/v1");
+  assert.deepEqual((await request("GET","health")).aiFallbacks,[]);
+});

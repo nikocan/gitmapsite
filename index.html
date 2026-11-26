@@ -1633,7 +1633,7 @@ button.adp-mini{color:inherit;text-align:left}
 .ph-go{border:0;border-radius:8px;background:#d97757;color:#fff;font:inherit;font-size:12.5px;font-weight:600;padding:5px 12px;cursor:pointer;transition:transform .12s}.ph-go:hover{transform:translateY(-1px)}
 
 .ai-adm{display:flex;flex-direction:column;gap:14px;max-width:860px}.ai-adm header h1{margin:0 0 6px}.ai-adm header p{color:var(--mut);margin:0;line-height:1.55}
-.ai-sum{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13.5px}.ai-sum span{display:inline-flex;gap:6px;align-items:center}.ai-swap{margin-left:auto}.ai-sum em{flex-basis:100%;font-style:normal;color:#f5a524;font-size:13px}
+.ai-sum{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13.5px}.ai-sum span{display:inline-flex;gap:6px;align-items:center}.ai-swap{margin-left:auto}.ai-note{flex-basis:100%;font-style:normal;color:#f0b49d;font-size:13px}.ai-sum em{flex-basis:100%;font-style:normal;color:#f5a524;font-size:13px}
 .ai-card{display:flex;flex-direction:column;gap:12px}.ai-h{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}.ai-h h2{margin:0 0 4px;font-size:17px}.ai-h p{margin:0;color:var(--mut);font-size:13px;line-height:1.5}
 .ai-f{display:flex;flex-direction:column;gap:5px}.ai-f label{font-size:13px;color:var(--mut);display:flex;gap:8px;align-items:center}.ai-row{display:flex;gap:6px;align-items:flex-start}.ai-row .in{flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace;font-size:13px}
 .ai-src{font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line)}.ai-src.panel{color:#3ecf8e;border-color:rgba(62,207,142,.4)}.ai-src.sunucu{color:#a3a19a}.ai-src.yok{color:#f5a524;border-color:rgba(245,165,36,.4)}
@@ -1655,8 +1655,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.36.1";
+const VERSION="5.37.0";
 const CHANGELOG=[
+ {v:"5.37.0",date:"2026-11-26",items:[
+  "🧩 Adres–anahtar uyuşmazlığı kendiliğinden düzeliyor: ana anahtar OpenRouter'a aitse (sk-or-…) adres başka yeri gösterse bile OpenRouter kullanılıyor ve sayfada not çıkıyor. Önceden her istek önce Hostinger'dan 401 alıp sonra yedeğe geçiyor, boşuna gecikiyordu",
+  "🧹 “Hostinger'ı kaldır”: tek tıkla Hostinger AI Router hem ana sağlayıcıdan hem yedek listesinden çıkıyor, ana sağlayıcı OpenRouter oluyor",
+  "🛡️ Adres düğmeleri (Hostinger / OpenRouter / OpenAI) artık tek başına adres kaydetmiyor: adres, anahtar ve model listesi birlikte değişiyor; Hostinger'a dönüş onay isteyip sunucu dosyasındaki ayarlara geri dönüyor"]},
  {v:"5.36.1",date:"2026-11-26",items:["🎯 Model seçicideki seçkin sette OpenRouter'ın takma adları (~…-latest) ve toplu işleme sürümleri (:batch) yerine doğrudan kullanılabilen model sürümleri gösteriliyor"]},
  {v:"5.36.0",date:"2026-11-26",items:[
   "🛟 Ana sağlayıcı OpenRouter'a elle çevrildiğinde de Hostinger AI Router kendiliğinden yedek oluyor: sunucu dosyasındaki Hostinger anahtarı yedek olarak kullanılıyor; varsayılan yedek sırası Hostinger → OpenRouter → Anthropic → OpenAI → Gemini → DeepSeek (ana sağlayıcı kendi yedeği olmaz)",
@@ -2746,6 +2750,12 @@ function AdminAI({toast}){
  const f=name=>st?.fields.find(x=>x.name===name)||{};
  const keep=j=>setSt(o=>({...j,byok:j.byok||o?.byok||[]}));
  async function swap(){if(!confirm("OpenRouter ana sağlayıcı, Hostinger AI Router yedek olsun mu? Model adları OpenRouter biçimine çevrilecek."))return;setBusy("swap");try{const j=await api("POST","/api/admin/ai/openrouter-primary");keep(j);toast("OpenRouter ana sağlayıcı oldu · Hostinger yedekte · "+j.swapped.models.length+" model")}catch(e){toast(e.message)}finally{setBusy("")}}
+ async function removeHostinger(){if(!confirm("Hostinger AI Router tamamen bırakılsın mı? Ana sağlayıcı OpenRouter olur, Hostinger yedek listesinden de çıkar."))return;setBusy("rmh");try{const j=await api("POST","/api/admin/ai/remove-hostinger");keep(j);toast("Hostinger kaldırıldı · ana sağlayıcı OpenRouter")}catch(e){toast(e.message)}finally{setBusy("")}}
+ // Adres düğmeleri tek başına adres kaydetmez: adres, anahtar ve model listesi birlikte değişir
+ async function preset(u){if(u===st.base)return;
+  if(/openrouter\.ai/.test(u)){if(!f("OPENROUTER_API_KEY").set){toast("Önce Yedek sağlayıcılar › OpenRouter'a anahtarı kaydet");return}return /router\.hostinger\.com/.test(st.base)&&!st.note?swap():(async()=>{setBusy("swap");try{const j=await api("POST","/api/admin/ai/openrouter-primary");keep(j);toast("Ana sağlayıcı OpenRouter")}catch(e){toast(e.message)}finally{setBusy("")}})()}
+  if(/router\.hostinger\.com/.test(u)){if(!confirm("Ana sağlayıcı sunucu dosyasındaki Hostinger ayarlarına dönsün mü? Panelde girilen ana adres, anahtar ve model listesi silinir."))return;for(const n of ["AI_BASE","AI_KEY","AI_MODELS","AI_MODEL"])if(f(n).source==="panel")await save(n,"");return}
+  toast("Bu sağlayıcı için adresi ve anahtarı birlikte girip Kaydet'e bas");setVals(v=>({...v,AI_BASE:u}))}
  async function importKey(prov){setBusy("imp:"+prov);try{const j=await api("POST","/api/admin/ai/import-byok",{provider:prov});keep(j);toast("Hesabındaki anahtar yedeğe eklendi")}catch(e){toast(e.message)}finally{setBusy("")}}
  async function save(name,value){setBusy(name);try{const j=await api("PUT","/api/admin/ai",{name,value});keep(j);setVals(v=>({...v,[name]:undefined}));toast(value?"Kaydedildi · hemen geçerli":"Sunucu dosyasındaki değere dönüldü")}catch(e){toast(e.message)}finally{setBusy("")}}
  async function test(target){setBusy("t:"+target);setTests(t=>({...t,[target]:{run:true}}));try{const j=await api("POST","/api/admin/ai/test",{target});setTests(t=>({...t,[target]:j}))}catch(e){setTests(t=>({...t,[target]:{ok:false,message:e.message}}))}finally{setBusy("")}}
@@ -2757,9 +2767,9 @@ function AdminAI({toast}){
  const fbs=st.fallbacks;
  return html`<section class="ai-adm">
   <header><h1>Yapay zekâ sağlayıcıları</h1><p>Anahtarları buradan yönet; kaydettiğin an geçerli olur, SSH ve yeniden başlatma gerekmez. Anahtarlar sunucuda şifreli saklanır ve bir daha gösterilmez. Panel değeri sunucu dosyasındaki (.env) değerin önüne geçer.</p>
-   <div class="ai-sum"><span><${Icon} n="cpu" s=${15}/> Ana: <b>${(AI_BASES.find(b=>b[0]===st.base)||[0,st.base.replace(/^https:\/\//,"")])[1]}</b></span><span><${Icon} n="refresh" s=${15}/> Yedek: <b>${fbs.length?fbs.map(p=>AI_PROVS.find(x=>x.id===p)?.n||p).join(" → "):"yok"}</b></span>${!fbs.length&&html`<em>Yedek yokken ana sağlayıcının bakiyesi bitince üretim durur. En az bir yedek ekle.</em>`}${!/openrouter\.ai/.test(st.base)&&f("OPENROUTER_API_KEY").set&&html`<button class="btn s ai-swap" disabled=${busy==="swap"} onClick=${swap}>${busy==="swap"?"Ayarlanıyor…":"OpenRouter'ı ana, Hostinger'ı yedek yap"}</button>`}</div></header>
+   <div class="ai-sum"><span><${Icon} n="cpu" s=${15}/> Ana: <b>${(AI_BASES.find(b=>b[0]===st.base)||[0,st.base.replace(/^https:\/\//,"")])[1]}</b></span><span><${Icon} n="refresh" s=${15}/> Yedek: <b>${fbs.length?fbs.map(p=>AI_PROVS.find(x=>x.id===p)?.n||p).join(" → "):"yok"}</b></span>${!fbs.length&&html`<em>Yedek yokken ana sağlayıcının bakiyesi bitince üretim durur. En az bir yedek ekle.</em>`}${!/openrouter\.ai/.test(st.base)&&f("OPENROUTER_API_KEY").set&&html`<button class="btn s ai-swap" disabled=${busy==="swap"} onClick=${swap}>${busy==="swap"?"Ayarlanıyor…":"OpenRouter'ı ana, Hostinger'ı yedek yap"}</button>`}${(/router\.hostinger\.com/.test(st.base)||fbs.includes("hostinger"))&&(f("OPENROUTER_API_KEY").set||/openrouter\.ai/.test(st.base))&&html`<button class="btn g s" disabled=${busy==="rmh"} onClick=${removeHostinger}>${busy==="rmh"?"Kaldırılıyor…":"Hostinger'ı kaldır"}</button>`}${st.note&&html`<em class="ai-note">${st.note} Kalıcı düzeltmek için “Hostinger'ı kaldır” ya da “OpenRouter” düğmesine bas.</em>`}</div></header>
   <div class="box ai-card"><div class="ai-h"><div><h2>Ana sağlayıcı</h2><p>${AI_PROVS[0].d}</p></div><button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test("primary")}>Bağlantıyı test et</button></div>
-   <div class="ai-presets">${AI_BASES.map(([u,l])=>html`<button type="button" key=${u} class=${"chip"+(st.base===u?" on":"")} onClick=${()=>save("AI_BASE",u)}>${l}</button>`)}</div>
+   <div class="ai-presets">${AI_BASES.map(([u,l])=>html`<button type="button" key=${u} class=${"chip"+(st.base===u?" on":"")} disabled=${!!busy} onClick=${()=>preset(u)}>${l}</button>`)}</div>
    ${field("AI_BASE","Adres","https://…/v1")}${field("AI_KEY","API anahtarı","sk-…",{secret:true})}${field("AI_MODELS","Model listesi (virgülle)","claude-sonnet-5,gpt-5.2",{area:true})}${field("AI_MODEL","Varsayılan model","boş bırakılırsa listeden seçilir")}
    ${result("primary")}</div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Yedek sağlayıcılar</h2><p>Ana sağlayıcı bakiye bitti, model yok, yoğunluk ya da hata verirse istek sırayla bunlara gider; kullanıcı hata görmez.</p></div></div>
