@@ -1562,6 +1562,12 @@ button.adp-mini{color:inherit;text-align:left}
 @media(max-width:820px){.ws-grid.sp-on .sp{left:12px;right:12px;width:auto;top:auto;max-height:78dvh;bottom:84px}}
 
 .cp-div{display:flex;align-items:center;gap:10px;margin:6px 0;color:#8a8882;font-size:12px}.cp-div::before,.cp-div::after{content:"";flex:1;height:1px;background:#33332f}
+
+.cp-att{display:flex;flex-wrap:wrap;gap:6px;padding:8px 8px 0}.cp-ac{position:relative;display:inline-flex;align-items:center;gap:6px;height:44px;max-width:160px;padding:0 8px;border-radius:10px;background:#262624;border:1px solid #3a3a37;font-size:12px;color:#d6d4ce}
+.cp-ac img{width:44px;height:44px;margin:-1px -9px;border-radius:10px;object-fit:cover}.cp-ac b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-ac button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:0;background:#f2f1ec;color:#1a1a19;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.cp-box.drag{outline:2px dashed #d97757;outline-offset:2px}
+.cp-ua{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.cp-ua img{width:84px;height:84px;object-fit:cover;border-radius:10px;border:1px solid #3a3a37}.cp-ua span{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:9px;background:#262624;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -1575,8 +1581,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.26.0";
+const VERSION="5.27.0";
 const CHANGELOG=[
+ {v:"5.27.0",date:"2026-11-26",items:[
+  "📎 Asistan'a görsel ve dosya ekleme: ＋ düğmesi, yapıştırma (⌘V) ya da sürükle-bırak ile en fazla 4 ek (görsel; .txt, .md, .csv, .json, .html, .css, .js). Ekler gönderilmeden önce küçük resim olarak görünüyor, mesaj balonunda da kalıyor",
+  "👁️ Asistan görseli gerçekten görüyor: görsel eklenince görsel okuyabilen bir modele geçiyor; ekran görüntüsündeki hatayı okuyup açıklayabiliyor, tasarımı değerlendirebiliyor. Metin dosyalarının içeriğini de okuyor",
+  "🧠 Niyet anlama (ChatGPT gibi): “bakar mısın, nasıl olmuş, ne düşünüyorsun” → Asistan görseli inceleyip yorumluyor, iş başlatmıyor; “bunu uygula, buna benzet” → istem yazıp geliştirme öneriyor; belirsizse “değerlendireyim mi, uygulayayım mı?” diye soruyor",
+  "❓ Stüdyo'da soru biçimindeki mesajlar (“bu ekran nasıl olmuş sence?”, “neden boş görünüyor?”) artık üretime gitmiyor ve kredi harcamıyor; eklenen görselle birlikte Asistan'a aktarılıyor ve Asistan yanıtlıyor",
+  "🖼️ Stüdyo'ya eklenen görselin varsayılan rolü “Referans” oldu: model görseli yerleşim çizimi mi, renk örneği mi, uygulamada gösterilecek fotoğraf mı, isteğinden anlıyor. Önceden açık renkli her görsel otomatik “yerleşim çizimi” sayılıyor ve “çizimi uygulamaya çevir” diye işleniyordu. İstersen rolü görselin üzerindeki simgelerden yine seçebilirsin"]},
  {v:"5.26.0",date:"2026-11-26",items:[
   "🧭 Asistan artık projeyi karıştırmıyor: emlak uygulamasında “oyunu düzelt, karakter, düşman ekle” gibi istem yazması düzeltildi. Sebep: Asistan'ın sohbet geçmişi projeden bağımsızdı ve önceki projenin (oyunun) konuşması modele gidiyordu. Artık her mesaj projesiyle işaretleniyor, modele yalnızca açık projenin sohbeti gidiyor; proje değişince sohbette “Proje: …” ayırıcısı çıkıyor",
   "🔎 Asistan açık uygulamanın içeriğini biliyor (başlık, ekran/bölüm başlıkları, boyut, oyun mu); “eksikler var, resimler bozuk” gibi genel şikâyetlerde o uygulamaya özel, somut düzeltme istemi yazıyor",
@@ -3058,6 +3070,10 @@ function nextPrompts({html,kind,plan,asked}){const out=[];const H=String(html||"
 const GO_W=new Set("başla basla başlat baslat başlayalım baslayalim devam et ettir tekrar yeniden dene deneyelim yap uygula hadi haydi onayla onaylıyorum onayliyorum".split(" "));
 const isGo=t=>{const w=String(t||"").toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);return w.length>0&&w.length<=4&&w.every(x=>GO_W.has(x)||ACK_W.has(x))&&w.some(x=>GO_W.has(x))};
 const GREET=/^(merhaba|selam(lar)?|hey|hi|hello|günaydın|iyi (akşamlar|günler|geceler)|nasılsın)[\s!.?]*$/iu;
+// Soru mu, iş isteği mi? “bakar mısın, ne düşünüyorsun, neden…” → Asistan'a; “yap, ekle, değiştir…” → üretim
+const Q_RE=/(\?\s*$|\b(bakar m[ıi]s[ıi]n|bak(abilir) m[ıi]s[ıi]n|ne düşün|ne dusun|değerlendir|degerlendir|yorumla|yorumun|nas[ıi]l (olmuş|olmus|duruyor|görünüyor|gorunuyor)|sence|fikrin|neden|niye|niçin|ne demek|anlat(ır|ir) m[ıi]s[ıi]n|açıkla|acikla)\b)/i;
+const DO_RE=/\b(yap|yapar m|yapın|uygula|ekle|değiştir|degistir|dönüştür|donustur|çevir|cevir|tasarla|oluştur|olustur|benzet|düzelt|duzelt|kaldır|kaldir|sil|güncelle|guncelle|yaz|koy|getir|taşı|tasi|büyüt|küçült)/i;
+const isQuestion=t=>{t=String(t||"").trim();return t.length>2&&t.length<400&&Q_RE.test(t)&&!DO_RE.test(t)};
 function promptIntent(text,ctx){const t=String(text||"").trim();ctx=ctx||{};if(!t)return {k:"idle"};
  if(t.startsWith("/"))return {k:"cmd",ic:"slash",l:"Komut çalıştırılacak"};
  const words=t.toLocaleLowerCase("tr").replace(/[.,!?;:…]+/g," ").split(/\s+/).filter(Boolean);
@@ -3067,6 +3083,7 @@ function promptIntent(text,ctx){const t=String(text||"").trim();ctx=ctx||{};if(!
  if(isGo(t)&&ctx.last)return {k:"resume",ic:"refresh",l:"Son isteğin yeniden gönderilecek: “"+String(ctx.last).slice(0,40)+(String(ctx.last).length>40?"…":"")+"”"};
  if(ack||GREET.test(t))return {k:"chat",ic:"chat",l:"Sohbet · kod yazılmaz, kredi harcanmaz"};
  if(/github\.com\/[\w.-]+\/[\w.-]+/i.test(t))return {k:"github",ic:"github",l:"GitHub'dan içe aktarılacak"};
+ if(isQuestion(t))return {k:"ask",ic:"chat",l:"Soru · Asistan yanıtlar, kod yazılmaz"};
  if(ctx.picked)return {k:"pick",ic:"pointer",l:"Seçili öğe değiştirilecek"};
  const K={app:"uygulama",site:"web sitesi",game:"oyun"}[ctx.kind]||"uygulama";
  if(ctx.mode==="ajan")return {k:"agent",ic:"list",l:"Yapılacaklar listesi çıkarılacak"};
@@ -3450,9 +3467,9 @@ function paletteOf(img){
 async function prepImage(file){
  if(!/^image\/(jpeg|png|webp|gif|heic|heif)/i.test(file.type||"image/jpeg"))throw new Error(file.name+": desteklenmeyen dosya türü");
  const img=await loadImg(file);const pal=paletteOf(img);
- return {id:Math.random().toString(36).slice(2),name:file.name,full:shrink(img,1024,.74),small:shrink(img,640,.78),thumb:shrink(img,120,.7),pal:pal.colors,role:pal.sat<.14?"layout":"style",w:img.width,h:img.height};
+ return {id:Math.random().toString(36).slice(2),name:file.name,full:shrink(img,1024,.74),small:shrink(img,640,.78),thumb:shrink(img,120,.7),pal:pal.colors,role:"ref",w:img.width,h:img.height};
 }
-const ROLES={layout:["pen","Yerleşim çizimi","Ekran düzenini birebir takip eder"],style:["palette","Stil / renk","Renkleri ve havayı alır"],content:["image","İçerik görseli","Uygulamanın içinde gösterilir"]};
+const ROLES={ref:["sparkles","Referans","Ne için eklediğini isteğinden anlar"],layout:["pen","Yerleşim çizimi","Ekran düzenini birebir takip eder"],style:["palette","Stil / renk","Renkleri ve havayı alır"],content:["image","İçerik görseli","Uygulamanın içinde gösterilir"]};
 function themeFromPalette(cols){
  if(!cols||cols.length<2)return null;const bg=cols[0];const dark=lum(bg)<.35;const rest=cols.slice(1).sort((a,b)=>satOf(b)-satOf(a));
  const pr=rest[0]||(dark?"#7c9cff":"#2563eb");const ac=rest[1]||pr;
@@ -4200,6 +4217,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    {const lw=st.msgs.findLast(m=>m.log);if(lw&&lw.log.asked&&!lw.log.answered&&it.k!=="approve"&&it.k!=="resume"&&lw.log.req?.text){const q=lw.log.res?.summary||"";lw.log.answered=true;const full=lw.log.req.text+"\n\nModelin sorusu: "+q+"\nYanıtım: "+text+"\n\nBu yanıtla artık soru sormadan uygulamayı yap.";setInput("");if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}return build(full,null,text,false,takeImages())}}
    if(it.k==="resume"){setInput("");toast("Son isteğin yeniden gönderiliyor");text=lastAsk()}else
    if(it.k==="approve"){setInput("");if(plan)return approvePlan();if(todo&&todo.awaiting){setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text}]}));return runTodos()}}
+   if(it.k==="ask"){window.__cpPending={text,att:atts.map(a=>({id:a.id,kind:"img",name:a.name,thumb:a.thumb,data:a.small}))};setInput("");setAtts([]);dispatchEvent(new Event("gm:cp-open"));setTimeout(()=>dispatchEvent(new Event("gm:cp-pending")),400);toast("Bu bir soru · Asistan yanıtlıyor, kredi harcanmaz");return}
    if(it.k==="chat"&&!atts.length){setInput("");setSt(s=>({...s,msgs:[...s.msgs,{role:"user",content:text},{role:"assistant",anim:true,content:chatReply(text,!!st.html)}]}));return}}
   if(!API_ON){toast("Stüdyo sunucusuna ulaşılamadı.");return}
   setInput("");track("studio_prompt",{query:text,meta:{kind:prefs.kind,model:curModel,mode:prefs.mode,images:atts.length}});
@@ -5489,6 +5507,7 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
  const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
  const [auto,setAuto]=useState(()=>LS.get("cpAuto",false)===true);const [speakOn,setSpeakOn]=useState(()=>LS.get("cpSpeak",true)!==false);
  const [voice,setVoice]=useState(false);const [listen,setListen]=useState(false);const [interim,setInterim]=useState("");const [talking,setTalking]=useState(false);const [asking,setAsking]=useState(null);
+ const [cpAtt,setCpAtt]=useState([]);const cpFile=useRef(null);const [cpDrag,setCpDrag]=useState(false);
  const [run0,setRun0]=useState(null);const [,setTick]=useState(0);const stepT=useRef({});const [openTh,setOpenTh]=useState({});
  const R=useRef({});Object.assign(R.current,{msgs,auto,speakOn,voice,busy,run,ctx,talking});
  useEffect(()=>{if(!busy&&!msgs.some(m=>m.st&&m.st.includes("run")))return;const i=setInterval(()=>setTick(x=>x+1),500);return()=>clearInterval(i)},[busy,msgs]);
@@ -5536,11 +5555,13 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
  function okAct(mi,ai){const w=waitRef.current;if(w&&w.mi===mi&&w.ai===ai){w.r(true);return}if(w){toast("Önce bekleyen adımı onayla ya da atla");return}exec(mi,ai)}
  function skipAct(mi,ai){const w=waitRef.current;if(w&&w.mi===mi&&w.ai===ai){w.r(false);return}setAct(mi,ai,"skip")}
  // --- gönder ---
- async function send(text,fromVoice){text=String(text!=null?text:t).trim();if(!text||R.current.busy)return;if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
+ async function addCpFiles(list){const out=[];for(const f of [...(list||[])].slice(0,4-cpAtt.length)){try{if(/^image\//.test(f.type)){const a=await prepImage(f);out.push({id:a.id,kind:"img",name:f.name,thumb:a.thumb,data:a.small})}else if(/^text\/|json|csv|javascript|xml|html|markdown/.test(f.type)||/\.(txt|md|csv|json|html?|css|js|ts|xml)$/i.test(f.name)){if(f.size>200000)throw new Error(f.name+": dosya çok büyük (en fazla 200 KB)");out.push({id:Math.random().toString(36).slice(2),kind:"file",name:f.name,text:(await f.text()).slice(0,20000)})}else throw new Error(f.name+": desteklenmeyen dosya (görsel ya da metin dosyası ekle)")}catch(e){toast(e.message)}}if(out.length)setCpAtt(x=>[...x,...out].slice(0,4));if(cpAtt.length+out.length>=4&&list.length>out.length)toast("En fazla 4 ek")}
+ useEffect(()=>{const take=()=>{const p=window.__cpPending;if(!p)return;window.__cpPending=null;setTimeout(()=>send(p.text,false,p.att||[]),120)};take();addEventListener("gm:cp-pending",take);return()=>removeEventListener("gm:cp-pending",take)},[]);
+ async function send(text,fromVoice,extAtt){const att=extAtt||cpAtt;text=String(text!=null?text:t).trim();if(!text&&att.length)text=att.some(a=>a.kind==="img")?"Eklediğim görsele bak.":"Eklediğim dosyaya bak.";if(!text||R.current.busy)return;if(!extAtt)setCpAtt([]);if(!API_ON){toast("Asistan sunucusu bağlanıyor, birazdan tekrar dene.");return}
   if(waitRef.current){waitRef.current.r(false)}stopSpeak();setT("");
   const gs0=window.__gmStudio||{};const pj=gs0.acik?gs0.projeId||"taslak":"genel";const pjAd=gs0.acik?(gs0.baslik||gs0.icerik?.baslik||"Yeni proje"):"";
-  const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice,pj,pjAd}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";const t0=Date.now();let first=0;const ttl=clTopic(text);setRun0({t0,ttl,think:null});const thk=()=>Math.max(1,Math.round(((first||Date.now())-t0)/1000));
-  try{const j=await apiStream("/api/ai/copilot",{messages:(()=>{let k=next.length-1;for(let i=next.length-2;i>=0;i--){if(next[i].role!=="user")continue;if(next[i].pj===pj)k=i;else break}return next.slice(k)})().filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice},d=>{if(!first){first=Date.now();setRun0(r=>r&&{...r,think:thk()})}acc+=d;setLive(acc)});
+  const next=[...R.current.msgs,{role:"user",content:text,voice:!!fromVoice,pj,pjAd,imgs:att.filter(a=>a.kind==="img").map(a=>a.thumb),files:att.filter(a=>a.kind==="file").map(a=>a.name)}];setMsgs(next);R.current.msgs=next;setBusy(true);R.current.busy=true;setLive("");let acc="";const t0=Date.now();let first=0;const ttl=clTopic(text);setRun0({t0,ttl,think:null});const thk=()=>Math.max(1,Math.round(((first||Date.now())-t0)/1000));
+  try{const j=await apiStream("/api/ai/copilot",{messages:(()=>{let k=next.length-1;for(let i=next.length-2;i>=0;i--){if(next[i].role!=="user")continue;if(next[i].pj===pj)k=i;else break}return next.slice(k)})().filter(m=>!m.err).slice(-16).map(m=>({role:m.role,content:m.role==="assistant"?(m.raw||m.content):m.content})),context:R.current.ctx(),voice:!!R.current.voice,images:att.filter(a=>a.kind==="img").map(a=>a.data),files:att.filter(a=>a.kind==="file").map(a=>({name:a.name,text:a.text}))},d=>{if(!first){first=Date.now();setRun0(r=>r&&{...r,think:thk()})}acc+=d;setLive(acc)});
    const raw=(j&&j.reply)||acc;const p=cpParse(raw);const msg={role:"assistant",content:p.body||(p.acts.length?"Hemen yapıyorum.":"…"),raw,acts:p.acts.length?p.acts:undefined,st:p.acts.length?p.acts.map(()=>"wait"):undefined,think:thk(),ttl};
    const all=[...R.current.msgs,msg];const mi=all.length-1;setMsgs(all);R.current.msgs=all;setLive("");setRun0(null);setBusy(false);R.current.busy=false;
    const sp=(R.current.speakOn||R.current.voice)?say(msg.content):Promise.resolve();
@@ -5573,17 +5594,17 @@ function Copilot({close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0)
    ${!msgs.length&&html`<div class="cp-hello"><div class="cp-big">${orb}</div><h3>Merhaba${auth.user&&auth.user.name?" "+auth.user.name.split(" ")[0]:""}, ne yapalım?</h3><p>Fikrini anlat, birlikte netleştirelim. Hazır olunca istemi ben yazar, geliştirmeyi başlatırım. <b>Oto</b> modda ekranları ve ayarları ben yönetirim; sen yalnızca onaylarsın.</p>
     <button class="cp-voicebtn" onClick=${toggleVoice}><${Icon} n="headphones" s=${17}/> Sesli konuşmaya başla</button>
     <div class="cp-start">${CP_START.map(([ic,l,q])=>html`<button key=${l} onClick=${()=>send(q)}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}</div></div>`}
-   ${msgs.map((m,mi)=>m.role==="user"?html`${m.pj&&m.pj!==(msgs.slice(0,mi).findLast(x=>x.role==="user")||{}).pj&&mi>0?html`<div class="cp-div" key=${"d"+mi}><span>${m.pjAd?"Proje: "+m.pjAd:"Yeni konu"}</span></div>`:""}<div class="cp-u" key=${mi}>${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}>${!m.err&&thinkRow(m,mi)}<div class=${"cp-t"+(m.err?" err":"")}>${m.err?m.content:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
+   ${msgs.map((m,mi)=>m.role==="user"?html`${m.pj&&m.pj!==(msgs.slice(0,mi).findLast(x=>x.role==="user")||{}).pj&&mi>0?html`<div class="cp-div" key=${"d"+mi}><span>${m.pjAd?"Proje: "+m.pjAd:"Yeni konu"}</span></div>`:""}<div class="cp-u" key=${mi}>${(m.imgs?.length||m.files?.length)?html`<div class="cp-ua">${(m.imgs||[]).map((u,j)=>html`<img key=${j} src=${u} alt=${"Eklenen görsel "+(j+1)}/>`)}${(m.files||[]).map(f=>html`<span key=${f}><${Icon} n="file" s=${13}/>${f}</span>`)}</div>`:""}${m.voice&&html`<${Icon} n="mic" s=${12}/>`}${m.content}</div>`:html`<div class="cp-m" key=${mi}>${!m.err&&thinkRow(m,mi)}<div class=${"cp-t"+(m.err?" err":"")}>${m.err?m.content:html`<${CopilotReply} text=${m.content}/>`}</div>${m.acts&&actCard(m,mi)}</div>`)}
    ${busy&&html`<div class="cp-m">${run0&&run0.think==null?html`<div class="cl-sec"><div class="cl-row"><${ClSpark} s=${17}/><span class="shimmer">${run0.ttl}</span></div><div class="cl-think"><div class="cl-tt">Düşünüyor… ${Math.floor((Date.now()-run0.t0)/1000)} sn</div><p>Ekran bağlamı ve önceki konuşma okunuyor.</p></div></div>`:html`${run0&&html`<div class="cl-row"><span>${run0.think} sn düşündü</span></div>`}<div class="cp-t">${cpParse(live).body?html`<${CopilotReply} text=${cpParse(live).body}/>`:html`<span class="shimmer">Yanıt yazılıyor…</span>`}<span class="caret"></span></div>`}</div>`}
    ${msgs.length>=2&&!busy&&!window.__gmStudio?.calisiyor&&lastA&&!lastA.acts&&html`<div class="cp-sug"><button onClick=${()=>send("Konuştuklarımızı ayrıntılı bir geliştirme istemine dönüştür, istem kutusuna yaz ve uygun tür, tema ve modu ayarla.")}><${Icon} n="wand" s=${13}/> Prompta dönüştür</button><button onClick=${()=>send("Bunu geliştirmeye başla.")}><${Icon} n="play" s=${13}/> Geliştirmeye başla</button></div>`}
    <div ref=${endRef}></div></div>
   <div class="cp-in">
    ${(voice||listen)&&html`<div class=${"cp-live"+(listen?" on":"")}><span class="cp-wave"><i></i><i></i><i></i><i></i><i></i></span><span class="cp-li">${interim||(listen?"Dinliyorum… konuşabilirsin":talking?"Konuşuyorum… araya girmek için mikrofona dokun":busy?"Düşünüyorum…":asking?"“Evet” ya da “Atla” diyebilirsin":"Sesli sohbet açık")}</span>${voice&&html`<button class="cp-stop" onClick=${toggleVoice} title="Sesli sohbeti bitir"><${Icon} n="stop" s=${12}/></button>`}</div>`}
-   <div class="cp-box"><textarea ref=${taRef} rows="1" value=${t} placeholder=${voice?"Konuşabilir ya da yazabilirsin…":"Bir şey sor ya da yapmamı iste…"} onInput=${e=>{setT(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(140,e.target.scrollHeight)+"px"}} onKeyDown=${key}></textarea>
-    <div class="cp-bar"><button class=${"ib sm"+(listen&&!voice?" rec":"")} title="Bir kez sesle söyle" onClick=${()=>{if(listen){stopListen();return}startListen()}}><${Icon} n="mic" s=${16}/></button>
+   <div class=${"cp-box"+(cpDrag?" drag":"")} onDragOver=${e=>{e.preventDefault();setCpDrag(true)}} onDragLeave=${()=>setCpDrag(false)} onDrop=${e=>{e.preventDefault();setCpDrag(false);addCpFiles(e.dataTransfer.files)}}>${cpAtt.length>0&&html`<div class="cp-att">${cpAtt.map(a=>html`<span class="cp-ac" key=${a.id} title=${a.name}>${a.kind==="img"?html`<img src=${a.thumb} alt=${a.name}/>`:html`<${Icon} n="file" s=${15}/><b>${a.name}</b>`}<button type="button" aria-label=${a.name+" kaldır"} onClick=${()=>setCpAtt(x=>x.filter(y=>y.id!==a.id))}><${Icon} n="x" s=${10} w=${2.6}/></button></span>`)}</div>`}<input type="file" hidden ref=${cpFile} multiple accept="image/*,.txt,.md,.csv,.json,.html,.css,.js" onChange=${e=>{addCpFiles(e.target.files);e.target.value=""}}/><textarea ref=${taRef} rows="1" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addCpFiles(f)}}} value=${t} placeholder=${voice?"Konuşabilir ya da yazabilirsin…":"Bir şey sor ya da yapmamı iste…"} onInput=${e=>{setT(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(140,e.target.scrollHeight)+"px"}} onKeyDown=${key}></textarea>
+    <div class="cp-bar"><button type="button" class="ib sm" title="Görsel ya da dosya ekle (yapıştırabilir, sürükleyebilirsin)" aria-label="Görsel ya da dosya ekle" disabled=${cpAtt.length>=4} onClick=${()=>cpFile.current.click()}><${Icon} n="plus" s=${17}/></button><button class=${"ib sm"+(listen&&!voice?" rec":"")} title="Bir kez sesle söyle" onClick=${()=>{if(listen){stopListen();return}startListen()}}><${Icon} n="mic" s=${16}/></button>
      <button class=${"ib sm"+(voice?" rec":"")} title=${voice?"Sesli sohbeti bitir":"Sesli sohbet (eller serbest)"} onClick=${toggleVoice}><${Icon} n="headphones" s=${16}/></button>
      <span class="cp-note">${auto?"Oto pilot":"Sohbet"} · Enter ile gönder</span><span style=${{flex:1}}></span>
-     <button class="cp-send" disabled=${busy||!t.trim()} onClick=${()=>send()} title="Gönder"><${Icon} n="arrowUp" s=${16} w=${2.3}/></button></div></div></div>
+     <button class="cp-send" disabled=${busy||!t.trim()&&!cpAtt.length} onClick=${()=>send()} title="Gönder"><${Icon} n="arrowUp" s=${16} w=${2.3}/></button></div></div></div>
  </aside>`;
 }
 
@@ -5887,7 +5908,7 @@ function App(){
   return()=>{removeEventListener("gm:gh",g);removeEventListener("gm:cr",co);removeEventListener("gm:studio",so);removeEventListener("gm:beceri",sk);removeEventListener("gm:credits",c)}},[]);
  useEffect(()=>{try{sessionStorage.getItem("crS")||(sessionStorage.setItem("crS","1"),LS.set("crSession",{n:0,s:0}))}catch(e){}},[]);
  useEffect(()=>{const p=LS.get("ghPending","");if(p&&auth.user){LS.set("ghPending","");setGh({url:p,auto:false,n:Date.now()})}},[auth.user&&auth.user.id]);
- useEffect(()=>{const o=()=>setCp(true);addEventListener("gm:cp",o);const j=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="j"){e.preventDefault();setCpS(x=>{LS.set("cpOpen",!x);return !x})}};addEventListener("keydown",j);return()=>{removeEventListener("gm:cp",o);removeEventListener("keydown",j)}},[]);
+ useEffect(()=>{const o=()=>setCp(true);addEventListener("gm:cp",o);addEventListener("gm:cp-open",o);const j=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="j"){e.preventDefault();setCpS(x=>{LS.set("cpOpen",!x);return !x})}};addEventListener("keydown",j);return()=>{removeEventListener("gm:cp",o);removeEventListener("keydown",j)}},[]);
  useEffect(()=>{const h=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCmdk(x=>!x)}};addEventListener("keydown",h);try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9]{12}$/.test(r))LS.set("ref",r)}catch(e){}return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(apiOn&&auth.user)api("GET","/api/apps").then(j=>setMyApps(j.apps)).catch(()=>{});else setMyApps([])},[apiOn,auth.user&&auth.user.id,view]);
  const adminPage=ADMIN.includes(view);
