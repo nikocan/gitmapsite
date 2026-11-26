@@ -2041,6 +2041,39 @@ button.adp-mini{color:inherit;text-align:left}
 .ghtok{display:flex;flex-direction:column;gap:8px}.ghtok ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mut);line-height:1.45}.ghtok code{font-size:12px}.ghtok-r{display:flex;align-items:center;gap:8px}.ghtok-r input{flex:1;min-width:0}.ghtok-e{color:#f87171;font-size:12.5px;margin:0}
 .gh-copy{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff0d}.gh-copy small{width:190px;flex:none;color:var(--mut);font-size:12px}.gh-copy code{flex:1;min-width:0;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:640px){.gh-copy{flex-wrap:wrap}.gh-copy small{width:100%}}
+/* v5.47 Asistan halkası + rehber yerleşimi */
+.ao{position:relative;display:inline-grid;place-items:center;flex:none!important;border-radius:50%}
+.ao-glow{position:absolute;inset:-18%;border-radius:50%;background:conic-gradient(from 0deg,#e4ff3d,#22d3ee,#a78bfa,#f472b6,#fb923c,#e4ff3d);filter:blur(14px);opacity:.28;animation:cpspin 8s linear infinite}
+.ao-ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#e4ff3d,#22d3ee,#a78bfa,#f472b6,#fb923c,#e4ff3d);animation:cpspin 6s linear infinite;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px))}
+.ao-ring.r2{inset:-7px;opacity:0;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 1.5px),#000 calc(100% - 1px));mask:radial-gradient(farthest-side,transparent calc(100% - 1.5px),#000 calc(100% - 1px))}
+.ao-core{position:absolute;inset:3px;border-radius:50%;display:grid;place-items:center;color:#f4f4ef;background:radial-gradient(circle at 35% 28%,#34343a,#111114 72%);box-shadow:inset 0 1px 0 #ffffff1a}
+.ao.listen .ao-ring{animation-duration:2.4s}.ao.listen .ao-ring.r2{animation:aoPulse 1.4s ease-out infinite,cpspin 3s linear infinite}.ao.listen .ao-glow{opacity:.5}
+.ao.think .ao-ring{animation-duration:1s}.ao.think .ao-core svg{animation:aoBlink 1.2s ease-in-out infinite}
+.ao.talk .ao-ring{animation-duration:1.8s}.ao.talk .ao-core{animation:aoTalk .5s ease-in-out infinite alternate}.ao.talk .ao-glow{opacity:.45;animation:cpspin 3s linear infinite,aoGlow .9s ease-in-out infinite alternate}
+@keyframes aoPulse{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.25);opacity:0}}@keyframes aoBlink{50%{opacity:.35;transform:scale(.85)}}@keyframes aoTalk{to{transform:scale(1.06)}}@keyframes aoGlow{to{opacity:.65}}
+.sqg2{position:relative;width:min(540px,100%);max-height:calc(100dvh - 40px);overflow:auto;border-radius:24px;background:rgba(22,22,24,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 30px 80px -20px #000d,0 0 0 1px #ffffff12,inset 0 1px 0 #ffffff0d;padding:14px 18px 18px;animation:sqg2In .38s cubic-bezier(.2,.9,.2,1);color:#ecebf2}
+@keyframes sqg2In{from{transform:translateY(18px) scale(.98);opacity:0}}
+.sqg2-h{display:flex;align-items:center;gap:10px;padding:2px 0 12px;border-bottom:1px solid #ffffff0d;margin-bottom:14px}.sqg2-h>span:not(.ao){flex:1;min-width:0;display:flex;flex-direction:column}.sqg2-h b{font-size:14.5px;font-weight:600;letter-spacing:.01em}.sqg2-h small{font-size:12px;color:#9a99a6;display:flex;align-items:center;gap:6px}.sqg2-h small i{width:6px;height:6px;border-radius:50%;background:#6ee7b7}.sqg2-h small i.busy{background:#f3c969;animation:kokP 1s infinite}
+.sqg2-ib{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;border:0;background:transparent;color:#a3a2b0;cursor:pointer;transition:background .15s,color .15s}.sqg2-ib:hover{background:#ffffff10;color:#fff}.sqg2-ib.on{color:#e4ff3d}
+.sqg2-stage{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:6px 4px 4px}
+.sqg2-alert{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;background:#f3c96914;border:1px solid #f3c96933;color:#f3d28a;font-size:12px;font-weight:600}
+.sqg2-msg{margin:0;font-size:15.5px;line-height:1.6;color:#e8e7ee;max-width:440px}.sqg2-msg b{font-weight:600}
+.sqg2-acts{display:flex;gap:8px;width:100%;margin-top:4px}.sqg2-acts button{flex:1;height:46px;border-radius:14px;font:inherit;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:transform .12s,background .15s,border-color .15s}.sqg2-acts button:active{transform:scale(.98)}
+.sqg2-acts .pri{border:0;background:#e4ff3d;color:#0b0b0f;box-shadow:0 10px 26px -12px #e4ff3d99}.sqg2-acts .pri:hover{background:#eeff6a}.sqg2-acts .sec{border:1px solid #ffffff1f;background:#ffffff08;color:#ecebf2}.sqg2-acts .sec:hover{border-color:#ffffff38;background:#ffffff10}
+.sqg2-hint{font-size:12px;color:#7d7c88}
+.sqg2-chat{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}.sqg2-bub{flex:1;min-width:0;padding:12px 14px;border-radius:4px 16px 16px 16px;background:#ffffff08;border:1px solid #ffffff10;font-size:15px;line-height:1.6;color:#e8e7ee}.sqg2-bub.err{border-color:#ff8a9b44;background:#ff8a9b0d}
+.sqg2-int{display:block;margin-top:6px;font-size:13.5px;color:#a3a2b0}
+.sqg2-live{display:flex;align-items:center;gap:12px;padding:6px 8px 6px 6px;border-radius:16px;background:#ffffff06;border:1px solid #ffffff10;margin-bottom:10px}
+.sqg2-mic{position:relative;width:44px;height:44px;flex:none;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;color:#0b0b0f;background:#e4ff3d;transition:transform .12s,background .2s}.sqg2-mic:hover{transform:scale(1.04)}.sqg2-mic.on{background:#ff8a9b;color:#fff}.sqg2-mic.on:after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid #ff8a9b88;animation:aoPulse 1.4s ease-out infinite}
+.sqg2-wave{display:flex;align-items:center;gap:3px;height:22px}.sqg2-wave i{width:3px;height:6px;border-radius:3px;background:#5b5a66;transition:background .2s}.sqg2-wave.on i{background:#e4ff3d;animation:sqgW .9s ease-in-out infinite}.sqg2-wave.talk i{background:#93b4ff;animation:sqgW .7s ease-in-out infinite}
+.sqg2-wave i:nth-child(2){animation-delay:.1s}.sqg2-wave i:nth-child(3){animation-delay:.2s}.sqg2-wave i:nth-child(4){animation-delay:.3s}.sqg2-wave i:nth-child(5){animation-delay:.15s}.sqg2-wave i:nth-child(6){animation-delay:.25s}@keyframes sqgW{50%{height:20px}}
+.sqg2-st{flex:1;font-size:13.5px;color:#d0cfdb}
+.sqg2 .sqg-card{background:#ffffff05;border-color:#ffffff10;border-radius:14px;margin-bottom:10px}.sqg2 .sqg-card.cmd p{font-family:inherit;font-size:14.5px}
+.sqg2 .sqg-in{border-color:#ffffff14;background:#ffffff06;border-radius:14px}
+.sq-perch .ao{position:absolute;inset:0}
+@media(prefers-reduced-motion:reduce){.ao *,.sqg2,.sqg2-wave i,.sqg2-mic:after{animation:none!important}}
+@media(max-width:640px){.sqg2{padding:12px 14px 14px;border-radius:20px}.sqg2-acts{flex-direction:column}}
+.st-voice{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.st-voice select{max-width:240px}
 </style>
 </head>
 <body>
@@ -2054,8 +2087,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.46.0";
+const VERSION="5.47.0";
 const CHANGELOG=[
+ {v:"5.47.0",date:"2026-11-26",items:[
+  "✨ Rehber artık “Gitmapp Asistan”: sincap yerine Asistan'ın renkli halka simgesi; dinlerken dalgalanıyor, düşünürken hızlanıyor, konuşurken nabız gibi atıyor",
+  "🪟 Yeni yerleşim: başlıkta asistan adı ve canlı durum (Hazır / Dinliyor / Düşünüyor / Konuşuyor), ses aç-kapat ve kapat düğmeleri; kapat düğmesi artık mesajın üstüne binmiyor. Açılışta büyük halka, net mesaj ve yan yana iki seçenek: “Konuşarak anlat” ve “Yazarak devam et”",
+  "🎙️ Konuşma çubuğu: mikrofon düğmesi, dinlerken ve konuşurken hareket eden ses dalgası, konuşmayı anında susturma düğmesi",
+  "🗣️ Ses çok daha doğal: sunucuda OpenAI anahtarı varsa gerçek yapay zekâ sesi (Türkçe, sıcak ve profesyonel tonda) kullanılıyor; yoksa cihazdaki en kaliteli Türkçe ses otomatik seçiliyor (Edge “Natural”, Google Türkçe, Apple “Yelda Gelişmiş”), cümleler doğal duraklarla okunuyor, robotik eSpeak sesleri atlanıyor",
+  "⚙️ Ayarlar › Yetenekler › Asistan sesi: ses türü (Nova, Shimmer, Sage, Coral, Ash, Onyx ya da tarayıcı sesi), konuşma hızı ve “Dinle” ile deneme",
+  "🧭 Asistan bir hata ya da bakiye sorusunda artık “:free modele geç” gibi teknik/yanlış öneriler yapmıyor; sorunu sade anlatıp kredinin düşmediğini söylüyor ve fikrine geri dönüyor"
+ ]},
  {v:"5.46.0",date:"2026-11-26",items:[
   "🐙 GitHub bağlantısı artık sunucu ayarı beklemeden çalışıyor: Sürüm kontrolü › GitHub sekmesinde kişisel erişim anahtarıyla (ghp_…) bağlanabilirsin; adım adım yönlendirme, anahtar GitHub'a sorularak doğrulanıyor ve şifreli saklanıyor. Oturum panelindeki GitHub “Bağla” düğmesi de bu forma götürüyor",
   "🛠️ Yönetim › GitHub bağlantısı: tek tıkla “GitHub ile bağlan/giriş” için OAuth uygulaması kurulum sihirbazı; GitHub'da hazır doldurulmuş uygulama oluşturma bağlantısı, kopyalanabilir Homepage ve Callback adresleri, Client ID/secret'ın GitHub'a sorularak doğrulanması",
@@ -3705,7 +3746,7 @@ function useGS(){const [,f]=useState(0);useEffect(()=>{const h=()=>f(x=>x+1);add
 const openSettings=(tab)=>dispatchEvent(new CustomEvent("gm:settings-open",{detail:{tab:tab||"genel"}}));
 const PROFILE_ROLES=["Restoran ve kafe","Sağlık ve klinik","Eğitim","E-ticaret ve mağaza","Emlak","Hizmet işletmesi","Pazarlama ve ajans","Yazılım ve teknoloji","Finans","Öğrenci","Diğer"];
 const ST_TABS=[["genel","Genel","sliders"],["profil","Profil","user"],["gizlilik","Gizlilik","lock"],["fatura","Faturalandırma","card"],["kullanim","Kullanım","chart"],["yetenekler","Yetenekler","sparkles"],["baglantilar","Bağlantılar","plug"]];
-const ST_INTRO={genel:"Uygulamanın bu cihazda nasıl davrandığı. Değişiklikler hemen uygulanır.",profil:"Gitmapp'in seni tanıması için. Buradaki bilgiler Stüdyo, Asistan ve Fındık'ın her yanıtına eklenir; böylece her seferinde kendini anlatmana gerek kalmaz.",gizlilik:"Yaptıklarının kimlere görüneceği ve hangi verilerin tutulacağı.",fatura:"Kredi bakiyen ve kredi yükleme. Kredi yalnızca bir üretim başarıyla bittiğinde düşer; durdurulan ya da yarıda kalan işler ücretsizdir.",kullanim:"Son 30 günde neye ne kadar kredi harcadığın.",yetenekler:"Gitmapp'in yardımcı özelliklerini aç ya da kapat. Kapattığın özellik arka planda da çalışmaz.",baglantilar:"Gitmapp'in bağlandığı hesaplar ve kendi yapay zekâ anahtarların."};
+const ST_INTRO={genel:"Uygulamanın bu cihazda nasıl davrandığı. Değişiklikler hemen uygulanır.",profil:"Gitmapp'in seni tanıması için. Buradaki bilgiler Stüdyo ve Asistan'ın her yanıtına eklenir; böylece her seferinde kendini anlatmana gerek kalmaz.",gizlilik:"Yaptıklarının kimlere görüneceği ve hangi verilerin tutulacağı.",fatura:"Kredi bakiyen ve kredi yükleme. Kredi yalnızca bir üretim başarıyla bittiğinde düşer; durdurulan ya da yarıda kalan işler ücretsizdir.",kullanim:"Son 30 günde neye ne kadar kredi harcadığın.",yetenekler:"Gitmapp'in yardımcı özelliklerini aç ya da kapat. Kapattığın özellik arka planda da çalışmaz.",baglantilar:"Gitmapp'in bağlandığı hesaplar ve kendi yapay zekâ anahtarların."};
 const KL_USE={build:"Üretim",plan:"Plan",review:"Kontrol",todos:"Ajan listesi",design:"Tasarım",convert:"GitHub dönüştürme",proto:"Prototip"};
 function StRow({t,d,children,col}){return html`<div class=${"st-row"+(col?" col":"")}><div class="st-l"><b>${t}</b>${d&&html`<small>${d}</small>`}</div><div class="st-c">${children}</div></div>`}
 function StSw({on,set,label}){return html`<button type="button" role="switch" aria-checked=${!!on} aria-label=${label} class=${"st-sw"+(on?" on":"")} onClick=${()=>set(!on)}><i></i></button>`}
@@ -3735,9 +3776,9 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
   case "profil":if(!u)return needLogin;return html`
    <${StRow} t="Profil fotoğrafı" d="PNG, JPEG ya da WebP, en fazla 10 MB. Kare olarak kırpılır."><div class="st-ph"><${UserAvatar} u=${u} s=${52}/><button class="btn g s" disabled=${saving} onClick=${()=>fileRef.current.click()}>Yükle</button>${u.avatar&&html`<button class="btn g s" disabled=${saving} onClick=${()=>saveProfile({avatar:""})}>Kaldır</button>`}<input ref=${fileRef} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange=${pickPhoto}/></div><//>
    <${StRow} t="Ad soyad" d="Yayınladığın uygulamalarda geliştirici adı olarak görünür."><input class="st-in" aria-label="Ad soyad" value=${f.name} maxlength="80" onInput=${e=>setF({...f,name:e.target.value})}/><//>
-   <${StRow} t="Gitmapp sana nasıl hitap etsin?" d="Ana sayfadaki selamlama, Asistan ve Fındık bu adı kullanır."><input class="st-in" aria-label="Hitap adı" value=${f.nickname} maxlength="40" placeholder=${(u.name||"").split(" ")[0]||"Adın"} onInput=${e=>setF({...f,nickname:e.target.value})}/><//>
+   <${StRow} t="Gitmapp sana nasıl hitap etsin?" d="Ana sayfadaki selamlama ve Asistan bu adı kullanır."><input class="st-in" aria-label="Hitap adı" value=${f.nickname} maxlength="40" placeholder=${(u.name||"").split(" ")[0]||"Adın"} onInput=${e=>setF({...f,nickname:e.target.value})}/><//>
    <${StRow} t="İşini en iyi hangisi tanımlıyor?" d="Üretilen uygulamalardaki örnek veriler, metinler ve öneriler bu alana göre seçilir."><select class="st-in" aria-label="İş alanı" value=${f.role} onChange=${e=>setF({...f,role:e.target.value})}><option value="">Seçilmedi</option>${PROFILE_ROLES.map(r=>html`<option key=${r} value=${r}>${r}</option>`)}</select><//>
-   <${StRow} t="Yapay zekâ için talimatlar" d="Her üretimde, kod kontrolünde, Asistan'da ve Fındık'ta dikkate alınır. Kalıcı isteklerini yaz: marka rengin, dil tonu, olmazsa olmazların. Güvenlik kurallarını değiştiremez." col=${true}><textarea class="st-in st-ta" rows="5" maxlength="1500" placeholder="Örnek: Markamın rengi lacivert ve turuncu. Metinler samimi ve kısa olsun. Her uygulamada WhatsApp ile iletişim düğmesi bulunsun. Fiyatlar TL ile gösterilsin." value=${f.instructions} onInput=${e=>setF({...f,instructions:e.target.value})}></textarea><div class="st-cnt">${f.instructions.length}/1500</div><//>
+   <${StRow} t="Yapay zekâ için talimatlar" d="Her üretimde, kod kontrolünde ve Asistan'da dikkate alınır. Kalıcı isteklerini yaz: marka rengin, dil tonu, olmazsa olmazların. Güvenlik kurallarını değiştiremez." col=${true}><textarea class="st-in st-ta" rows="5" maxlength="1500" placeholder="Örnek: Markamın rengi lacivert ve turuncu. Metinler samimi ve kısa olsun. Her uygulamada WhatsApp ile iletişim düğmesi bulunsun. Fiyatlar TL ile gösterilsin." value=${f.instructions} onInput=${e=>setF({...f,instructions:e.target.value})}></textarea><div class="st-cnt">${f.instructions.length}/1500</div><//>
    <${StRow} t="E-posta" d=${"Üyelik: "+(u.created?new Date(u.created.replace(" ","T")+"Z").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"}):"—")}><span class="st-val">${u.email}</span><//>
    <div class="st-save">${dirty?html`<span>Kaydedilmemiş değişiklikler var</span><button class="btn g s" onClick=${()=>setF({name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""})}>Vazgeç</button><button class="btn s" disabled=${saving||!f.name.trim()} onClick=${()=>saveProfile()}>Kaydet</button>`:html`<span class="ok"><${Icon} n="check" s=${13}/> Profil güncel</span><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>{auth.logout();toast("Çıkış yapıldı");close()}}><${Icon} n="logout" s=${14}/> Çıkış yap</button>`}</div>`;
   case "gizlilik":return html`
@@ -3755,11 +3796,12 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
     <${StRow} t="Son işlemler" col=${true}>${use.usage.length?html`<div class="st-log">${use.usage.slice(0,8).map((x,i)=>html`<div key=${i}><span>${KL_USE[x.kind]||x.kind}</span><span>${shortModel(x.model||"")}</span><span>${new Date(x.created.replace(" ","T")+"Z").toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</span><b>−${x.credits}</b></div>`)}</div>`:html`<p class="st-mut">Henüz işlem yok.</p>`}<//>
     <div class="st-save"><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>{close();dispatchEvent(new Event("gm:cr"))}}><${Icon} n="chart" s=${14}/> Canlı kredi paneli</button></div>`}`}
   case "yetenekler":return html`
-   <${StRow} t="Fındık rehber" d="“Benim için yap” bir şey başlatamazsa ajan sincap çıkar; konuşarak ya da yazarak fikrini netleştirir ve hazır komut yazar."><${StSw} on=${gs.guide} set=${v=>gsSet({guide:v})} label="Fındık rehber"/><//>
+   <${StRow} t="Asistan rehberi" d="“Benim için yap” bir şey başlatamazsa Gitmapp Asistan açılır; konuşarak ya da yazarak fikrini netleştirir ve hazır komut yazar."><${StSw} on=${gs.guide} set=${v=>gsSet({guide:v})} label="Asistan rehberi"/><//>
    <${StRow} t="Prompt motoru" d="Yazarken “Okuyor”, durunca gönderince ne olacağını ve kaç kredi harcanacağını gösterir. “tamam” gibi kısa mesajlar kod yazmayı başlatmaz."><${StSw} on=${gs.engine} set=${v=>gsSet({engine:v})} label="Prompt motoru"/><//>
    <${StRow} t="“Benim için yap” imleci" d="Hayalet imleç ekranda gezip adımları senin gözünün önünde tıklar. Kapalıysa aynı adımlar anında yapılır."><${StSw} on=${gs.ghost} set=${v=>gsSet({ghost:v})} label="Hayalet imleç"/><//>
-   <${StRow} t="Sesli yanıtlar" d="Fındık konuşarak anlatırken yanıtlarını sesli okur. Asistan'ın kendi ses düğmesi ayrıca çalışır."><${StSw} on=${gs.voice} set=${v=>gsSet({voice:v})} label="Sesli yanıtlar"/><//>
-   <${StRow} t="Fındık'ı şimdi çağır" d="Fikrini konuşarak anlatmak istediğinde."><button class="btn g s" onClick=${()=>{close();setTimeout(()=>sincap("manual"),200)}}><${BrandMark} s=${16}/> Çağır</button><//>`;
+   <${StRow} t="Sesli yanıtlar" d="Asistan konuşarak anlatırken yanıtlarını sesli okur."><${StSw} on=${gs.voice} set=${v=>gsSet({voice:v})} label="Sesli yanıtlar"/><//>
+   <${StRow} t="Asistan rehberini çağır" d="Fikrini konuşarak anlatmak istediğinde."><button class="btn g s" onClick=${()=>{close();setTimeout(()=>sincap("manual"),200)}}><${Icon} n="sparkles" s=${15}/> Çağır</button><//>
+   <${StVoice} gs=${gs}/>`;
   case "baglantilar":return html`
    <${StRow} t="GitHub" d="Depolarını içe aktarmak ve projeleri GitHub'a göndermek için."><span class="st-val">${u&&u.github?html`<span class="ok">@${u.github}</span>`:"Bağlı değil"}</span><//>
    <${StRow} t="Kendi yapay zekâ anahtarların" d="OpenAI, Anthropic ve diğer sağlayıcıların anahtarını bağlarsan üretimlerde Gitmapp kredisi düşmez. Anahtarlar şifreli saklanır, bir daha gösterilmez."><button class="btn g s" onClick=${()=>{close();go("hesabim")}}><${Icon} n="key" s=${14}/> Anahtarları yönet</button><//>
@@ -7300,6 +7342,35 @@ function cpLabel(a){const th=a.deger&&lookupDesign(a.deger);const K={app:"Uygula
   case "hesap":return [a.ad==="github"?"github":"user",({github:"GitHub",google:"Google",hostinger:"Hostinger"}[a.ad]||a.ad)+" hesabını bağla",a.ad==="hostinger"?"oturum panelinde API anahtarı":"giriş sayfasına gider"];
   case "yeni":return ["plus","Yeni proje başlat","açık çalışma kapanır"];case "github":return ["github",(a.devral?"Projeyi devral: ":"GitHub önizleme: ")+ghShort(a.url||""),a.devral?"kontrol edilir ve canlıya alınır":"Geliştir ve Tasarım'a alınabilir"];default:return ["dot",a.t]}}
 function cpSpeakText(t){return String(t||"").replace(/<[^>]+>/g," ").replace(/https?:\/\/\S+/g,"bağlantı").replace(/[*_#`>|~]/g,"").replace(/^\s*[-•]\s*/gm,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/\s+/g," ").trim()}
+/* ================= v5.47 — Ses motoru (doğal yapay zekâ sesi + en iyi tarayıcı sesi) ================= */
+const VOX={audio:null,gen:0,
+ voices(){try{return (window.speechSynthesis?.getVoices()||[]).filter(v=>/^tr/i.test(v.lang))}catch(e){return []}},
+ score(v){const n=v.name||"";let s=0;if(/natural|neural/i.test(n))s+=60;if(/online/i.test(n))s+=25;if(/premium|enhanced|geliştirilmiş|gelişmiş/i.test(n))s+=45;if(/google/i.test(n))s+=30;if(/emel|ahmet|yelda|filiz|cem/i.test(n))s+=8;if(/espeak|compact|eloquence/i.test(n))s-=60;return s},
+ best(){const vs=this.voices();return vs.find(v=>v.name===GS.ttsVoice)||[...vs].sort((a,b)=>this.score(b)-this.score(a))[0]||null},
+ cloud(){return !!(window.__gmHealth&&window.__gmHealth.tts)&&GS.ttsCloud!==false},
+ stop(){this.gen++;try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}if(this.audio){try{this.audio.pause()}catch(e){}this.audio=null}},
+ parts(t){const out=[];let cur="";(t.match(/[^.!?…;:]+[.!?…;:]*/g)||[t]).forEach(x=>{if((cur+x).length>200&&cur){out.push(cur.trim());cur=x}else cur+=x});if(cur.trim())out.push(cur.trim());return out},
+ async say(text,o={}){this.stop();const id=this.gen;const clean=cpSpeakText(text);if(!clean)return;
+  if(this.cloud()&&!o.browser){try{const tk=TOK.get();const r=await fetch(API+"/api/ai/tts",{method:"POST",headers:{"Content-Type":"application/json",...(tk?{Authorization:"Bearer "+tk}:{})},body:JSON.stringify({text:clean.slice(0,1200),voice:GS.ttsCloudVoice||undefined})});
+    if(r.ok&&id===this.gen){const url=URL.createObjectURL(await r.blob());const a=new Audio(url);a.playbackRate=GS.ttsRate||1;this.audio=a;o.onStart&&o.onStart();
+     await new Promise(res=>{a.onended=a.onerror=a.onpause=res;a.play().catch(res)});URL.revokeObjectURL(url);if(this.audio===a)this.audio=null;return}}catch(e){}}
+  const s=window.speechSynthesis;if(!s||id!==this.gen)return;
+  const v=this.best();const ps=this.parts(clean);o.onStart&&o.onStart();
+  await new Promise(res=>{let i=0;const next=()=>{if(id!==this.gen||i>=ps.length){res();return}const u=new SpeechSynthesisUtterance(ps[i++]);u.lang="tr-TR";if(v)u.voice=v;u.rate=Math.max(.7,Math.min(1.3,GS.ttsRate||1));u.pitch=1;u.volume=1;u.onend=()=>setTimeout(next,110);u.onerror=()=>res();s.speak(u)};next();
+   // Chrome uzun konuşmada takılmasın diye güvenlik süresi
+   setTimeout(res,Math.max(4000,clean.length*95))})}};
+try{window.speechSynthesis&&window.speechSynthesis.getVoices();window.speechSynthesis&&window.speechSynthesis.addEventListener&&window.speechSynthesis.addEventListener("voiceschanged",()=>{})}catch(e){}
+// Asistan halkası: rehberin ve asistanın ortak kimliği (dinliyor / düşünüyor / konuşuyor)
+const AsstOrb=({s=44,state=""})=>html`<span class=${"ao "+state} style=${{width:s,height:s}} aria-hidden="true"><b class="ao-glow"></b><b class="ao-ring"></b><b class="ao-ring r2"></b><i class="ao-core"><${Icon} n="sparkles" s=${Math.round(s*.38)} w=${1.6}/></i></span>`;
+const AO_ST={listen:"Dinliyor",think:"Düşünüyor",talk:"Konuşuyor","":"Hazır"};
+function StVoice({gs}){const [vs,setVs]=useState(()=>VOX.voices());useEffect(()=>{const h=()=>setVs(VOX.voices());try{speechSynthesis.addEventListener("voiceschanged",h)}catch(e){}const t=setTimeout(h,600);return()=>{clearTimeout(t);try{speechSynthesis.removeEventListener("voiceschanged",h)}catch(e){}}},[]);
+ const cloud=!!(window.__gmHealth&&window.__gmHealth.tts);const best=VOX.best();const sorted=[...vs].sort((a,b)=>VOX.score(b)-VOX.score(a));
+ const test=()=>VOX.say("Merhaba, ben Gitmapp Asistan. Fikrini dinliyor, birlikte netleştiriyorum.");
+ return html`<${StRow} t="Asistan sesi" d=${cloud?"Doğal yapay zekâ sesi açık. İstersen tarayıcı sesine geçebilir ya da hızını ayarlayabilirsin.":"Bu cihazdaki en doğal Türkçe ses otomatik seçilir. Daha iyi ses için Edge'de “Microsoft Emel/Ahmet (Natural)”, Mac/iPhone'da Ayarlar › Erişilebilirlik › Seslendirme'den “Yelda (Gelişmiş)” indirilebilir."}>
+  <div class="st-voice">${cloud&&html`<select class="st-in" value=${gs.ttsCloud===false?"tarayici":(gs.ttsCloudVoice||"nova")} onChange=${e=>e.target.value==="tarayici"?gsSet({ttsCloud:false},false):gsSet({ttsCloud:true,ttsCloudVoice:e.target.value},false)} aria-label="Ses türü">${[["nova","Doğal · Nova (sıcak)"],["shimmer","Doğal · Shimmer (net)"],["sage","Doğal · Sage (sakin)"],["coral","Doğal · Coral (enerjik)"],["ash","Doğal · Ash (erkek)"],["onyx","Doğal · Onyx (derin erkek)"],["tarayici","Tarayıcı sesi"]].map(([k,l])=>html`<option key=${k} value=${k}>${l}</option>`)}</select>`}
+   ${(!cloud||gs.ttsCloud===false)&&html`<select class="st-in" value=${gs.ttsVoice||""} onChange=${e=>gsSet({ttsVoice:e.target.value||""},false)} aria-label="Tarayıcı sesi"><option value="">Otomatik${best?" · "+best.name:""}</option>${sorted.map(v=>html`<option key=${v.name} value=${v.name}>${v.name}</option>`)}</select>`}
+   <select class="st-in" value=${String(gs.ttsRate||1)} onChange=${e=>gsSet({ttsRate:+e.target.value},false)} aria-label="Konuşma hızı">${[[.9,"Yavaş"],[1,"Normal"],[1.1,"Hızlı"]].map(([k,l])=>html`<option key=${k} value=${String(k)}>${l}</option>`)}</select>
+   <button class="btn g s" onClick=${test}><${Icon} n="volume" s=${14}/> Dinle</button></div><//>`}
 function ghostEnsure(){let c=document.getElementById("ghost");if(!c){c=document.createElement("div");c.id="ghost";c.innerHTML='<svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 3l7 18 2.5-7.5L21 11z" fill="#fff" stroke="#0f0f0e" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="gh-ring"></span><span class="gh-tag">Gitmapp</span>';document.body.appendChild(c);c.style.transform="translate("+(innerWidth*.6)+"px,"+(innerHeight*.8)+"px)"}return c}
 function ghostPoint(el){const c=ghostEnsure();el.scrollIntoView({block:"nearest",behavior:"smooth"});setTimeout(()=>{const r=el.getBoundingClientRect();c.classList.add("on","wait");c.style.transform="translate("+(r.left+r.width*.5)+"px,"+(r.top+r.height*.6)+"px)"},120)}
 function ghostHide(){const c=document.getElementById("ghost");if(c)c.classList.remove("on","wait")}
@@ -7344,12 +7415,8 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]
  useEffect(()=>{const v=window.speechSynthesis;if(v&&v.getVoices)v.getVoices();return()=>{stopAll()}},[]);
  useEffect(()=>{const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal")&&!R.current.voice)close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
  // --- ses: okuma ---
- function say(text){return new Promise(res=>{const s=window.speechSynthesis;const clean=cpSpeakText(text);if(!s||!clean){res();return}s.cancel();
-  const parts=[];let cur="";(clean.match(/[^.!?…]+[.!?…]*/g)||[clean]).forEach(x=>{if((cur+x).length>180&&cur){parts.push(cur);cur=x}else cur+=x});if(cur.trim())parts.push(cur);
-  const vo=(s.getVoices()||[]).filter(v=>/^tr/i.test(v.lang));const best=vo.find(v=>/google|yelda|natural|online/i.test(v.name))||vo[0];
-  let i=0;setTalking(true);R.current.talking=true;const fin=()=>{setTalking(false);R.current.talking=false;res()};
-  const next=()=>{if(i>=parts.length){fin();return}const u=new SpeechSynthesisUtterance(parts[i++].trim());u.lang="tr-TR";if(best)u.voice=best;u.rate=1.05;u.onend=next;u.onerror=fin;s.speak(u)};next()})}
- function stopSpeak(){try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}setTalking(false);R.current.talking=false}
+ function say(text){setTalking(true);R.current.talking=true;return VOX.say(text).finally(()=>{setTalking(false);R.current.talking=false})}
+ function stopSpeak(){VOX.stop();setTalking(false);R.current.talking=false}
  // --- ses: dinleme ---
  function startListen(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; Chrome, Edge ya da Safari dene.");setVoice(false);R.current.voice=false;return}
   stopSpeak();try{recRef.current&&recRef.current.abort()}catch(e){}
@@ -7561,18 +7628,19 @@ const SQ_WORDS=/\b(randevu|rezervasyon|sipariş|ödeme|menü|stok|müşteri|pers
 const sqWords=t=>[...new Set((String(t||"").match(SQ_WORDS)||[]).map(w=>w.toLocaleLowerCase("tr")))].slice(0,6);
 function SqHL({text,words}){const ws=(words||[]).filter(w=>w&&w.length>1).map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));if(!ws.length)return text;
  const re=new RegExp("("+ws.join("|")+")","giu");return String(text).split(re).map((p,i)=>i%2?html`<mark class="sq-hl" key=${i}>${p}</mark>`:p)}
-const SQ_MSG={nostart:"Hmm, hiçbir şey başlamadı! Merak etme, birlikte çözelim. Ne yapmak istediğini bana anlatır mısın?",busy:"Şu an bir iş sürüyor. Bitmesini beklerken sıradaki fikrini bana anlatabilirsin.",manual:"Merhaba, ben Fındık! Fikrini anlat, birlikte netleştirip hazır komutu yazayım."};
+const SQ_MSG={nostart:"İşlem başlatılamadı. Birlikte çözelim: ne yapmak istediğini kısaca anlatır mısın?",busy:"Şu an bir iş sürüyor. Bitmesini beklerken sıradaki fikrini anlatabilirsin; komutunu hazırlayayım.",manual:"Merhaba, ben Gitmapp Asistan. Fikrini anlat; birlikte netleştirip hazır bir komut yazalım."};
 function SquirrelGuide({run,toast}){
  const [open,setOpen]=useState(null);const [phase,setPhase]=useState("alert");const [msgs,setMsgs]=useState([]);const [res,setRes]=useState(null);
  const [listen,setListen]=useState(false);const [interim,setInterim]=useState("");const [busy,setBusy]=useState(false);const [talking,setTalking]=useState(false);const [txt,setTxt]=useState("");
  const [perch,setPerch]=useState(null);const [note,setNote]=useState("");const flyRef=useRef(null);const recRef=useRef(null);const R=useRef({});Object.assign(R.current,{msgs,phase,open,busy});
  useEffect(()=>{const h=e=>{const d=e.detail||{};setOpen({reason:d.reason||"manual",msg:d.msg||"",n:Date.now()});setPhase("alert");setPerch(null);setRes(null);setMsgs([]);setTxt("")};addEventListener("gm:sincap",h);return()=>removeEventListener("gm:sincap",h)},[]);
  useEffect(()=>{if(!open)return;const k=e=>{if(e.key==="Escape")close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[open]);
- const close=()=>{stopL();try{speechSynthesis.cancel()}catch(e){}setOpen(null);setPerch(null);setPhase("alert")};
- function say(t){return new Promise(r=>{const s=window.speechSynthesis;if(!s||!t||!GS.voice){r();return}s.cancel();const u=new SpeechSynthesisUtterance(cpSpeakText(t));u.lang="tr-TR";const v=(s.getVoices()||[]).find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;u.rate=1.05;setTalking(true);let done=false;const fin=()=>{if(done)return;done=true;setTalking(false);r()};u.onend=u.onerror=fin;setTimeout(fin,Math.max(2500,t.length*85));s.speak(u)})}
+ const close=()=>{stopL();VOX.stop();setOpen(null);setPerch(null);setPhase("alert")};
+ const [voiceOn,setVoiceOn]=useState(()=>GS.voice!==false);
+ function say(t){if(!t||!GS.voice)return Promise.resolve();setTalking(true);return VOX.say(t).finally(()=>setTalking(false))}
  function stopL(){const r=recRef.current;recRef.current=null;try{r&&r.abort()}catch(e){}setListen(false);setInterim("")}
  function startL(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; aşağıya yazabilirsin.");return}
-  try{speechSynthesis.cancel()}catch(e){}stopL();const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;let fin="";
+  VOX.stop();stopL();const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;let fin="";
   r.onresult=e=>{fin=speechText(e.results,true);setInterim(speechText(e.results))};
   r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")toast("Mikrofon izni verilmedi; adres çubuğundaki kilitten izin verebilirsin.")};
   r.onend=()=>{if(recRef.current!==r)return;recRef.current=null;setListen(false);setInterim("");if(fin.trim())ask(fin.trim(),true)};setListen(true);try{r.start()}catch(e){setListen(false)}}
@@ -7583,7 +7651,7 @@ function SquirrelGuide({run,toast}){
   catch(e){setBusy(false);setMsgs([...next,{role:"assistant",content:e.message||"Bağlantı sorunu, tekrar dene.",err:true}])}}
  const target=()=>document.querySelector(".ws-in .gbox")||document.querySelector(".gbox");
  const perchAt=r=>r.right+300<innerWidth?{x:r.right-24,y:r.top-34,side:"r"}:{x:r.right-70,y:r.top-58,side:"l"};
- async function fly(){stopL();try{speechSynthesis.cancel()}catch(e){}
+ async function fly(){stopL();VOX.stop();
   if(!target()){location.hash="#studio";await wait(700)}const g=target();if(!g){toast("Yazı alanı bulunamadı");return}
   g.scrollIntoView({block:"center",inline:"nearest",behavior:"smooth"});await wait(260);
   const el=flyRef.current;const from=el?el.getBoundingClientRect():{left:innerWidth/2-60,top:innerHeight/2-60,width:120};const r=g.getBoundingClientRect();
@@ -7601,28 +7669,33 @@ function SquirrelGuide({run,toast}){
    const ta=g.querySelector("textarea");const v=ta?ta.value:"";const ws=sqWords(v);setNote(v.trim()?(ws.length?"Not aldım: "+ws.join(" · "):"Harika, devam et…"):"");if((window.__gmStudio||{}).calisiyor){close()}};
   upd();const i=setInterval(upd,350);addEventListener("resize",upd);addEventListener("scroll",upd,true);return()=>{clearInterval(i);removeEventListener("resize",upd);removeEventListener("scroll",upd,true);clearTimeout(tm)}},[perch]);
  async function useCmd(start){if(!res||!res.komut)return;const steps=[{t:"tur",deger:res.tur||"app"},{t:"prompt",metin:res.komut}];if(start)steps.push({t:"yap"});
-  setPhase("fly");stopL();try{speechSynthesis.cancel()}catch(e){}
+  setPhase("fly");stopL();VOX.stop();
   try{if(!start){await fly()}for(const a of steps)await run(a);if(start)close()}catch(e){toast(e.message||"Yapılamadı")}}
  if(!open)return null;
  if(phase==="perch"&&pos)return html`<div class="sq-ripple" style=${{left:pos.l-4,top:pos.t-4,width:pos.w+8,height:pos.h+8}} aria-hidden="true"></div>
-  <div class=${"sq-perch "+pos.side} style=${{left:pos.x,top:pos.y}}><div class="sq-pb">${note?html`<${SqHL} text=${note} words=${sqWords(note)}/>`:"Seni bekliyorum ✍️"}</div><button class="sq-px" title="Fındık'ı gönder" onClick=${close}><${Icon} n="x" s=${11}/></button><${GuideMark} s=${52} mode=${note?"nod":"wait"}/></div>`;
+  <div class=${"sq-perch "+pos.side} style=${{left:pos.x,top:pos.y}}><div class="sq-pb">${note?html`<${SqHL} text=${note} words=${sqWords(note)}/>`:"Seni bekliyorum ✍️"}</div><button class="sq-px" title="Asistanı kapat" onClick=${close}><${Icon} n="x" s=${11}/></button><${AsstOrb} s=${48} state=${note?"listen":""}/></div>`;
  if(phase==="perch"||phase==="fly")return null;
  const lastA=[...msgs].reverse().find(m=>m.role==="assistant");const words=(res&&res.vurgu)||[];
- return html`<div class="sqg-bg" onClick=${e=>{if(e.target===e.currentTarget)close()}}><div class=${"sqg "+phase} role="dialog" aria-label="Ajan sincap Fındık">
-  <button class="ib sqg-x" onClick=${close} title="Kapat"><${Icon} n="x" s=${16}/></button>
-  <div class="sqg-hero"><div class="sqg-sq" ref=${flyRef}><${GuideMark} s=${phase==="talk"?84:112} mode=${"pop "+(listen?"listen":busy?"think":talking?"talk":"wait")}/></div>
-   <div class="sqg-bub">${phase==="alert"&&html`<span class="sqg-alert"><${Icon} n="alert" s=${13}/> ${open.reason==="busy"?"Biraz bekle":"Uyarı"}</span>`}
-    <p>${phase==="alert"?(open.msg||SQ_MSG[open.reason]||SQ_MSG.nostart):listen?html`<b>Seni dinliyorum…</b>${interim&&html`<span class="sqg-int">${interim}</span>`}`:busy?html`<span class="shimmer">Düşünüyorum…</span>`:lastA?html`<${SqHL} text=${lastA.content} words=${words}/>`:"Hazırım."}</p></div></div>
-  ${phase==="alert"&&html`<div class="sqg-acts"><button class="sqg-mic" onClick=${talk}><span class="sqg-ring"></span><${Icon} n="mic" s=${30}/></button>
-   <b>Konuşarak anlat</b><small>Mikrofona dokun, fikrini anlat; ben dinleyip özetleyeyim.</small>
-   <button class="sqg-type" onClick=${fly}><${Icon} n="edit" s=${15}/> Yazarak devam et</button><small class="sqg-hint">ya da klavyede yazmaya başla</small></div>`}
+ const state=listen?"listen":busy?"think":talking?"talk":"";
+ const togVoice=()=>{const v=!voiceOn;setVoiceOn(v);gsSet({voice:v});if(!v){VOX.stop();setTalking(false)}};
+ return html`<div class="sqg-bg" onClick=${e=>{if(e.target===e.currentTarget)close()}}><div class="sqg2" role="dialog" aria-label="Gitmapp Asistan">
+  <header class="sqg2-h"><${AsstOrb} s=${34} state=${state}/><span><b>Gitmapp Asistan</b><small><i class=${state?"busy":""}></i>${AO_ST[state]}${phase==="talk"&&voiceOn?" · sesli":""}</small></span>
+   <button type="button" class=${"sqg2-ib"+(voiceOn?" on":"")} onClick=${togVoice} title=${voiceOn?"Sesli yanıtı kapat":"Sesli yanıtı aç"} aria-pressed=${voiceOn}><${Icon} n=${voiceOn?"volume":"volumeX"} s=${17}/></button>
+   <button type="button" class="sqg2-ib" onClick=${close} title="Kapat" aria-label="Kapat"><${Icon} n="x" s=${17}/></button></header>
+  ${phase==="alert"&&html`<div class="sqg2-stage"><div ref=${flyRef}><${AsstOrb} s=${92} state=${state}/></div>
+   ${open.reason!=="manual"&&html`<span class="sqg2-alert"><${Icon} n="alert" s=${13}/>${open.reason==="busy"?"Bir iş sürüyor":"İşlem başlatılamadı"}</span>`}
+   <p class="sqg2-msg">${open.msg||SQ_MSG[open.reason]||SQ_MSG.nostart}</p>
+   <div class="sqg2-acts"><button type="button" class="pri" onClick=${talk}><${Icon} n="mic" s=${18}/>Konuşarak anlat</button><button type="button" class="sec" onClick=${fly}><${Icon} n="edit" s=${16}/>Yazarak devam et</button></div>
+   <small class="sqg2-hint">Klavyede yazmaya başlarsan doğrudan yazı alanına geçerim.</small></div>`}
   ${phase==="talk"&&html`<div class="sqg-talk">
-   <div class="sqg-live"><button class=${"sqg-mic sm"+(listen?" on":"")} onClick=${()=>listen?stopL():startL()} title=${listen?"Dinlemeyi durdur":"Konuş"}><span class="sqg-ring"></span><${Icon} n=${listen?"stop":"mic"} s=${listen?16:20}/></button>
-    <span class="cp-wave">${listen&&html`<i></i><i></i><i></i><i></i><i></i>`}</span><span class="sqg-st">${listen?"Seni dinliyorum":busy?"Düşünüyorum":talking?"Anlatıyorum":"Konuşmak için dokun"}</span></div>
+   <div class="sqg2-chat" ref=${flyRef}><div class=${"sqg2-bub"+(lastA?.err?" err":"")} aria-live="polite">${listen?html`<b>Seni dinliyorum…</b>${interim&&html`<span class="sqg2-int">${interim}</span>`}`:busy?html`<span class="shimmer">Düşünüyorum…</span>`:lastA?html`<${SqHL} text=${lastA.content} words=${words}/>`:"Hazırım, fikrini anlat."}</div></div>
+   <div class="sqg2-live"><button type="button" class=${"sqg2-mic"+(listen?" on":"")} onClick=${()=>listen?stopL():startL()} title=${listen?"Dinlemeyi durdur":"Konuş"} aria-label=${listen?"Dinlemeyi durdur":"Konuş"}><${Icon} n=${listen?"stop":"mic"} s=${listen?16:20}/></button>
+    <span class=${"sqg2-wave"+(listen?" on":talking?" talk":"")}><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="sqg2-st">${listen?"Seni dinliyorum":busy?"Düşünüyorum":talking?"Anlatıyorum · durdurmak için mikrofona dokun":"Konuşmak için mikrofona dokun"}</span>
+    ${talking&&html`<button type="button" class="sqg2-ib" title="Susmasını sağla" onClick=${()=>{VOX.stop();setTalking(false)}}><${Icon} n="stop" s=${15}/></button>`}</div>
    ${res&&res.ozet&&res.ozet.length>0&&html`<div class="sqg-card"><div class="sqg-ct"><${Icon} n="list" s=${13}/> Özet</div><ul>${res.ozet.map((o,i)=>html`<li key=${i}><${SqHL} text=${o} words=${words}/></li>`)}</ul>${words.length>0&&html`<div class="sqg-tags">${words.map(w=>html`<span key=${w}>${w}</span>`)}</div>`}</div>`}
-   ${res&&res.komut&&html`<div class="sqg-card cmd"><div class="sqg-ct"><${Icon} n="wand" s=${13}/> Örnek komut hazır</div><p><${SqHL} text=${res.komut} words=${words}/></p>
+   ${res&&res.komut&&html`<div class="sqg-card cmd"><div class="sqg-ct"><${Icon} n="wand" s=${13}/> Komut hazır</div><p><${SqHL} text=${res.komut} words=${words}/></p>
     <div class="sqg-cb"><button class="btn s" onClick=${()=>useCmd(true)}><${Icon} n="play" s=${14}/> Bununla başlat</button><button class="btn g s" onClick=${()=>useCmd(false)}><${Icon} n="edit" s=${14}/> Yazı alanına koy</button></div></div>`}
-   <form class="sqg-in" onSubmit=${e=>{e.preventDefault();ask(txt.trim(),false)}}><input value=${txt} placeholder="ya da buraya yaz…" onInput=${e=>setTxt(e.target.value)}/><button class="cp-send" disabled=${busy||!txt.trim()}><${Icon} n="arrowUp" s=${15} w=${2.3}/></button></form>
+   <form class="sqg-in" onSubmit=${e=>{e.preventDefault();ask(txt.trim(),false)}}><input value=${txt} placeholder="ya da buraya yaz…" aria-label="Mesaj" onInput=${e=>setTxt(e.target.value)}/><button class="cp-send" disabled=${busy||!txt.trim()}><${Icon} n="arrowUp" s=${15} w=${2.3}/></button></form>
   </div>`}
  </div></div>`;
 }
@@ -7661,7 +7734,7 @@ function App(){
  const [msg,setMsg]=useState("");const toast=m=>{window.__gmToast=toast;window.__gmLastToast={m:String(m||""),t:Date.now()};setMsg(m);clearTimeout(window._t);window._t=setTimeout(()=>setMsg(""),3600)};
  useEffect(()=>{
   let current=true;setHealthError(false);const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),10000);
-  api("GET","/api/health",undefined,controller.signal).then(j=>{if(!j.ok)throw new Error();if(current){API_ON=true;setHealth(j);setApiOn(true)}})
+  api("GET","/api/health",undefined,controller.signal).then(j=>{if(!j.ok)throw new Error();if(current){API_ON=true;window.__gmHealth=j;setHealth(j);setApiOn(true)}})
    .catch(()=>{if(current){API_ON=false;setApiOn(false);setHealthError(true)}}).finally(()=>clearTimeout(timer));
   return ()=>{current=false;clearTimeout(timer);controller.abort()};
  },[attempt]);
@@ -7835,7 +7908,7 @@ function App(){
       ${mode==="musteri"&&html`<button onClick=${async()=>{setSMenu(false);if(!auth.user){openAuth("Davet bağlantını almak için hesap oluştur.");return}const u=location.origin+location.pathname+"?ref="+auth.user.id;try{await navigator.clipboard.writeText(u);toast("Davet bağlantın kopyalandı · arkadaşın ilk uygulamasını yayınlayınca 50 kredi")}catch(e){prompt("Davet bağlantın:",u)}}}><${Icon} n="gift" s=${16}/> Gitmapp'i paylaş<kbd>+50</kbd></button>`}
       ${!installed&&html`<button onClick=${()=>{setSMenu(false);installApp()}}><${Icon} n="device" s=${16}/> Uygulamayı yükle</button>`}
       <hr/><button onClick=${()=>{setSMenu(false);navGo("guncel")}}><${Icon} n="download" s=${16}/> Güncellemeler<kbd>v${VERSION}</kbd></button>
-      <button onClick=${()=>{setSMenu(false);sincap("manual")}}><${BrandMark} s=${16}/> Fındık'a sor</button>
+      <button onClick=${()=>{setSMenu(false);sincap("manual")}}><${Icon} n="sparkles" s=${16}/> Asistan rehberi</button>
       ${mode==="admin"&&html`<button disabled><${Icon} n="github" s=${16}/> GitHub limiti<kbd>${rate.rem}/${rate.lim}</kbd></button>`}
       ${auth.user&&html`<hr/><button onClick=${()=>{setSMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${16}/> Çıkış yap</button>`}
      </div>`}</div></div></aside>
