@@ -178,12 +178,18 @@ test("tek tıkla OpenRouter ana, Hostinger yedek; yöneticinin kendi anahtarı y
   assert.ok(imp.fallbacks.includes("anthropic"));
   assert.doesNotMatch(JSON.stringify(imp),/sk-ant-0123456789abcdef0123/);
 });
-test("ana sağlayıcı OpenRouter'a çevrilince sunucu dosyasındaki Hostinger anahtarı kendiliğinden yedek olur", async t => {
-  const {request,admin}=await fixture(t,{AI_BASE:"https://router.hostinger.com/v1",AI_KEY:"hostinger-key-0123456789",OPENROUTER_API_KEY:"",ANTHROPIC_API_KEY:"",OPENAI_API_KEY:"",GEMINI_API_KEY:"",DEEPSEEK_API_KEY:"",AI_FALLBACKS:"",HOSTINGER_AI_KEY:""});
-  assert.deepEqual((await request("GET","health")).aiFallbacks,[]);
+test("Hostinger kaldırıldı: sunucu dosyasındaki eski Hostinger anahtarı artık kendiliğinden yedek olmaz; HOSTINGER_FALLBACK=1 ya da panelden anahtarla geri eklenir", async t => {
+  const env={AI_BASE:"https://router.hostinger.com/v1",AI_KEY:"hostinger-key-0123456789",OPENROUTER_API_KEY:"",ANTHROPIC_API_KEY:"",OPENAI_API_KEY:"",GEMINI_API_KEY:"",DEEPSEEK_API_KEY:"",AI_FALLBACKS:"",HOSTINGER_AI_KEY:""};
+  const {request,admin}=await fixture(t,env);
   await request("PUT","admin/ai",{name:"AI_BASE",value:"https://openrouter.ai/api/v1"},admin);
   await request("PUT","admin/ai",{name:"AI_KEY",value:"sk-or-v1-0123456789abcdef"},admin);
+  assert.deepEqual((await request("GET","health")).aiFallbacks,[]);
+  await request("PUT","admin/ai",{name:"HOSTINGER_AI_KEY",value:"hostinger-key-9876543210"},admin);
   assert.deepEqual((await request("GET","health")).aiFallbacks,["hostinger"]);
+  const opt=await fixture(t,{...env,HOSTINGER_FALLBACK:"1"});
+  await opt.request("PUT","admin/ai",{name:"AI_BASE",value:"https://openrouter.ai/api/v1"},opt.admin);
+  await opt.request("PUT","admin/ai",{name:"AI_KEY",value:"sk-or-v1-0123456789abcdef"},opt.admin);
+  assert.deepEqual((await opt.request("GET","health")).aiFallbacks,["hostinger"]);
 });
 test("adres Hostinger, anahtar OpenRouter ise OpenRouter kullanılır; Hostinger tek tıkla tamamen kaldırılır", async t => {
   const {request,admin}=await fixture(t,{AI_BASE:"https://router.hostinger.com/v1",AI_KEY:"hostinger-key-0123456789",OPENROUTER_API_KEY:"",ANTHROPIC_API_KEY:"",OPENAI_API_KEY:"",GEMINI_API_KEY:"",DEEPSEEK_API_KEY:"",AI_FALLBACKS:"",HOSTINGER_AI_KEY:""});
@@ -193,7 +199,7 @@ test("adres Hostinger, anahtar OpenRouter ise OpenRouter kullanılır; Hostinger
   const mixed=await request("PUT","admin/ai",{name:"AI_KEY",value:or},admin);
   assert.equal(mixed.base,"https://openrouter.ai/api/v1");
   assert.match(mixed.note,/OpenRouter'a ait/);
-  assert.deepEqual(mixed.fallbacks,["hostinger"]);
+  assert.ok(!mixed.fallbacks.includes("hostinger"));
   const rm=await request("POST","admin/ai/remove-hostinger",null,admin);
   assert.equal(rm.status,200,JSON.stringify(rm));
   assert.equal(rm.base,"https://openrouter.ai/api/v1");
@@ -267,4 +273,20 @@ test("template token tariffs and estimates are managed by admins and published t
   assert.equal((await save({id:"sofra",estimate:{input:2,output:0}})).status,200);
   assert.deepEqual((await request("GET","settings")).templatePricing,{rates,estimates:{ziyaret:estimate,sofra:{input:2,output:0}}});
   assert.deepEqual((await save({id:"ziyaret",estimate:null})).templatePricing,{rates,estimates:{sofra:{input:2,output:0}}});
+});
+
+test("OpenRouter bağlantı testi hesap bakiyesini sorar: kredi yoksa 'anahtar limiti bakiye değildir' der", async t => {
+  const http=await import("node:http");
+  const srv=http.createServer((req,res)=>{res.writeHead(req.url.endsWith("/chat/completions")?402:200,{"Content-Type":"application/json"});
+    if(req.url.endsWith("/models"))return res.end(JSON.stringify({data:[{id:"anthropic/claude-sonnet-5.5"}]}));
+    if(req.url.endsWith("/credits"))return res.end(JSON.stringify({data:{total_credits:0,total_usage:0}}));
+    if(req.url.endsWith("/key"))return res.end(JSON.stringify({data:{limit:100,usage:0,limit_remaining:100,is_free_tier:true}}));
+    res.end(JSON.stringify({error:{message:"Insufficient credits"}}));});
+  srv.listen(0,"127.0.0.1");await once(srv,"listening");t.after(()=>srv.close());
+  const base="http://127.0.0.1:"+srv.address().port;
+  const {request,admin}=await fixture(t,{AI_BASE:base,AI_KEY:"or-test-key-1234",AI_MODEL:"anthropic/claude-sonnet-5.5",TEST_OR_CREDITS:"1",AI_FALLBACKS:"",OPENROUTER_API_KEY:"",HOSTINGER_AI_KEY:""});
+  const r=await request("POST","admin/ai/test",{target:"primary"},admin);
+  assert.equal(r.ok,false);assert.equal(r.status,402);
+  assert.equal(r.credits.balance,0);assert.equal(r.credits.keyLimit,100);
+  assert.match(r.message,/kredi yok/);assert.match(r.message,/bakiye değil/);
 });
