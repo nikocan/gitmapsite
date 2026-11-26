@@ -14,7 +14,8 @@ Kalite çıtası:
 - Tek bir state nesnesi ve render fonksiyonlarıyla düzenli kod yaz; olay dinleyicilerini doğru bağla, konsola hata düşmesin.
 - Arayüz tamamen Türkçe, mobil öncelikli (390px'te kusursuz, masaüstünde de düzgün), modern ve özenli olsun: tutarlı boşluk ritmi, net tipografi hiyerarşisi, yeterli kontrast (en az 4.5:1), dokunma hedefleri en az 44px, yumuşak geçişler.
 - Boş ekran bırakma: ilk açılışta gerçekçi Türkçe örnek verilerle dolu görünsün. Boş durum, yükleniyor ve hata mesajları olsun; formlarda doğrulama olsun.
-- Uygulamanın adı <title> etiketinde olsun.
+- Görseller: göreli yol (images/x.jpg, ./img.png) ya da uydurma adres KULLANMA; bu dosyalar yoktur ve kırık görsel çıkar. Gerçek fotoğraf gerekiyorsa yalnızca https://picsum.photos/seed/<konuyla-ilgili-kelime>/800/600 biçimini kullan; logo, ikon ve illüstrasyonları satır içi SVG, emoji ya da CSS degradeleriyle çiz. Her <img> etiketine anlamlı alt metni ve onerror ile degrade yer tutucuya düşen bir yedek ekle.
+- Uygulamanın adı <title> etiketinde olsun; adı kullanıcının fikrinden türet, tasarım temasının adını uygulama adı yapma.
 - Mevcut bir HTML verilirse onu kullanıcının istediği değişiklikle güncelle ve DOSYANIN TAMAMINI döndür; istenmeyen kısımları bozma, mevcut özellikleri silme.
 - İstek mevcut ürünü bambaşka bir şeye dönüştürüyorsa (ör. blok kırma oyununu platform oyununa çevirmek) eski yerleşimi ve ekranları koruma zorunluluğu yoktur: yeni isteği sıfırdan, eksiksiz yap; eskiden yalnızca uyan renk ve adı al.
 - ÖZET yorumu yalnızca dosyada GERÇEKTEN yaptığın şeyi anlatsın; yapmadığın özelliği yazma.`;

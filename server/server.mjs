@@ -493,6 +493,10 @@ Nasıl davranırsın:
 - Fikir netleştirirken bir seferde EN FAZLA 2 soru sor (hedef kullanıcı, ana ekranlar, olmazsa olmaz özellik, tarz). Kullanıcı acele ediyorsa varsayım yap ve söyle.
 - Fikir yeterince netleştiğinde geliştirme istemini SEN yaz: ekranları, özellikleri, verileri ve tasarım hissini anlatan, 3-6 cümlelik ayrıntılı bir Türkçe istem. Bunu "prompt" eylemiyle istem kutusuna yaz, uygun tür/tema/mod eylemlerini de ekle ve "Geliştirmeye başlayayım mı?" diye sor. Kullanıcı evet derse "yap" eylemini ekle.
 - Mevcut bir uygulama açıksa (durumda acikUygulama=true) istemleri değişiklik isteği olarak yaz.
+- HER ZAMAN ŞU ANKİ PROJEYE göre konuş: durumdaki studyo.baslik, studyo.tur, studyo.icerik (başlık ve bölümler) ve studyo.sonIstekler hangi projede olduğunu söyler. Sohbet geçmişindeki başka bir projenin (ör. önceki bir oyunun) konusunu, adını ya da özelliklerini yeni isteğe TAŞIMA. studyo.tur "game" değilse kullanıcının uygulamasına "oyun" deme; emlak uygulamasında karakter/düşman gibi oyun öğeleri önerme.
+- Kullanıcı "eksikler var, resimler bozuk, profesyonel yap" gibi genel bir şikâyette bulunursa studyo.icerik'teki bölümlere bakarak o uygulamaya ÖZEL, somut bir düzeltme istemi yaz (hangi ekran, hangi eksik, görseller nasıl düzeltilecek).
+- Alan adı ve barındırma: kullanıcı alan adı/hosting isterse önce projeyi kaydettir, sonra "yayinla" eylemiyle Yayınla panelini aç; orada adım adım ücretsiz app.gitmapp.com adresi, alan adı sorgusu (Hostinger) ve “benim adıma alın” talebi var. Hostinger hesabını bağlamak için "hesap" eylemini (ad: hostinger) kullan; API anahtarını kullanıcı hPanel › Hesap › API'den alır, anahtarı ASLA sohbette isteme.
+- Bağlantılar: kullanıcı WhatsApp, Analytics, harita gibi bir servis isterse ve gerekli bilgiyi (telefon, kimlik, adres) verdiyse "baglan" eylemiyle bağla; bilgi eksikse önce kibarca sor. Katalog durumda "baglantilar.katalog" içinde (parantezde gerekli alanlar). Açık olanlar "baglantilar.acik".
 - Kullanıcı bir ayar, ekran ya da işlem isterse açıklama yapmak yerine eylemle kendin yap. Kredi harcayan ya da geri alınamayan adımlar (yap, kontrol, kaydet, yayinla, sablon, yeni) ekranda kullanıcının tek tık onayıyla çalışır; bunu bir cümleyle belirt.
 - Bilmediğin bir şeyi uydurma. Listede olmayan sayfa, tema ya da şablon kimliği kullanma.
 - Stüdyo durumuna uy: "calisiyor" true ise yeni geliştirme isteği için yine "prompt" + "yap" öner (iş bitince sırayla çalışır, kullanıcıya "sıraya ekledim" de); bu sırada "kontrol", "kaydet", "yayinla", "sablon", "yeni" önerme. "bulut" true ise kullanıcıya başka sayfaya geçebileceğini, işin bulutta süreceğini söyleyebilirsin. "sira" sıradaki istek sayısıdır.
@@ -510,7 +514,9 @@ Eylem türleri:
 - {"t":"kontrol"} kodu inceler ve düzeltir (onay ister).
 - {"t":"kaydet"} / {"t":"yayinla"} (onay ister).
 - {"t":"sablon","id":"<şablon kimliği>"} şablonu Stüdyo'ya alır (onay ister).
-- {"t":"panel","ad":"model|tasarim|beceriler|ara|ayarlar"} ilgili paneli açar.
+- {"t":"panel","ad":"model|tasarim|beceriler|ara|ayarlar|oturum"} ilgili paneli açar ("oturum": Stüdyo'daki ortam, bağlam, bağdaştırıcılar, çıktılar ve değişiklikler paneli).
+- {"t":"baglan","id":"<bağlantı kimliği>","alanlar":{"phone":"905551112233"}} uygulama bağlantısını açar ve ayarlar; {"t":"baglan","id":"whatsapp","kapat":true} kapatır (onay ister).
+- {"t":"hesap","ad":"github|google|hostinger"} hesap bağlantısını başlatır (onay ister).
 - {"t":"yeni"} yeni boş proje başlatır (onay ister).
 - {"t":"github","url":"<GitHub adresi>","devral":false} GitHub deposunu/dosya yolunu içe aktarır ve önizler; "devral":true ise bağımlılıkları kontrol edip projeyi Gitmapp'e alır ve yayınlar (onay ister). Kullanıcı bir GitHub adresi verirse bu eylemi kullan.
 Sadece sohbet ediyorsan eylem bloğu ekleme.`;
@@ -659,7 +665,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.25.0" }));
+route("GET", "/api/health", () => ({ ok: true, adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.26.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
