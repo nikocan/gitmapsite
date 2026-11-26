@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kutu Dükkân</title><meta name="description" content="Ürünleri kutunuza ekleyin, adetleri değiştirin ve teslim alma siparişi verin.">
+<!-- Gitmapp hazır şablonu · Copyright (c) 2026 Gitmapp · MIT
+2025 tasarım referansı: https://github.com/OlivierBelaud/nuxt-starter-medusa
+MIT License
+
+Copyright (c) 2022 Medusa
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<style>
+:root{--pr:#38522e;--bg:#f6f5f0;--tx:#20251f;--panel:white;font-family:system-ui,sans-serif;color:var(--tx);background:var(--bg)}
+*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1120px;margin:auto;padding:20px clamp(16px,4vw,48px)}
+header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #bdbeb6;font-weight:700}
+a{color:var(--pr);padding:10px 0}h1{font-size:clamp(38px,6vw,78px);line-height:1.02;letter-spacing:-.045em;margin:16px 0}h2{font-size:22px;margin:0 0 20px}
+.hero{padding:30px 0}.hero p{max-width:64ch;line-height:1.6}.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px}
+article,form,.history{background:var(--panel);padding:clamp(16px,3vw,32px);border:1px solid #c3c6bc;border-radius:14px;min-width:0}
+label{display:grid;gap:5px;font-weight:600;font-size:14px;margin:0 0 14px}
+input,select,textarea,button{font:inherit;min-height:44px;width:100%;min-width:0;border:1px solid #767a70;border-radius:6px;padding:9px;background:white;color:#20251f}
+textarea{resize:vertical}button{font-weight:650;background:var(--pr);color:white;border:0;cursor:pointer}
+:focus-visible{outline:3px solid #145ac5;outline-offset:3px}
+.history{margin-top:24px}.history ul{padding-left:22px}.history li{padding:8px 0;white-space:pre-line;overflow-wrap:anywhere}.history img{display:block;max-height:100px;max-width:100%;margin-top:6px}footer{font-size:13px}
+@media(max-width:680px){.grid{grid-template-columns:minmax(0,1fr)}header,main,footer{padding:15px}.hero{padding:16px 0}.grid{gap:16px}}
+fieldset{border:0;padding:0}legend{margin-bottom:18px}fieldset label{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid #c5cbb9}fieldset input{width:70px}.hero h1{font-family:Georgia,serif}</style></head>
+<body><header><strong>Kutu Dükkân</strong><a href="#task">Sipariş ver</a></header><main>
+<div class="hero"><h1>Kendi kutunu hazırla</h1><p>Ürünleri kutunuza ekleyin, adetleri değiştirin ve teslim alma siparişi verin.</p></div><div class="grid"><article><h2>Ürün rafı</h2><fieldset id="cart"><legend>Adet seçin</legend><label>Taş baskı defter · 145 ₺<input aria-label="Taş baskı defter adedi" type="number" value="0" min="0" max="20" data-price="145" data-name="Taş baskı defter"></label><label>Bez çanta · 220 ₺<input aria-label="Bez çanta adedi" type="number" value="0" min="0" max="20" data-price="220" data-name="Bez çanta"></label><label>Çini fincan · 320 ₺<input aria-label="Çini fincan adedi" type="number" value="0" min="0" max="20" data-price="320" data-name="Çini fincan"></label></fieldset></article>
+<form id="task"><h2>Sipariş ver</h2><label>Teslim alacak kişi<input name="client" type="text" required ></label><label>Kutunuz<textarea name="basket" readonly></textarea></label><button type="submit">Sipariş ver</button></form></div>
+<section class="history"><h2>Teslim alma siparişleri</h2><p id="empty">Henüz kayıt yok.</p><ul id="records"></ul><p role="status" id="status"></p></section>
+</main><footer>Bu cihazdaki örnek çalışma alanı</footer>
+<script>
+const form=document.querySelector("form"),list=document.querySelector("#records"),statusLine=document.querySelector("#status");
+const key="gitmapp-dukkan";let rows=[];
+try{rows=JSON.parse(localStorage.getItem(key)||"[]")}catch{}
+/* gitmapp-task-records */
+function render(){
+ list.replaceChildren();document.querySelector("#empty").hidden=rows.length>0;
+ for(const row of rows){
+  const item=document.createElement("li");item.textContent=row.text;
+  if(row.photo){const image=new Image();image.src=row.photo;image.alt="İş emri fotoğrafı";item.append(image)}
+  list.append(item);
+ }
+}
+const money=n=>new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY"}).format(n);
+const products=[...document.querySelectorAll("#cart input")];
+function basket(){let total=0;const lines=[];for(const el of products){if(!el.validity.valid){form.client.setCustomValidity("0–20 arasında tam adet seçin.");return}const n=Number(el.value);if(n){lines.push(el.dataset.name+" × "+n);total+=n*el.dataset.price}}form.basket.value=lines.length?lines.join(", ")+" · "+money(total):"";form.client.setCustomValidity(lines.length?"":"Sepete en az bir ürün ekleyin.")}
+products.forEach(el=>el.addEventListener("input",basket));basket();form.addEventListener("reset",()=>setTimeout(()=>{products.forEach(el=>el.value=0);basket()}));
+form.addEventListener("submit",async event=>{
+ event.preventDefault();const data=new FormData(form);
+ const entries=[...form.querySelectorAll("[name]")].filter(el=>el.type!=="file").map(el=>el.closest("label").firstChild.textContent.trim()+" · "+String(data.get(el.name)).trim());
+ const row={text:entries.join("\n")};const file=data.get("photo");
+ if(file?.size){
+  if(file.size>350000||!["image/png","image/jpeg","image/webp"].includes(file.type)){statusLine.textContent="350 KB altında PNG, JPEG veya WebP seçin.";return}
+  try{row.photo=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})}catch{statusLine.textContent="Fotoğraf okunamadı.";return}
+ }
+ rows.unshift(row);render();form.reset();
+ try{localStorage.setItem(key,JSON.stringify(rows));form.dispatchEvent(new Event("gitmapp-save"));statusLine.textContent="Kaydedildi."}
+ catch{statusLine.textContent="Bu önizlemede kayıt oluşturuldu. Cihaz depolaması kullanılamıyor."}
+});render();
+</script></body></html>

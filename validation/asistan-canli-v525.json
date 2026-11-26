@@ -1,0 +1,12 @@
+{
+  "tarih": "2026-11-26",
+  "main": "e69b12d545d2f4c02c9c2103dca1b5bad816a79e",
+  "yol": "POST https://api.gitmapp.com/api/ai/copilot",
+  "sonuc": "Canlı kabul testi engellendi",
+  "api_http": 400,
+  "saglayici_http": 404,
+  "model": "claude-sonnet-4.5",
+  "saglayici_mesaji": "Model not found",
+  "onceki_canli_kayit": "asistan-canli.json",
+  "bu_surumde_kontrollu_tarayıcı_testi": "asistan-tarayıcı.json"
+}

@@ -1,0 +1,88 @@
+[
+  [
+    {
+      "kimlik": "one",
+      "dal": "Proje taslağı",
+      "amac": "Mevsim menüsünü inceleyin, kişi sayısını ve saati seçerek masanızı ayırın.",
+      "ekranlar": [
+        "Avluda bu akşam",
+        "Mevsim menüsü",
+        "Masa ayır",
+        "Masa rezervasyonları"
+      ],
+      "bilesen": "Avluda bu akşam",
+      "secili": null,
+      "tema": "Sıcak Lezzet",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "Test yanıtı Proje taslağı"
+  ],
+  [
+    {
+      "kimlik": "two",
+      "dal": "Proje taslağı",
+      "amac": "Öğrenci ders programını görür, dersini seçer ve ödev yanıtını teslim eder.",
+      "ekranlar": [
+        "Öğrenci çalışma alanı",
+        "Ders programı",
+        "Ödevi teslim et",
+        "Teslim edilen ödevler"
+      ],
+      "bilesen": "Öğrenci çalışma alanı",
+      "secili": null,
+      "tema": "Neşeli Renkler",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "Test yanıtı Proje taslağı"
+  ],
+  [
+    {
+      "kimlik": "one",
+      "dal": "main",
+      "kaynak": "gitmapp",
+      "amac": "Mevsim menüsünü inceleyin, kişi sayısını ve saati seçerek masanızı ayırın.",
+      "ekranlar": [
+        "Avluda bu akşam",
+        "Mevsim menüsü",
+        "Masa ayır",
+        "Masa rezervasyonları"
+      ],
+      "bilesen": "Avluda bu akşam",
+      "secili": null,
+      "tema": "Sıcak Lezzet",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "Test yanıtı main"
+  ],
+  [
+    {
+      "kimlik": "one",
+      "dal": "ogrenci",
+      "kaynak": "gitmapp",
+      "amac": "Öğrenci ders programını görür, dersini seçer ve ödev yanıtını teslim eder.",
+      "ekranlar": [
+        "Öğrenci çalışma alanı",
+        "Ders programı",
+        "Ödevi teslim et",
+        "Teslim edilen ödevler"
+      ],
+      "bilesen": "Öğrenci çalışma alanı",
+      "secili": null,
+      "tema": "Sıcak Lezzet",
+      "cihaz": "phone",
+      "sonDegisiklikler": [],
+      "tasarim": [],
+      "sonDuzenleme": null
+    },
+    "Test yanıtı ogrenci"
+  ]
+]
