@@ -1,0 +1,183 @@
+[
+  {
+    "sayfa": "paketler",
+    "genişlik": 320,
+    "tablo": "Ek hizmetler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "rozet_kontrastı": 16.52,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "modeller",
+    "genişlik": 320,
+    "tablo": "İşe göre dil modeli seçimi",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "hesabim",
+    "genişlik": 320,
+    "tablo": "Kullanım geçmişi",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "maliyetler",
+    "genişlik": 320,
+    "tablo": "Model ve işlem kullanımı",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "ai-destek",
+    "genişlik": 320,
+    "tablo": "İşe göre model sınıfı",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "kullanicilar",
+    "genişlik": 320,
+    "tablo": "Hesaplar",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "yonetim-projeler",
+    "genişlik": 320,
+    "tablo": "Projeler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "siparisler",
+    "genişlik": 320,
+    "tablo": "Siparişler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 320
+  },
+  {
+    "sayfa": "paketler",
+    "genişlik": 390,
+    "tablo": "Ek hizmetler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "rozet_kontrastı": 16.52,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "modeller",
+    "genişlik": 390,
+    "tablo": "İşe göre dil modeli seçimi",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "hesabim",
+    "genişlik": 390,
+    "tablo": "Kullanım geçmişi",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "maliyetler",
+    "genişlik": 390,
+    "tablo": "Model ve işlem kullanımı",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "ai-destek",
+    "genişlik": 390,
+    "tablo": "İşe göre model sınıfı",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "kullanicilar",
+    "genişlik": 390,
+    "tablo": "Hesaplar",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "yonetim-projeler",
+    "genişlik": 390,
+    "tablo": "Projeler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "siparisler",
+    "genişlik": 390,
+    "tablo": "Siparişler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "klavyeyle_yatay_kaydırma": true,
+    "sayfa_genişliği": 390
+  },
+  {
+    "sayfa": "paketler",
+    "genişlik": 1440,
+    "tablo": "Ek hizmetler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "rozet_kontrastı": 16.52,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "modeller",
+    "genişlik": 1440,
+    "tablo": "İşe göre dil modeli seçimi",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "hesabim",
+    "genişlik": 1440,
+    "tablo": "Kullanım geçmişi",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "maliyetler",
+    "genişlik": 1440,
+    "tablo": "Model ve işlem kullanımı",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "ai-destek",
+    "genişlik": 1440,
+    "tablo": "İşe göre model sınıfı",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "kullanicilar",
+    "genişlik": 1440,
+    "tablo": "Hesaplar",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "yonetim-projeler",
+    "genişlik": 1440,
+    "tablo": "Projeler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  },
+  {
+    "sayfa": "siparisler",
+    "genişlik": 1440,
+    "tablo": "Siparişler",
+    "en_düşük_başlık_kontrastı": 16.55,
+    "sayfa_genişliği": 1440
+  }
+]

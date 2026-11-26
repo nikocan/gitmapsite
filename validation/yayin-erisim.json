@@ -1,0 +1,22 @@
+{
+  "başlangıç": {
+    "commit": "4b0808d",
+    "yazı": "#f5f5f7",
+    "zemin": "#e4ff3d",
+    "oran": 1.03,
+    "klavyeye_açık_hazır_soru": 0
+  },
+  "sonuçlar": [
+    {
+      "genislik": 390,
+      "sohbet_kontrasti": 15.97,
+      "sonuc": "Geçti"
+    },
+    {
+      "genislik": 1440,
+      "sohbet_kontrasti": 15.97,
+      "sonuc": "Geçti"
+    }
+  ],
+  "test": "Sahte hesap ve yanıtlarla Chromium: alan etiketleri, alan adı sonuçları, klavyeyle soru seçimi ve gönderim, zengin metin, kontrast, 44 px denetimler, taşma, Escape ve odak dönüşü."
+}

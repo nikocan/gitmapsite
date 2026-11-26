@@ -64,6 +64,23 @@ h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:22px 0 10px}.sub{color
 .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
 .step{display:flex;gap:12px;margin-bottom:14px}.step .n{width:28px;height:28px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-weight:700;flex-shrink:0}
 pre.cmd{background:#0e0e0d;border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;font-size:12px;color:#c9d6ff}
+
+/* A wide data table scrolls inside its own named region. */
+.data-table{min-width:0;max-width:100%}
+.cost-panel{overflow-wrap:anywhere}.cost-panel label{min-width:0;max-width:100%}
+@media(max-width:640px){.data-table-scroller :is(button,select,input){min-height:44px}}
+.data-table-scroller{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-gutter:auto}
+.data-table-scroller:focus-visible{outline:2px solid var(--txt);outline-offset:-2px}
+.data-table-scroller table{width:100%;border-collapse:collapse;line-height:1.5}
+.data-table-scroller .table-wide{min-width:38rem}
+.table-wide :is(th,td){min-width:6.5rem}.table-wide .table-number{min-width:auto}
+.data-table-scroller th,.data-table-scroller td{vertical-align:top;padding:10px 8px;overflow-wrap:anywhere;border-bottom:1px solid var(--line)}
+.data-table-scroller thead th{font-weight:650;color:var(--txt);background:var(--card)}
+.data-table-scroller tbody th{font-weight:500;color:inherit}
+.data-table-scroller .table-number{text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+.table-scroll-hint{margin:0 0 6px;color:var(--mut);font-size:12px}
+.table-project{padding:0;border:0;background:transparent;color:inherit;text-align:start;cursor:pointer;text-decoration:underline;font:inherit;font-weight:650}
+
 table{width:100%;border-collapse:collapse}td,th{padding:9px 8px;border-bottom:1px solid #242423;text-align:left;font-size:13px}th{color:var(--mut);font-weight:500}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#292928;border:1px solid var(--acc);padding:10px 16px;border-radius:10px;z-index:99}
 /* Sunum */
@@ -703,7 +720,7 @@ body{background:radial-gradient(1000px 560px at 90% -10%,rgba(91,140,255,.10),tr
 .gbox.hg{padding:1px!important}.gbox.hg::before{border-radius:32px}
 .blogo{display:grid;place-items:center;flex-shrink:0;background:color-mix(in srgb,var(--bc,#fff) 9%,#141416);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--bc,#fff) 22%,#26262a)}
 .blogo.txt{font-weight:800;letter-spacing:-.04em;color:#f4f4ef;background:#141416;box-shadow:inset 0 0 0 1px #2c2c30}
-.tierb{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:99px;color:var(--tc);background:color-mix(in srgb,var(--tc) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc) 30%,transparent)}
+.tierb{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:99px;color:color-mix(in srgb,var(--tc) 72%,white);background:color-mix(in srgb,var(--tc) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc) 30%,transparent)}
 .mp{text-align:left;width:min(860px,100%);max-height:92vh;display:flex;flex-direction:column;background:#111113;border:1px solid #26262a;border-radius:26px;box-shadow:0 40px 80px -30px #000;animation:dgin .25s;overflow:hidden}
 .mp-h{display:flex;gap:14px;align-items:flex-start;padding:22px 22px 12px}.mp-h h2{margin:0;font-size:22px;letter-spacing:-.4px}.mp-h p{margin:4px 0 0;color:var(--label2);font-size:13.5px;line-height:1.5}
 .mp-hi{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#c4b5fd;background:linear-gradient(135deg,rgba(91,140,255,.18),rgba(167,139,250,.18));box-shadow:inset 0 0 0 1px rgba(167,139,250,.3)}
@@ -1185,6 +1202,35 @@ dialog.ui-dialog{padding:0;border:0;background:transparent;color:var(--ink);widt
 .ui-dialog .runpanel{position:static;width:100%;background:#19191b!important;box-shadow:none;animation:none}
 .ui-dialog .dg,.ui-dialog .mp,.ui-dialog .st{width:100%;max-height:calc(100dvh - 24px)}
 .ui-dialog .publish-panel{margin:0;padding:clamp(12px,3vw,22px)}
+
+.ui-dialog :is(.mp,.dg,.st,.publish-panel){background-color:var(--card)!important}
+@media(prefers-reduced-motion:reduce){dialog.ui-dialog,dialog.ui-dialog::backdrop,.ui-dialog :is(.mp,.dg,.st,.publish-panel,.runpanel){animation:none!important;transition:none!important}}
+html:has(dialog.ui-dialog[open]){overflow:hidden}
+dialog.ui-dialog{overscroll-behavior:contain;scroll-padding-block:12px}
+.publish-columns{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);align-items:start;gap:14px}
+.publish-columns>*{min-width:0}.publish-columns>div>.box{min-width:0;overflow-wrap:anywhere}
+.publish-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;background:var(--card);padding:8px 0 12px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+dialog.ui-dialog:has(.publish-panel){scroll-padding-top:90px}
+.publish-header>div{min-width:0;overflow-wrap:anywhere}
+.publish-panel :is(.btn,.ib,.chip,.in){min-height:44px}.publish-panel .ib{min-width:44px}
+.publish-panel .in::placeholder{color:var(--label2);opacity:1}
+.publish-panel .in{border-color:#72726f}
+.publish-label{display:block;font-size:13px;font-weight:600;margin:8px 0 4px}
+.publish-label .in{display:block;width:100%;margin-top:4px}
+.publish-store-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(90px,120px);gap:8px}
+.publish-panel .publish-help{position:sticky;top:84px;margin:0}
+.publish-assistant{display:flex;flex-direction:column;gap:10px;min-width:0}
+.publish-assistant h3{margin:0;display:flex;align-items:center;gap:6px}
+.publish-transcript{display:flex;flex-direction:column;gap:8px;overflow:auto;overscroll-behavior:contain;min-height:120px;max-height:min(43dvh,420px);padding:2px}
+.publish-msg{max-width:94%;align-self:flex-start;border-radius:12px;background:#252523;color:#f5f5f7;padding:9px 12px;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.publish-msg.user{align-self:flex-end;background:var(--acc);color:#16180a;white-space:pre-wrap}
+.publish-speaker{display:block;font-size:12px;font-weight:700}
+.publish-msg p,.publish-msg ol,.publish-msg ul{margin:.3em 0}.publish-msg ol,.publish-msg ul{padding-inline-start:20px}
+.publish-prompts,.publish-actions{display:flex;flex-wrap:wrap;gap:6px}
+.publish-compose{display:flex;gap:6px}.publish-compose input{min-width:0;flex:1}
+.publish-domains{margin:12px 0 0}.publish-domains table{table-layout:fixed}.publish-domains caption{text-align:left;font-weight:600;padding-block:6px}
+.publish-domains th,.publish-domains td{text-align:left;overflow-wrap:anywhere;white-space:normal;vertical-align:top}.publish-domains small{font-weight:400;display:block}.publish-actions .btn{white-space:normal}
+@media(max-width:760px){.publish-columns{grid-template-columns:minmax(0,1fr)}.publish-panel .publish-help{position:static}.publish-store-fields{grid-template-columns:minmax(0,1fr)}}
 .publish-visibility{display:flex;align-items:center;gap:6px;margin-top:10px;color:var(--label2)}
 .st-profile-status{padding:8px 0;color:var(--txt)}
 .st-profile-status[role="alert"]{color:#fca5a5}
@@ -1609,6 +1655,53 @@ button.adp-mini{color:inherit;text-align:left}
 .ms-wait{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:12px;background:#232322;border:1px solid #33332f;font-size:13px}.ms-wait>span:nth-child(2){flex:1;min-width:200px}
 .ms-prog{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#a3a19a}.ms-bar{height:3px;border-radius:3px;background:#2c2c2a;overflow:hidden}.ms-bar i{display:block;width:30%;height:100%;background:linear-gradient(90deg,#4f8cff,#a78bfa,#f472b6,#fb923c);animation:bsind 1.6s ease-in-out infinite}
 .ms-res{animation:msIn .35s cubic-bezier(.2,.8,.2,1)}.ms-stage{border-radius:14px;overflow:hidden;background:#111;display:grid;place-items:center;max-height:52vh}.ms-stage img,.ms-stage video{max-width:100%;max-height:52vh;display:block}
+.ui-dialog .mp{overflow:auto;display:block;overscroll-behavior:contain}
+.mp .mp-body{overflow:visible}.mp .mp-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}
+.mp .mp-cr,.mp .mp-tier span,.mp .mp-tier em,.mp .mp-f,.mp .mp-fh b span{color:#b9b9c1}
+.model-find{margin:0 22px 8px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.model-find label{grid-column:1/-1;font-weight:600}.model-find input{min-width:0;min-height:44px}.model-find [role=status]{font-size:13px;color:var(--label2)}
+.model-guide{margin:0 22px 8px}.model-guide summary{cursor:pointer;line-height:1.4;padding:12px 0;color:var(--label2)}.model-guide .mp-tiers{padding:4px 0 8px}
+.mp-h strong{color:var(--ink);overflow-wrap:anywhere}.mp .mp-tabs button{min-height:44px}
+.tpl-find{width:100%;display:grid;grid-template-columns:minmax(0,32rem) auto;align-items:center;gap:5px 12px;justify-content:start}
+.tpl-find label{grid-column:1/-1;font-weight:600}.tpl-find .in{min-width:0;min-height:44px}.tpl-find [role=status]{font-size:13px;color:var(--label2)}
+.tp-filter .chip,.tp-filter .seg button,.tpc .chip,.tpc .getbtn{min-height:44px}.tp-filter .seg{flex-wrap:wrap}
+.tpc-img .tpc-ov{opacity:1;align-items:end;justify-items:start;padding:10px}
+.tpc-img .tpc-b{background:#171719;color:#fff;border:1px solid #a1a1aa;padding:5px 10px}
+.tp-stats span{color:var(--label2)}
+/* Studio resources are available beside the composer at both stages. */
+.studio-resources{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0;min-width:0}
+.studio-start .studio-resources{justify-content:center}
+.studio-resources button,.resource-tabs button,.resource-actions button,.resource-examples button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;line-height:1.25;color:var(--txt);background:var(--fill2);border:1px solid var(--sep);border-radius:11px;cursor:pointer}
+.studio-resources button:first-child,.resource-tabs button[aria-pressed=true]{color:#17190a;background:#e4ff3d;border-color:transparent}
+.studio-resources button{min-width:0;max-width:100%}.studio-resources .resource-model span{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;max-width:20ch}
+.ws-in .studio-resources button{padding-inline:9px}
+.resource-library{background:var(--bg);color:var(--txt);padding:clamp(16px,3vw,32px);border:1px solid var(--sep);border-radius:20px;text-align:left}
+.resource-library header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.resource-library h2,.resource-library h3,.resource-library p{margin:0}
+.resource-library header .ib{min-width:44px;min-height:44px;flex-shrink:0}
+.resource-library h2{font-size:clamp(22px,3vw,30px);line-height:1.14;letter-spacing:-.035em}
+.resource-library h3{font-size:17px;line-height:1.25}
+.resource-library p,.resource-library small{color:var(--label2);line-height:1.5}
+.resource-library>p{margin:12px 0;font-size:14px}
+.resource-tabs,.resource-actions{display:flex;gap:6px;flex-wrap:wrap}
+.resource-filters{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin:14px 0}
+.resource-filters label{display:grid;gap:5px;font-size:13px;color:var(--label2);min-width:0}
+.resource-filters .in{box-sizing:border-box;width:100%;min-width:0;min-height:44px}
+.resource-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+.resource-cards article,.resource-examples article{display:flex;flex-direction:column;min-width:0;background:var(--card);border:1px solid var(--sep);border-radius:14px;overflow:hidden}
+.resource-cards article>img{max-height:158px;object-position:top;border-bottom:1px solid var(--sep)}
+.resource-card-body,.resource-examples article{padding:14px}
+.resource-card-body{display:flex;flex:1;flex-direction:column;gap:6px}
+.resource-card-body small{font-size:12px}.resource-card-body p,.resource-examples p{font-size:13px}
+.resource-actions{margin-top:auto;padding-top:8px}
+.resource-actions button,.resource-examples button{color:var(--txt);background:var(--fill2)}
+.resource-actions button:first-child{background:transparent}.resource-actions button[disabled]{opacity:.65;cursor:wait}
+.resource-examples{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.resource-examples article{gap:8px}.resource-examples summary{cursor:pointer;padding:10px 0;min-height:44px}.resource-examples button{margin-top:auto;align-self:start}
+.resource-examples pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4;font-size:12px}.resource-empty{text-align:center;padding:24px}
+.resource-notice{border-inline-start:3px solid #7da78e;padding:7px 10px}
+@media(max-width:600px){.resource-filters{grid-template-columns:1fr}.studio-resources{gap:4px}.studio-resources button,.ws-in .studio-resources button{font-size:12px;padding-inline:7px}.studio-resources .resource-model span{max-width:14ch}.resource-cards{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -1622,8 +1715,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.30.0";
+const VERSION="5.31.0";
 const CHANGELOG=[
+ {v:"5.31.0",date:"2026-11-26",items:["Stüdyo’da istemin yanında şablonlara, tasarımlara ve model seçimine ulaşabilirsin. Yayın penceresi ve tablolarda okunabilirlik ve klavye kullanımı iyileştirildi."]},
  {v:"5.30.0",date:"2026-11-26",items:[
   "🛡️ Kod hatası kullanıcıya ulaşmadan onarılıyor: sunucu, modelin yazdığı JavaScript'i yayına vermeden önce derleyip denetliyor; “Unexpected identifier” gibi sözdizimi hatası varsa (çoğu zaman Türkçe kesme işaretli metin: Ankara'nda) aynı istek içinde, ek kredi düşmeden bir kez onarıyor. İşlem kartında “1 kod hatası otomatik onarıldı” yazıyor",
   "🧠 Model önerisi: hızlı/küçük bir model (ör. mistral-small) seçiliyken sıfırdan uygulama ya da büyük iş istenirse, işe başlamadan önce “Bu iş için daha güçlü bir model önerilir” kartı çıkıyor: güçlü modelle yap · seçili modelle devam et · hep otomatik seç",
@@ -2231,6 +2325,24 @@ function Discover({results,setResults,open,saved,toggleSave,secs,toast}){
  </div>`;
 }
 
+function DataTable({label,wide=false,children}){
+ const region=useRef(null);
+ const [overflow,setOverflow]=useState(false);
+ const hint=React.useId();
+ useEffect(()=>{
+  const el=region.current;
+  const measure=()=>setOverflow(el.scrollWidth>el.clientWidth+1);
+  measure();
+  const resize=new ResizeObserver(measure);
+  resize.observe(el);resize.observe(el.firstElementChild);
+  return ()=>resize.disconnect();
+ },[]);
+ return html`<div class="data-table">
+  ${overflow&&html`<p class="table-scroll-hint" id=${hint}>Diğer sütunlar için yana kaydırın veya sağ ve sol ok tuşlarını kullanın.</p>`}
+  <div ref=${region} class="data-table-scroller" role=${overflow?"region":undefined} aria-label=${overflow?label:undefined} aria-describedby=${overflow?hint:undefined} tabindex=${overflow?0:undefined}>
+   <table aria-label=${label} class=${wide?"table-wide":undefined}>${children}</table>
+  </div></div>`;
+}
 function Categories({results,saved,open}){
  const pool=[...results];Object.values(saved).forEach(s=>{if(!pool.find(r=>r.full_name===s.full_name))pool.push(s)});
  const groups={};pool.forEach(r=>{const c=categorize(r);(groups[c.id]=groups[c.id]||{...c,items:[]}).items.push(r)});
@@ -2239,7 +2351,7 @@ function Categories({results,saved,open}){
   ${!arr.length?html`<div class="empty">Önce Keşfet'ten arama yapın.</div>`:html`
   <div class="box">${arr.map(g=>html`<div style=${{display:"flex",alignItems:"center",gap:10,margin:"6px 0"}}><span style=${{width:190}}>${symbolIcon(g.ic)} ${g.name}</span><div style=${{flex:1,background:"#131312",borderRadius:6,height:14}}><div style=${{width:(g.items.length/max*100)+"%",height:"100%",borderRadius:6,background:"linear-gradient(90deg,#e4ff3d,#a3e635)"}}></div></div><b style=${{width:30,textAlign:"right"}}>${g.items.length}</b></div>`)}</div>
   ${arr.map(g=>html`<h2>${symbolIcon(g.ic)} ${g.name} <span style=${{color:"var(--mut)",fontWeight:400}}>· ${g.items.length}</span></h2>
-   <table><tbody>${g.items.slice(0,10).map(r=>html`<tr style=${{cursor:"pointer"}} onClick=${()=>open(r)}><td><b>${r.full_name}</b><div style=${{color:"var(--mut)",fontSize:12}}>${(r.description||"").slice(0,110)}</div></td><td>${r.language||"—"}</td><td><${Icon} n="star" s=${16}/> ${fmt(r.stargazers_count)}</td></tr>`)}</tbody></table>`)}`}
+   <${DataTable} label=${g.name+" projeleri"}><thead><tr><th scope="col">Proje</th><th scope="col">Dil</th><th class="table-number" scope="col">Yıldız</th></tr></thead><tbody>${g.items.slice(0,10).map(r=>html`<tr style=${{cursor:"pointer"}} onClick=${()=>open(r)}><td><button type="button" class="table-project" onClick=${e=>{e.stopPropagation();open(r)}}>${r.full_name}</button><div style=${{color:"var(--mut)",fontSize:12}}>${(r.description||"").slice(0,110)}</div></td><td>${r.language||"—"}</td><td class="table-number"><${Icon} n="star" s=${16}/> ${fmt(r.stargazers_count)}</td></tr>`)}</tbody><//>`)}`}
  </div>`;
 }
 
@@ -2249,8 +2361,8 @@ function SecurityTab({repo,sec,runSec,busy}){
  return html`<div>
   <div style=${{display:"flex",gap:16,alignItems:"center",marginBottom:12}}><div class=${"grade g"+sec.grade} style=${{fontSize:34,padding:"10px 20px"}}>${sec.grade}</div><div><b style=${{fontSize:20}}>${sec.score}/100</b><div style=${{color:"var(--mut)"}}>Test: ${new Date(sec.date).toLocaleString("tr-TR")}</div></div><button class="btn g s" style=${{marginLeft:"auto"}} disabled=${busy} onClick=${runSec}>Yeniden test et</button></div>
   ${sec.checks.map(c=>html`<div class="row"><span class=${"dot d-"+c.lvl}>${ic[c.lvl]}</span><div><b>${c.title}</b><div style=${{color:"var(--mut)"}}>${c.detail}</div></div></div>`)}
-  ${sec.vulns.length>0&&html`<h2>Zafiyetli bağımlılıklar</h2><table><thead><tr><th>Paket</th><th>Sürüm</th><th>Kayıtlar</th></tr></thead><tbody>${sec.vulns.map(v=>html`<tr><td>${v.pkg} <span class="tag">${v.eco}</span></td><td>${v.ver}</td><td>${v.ids.slice(0,4).map(id=>html`<a href=${"https://osv.dev/vulnerability/"+id} target="_blank" style=${{marginRight:6}}>${id}</a>`)}${v.ids.length>4?" +"+(v.ids.length-4):""}</td></tr>`)}</tbody></table>`}
-  ${sec.scorecard&&sec.scorecard.checks&&html`<h2>OpenSSF Scorecard detayları</h2><table><tbody>${sec.scorecard.checks.map(c=>html`<tr><td>${c.name}</td><td style=${{width:60}}><b>${c.score<0?"—":c.score}</b>/10</td><td style=${{color:"var(--mut)",fontSize:12}}>${c.reason}</td></tr>`)}</tbody></table>`}
+  ${sec.vulns.length>0&&html`<h2>Zafiyetli bağımlılıklar</h2><${DataTable} label="Zafiyetli bağımlılıklar"><thead><tr><th scope="col">Paket</th><th scope="col">Sürüm</th><th scope="col">Kayıtlar</th></tr></thead><tbody>${sec.vulns.map(v=>html`<tr><td>${v.pkg} <span class="tag">${v.eco}</span></td><td>${v.ver}</td><td>${v.ids.slice(0,4).map(id=>html`<a href=${"https://osv.dev/vulnerability/"+id} target="_blank" style=${{marginRight:6}}>${id}</a>`)}${v.ids.length>4?" +"+(v.ids.length-4):""}</td></tr>`)}</tbody><//>`}
+  ${sec.scorecard&&sec.scorecard.checks&&html`<h2>OpenSSF Scorecard detayları</h2><${DataTable} label="OpenSSF Scorecard sonuçları"><thead><tr><th scope="col">Denetim</th><th class="table-number" scope="col">Puan</th><th scope="col">Açıklama</th></tr></thead><tbody>${sec.scorecard.checks.map(c=>html`<tr><th scope="row">${c.name}</th><td class="table-number"><b>${c.score<0?"—":c.score}</b>/10</td><td style=${{color:"var(--mut)",fontSize:12}}>${c.reason}</td></tr>`)}</tbody><//>`}
   <p style=${{color:"var(--mut)",fontSize:12,marginTop:14}}>Not: Bu otomatik ön taramadır (statik kontroller + açık zafiyet veritabanları). Canlıya almadan önce kod incelemesi ve bağımlılık güncellemesi önerilir.</p>
  </div>`;
 }
@@ -2356,8 +2468,8 @@ function Compare({repos,secs,close}){
  const rows=[["İş kolu",r=>{const c=categorize(r);return c.ic+" "+c.name}],["Yıldız",r=>fmt(r.stargazers_count)],["Fork",r=>fmt(r.forks_count)],["Açık konu",r=>fmt(r.open_issues_count)],["Dil",r=>r.language||"—"],["Lisans",r=>!r.license?"Yok":r.license.spdx_id==="NOASSERTION"?"Özel / belirsiz":r.license.spdx_id],["Son güncelleme",r=>ago(r.pushed_at)],["Arşiv",r=>r.archived?"Evet":"Hayır"],["Güvenlik notu",r=>secs[r.full_name]?html`<span class=${"grade g"+secs[r.full_name].grade}>${secs[r.full_name].grade} · ${secs[r.full_name].score}</span>`:"Test edilmedi"],["Zafiyetli paket",r=>secs[r.full_name]?String(secs[r.full_name].vulns.length):"—"],["Yapı",r=>deployProfile(r,secs[r.full_name]&&secs[r.full_name].pkg).fw]];
  const best=[...repos].sort((a,b)=>((secs[b.full_name]||{}).score||0)-((secs[a.full_name]||{}).score||0)||b.stargazers_count-a.stargazers_count)[0];
  return html`<div class="box" style=${{overflowX:"auto"}}><div style=${{display:"flex",alignItems:"center",marginBottom:8}}><b>Karşılaştırma</b><span style=${{flex:1}}></span><button class="btn g s" onClick=${close}>Kapat</button></div>
-  <table><thead><tr><th></th>${repos.map(r=>html`<th style=${{color:"var(--txt)"}}>${r.full_name}${best===r?html` <span class="tag"><${Icon} n="star" s=${16}/> öneri</span>`:""}</th>`)}</tr></thead>
-  <tbody>${rows.map(([l,f])=>html`<tr><td style=${{color:"var(--mut)"}}>${l}</td>${repos.map(r=>html`<td>${f(r)}</td>`)}</tr>`)}</tbody></table>
+  <${DataTable} label="Depo karşılaştırması" wide=${true}><thead><tr><th scope="col">Ölçüt</th>${repos.map(r=>html`<th scope="col" style=${{color:"var(--txt)"}}>${r.full_name}${best===r?html` <span class="tag"><${Icon} n="star" s=${16}/> öneri</span>`:""}</th>`)}</tr></thead>
+  <tbody>${rows.map(([l,f])=>html`<tr><th scope="row">${l}</th>${repos.map(r=>html`<td class=${["Yıldız","Fork","Açık konu","Zafiyetli paket"].includes(l)?"table-number":undefined}>${f(r)}</td>`)}</tr>`)}</tbody><//>
   <p style=${{color:"var(--mut)",fontSize:12}}>Öneri: önce güvenlik puanı, eşitse yıldız sayısı esas alınır.</p></div>`;
 }
 function SavedView({saved,open,toggleSave,secs,present,runAll,busyAll,toast}){
@@ -2377,11 +2489,11 @@ function Builds({builds,setBuilds,open,saved}){
  const ST=["Bekliyor","Geliştiriliyor","Test","Canlıda"];
  const upd=(full,patch)=>setBuilds(builds.map(b=>b.full===full?{...b,...patch,updated:new Date().toISOString()}:b));
  return html`<div><h1>Yapım Kuyruğu</h1><p class="sub">"Bu projeyi yap" dediğiniz projelerin geliştirme ve canlıya alma takibi.</p>
-  ${!builds.length?html`<div class="empty">Kuyruk boş. Bir projenin "Bu projeyi yap" sekmesinden ekleyin.</div>`:html`<table><thead><tr><th>Proje</th><th>Yapı / Hedef</th><th>Durum</th><th>Canlı URL</th><th></th></tr></thead><tbody>
+  ${!builds.length?html`<div class="empty">Kuyruk boş. Bir projenin "Bu projeyi yap" sekmesinden ekleyin.</div>`:html`<${DataTable} label="Yapım kuyruğu" wide=${true}><thead><tr><th scope="col">Proje</th><th scope="col">Yapı / Hedef</th><th scope="col">Durum</th><th scope="col">Canlı URL</th><th scope="col">İşlem</th></tr></thead><tbody>
   ${builds.map(b=>html`<tr><td><b>${b.full}</b><div style=${{color:"var(--mut)",fontSize:12}}>${b.notes||"Ek geliştirme notu yok"}</div><div style=${{color:"var(--mut)",fontSize:11}}>Eklendi: ${new Date(b.created).toLocaleDateString("tr-TR")}</div></td><td>${b.fw}<div style=${{color:"var(--mut)",fontSize:12}}>${b.target}</div></td>
-   <td><select class="in" value=${b.status} onChange=${e=>upd(b.full,{status:e.target.value})}>${ST.map(s=>html`<option>${s}</option>`)}</select></td>
-   <td>${b.live?html`<a href=${b.live} target="_blank">${b.live.replace(/^https?:\/\//,"")}</a>`:html`<input class="in" style=${{width:170}} placeholder="https://…" onKeyDown=${e=>{if(e.key==="Enter")upd(b.full,{live:e.target.value,status:"Canlıda"})}}/>`}</td>
-   <td><button class="btn g s" onClick=${()=>setBuilds(builds.filter(x=>x.full!==b.full))}>Sil</button></td></tr>`)}</tbody></table>`}</div>`;
+   <td><select class="in" aria-label=${b.full+" durumu"} value=${b.status} onChange=${e=>upd(b.full,{status:e.target.value})}>${ST.map(s=>html`<option>${s}</option>`)}</select></td>
+   <td>${b.live?html`<a href=${b.live} target="_blank">${b.live.replace(/^https?:\/\//,"")}</a>`:html`<input class="in" style=${{width:170}} aria-label=${b.full+" canlı adresi"} placeholder="https://…" onKeyDown=${e=>{if(e.key==="Enter")upd(b.full,{live:e.target.value,status:"Canlıda"})}}/>`}</td>
+   <td><button class="btn g s" onClick=${()=>setBuilds(builds.filter(x=>x.full!==b.full))}>Sil</button></td></tr>`)}</tbody><//>`}</div>`;
 }
 function Settings({toast}){
  const [t,setT]=useState(LS.get("token",""));
@@ -2531,18 +2643,18 @@ function Packages({goWizard}){
  const rows=[["site","Tek sayfa / kurumsal site, portfolyo, blog",["Hazır tasarım + markanıza uyarlama","Alan adı bağlama + SSL","Mobil uyumlu","İletişim formu, harita, WhatsApp butonu"]],["is","Randevu, CRM, stok, fatura, restoran gibi iş uygulamaları",["Hızlı Site paketindeki her şey","Kullanıcı girişi ve yönetim paneli","Türkçeleştirme ve logo/renk","Veritabanı kurulumu ve yedekleme","Güvenlik testi + bağımlılık güncellemesi"]],["platform","E-ticaret, eğitim platformu, SaaS, çok kullanıcılı sistemler",["İş Uygulaması paketindeki her şey","Ödeme altyapısı (PayTR / iyzico)","Özel geliştirmeler (2 hafta dahil)","Performans ve ölçeklendirme ayarları"]]];
  return html`<div><h1>Paketler ve Fiyatlar</h1><p class="sub">Tek seferlik kurulum ücreti + isteğe bağlı aylık hizmetler. Fiyatlara KDV dahil değildir.</p>
   <div class="grid">${rows.map(([k,d,f],i)=>html`<div class="box" style=${{display:"flex",flexDirection:"column",gap:8,margin:0,borderColor:i===1?"var(--acc)":"var(--line)"}}>
-   ${i===1?html`<span class="tag" style=${{alignSelf:"flex-start",background:"var(--acc)",color:"#fff",border:0}}>En çok tercih edilen</span>`:""}
+   ${i===1?html`<span class="tag" style=${{alignSelf:"flex-start",background:"var(--acc)",color:"#131313",border:0}}>En çok tercih edilen</span>`:""}
    <div style=${{fontSize:28}}>${symbolIcon(TIERS[k].ic,26)}</div><b style=${{fontSize:18}}>${TIERS[k].name}</b><span style=${{color:"var(--mut)"}}>${d}</span>
    <div><span style=${{fontSize:28,fontWeight:800}}>${tl(P[k])}</span><span style=${{color:"var(--mut)"}}> tek sefer</span></div><span style=${{color:"var(--mut)",fontSize:12}}>Teslim: ${TIERS[k].gun}</span>
    <ul style=${{paddingLeft:18,lineHeight:1.8,margin:"6px 0",flex:1}}>${f.map(x=>html`<li>${x}</li>`)}</ul>
    <button class=${"btn"+(i===1?"":" g")} onClick=${()=>goWizard(null,k)}>Bu paketle başla</button></div>`)}</div>
   <h2>Ek hizmetler</h2>
-  <table><tbody>
-   <tr><td><${Icon} n="phone" s=${16}/> <b>Mobil uygulama</b> (Android + iOS paketleme ve mağaza başvurusu)</td><td><b>${tl(P.mobil)}</b> tek sefer</td></tr>
-   <tr><td><${Icon} n="wrench" s=${16}/> <b>Bakım ve güncelleme</b> (güvenlik yamaları, yedek, küçük değişiklikler)</td><td><b>${tl(P.bakim)}</b> / ay</td></tr>
-   <tr><td><${Icon} n="globe" s=${16}/> <b>Barındırma</b> (Hostinger sunucusu, biz yönetiriz)</td><td><b>${tl(P.hosting)}</b> / ay</td></tr>
-   <tr><td><${Icon} n="bot" s=${16}/> <b>Yapay zekâ eklentisi</b> (her eklenti, temel kullanım dahil)</td><td><b>${tl(P.ai)}</b> / ay'dan</td></tr>
-  </tbody></table>
+  <${DataTable} label="Ek hizmetler"><thead><tr><th scope="col">Hizmet</th><th class="table-number" scope="col">Ücret</th></tr></thead><tbody>
+   <tr><th scope="row"><${Icon} n="phone" s=${16}/> <b>Mobil uygulama</b> (Android + iOS paketleme ve mağaza başvurusu)</th><td class="table-number"><b>${tl(P.mobil)}</b> tek sefer</td></tr>
+   <tr><th scope="row"><${Icon} n="wrench" s=${16}/> <b>Bakım ve güncelleme</b> (güvenlik yamaları, yedek, küçük değişiklikler)</th><td class="table-number"><b>${tl(P.bakim)}</b> / ay</td></tr>
+   <tr><th scope="row"><${Icon} n="globe" s=${16}/> <b>Barındırma</b> (Hostinger sunucusu, biz yönetiriz)</th><td class="table-number"><b>${tl(P.hosting)}</b> / ay</td></tr>
+   <tr><th scope="row"><${Icon} n="bot" s=${16}/> <b>Yapay zekâ eklentisi</b> (her eklenti, temel kullanım dahil)</th><td class="table-number"><b>${tl(P.ai)}</b> / ay'dan</td></tr>
+  </tbody><//>
   <div class="box" style=${{marginTop:14,fontSize:13,color:"var(--mut)",lineHeight:1.7}}><b style=${{color:"var(--txt)"}}>Mağaza ücretleri hakkında:</b> Apple Developer Program yıllık 99 $, Google Play tek seferlik 25 $'dır ve hesaplar <b>sizin adınıza</b> açılır (Apple kuralı 4.2.6 gereği şablon tabanlı uygulamalar içerik sahibinin kendi hesabından gönderilmelidir). Uygulamanızı mağazada ücretli satarsanız ilk 1 milyon $ gelirde mağaza komisyonu genellikle %15'tir.</div>
  </div>`;
 }
@@ -2551,12 +2663,12 @@ function AiGuide(){
  return html`<div><h1>Yapay Zekâ Destekleri</h1><p class="sub">Uygulamanıza eklenebilecek yapay zekâ özellikleri ve hangi işte hangi modelin kullanılacağı.</p>
   <div class="grid">${AI_ADDONS.map(a=>html`<div class="box" style=${{margin:0}}><div style=${{fontSize:26}}>${symbolIcon(a.ic,26)}</div><b>${a.name}</b><p style=${{color:"var(--mut)",fontSize:13,lineHeight:1.5}}>${a.desc}</p><b>${tl(getPrices().ai*a.mult)}</b><span style=${{color:"var(--mut)"}}> / ay'dan</span></div>`)}</div>
   <h2>Hangi işe hangi model?</h2>
-  <table><thead><tr><th>İş</th><th>Model sınıfı</th><th>Neden</th></tr></thead><tbody>
+  <${DataTable} label="İşe göre model sınıfı"><thead><tr><th scope="col">İş</th><th scope="col">Model sınıfı</th><th scope="col">Neden</th></tr></thead><tbody>
    <tr><td>SSS yanıtlama, sınıflandırma, kısa metin</td><td>Küçük/hızlı modeller (Claude Haiku, GPT mini sınıfı, Gemini Flash)</td><td>En ucuz ve en hızlı; günlük binlerce mesajda maliyet düşük kalır</td></tr>
    <tr><td>Ürün açıklaması, blog, e-posta</td><td>Orta sınıf (Claude Sonnet, GPT standart)</td><td>Türkçe yazım kalitesi ve marka tonu için dengeli</td></tr>
    <tr><td>Belge okuma, uzun rapor, karmaşık analiz</td><td>Güçlü modeller (Claude Opus sınıfı)</td><td>Az ama kritik işlerde doğruluk öncelikli</td></tr>
    <tr><td>Görsel üretimi</td><td>Görsel modelleri</td><td>Kampanya ve ürün görselleri</td></tr>
-  </tbody></table>
+  </tbody><//>
   <div class="box" style=${{marginTop:14,lineHeight:1.7}}><b>Altyapı önerisi: Hostinger AI Router</b><br/>Tek API anahtarıyla Anthropic, OpenAI ve diğer sağlayıcıların modellerine erişim, kredi bazlı ödeme ve model kapalıysa otomatik yedek modele geçiş. OpenAI ve Anthropic API formatlarını desteklediği için uygulamada sadece adres değişir. Böylece hosting, alan adı ve yapay zekâ tek faturada toplanır.</div>
   <div class="box" style=${{lineHeight:1.7}}><b>Maliyet kontrolü</b><ul style=${{margin:"6px 0",paddingLeft:18}}><li>Her müşteriye aylık kullanım limiti ve limit aşımında uyarı</li><li>Sık tekrar eden istemlerde önbellek (cache) kullanımı</li><li>Basit işi küçük modele, zor işi büyük modele yönlendirme</li></ul>
   <b>KVKK ve mağaza kuralları</b><ul style=${{margin:"6px 0",paddingLeft:18}}><li>Kullanıcı verisinin yapay zekâ sağlayıcısına gönderildiği gizlilik politikasında açıkça yazılmalı</li><li>Mobil uygulamalarda üçüncü taraf yapay zekâya veri paylaşımı kullanıcıya bildirilmeli; aksi hâlde mağaza reddi riski var</li></ul></div>
@@ -2620,14 +2732,14 @@ function Wizard({pick,setPick,orders,setOrders,toast,go,uid}){
      <label>Telefon<input class="in" style=${{width:"100%",margin:"4px 0 10px"}} value=${f.phone} onInput=${e=>u("phone",e.target.value)} placeholder="05xx xxx xx xx"/></label>
      <label>E-posta<input class="in" style=${{width:"100%",margin:"4px 0 10px"}} value=${f.email} onInput=${e=>u("email",e.target.value)}/></label>
      <p style=${{color:"var(--mut)",fontSize:12}}>* Telefon veya e-postadan en az biri gerekli. Bilgileriniz sadece teklif için kullanılır.</p></div>
-    <div><h2 style=${{marginTop:0}}>Teklif özeti</h2><table><tbody>
-     <tr><td>${symbolIcon(TIERS[f.tier].ic)} ${TIERS[f.tier].name}${repo?" — "+repo.name:""}</td><td>${tl(P[f.tier])}</td></tr>
-     ${f.mobile!=="yok"&&html`<tr><td><${Icon} n="phone" s=${16}/> Mobil (${f.mobile==="ikisi"?"Android + iOS":"Android"})</td><td>${tl(P.mobil)}</td></tr>`}
-     <tr><td><b>Tek seferlik toplam</b></td><td><b>${tl(total)}</b></td></tr>
-     ${f.hosting==="biz"&&html`<tr><td><${Icon} n="globe" s=${16}/> Barındırma</td><td>${tl(P.hosting)}/ay</td></tr>`}
-     ${f.bakim&&html`<tr><td><${Icon} n="wrench" s=${16}/> Bakım</td><td>${tl(P.bakim)}/ay</td></tr>`}
-     ${f.ai.map(id=>{const a=AI_ADDONS.find(x=>x.id===id);return html`<tr><td>${symbolIcon(a.ic)} ${a.name}</td><td>${tl(P.ai*a.mult)}/ay</td></tr>`})}
-     <tr><td><b>Aylık toplam</b></td><td><b>${tl(monthly)}</b></td></tr></tbody></table>
+    <div><h2 style=${{marginTop:0}}>Teklif özeti</h2><${DataTable} label="Teklif özeti"><tbody>
+     <tr><th scope="row">${symbolIcon(TIERS[f.tier].ic)} ${TIERS[f.tier].name}${repo?" — "+repo.name:""}</th><td class="table-number">${tl(P[f.tier])}</td></tr>
+     ${f.mobile!=="yok"&&html`<tr><th scope="row"><${Icon} n="phone" s=${16}/> Mobil (${f.mobile==="ikisi"?"Android + iOS":"Android"})</th><td class="table-number">${tl(P.mobil)}</td></tr>`}
+     <tr><th scope="row"><b>Tek seferlik toplam</b></th><td class="table-number"><b>${tl(total)}</b></td></tr>
+     ${f.hosting==="biz"&&html`<tr><th scope="row"><${Icon} n="globe" s=${16}/> Barındırma</th><td class="table-number">${tl(P.hosting)}/ay</td></tr>`}
+     ${f.bakim&&html`<tr><th scope="row"><${Icon} n="wrench" s=${16}/> Bakım</th><td class="table-number">${tl(P.bakim)}/ay</td></tr>`}
+     ${f.ai.map(id=>{const a=AI_ADDONS.find(x=>x.id===id);return html`<tr><th scope="row">${symbolIcon(a.ic)} ${a.name}</th><td class="table-number">${tl(P.ai*a.mult)}/ay</td></tr>`})}
+     <tr><th scope="row"><b>Aylık toplam</b></th><td class="table-number"><b>${tl(monthly)}</b></td></tr></tbody><//>
      <p style=${{color:"var(--mut)",fontSize:12,lineHeight:1.6}}>Fiyatlara KDV, alan adı ve mağaza hesap ücretleri dahil değildir. Kesin teklif, ihtiyaç görüşmesinden sonra gönderilir.</p></div></div>`}
   <div style=${{display:"flex",gap:8,marginTop:18}}>${step>0&&html`<button class="btn g" onClick=${()=>setStep(step-1)}>← Geri</button>`}<span style=${{flex:1}}></span>
    ${step<5?html`<button class="btn" disabled=${!can[step]()} onClick=${()=>setStep(step+1)}>Devam →</button>`:html`<button class="btn" disabled=${!can[5]()||sending} onClick=${submit}>${sending?"Gönderiliyor…":iconLabel("📨 Teklif talebini gönder")}</button>`}</div>
@@ -2706,7 +2818,7 @@ function AdminCosts({toast}){
  <div class="adm-stats">${[["Hesaplanabilen gider",tl(data.total)],["Aylık bütçe",tl(settings.budget)],["Kullanılan Gitmapp kredisi",number(data.credits)],["Son bildirilen Hostinger bakiyesi",number(settings.balance)]].map(([label,value])=>html`<div class="box" key=${label}><span>${label}</span><strong>${value}</strong></div>`)}</div>
  ${suggestions.length>0&&html`<div class="box"><h3>Öneriler</h3><ul>${suggestions.map(v=>html`<li key=${v}>${v}</li>`)}</ul></div>`}
  <div class="box"><h3>Model ve işlem kullanımı</h3><p>TL tahminleri çağrı anındaki tarifeyle hesaplanır. Kullanıcı anahtarıyla yapılan çağrıların ücreti kullanıcıya aittir. Ayrıntılı takip bu sürümle başlar.</p>
- ${rows.length?html`<div class="adm-table"><table><thead><tr>${["Sağlayıcı","Model","İşlem","Çağrı","Bildirilen token","Hesaplanan gider"].map(x=>html`<th>${x}</th>`)}</tr></thead><tbody>${rows.map(r=>html`<tr><td>${r.provider==="gitmapp"?"Hostinger":r.provider+" · kullanıcı anahtarı"}</td><td>${r.model}</td><td>${r.kind}</td><td>${r.calls}</td><td>${number(r.tokens)}</td><td>${tl(r.cost)}</td></tr>`)}</tbody></table></div>`:html`<p>Bu ay için model çağrısı kaydedilmedi.</p>`}</div>
+ ${rows.length?html`<${DataTable} label="Model ve işlem kullanımı" wide=${true}><thead><tr>${["Sağlayıcı","Model","İşlem","Çağrı","Bildirilen token","Hesaplanan gider"].map((x,i)=>html`<th scope="col" class=${i>=3?"table-number":undefined}>${x}</th>`)}</tr></thead><tbody>${rows.map(r=>html`<tr><td>${r.provider==="gitmapp"?"Hostinger":r.provider+" · kullanıcı anahtarı"}</td><td>${r.model}</td><td>${r.kind}</td><td class="table-number">${r.calls}</td><td class="table-number">${number(r.tokens)}</td><td class="table-number">${tl(r.cost)}</td></tr>`)}</tbody><//>`:html`<p>Bu ay için model çağrısı kaydedilmedi.</p>`}</div>
  <div class="box"><h3>Entegrasyon giderleri</h3><p>Dönemin toplam miktarını ve TL birim ücretini girin. Aynı ay ve adla kaydetmek mevcut tutarı günceller. Model tablosuna dahil olan giderleri tekrar girmeyin.</p>
  ${integrations.map(r=>html`<p>${r.name} · ${number(r.quantity)} × ${tl(r.unit)} = <b>${tl(r.cost)}</b></p>`)}
  <form onSubmit=${e=>save(e,"integration")}>${field("name","Entegrasyon adı","",true,"text")}${field("quantity","Miktar")}${field("unit","Birim ücret (TL)")}${submit}</form></div>
@@ -2734,8 +2846,8 @@ function AdminDirectory({kind,status,onStatus,toast}){
  ${!users&&html`<label>Proje durumu <select class="in" value=${status} onChange=${e=>{onStatus(e.target.value);setPage(1)}}><option value="">Tümü</option><option value="draft">Taslak</option><option value="published">Yayında</option></select></label>`}
  ${error&&html`<p role="alert">${error}</p>`}
  ${credit&&html`<${CreditAdmin} key=${credit} selected=${credit} toast=${toast} done=${()=>{setCredit(null);request.refresh()}} close=${()=>setCredit(null)}/>`}
- ${request.data?html`${request.data.rows.length?html`<div class="adm-table"><table><thead><tr>${(users?["Hesap","Rol","Kredi",""]:["Proje","Sahip","Durum","Son düzenleme","Mağaza"]).map((s,i)=>html`<th key=${i}>${s}</th>`)}</tr></thead><tbody>
- ${request.data.rows.map(r=>html`<tr key=${r.id}>${users?html`<td><b>${r.name||r.email}</b><small>${r.email}</small></td><td>${r.admin?"Yönetici":"Kullanıcı"}</td><td>${r.credits??0}</td><td><button class="btn g s" onClick=${()=>setCredit(r.email)}>Kredi yükle</button></td>`:html`<td>${r.url?html`<a href=${r.url} target="_blank" rel="noopener noreferrer">${r.title} ↗</a>`:r.title}</td><td>${r.owner}</td><td>${r.status==="published"?"Yayında":"Taslak"}${r.listed?" · Mağazada":""}</td><td>${r.updated?.slice(0,10)}</td><td>${r.status==="published"?html`<button class="btn g s" disabled=${saving} onClick=${()=>visibility(r)}>${r.listed?"Mağazadan gizle":"Mağazada göster"}</button>`:"—"}</td>`}</tr>`)}</tbody></table></div>`:html`<p class="empty">Kayıt bulunamadı.</p>`}<${AdminPager} page=${page} total=${request.data.total} go=${setPage}/>`:html`<${LoadState} request=${request}/>`}</section>`;
+ ${request.data?html`${request.data.rows.length?html`<${DataTable} label=${users?"Hesaplar":"Projeler"} wide=${true}><thead><tr>${(users?["Hesap","Rol","Kredi","İşlem"]:["Proje","Sahip","Durum","Son düzenleme","Mağaza"]).map((s,i)=>html`<th class=${users&&i===2?"table-number":undefined} scope="col" key=${i}>${s}</th>`)}</tr></thead><tbody>
+ ${request.data.rows.map(r=>html`<tr key=${r.id}>${users?html`<td><b>${r.name||r.email}</b><small>${r.email}</small></td><td>${r.admin?"Yönetici":"Kullanıcı"}</td><td class="table-number">${r.credits??0}</td><td><button class="btn g s" onClick=${()=>setCredit(r.email)}>Kredi yükle</button></td>`:html`<td>${r.url?html`<a href=${r.url} target="_blank" rel="noopener noreferrer">${r.title} ↗</a>`:r.title}</td><td>${r.owner}</td><td>${r.status==="published"?"Yayında":"Taslak"}${r.listed?" · Mağazada":""}</td><td>${r.updated?.slice(0,10)}</td><td>${r.status==="published"?html`<button class="btn g s" disabled=${saving} onClick=${()=>visibility(r)}>${r.listed?"Mağazadan gizle":"Mağazada göster"}</button>`:"—"}</td>`}</tr>`)}</tbody><//>`:html`<p class="empty">Kayıt bulunamadı.</p>`}<${AdminPager} page=${page} total=${request.data.total} go=${setPage}/>`:html`<${LoadState} request=${request}/>`}</section>`;
 }
 function AdminOrders({toast,onChange}){
  const [open,setOpen]=useState(null),[live,setLive]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -2765,14 +2877,14 @@ Bitince canlı URL'yi ver ve sipariş durumunu güncelle.`;try{await navigator.c
   ${!request.data?html`<${LoadState} request=${request}/>`:html`
   <div class="stat">${[[stats.total,"Toplam talep"],[stats.pending,"Yeni talep"],[tl(stats.revenue),"Tahsil edilen kurulum"],[tl(stats.monthly),"Aylık tekrarlayan gelir"]].map(([v,n])=>html`<div class="st" key=${n}><b>${v}</b><span>${n}</span></div>`)}</div>
   ${error&&html`<p role="alert">${error}</p>`}${!orders.length?html`<p class="empty">Sipariş bulunamadı.</p>`:
-  html`<div class="adm-table"><table><thead><tr><th>Sipariş</th><th>Müşteri</th><th>Paket</th><th>Tutar</th><th>Durum</th><th></th></tr></thead><tbody>${orders.map(o=>html`<tr key=${o.id}>
+  html`<${DataTable} label="Siparişler" wide=${true}><thead><tr><th scope="col">Sipariş</th><th scope="col">Müşteri</th><th scope="col">Paket</th><th class="table-number" scope="col">Tutar</th><th scope="col">Durum</th><th scope="col">İşlemler</th></tr></thead><tbody>${orders.map(o=>html`<tr key=${o.id}>
    <td><b>${o.brand}</b><div style=${{color:"var(--mut)",fontSize:11}}>${o.id} · ${new Date(o.created).toLocaleDateString("tr-TR")}</div></td>
    <td>${o.name}<div style=${{color:"var(--mut)",fontSize:11}}>${o.phone} ${o.email}</div></td>
    <td>${(TIERS[o.tier]?.name||"Belirtilmedi")}${o.mobile&&o.mobile!=="yok"?" + 📱":""}${o.ai.length?" · "+o.ai.length+" AI":""}</td>
-   <td>${tl(o.total)}<div style=${{color:"var(--mut)",fontSize:11}}>${tl(o.monthly)}/ay</div></td>
+   <td class="table-number">${tl(o.total)}<div style=${{color:"var(--mut)",fontSize:11}}>${tl(o.monthly)}/ay</div></td>
    <td><select class="in" aria-label=${o.id+" durumu"} disabled=${busy} value=${o.status} onChange=${e=>change(o.id,{status:e.target.value})}>${[...ORDER_ST,"İptal"].map(s=>html`<option>${s}</option>`)}</select></td>
    <td style=${{whiteSpace:"nowrap"}}><button class="btn g s" onClick=${()=>{setOpen(open===o.id?null:o.id);setLive(o.live||"");setError("")}}>Detay</button> <button class="btn s" onClick=${()=>cmd(o)}>Claude komutu</button></td></tr>
-   ${open===o.id&&html`<tr><td colspan="6"><pre class="cmd">${orderText(o)}</pre><div style=${{display:"flex",gap:8,alignItems:"center"}}>Canlı URL: <input class="in" style=${{flex:1}} aria-label="Canlı URL" value=${live} onInput=${e=>setLive(e.target.value)} placeholder="https://…"/><button class="btn s" disabled=${busy||live===(o.live||"")} onClick=${()=>change(o.id,{live})}>Adresi kaydet</button>${o.phone&&html`<a class="btn g s" target="_blank" href=${"https://wa.me/"+(o.phone.replace(/\D/g,"").replace(/^0/,"90"))}>WhatsApp'tan yaz ↗</a>`}<button class="btn g s" disabled=${busy} onClick=${()=>{if(confirm(o.id+" numaralı sipariş silinsin mi?"))change(o.id,null)}}>Sil</button></div></td></tr>`}`)}</tbody></table></div>`}<${AdminPager} page=${page} total=${request.data.total} go=${setPage}/>`}</div>`;
+   ${open===o.id&&html`<tr><td colspan="6"><pre class="cmd">${orderText(o)}</pre><div style=${{display:"flex",gap:8,alignItems:"center"}}>Canlı URL: <input class="in" style=${{flex:1}} aria-label="Canlı URL" value=${live} onInput=${e=>setLive(e.target.value)} placeholder="https://…"/><button class="btn s" disabled=${busy||live===(o.live||"")} onClick=${()=>change(o.id,{live})}>Adresi kaydet</button>${o.phone&&html`<a class="btn g s" target="_blank" href=${"https://wa.me/"+(o.phone.replace(/\D/g,"").replace(/^0/,"90"))}>WhatsApp'tan yaz ↗</a>`}<button class="btn g s" disabled=${busy} onClick=${()=>{if(confirm(o.id+" numaralı sipariş silinsin mi?"))change(o.id,null)}}>Sil</button></div></td></tr>`}`)}</tbody><//>`}<${AdminPager} page=${page} total=${request.data.total} go=${setPage}/>`}</div>`;
 }
 
 const SOURCES=[
@@ -2797,7 +2909,7 @@ function Strategy(){
   <div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14}}>
    <div class="box" style=${{margin:0}}><b>Satış adetleri</b>${N("site","⚡ Hızlı Site satışı")}${N("is","💼 İş Uygulaması satışı")}${N("platform","🏗️ Gelişmiş Platform satışı")}${N("mobil","📱 Mobil paket satışı")}${N("bakim","🛠️ Aktif bakım abonesi")}${N("hosting","🌐 Bizde barındırılan site")}${N("ai","🤖 Aktif AI eklentisi")}${N("ref","🔗 Hostinger referans satışı")}${N("refAvg","   Ortalama referans komisyonu","₺")}</div>
    <div class="box" style=${{margin:0}}><b>Maliyetler</b>${N("payFee","Ödeme komisyonu (PayTR)","%")}${N("aiCost","AI eklentisi model maliyeti","%")}${N("hostCost","Site başı hosting maliyeti","₺")}${N("devCost","Sabit gider (yazılımcı, reklam vb.)","₺")}
-    <table style=${{marginTop:10}}><tbody><tr><td>Kurulum gelirleri</td><td>${tl(setup)}</td></tr><tr><td>Tekrarlayan gelir</td><td>${tl(recur)}</td></tr><tr><td>Hostinger komisyonu</td><td>${tl(ref)}</td></tr><tr><td><b>Brüt</b></td><td><b>${tl(gross)}</b></td></tr><tr><td>Maliyetler</td><td>−${tl(cost)}</td></tr><tr><td><b style=${{color:"var(--ok)"}}>Net (vergi öncesi)</b></td><td><b style=${{color:"var(--ok)",fontSize:18}}>${tl(net)}</b></td></tr><tr><td>Yıllık tekrarlayan gelir</td><td>${tl(recur*12)}</td></tr></tbody></table></div></div>
+    <${DataTable} label="Gelir ve maliyet özeti"><tbody><tr><th scope="row">Kurulum gelirleri</th><td class="table-number">${tl(setup)}</td></tr><tr><th scope="row">Tekrarlayan gelir</th><td class="table-number">${tl(recur)}</td></tr><tr><th scope="row">Hostinger komisyonu</th><td class="table-number">${tl(ref)}</td></tr><tr><th scope="row"><b>Brüt</b></th><td class="table-number"><b>${tl(gross)}</b></td></tr><tr><th scope="row">Maliyetler</th><td class="table-number">−${tl(cost)}</td></tr><tr><th scope="row"><b style=${{color:"var(--ok)"}}>Net (vergi öncesi)</b></th><td class="table-number"><b style=${{color:"var(--ok)",fontSize:18}}>${tl(net)}</b></td></tr><tr><th scope="row">Yıllık tekrarlayan gelir</th><td class="table-number">${tl(recur*12)}</td></tr></tbody><//></div></div>
   <p style=${{color:"var(--mut)",fontSize:12}}>Fiyatlar Ayarlar'daki paket fiyatlarından gelir. Hesaplayıcı tahmindir; vergi, iade ve kur farkı dahil değildir.</p>
   <h2><${Icon} n="compass" s=${16}/> Temel bulgular</h2>
   <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))"}}>
@@ -3315,14 +3427,20 @@ function ThemeExample({kind}){
  </div>`;
 }
 
+// Saving can temporarily disable the button that launched a dialog and move focus to body.
+let lastDialogTrigger=null;
+document.addEventListener("focusin",e=>{
+ if(e.target instanceof HTMLElement&&e.target!==document.body)lastDialogTrigger=e.target;
+},true);
 function UiDialog({label,width,close,children}){
  const ref=useRef(null);
  useEffect(()=>{
-  const dialog=ref.current,trigger=document.activeElement;
+  const dialog=ref.current,trigger=document.activeElement===document.body?lastDialogTrigger:document.activeElement;
   dialog.showModal();
   return ()=>{dialog.close();if(trigger?.isConnected)trigger.focus({preventScroll:true})};
  },[]);
- return ReactDOM.createPortal(html`<dialog class="ui-dialog" ref=${ref} aria-label=${label} style=${{"--dialog-width":width}} onCancel=${e=>{e.preventDefault();close()}} onClick=${e=>{if(e.target===e.currentTarget)close()}}>${children}</dialog>`,document.body);
+ return ReactDOM.createPortal(html`<dialog class="ui-dialog" ref=${ref} aria-label=${label} style=${{"--dialog-width":width}} onCancel=${e=>{e.preventDefault();close()}} onClick=${e=>{if(e.target!==e.currentTarget)return;const bounds=e.currentTarget.getBoundingClientRect();
+  if(e.clientX<bounds.left||e.clientX>bounds.right||e.clientY<bounds.top||e.clientY>bounds.bottom)close()}}>${children}</dialog>`,document.body);
 }
 
 // Tasarım galerisi
@@ -4252,8 +4370,54 @@ function speechText(results,finalOnly=false){
  }
  return parts.filter(p=>!finalOnly||p.final).map(p=>p.text).join(" ");
 }
-function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
- const [designOpen,setDesignOpen]=useState(false);
+const STUDIO_EXAMPLES=[
+ {name:"Restoran ana sayfası",prompt:"Mahalle restoranım için telefonda hızlı açılan bir ana sayfa hazırla. Günün menüsünü fiyatlarla göster. Ziyaretçi bir saat seçip masa rezervasyonu yapabilsin."},
+ {name:"Sık sorulan sorular",prompt:"Bu açılır soru ve yanıt bölümünü sayfama ekle. İçeriğini projeme uyarla.",code:'<details>\n  <summary>Randevumu nasıl değiştiririm?</summary>\n  <p>Yeni bir saat seçmek için bize ulaşabilirsiniz.</p>\n</details>'},
+ {name:"Esnek kart düzeni",prompt:"Kart listesini bu CSS düzeniyle güncelle. Dar ekranlarda kartları tek sütuna indir.",code:'.kartlar {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));\n  gap: 1rem;\n}'}
+];
+function StudioResources({close,append,create,separate}){
+ const [section,setSection]=useState("templates"),[filter,setFilter]=useState(""),[query,setQuery]=useState("");
+ const [demo,setDemo]=useState(null),[loading,setLoading]=useState(""),[feedback,setFeedback]=useState("");
+ const live=useRef(true),inFlight=useRef(false),demoTrigger=useRef(null);
+ useEffect(()=>{live.current=true;return()=>{live.current=false}},[]);
+ function closeDemo(){
+  setDemo(null);
+  requestAnimationFrame(()=>document.getElementById(demoTrigger.current)?.focus({preventScroll:true}));
+ }
+ async function use(t){
+  if(inFlight.current)return;
+  inFlight.current=true;setLoading(t.id);setFeedback("");
+  try{
+   const made=await create(t,()=>live.current);
+   if(live.current&&made){
+    if(separate){setFeedback("“"+t.name+"” oluşturuldu. Projeler → Yerel taslaklar’dan açabilirsin.");if(demo)closeDemo()}
+    else close();
+   }
+  }finally{inFlight.current=false;if(live.current)setLoading("")}
+ }
+ const action=separate?"Ayrı taslak oluştur":"Şablonla başla";
+ const needle=searchSector(query.trim());
+ const featured=["sofra","dukkan","derslik"];
+ const ordered=[...featured.map(id=>TEMPLATE_LIB.find(t=>t.id===id)).filter(Boolean),...TEMPLATE_LIB.filter(t=>!featured.includes(t.id))];
+ const matches=ordered.filter(t=>(!filter||t.type===filter)&&searchSector([t.name,t.sector,t.desc,...t.feat].join(" ")).includes(needle));
+ if(demo)return html`<${TplDemo} t=${demo} close=${closeDemo} onUse=${use} useLabel=${action} cloneOnly=${true} pending=${!!loading} onReference=${t=>append("“"+t.name+"” örneğindeki akışı projeme uyarla. "+t.desc+" Özellikler: "+t.feat.join(", ")+".")}/>`;
+ return html`<${UiDialog} label="Şablon ve örnekler" width="900px" close=${close}><section class="resource-library">
+  <header><h2>Şablon ve örnekler</h2><button type="button" class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${18}/></button></header>
+  <div class="resource-tabs" role="group" aria-label="Kaynak türü">${[["templates","layers","Çalışan şablonlar"],["examples","code","İstem ve kod örnekleri"]].map(([id,icon,name])=>html`<button key=${id} type="button" aria-pressed=${section===id} onClick=${()=>setSection(id)}><${Icon} n=${icon} s=${15}/>${name}</button>`)}</div>
+  ${section==="templates"?html`<p>Önce canlı örneği dene. ${separate?"Ayrı taslak oluşturduğunda mevcut projende çalışmaya devam edersin.":"Beğendiğin şablonla başlayıp metinleri ve renkleri değiştirebilirsin."}</p>
+   <div class="resource-filters"><label>Şablon ara<input class="in" type="search" placeholder="Menü, eğitim, randevu…" value=${query} onInput=${e=>setQuery(e.target.value)}/></label><label><span id="studio-template-type">Tür</span><select class="in" aria-labelledby="studio-template-type" value=${filter} onChange=${e=>setFilter(e.target.value)}><option value="">Tümü</option><option value="site">Hazır web siteleri</option><option value="panel">Uygulama ve paneller</option></select></label></div>
+   ${feedback&&html`<p class="resource-notice" role="status">${feedback}</p>`}
+   <div class="resource-cards">${matches.map(t=>html`<article key=${t.id}><${TplThumb} t=${t}/><div class="resource-card-body"><small>${t.sector} · ${t.type==="site"?"Web sitesi":"Uygulama"}</small><h3>${t.name}</h3><p>${t.desc}</p>
+    <div class="resource-actions"><button type="button" id=${"studio-demo-"+t.id} onClick=${()=>{demoTrigger.current="studio-demo-"+t.id;setDemo({...t,previewDevice:innerWidth<600?"phone":"desktop"})}}>Canlı dene</button>
+    <button type="button" disabled=${!!loading} onClick=${()=>use(t)}>${loading===t.id?"Oluşturuluyor…":action}</button></div></div></article>`)}</div>
+   ${!matches.length&&html`<div class="resource-empty"><p>Eşleşen şablon bulunamadı.</p><button type="button" class="btn g s" onClick=${()=>{setFilter("");setQuery("")}}>Filtreleri temizle</button></div>`}`
+   :html`<p>Bir örnek seç, istemine ekle ve kendi işine göre düzenle. Gönderdiğinde model çalışmaya başlar.</p>
+   <div class="resource-examples">${STUDIO_EXAMPLES.map(ex=>html`<article key=${ex.name}><h3>${ex.name}</h3><p>${ex.prompt}</p>${ex.code&&html`<details><summary>Kodu incele</summary><pre><code>${ex.code}</code></pre></details>`}<button type="button" onClick=${()=>append(ex.prompt+(ex.code?"\n\n"+ex.code:""))}>${ex.code?"Kodla birlikte isteme ekle":"İsteme ekle"}</button></article>`)}</div>`}
+ </section><//>`;
+}
+
+function Studio({compact,setSidebarClosed,createTemplate,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
+ const [designOpen,setDesignOpen]=useState(false),[resources,setResources]=useState(false);
  const proposedTitle=useRef("");
  const [gitOpen,setGitOpen]=useState(false);
  useEffect(()=>{if(resumeVersions){setGitOpen("github");clearResumeVersions()}},[resumeVersions]);
@@ -4302,7 +4466,8 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector([st.purpose,st.title,firstUser?.content,input].filter(Boolean).join(" "),prefs.kind);
  const sector=prefs.sector!=="auto"?prefs.sector:autoSec;const styleAtt=atts.find(a=>a.role==="style");const customTheme=styleAtt?themeFromPalette(styleAtt.pal):(st.custom||null);const effTheme=prefs.theme==="gorsel"&&customTheme?customTheme:prefs.theme==="auto"||prefs.theme==="gorsel"?suggestThemes(sector)[0]:themeById(prefs.theme);const effRef=useRef(effTheme);effRef.current=effTheme;
  const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector,kind:String(id).startsWith("pk-")?"site":p.kind}));if(st.html)setPendTheme(id);if(String(id).startsWith("pk-"))toast("Panel şablonu seçildi · tür: Web (masaüstü panel)")};
- const startPanel=d=>{pickTheme(d.id,null);const app=PK_APPS.find(a=>a.id===d.app);setInput(app.id==="giris"?"“"+d.name+"” şablonuyla giriş, kayıt ve şifre sıfırlama ekranları olan bir hesap sayfası yap.":"“"+d.name+"” şablonuyla "+app.l+" yönetim paneli yap. Menüde "+app.nav.join(", ")+" olsun; her sayfayı gerçekçi Türkçe örnek verilerle doldur, açık/koyu tema geçişi ekle.");setTimeout(()=>{const t=document.querySelector(".gta");t&&t.focus()},120)};
+ function appendPrompt(text){setInput(value=>value.trimEnd()?(value.trimEnd()+"\n\n"+text):text);requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus())}
+ const startPanel=d=>{pickTheme(d.id,null);const app=PK_APPS.find(a=>a.id===d.app);appendPrompt(app.id==="giris"?"“"+d.name+"” şablonuyla giriş, kayıt ve şifre sıfırlama ekranları olan bir hesap sayfası yap.":"“"+d.name+"” şablonuyla "+app.l+" yönetim paneli yap. Menüde "+app.nav.join(", ")+" olsun; her sayfayı gerçekçi Türkçe örnek verilerle doldur, açık/koyu tema geçişi ekle.");setTimeout(()=>{const t=document.querySelector(".gta");t&&t.focus()},120)};
  useEffect(()=>{setLocalOk(LS.set(store,st)&&LS.set("studioMsgs:"+scope,st.msgs));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
  const recordKey="templateRows:"+scope;
@@ -4335,7 +4500,9 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  const curModel=prefs.model||(prefs.provider==="gitmapp"?md.default:"")||"";
  const curInfo=prefs.provider==="gitmapp"?md.platform.find(m=>m.id===curModel):null;
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
+ const effectiveModel=prefs.autoModel&&prefs.provider==="gitmapp"
+  ?pickModel(md.platform,!st.html||prefs.mode==="ajan"?"guclu":"dengeli")?.id||curModel:curModel;
+ const aiBody=()=>({projectContext:proje,settings:{...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),kind:prefsRef.current.kind,provider:prefs.provider,model:effectiveModel||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -4600,7 +4767,14 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  </div>`;
  const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`;
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} onStart=${startPanel} close=${()=>setGallery(false)}/>`;
- const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
+ const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:effectiveModel}} setSel=${x=>setPrefs(p=>({...p,...x,autoModel:false}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
+ const preserveProject=!!(st.appId||st.html||st.title||st.msgs.length||input.trim()||atts.length||busy||plan||todo||hasLocalDraft(account,st));
+ const resourceBar=()=>html`<div class="studio-resources" role="group" aria-label="Stüdyo kaynakları">
+  <button type="button" aria-haspopup="dialog" onClick=${()=>setResources(true)}><${Icon} n="layers" s=${15}/> Şablon ve örnekler</button>
+  <button type="button" aria-haspopup="dialog" onClick=${()=>setGallery(true)}><${Icon} n="palette" s=${15}/> Tasarım</button>
+  <button type="button" class="resource-model" aria-haspopup="dialog" title=${effectiveModel?"Dil modeli: "+effectiveModel:"Dil modeli seç"} onClick=${()=>setPicker(true)}><${Icon} n="cpu" s=${15}/><span>${effectiveModel?(prefs.autoModel?"Otomatik · ":"Model · ")+shortModel(effectiveModel):"Dil modeli seç"}</span></button>
+ </div>`;
+ const resourceEl=()=>resources&&html`<${StudioResources} key=${scope} close=${()=>setResources(false)} separate=${preserveProject} append=${text=>{setResources(false);appendPrompt(text)}} create=${(t,active)=>createTemplate(t,()=>active()&&!detachRef.current&&epoch.current===renderEpoch,preserveProject?account:null)}/>`;
  const slashOpts=input.startsWith("/")&&!input.includes(" ")?SLASH.filter(([k])=>k.startsWith(input.toLowerCase())):[];
  const prompt=(big)=>html`<form onSubmit=${send} class=${"gbox"+(busy?" busy":"")+(drag?" drag":"")+(input.trim()?" typing":"")} onDragOver=${e=>{e.preventDefault();setDrag(true)}} onDragLeave=${()=>setDrag(false)} onDrop=${e=>{e.preventDefault();setDrag(false);addFiles(e.dataTransfer.files)}}><div class="gin" onPaste=${e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}}}>
    ${ghFind(input)&&!input.startsWith("/")&&html`<div class="gh-detect"><${Icon} n="github" s=${15}/><span style=${{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>GitHub deposu: <b>${ghShort(ghFind(input))}</b></span><button type="button" class="btn g s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:false}}))}}><${Icon} n="eye" s=${13}/> Önizle</button><button type="button" class="btn s" onClick=${()=>{const u=ghFind(input);setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:u,auto:true}}))}}><${Icon} n="rocket" s=${13}/> Devral</button></div>`}
@@ -4743,17 +4917,17 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
 
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
  const hasWork=st.html||busy||plan||st.msgs.length;
- if(!hasWork)return html`<div class="hero studio-start"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
+ if(!hasWork)return html`<div class="hero studio-start"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}${resourceEl()}
   <h1 class="hero-greet"><span class="grad-text">Merhaba${auth.user&&(auth.user.nickname||auth.user.name)?" "+(auth.user.nickname||auth.user.name.split(" ")[0]):""}</span>, bugün ne yapalım?</h1>
   <p class="hero-sub">Bir proje türü seç ve ne yapmak istediğini yaz.</p>
   <div class="start-type">${typeSwitch()}</div>
-  ${escCard()}${prompt(true)}${ccFoot()}
+  ${escCard()}${resourceBar()}${prompt(true)}${ccFoot()}
   <div class="start-options"><button type="button" class="forme" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${15}/> Benim için yap</button></div>
   <${DesignStrip} custom=${customTheme} kind=${prefs.kind} sector=${sector} autoSector=${prefs.sector==="auto"} theme=${prefs.theme} setTheme=${id=>setPrefs(p=>({...p,theme:id}))} openGallery=${()=>setGallery(true)}/>
   ${!API_ON&&html`<div class="gcard" role="status" style=${{marginTop:12,padding:10,color:"var(--label2)"}}>${healthError?html`Stüdyo sunucusuna ulaşılamadı. <button class="btn g s" onClick=${retry}>Tekrar dene</button>`:"Stüdyo sunucusuna bağlanılıyor…"}</div>`}
   <div class="skpromo"><div class="skp-art"><svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="#5b616c" stroke-width="2" stroke-linecap="round"><rect x="6" y="6" width="34" height="50" rx="5" fill="#fbfaf6"/><path d="M11 14h24M11 20l10 10M21 20L11 30M11 36h24M11 42h16"/><rect x="30" y="22" width="28" height="38" rx="6" fill="#151514" stroke="#e4ff3d"/><rect x="34" y="28" width="20" height="8" rx="2" fill="#e4ff3d" stroke="none"/><path d="M34 42h20M34 48h14" stroke="#e4ff3d"/></svg></div><div style=${{flex:1}}><b>Çizimden uygulama</b><span>Çiziminin fotoğrafını yükle, yerleşimi uygulamaya dönüştür.</span></div><button type="button" class="hb-btn ghost sm sketch-upload" disabled=${atts.length>=3} onClick=${()=>{roleRef.current="layout";fileRef.current.click()}}><${Icon} n="camera" s=${15}/> Çizim yükle</button></div>
   <div class="tpl-h">Bir fikirle başla</div>
-  <div class="tpl-grid">${TEMPLATES.map(([ic,t,p,k],i)=>html`<button type="button" class="tpl" data-i=${i} key=${t} onClick=${()=>{setSt(s=>({...s,emoji:ic}));setPrefs(x=>({...x,kind:k||"app"}));setInput(p);document.querySelector(".gta")?.focus()}}>
+  <div class="tpl-grid">${TEMPLATES.map(([ic,t,p,k],i)=>html`<button type="button" class="tpl" data-i=${i} key=${t} onClick=${()=>{setSt(s=>({...s,emoji:ic}));setPrefs(x=>({...x,kind:k||"app"}));appendPrompt(p)}}>
    <span class="tpl-ic"><${AppIcon2} emoji=${ic} color=${APP_COLORS[i%9]} size=${34}/></span><span class="tpl-t">${t}</span><span class="tpl-d">${p.slice(0,64)}…</span><span class="tpl-k"><${Icon} n=${KIND_ICON[k||"app"]} s=${12}/></span></button>`)}</div>
   <div class="steps4">${[["sparkles","Anlat","Fikrini Türkçe yaz"],["eye","Gör","Canlı önizlemede çalışır"],["wand","Düzelt","Sohbetle değişiklik iste"],["rocket","Yayınla","Kendi adresinle canlıya al"]].map(([ic,t,d],i)=>html`<div class="st4"><${Icon} n=${ic} s=${18} c="#e4ff3d"/><div><b>${t}</b><span>${d}</span></div></div>`)}</div>
  </div>`;
@@ -4791,7 +4965,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
  const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
+ return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}${resourceEl()}
   <div class="ws-top">
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -4817,7 +4991,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const fix=()=>build("TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun.",null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   return html`<div class=${"dq-card"+(probs.length?" warn":"")} role="status"><div class="dq-h"><${Icon} n=${probs.length?"alert":"check"} s=${14}/><b>Tasarım ajanı</b><span>${probs.length?probs.length+" sorun buldu":"önizlemeyi denetledi · sorun yok"}</span>${st.tokens&&html`<em title=${st.tokens}>tasarım sistemi kayıtlı</em>`}</div>${probs.length>0&&html`<ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Ajan düzeltsin</button>`}</div>`})()}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const nx=nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked});
-  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
+  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri">${nx.map(x=>html`<button type="button" role="listitem" class="nx-chip" key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${resourceBar()}${prompt(false)}${ccFoot()}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
@@ -4843,14 +5017,23 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   </div>`;
 }
 function Assistant({context}){
- const [msgs,setMsgs]=useState([{role:"assistant",content:"Merhaba! 👋 Yayın Asistanıyım. Her adımda yanındayım; takıldığın yeri sor."}]);const [t,setT]=useState("");const [busy,setBusy]=useState(false);const end=useRef(null);
- useEffect(()=>{end.current&&end.current.scrollIntoView({behavior:"smooth"})},[msgs.length,busy]);
- async function send(e){e.preventDefault();const text=t.trim();if(!text||busy)return;const m=[...msgs,{role:"user",content:text}];setMsgs(m);setT("");setBusy(true);
-  try{const j=await api("POST","/api/ai/assist",{messages:m.slice(1),context});setMsgs([...m,{role:"assistant",content:j.reply}])}catch(er){setMsgs([...m,{role:"assistant",content:"⚠️ "+er.message}])}setBusy(false)}
- return html`<div style=${{display:"flex",flexDirection:"column",height:"100%",minHeight:300}}><b style=${{marginBottom:8}}><${Icon} n="bot" s=${16}/> Yayın Asistanı</b>
-  <div style=${{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:7}}>${msgs.map(m=>html`<div style=${{alignSelf:m.role==="user"?"flex-end":"flex-start",maxWidth:"92%",background:m.role==="user"?"var(--acc)":"#252523",padding:"7px 10px",borderRadius:10,fontSize:13,lineHeight:1.5,whiteSpace:"pre-wrap"}}>${m.content}</div>`)}${busy&&html`<div style=${{color:"var(--mut)",fontSize:12}}>yazıyor…</div>`}<div ref=${end}></div></div>
-  <div style=${{display:"flex",gap:5,flexWrap:"wrap",margin:"8px 0"}}>${["Alan adı nedir?","GitHub'a neden kaydetmeliyim?","Telefona nasıl yüklerim?"].map(x=>html`<span class="chip" style=${{fontSize:11}} onClick=${()=>setT(x)}>${x}</span>`)}</div>
-  <form onSubmit=${send} style=${{display:"flex",gap:6}}><input class="in" style=${{flex:1}} placeholder="Sorunu yaz…" value=${t} onInput=${e=>setT(e.target.value)}/><button class="btn" disabled=${busy}>➤</button></form></div>`;
+ const [msgs,setMsgs]=useState([{role:"assistant",content:"Uygulamanı paylaşmak için Gitmapp adresiyle başlayabilirsin. Yayınlama hakkında ne öğrenmek istersin?"}]);
+ const [t,setT]=useState(""),[busy,setBusy]=useState(false);
+ const transcript=useRef(null),field=useRef(null),follow=useRef(true);
+ useEffect(()=>{const list=transcript.current;if(list&&follow.current)list.scrollTop=list.scrollHeight},[msgs.length,busy]);
+ async function send(e){
+  e.preventDefault();const text=t.trim();if(!text||busy)return;
+  const m=[...msgs,{role:"user",content:text}];follow.current=true;setMsgs(m);setT("");setBusy(true);
+  try{const j=await api("POST","/api/ai/assist",{messages:m.slice(1),context});setMsgs([...m,{role:"assistant",content:j.reply}])}
+  catch(er){setMsgs([...m,{role:"assistant",content:"Yanıt alınamadı. "+er.message}])}finally{setBusy(false)}
+ }
+ return html`<section class="publish-assistant" aria-labelledby="publish-help-title"><h3 id="publish-help-title"><${Icon} n="bot" s=${18}/> Yayın asistanı</h3>
+  <div class="publish-transcript" role="log" aria-label="Yayın sohbeti" aria-relevant="additions" tabindex="0" ref=${transcript} onScroll=${e=>{const l=e.currentTarget;follow.current=l.scrollHeight-l.clientHeight-l.scrollTop<44}}>
+   ${msgs.map((m,i)=>html`<div key=${i} class=${"publish-msg "+m.role}><span class="publish-speaker">${m.role==="user"?"Sen":"Asistan"}</span>${m.role==="assistant"?html`<${CopilotReply} text=${m.content}/>`:m.content}</div>`)}
+   ${busy&&html`<span role="status">Yanıt hazırlanıyor…</span>`}</div>
+  <div class="publish-prompts">${["Alan adı nedir?","GitHub'a neden kaydetmeliyim?","Telefona nasıl yüklerim?"].map(x=>html`<button key=${x} type="button" class="chip" onClick=${()=>{setT(x);field.current?.focus()}}>${x}</button>`)}</div>
+  <form onSubmit=${send}><label class="publish-label" for="publish-question">Yayın asistanına sor</label><div class="publish-compose"><input id="publish-question" class="in" ref=${field} placeholder="Sorunu yaz…" value=${t} onInput=${e=>setT(e.target.value)}/><button class="btn" type="submit" aria-label="Soruyu gönder" disabled=${busy||!t.trim()}><${Icon} n="arrowUp" s=${16}/></button></div></form>
+ </section>`;
 }
 
 const PublishStep=({n,done,title,children,sub})=>html`<div class="box" style=${{margin:"0 0 10px",borderColor:done?"#14532d":"var(--line)"}}><div style=${{display:"flex",gap:10,alignItems:"center"}}><span class=${"dot "+(done?"d-ok":"d-info")} style=${{width:26,height:26}}>${done?"✓":n}</span><div><b>${iconLabel(title)}</b>${sub&&html`<div style=${{color:"var(--mut)",fontSize:12}}>${sub}</div>`}</div></div><div style=${{marginTop:10}}>${children}</div></div>`;
@@ -4872,14 +5055,14 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
  const askDomain=d=>run("ask",async()=>{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:auth.user.name||auth.user.email,email:auth.user.email,brand:a.title,domain:d,tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:"Alan adı alımı ve bağlama: "+d+" → "+(a.url||"(henüz yayınlanmadı)"),type:"alan-adi",total:0,monthly:0});toast("Talebiniz alındı ("+id+"). Ekibimiz size ulaşacak.")});
  const toStore=listed=>run("store",async()=>{await api("PUT","/api/apps/"+a.id,{category:cat,description:desc});const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed,price:+price||0});upd({...a,...j.app,category:cat,description:desc});setNotice({text:listed?"Uygulama Keşfet’te listelendi":"Uygulama Keşfet’ten kaldırıldı"})});
  return html`<${UiDialog} label="Yayın merkezi" width="1000px" close=${close}><div class="box publish-panel">
-  <div style=${{display:"flex",gap:12,alignItems:"center",marginBottom:14}}><${AppIcon} emoji=${a.emoji} color=${a.color} size=${48}/><div><h2 style=${{margin:0,fontSize:20}}>${a.title}</h2><span style=${{color:"var(--mut)",fontSize:13}}>Yayın merkezi</span></div><button type="button" class="ib" style=${{marginLeft:"auto"}} aria-label="Yayın merkezini kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  <header class="publish-header"><${AppIcon} emoji=${a.emoji} color=${a.color} size=${48}/><div><h2 style=${{margin:0,fontSize:20}}>${a.title}</h2><span style=${{color:"var(--mut)",fontSize:13}}>Yayın merkezi</span></div><button type="button" class="ib" style=${{marginLeft:"auto"}} aria-label="Yayın merkezini kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></header>
   ${notice&&html`<p class="st-profile-status" role=${notice.error?"alert":"status"}>${notice.text}</p>`}
-  <div style=${{display:"grid",gridTemplateColumns:"minmax(0,1.6fr) minmax(260px,1fr)",gap:14}} class="studio-grid">
+  <div class="publish-columns">
   <div>
    <${PublishStep} n="1" done=${!!a.url} title="⚡ Hemen yayınla (ücretsiz)" sub="Birkaç saniyede herkesin açabileceği bir adres">
-    ${a.url?html`<div style=${{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}><a href=${a.url} target="_blank" style=${{fontWeight:700}}>${a.url.replace("https://","")}</a><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){}}}>Kopyala</button><button class="btn g s" disabled=${busy==="pub"} onClick=${pub}>Son hâli yayınla</button></div>
+    ${a.url?html`<div style=${{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}><a href=${a.url} target="_blank" style=${{fontWeight:700}}>${a.url.replace("https://","")}</a><button class="btn g s" onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){toast("Adres kopyalanamadı. Bağlantıyı seçerek kopyalayabilirsin.")}}}>Kopyala</button><button class="btn g s" disabled=${busy==="pub"} onClick=${pub}>Son hâli yayınla</button></div>
      <p style=${{color:"var(--mut)",fontSize:12.5,lineHeight:1.6,margin:"8px 0 0"}}><${Icon} n="phone" s=${16}/> <b>Telefona indirmek için:</b> adresi telefonda açın → iPhone'da Paylaş ⬆️, Android'de ⋮ menüsü → <b>"Ana Ekrana Ekle"</b>. Uygulama simgesiyle telefona yüklenir.</p>`
-    :html`<div style=${{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}><span style=${{color:"var(--mut)"}}>app.gitmapp.com/</span><input class="in" style=${{flex:"1 1 140px"}} aria-label="Yayın adresi" value=${slug} onInput=${e=>setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,40))}/><button class="btn" disabled=${busy==="pub"} onClick=${pub}>${busy==="pub"?"…":"Yayınla"}</button></div><label class="publish-visibility"><input type="checkbox" checked=${listedOnPublish} onChange=${e=>setListedOnPublish(e.target.checked)}/> Keşfet’te listele</label>`}
+    :html`<label class="publish-label" for="publish-slug">Yayın adresi</label><div style=${{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}><span style=${{color:"var(--mut)"}}>app.gitmapp.com/</span><input class="in" style=${{flex:"1 1 140px"}} id="publish-slug" value=${slug} onInput=${e=>setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,40))}/><button class="btn" disabled=${busy==="pub"} onClick=${pub}>${busy==="pub"?"…":"Yayınla"}</button></div><label class="publish-visibility"><input type="checkbox" checked=${listedOnPublish} onChange=${e=>setListedOnPublish(e.target.checked)}/> Keşfet’te listele</label>`}
    </${PublishStep}>
    <${PublishStep} n="2" done=${!!gh} title="🐙 Kendi GitHub hesabına kaydet" sub="Kodun sahibi siz olursunuz; ücretsiz GitHub Pages adresi de açılır">
     ${gh?html`<div style=${{fontSize:13,lineHeight:1.8}}>Depo: <a href=${gh.repo} target="_blank">${gh.repo.replace("https://github.com/","")}</a>${gh.pages_url&&html`<br/>Yedek adres: <a href=${gh.pages_url} target="_blank">${gh.pages_url}</a> <span style=${{color:"var(--mut)"}}>(ilk açılış 1–2 dk sürebilir)</span>`}${gh.pages_note&&html`<br/><span style=${{color:"var(--warn)"}}>${gh.pages_note}</span>`}<br/><button class="btn g s" disabled=${busy==="gh"} onClick=${toGh}>Son hâli GitHub'a gönder</button></div>`
@@ -4888,19 +5071,19 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
     :html`<span style=${{color:"var(--mut)",fontSize:13}}>GitHub bağlantısı yakında açılacak.</span>`}
    </${PublishStep}>
    <${PublishStep} n="3" title="🌐 Kendi alan adın (örn. salonelif.com)" sub="Uygulaman markanın adresinde açılsın">
-    <div style=${{display:"flex",gap:6,flexWrap:"wrap"}}><input class="in" style=${{flex:"1 1 160px"}} value=${dom} onInput=${e=>setDom(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,""))} placeholder="markaniz"/>${health.domain?html`<button class="btn g" disabled=${busy==="dom"} onClick=${chk}>${busy==="dom"?"…":"Sorgula"}</button>`:""}</div>
-    ${domRes&&html`<table style=${{marginTop:8}}><tbody>${domRes.map(d=>html`<tr><td>${d.available?"✅":"❌"} <b>${d.domain}</b>${d.premium?" (premium)":""}</td><td style=${{textAlign:"right",whiteSpace:"nowrap"}}>${d.available?html`<a class="btn g s" target="_blank" href=${S.hostingerRef||"https://www.hostinger.com/domain-name-search"}>Kendim alayım</a> <button class="btn s" disabled=${busy==="ask"} onClick=${()=>askDomain(d.domain)}>Benim adıma alın</button>`:html`<span style=${{color:"var(--mut)",fontSize:12}}>alınmış</span>`}</td></tr>`)}</tbody></table>`}
+    <label class="publish-label" for="publish-domain">Alan adı</label><div style=${{display:"flex",gap:6,flexWrap:"wrap"}}><input id="publish-domain" class="in" style=${{flex:"1 1 160px"}} value=${dom} disabled=${busy==="dom"} onInput=${e=>{setDom(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,""));setDomRes(null)}} placeholder="markaniz"/>${health.domain?html`<button class="btn g" disabled=${!dom||busy==="dom"} onClick=${chk}>${busy==="dom"?"…":"Sorgula"}</button>`:""}</div>
+    ${domRes&&html`<div class="publish-domains"><${DataTable} label="Alan adı sonuçları"><caption>Alan adı sonuçları</caption><thead><tr><th scope="col">Alan adı ve uygunluk</th><th scope="col">İşlem</th></tr></thead><tbody>${domRes.map(d=>html`<tr key=${d.domain}><th scope="row">${d.domain}<small>${d.available?"Uygun":"Alınmış"}${d.premium?" · Premium":""}</small></th><td>${d.available?html`<div class="publish-actions"><a class="btn g s" target="_blank" href=${S.hostingerRef||"https://www.hostinger.com/domain-name-search"}>Kendim alayım</a><button class="btn s" disabled=${busy==="ask"} onClick=${()=>askDomain(d.domain)}>Benim adıma alın</button></div>`:"—"}</td></tr>`)}</tbody><//></div>`}
     ${!health.domain&&html`<div style=${{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}><a class="btn g s" target="_blank" href=${S.hostingerRef||"https://www.hostinger.com/domain-name-search"}>Hostinger'da sorgula, kendim alayım</a><button class="btn s" disabled=${!dom||busy==="ask"} onClick=${()=>askDomain(dom+".com")}>${dom||"…"}.com'u benim adıma alın</button></div>`}
     <p style=${{color:"var(--mut)",fontSize:12,lineHeight:1.6,margin:"8px 0 0"}}><b>Kendim alayım:</b> Hostinger'da kendi adınıza alırsınız, bağlama adımlarında asistan yardım eder. <b>Benim adıma alın:</b> alan adını sizin bilgilerinizle biz alır ve uygulamanıza bağlarız (ücret teklifte bildirilir).</p>
    </${PublishStep}>
    <${PublishStep} n="4" done=${a.listed} title="🛍️ Gitmapp Mağazası'na koy" sub="Başkaları uygulamanı bulsun, indirsin, kopyalayıp özelleştirsin">
-    <div style=${{display:"grid",gridTemplateColumns:"1fr 120px",gap:8}}><select class="in" aria-label="Mağaza kategorisi" value=${cat} onChange=${e=>setCat(e.target.value)}>${STORE_CATS2.map(([k,ic,l])=>html`<option value=${k}>${l}</option>`)}</select><label style=${{display:"flex",alignItems:"center",gap:4}}><input class="in" type="number" aria-label="Fiyat (₺)" min="0" style=${{width:"100%"}} value=${price} onInput=${e=>setPrice(e.target.value)}/>₺</label></div>
-    <textarea class="in" style=${{width:"100%",marginTop:8,minHeight:60}} maxLength="400" placeholder="Uygulamanı bir iki cümleyle anlat…" value=${desc} onInput=${e=>setDesc(e.target.value)}></textarea>
+    <div class="publish-store-fields"><label class="publish-label">Mağaza kategorisi<select class="in" aria-label="Mağaza kategorisi" value=${cat} onChange=${e=>setCat(e.target.value)}>${STORE_CATS2.map(([k,ic,l])=>html`<option value=${k}>${l}</option>`)}</select></label><label class="publish-label">Fiyat (₺)<input class="in" type="number" min="0" style=${{width:"100%"}} value=${price} onInput=${e=>setPrice(e.target.value)}/></label></div>
+    <label class="publish-label" for="publish-desc">Mağaza açıklaması</label><textarea id="publish-desc" class="in" style=${{width:"100%",minHeight:60}} maxLength="400" placeholder="Uygulamanı bir iki cümleyle anlat…" value=${desc} onInput=${e=>setDesc(e.target.value)}></textarea>
     <p style=${{color:"var(--mut)",fontSize:12,margin:"4px 0 8px"}}>0 ₺ = ücretsiz. Ücretli satışta ödeme altyapısı yakında açılacak; o zamana kadar fiyat bilgisi gösterilir.</p>
     <div style=${{display:"flex",gap:8}}><button class="btn" disabled=${busy==="store"} onClick=${()=>toStore(true)}>${a.listed?"Bilgileri güncelle":"Mağazaya koy"}</button>${a.listed&&html`<button class="btn g" disabled=${busy==="store"} onClick=${()=>toStore(false)}>Mağazadan kaldır</button>`}</div>
    </${PublishStep}>
   </div>
-  <div class="box" style=${{margin:0,minHeight:360}}><${Assistant} context=${{uygulama:a.title,yayinda:!!a.url,adres:a.url,github:!!gh,magazada:!!a.listed}}/></div>
+  <div class="box publish-help"><${Assistant} context=${{uygulama:a.title,yayinda:!!a.url,adres:a.url,github:!!gh,magazada:!!a.listed}}/></div>
  </div></div></${UiDialog}>`;
 }
 
@@ -5222,7 +5405,7 @@ function TplCard({t,onDemo,onUse,w}){return html`<div class="tpc">
  <div class="tpc-img"><${TplThumb} t=${t} w=${w||380}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı demoyu aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı dene</span></button><span class="tpc-type">${t.type==="panel"?"Yönetim paneli":"Web sitesi"}</span></div>
  <div class="tpc-m"><${ProductMark} t=${t}/><div style=${{flex:1,minWidth:0}}><b>${t.name}</b><span>${t.sector}</span></div></div><div style=${{padding:"0 14px 14px"}}><p>${t.desc}</p><button class="chip" onClick=${()=>onDemo({...t,previewDevice:"phone"})}>Telefon</button> <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"desktop"})}>Masaüstü</button> <button class="getbtn" onClick=${()=>onUse(t)}>Stüdyo’da kullan</button></div>
 </div>`}
-function TplDemo({t,close,onUse}){
+function TplDemo({t,close,onUse,useLabel="Bu şablonla başla",cloneOnly=false,pending=false,onReference}){
  const [dev,setDev]=useState(t.previewDevice||"desktop"),dialog=useRef(null);
  const [source,setSource]=useState(""),[failure,setFailure]=useState("");
  useEffect(()=>{const controller=new AbortController();
@@ -5242,22 +5425,30 @@ function TplDemo({t,close,onUse}){
    <p>${t.desc}</p><div class="product-features">${t.feat.slice(0,3).map(f=>html`<span key=${f}><${Icon} n="check" s=${14}/>${f}</span>`)}</div>
    <div class="product-controls"><div class="seg" role="group" aria-label="Önizleme cihazı">${[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]].map(([k,ic,l])=>html`<button key=${k} title=${l} aria-label=${l} aria-pressed=${dev===k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${16}/><span>${l}</span></button>`)}</div>
    <a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" aria-label="Demoyu yeni sekmede aç" title="Demoyu yeni sekmede aç"><${Icon} n="external" s=${16}/></a>
-   <button class="getbtn" onClick=${()=>onUse({...t,openDesign:true})}>Tasarımı düzenle</button><button class="getbtn solid" onClick=${()=>onUse(t)}>Bu şablonla başla <${Icon} n="arrowRight" s=${16}/></button></div>
+   ${onReference&&html`<button type="button" class="getbtn" onClick=${()=>onReference(t)}>Bu akışı isteme ekle</button>`}${!cloneOnly&&html`<button class="getbtn" onClick=${()=>onUse({...t,openDesign:true})}>Tasarımı düzenle</button>`}<button class="getbtn solid" disabled=${pending} onClick=${()=>onUse(t)}>${pending?"Oluşturuluyor…":useLabel} <${Icon} n="arrowRight" s=${16}/></button></div>
   </header>
   <div class="product-caption"><span>Canlı demo</span> Örnek verilerle deneyin</div>
   <div class="fp-stage product-stage" onClick=${e=>{if(e.target===e.currentTarget)close()}}>${failure&&html`<p role="alert">${failure}</p>`}<iframe title=${t.name} srcDoc=${source} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></div></dialog>`,document.body);
 }
 function TemplatesPage({onUse,toast}){
  const [type,setType]=useState("");const [sec,setSec]=useState("");const [demo,setDemo]=useState(null);
- const secs=[...new Set(TEMPLATE_LIB.map(t=>t.sector))];const list=TEMPLATE_LIB.filter(t=>(!type||t.type===type)&&(!sec||t.sector===sec));
+ const [query,setQuery]=useState("");
+ const terms=searchSector(query.trim()).split(/\s+/).filter(Boolean);
+ const secs=[...new Set(TEMPLATE_LIB.map(t=>t.sector))];
+ const list=TEMPLATE_LIB.filter(t=>{
+  const matches=(!type||t.type===type)&&(!sec||t.sector===sec);
+  return matches&&terms.every(word=>searchSector([t.name,t.sector,t.desc,...t.feat].join(" ")).includes(word));
+ });
  return html`<div class="explore">
   <div class="tp-hero"><div><div class="eyebrow light">Hazır şablonlar · canlı demo</div><h1>Sıfırdan başlama.<br/>Çalışan bir şablonla başla.</h1><p>Menüden rezervasyona, ders programından ödev teslimine kadar işine uygun bir akışı dene. Seçtiğin şablonu Stüdyo’da kendi projene dönüştür.</p>
    <div class="tp-stats"><div><b>${TEMPLATE_LIB.length}</b><span>Çalışan şablon</span></div><div><b>${secs.length}</b><span>Sektör</span></div><div><b>₺0</b><span>Ücretsiz</span></div></div></div>
    <div class="tp-stack">${TEMPLATE_LIB.slice(0,3).map((t,i)=>html`<div class="tp-sc" key=${t.id} style=${{["--i"]:i}}><${TplThumb} t=${t} w=${300}/></div>`)}</div></div>
-  <div class="tp-filter"><div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Yönetim panelleri"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+  <div class="tp-filter">
+   <div class="tpl-find"><label for="task-find">Ne yapmak istiyorsun?</label><input class="in" type="search" id="task-find" value=${query} onInput=${e=>setQuery(e.target.value)} placeholder="Örneğin rezervasyon, ders veya stok"/><span role="status">${list.length} şablon</span></div>
+   <div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Yönetim panelleri"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <div class="tp-secs" role="group" aria-label="Şablon sektörü">${["",...secs].map(s=>html`<button type="button" key=${s} aria-pressed=${sec===s} class=${"chip"+(sec===s?" on":"")} onClick=${()=>setSec(s)}>${s||"Tüm sektörler"}</button>`)}</div></div>
-  <div class="tp-grid">${list.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}${!list.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSec("")}}>Filtreleri temizle</button></div>`}</div>
-  <section class="tp-how"><h3>Şablonla nasıl çalışılır?</h3><div class="tp-steps">${[["play","Canlı dene","Demoda kayıt ekle, sürükle, yazdır; telefon ve tablette nasıl göründüğüne bak."],["hammer","Kullan","Şablon Geliştir'e yüklenir. “Logomuzu koy, alanlara TC no ekle” gibi isteklerle değiştir."],["image","Kendi görsellerini ekle","Ürün, ilan ya da menü fotoğraflarını sürükle; içerik görseli olarak yerleşsin."],["rocket","Yayınla","Kendi adresinle tek tıkla canlıya al, istersen mağazada sat."]].map(([ic,t,d],i)=>html`<div key=${i}><${Tile} n=${ic} g=${["#e4ff3d,#a3e635","#f97316,#ec4899","#22c55e,#14b8a6","#a855f7,#ec4899"][i]} s=${36}/><b>${t}</b><span>${d}</span></div>`)}</div>
+  <div class="tp-grid">${list.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}${!list.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSec("");setQuery("")}}>Filtreleri temizle</button></div>`}</div>
+  <section class="tp-how"><h3>Şablonla nasıl çalışılır?</h3><div class="tp-steps">${[["play","Canlı dene","Demoda kayıt ekle, sürükle, yazdır; telefon ve tablette nasıl göründüğüne bak."],["hammer","Kullan","Şablon Geliştir'e yüklenir. “Menüyü kategorilere ayır” gibi bir istek yazarak taslağı değiştir."],["image","Kendi görsellerini ekle","Ürün, ilan ya da menü fotoğraflarını sürükle; içerik görseli olarak yerleşsin."],["rocket","Yayınla","Kendi adresinle tek tıkla canlıya al, istersen mağazada sat."]].map(([ic,t,d],i)=>html`<div key=${i}><${Tile} n=${ic} g=${["#e4ff3d,#a3e635","#f97316,#ec4899","#22c55e,#14b8a6","#a855f7,#ec4899"][i]} s=${36}/><b>${t}</b><span>${d}</span></div>`)}</div>
    <p class="tp-note">Uyarlanan şablonların kaynak ve lisans bilgileri indirilen HTML dosyasında bulunur. İçlerindeki firma, kişi ve ilanlar kurgusaldır.</p></section>
   ${demo&&html`<${TplDemo} t=${demo} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
  </div>`;
@@ -5690,7 +5881,7 @@ function Radar({toast}){
 
  const g=k=>(d?d.rows:[]).filter(r=>r.kind===k);
  const catName=id=>{const c=STORE_CATS.find(x=>x.id===id);return c?c.ic+" "+c.name:id};
- const T=(title,list,f)=>html`<div class="box" style=${{margin:0}}><b>${iconLabel(title)}</b>${!list.length?html`<p style=${{color:"var(--mut)",fontSize:13}}>Henüz veri yok.</p>`:html`<table><tbody>${list.slice(0,15).map(r=>html`<tr><td>${f?f(r.label):r.label}</td><td style=${{width:50,textAlign:"right"}}><b>${r.hits}</b></td></tr>`)}</tbody></table>`}</div>`;
+ const T=(title,list,f)=>html`<div class="box" style=${{margin:0}}><b>${iconLabel(title)}</b>${!list.length?html`<p style=${{color:"var(--mut)",fontSize:13}}>Henüz veri yok.</p>`:html`<${DataTable} label=${title}><thead><tr><th scope="col">Konu</th><th scope="col" class="table-number">Adet</th></tr></thead><tbody>${list.slice(0,15).map(r=>html`<tr><th scope="row">${f?f(r.label):r.label}</th><td class="table-number"><b>${r.hits}</b></td></tr>`)}</tbody><//>`}</div>`;
  return html`<div><h1>Talep Radarı</h1><p class="sub">Kullanıcıların Stüdyo'da ne yapmak istediği, neleri aradığı ve hangi uygulamalara ilgi gösterdiği. Üretim Ajanı hangi uygulamaları hazırlayacağını buradan seçecek.</p>
   ${d&&d.stats&&html`<div class="stat"><div class="st"><b>${d.stats.users||0}</b><span>Kullanıcı</span></div><div class="st"><b>${d.stats.apps||0}</b><span>Yapılan uygulama</span></div><div class="st"><b>${d.stats.published||0}</b><span>Yayında</span></div><div class="st"><b>${d.stats.listed||0}</b><span>Mağazada</span></div></div>`}
   <div class="chips">${[1,7,30,90].map(x=>html`<span class=${"chip"+(days===x?" on":"")} onClick=${()=>setDays(x)}>Son ${x} gün</span>`)}</div>
@@ -5726,20 +5917,37 @@ const TierBadge=({t})=>html`<span class="tierb" style=${{["--tc"]:TIER_INFO[t].c
 
 function ModelPicker({models,sel,setSel,close,auth,toast,go}){
  const d=models.data||{platform:[],byok:[]};const [tab,setTab]=useState(sel.provider==="gitmapp"?"gitmapp":sel.provider);const [pm,setPm]=useState({});const [loading,setLoading]=useState(false);
+ const [query,setQuery]=useState("");
  const conn=d.byok.filter(b=>b.connected);
- useEffect(()=>{if(tab!=="gitmapp"&&!pm[tab]){setLoading(true);api("GET","/api/keys/"+tab+"/models").then(j=>setPm(p=>({...p,[tab]:j.models}))).catch(e=>toast(e.message)).finally(()=>setLoading(false))}},[tab]);
+ useEffect(()=>{
+  setQuery("");let current=true;
+  if(tab==="gitmapp"||pm[tab]){setLoading(false);return}
+  setLoading(true);
+  api("GET","/api/keys/"+tab+"/models").then(j=>{if(current)setPm(cache=>({...cache,[tab]:j.models}))})
+   .catch(e=>{if(current)toast(e.message)}).finally(()=>{if(current)setLoading(false)});
+  return ()=>{current=false};
+ },[tab]);
  const list=tab==="gitmapp"?d.platform:(pm[tab]||[]);
- const groups={};list.forEach(m=>{(groups[m.family]=groups[m.family]||[]).push(m)});
+ const selected=sel.model||(sel.provider==="gitmapp"?d.default:"");
+ const rank=m=>sel.provider===tab&&m.id===selected?0:tab==="gitmapp"&&m.id===d.default?1:2;
+ const words=query.trim().toLocaleLowerCase("tr").split(/\s+/).filter(Boolean);
+ const visible=list.filter(m=>{const family=fam(m.family);
+  const text=[m.id,family.n,family.by,TIER_INFO[m.tier]?.l].join(" ").toLocaleLowerCase("tr");
+  return words.every(word=>text.includes(word))}).sort((a,b)=>rank(a)-rank(b));
+ const groups={};visible.forEach(m=>{(groups[m.family]=groups[m.family]||[]).push(m)});
  const pick=m=>{setSel({provider:tab,model:m.id});close()};
  const PB={anthropic:"claude",gemini:"gemini",deepseek:"deepseek",openrouter:"openrouter"};
  return html`<${UiDialog} label="Dil modeli seç" width="980px" close=${close}><div class="mp">
-  <div class="mp-h"><span class="mp-hi"><${Icon} n="cpu" s=${20}/></span><div style=${{flex:1}}><h2>Dil modeli seç</h2><p>Gitmapp kredisiyle hazır modelleri kullan ya da kendi API anahtarınla çalış (kendi anahtarında Gitmapp kredisi düşmez).</p></div><button class="ib" aria-label="Model seçiciyi kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
-  <div class="mp-tabs"><button class=${tab==="gitmapp"?"on":""} onClick=${()=>setTab("gitmapp")}><${Icon} n="gem" s=${15}/> Gitmapp kredisi</button>${conn.map(b=>html`<button key=${b.provider} class=${tab===b.provider?"on":""} onClick=${()=>setTab(b.provider)}>${PB[b.provider]?html`<${BrandLogo} b=${PB[b.provider]} s=${18} tile=${false}/>`:html`<${Icon} n="key" s=${15}/>`} ${b.label}</button>`)}<button onClick=${()=>{close();go("hesabim")}}><${Icon} n="plus" s=${15}/> Kendi anahtarımı bağla</button></div>
-  ${tab==="gitmapp"&&html`<div class="mp-tiers">${Object.entries(TIER_INFO).map(([k,t])=>html`<div key=${k} class="mp-tier" style=${{["--tc"]:t.c}}><span class="mp-ti"><${Icon} n=${TIER_IC[k]} s=${16} w=${2}/></span><div><b>${t.l} <em>${(d.tiers||{})[k]||"?"} kredi</em></b><span>${t.d}</span></div></div>`)}</div>`}
+  <div class="mp-h"><span class="mp-hi"><${Icon} n="cpu" s=${20}/></span><div style=${{flex:1}}><h2>Dil modeli seç</h2><p>${selected?html`Etkin model <strong>${shortModel(selected)}</strong>. Bir model seçtiğinde sonraki isteğinde kullanılır.`:"Başlamak için önerilen modeli seçebilirsin. Her modelin üretim başına kredi tutarı kartında görünür."}</p></div><button class="ib" aria-label="Model seçiciyi kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  <div class="mp-tabs"><button type="button" aria-pressed=${tab==="gitmapp"} class=${tab==="gitmapp"?"on":""} onClick=${()=>setTab("gitmapp")}><${Icon} n="gem" s=${15}/> Gitmapp kredisi</button>${conn.map(b=>html`<button key=${b.provider} aria-pressed=${tab===b.provider} class=${tab===b.provider?"on":""} onClick=${()=>setTab(b.provider)}>${PB[b.provider]?html`<${BrandLogo} b=${PB[b.provider]} s=${18} tile=${false}/>`:html`<${Icon} n="key" s=${15}/>`} ${b.label}</button>`)}<button onClick=${()=>{close();go("hesabim")}}><${Icon} n="plus" s=${15}/> Kendi anahtarımı bağla</button></div>
+  <div class="model-find"><label for="model-query">Model ara</label>
+   <input class="in" type="search" id="model-query" value=${query} placeholder="Model, sağlayıcı veya seviye" onInput=${e=>setQuery(e.target.value)}/>
+   <span role="status">${loading?"Modeller yükleniyor":visible.length+" model"}</span></div>
+  ${tab==="gitmapp"&&html`<details class="model-guide"><summary>Hızlı, dengeli ve güçlü modellerin farkı</summary><div class="mp-tiers">${Object.entries(TIER_INFO).map(([k,t])=>html`<div key=${k} class="mp-tier" style=${{["--tc"]:t.c}}><span class="mp-ti"><${Icon} n=${TIER_IC[k]} s=${16} w=${2}/></span><div><b>${t.l} <em>${Number.isFinite(d.tiers?.[k])?d.tiers[k]+" kredi":"Ücret bilgisi bekleniyor"}</em></b><span>${t.d}</span></div></div>`)}</div></details>`}
   <div class="mp-body">${loading?html`<div class="empty">Modeller yükleniyor…</div>`:!list.length?html`<div class="empty">${tab==="gitmapp"?(d.error||"Model listesi alınamadı."):"Bu anahtarla model bulunamadı."}</div>`:
-  Object.entries(groups).map(([f,ms])=>{const F=fam(f);return html`<section key=${f} class="mp-fam">
+  !visible.length?html`<div class="empty">Bu aramaya uygun model bulunamadı. <button type="button" class="btn g s" onClick=${()=>setQuery("")}>Aramayı temizle</button></div>`:Object.entries(groups).map(([f,ms])=>{const F=fam(f);return html`<section key=${f} class="mp-fam">
    <div class="mp-fh"><${FamLogo} f=${f} s=${44}/><div style=${{flex:1,minWidth:0}}><b>${F.n} <span>· ${F.by}</span></b><p>${F.best}</p><div class="mp-sk">${(FAM_SKILLS[f]||[]).map(x=>html`<span key=${x}>${x}</span>`)}</div></div></div>
-   <div class="mp-grid">${ms.map(m=>{const on=sel.provider===tab&&sel.model===m.id;return html`<button key=${m.id} class=${"mp-m"+(on?" on":"")} onClick=${()=>pick(m)}><div class="mp-mt"><b>${shortModel(m.id)}</b>${d.default===m.id&&tab==="gitmapp"?html`<span class="mp-rec"><${Icon} n="star" s=${11} w=${2.2}/> Önerilen</span>`:""}</div><div class="mp-mm"><${TierBadge} t=${m.tier}/>${tab==="gitmapp"?html`<span class="mp-cr"><${Icon} n="gem" s=${12}/> ${m.credits} kredi</span>`:html`<span class="mp-cr">kendi anahtarın</span>`}${on?html`<span class="mp-ok"><${Icon} n="check" s=${14} w=${2.4}/></span>`:""}</div></button>`})}</div></section>`})}</div>
+   <div class="mp-grid">${ms.map(m=>{const on=sel.provider===tab&&selected===m.id;return html`<button type="button" key=${m.id} aria-pressed=${on} class=${"mp-m"+(on?" on":"")} onClick=${()=>pick(m)}><div class="mp-mt"><b>${shortModel(m.id)}</b>${d.default===m.id&&tab==="gitmapp"?html`<span class="mp-rec"><${Icon} n="star" s=${11} w=${2.2}/> Önerilen</span>`:""}</div><div class="mp-mm"><${TierBadge} t=${m.tier}/>${tab==="gitmapp"?html`<span class="mp-cr"><${Icon} n="gem" s=${12}/> ${m.credits} kredi</span>`:html`<span class="mp-cr">kendi anahtarın</span>`}${on?html`<span class="mp-ok"><${Icon} n="check" s=${14} w=${2.4}/></span>`:""}</div></button>`})}</div></section>`})}</div>
   <div class="mp-f"><${Icon} n="help" s=${14}/> Hangi modelin neye iyi geldiğini ayrıntılı görmek için <a href="#modeller" onClick=${close}>Dil Modelleri</a> sayfasına bak.</div>
  </div></${UiDialog}>`;
 }
@@ -5754,18 +5962,18 @@ function ModelsPage({models,go}){
    <div class="box" style=${{margin:0,lineHeight:1.6}}><b style=${{display:"flex",alignItems:"center",gap:6}}><${Icon} n="key" s=${16}/> Kendi API anahtarın</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}>Anthropic, OpenAI, Google Gemini, DeepSeek veya OpenRouter anahtarınızı bağlayın; ücreti doğrudan sağlayıcıya ödersiniz, <b>Gitmapp kredisi düşmez</b>. Anahtarınız şifreli saklanır, size bile geri gösterilmez.</p><button class="btn s" onClick=${()=>go("hesabim")}>Anahtarımı bağla</button></div>
    <div class="box" style=${{margin:0,lineHeight:1.6}}><b style=${{display:"flex",alignItems:"center",gap:6}}><${Icon} n="file" s=${16}/> Abonelikler hakkında</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}><b>Claude Pro/Max</b> aboneliği Anthropic kuralları gereği başka uygulamalarda kullanılamaz; Claude için API anahtarı gerekir. <b>ChatGPT Plus/Pro</b> için OpenAI'ın "Sign in with ChatGPT" programı var; Gitmapp'in katılımı için başvuru gerekiyor, açıldığında burada duyuracağız.</p></div></div>
   <h2>Model aileleri</h2>
-  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(330px,1fr))"}}>${order.map(f=>{const F=fam(f);const ms=fams[f]||[];return html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,330px),1fr))"}}>${order.map(f=>{const F=fam(f);const ms=fams[f]||[];return html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}>
    <div style=${{display:"flex",alignItems:"center",gap:10}}><${FamLogo} f=${f} s=${46}/><div><b style=${{fontSize:17}}>${F.n}</b><div style=${{color:"var(--mut)",fontSize:12}}>${F.by}</div></div><span style=${{flex:1}}></span>${ms.length?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Gitmapp'te hazır</span>`:html`<span class="tag">Kendi anahtarınla</span>`}</div>
    <div class="mp-sk">${(FAM_SKILLS[f]||[]).map(x=>html`<span key=${x}>${x}</span>`)}</div><ul style=${{margin:0,paddingLeft:18,lineHeight:1.6,fontSize:13.5}}>${F.good.map(g=>html`<li>${g}</li>`)}</ul>
    <div style=${{fontSize:13}}><b>En iyi olduğu işler:</b> ${F.best}</div>${F.note&&html`<div style=${{fontSize:12.5,color:"var(--mut)"}}>${F.note}</div>`}
    ${ms.length?html`<div style=${{display:"flex",flexWrap:"wrap",gap:6}}>${ms.map(m=>html`<span class="tag" title=${m.id}>${shortModel(m.id)} · ${TIER_INFO[m.tier].l.split(" ")[0]} ${m.credits} <${Icon} n="gem" s=${12}/></span>`)}</div>`:""}</div>`})}</div>
   <h2>Hangi işe hangisi?</h2>
-  <table><thead><tr><th>Ne yapıyorsunuz?</th><th>Önerilen seviye</th><th>Neden</th></tr></thead><tbody>
+  <${DataTable} label="İşe göre dil modeli seçimi"><thead><tr><th scope="col">Ne yapıyorsunuz?</th><th scope="col">Önerilen seviye</th><th scope="col">Neden</th></tr></thead><tbody>
    <tr><td>Kişisel site, davetiye, basit form</td><td><${Icon} n="bolt" s=${16}/> Hızlı</td><td>Kısa sürede biter, en az kredi</td></tr>
    <tr><td>Randevu, stok, CRM gibi iş uygulaması</td><td><${Icon} n="scale" s=${16}/> Dengeli</td><td>Çok ekran ve veri mantığında güvenilir</td></tr>
    <tr><td>Arcade/puzzle oyunu</td><td><${Icon} n="scale" s=${16}/> Dengeli</td><td>Oyun döngüsü ve kontroller için yeterli</td></tr>
    <tr><td>Fizik/yapay rakip içeren oyun, karmaşık hesaplama</td><td><${Icon} n="rocket" s=${16}/> Güçlü</td><td>Zor mantıkta daha az hata</td></tr>
-   <tr><td>Hata bulma, "çalışmıyor" düzeltmeleri</td><td><${Icon} n="rocket" s=${16}/> Güçlü + 🔍 Kontrol et</td><td>İnceleme adımı sorunları bulup düzeltir</td></tr></tbody></table>
+   <tr><td>Hata bulma, "çalışmıyor" düzeltmeleri</td><td><${Icon} n="rocket" s=${16}/> Güçlü + 🔍 Kontrol et</td><td>İnceleme adımı sorunları bulup düzeltir</td></tr></tbody><//>
   <div class="box" style=${{marginTop:14,lineHeight:1.6,fontSize:13}}><b><${Icon} n="compass" s=${16}/> Planlı mod (Codex / Claude Code tarzı çalışma)</b><br/>Stüdyo'da "Planlı" modu seçtiğinizde yapay zekâ önce bir <b>yapım planı</b> yazar; siz planı düzenleyip onaylarsınız, sonra uygulama bu plana göre yapılır. İsterseniz ardından <b>"Kontrol et ve düzelt"</b> adımıyla kod incelenip hatalar giderilir. Büyük işlerde sonucu çok daha öngörülebilir yapar.</div>
  </div>`;
 }
@@ -5781,21 +5989,21 @@ function Account({auth,health,toast,models,go}){
  async function buy(c,p){try{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,name:auth.user.name||auth.user.email,email:auth.user.email,brand:"Kredi paketi",tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:c+" kredi satın alma talebi ("+p+" ₺)",type:"kredi",total:p,monthly:0});toast("Talebiniz alındı ("+id+"). Ödeme bağlantısı size iletilecek.")}catch(e){toast(e.message)}}
  const KL={build:"Üretim",plan:"Plan",review:"Kontrol"};
  return html`<div><h1>Hesabım</h1><p class="sub">${auth.user.email}</p>
-  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,300px),1fr))"}}>
    <div class="box" style=${{margin:0}}><div style=${{color:"var(--mut)",fontSize:13}}>Gitmapp krediniz</div><div style=${{fontSize:40,fontWeight:800}}><${Icon} n="gem" s=${16}/> ${u?u.credits:auth.user.credits}</div>
     <div style=${{display:"flex",gap:8,flexWrap:"wrap",marginTop:8}}>${CREDIT_PACKS.map(([c,p])=>html`<button class="btn g s" onClick=${()=>buy(c,p)}>${c} kredi · ${p} ₺</button>`)}</div>
     <p style=${{color:"var(--mut)",fontSize:12,marginTop:8}}>Online ödeme yakında; şimdilik talep oluşturulur ve ödeme bağlantısı size iletilir.</p></div>
-   <div class="box" style=${{margin:0}}><b><${Icon} n="link" s=${16}/> Bağlantılar</b><table style=${{marginTop:6}}><tbody>
-    <tr><td><${Icon} n="code" s=${16}/> GitHub</td><td>${auth.user.github?html`<span style=${{color:"var(--ok)"}}>@${auth.user.github}</span>`:health.github?"Bağlı değil (Yayın merkezinden bağlanır)":"Yakında"}</td></tr>
-    <tr><td><${Icon} n="video" s=${16}/> Higgsfield (video/görsel)</td><td><span style=${{color:"var(--mut)"}}>Yakında — 50+ video ve görsel modeli ile uygulamanıza görsel üretimi</span></td></tr>
-    <tr><td><${Icon} n="palette" s=${16}/> Canva</td><td><span style=${{color:"var(--mut)"}}>Yakında — tasarımları Canva'da düzenleme (Canva onayı gerekiyor)</span></td></tr>
-    <tr><td><${Icon} n="dot" s=${16}/> ChatGPT aboneliği</td><td><span style=${{color:"var(--mut)"}}>Başvuru aşamasında</span></td></tr></tbody></table></div></div>
+   <div class="box" style=${{margin:0}}><b><${Icon} n="link" s=${16}/> Bağlantılar</b><${DataTable} label="Bağlantı durumları"><tbody>
+    <tr><th scope="row"><${Icon} n="code" s=${16}/> GitHub</th><td>${auth.user.github?html`<span style=${{color:"var(--ok)"}}>@${auth.user.github}</span>`:health.github?"Bağlı değil (Yayın merkezinden bağlanır)":"Yakında"}</td></tr>
+    <tr><th scope="row"><${Icon} n="video" s=${16}/> Higgsfield (video/görsel)</th><td><span style=${{color:"var(--mut)"}}>Yakında — 50+ video ve görsel modeli ile uygulamanıza görsel üretimi</span></td></tr>
+    <tr><th scope="row"><${Icon} n="palette" s=${16}/> Canva</th><td><span style=${{color:"var(--mut)"}}>Yakında — tasarımları Canva'da düzenleme (Canva onayı gerekiyor)</span></td></tr>
+    <tr><th scope="row"><${Icon} n="dot" s=${16}/> ChatGPT aboneliği</th><td><span style=${{color:"var(--mut)"}}>Başvuru aşamasında</span></td></tr></tbody><//></div></div>
   <h2><${Icon} n="key" s=${16}/> Kendi API anahtarlarım</h2><p class="sub" style=${{marginTop:-4}}>Bağladığınız anahtarla yapılan üretimlerde Gitmapp kredisi düşmez; ücret doğrudan sağlayıcıya ödenir. Anahtarlar sunucuda şifreli tutulur ve bir daha gösterilmez.</p>
-  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${d.byok.map(b=>html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}><div style=${{display:"flex",alignItems:"center",gap:8}}><b style=${{flex:1}}>${b.label}</b>${b.connected?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Bağlı ••••${b.last4}</span>`:""}</div>
+  <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,300px),1fr))"}}>${d.byok.map(b=>html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}><div style=${{display:"flex",alignItems:"center",gap:8}}><b style=${{flex:1}}>${b.label}</b>${b.connected?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Bağlı ••••${b.last4}</span>`:""}</div>
    ${b.connected?html`<button class="btn g s" disabled=${busy===b.provider} onClick=${()=>delKey(b.provider)}>Anahtarı kaldır</button>`:html`<div style=${{display:"flex",gap:6}}><input class="in" type="password" autocomplete="off" style=${{flex:1}} placeholder=${b.hint||"API anahtarı"} value=${keys[b.provider]||""} onInput=${e=>setKeys(k=>({...k,[b.provider]:e.target.value}))}/><button class="btn s" disabled=${busy===b.provider||!(keys[b.provider]||"").trim()} onClick=${()=>saveKey(b.provider)}>${busy===b.provider?"…":"Bağla"}</button></div>
     <a href=${b.keyUrl} target="_blank" style=${{fontSize:12}}>Anahtarı nereden alırım? ↗</a>`}</div>`)}</div>
   <h2><${Icon} n="chart" s=${16}/> Kullanım geçmişi</h2>
-  ${!u?html`<div class="empty">Yükleniyor…</div>`:!u.usage.length?html`<div class="empty">Henüz kullanım yok.</div>`:html`<table><thead><tr><th>Tarih</th><th>İşlem</th><th>Model</th><th>Kaynak</th><th>Kredi</th></tr></thead><tbody>${u.usage.map(x=>html`<tr><td>${new Date(x.created.replace(" ","T")+"Z").toLocaleString("tr-TR")}</td><td>${KL[x.kind]||x.kind}</td><td style=${{fontSize:12}}>${shortModel(x.model)}</td><td>${iconLabel(x.provider==="gitmapp"?"💎 Gitmapp":"🔑 "+x.provider)}</td><td>${x.credits?"−"+x.credits:"0"}</td></tr>`)}</tbody></table>`}
+  ${!u?html`<div class="empty">Yükleniyor…</div>`:!u.usage.length?html`<div class="empty">Henüz kullanım yok.</div>`:html`<${DataTable} label="Kullanım geçmişi" wide=${true}><thead><tr><th scope="col">Tarih</th><th scope="col">İşlem</th><th scope="col">Model</th><th scope="col">Kaynak</th><th scope="col" class="table-number">Kredi</th></tr></thead><tbody>${u.usage.map(x=>html`<tr><td>${new Date(x.created.replace(" ","T")+"Z").toLocaleString("tr-TR")}</td><td>${KL[x.kind]||x.kind}</td><td style=${{fontSize:12}}>${shortModel(x.model)}</td><td>${iconLabel(x.provider==="gitmapp"?"💎 Gitmapp":"🔑 "+x.provider)}</td><td class="table-number">${x.credits?"−"+x.credits:"0"}</td></tr>`)}</tbody><//>`}
  </div>`;
 }
 
@@ -6274,10 +6482,16 @@ function App(){
  const overview=useRemoteData(isAdm&&mode==="admin"?"/api/admin/overview":null,auth.user?.id);
  const needLogin=adminPage&&(!apiOn||auth.phase!=="ready"||!isAdm);
  const switchMode=m=>setView(m==="admin"?"yonetim":"ana");
- const useTemplate=async (t,active=()=>true)=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
+ const useTemplate=async (t,active=()=>true,separateOwner=null)=>{try{const r=await fetch(TPL_URL(t.id));if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");const h=await r.text();if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
    const draftId=crypto.randomUUID();
    const projectHtml=t.workflow?h.replace('const key="gitmapp-'+t.id+'";','const key="gitmapp-'+draftId+'";'):h;
-   setIncoming({draftId,openDesign:t.openDesign===true,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,purpose:t.desc,appId:null,msgs:[]});setView("studio")}catch(e){toast(e.message)}};
+   const draft={draftId,openDesign:t.openDesign===true,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,purpose:t.desc,appId:null,msgs:[]};
+   if(separateOwner){
+    const key="localDraft:"+studioScope(separateOwner,draft),indexKey="localDrafts:"+separateOwner;
+    if(!LS.set(key,draft))throw new Error("Taslak için cihazda yeterli alan yok.");
+    if(!LS.set(indexKey,[{id:draftId,title:t.name},...LS.get(indexKey,[])])){LS.del(key);throw new Error("Taslak listeye eklenemedi.")}
+   }else{setIncoming(draft);setView("studio")}
+   return true}catch(e){toast(e.message)}};
  const openDraft=draft=>{setIncoming(draft);setView("studio")};
  const newProject=()=>startTemplate({kind:"app"});
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
@@ -6365,7 +6579,7 @@ function App(){
    ${view==="maliyetler"&&html`<${AdminCosts} toast=${toast}/>`}
    ${view==="yonetim"&&html`<${AdminHome} request=${overview} go=${(page,status)=>{setProjectStatus(status);setView(page)}}/>`}
    ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
-   ${view==="studio"&&html`<${Studio} key=${auth.user?.id||"guest"} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
+   ${view==="studio"&&html`<${Studio} createTemplate=${useTemplate} key=${auth.user?.id||"guest"} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} openDraft=${openDraft} newProject=${newProject} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
    ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
