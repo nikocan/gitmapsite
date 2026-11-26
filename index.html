@@ -794,6 +794,11 @@ body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#10
 .tpl-details h2{font-size:19px;margin:0 0 9px}.tpl-details h3{font-size:15px;margin:17px 0 7px}
 .tpl-details p,.tpl-details ul{color:#dddde2;line-height:1.55;margin:0 0 8px}
 .tpl-details ul{padding-left:20px}.tpl-pricing{grid-column:1/-1}.tpl-pricing strong{color:#e4ff3d}
+.tpl-theme-label{display:flex;align-items:center;gap:8px;color:var(--label2);font-size:13px}
+.tpl-theme-label select{min-height:38px}.tpl-preview-tools{gap:6px;flex-wrap:wrap}
+.tpl-preview-tools>.ib{margin-left:auto}
+.tpl-details .getbtn{margin-top:8px}
+@media(max-width:500px){.tpl-preview-tools .seg button{font-size:11px;padding-inline:7px;gap:4px}.tpl-preview-tools>.ib{margin-left:0}.tpl-preview-tools .tpl-theme-label select{min-height:34px}}
 .tpl-price-editor form{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));align-items:end;margin:12px 0}
 .tpl-price-editor label{display:grid;gap:4px}
 @media(max-width:620px){
@@ -5417,6 +5422,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   return await ghostRun([{el:'.seg [data-k="'+k+'"]',fn:()=>setPrefs(p=>({...p,kind:k}))},{el:'.tpl[data-i="'+i+'"]',slow:true,fn:()=>setSt(x=>({...x,emoji:t[0]}))},{el:".gta",fn:()=>typeInto(t[2]),after:250},{el:".gsend",fn:()=>gen(t[2])}]);}
  const seedActions=useRef(null);seedActions.current={gen,doForMe};
  useEffect(()=>{if(!seed)return;const sd=seed;clearSeed&&clearSeed();
+  if(sd.templateRequest){
+   if(!st.html)return;
+   setInput(previous=>[previous,sd.templateRequest].filter(Boolean).join("\n\n"));
+   requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus());
+   return;
+  }
   if((sd.prompt||sd.kind||sd.sketch)&&st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışmanız var. Yeni projeye geçilsin mi?"))return;
   if(sd.prompt||sd.kind||sd.sketch){switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setTodo(null);setVersions([]);setPlan(null);setInput("");setAtts([])}
   if(sd.kind)setPrefs(p=>({...p,kind:sd.kind}));if(sd.theme)setPrefs(p=>({...p,theme:sd.theme,sector:sd.sector||p.sector}));if(sd.emoji)setSt(x=>({...x,emoji:sd.emoji}));
@@ -6166,6 +6177,16 @@ function AiCheck({toast}){
 
 /* ================= v3.7 — HAZIR ŞABLONLAR (çalışan demolar) ================= */
 const TEMPLATE_LIB=[
+/* premium-workflows:start */
+ {"id": "mimari", "name": "Mihenk Mimarlık", "sector": "Mimarlık & İç Mekân", "desc": "Mimari hizmetleri inceleyin, proje alanını girin ve başlangıç bütçesiyle birlikte bir görüşme isteyin.", "feat": ["Portföy ve hizmetler", "Anlık tutar hesabı", "Teklif talebi"], "pr": "#513f33", "ac": "#be946c", "type": "site", "kind": "site", "emoji": "🏡", "workflow": true, "premium": true, "use": ["Mimarlık ve iç mimarlık ofislerinde portföy sunumu ve ön teklif toplama", "Portföy projelerinizi ve metrekare ücretlerinizi girin. Formu görüşme takviminize bağlayabilirsiniz."]},
+ {"id": "cicek", "name": "Mimoza Çiçek Evi", "sector": "Çiçekçilik & Hediyelik", "desc": "Mevsim aranjmanlarını seçin, teslim tarihini belirleyin ve örnek siparişinizi oluşturun.", "feat": ["Çiçek koleksiyonu", "Anlık tutar hesabı", "Teslim alma siparişi"], "pr": "#572d3e", "ac": "#cf8d9f", "type": "site", "kind": "site", "emoji": "🌿", "workflow": true, "premium": true, "use": ["Çiçekçi, hediye atölyesi ve etkinlik floristi için ürün kataloğu ve sipariş toplama", "Koleksiyonu, teslimat bölgelerini ve ürün fiyatlarını kendi mağazanıza göre uyarlayın."]},
+ {"id": "pilates", "name": "Forme Pilates", "sector": "Spor & Wellness", "desc": "Ders türünü seçin, uygun seansı görün ve stüdyo için deneme rezervasyonu oluşturun.", "feat": ["Dersler", "Anlık tutar hesabı", "Müsait saat seçimi"], "pr": "#474f39", "ac": "#a9ab81", "type": "site", "kind": "site", "emoji": "♥", "workflow": true, "premium": true, "use": ["Pilates, yoga ve butik spor stüdyolarında ders tanıtımı ve seans rezervasyonu", "Ders saatlerini, seans ücretlerini ve eğitmenlerinizi ekleyin."]},
+ {"id": "etkinlik", "name": "Avra Davet", "sector": "Etkinlik & Organizasyon", "desc": "Mekân paketlerini karşılaştırın, konuk sayısına göre bütçeyi hesaplayın ve teklif isteyin.", "feat": ["Mekân paketleri", "Anlık tutar hesabı", "Teklif talebi"], "pr": "#44302a", "ac": "#ce9e70", "type": "site", "kind": "site", "emoji": "✨", "workflow": true, "premium": true, "use": ["Davet mekânı, organizasyon ajansı ve kurumsal etkinlik ekipleri için bütçe tahmini ve teklif toplama", "Mekân kapasitesini, kişi başı fiyatları ve etkinlik paketlerini güncelleyin."]},
+ {"id": "detaygaraj", "name": "Atlas Detay Garajı", "sector": "Otomotiv & Detailing", "desc": "Araç bakım paketini seçin, servis süresini görün ve örnek randevu açın.", "feat": ["Bakım paketleri", "Anlık tutar hesabı", "Müsait saat seçimi"], "pr": "#273440", "ac": "#8aacc6", "type": "site", "kind": "site", "emoji": "🔧", "workflow": true, "premium": true, "use": ["Oto bakım garajı, kaplama atölyesi ve premium araç yıkama işletmelerinde servis randevusu", "Servis seçeneklerini, servis süresini ve araç kabul saatlerini düzenleyin."]},
+ {"id": "kavurma", "name": "Kavun Kahve", "sector": "Kahve Kavurma & Gurme", "desc": "Kavrumları karşılaştırın, paket adedini seçin ve mağazadan teslim siparişi oluşturun.", "feat": ["Kavrum seçkisi", "Anlık tutar hesabı", "Teslim alma siparişi"], "pr": "#4b382d", "ac": "#c29070", "type": "site", "kind": "site", "emoji": "☕", "workflow": true, "premium": true, "use": ["Kahve kavurucuları, butik şarküteriler ve yerel gurme markalarında ürün keşfi ve teslim alma siparişi", "Kökenleri, gramajları, tadım notlarını ve teslim alma koşullarını ekleyin."]},
+ {"id": "patik", "name": "Patik Veteriner", "sector": "Veteriner & Evcil Hayvan", "desc": "Ziyaret türünü ve saati seçin, örnek bir evcil hayvan randevusu oluşturun.", "feat": ["Ziyaret türleri", "Anlık tutar hesabı", "Müsait saat seçimi"], "pr": "#2f4d46", "ac": "#8cad93", "type": "site", "kind": "site", "emoji": "🩺", "workflow": true, "premium": true, "use": ["Veteriner kliniği ve evcil hayvan bakım merkezlerinde hizmet tanıtımı ve randevu talebi", "Hizmetleri ve ajanda saatlerini kendi kliniğinize göre düzenleyin."]},
+ {"id": "fotostudyo", "name": "Lento Fotoğraf", "sector": "Fotoğraf & Prodüksiyon", "desc": "Çekim türünü seçin, seans adedine göre bütçe görün ve stüdyo talebi bırakın.", "feat": ["Çekim paketleri", "Anlık tutar hesabı", "Teklif talebi"], "pr": "#443655", "ac": "#ad95c5", "type": "site", "kind": "site", "emoji": "🎬", "workflow": true, "premium": true, "use": ["Fotoğraf, video ve içerik prodüksiyon stüdyolarında paket tanıtımı ve çekim teklifi toplama", "Portföyünüzü, teslim sürelerinizi ve çekim paketlerinizi kendi stüdyonuza göre ekleyin."]},
+/* premium-workflows:end */
 {"id": "adisyon", "name": "Paylı Adisyon", "sector": "Yemek & Kafe", "desc": "Masadaki ürünleri ve kişi sayısını girin. Hesabı kuruş kaybetmeden paylaştırın.", "feat": ["Ürün adedi", "Kuruş bazında paylaşım", "Adisyon geçmişi"], "pr": "#734125", "ac": "#734125", "type": "panel", "kind": "app", "emoji": "☕", "workflow": true},
 {"id": "iade", "name": "İade Tezgâhı", "sector": "Perakende & E-ticaret", "desc": "Sipariş kalemini seçin, iade edilebilir adedi kontrol edip tutarı hesaplayın.", "feat": ["Sipariş kalemleri", "Kalan iade hakkı", "İade tutarı"], "pr": "#305744", "ac": "#305744", "type": "panel", "kind": "app", "emoji": "🛍️", "workflow": true},
 {"id": "sira", "name": "Sıram Geldi", "sector": "Kuaför & Güzellik", "desc": "Randevusuz gelen müşterileri geliş sırasına alın. Sıradaki kişiyi çağırıp bekleme süresini güncelleyin.", "feat": ["Canlı bekleme listesi", "Bekleme süresi", "Sıradakini çağır"], "pr": "#6e3551", "ac": "#6e3551", "type": "panel", "kind": "app", "emoji": "✂️", "workflow": true},
@@ -6228,12 +6249,43 @@ const TEMPLATE_USE_CASES={
 const TPL_URL=id=>"templates/"+id+".html";
 const TPL_TYPES={panel:"Yönetim paneli",site:"Web sitesi"};
 const TPL_DEVICES=[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]];
+const TPL_APPEARANCES=[
+ ["","Özgün"],
+ ["ivory","Fildişi"],
+ ["noir","Gece"]
+];
+const TPL_THEME_CSS=`
+:root[data-gm-template-theme]{--panel:var(--sf);--r:14px;--sh:0 16px 35px -27px #2c2118a0}
+:root[data-gm-template-theme="ivory"]{--pr:#6e4e36;--ac:#a4744c;--bg:#f7f1e8;--sf:#fffaf1;--sf2:#efe4d7;--tx:#30241e;--tx2:#564537;--tx3:#5f5043;--ln:#d8cabb;--cover:#5b402d}
+:root[data-gm-template-theme="noir"]{--pr:#34313b;--ac:#85674d;--bg:#efece7;--sf:#fcf8f1;--sf2:#e7e0d8;--tx:#251f24;--tx2:#47404a;--tx3:#5e5160;--ln:#d4c7c2;--cover:#221f26}
+:root[data-gm-template-theme] :is(h1,h2,.big){font-family:Georgia,serif;font-weight:500;letter-spacing:-.038em}
+:root[data-gm-template-theme] :is(h2,.big){text-wrap:balance}
+:root[data-gm-template-theme] :is(header,.nav-in,.tb,.sb){border-color:var(--ln);box-shadow:var(--sh)}
+:root[data-gm-template-theme] :is(.hero:has(.hero-copy),.hero:has(+.grid),.hero-copy){background-color:var(--cover)}
+:root[data-gm-template-theme] :is(.hero:has(.hero-copy),.hero:has(+.grid)){color:#fff8ec}
+:root[data-gm-template-theme] .hero::after{filter:saturate(.82)}
+:root[data-gm-template-theme] .hero-art{filter:saturate(.79) contrast(1.07)}
+:root[data-gm-template-theme] :is(.hero-copy>p,.sector){color:#fff8ec}
+:root[data-gm-template-theme] :is(.offer,.history,.panel,.card){box-shadow:var(--sh)}
+:root[data-gm-template-theme="noir"] :is(.nav-in,body>header){background:#26232a;color:#fff8ec}
+:root[data-gm-template-theme="noir"] :is(.nav-in .links a,body>header a){color:#fff8ec}
+:root[data-gm-template-theme="noir"] body>header>a{background:#39343f}
+`;
+const TPL_THEME_SWITCH='<script>addEventListener("message",function(event){var d=event.data;if(event.source!==parent||d?.gm!=="template-theme")return;if(d.theme==="ivory"||d.theme==="noir")document.documentElement.dataset.gmTemplateTheme=d.theme;else delete document.documentElement.dataset.gmTemplateTheme});<\/script>';
+function templateAppearance(source,appearance,preview=false){
+ const active=TPL_APPEARANCES.some(([id])=>id&&id===appearance);
+ if(!active&&!preview)return source;
+ const sheet='<style data-gm-tpl-theme>'+TPL_THEME_CSS+'</style>';
+ const themed=active?source.replace(/<html\b/i,'<html data-gm-template-theme="'+appearance+'"'):source;
+ return themed.replace(/<\/head\s*>/i,close=>sheet+(preview?TPL_THEME_SWITCH:"")+close);
+}
+const activeTemplateProject=account=>LS.get("studio:"+(account||"guest"),null)||(account?null:LS.get("studio",null));
 const tplNumber=new Intl.NumberFormat("tr-TR");
 const tplMoney=new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:4});
 async function loadTemplate(id,signal){
  const r=await fetch(TPL_URL(id),{signal});
  if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");
- return (await r.text()).replace(/url\("(\.\/art\/[a-z]+\.webp)"\)/g,(_,path)=>'url("'+new URL(path,r.url).href+'")');
+ return (await r.text()).replace(/url\("(\.\/art\/[a-z0-9-]+\.webp)"\)/g,(_,path)=>'url("'+new URL(path,r.url).href+'")');
 }
 function tplQuote(t,pricing=siteSettings?.templatePricing){
  const usage=pricing?.estimates?.[t.id],rates=pricing?.rates;
@@ -6244,7 +6296,7 @@ function ProductMark({t}){
  return html`<span class="product-mark pm2"><${AppIcon2} emoji=${t.workflow?t.emoji:"brand_"+t.id} color=${t.pr} size=${46}/></span>`;
 }
 function TplThumb({t,eager=false}){
- const base="templates/previews/"+t.id;
+ const base="templates/previews/"+t.id+(t.appearance?"-"+t.appearance:"");
  return html`<div class="tpl-device-art" style=${{"--tpl-color":t.pr}}>
   <img class="tpl-web-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" masaüstü görünümü"} src=${base+".webp"}/>
   <img class="tpl-phone-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" mobil görünümü"} src=${base+"-mobile.webp"}/>
@@ -6254,7 +6306,7 @@ function TplCard({t,onDemo,onUse}){
  const quote=tplQuote(t);
  return html`<article class="tpc">
  <div class="tpc-img"><${TplThumb} t=${t}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı önizlemeyi aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı önizleme</span></button></div>
- <div class="tpc-m"><${ProductMark} t=${t}/><div><b>${t.name}</b><span>${t.sector} · ${TPL_TYPES[t.type]}</span></div></div>
+ <div class="tpc-m"><${ProductMark} t=${t}/><div><b>${t.name}</b><span>${t.sector} · ${TPL_TYPES[t.type]}${t.premium?" · Premium":""}</span></div></div>
  <div class="tpl-card-info"><p>${t.desc}</p><small>${quote?"Tahmini AI maliyeti · "+tplMoney.format(quote.total):"Ücretsiz önizleme"}</small></div>
  <div class="tpl-card-actions">
   <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"phone"})}><${Icon} n="phone" s=${14}/> Telefon</button>
@@ -6263,10 +6315,13 @@ function TplCard({t,onDemo,onUse}){
   <button class="getbtn" onClick=${()=>onUse(t)}>Stüdyo’da kullan</button>
  </div></article>`;
 }
-function TplDemo({t,close,onUse}){
+function TplDemo({t,close,onUse,canAdapt=false}){
  const [dev,setDev]=useState(t.previewDevice||"desktop"),[details,setDetails]=useState(!!t.showDetails),dialog=useRef(null);
- const [source,setSource]=useState(""),[failure,setFailure]=useState("");
- const quote=tplQuote(t),[usage,adapt]=TEMPLATE_USE_CASES[t.id];
+ const [source,setSource]=useState(""),[failure,setFailure]=useState(""),[appearance,setAppearance]=useState(t.appearance||"");
+ const frame=useRef(null);
+ const applyAppearance=()=>frame.current?.contentWindow?.postMessage({gm:"template-theme",theme:appearance},"*");
+ useEffect(applyAppearance,[appearance]);
+ const quote=tplQuote(t),[usage,adapt]=t.use||TEMPLATE_USE_CASES[t.id];
  useEffect(()=>{
   const el=dialog.current,trigger=document.activeElement;
   el.showModal();
@@ -6276,7 +6331,7 @@ function TplDemo({t,close,onUse}){
   if(details||source||failure)return;
   const controller=new AbortController();
   loadTemplate(t.id,controller.signal)
-   .then(h=>{if(!controller.signal.aborted)setSource(withStoreShim(h))})
+   .then(h=>{if(!controller.signal.aborted)setSource(withStoreShim(templateAppearance(h,t.appearance,true)))})
    .catch(e=>{if(!controller.signal.aborted)setFailure(e.message)});
   return()=>controller.abort();
  },[details,t.id,source,failure]);
@@ -6289,13 +6344,13 @@ function TplDemo({t,close,onUse}){
      <button class=${!details?"on":""} aria-pressed=${!details} onClick=${()=>setDetails(false)}>Canlı önizleme</button>
      <button class=${details?"on":""} aria-pressed=${details} onClick=${()=>setDetails(true)}>Detaylar</button>
     </div>
-    <button class="getbtn" onClick=${()=>onUse({...t,openDesign:true})}>Tasarımı düzenle</button>
-    <button class="getbtn solid" onClick=${()=>onUse(t)}>Bu şablonla başla <${Icon} n="arrowRight" s=${16}/></button>
+    <button class="getbtn" onClick=${()=>onUse({...t,appearance,openDesign:true})}>Tasarımı düzenle</button>
+    <button class="getbtn solid" onClick=${()=>onUse({...t,appearance})}>Bu şablonla başla <${Icon} n="arrowRight" s=${16}/></button>
    </div>
   </header>
   ${details&&html`<div class="tpl-details">
    <section><h2>Şablon hakkında</h2><p>${t.desc}</p><ul>${t.feat.map(f=>html`<li key=${f}>${f}</li>`)}</ul></section>
-   <section><h2>Kullanım alanları</h2><p>${usage}</p><h3>Projenize uyarlayın</h3><p>${adapt}</p></section>
+   <section><h2>Kullanım alanları</h2><p>${usage}</p><h3>Projenize uyarlayın</h3><p>${adapt}</p>${canAdapt&&html`<button class="getbtn" onClick=${()=>onUse({...t,appearance,adaptExisting:true})}>Açık projeye uyarlama isteği hazırla</button>`}</section>
    <section class="tpl-pricing"><h2>Yapay zekâ maliyeti</h2>
     ${quote?html`<p><strong>${tplMoney.format(quote.total)}</strong> tahmini özelleştirme maliyeti</p><p>${tplNumber.format(quote.input)} giriş ve ${tplNumber.format(quote.output)} çıkış tokenı üzerinden hesaplanır.</p>`:html`<p>Bu şablon için özelleştirme tahmini henüz girilmedi.</p>`}
     <p>Demoyu açmak ve şablonu Stüdyo’ya almak ücretsizdir. Yapay zekâ işlemlerinde seçilen modelin kredi tarifesi geçerlidir.</p>
@@ -6303,27 +6358,31 @@ function TplDemo({t,close,onUse}){
   </div>`}
   <div class="product-caption tpl-preview-tools" hidden=${details}>
    <div class="seg" role="group" aria-label="Önizleme cihazı">${TPL_DEVICES.map(([k,ic,l])=>html`<button key=${k} aria-label=${l} aria-pressed=${dev===k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${16}/>${l}</button>`)}</div>
-   <a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" aria-label="Demoyu yeni sekmede aç" title="Demoyu yeni sekmede aç"><${Icon} n="external" s=${16}/></a>
+   <label class="tpl-theme-label">Tema <select aria-label="Önizleme teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}>${TPL_APPEARANCES.map(([id,label])=>html`<option key=${id} value=${id}>${label}</option>`)}</select></label>
+   ${!appearance&&html`<a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" aria-label="Demoyu yeni sekmede aç" title="Demoyu yeni sekmede aç"><${Icon} n="external" s=${16}/></a>`}
   </div>
   <div class="fp-stage product-stage" hidden=${details}>
-   ${failure?html`<p role="alert">${failure} <button class="btn s" onClick=${()=>setFailure("")}>Tekrar dene</button></p>`:source?html`<iframe title=${t.name} srcDoc=${source} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe>`:html`<p role="status">Önizleme yükleniyor…</p>`}
+   ${failure?html`<p role="alert">${failure} <button class="btn s" onClick=${()=>setFailure("")}>Tekrar dene</button></p>`:source?html`<iframe ref=${frame} onLoad=${applyAppearance} title=${t.name} srcDoc=${source} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe>`:html`<p role="status">Önizleme yükleniyor…</p>`}
   </div></dialog>`,document.body);
 }
-function TemplatesPage({onUse}){
- const [type,setType]=useState(""),[sector,setSector]=useState(""),[demo,setDemo]=useState(null);
+function TemplatesPage({onUse,canAdapt}){
+ const [type,setType]=useState(""),[sector,setSector]=useState(""),[demo,setDemo]=useState(null),[appearance,setAppearance]=useState("");
+ const [premiumOnly,setPremiumOnly]=useState(false);
  const sectors=[...new Set(TEMPLATE_LIB.map(t=>t.sector))].sort((a,b)=>a.localeCompare(b,"tr"));
- const groups=(sector?[sector]:sectors).map(name=>({name,items:TEMPLATE_LIB.filter(t=>t.sector===name&&(!type||t.type===type))})).filter(group=>group.items.length);
- const featured=TEMPLATE_LIB.find(t=>t.id==="ziyaret");
+ const groups=(sector?[sector]:sectors).map(name=>({name,items:TEMPLATE_LIB.filter(t=>t.sector===name&&(!type||t.type===type)&&(!premiumOnly||t.premium))})).filter(group=>group.items.length);
+ const featured={...TEMPLATE_LIB.find(t=>t.id==="mimari"),appearance};
  return html`<div class="explore tpl-catalog">
-  <section class="tpl-catalog-hero"><div><h1>Şablonlar</h1><p>İşinize uygun şablonu bulun, mobilde ve masaüstünde deneyin, Stüdyo’da özelleştirin.</p></div>
+  <section class="tpl-catalog-hero"><div><h1>Şablonlar</h1><p>İşinize uygun şablonu ve temayı seçin. Çalışan demoyu mobilde veya masaüstünde deneyip Stüdyo’da özelleştirin.</p></div>
    <${TplThumb} t=${featured} eager=${true}/></section>
   <div class="tp-filter">
    <div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Paneller"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   <button class=${"chip"+(premiumOnly?" on":"")} aria-pressed=${premiumOnly} onClick=${()=>setPremiumOnly(!premiumOnly)}>Premium koleksiyon</button>
+   <label class="tpl-theme-label">Tema <select aria-label="Katalog teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}>${TPL_APPEARANCES.map(([id,label])=>html`<option key=${id} value=${id}>${label}</option>`)}</select></label>
    <label class="tpl-sector">Kategori <select class="in" aria-label="Kategori" value=${sector} onChange=${e=>setSector(e.target.value)}><option value="">Tüm kategoriler</option>${sectors.map(s=>html`<option key=${s} value=${s}>${s}</option>`)}</select></label>
   </div>
-  ${groups.map(({name,items})=>html`<section class="tpl-group" key=${name}><h2>${name}</h2><div class="tp-grid">${items.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setDemo} onUse=${onUse}/>`)}</div></section>`)}
-  ${!groups.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSector("")}}>Filtreleri temizle</button></div>`}
-  ${demo&&html`<${TplDemo} t=${demo} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
+  ${groups.map(({name,items})=>html`<section class="tpl-group" key=${name}><h2>${name}</h2><div class="tp-grid">${items.map(t=>html`<${TplCard} key=${t.id} t=${{...t,appearance}} onDemo=${setDemo} onUse=${onUse}/>`)}</div></section>`)}
+  ${!groups.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSector("");setPremiumOnly(false)}}>Filtreleri temizle</button></div>`}
+  ${demo&&html`<${TplDemo} t=${demo} canAdapt=${canAdapt} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
  </div>`;
 }
 
@@ -7540,7 +7599,15 @@ function App(){
  const overview=useRemoteData(isAdm&&mode==="admin"?"/api/admin/overview":null,auth.user?.id);
  const needLogin=adminPage&&(!apiOn||auth.phase!=="ready"||!isAdm);
  const switchMode=m=>setView(m==="admin"?"yonetim":"ana");
- const useTemplate=async (t,active=()=>true)=>{try{const h=await loadTemplate(t.id);if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
+ const useTemplate=async (t,active=()=>true)=>{try{
+   if(t.adaptExisting){
+    if(!activeTemplateProject(auth.user?.id)?.html)throw new Error("Önce Stüdyo’da uyarlamak istediğiniz projeyi açın.");
+    const theme=TPL_APPEARANCES.find(([id])=>id===(t.appearance||""))?.[1];
+    setSeed({templateRequest:`“${t.name}” şablonunun iş akışını açık projeme uyarla. ${t.desc} Özellikler: ${t.feat.join(", ")}. Görünüm: ${theme}. Mevcut sayfaları ve verileri koruyarak yeni iş akışını ayrı bir bölüm olarak ekle.`});
+    setView("studio");
+    return;
+   }
+   const h=templateAppearance(await loadTemplate(t.id),t.appearance);if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
    const draftId=crypto.randomUUID();
    const projectHtml=t.workflow?h.replace('const key="gitmapp-'+t.id+'";','const key="gitmapp-'+draftId+'";'):h;
    setIncoming({draftId,openDesign:t.openDesign===true,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.kind,purpose:t.desc,appId:null,msgs:[]});setView("studio")}catch(e){toast(e.message)}};
@@ -7638,7 +7705,7 @@ function App(){
    ${view==="kreator"&&html`<${KreatorPage} auth=${auth} toast=${toast} openAuth=${openAuth}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
    ${view==="otomasyon"&&html`<${Automations} toast=${toast}/>`}
-   ${view==="sablonlar"&&html`<${TemplatesPage} onUse=${useTemplate}/>`}
+   ${view==="sablonlar"&&html`<${TemplatesPage} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
    ${view==="detay"&&html`<${AppDetail} key=${appSlug} slug=${appSlug} go=${navGo} backToStore=${backToStore} auth=${auth} openAuth=${openAuth} openInStudio=${openInStudio} toast=${toast} apiOn=${apiOn} healthError=${healthError} retry=${()=>retry(x=>x+1)}/>`}
    ${view==="modeller"&&html`<${ModelsPage} models=${models} go=${setView}/>`}
    ${view==="hesabim"&&html`<${Account} auth=${auth} health=${health} toast=${toast} models=${models} go=${setView}/>`}
