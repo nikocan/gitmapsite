@@ -57,3 +57,13 @@ test("yedek tanımlı değilse birincilin anlaşılır hatası döner", async (t
   assert.notEqual(r.status, 200);
   assert.match(j.error, /bakiye bitti \(402\)/);
 });
+
+test("çok modelli ana sağlayıcıda kullanıcıya yalnızca seçilen modeller gösterilir, Hostinger adları eşlenir", async (t) => {
+  const many = Array.from({ length: 60 }, (_, i) => ({ id: "vendor" + i + "/model-" + i })).concat([{ id: "anthropic/claude-sonnet-4.5" }, { id: "anthropic/claude-opus-4.5" }]);
+  const primary = await fake((url) => url.endsWith("/models") ? [200, { data: many }] : [200, { choices: [{ message: { content: "ok" } }] }]);
+  t.after(() => primary.close());
+  const api = await start(t, { AI_BASE: primary.base, AI_KEY: "k", AI_MODELS: "claude-sonnet-4.5,claude-opus-4.5", AI_MODEL: "claude-sonnet-4.5" });
+  const j = await (await fetch("http://127.0.0.1:" + api.port + "/api/ai/models")).json();
+  assert.deepEqual(j.platform.map((m) => m.id), ["anthropic/claude-sonnet-4.5", "anthropic/claude-opus-4.5"]);
+  assert.equal(j.default, "anthropic/claude-sonnet-4.5");
+});

@@ -178,3 +178,10 @@ test("tek tıkla OpenRouter ana, Hostinger yedek; yöneticinin kendi anahtarı y
   assert.ok(imp.fallbacks.includes("anthropic"));
   assert.doesNotMatch(JSON.stringify(imp),/sk-ant-0123456789abcdef0123/);
 });
+test("ana sağlayıcı OpenRouter'a çevrilince sunucu dosyasındaki Hostinger anahtarı kendiliğinden yedek olur", async t => {
+  const {request,admin}=await fixture(t,{AI_BASE:"https://router.hostinger.com/v1",AI_KEY:"hostinger-key-0123456789",OPENROUTER_API_KEY:"",ANTHROPIC_API_KEY:"",OPENAI_API_KEY:"",GEMINI_API_KEY:"",DEEPSEEK_API_KEY:"",AI_FALLBACKS:"",HOSTINGER_AI_KEY:""});
+  assert.deepEqual((await request("GET","health")).aiFallbacks,[]);
+  await request("PUT","admin/ai",{name:"AI_BASE",value:"https://openrouter.ai/api/v1"},admin);
+  await request("PUT","admin/ai",{name:"AI_KEY",value:"sk-or-v1-0123456789abcdef"},admin);
+  assert.deepEqual((await request("GET","health")).aiFallbacks,["hostinger"]);
+});

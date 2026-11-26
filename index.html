@@ -1655,8 +1655,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.35.0";
+const VERSION="5.36.0";
 const CHANGELOG=[
+ {v:"5.36.0",date:"2026-11-26",items:[
+  "🛟 Ana sağlayıcı OpenRouter'a elle çevrildiğinde de Hostinger AI Router kendiliğinden yedek oluyor: sunucu dosyasındaki Hostinger anahtarı yedek olarak kullanılıyor; varsayılan yedek sırası Hostinger → OpenRouter → Anthropic → OpenAI → Gemini → DeepSeek (ana sağlayıcı kendi yedeği olmaz)",
+  "🎯 Model seçicide yüzlerce rastgele model görünmesi düzeltildi: OpenRouter ana sağlayıcıyken yalnızca model listesindekiler gösteriliyor; Hostinger biçimindeki adlar (claude-sonnet-4.5) OpenRouter karşılıklarına (anthropic/claude-sonnet-4.5) kendiliğinden eşleniyor, eşleşme yoksa seçkin bir set (Sonnet, Opus, GPT, Gemini, DeepSeek) gösteriliyor",
+  "🤝 Asistan ve görsel okuma modeli de aynı şekilde ana sağlayıcının biçimine eşleniyor"]},
  {v:"5.35.0",date:"2026-11-26",items:[
   "🔀 Tek tıkla “OpenRouter'ı ana, Hostinger'ı yedek yap”: ana sağlayıcı OpenRouter oluyor, model adları OpenRouter biçimine çevriliyor (claude-sonnet-4.5 → anthropic/claude-sonnet-4.5), eksikse güçlü/dengeli/hızlı birer model ekleniyor; mevcut Hostinger anahtarı ve model listesi otomatik olarak yedeğe taşınıyor",
   "🗝️ Hesabım › API anahtarlarım'da Anthropic ya da OpenAI anahtarın varsa, sağlayıcı sayfasında “Hesabımdaki anahtarı kullan” düğmesi çıkıyor; anahtar sunucu içinde kopyalanıyor, tarayıcıya hiç gelmiyor",
@@ -2759,7 +2763,7 @@ function AdminAI({toast}){
    ${result("primary")}</div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Yedek sağlayıcılar</h2><p>Ana sağlayıcı bakiye bitti, model yok, yoğunluk ya da hata verirse istek sırayla bunlara gider; kullanıcı hata görmez.</p></div></div>
    ${AI_PROVS.slice(1).filter(pv=>!(pv.id==="hostinger"&&/router\.hostinger\.com/.test(st.base)&&!f(pv.env).set)).map(pv=>{const x=f(pv.env);return html`<div class="ai-prov" key=${pv.id}><div class="ai-ph"><b>${pv.n}</b>${x.set?html`<span class="pill-ok">anahtar var · ••••${x.last4}</span>`:html`<span class="pill-no">anahtar yok</span>`}<a href=${pv.keyUrl} target="_blank" rel="noopener">Anahtar al</a>${(st.byok||[]).find(b=>b.provider===pv.id)&&!x.set?html`<button class="btn s" disabled=${busy==="imp:"+pv.id} onClick=${()=>importKey(pv.id)}>Hesabımdaki anahtarı kullan (••••${(st.byok||[]).find(b=>b.provider===pv.id).last4})</button>`:""}<span style=${{flex:1}}></span>${x.set&&html`<button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test(pv.id)}>Test et</button>`}</div><small>${pv.d}</small>${field(pv.env,"API anahtarı","",{secret:true})}${result(pv.id)}</div>`})}
-   ${field("AI_FALLBACKS","Deneme sırası","openrouter,anthropic,openai,gemini,deepseek")}</div>
+   ${field("AI_FALLBACKS","Deneme sırası","hostinger,openrouter,anthropic,openai,gemini,deepseek")}</div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Asistan</h2><p>Asistan ücretsiz; maliyeti düşük, hızlı bir model önerilir. Görsel ekli mesajlarda görsel okuyan model kullanılır.</p></div></div>
    ${field("COPILOT_MODEL","Asistan modeli","boş: listeden dengeli bir model")}${field("VISION_MODEL","Görsel okuyan model","boş: otomatik")}</div>
  </section>`;
