@@ -799,7 +799,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.45.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.46.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -2166,4 +2166,35 @@ route("POST", "/api/admin/mail/test", async ({ user, body }) => {
   catch (e) { const m = mailErrTr(String(e.message || e)); q("INSERT INTO mail_log(to_addr,kind,subject,status,error,tries) VALUES(?,?,?,?,?,1)").run(to, "test", "Gitmapp e-posta denemesi", "hata", m); throw new HttpErr(502, "Gönderilemedi: " + m); }
 });
 route("POST", "/api/admin/mail/retry", () => { q("UPDATE mail_log SET status='bekliyor', tries=0 WHERE status='hata' AND body IS NOT NULL").run(); for (const r of q("SELECT id FROM mail_log WHERE status='bekliyor' ORDER BY id LIMIT 50").all()) deliverMail(r.id).catch(() => { }); return mailState(); });
+// ---------- GitHub bağlantısı: yönetici panelinden OAuth uygulaması + kullanıcı erişim anahtarı (PAT) ----------
+const GH_ENV0 = { ...CFG.gh };
+function ghPanel() { const r = q("SELECT v FROM server_settings WHERE k='gh_oauth'").get(); if (!r) return null; try { return JSON.parse(decKey(r.v)); } catch { return null; } }
+function applyGh() { const p = ghPanel(); CFG.gh = p && p.id && p.secret ? { id: p.id, secret: p.secret, source: "panel" } : { ...GH_ENV0, source: GH_ENV0.id ? "sunucu" : "yok" }; }
+applyGh();
+const ghState = () => ({ configured: !!(CFG.gh.id && CFG.gh.secret), source: CFG.gh.source, id: CFG.gh.id || "", secretSet: !!CFG.gh.secret, callback: CFG.api + "/api/auth/oauth/github/callback", homepage: CFG.site, users: q("SELECT COUNT(*) n FROM users WHERE github_token IS NOT NULL").get().n });
+route("GET", "/api/admin/github", () => ghState());
+route("PUT", "/api/admin/github", async ({ body }) => {
+  const id = String(body.id || "").trim(), old = ghPanel() || {}; const secret = String(body.secret || "").trim() || (old.id === id ? old.secret : "");
+  need(/^(Ov23|Iv1\.|Iv23)[A-Za-z0-9._-]{8,40}$/.test(id) || /^[a-f0-9]{20}$/.test(id), 400, "Client ID biçimi tanınmadı (ör. Ov23li… ya da Iv1.…)");
+  need(/^[a-f0-9]{40}$/.test(secret), 400, "Client secret 40 karakterlik bir anahtar olmalı (GitHub › Developer settings › OAuth Apps › Generate a new client secret)");
+  // Kimlik bilgisi doğrulama: sahte kodla takas isteği; doğru id/secret "bad_verification_code", yanlışsa "incorrect_client_credentials" döner
+  const r = await fetch(E.TEST_GH_OAUTH || "https://github.com/login/oauth/access_token", { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify({ client_id: id, client_secret: secret, code: "gitmapp-dogrulama" }), signal: AbortSignal.timeout(12000) }).then((x) => x.json()).catch(() => null);
+  need(r, 502, "GitHub'a ulaşılamadı, biraz sonra tekrar deneyin");
+  need(r.error !== "incorrect_client_credentials", 400, "GitHub bu Client ID ve secret'ı kabul etmedi; ikisini de yeniden kopyala");
+  q("INSERT INTO server_settings(k,v) VALUES('gh_oauth',?) ON CONFLICT(k) DO UPDATE SET v=excluded.v").run(encKey(JSON.stringify({ id, secret })));
+  applyGh(); return { ...ghState(), verified: r.error === "bad_verification_code" };
+});
+route("DELETE", "/api/admin/github", () => { q("DELETE FROM server_settings WHERE k='gh_oauth'").run(); applyGh(); return ghState(); });
+// Kullanıcı: OAuth olmadan kişisel erişim anahtarıyla bağlan (repo izni gerekir)
+route("PUT", "/api/connect/github-token", async ({ user, body }) => {
+  need(user, 401, "Giriş yapın");
+  const tok = String(body.token || "").trim(); need(/^(ghp_|github_pat_|gho_)[A-Za-z0-9_]{20,255}$/.test(tok), 400, "GitHub erişim anahtarı ghp_ ya da github_pat_ ile başlamalı");
+  const r = await fetch((E.TEST_CONN_BASE ? E.TEST_CONN_BASE + "/github" : "https://api.github.com") + "/user", { headers: { Authorization: "Bearer " + tok, Accept: "application/vnd.github+json", "User-Agent": "gitmapp" }, signal: AbortSignal.timeout(12000) }).catch(() => null);
+  need(r, 502, "GitHub'a ulaşılamadı, biraz sonra tekrar deneyin"); need(r.status !== 401, 400, "GitHub bu anahtarı kabul etmedi (süresi dolmuş ya da yanlış kopyalanmış)"); need(r.ok, 502, "GitHub yanıt vermedi (" + r.status + ")");
+  const me = await r.json(); const scopes = (r.headers.get("x-oauth-scopes") || "").split(",").map((s) => s.trim()).filter(Boolean);
+  need(!scopes.length || scopes.some((s) => s === "repo" || s === "public_repo"), 400, "Anahtarda depo izni yok; oluştururken “repo” kutusunu işaretle");
+  q("UPDATE users SET github_login=?, github_token=? WHERE id=?").run(String(me.login || "").slice(0, 100), tok, user.id);
+  if (typeof HEALTH_CACHE !== "undefined") HEALTH_CACHE.delete(user.id);
+  return { ok: true, login: me.login, scopes, user: pubUser(q("SELECT * FROM users WHERE id=?").get(user.id)) };
+});
 server.listen(CFG.port, "127.0.0.1", () => { startRadar(); console.log(`Gitmapp API :${server.address().port} — AI:${!!CFG.aiKey} GitHub:${!!CFG.gh.id} Google:${!!CFG.google.id} Alan adı:${!!CFG.hostingerToken}`); });
