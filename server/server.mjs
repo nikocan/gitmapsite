@@ -1802,12 +1802,34 @@ function validWebUrl(value) {
 }
 function publicSettings() {
   const read = k => { const row=q("SELECT v FROM server_settings WHERE k=?").get(k); return row ? JSON.parse(row.v) : null; };
-  return { business:read("business"), prices:read("prices") };
+  const estimates=Object.fromEntries(q("SELECT k,v FROM server_settings WHERE k GLOB 'template_estimate:*'").all()
+    .map(row=>[row.k.slice("template_estimate:".length),JSON.parse(row.v)]));
+  return { business:read("business"), prices:read("prices"),
+    templatePricing:{rates:read("template_rates"),estimates} };
 }
 route("GET", "/api/settings", publicSettings);
 route("PATCH", "/api/admin/settings", ({body}) => {
   const write=q("INSERT INTO server_settings(k,v) VALUES(?,?) ON CONFLICT(k) DO UPDATE SET v=excluded.v");
-  if (body.business) {
+  if (Object.hasOwn(body,"templatePricing")) {
+    const pricing=body.templatePricing;
+    need(pricing && typeof pricing==="object",400,"Şablon fiyatlandırması geçersiz");
+    const pair=(value,max,valid,message)=>{
+      need(value && [value.input,value.output].every(n=>valid(n) && n>=0 && n<=max),400,message);
+      return {input:value.input,output:value.output};
+    };
+    if (Object.hasOwn(pricing,"rates")) {
+      const rates=pair(pricing.rates,1e6,Number.isFinite,"Token tarifesi geçersiz");
+      write.run("template_rates",JSON.stringify(rates));
+    } else {
+      need(typeof pricing.id==="string" && /^[a-z][a-z0-9-]{0,63}$/.test(pricing.id),400,"Şablon kimliği geçersiz");
+      const key="template_estimate:"+pricing.id;
+      if (pricing.estimate===null) q("DELETE FROM server_settings WHERE k=?").run(key);
+      else {
+        const estimate=pair(pricing.estimate,1e7,Number.isSafeInteger,"Token tahmini geçersiz");
+        write.run(key,JSON.stringify(estimate));
+      }
+    }
+  } else if (body.business) {
     const whatsapp=str(body.business.whatsapp,30,"Telefon")?.trim() || "";
     const hostingerRef=str(body.business.hostingerRef,500,"Bağlantı")?.trim() || "";
     need(!whatsapp || /^\+?[\d ()-]{7,30}$/.test(whatsapp), 400, "WhatsApp numarası geçersiz");

@@ -38,7 +38,24 @@ textarea{resize:vertical}button{font-weight:650;background:var(--pr);color:white
 :focus-visible{outline:3px solid #145ac5;outline-offset:3px}
 .history{margin-top:24px}.history ul{padding-left:22px}.history li{padding:8px 0;white-space:pre-line;overflow-wrap:anywhere}.history img{display:block;max-height:100px;max-width:100%;margin-top:6px}footer{font-size:13px}
 @media(max-width:680px){.grid{grid-template-columns:minmax(0,1fr)}header,main,footer{padding:15px}.hero{padding:16px 0}.grid{gap:16px}}
-article li{margin:20px 0;line-height:1.4}.hero h1{color:#213f64}</style></head>
+article li{margin:20px 0;line-height:1.4}.hero h1{color:#213f64}
+/* Şablonun düzenlenebilir tema ve yerleşim kuralları */
+:root{--bg:#eaeff2;--tx:#182321;--line:color-mix(in srgb,var(--pr) 16%,white);font-family:"Inter",system-ui,sans-serif}
+header{max-width:none;padding-block:14px;padding-inline:max(20px,calc((100vw - 1120px)/2 + 32px));background:#fff;border-color:var(--line);gap:12px}
+header strong{display:flex;align-items:center;gap:10px;letter-spacing:-.025em}
+header strong::before{content:"";width:20px;height:20px;flex:none;border-radius:7px;background:var(--pr);box-shadow:inset 0 0 0 5px #fff5}
+header a{padding:8px 13px;background:#f3f5f4;border-radius:20px;text-decoration:none;text-align:center;font-size:13px}
+main{padding-top:24px}.hero{position:relative;overflow:hidden;isolation:isolate;display:flex;justify-content:center;flex-direction:column;padding:clamp(22px,4.4vw,62px);margin:0 0 24px;border-radius:26px;background:var(--pr);color:#fff}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-radial-gradient(ellipse at 100% 0%,transparent 0 26px,#fff2 27px 28px,transparent 29px 49px);mask-image:linear-gradient(90deg,transparent 45%,black)}
+.hero h1{color:inherit;font-size:clamp(34px,5.1vw,67px);margin:0;letter-spacing:-.06em;line-height:1.05;text-wrap:balance}
+.hero p{color:inherit;font-size:clamp(14px,1.4vw,17px);margin:12px 0 0;max-width:51ch;line-height:1.48}
+article,form,.history{border-color:var(--line);border-radius:20px;box-shadow:0 10px 32px -26px var(--pr)}
+article h2,form h2,.history h2{letter-spacing:-.035em}
+input,select,textarea{border-radius:10px;border-color:color-mix(in srgb,var(--pr) 39%,white)}
+button{border-radius:10px}button:hover{filter:brightness(.9)}
+article>ul{padding-left:20px}footer{color:var(--pr)}
+@media(max-width:680px){header{padding:11px 15px}header strong{font-size:15px}main{padding-top:14px}.hero{margin-bottom:16px;border-radius:20px}.hero h1{font-size:clamp(30px,9vw,44px)}.hero p{margin-top:9px}article,form,.history{border-radius:16px}}
+</style></head>
 <body><header><strong>Poliklinik Ajandası</strong><a href="#task">Saat ayır</a></header><main>
 <div class="hero"><h1>Muayene randevuları</h1><p>Branş ve hekim seçin, uygun saatlerden birini ayırın.</p></div><div class="grid"><article><h2>Poliklinikler</h2><ul><li><b>Dahiliye</b><p>Genel değerlendirme ve takip</p></li><li><b>Göz hastalıkları</b><p>Görme ve göz sağlığı muayenesi</p></li></ul></article>
 <form id="task"><h2>Saat ayır</h2><label>Branş<select name="unit" required><option value="">Seçin</option><option>Dahiliye</option><option>Göz hastalıkları</option></select></label><label>Hekim<select name="doctor" required><option value="">Seçin</option></select></label><label>Randevu günü<input name="day" type="date" required ></label><label>Saat<select name="slot" required><option value="">Seçin</option><option>09.00</option><option>10.00</option><option>11.00</option></select></label><label>Hasta rumuzu<input name="alias" type="text" required ></label><button type="submit">Saat ayır</button></form></div>
