@@ -35,7 +35,7 @@ async function fixture(t, extra = {}) {
   const admin=await login(password);
   assert.equal(admin.user.admin,true);
   const member=await request("POST","auth/register",{email:"customer@example.test",password:randomBytes(16).toString("hex"),name:"Müşteri"});
-  return {request,admin:admin.token,member,login,cli,password};
+  return {request,admin:admin.token,member,login,cli,password,base:"http://127.0.0.1:"+port};
 }
 
 test("admin routes require a verified manager, provisioning is repeatable and a password reset ends older sessions", async t => {
@@ -201,4 +201,53 @@ test("adres Hostinger, anahtar OpenRouter ise OpenRouter kullanılır; Hostinger
   assert.ok(!rm.fallbacks.includes("hostinger"));
   assert.equal(rm.fields.find(f=>f.name==="AI_BASE").value,"https://openrouter.ai/api/v1");
   assert.deepEqual((await request("GET","health")).aiFallbacks,[]);
+});
+
+
+test("Radar release binds approval and public HTML to the reviewed version, and paid copies require a verified sale", async t => {
+  const {request,admin,member,base}=await fixture(t);
+  const draft={title:"Radar örnek",html:"<h1>İncelenen sürüm</h1>",meta:{source:"github:example/demo@abc123",radarOrigin:"import"}};
+  const created=await request("POST","apps",draft,admin);
+  assert.equal(created.status,200);
+  const path="apps/"+created.app.id;
+  const review="admin/radar-review/"+created.app.id;
+  const checks={rights:true,security:true,usability:4,functionality:5,presentation:4};
+  const publish={slug:"radar-demo",listed:true,price:250};
+  assert.equal((await request("POST",path+"/publish",publish,admin)).status,409);
+  assert.equal((await request("POST",review,checks,member.token)).status,403);
+  assert.equal((await request("POST",review,{...checks,functionality:1},admin)).status,409);
+  assert.equal((await request("POST",review,checks,admin)).app.review.score,90);
+  assert.equal((await request("POST",path+"/publish",publish,admin)).status,200);
+  const store="store/radar-demo";
+  assert.equal((await request("GET",store)).app.review.score,90);
+  assert.equal((await request("POST",store+"/remix",{},member.token)).status,402);
+  assert.deepEqual((await request("POST",store+"/sale",{},member.token)).sale,{amount:250,status:"pending"});
+  assert.deepEqual((await request("POST",store+"/sale",{},member.token)).sale,{amount:250,status:"pending"});
+  assert.equal((await request("GET","admin/store-sales",null,member.token)).status,403);
+  const row=(await request("GET","admin/store-sales",null,admin)).rows[0];
+  const payment={appId:row.app_id,buyerId:row.buyer_id,reference:"provider-demo-01"};
+  assert.equal((await request("POST","admin/store-sales/confirm",payment,member.token)).status,403);
+  assert.equal((await request("POST","admin/store-sales/confirm",payment,admin)).sale.status,"paid");
+  const changed=await request("PUT",path,{html:"<h1>Henüz incelenmedi</h1>"},admin);
+  assert.equal(changed.app.review,null);
+  assert.equal((await request("POST",path+"/publish",publish,admin)).status,409);
+  assert.match((await request("POST",store+"/remix",{},member.token)).app.html,/İncelenen sürüm/);
+  const live=await fetch(base+"/radar-demo",{headers:{"x-forwarded-host":"app.gitmapp.com"}});
+  assert.match(await live.text(),/İncelenen sürüm/);
+  assert.equal((await request("POST",review,checks,admin)).status,200);
+  assert.equal((await request("POST",path+"/publish",publish,admin)).status,200);
+  assert.match((await request("POST",store+"/remix",{},member.token)).app.html,/Henüz incelenmedi/);
+});
+
+test("Radar scheduler settings and execution require a verified manager", async t => {
+  const {request,admin,member}=await fixture(t);
+  const endpoint="admin/radar-agent";
+  const initial=await request("GET",endpoint,null,admin);
+  assert.equal(initial.settings.hours,24);
+  assert.equal(initial.settings.design,false);
+  assert.equal((await request("GET",endpoint,null,member.token)).status,403);
+  assert.equal((await request("POST",endpoint+"/run",{},member.token)).status,403);
+  assert.equal((await request("PUT",endpoint,{...initial.settings,hours:1},admin)).status,400);
+  const update=await request("PUT",endpoint,{enabled:false,design:true,hours:12,monthlyCredits:10},admin);
+  assert.deepEqual(update.settings,{enabled:false,design:true,hours:12,monthlyCredits:10});
 });
