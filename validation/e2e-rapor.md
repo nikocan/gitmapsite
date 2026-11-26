@@ -1,6 +1,6 @@
 # Uçtan uca test raporu
 
-2026-11-26 18:22 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
+2026-11-26 18:44 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
 
 **60 / 60 kontrol geçti.**
 
