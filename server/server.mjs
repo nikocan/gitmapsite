@@ -781,7 +781,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.38.0" }));
+route("GET", "/api/health", () => ({ ok: true, aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.40.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -972,7 +972,7 @@ route("DELETE", "/api/keys/:prov", ({ user, params }) => { need(user, 401, "Giri
 route("PUT", "/api/connect/hostinger", async ({ user, body }) => {
   need(user, 401, "Giriş yapın");
   const token = (str(body.token, 400, "Anahtar", true) || "").trim(); need(token.length >= 20 && !/\s/.test(token), 400, "Hostinger API anahtarı biçimi geçersiz");
-  const r = await fetch("https://developers.hostinger.com/api/billing/v1/subscriptions", { headers: { Authorization: "Bearer " + token, Accept: "application/json" }, signal: AbortSignal.timeout(15000) }).catch(() => null);
+  const r = await fetch(CONN_BASE("hostinger") + "/api/billing/v1/subscriptions", { headers: { Authorization: "Bearer " + token, Accept: "application/json" }, signal: AbortSignal.timeout(15000) }).catch(() => null);
   need(r, 502, "Hostinger'a ulaşılamadı, biraz sonra tekrar deneyin");
   need(r.status !== 401, 400, "Hostinger anahtarı geçersiz ya da süresi dolmuş (hPanel › Hesap › API)");
   q("INSERT INTO user_keys(user_id,provider,enc,last4) VALUES(?,?,?,?) ON CONFLICT(user_id,provider) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,created=datetime('now')").run(user.id, "hostinger", encKey(token), token.slice(-4));
@@ -981,6 +981,7 @@ route("PUT", "/api/connect/hostinger", async ({ user, body }) => {
 });
 route("DELETE", "/api/connect/:prov", ({ user, params }) => {
   need(user, 401, "Giriş yapın");
+  HEALTH_CACHE.delete(user.id);
   if (["hostinger", "higgsfield", "canva"].includes(params.prov)) q("DELETE FROM user_keys WHERE user_id=? AND provider=?").run(user.id, params.prov);
   else if (params.prov === "github") { need(user.pass || user.google_sub, 400, "Bu hesaba yalnızca GitHub ile giriliyor; bağlantı kesilirse giriş yapamazsın. Önce şifre belirle ya da Google bağla."); q("UPDATE users SET github_login=NULL, github_token=NULL WHERE id=?").run(user.id); }
   else if (params.prov === "google") { need(user.pass || user.github_login, 400, "Bu hesaba yalnızca Google ile giriliyor; bağlantı kesilirse giriş yapamazsın."); q("UPDATE users SET google_sub=NULL WHERE id=?").run(user.id); }
@@ -988,7 +989,7 @@ route("DELETE", "/api/connect/:prov", ({ user, params }) => {
   return { ok: true, user: pubUser(q("SELECT * FROM users WHERE id=?").get(user.id)) };
 });
 // ---------- Medya stüdyosu: Higgsfield (görsel/video üretimi) ve Canva (tasarım) ----------
-const HF = "https://api.higgsfield.ai";
+const HF = E.TEST_CONN_BASE ? E.TEST_CONN_BASE + "/higgsfield" : "https://api.higgsfield.ai";
 const HF_MODELS = { image: { path: "/ideogram/v4.0", body: (b) => ({ prompt: b.prompt, aspect_ratio: b.aspect, rendering_speed: "DEFAULT" }) }, video: { path: "/alibaba/happy-horse/v1.1/text-to-video", body: (b) => ({ prompt: b.prompt, aspect_ratio: b.aspect, duration: 5, resolution: "720p" }) } };
 const MEDIA_URLS = new Map(); // kullanıcı → bu sunucunun döndürdüğü çıktı adresleri (yalnızca bunlar vekille indirilebilir)
 const rememberMedia = (uid, url) => { if (!url) return; const set = MEDIA_URLS.get(uid) || new Set(); set.add(url); if (set.size > 60) set.delete(set.values().next().value); MEDIA_URLS.set(uid, set); };
@@ -1085,13 +1086,82 @@ route("GET", "/api/media/canva/return", ({ res, url }) => {
   res.end(`<!doctype html><meta charset="utf-8"><title>Canva</title><body style="font-family:system-ui;background:#111;color:#eee;display:grid;place-items:center;height:100vh"><p>Tasarım Gitmapp'e aktarılıyor…</p><script>try{opener&&opener.postMessage({gm:"canva-return"},${JSON.stringify(CFG.site)})}catch(e){}setTimeout(()=>{window.close();location.href=${JSON.stringify(CFG.site + "/#studio")}},600)</script>`);
   return null;
 });
+// ---------- Bağlantı sağlığı: hesap bağlantılarını sağlayıcıya sorarak doğrular ----------
+const CONN_BASE = (h) => E.TEST_CONN_BASE ? E.TEST_CONN_BASE + "/" + h : { github: "https://api.github.com", hostinger: "https://developers.hostinger.com", higgsfield: HF, canva: CANVA }[h];
+const HEALTH_CACHE = new Map(); // kullanıcı → { at, out } (60 sn)
+const probe = (url, headers) => fetch(url, { headers: { Accept: "application/json", "User-Agent": "gitmapp", ...headers }, signal: AbortSignal.timeout(8000) }).then((r) => r, () => null);
+const rowKey = (uid, p) => { const r = q("SELECT enc, created FROM user_keys WHERE user_id=? AND provider=?").get(uid, p); return r ? { key: decKey(r.enc), created: r.created } : null; };
+async function connHealth(user) {
+  const out = [];
+  const add = (id, name, status, msg, fix, extra = {}) => out.push({ id, name, status, msg, fix: fix || null, ...extra });
+  const jobs = [];
+  // GitHub: belirteç geçerli mi, yayın için depo izni var mı, istek sınırı
+  if (user.github_token) jobs.push((async () => {
+    const r = await probe(CONN_BASE("github") + "/user", { Authorization: "Bearer " + user.github_token });
+    if (!r) return add("github", "GitHub", "warn", "GitHub'a şu an ulaşılamıyor; bağlantın büyük olasılıkla sağlam, birazdan yeniden denenecek.", "retry");
+    if (r.status === 401) return add("github", "GitHub", "error", "GitHub izni iptal edilmiş ya da süresi dolmuş. Yayınlama ve depo içe aktarma çalışmaz.", "reconnect", { cause: "token" });
+    const scopes = (r.headers.get("x-oauth-scopes") || "").split(",").map((s) => s.trim()).filter(Boolean);
+    const left = +r.headers.get("x-ratelimit-remaining");
+    if (scopes.length && !scopes.some((s) => s === "repo" || s === "public_repo")) return add("github", "GitHub", "warn", "GitHub bağlı ama depo oluşturma izni yok; GitHub'a yayınlama başarısız olur.", "reconnect", { cause: "scope", scopes });
+    if (Number.isFinite(left) && left < 100) return add("github", "GitHub", "warn", `GitHub istek hakkın azaldı (${left} kaldı); bir saat içinde yenilenir. Bu sürede büyük içe aktarmalardan kaçın.`, null, { cause: "rate" });
+    add("github", "GitHub", "ok", "Bağlı ve yayın izni var" + (user.github_login ? " · @" + user.github_login : "") + ".");
+  })());
+  else add("github", "GitHub", "off", "Bağlı değil. Uygulamanı GitHub'a yedeklemek ve sürüm geçmişi tutmak için bağla.", "connect");
+  // Hostinger: anahtar geçerli mi, plan var mı
+  const hk = rowKey(user.id, "hostinger");
+  if (hk) jobs.push((async () => {
+    const r = await probe(CONN_BASE("hostinger") + "/api/billing/v1/subscriptions", { Authorization: "Bearer " + hk.key });
+    if (!r) return add("hostinger", "Hostinger", "warn", "Hostinger'a şu an ulaşılamıyor; birazdan yeniden denenecek.", "retry");
+    if (r.status === 401 || r.status === 403) return add("hostinger", "Hostinger", "error", "Hostinger anahtarı geçersiz ya da iptal edilmiş. Alan adı ve barındırma işlemleri çalışmaz.", "reconnect", { cause: "token" });
+    let n = null; try { const j = await r.json(); n = Array.isArray(j) ? j.length : Array.isArray(j?.data) ? j.data.length : null; } catch { }
+    if (n === 0) return add("hostinger", "Hostinger", "warn", "Anahtar çalışıyor ama hesapta etkin plan görünmüyor; yayın için bir barındırma planı gerekir.", null, { cause: "plan" });
+    add("hostinger", "Hostinger", "ok", "Anahtar çalışıyor" + (n ? ` · ${n} plan` : "") + ".");
+  })());
+  // Higgsfield: anahtar geçerli mi (sahte iş kimliğine 404 = anahtar doğru)
+  const fk = rowKey(user.id, "higgsfield");
+  if (fk) jobs.push((async () => {
+    const r = await probe(CONN_BASE("higgsfield") + "/requests/00000000-0000-0000-0000-000000000000/status", { Authorization: "Key " + fk.key });
+    if (!r) return add("higgsfield", "Higgsfield", "warn", "Higgsfield'e şu an ulaşılamıyor.", "retry");
+    if (r.status === 401 || r.status === 403) return add("higgsfield", "Higgsfield", "error", "Higgsfield anahtarı geçersiz; görsel ve video üretimi çalışmaz.", "reconnect", { cause: "token" });
+    if (r.status === 402) return add("higgsfield", "Higgsfield", "warn", "Higgsfield bakiyen bitmiş; üretim başarısız olur.", "billing", { cause: "balance" });
+    add("higgsfield", "Higgsfield", "ok", "Anahtar çalışıyor.");
+  })());
+  // Canva: oturum süresi ve yenileme
+  const ck = rowKey(user.id, "canva");
+  if (ck) jobs.push((async () => {
+    let tok; try { tok = JSON.parse(ck.key); } catch { return add("canva", "Canva", "error", "Canva oturum bilgisi bozuk; yeniden bağla.", "reconnect", { cause: "token" }); }
+    if (Date.now() > tok.exp && !tok.refresh) return add("canva", "Canva", "error", "Canva oturumu sona erdi; yeniden bağla.", "reconnect", { cause: "token" });
+    if (Date.now() > tok.exp) return add("canva", "Canva", "ok", "Bağlı; oturum ilk kullanımda kendiliğinden yenilenecek.");
+    const r = await probe(CONN_BASE("canva") + "/users/me", { Authorization: "Bearer " + tok.access });
+    if (!r) return add("canva", "Canva", "warn", "Canva'ya şu an ulaşılamıyor.", "retry");
+    if (r.status === 401) return add("canva", "Canva", "error", "Canva izni geri alınmış; yeniden bağla.", "reconnect", { cause: "token" });
+    add("canva", "Canva", "ok", "Bağlı · oturum " + Math.max(1, Math.round((tok.exp - Date.now()) / 60000)) + " dk geçerli.");
+  })());
+  add("google", "Google", user.google_sub ? "ok" : "off", user.google_sub ? "Google ile giriş bağlı." : "Bağlı değil. Yedek giriş yolu olarak bağlaman önerilir.", user.google_sub ? null : "connect");
+  await Promise.all(jobs);
+  // Hesap güvenliği: tek giriş yolu riski
+  const ways = [user.pass && "şifre", user.github_login && "GitHub", user.google_sub && "Google"].filter(Boolean);
+  if (ways.length === 1 && !user.pass) out.push({ id: "login", name: "Giriş yolu", status: "warn", msg: `Hesabına yalnızca ${ways[0]} ile girilebiliyor. Bu bağlantı bozulursa hesaba erişemezsin; ikinci bir yol ekle.`, fix: "connect", cause: "single" });
+  const order = { error: 0, warn: 1, off: 2, ok: 3 }; out.sort((a, b) => order[a.status] - order[b.status]);
+  return { at: new Date().toISOString(), items: out };
+}
+route("GET", "/api/me/connectors/health", async ({ user, url }) => {
+  need(user, 401, "Giriş yapın");
+  const c = HEALTH_CACHE.get(user.id);
+  if (c && Date.now() - c.at < 60000 && url.searchParams.get("fresh") !== "1") return { ...c.out, cached: true };
+  const out = await connHealth(user); HEALTH_CACHE.set(user.id, { at: Date.now(), out });
+  if (HEALTH_CACHE.size > 5000) HEALTH_CACHE.delete(HEALTH_CACHE.keys().next().value);
+  return out;
+});
 route("GET", "/api/me/usage", ({ user }) => {
   need(user, 401, "Giriş yapın");
   const sum = (since) => q("SELECT COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=?").get(user.id, since);
   const d0 = new Date().toISOString().slice(0, 10) + " 00:00:00"; const d7 = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 19).replace("T", " "); const d30 = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 19).replace("T", " ");
   const byKind = q("SELECT kind, COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=? GROUP BY kind ORDER BY s DESC").all(user.id, d30);
   const topup = q("SELECT COALESCE(SUM(amount),0) s FROM credit_log WHERE user_id=? AND amount>0").get(user.id).s;
-  return { summary: { today: sum(d0), week: sum(d7), month: sum(d30), byKind, received: topup }, credits: q("SELECT credits FROM users WHERE id=?").get(user.id).credits ?? 0, usage: q("SELECT created,kind,provider,model,tokens,credits FROM usage WHERE user_id=? ORDER BY id DESC LIMIT 50").all(user.id), log: q("SELECT created,amount,reason FROM credit_log WHERE user_id=? ORDER BY id DESC LIMIT 30").all(user.id) };
+  const byModel = q("SELECT COALESCE(model,'?') model, provider, COALESCE(SUM(credits),0) s, COUNT(*) n, COALESCE(SUM(tokens),0) t FROM usage WHERE user_id=? AND created>=? GROUP BY model, provider ORDER BY s DESC LIMIT 8").all(user.id, d30);
+  const daily = q("SELECT substr(created,1,10) d, COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=? GROUP BY d ORDER BY d").all(user.id, d7);
+  return { summary: { today: sum(d0), week: sum(d7), month: sum(d30), byKind, byModel, daily, received: topup }, credits: q("SELECT credits FROM users WHERE id=?").get(user.id).credits ?? 0, usage: q("SELECT created,kind,provider,model,tokens,credits FROM usage WHERE user_id=? ORDER BY id DESC LIMIT 50").all(user.id), log: q("SELECT created,amount,reason FROM credit_log WHERE user_id=? ORDER BY id DESC LIMIT 30").all(user.id) };
 });
 route("POST", "/api/admin/credits", ({ user, body }) => {
   need(isAdmin(user), 403, "Yönetici yetkisi gerekli");
