@@ -91,7 +91,7 @@ test("manager directories, credit ledger, order data and shared settings stay co
   const prices={site:3000,is:5000,platform:8000,mobil:1200,bakim:150,ai:55,hosting:65};
   assert.equal((await managed("PATCH","settings",{prices})).status,200);
   const settings=await request("GET","settings");
-  assert.deepEqual(settings,{status:200,business,prices});
+  assert.deepEqual(settings,{status:200,business,prices,templatePricing:{rates:null,estimates:{}}});
 });
 
 test("optional profile fields can be saved and cleared", async t => {
@@ -250,4 +250,21 @@ test("Radar scheduler settings and execution require a verified manager", async 
   assert.equal((await request("PUT",endpoint,{...initial.settings,hours:1},admin)).status,400);
   const update=await request("PUT",endpoint,{enabled:false,design:true,hours:12,monthlyCredits:10},admin);
   assert.deepEqual(update.settings,{enabled:false,design:true,hours:12,monthlyCredits:10});
+});
+
+test("template token tariffs and estimates are managed by admins and published together", async t => {
+  const {request,admin,member}=await fixture(t);
+  const save=(templatePricing,token=admin)=>request("PATCH","admin/settings",{templatePricing},token);
+  const rates={input:120,output:480};
+  const estimate={input:15000,output:7500};
+  assert.deepEqual((await request("GET","settings")).templatePricing,{rates:null,estimates:{}});
+  assert.equal((await save({rates},member.token)).status,403);
+  assert.equal((await save({rates:{input:null,output:480}})).status,400);
+  assert.equal((await save({id:"ziyaret",estimate:{input:1.5,output:10}})).status,400);
+  assert.equal((await save({id:"../session_key",estimate})).status,400);
+  assert.equal((await save({rates})).status,200);
+  assert.equal((await save({id:"ziyaret",estimate})).status,200);
+  assert.equal((await save({id:"sofra",estimate:{input:2,output:0}})).status,200);
+  assert.deepEqual((await request("GET","settings")).templatePricing,{rates,estimates:{ziyaret:estimate,sofra:{input:2,output:0}}});
+  assert.deepEqual((await save({id:"ziyaret",estimate:null})).templatePricing,{rates,estimates:{sofra:{input:2,output:0}}});
 });

@@ -46,6 +46,23 @@ h1,.surface{font-family:Georgia,serif}.surface{border:2px dashed #8a6c4d}.readou
 @media(max-width:700px){.work{grid-template-columns:minmax(0,1fr)}header,main,footer{padding:13px 16px}.work{gap:15px}.hero{padding:22px 0}.surface,form,.history{padding:16px}.history{margin-top:15px}}
 header,main,footer{max-width:920px}.surface{border:0;border-block:5px double #694934;border-radius:0;padding-block:32px}.surface h2{text-align:center}.surface .item,.readout{font-family:ui-monospace,monospace}.history{border:0;border-top:2px solid #694934;background:transparent}
 @media(min-width:701px){.work{grid-template-columns:minmax(220px,.7fr) 1.3fr;align-items:center}.hero{text-align:center}.hero h1,.lead{margin-inline:auto}#task{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}#task h2,#task label:first-of-type,#task button{grid-column:1/-1}}
+
+/* Şablonun düzenlenebilir tema ve yerleşim kuralları */
+:root{--bg:#f0edeb;--tx:#182321;--line:color-mix(in srgb,var(--pr) 16%,white);font-family:"Inter",system-ui,sans-serif}
+header{max-width:none;padding-block:14px;padding-inline:max(20px,calc((100vw - 1120px)/2 + 32px));background:#fff;border-color:var(--line);gap:12px}
+header strong{display:flex;align-items:center;gap:10px;letter-spacing:-.025em}
+header strong::before{content:"";width:20px;height:20px;flex:none;border-radius:7px;background:var(--pr);box-shadow:inset 0 0 0 5px #fff5}
+header a{padding:8px 13px;background:#f3f5f4;border-radius:20px;text-decoration:none;text-align:center;font-size:13px}
+main{padding-top:24px}.hero{position:relative;overflow:hidden;isolation:isolate;display:flex;justify-content:center;flex-direction:column;padding:clamp(22px,4.4vw,62px);margin:0 0 24px;border-radius:26px;background:var(--pr);color:#fff}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-radial-gradient(ellipse at 100% 0%,transparent 0 26px,#fff2 27px 28px,transparent 29px 49px);mask-image:linear-gradient(90deg,transparent 45%,black)}
+.hero h1{font-size:clamp(34px,5.1vw,67px);margin:0;letter-spacing:-.06em;line-height:1.05;text-wrap:balance}
+.hero p{color:inherit;font-size:clamp(14px,1.4vw,17px);margin:12px 0 0;max-width:51ch;line-height:1.48}
+article,form,.history{border-color:var(--line);border-radius:20px;box-shadow:0 10px 32px -26px var(--pr)}
+article h2,form h2,.history h2{letter-spacing:-.035em}
+input,select,textarea{border-radius:10px;border-color:color-mix(in srgb,var(--pr) 39%,white)}
+button{border-radius:10px}button:hover{filter:brightness(.9)}
+article>ul{padding-left:20px}footer{color:var(--pr)}
+@media(max-width:680px){header{padding:11px 15px}header strong{font-size:15px}main{padding-top:14px}.hero{margin-bottom:16px;border-radius:20px}.hero h1{font-size:clamp(30px,9vw,44px)}.hero p{margin-top:9px}article,form,.history{border-radius:16px}}
 </style></head><body>
 <header><b>Paylı Adisyon</b><a href="#task">Hesabı böl</a></header><main><div class="hero"><h1>Masayı kapat</h1><p class="lead">Masadaki ürünleri ve kişi sayısını girin. Hesabı kuruş kaybetmeden paylaştırın.</p></div>
 <div class="work"><section class="surface"><h2>Masa hesabı</h2><div class="item"><strong>Süzme kahve</strong><span>85 ₺</span></div><div class="item"><strong>Peynirli tost</strong><span>120 ₺</span></div><div class="readout"><span>Toplam</span><output id="total">—</output></div></section><form id="task"><h2>Hesabı böl</h2><label>Masa adı<input type="text" name="name" required ></label><label>Kahve adedi<input type="number" name="coffee" required min="0" max="99" value="1"></label><label>Tost adedi<input type="number" name="toast" required min="0" max="99" value="0"></label><label>Kişi sayısı<input type="number" name="people" required min="1" max="30" value="2"></label><button type="submit">Hesabı böl</button></form></div>
