@@ -7,6 +7,7 @@ import { scriptErrors } from "./quality.mjs";
 import { sendMail, layout } from "./mail.mjs";
 import { registerRadar } from "./radar.mjs";
 import { registerStoreSales } from "./store-sales.mjs";
+import { registerPayments } from "./payments.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
@@ -125,7 +126,7 @@ function authUser(req) {
 function upsertOAuthUser({ email, name, github_login, github_token, google_sub }) {
   email = email.toLowerCase();
   let u = q("SELECT * FROM users WHERE email=?").get(email);
-  if (!u) { const id = rid(); q("INSERT INTO users(id,email,name,email_verified) VALUES(?,?,?,1)").run(id, email, name || ""); u = q("SELECT * FROM users WHERE id=?").get(id); }
+  if (!u) { const id = rid(); const welcome = email === CFG.admin ? 0 : billing.signupCredits(); q("INSERT INTO users(id,email,name,email_verified,credits) VALUES(?,?,?,1,?)").run(id, email, name || "", welcome); if (welcome) q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, welcome, "Hoş geldin kredisi"); u = q("SELECT * FROM users WHERE id=?").get(id); }
   else {
     if (email === CFG.admin && !u.email_verified) {
       q("UPDATE users SET pass=NULL, github_login=NULL, github_token=NULL, google_sub=NULL, session_version=session_version+1 WHERE id=?").run(u.id);
@@ -808,7 +809,7 @@ route("POST", "/api/auth/register", ({ body }) => {
   need(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 400, "Geçerli bir e-posta girin"); need(pw.length >= 8, 400, "Şifre en az 8 karakter olmalı");
   need(email !== CFG.admin, 409, "Bu adres için giriş yapın.");
   need(!q("SELECT 1 FROM users WHERE email=?").get(email), 409, "Bu e-posta ile zaten hesap var, giriş yapın");
-  const id = rid(); const ref = /^[A-Za-z0-9]{12}$/.test(body.ref || "") && q("SELECT 1 FROM users WHERE id=?").get(body.ref) ? body.ref : null; q("INSERT INTO users(id,email,name,pass,ref_by) VALUES(?,?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw), ref); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, +(E.SIGNUP_CREDITS || 25), "Hoş geldin kredisi");
+  const id = rid(); const ref = /^[A-Za-z0-9]{12}$/.test(body.ref || "") && q("SELECT 1 FROM users WHERE id=?").get(body.ref) ? body.ref : null; const welcome = billing.signupCredits(); q("INSERT INTO users(id,email,name,pass,ref_by,credits) VALUES(?,?,?,?,?,?)").run(id, email, str(body.name, 120, "Ad") || "", hashPw(pw), ref, welcome); if (welcome) q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(id, welcome, "Hoş geldin kredisi");
   const u = q("SELECT * FROM users WHERE id=?").get(id); sendVerify(u); return { token: sign({ uid: id, version:u.session_version }), user: pubUser(u) };
 });
 route("POST", "/api/auth/login", ({ body }) => {
@@ -1754,7 +1755,7 @@ route("POST", "/api/apps/:id/publish", ({ user, body, params }) => {
   if (!a.slug) mailTo(user.email, "yayin", { title: "Uygulaman yayında", subject: "Gitmapp: “" + String(a.title || "Uygulaman").slice(0, 60) + "” yayında", intro: `“${a.title || "Uygulaman"}” artık herkese açık. Bağlantıyı paylaşabilir, Stüdyo'dan değiştirip yeniden yayınlayabilirsin.`, rows: [["Adres", CFG.appHost + "/" + slug]], button: "Uygulamayı aç", url: "https://" + CFG.appHost + "/" + slug });
   // Davet ödülü: davet edilen kişi ilk uygulamasını yayınlayınca davet edene kredi
   const me = q("SELECT ref_by, ref_paid FROM users WHERE id=?").get(user.id);
-  if (me && me.ref_by && !me.ref_paid) { const bonus = +(E.REF_CREDITS || 50); q("UPDATE users SET ref_paid=1 WHERE id=?").run(user.id); q("UPDATE users SET credits=credits+? WHERE id=?").run(bonus, me.ref_by); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(me.ref_by, bonus, "Davet ödülü"); }
+  if (me && me.ref_by && !me.ref_paid) { const bonus = billing.refCredits(); q("UPDATE users SET ref_paid=1 WHERE id=?").run(user.id); q("UPDATE users SET credits=credits+? WHERE id=?").run(bonus, me.ref_by); q("INSERT INTO credit_log(user_id,amount,reason) VALUES(?,?,?)").run(me.ref_by, bonus, "Davet ödülü"); }
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id)) };
 });
 route("POST", "/api/apps/:id/unpublish", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("UPDATE apps SET status='draft', listed=0 WHERE id=?").run(a.id); return { ok: true }; });
@@ -1779,6 +1780,7 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 
 // Mağaza
 const ownsSale = registerStoreSales({ db, route, need });
+const billing = registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, tiers: TIER_CREDITS, isAdmin });
 route("GET", "/api/store", ({ url }) => {
   const cat = url.searchParams.get("cat"); const s = (url.searchParams.get("q") || "").trim().slice(0, 60); const sort = url.searchParams.get("sort") === "yeni" ? "a.published_at DESC" : "a.downloads DESC, a.opens DESC";
   let sql = "SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.status='published' AND a.listed=1"; const args = [];
@@ -2085,7 +2087,7 @@ route("GET", "/api/admin/radar", ({ user, url }) => {
 
 // ---------- Sunucu ----------
 async function readBody(req) {
-  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); try { const v = JSON.parse(Buffer.concat(ch).toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
+  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); req.rawBody = Buffer.concat(ch); try { const v = JSON.parse(req.rawBody.toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
 }
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");

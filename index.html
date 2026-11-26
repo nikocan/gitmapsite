@@ -2178,6 +2178,41 @@ button.adp-mini{color:inherit;text-align:left}
 .nx-chip.hot{border-color:rgba(143,180,255,.45);background:rgba(79,140,255,.1);color:#e6ecff}.nx-chip.hot svg{color:#8fb4ff}
 @media(prefers-reduced-motion:reduce){.ws-in .gbox,.studio-start .gbox{animation:none!important}}
 .ghi-err small{display:block;margin-top:4px;color:#a3a29b;font-size:12px;line-height:1.45;font-weight:400}
+/* v5.56 — kredi ve ödeme */
+.bc{display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:22px;background:#19191b;border:1px solid #2c2c2e;color:#ecebe6}
+.bc-h{display:flex;align-items:flex-start;gap:10px}.bc-h>div{flex:1}.bc-h b{display:block;font-size:18px}.bc-h small{display:flex;align-items:center;gap:4px;color:#9a9993;font-size:12.5px;margin-top:3px}
+.bc-packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bc-pack{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:16px 14px 14px;border-radius:16px;border:1px solid #2e2e30;background:#1f1f21;color:inherit;font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.bc-pack:hover{border-color:#45454a}.bc-pack.on{border-color:#8fb4ff;background:rgba(79,140,255,.08);box-shadow:0 0 0 1px #8fb4ff inset}
+.bc-pack small{font-size:11.5px;color:#9a9993;text-transform:uppercase;letter-spacing:.06em}.bc-pack b{font-size:26px;font-weight:700;letter-spacing:-.02em}.bc-pack b span{font-size:13px;font-weight:500;color:#9a9993}
+.bc-pack i{font-style:normal;font-size:12px;color:#86efac;min-height:16px}.bc-pack strong{margin-top:8px;font-size:17px}.bc-unit{font-size:11.5px;color:#8a8882}
+.bc-pop{position:absolute;top:-9px;right:10px;font-style:normal;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:99px;background:#8fb4ff;color:#0b1020}
+.bc-use{display:flex;align-items:center;gap:6px;margin:0;font-size:12.5px;color:#9a9993;flex-wrap:wrap}
+.bc-m{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bc-m button{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;border:1px solid #2e2e30;background:#1f1f21;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.bc-m button.on{border-color:#8fb4ff;background:rgba(79,140,255,.08)}.bc-m button:disabled{opacity:.45;cursor:default}.bc-m b{display:block;font-size:14px}.bc-m small{font-size:12px;color:#9a9993}
+.bc-acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.bc-safe{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#8a8882}
+.bc-pay{min-width:140px;justify-content:center}
+.bc-ret{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:26px 10px}.bc-ret b{font-size:17px}.bc-ret p{margin:0;color:#a3a29b;font-size:13.5px;max-width:420px}.bc-ok{color:#22c55e}
+.bc-lead{margin:0;font-size:14px;line-height:1.55;color:#d6d5cf}
+.bc-hbox{border:1px solid #2e2e30;border-radius:14px;overflow:hidden}.bc-hr{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid #2a2a2c}.bc-hr:first-child{border-top:0}
+.bc-hr span{width:84px;color:#8a8882;font-size:12.5px}.bc-hr b{flex:1;font:500 14px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.02em;word-break:break-all}
+.bc-hv{display:flex;flex-direction:column;gap:12px}
+.bc-note{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:#222224;color:#c9c8c2;font-size:13px}.bc-note.ok{background:rgba(34,197,94,.08);color:#bbf7d0}
+.bc-err{color:#f87171}.bc-empty{color:#8a8882;font-size:13px}
+.bc-st{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:99px;background:#2a2a2c;color:#c9c8c2;white-space:nowrap;font-weight:500}
+.bc-st.ok{background:rgba(34,197,94,.14);color:#86efac}.bc-st.w{background:rgba(245,158,11,.14);color:#fcd34d}.bc-st.bad{background:rgba(248,113,113,.14);color:#fca5a5}
+.bc-hist{margin-top:14px}.bc-ht{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.bc-ht b,.bc-ht h3{margin:0;flex:1}
+.bc-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}.bc-amt.pos{color:#86efac}.bc-amt.neg{color:#d6d5cf}
+.bc-adm td small{display:block;color:var(--mut);font-size:11.5px}.bc-adm .bc-ref{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-adm tr.bc-hot td{background:rgba(245,158,11,.06)}.bc-ta{white-space:nowrap}.bc-ta .btn{margin-right:4px}
+.bc-adm .adm-stats .box small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.bc-pe{display:flex;flex-direction:column;gap:8px;margin:10px 0}.bc-pr{display:grid;grid-template-columns:1.4fr .8fr .8fr .9fr auto auto;gap:8px;align-items:end}
+.bc-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.bc-cols .box{margin:0}
+.bc-adm form.box{display:block}.bc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:10px 0}.bc-grid .w2{grid-column:span 2}
+.bc-ck{display:flex!important;align-items:center;gap:6px;font-size:13px}.bc-ck input{width:auto!important}
+.bc-steps .ib{display:inline-grid;vertical-align:middle;width:24px;height:24px}.bc-steps{margin:6px 0 4px;padding-left:18px;color:#a3a29b;font-size:13px;line-height:1.6}.bc-steps code{font-size:12px}
+@media(max-width:760px){.bc-m,.bc-cols{grid-template-columns:1fr}.bc-pr{grid-template-columns:1fr 1fr}.bc-grid .w2{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -2191,8 +2226,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.55.0";
+const VERSION="5.56.0";
 const CHANGELOG=[
+ {v:"5.56.0",date:"2026-11-26",items:[
+  "💳 Kredi satın alma artık gerçek ödeme ile: “Kredi yükle” penceresinde paket seçip kart (Stripe) ya da Havale/EFT ile ödüyorsun. Kartla ödemede Stripe'ın güvenli sayfasına gidip dönüyorsun, kredi anında yükleniyor; kart bilgin Gitmapp'e gelmiyor",
+  "🏦 Havale/EFT: IBAN, alıcı ve tutarla birlikte sana özel bir açıklama kodu veriliyor (kopyala düğmeli). “Ödemeyi yaptım” deyince yöneticiye düşüyor, onaylanınca kredi otomatik yükleniyor; bekleyen talebi iptal edebilirsin",
+  "📦 Paketler: Başlangıç 100 kredi 149 ₺ · Popüler 330 kredi (30 bonus) 399 ₺ · Profesyonel 1.150 kredi (150 bonus) 1.190 ₺. Her pakette kredi başı fiyat ve “yaklaşık kaç üretim eder” bilgisi; krediler süresiz",
+  "🧾 Hesabım › Kredi geçmişi: Ödemelerim (durum, yöntem, tutar) ve Kredi hareketleri (hoş geldin kredisi, satın almalar, her üretimde düşen kredi) tek yerde",
+  "🛠️ Yönetim › Kredi ve ödemeler: bu ay/toplam gelir, bekleyen ödemeler (“ödedim” diyenler öne çıkar), ödeme listesi ve arama; havaleyi tek tıkla onaylama, iptal ve iade (kartlıysa Stripe'tan otomatik iade, kredi geri alınır). Paket fiyatları, bonuslar, hoş geldin kredisi, davet bonusu ve işlem başı kredi (hızlı/dengeli/güçlü) buradan değiştirilir",
+  "🔐 Stripe kurulumu panelden: gizli anahtar ve webhook imza anahtarı şifreli saklanır, “Bağlantıyı test et” ile denenir. Aynı ödeme iki kez krediye dönüşemez; sahte webhook imzaları reddedilir"
+ ]},
  {v:"5.55.0",date:"2026-11-26",items:[
   "🧪 Uçtan uca test: test kullanıcısı (test@gitmapp.test) ve yönetici hesabıyla 60 kontrol çalıştırıldı, hepsi geçti — kayıt/giriş, yanlış şifre, yetki sınırları, kredi yükleme, uygulama üretimi, proje kaydı, misafir/müşteri/yönetici sayfalarının tamamı (38 sayfa), mobil görünüm ve Stüdyo akışı (istem → üretim → önizleme → kaydet)",
   "🩹 Test sırasında bulunan hata düzeltildi: açık projede “Çalışma modu” ve “Dil modeli” menüleri sağa taşıp kırpılıyordu, seçenekler tıklanamıyordu; menüler artık düğmenin sağına hizalı açılıyor",
@@ -3938,7 +3981,7 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
    <${StRow} t="Bu cihazdaki taslağı temizle" d="Stüdyo'daki kaydedilmemiş sohbet ve önizleme silinir. Projelerine kaydettiklerin etkilenmez. Geri alınamaz."><button class="btn g s danger" onClick=${()=>{if(confirm("Bu cihazdaki Stüdyo taslağı silinsin mi? Bu geri alınamaz.")){LS.set("studio",null);toast("Taslak temizlendi");setTimeout(()=>location.reload(),500)}}}><${Icon} n="trash" s=${14}/> Temizle</button><//>`;
   case "fatura":if(!u)return needLogin;return html`
    <${StRow} t="Kredi bakiyen" d="Hızlı modeller 1, dengeli 3, güçlü modeller 8 kredi harcar. Kendi API anahtarınla yaptığın üretimlerde Gitmapp kredisi düşmez."><span class="st-big"><${Icon} n="gem" s=${16}/> <${CountUp} v=${u.credits??0}/></span><//>
-   <${StRow} t="Kredi yükle" d="Şimdilik talep oluşturulur, ödeme bağlantısı e-postana gelir. Online ödeme yakında." col=${true}><div class="st-packs">${CREDIT_PACKS.map(([c,p])=>html`<button key=${c} class="st-pack" onClick=${()=>buy(c,p)}><b>${c} kredi</b><span>${p} ₺</span><small>${(p/c).toFixed(2)} ₺ / kredi</small></button>`)}</div><//>
+   <${StRow} t="Kredi yükle" d="Kart ile anında ya da Havale/EFT ile. Krediler süresizdir."><button class="btn s" onClick=${()=>{close();dispatchEvent(new Event("gm:buy"))}}><${Icon} n="plus" s=${14}/> Kredi yükle</button><//>
    <${StRow} t="Arkadaşını davet et" d="Davet ettiğin kişi ilk uygulamasını yayınlayınca 50 kredi kazanırsın."><button class="btn g s" onClick=${async()=>{const l=location.origin+location.pathname+"?ref="+u.id;try{await navigator.clipboard.writeText(l);toast("Davet bağlantın kopyalandı")}catch(e){prompt("Davet bağlantın:",l)}}}><${Icon} n="gift" s=${14}/> Bağlantıyı kopyala</button><//>`;
   case "kullanim":if(!u)return needLogin;{const sm=use&&use.summary;return html`
    ${!use?html`<p class="st-mut">Yükleniyor…</p>`:html`<div class="st-stats">${[["Bugün",sm.today],["7 gün",sm.week],["30 gün",sm.month]].map(([l,x])=>html`<div key=${l}><small>${l}</small><b>${x.s}</b><span>${x.n} işlem</span></div>`)}</div>
@@ -6301,7 +6344,7 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
 /* ================= v3.3 — APP STORE TARZI KEŞFET, CAM KENAR ÇUBUĞU, HAYALET İMLEÇ ================= */
 
 // iOS / Material tarzı renkli ikon karoları
-const TILE={"github-ayar":["github",""],kreator:["video",""],eposta:["mail",""],"yapay-zeka":["cpu",""],maliyetler:["chart",""],"uretim-ajani":["bot",""],yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={odemeler:["card",""],"github-ayar":["github",""],kreator:["video",""],eposta:["mail",""],"yapay-zeka":["cpu",""],maliyetler:["chart",""],"uretim-ajani":["bot",""],yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
 const NAV_TONE={kreator:"#ff3bd4","$beceri":"#c084fc","$asistan":"#22d3ee",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
@@ -7525,13 +7568,14 @@ function Account({auth,health,toast,models,go}){
  return html`<div><h1>Hesabım</h1><p class="sub">${auth.user.email}</p>
   <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>
    <div class="box" style=${{margin:0}}><div style=${{color:"var(--mut)",fontSize:13}}>Gitmapp krediniz</div><div style=${{fontSize:40,fontWeight:800}}><${Icon} n="gem" s=${16}/> ${u?u.credits:auth.user.credits}</div>
-    <div style=${{display:"flex",gap:8,flexWrap:"wrap",marginTop:8}}>${CREDIT_PACKS.map(([c,p])=>html`<button class="btn g s" onClick=${()=>buy(c,p)}>${c} kredi · ${p} ₺</button>`)}</div>
-    <p style=${{color:"var(--mut)",fontSize:12,marginTop:8}}>Online ödeme yakında; şimdilik talep oluşturulur ve ödeme bağlantısı size iletilir.</p></div>
+    <div style=${{display:"flex",gap:8,flexWrap:"wrap",marginTop:10}}><button class="btn s" onClick=${()=>dispatchEvent(new Event("gm:buy"))}><${Icon} n="plus" s=${14}/> Kredi yükle</button><button class="btn g s" onClick=${()=>dispatchEvent(new Event("gm:cr"))}><${Icon} n="chart" s=${14}/> Kullanım</button></div>
+    <p style=${{color:"var(--mut)",fontSize:12,marginTop:8}}>Kart ile anında ya da Havale/EFT ile. Krediler süresizdir.</p></div>
    <div class="box" style=${{margin:0}}><b><${Icon} n="link" s=${16}/> Bağlantılar</b><table style=${{marginTop:6}}><tbody>
     <tr><td><${Icon} n="code" s=${16}/> GitHub</td><td>${auth.user.github?html`<span style=${{color:"var(--ok)"}}>@${auth.user.github}</span>`:health.github?"Bağlı değil (Yayın merkezinden bağlanır)":"Yakında"}</td></tr>
     <tr><td><${Icon} n="video" s=${16}/> Higgsfield (video/görsel)</td><td><span style=${{color:"var(--mut)"}}>Yakında — 50+ video ve görsel modeli ile uygulamanıza görsel üretimi</span></td></tr>
     <tr><td><${Icon} n="palette" s=${16}/> Canva</td><td><span style=${{color:"var(--mut)"}}>Yakında — tasarımları Canva'da düzenleme (Canva onayı gerekiyor)</span></td></tr>
     <tr><td><${Icon} n="dot" s=${16}/> ChatGPT aboneliği</td><td><span style=${{color:"var(--mut)"}}>Başvuru aşamasında</span></td></tr></tbody></table></div></div>
+  <${BillingHistory} toast=${toast}/>
   <h2><${Icon} n="key" s=${16}/> Kendi API anahtarlarım</h2><p class="sub" style=${{marginTop:-4}}>Bağladığınız anahtarla yapılan üretimlerde Gitmapp kredisi düşmez; ücret doğrudan sağlayıcıya ödenir. Anahtarlar sunucuda şifreli tutulur ve bir daha gösterilmez.</p>
   <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${d.byok.map(b=>html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}><div style=${{display:"flex",alignItems:"center",gap:8}}><b style=${{flex:1}}>${b.label}</b>${b.connected?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Bağlı ••••${b.last4}</span>`:""}</div>
    ${b.connected?html`<button class="btn g s" disabled=${busy===b.provider} onClick=${()=>delKey(b.provider)}>Anahtarı kaldır</button>`:html`<div style=${{display:"flex",gap:6}}><input class="in" type="password" autocomplete="off" style=${{flex:1}} placeholder=${b.hint||"API anahtarı"} value=${keys[b.provider]||""} onInput=${e=>setKeys(k=>({...k,[b.provider]:e.target.value}))}/><button class="btn s" disabled=${busy===b.provider||!(keys[b.provider]||"").trim()} onClick=${()=>saveKey(b.provider)}>${busy===b.provider?"…":"Bağla"}</button></div>
@@ -7820,6 +7864,103 @@ function GhImport({url,auto,review,close,auth,openAuth,toast,onStudio,models,go}
 // ---------- Canlı kredi göstergesi ----------
 const KIND_TR={creator:"Kreatör Stüdyosu",build:"Geliştirme",plan:"Plan",review:"Kontrol",design:"Tasarım önerisi",github:"GitHub dönüşümü",element:"Öğe düzenleme"};
 function CountUp({v}){const [n,setN]=useState(v);const ref=useRef(v);useEffect(()=>{const from=ref.current,to=v;ref.current=v;if(from===to)return;const t0=performance.now();let raf;const step=t=>{const k=Math.min(1,(t-t0)/600);setN(Math.round(from+(to-from)*(1-Math.pow(1-k,3))));if(k<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf)},[v]);return n}
+/* ================= v5.56 — KREDİ VE ÖDEME (Stripe + Havale/EFT) ================= */
+const tlK=k=>((+k||0)/100).toLocaleString("tr-TR",{style:"currency",currency:"TRY",minimumFractionDigits:0,maximumFractionDigits:2});
+const PAY_ST={pending:["Bekliyor","w"],paid:["Ödendi","ok"],cancelled:["İptal","n"],refunded:["İade edildi","n"],failed:["Başarısız","bad"]};
+const payChip=p=>html`<span class=${"bc-st "+PAY_ST[p.status][1]}>${PAY_ST[p.status][0]}${p.status==="pending"&&p.notified?" · ödendi bildirildi":""}</span>`;
+const copyTxt=(t,toast)=>{try{t=String(t);navigator.clipboard.writeText(/^[A-Z]{2}\d{2}[\sA-Z0-9]+$/.test(t)?t.replace(/\s/g,""):t);toast&&toast("Kopyalandı")}catch(e){}};
+function creditsSync(){api("GET","/api/billing").then(j=>{if(j.balance!=null)dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:j.balance,spent:0}}))}).catch(()=>{})}
+function BuyCredits({close,toast,focus}){
+ const [b,setB]=useState(null),[err,setErr]=useState(""),[pack,setPack]=useState(null),[method,setMethod]=useState(null),[busy,setBusy]=useState(false),[hv,setHv]=useState(null),[ret,setRet]=useState(null);
+ useEffect(()=>{api("GET","/api/billing").then(j=>{setB(j);setPack(j.packs.find(x=>x.popular)?.id||j.packs[0]?.id);setMethod(j.methods.card?"card":j.methods.havale?"havale":null)}).catch(e=>setErr(e.message))},[]);
+ useEffect(()=>{if(!focus)return;let alive=true;setRet({state:"checking",cancel:focus.cancel});
+  (async()=>{for(let i=0;i<6&&alive;i++){try{const j=await api("POST","/api/billing/payments/"+focus.id+"/verify");if(j.payment.status!=="pending"||focus.cancel||i===5){setRet({state:j.payment.status,cancel:focus.cancel,p:j.payment});if(j.payment.status==="paid")creditsSync();return}}catch(e){setRet({state:"error",msg:e.message});return}await wait(2000)}})();
+  return()=>{alive=false}},[]);
+ async function pay(){if(!pack||!method)return;setBusy(true);try{const j=await api("POST","/api/billing/checkout",{pack,method:method==="card"?"card":"havale",returnUrl:location.origin+location.pathname});if(j.url){location.href=j.url;return}setHv(j)}catch(e){toast(e.message)}finally{setBusy(false)}}
+ async function act(kind){if(!hv)return;setBusy(true);try{const j=await api("POST","/api/billing/payments/"+hv.payment.id+"/"+kind);setHv(h=>({...h,payment:j.payment}));if(kind==="cancel")toast("Talep iptal edildi")}catch(e){toast(e.message)}finally{setBusy(false)}}
+ async function legacy(){const p=b.packs.find(x=>x.id===pack);if(!p)return;try{const id="GM-"+Date.now().toString(36).toUpperCase();await api("POST","/api/orders",{id,brand:"Kredi paketi",tier:"site",mobile:"yok",hosting:"biz",ai:[],bakim:false,idea:(p.credits+p.bonus)+" kredi satın alma talebi ("+tlK(p.price)+")",type:"kredi",total:p.price/100,monthly:0});toast("Talebin alındı ("+id+"). Ödeme bilgisi e-postana gelecek.");close()}catch(e){toast(e.message)}}
+ const P=b&&b.packs.find(x=>x.id===pack);
+ const body=()=>{
+  if(ret)return html`<div class="bc-ret">${ret.state==="checking"?html`<span class="ccspin"></span><b>Ödeme doğrulanıyor…</b><p>Stripe'tan sonuç alınıyor, birkaç saniye sürebilir.</p>`
+   :ret.state==="paid"?html`<div class="bc-ok"><${Icon} n="checkCircle" s=${40}/></div><b>Ödeme alındı</b><p>${ret.p.credits} kredi hesabına yüklendi. İyi çalışmalar!</p><button class="btn s" onClick=${close}>Devam et</button>`
+   :ret.cancel?html`<b>Ödeme tamamlanmadı</b><p>Ödeme sayfasından çıktın; kartından para çekilmedi.</p><button class="btn s" onClick=${()=>setRet(null)}>Tekrar dene</button>`
+   :ret.state==="pending"?html`<b>Ödeme henüz onaylanmadı</b><p>Bankan onayladığında kredin otomatik yüklenir. Birkaç dakika sonra Hesabım'dan kontrol edebilirsin.</p><button class="btn g s" onClick=${close}>Kapat</button>`
+   :html`<b>Ödeme alınamadı</b><p>${ret.msg||"Ödeme başarısız oldu ya da süresi doldu. Kartından para çekilmedi."}</p><button class="btn s" onClick=${()=>setRet(null)}>Tekrar dene</button>`}</div>`;
+  if(err)return html`<p class="bc-err">${err}</p>`;
+  if(!b)return html`<div class="bc-ret"><span class="ccspin"></span></div>`;
+  if(hv){const p=hv.payment,h=hv.havale;const row=(l,v,c)=>html`<div class="bc-hr"><span>${l}</span><b>${v}</b>${c?html`<button type="button" class="ib sm" title="Kopyala" onClick=${()=>copyTxt(v,toast)}><${Icon} n="copy" s=${14}/></button>`:""}</div>`;
+   return html`<div class="bc-hv">${p.status==="pending"?html`<p class="bc-lead">Aşağıdaki hesaba <b>${tlK(p.amount)}</b> gönder. Açıklamaya yalnızca <b>${p.id}</b> kodunu yaz; ödemeyi bu kodla eşleştiriyoruz.</p>
+    <div class="bc-hbox">${row("IBAN",h.iban,1)}${row("Alıcı",h.name||"—")}${h.bank?row("Banka",h.bank):""}${row("Tutar",tlK(p.amount),0)}${row("Açıklama",p.id,1)}</div>
+    ${p.notified?html`<div class="bc-note ok"><${Icon} n="check" s=${15}/> Bildirimin alındı. Ödeme hesaba geçince ${p.credits} kredi yüklenir; genelde iş saatlerinde 1 saat içinde.</div>`:""}
+    <div class="bc-acts"><button class="btn g s" disabled=${busy} onClick=${()=>act("cancel")}>Talebi iptal et</button><span style=${{flex:1}}></span>${p.notified?html`<button class="btn s" onClick=${close}>Tamam</button>`:html`<button class="btn s" disabled=${busy} onClick=${()=>act("notify")}><${Icon} n="check" s=${14}/> Ödemeyi yaptım</button>`}</div>`
+    :html`<p class="bc-lead">Bu talep ${PAY_ST[p.status][0].toLowerCase()}.</p><button class="btn s" onClick=${()=>setHv(null)}>Paketlere dön</button>`}</div>`}
+  const none=!b.methods.card&&!b.methods.havale;const T=b.tiers||{};
+  return html`<div class="bc-packs" role="radiogroup" aria-label="Kredi paketi">${b.packs.map(p=>html`<button type="button" role="radio" aria-checked=${pack===p.id} key=${p.id} class=${"bc-pack"+(pack===p.id?" on":"")} onClick=${()=>setPack(p.id)}>
+    ${p.popular&&html`<em class="bc-pop">En çok tercih edilen</em>`}<small>${p.label||"Paket"}</small><b>${(p.credits+p.bonus).toLocaleString("tr-TR")}<span> kredi</span></b>${p.bonus?html`<i>+${p.bonus} bonus dahil</i>`:html`<i> </i>`}
+    <strong>${tlK(p.price)}</strong><span class="bc-unit">kredi başı ${tlK(p.price/(p.credits+p.bonus))}</span></button>`)}</div>
+   <p class="bc-use"><${Icon} n="zap" s=${13}/> Bir işlem: hızlı model ${T.hizli} · dengeli ${T.dengeli} · güçlü ${T.guclu} kredi.${P?" Bu paket yaklaşık "+Math.floor((P.credits+P.bonus)/Math.max(1,T.dengeli))+" dengeli üretim eder.":""} Krediler süresizdir.</p>
+   ${none?html`<div class="bc-note">Online ödeme henüz açılmadı. Talep bırakırsan ödeme bilgisi e-postana gelir.</div><div class="bc-acts"><span style=${{flex:1}}></span><button class="btn s" disabled=${!P} onClick=${legacy}>Talep oluştur</button></div>`
+   :html`<div class="bc-m" role="radiogroup" aria-label="Ödeme yöntemi">
+     <button type="button" role="radio" aria-checked=${method==="card"} class=${method==="card"?"on":""} disabled=${!b.methods.card} onClick=${()=>setMethod("card")}><${Icon} n="card" s=${17}/><span><b>Kart ile öde</b><small>${b.methods.card?"Anında yüklenir · Stripe güvencesi":"Şu an kapalı"}</small></span></button>
+     <button type="button" role="radio" aria-checked=${method==="havale"} class=${method==="havale"?"on":""} disabled=${!b.methods.havale} onClick=${()=>setMethod("havale")}><${Icon} n="wallet" s=${17}/><span><b>Havale / EFT</b><small>${b.methods.havale?"Onaydan sonra yüklenir":"Şu an kapalı"}</small></span></button></div>
+    <div class="bc-acts"><span class="bc-safe"><${Icon} n="lock" s=${13}/> ${method==="card"?"Kart bilgin Gitmapp'e gelmez; ödeme Stripe sayfasında yapılır.":"IBAN ve açıklama kodu bir sonraki adımda."}</span><span style=${{flex:1}}></span>
+     <button class="btn s bc-pay" disabled=${busy||!P||!method} onClick=${pay}>${busy?"Hazırlanıyor…":P?tlK(P.price)+" öde":"Paket seç"}</button></div>`}`};
+ return html`<${UiDialog} label="Kredi yükle" width="720px" close=${close}><div class="bc">
+  <div class="bc-h"><div><b>Kredi yükle</b>${b&&b.balance!=null&&html`<small>Bakiyen: <${Icon} n="gem" s=${12}/> ${b.balance} kredi${b.month?" · bu ay "+b.month+" harcandı":""}</small>`}</div><button class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  ${body()}</div><//>`;
+}
+function BillingHistory({toast}){
+ const [b,setB]=useState(null),[tab,setTab]=useState("pay");
+ const load=()=>api("GET","/api/billing").then(setB).catch(()=>setB({payments:[],log:[]}));
+ useEffect(()=>{load();const h=()=>load();addEventListener("gm:credits",h);return()=>removeEventListener("gm:credits",h)},[]);
+ if(!b)return null;
+ return html`<div class="box bc-hist"><div class="bc-ht"><b>Kredi geçmişi</b><div class="seg" role="tablist"><button class=${tab==="pay"?"on":""} onClick=${()=>setTab("pay")}>Ödemelerim</button><button class=${tab==="log"?"on":""} onClick=${()=>setTab("log")}>Kredi hareketleri</button></div></div>
+  ${tab==="pay"?(b.payments.length?html`<div class="adm-table"><table><thead><tr><th>Kod</th><th>Tarih</th><th>Kredi</th><th>Tutar</th><th>Yöntem</th><th>Durum</th><th></th></tr></thead><tbody>${b.payments.map(p=>html`<tr key=${p.id}><td><code>${p.id}</code></td><td>${trDate(p.created)}</td><td>${p.credits}</td><td>${tlK(p.amount)}</td><td>${p.method==="stripe"?"Kart":"Havale"}</td><td>${payChip(p)}</td>
+    <td>${p.status==="pending"&&html`<button class="btn g s" onClick=${async()=>{try{await api("POST","/api/billing/payments/"+p.id+"/"+(p.method==="stripe"?"verify":"cancel"));load();creditsSync()}catch(e){toast(e.message)}}}>${p.method==="stripe"?"Kontrol et":"İptal"}</button>`}</td></tr>`)}</tbody></table></div>`:html`<p class="bc-empty">Henüz ödeme yok.</p>`)
+  :html`<div class="adm-table"><table><thead><tr><th>Tarih</th><th>Açıklama</th><th style=${{textAlign:"right"}}>Kredi</th></tr></thead><tbody>${b.log.map((l,i)=>html`<tr key=${i}><td>${trDate(l.created)}</td><td>${creditReason(l.reason)}</td><td class=${"bc-amt "+(l.amount<0?"neg":"pos")}>${l.amount>0?"+":""}${l.amount}</td></tr>`)}</tbody></table></div>`}</div>`;
+}
+const trDate=s=>{try{return new Date(String(s).replace(" ","T")+"Z").toLocaleString("tr-TR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}catch(e){return s}};
+const creditReason=r=>{r=String(r||"");const m=r.match(/^(build|update|plan|review|todos|design|copilot|rehber|proto|convert)[:]?(.*)$/);if(m)return ({build:"Uygulama üretimi",update:"Düzenleme",plan:"Plan",review:"Kontrol",todos:"Ajan listesi",design:"Tasarım",copilot:"Asistan",rehber:"Rehber",proto:"Prototip",convert:"GitHub dönüştürme"}[m[1]]||m[1])+(m[2]?" · "+m[2].replace(/^:/,""):"");return r};
+function AdminBilling({toast}){
+ const [st,setSt]=useState(""),[term,setTerm]=useState("");const request=useRemoteData("/api/admin/billing?status="+st+"&q="+encodeURIComponent(term));const d=request.data;
+ const [packs,setPacks]=useState(null),[busy,setBusy]=useState("");
+ useEffect(()=>{if(d&&!packs)setPacks(d.packs.filter(p=>p.active).map(p=>({...p,price:p.price/100})))},[d]);
+ const call=async(key,fn,msg)=>{setBusy(key);try{await fn();msg&&toast(msg);request.refresh()}catch(e){toast(e.message)}finally{setBusy("")}};
+ if(!d)return html`<${LoadState} request=${request}/>`;
+ const S=d.settings,X=d.stats;
+ const saveSettings=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.currentTarget));const body={};
+  for(const k of ["iban","accountName","bank"])if(k in f)body[k]=f[k];
+  for(const k of ["signupCredits","refCredits"])if(k in f)body[k]=+f[k];
+  if("hizli" in f)body.tiers={hizli:+f.hizli,dengeli:+f.dengeli,guclu:+f.guclu};
+  for(const k of ["stripeSecret","stripeWebhook"])if(f[k])body[k]=f[k];
+  if(e.currentTarget.dataset.toggles){body.card=!!f.card;body.havale=!!f.havale}
+  call("s",()=>api("POST","/api/admin/billing/settings",body).then(()=>{e.target.querySelectorAll('input[type=password]').forEach(i=>i.value="")}),"Kaydedildi")};
+ const setP=(i,k,v)=>setPacks(ps=>ps.map((p,j)=>j===i?{...p,[k]:v}:k==="popular"&&v?{...p,popular:false}:p));
+ const confirm1=p=>{const ref=prompt(p.id+" · "+tlK(p.amount)+" havalesini onayla.\nDekont/banka referansı (isteğe bağlı):","");if(ref===null)return;call(p.id,()=>api("POST","/api/admin/billing/payments/"+p.id+"/confirm",{reference:ref}),p.credits+" kredi yüklendi")};
+ const refund=p=>{if(!confirm(p.id+" iade edilsin mi? Kullanıcının bakiyesinden "+p.credits+" kredi geri alınır"+(p.method==="stripe"?" ve tutar Stripe üzerinden kartına iade edilir.":".")))return;call(p.id,()=>api("POST","/api/admin/billing/payments/"+p.id+"/refund",{}),"İade edildi")};
+ const box=(l,v,s)=>html`<div class="box" key=${l}><span>${l}</span><strong>${v}</strong>${s&&html`<small>${s}</small>`}</div>`;
+ return html`<section class="cost-panel bc-adm"><div class="adm-row"><h1>Kredi ve ödemeler</h1></div>
+  <div class="adm-stats">${box("Bu ay gelir",tlK(X.month.a),X.month.n+" ödeme · "+X.month.c+" kredi")}${box("Toplam gelir",tlK(X.all.a),X.all.n+" ödeme")}${box("Bekleyen",X.pending.n,X.notified?X.notified+" kişi ödedim dedi":"")}${box("Bu ay harcanan kredi",X.usedMonth.toLocaleString("tr-TR"),"kullanıcılarda "+X.balance.toLocaleString("tr-TR")+" kredi")}</div>
+  <div class="box"><div class="bc-ht"><h3>Ödemeler</h3><div class="seg">${[["","Tümü"],["pending","Bekleyen"],["paid","Ödendi"],["refunded","İade"],["cancelled","İptal"]].map(([k,l])=>html`<button key=${k} class=${st===k?"on":""} onClick=${()=>setSt(k)}>${l}</button>`)}</div><input class="in" placeholder="E-posta ya da kod ara" value=${term} onInput=${e=>setTerm(e.target.value)} style=${{maxWidth:220}}/></div>
+   ${d.rows.length?html`<div class="adm-table"><table><thead><tr>${["Kod","Kullanıcı","Kredi","Tutar","Yöntem","Durum","Tarih",""].map(x=>html`<th key=${x}>${x}</th>`)}</tr></thead><tbody>${d.rows.map(p=>html`<tr key=${p.id} class=${p.status==="pending"&&p.notified?"bc-hot":""}><td><code>${p.id}</code>${p.reference&&p.reference!==p.id&&html`<small class="bc-ref">${p.reference}</small>`}</td><td>${p.name||""}<small>${p.email||"silinmiş hesap"}</small></td><td>${p.credits}</td><td>${tlK(p.amount)}</td><td>${p.method==="stripe"?"Kart":"Havale"}</td><td>${payChip(p)}</td><td>${trDate(p.created)}</td>
+    <td class="bc-ta">${p.status==="pending"&&p.method==="havale"&&html`<button class="btn s" disabled=${busy===p.id} onClick=${()=>confirm1(p)}>Onayla</button>`}${p.status==="pending"&&p.method==="stripe"&&html`<button class="btn g s" disabled=${busy===p.id} onClick=${()=>call(p.id,()=>api("POST","/api/admin/billing/payments/"+p.id+"/verify"),"Stripe'tan kontrol edildi")}>Doğrula</button>`}${p.status==="pending"&&html`<button class="btn g s" disabled=${busy===p.id} onClick=${()=>call(p.id,()=>api("POST","/api/admin/billing/payments/"+p.id+"/cancel"),"İptal edildi")}>İptal</button>`}${p.status==="paid"&&html`<button class="btn g s" disabled=${busy===p.id} onClick=${()=>refund(p)}>İade</button>`}</td></tr>`)}</tbody></table></div>`:html`<p>Kayıt yok.</p>`}</div>
+  <div class="box"><h3>Kredi paketleri</h3><p>Fiyatlar TL; bonus kredi pakete eklenir. Kaldırılan paket eski ödemeler için gizlenir, silinmez.</p>
+   ${packs&&html`<div class="bc-pe">${packs.map((p,i)=>html`<div class="bc-pr" key=${i}><label>Ad<input class="in" value=${p.label} onInput=${e=>setP(i,"label",e.target.value)}/></label><label>Kredi<input class="in" type="number" min="1" value=${p.credits} onInput=${e=>setP(i,"credits",e.target.value)}/></label><label>Bonus<input class="in" type="number" min="0" value=${p.bonus} onInput=${e=>setP(i,"bonus",e.target.value)}/></label><label>Fiyat (₺)<input class="in" type="number" min="10" step="0.01" value=${p.price} onInput=${e=>setP(i,"price",e.target.value)}/></label><label class="bc-ck"><input type="checkbox" checked=${!!p.popular} onChange=${e=>setP(i,"popular",e.target.checked)}/> Öne çıkar</label><button class="ib" title="Kaldır" disabled=${packs.length<2} onClick=${()=>setPacks(ps=>ps.filter((_,j)=>j!==i))}><${Icon} n="trash" s=${15}/></button></div>`)}</div>
+   <div class="bc-acts"><button class="btn g s" disabled=${packs.length>=8} onClick=${()=>setPacks(ps=>[...ps,{label:"",credits:500,bonus:0,price:599,popular:false}])}><${Icon} n="plus" s=${14}/> Paket ekle</button><span style=${{flex:1}}></span><button class="btn s" disabled=${busy==="p"} onClick=${()=>call("p",()=>api("POST","/api/admin/billing/packs",{packs}).then(j=>setPacks(j.packs.filter(p=>p.active).map(p=>({...p,price:p.price/100})))),"Paketler kaydedildi")}>Paketleri kaydet</button></div>`}</div>
+  <div class="bc-cols">
+   <form class="box" onSubmit=${saveSettings}><h3>Kredi kuralları</h3><p>İşlem başına düşen kredi model sınıfına göre. Plan işlemleri bunun üçte biri.</p>
+    <div class="bc-grid"><label>Hoş geldin kredisi<input class="in" name="signupCredits" type="number" min="0" defaultValue=${S.signupCredits}/></label><label>Davet bonusu<input class="in" name="refCredits" type="number" min="0" defaultValue=${S.refCredits}/></label>
+    <label>Hızlı model<input class="in" name="hizli" type="number" min="0" defaultValue=${S.tiers.hizli}/></label><label>Dengeli model<input class="in" name="dengeli" type="number" min="0" defaultValue=${S.tiers.dengeli}/></label><label>Güçlü model<input class="in" name="guclu" type="number" min="0" defaultValue=${S.tiers.guclu}/></label></div><button class="btn s" disabled=${busy==="s"}>Kaydet</button></form>
+   <form class="box" onSubmit=${saveSettings}><h3>Havale / EFT</h3><p>Kullanıcı bu hesaba ödeme koda göre yapar; sen yukarıdan onaylarsın.</p>
+    <div class="bc-grid"><label class="w2">IBAN<input class="in" name="iban" defaultValue=${S.iban} placeholder="TR00 0000 0000 0000 0000 0000 00"/></label><label>Alıcı adı<input class="in" name="accountName" defaultValue=${S.accountName}/></label><label>Banka<input class="in" name="bank" defaultValue=${S.bank}/></label></div><button class="btn s" disabled=${busy==="s"}>Kaydet</button></form>
+  </div>
+  <form class="box" data-toggles="1" onSubmit=${saveSettings}><h3>Stripe (kart ile ödeme) <span class=${"bc-st "+(S.stripe.secret?"ok":"n")}>${S.stripe.secret?(S.stripe.mode==="live"?"Canlı":"Test modu")+" · …"+S.stripe.last4:"Bağlı değil"}</span></h3>
+   <ol class="bc-steps"><li>dashboard.stripe.com › Developers › API keys sayfasından <b>Secret key</b>'i kopyala (önce test anahtarıyla dene: sk_test_…).</li><li>Developers › Webhooks › Add endpoint: adres <code>${S.stripe.webhookUrl}</code> <button type="button" class="ib sm" title="Kopyala" onClick=${()=>copyTxt(S.stripe.webhookUrl,toast)}><${Icon} n="copy" s=${13}/></button>, olaylar <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.expired</code>.</li><li>Webhook'un <b>Signing secret</b>'ını (whsec_…) aşağıya gir. Webhook olmasa da ödeme, kullanıcı geri döndüğünde doğrulanır.</li></ol>
+   <div class="bc-grid"><label class="w2">Secret key${S.stripe.secretFromEnv?" (sunucu ortamından)":""}<input class="in" type="password" name="stripeSecret" autocomplete="off" placeholder=${S.stripe.secret?"kayıtlı · değiştirmek için yaz":"sk_test_…"}/></label><label class="w2">Webhook signing secret<input class="in" type="password" name="stripeWebhook" autocomplete="off" placeholder=${S.stripe.webhook?"kayıtlı · değiştirmek için yaz":"whsec_…"}/></label>
+    <label class="bc-ck"><input type="checkbox" name="card" defaultChecked=${S.card}/> Kart ile ödeme açık</label><label class="bc-ck"><input type="checkbox" name="havale" defaultChecked=${S.havale}/> Havale/EFT açık</label></div>
+   <div class="bc-acts"><button type="button" class="btn g s" disabled=${!S.stripe.secret||busy==="t"} onClick=${()=>call("t",()=>api("POST","/api/admin/billing/stripe-test").then(j=>toast("Stripe bağlantısı çalışıyor ("+(j.mode==="live"?"canlı":"test")+")")))}>Bağlantıyı test et</button><span style=${{flex:1}}></span><button class="btn s" disabled=${busy==="s"}>Kaydet</button></div></form>
+ </section>`;
+}
 function CreditPanel({auth,close,go,flash}){const [d,setD]=useState(null);const [e,setE]=useState(null);
  const load=()=>api("GET","/api/me/usage").then(j=>{setD(j);auth.patch({credits:j.credits})}).catch(x=>setE(x.message));
  useEffect(()=>{load();const h=()=>setTimeout(load,300);addEventListener("gm:credits",h);const k=ev=>{if(ev.key==="Escape")close()};addEventListener("keydown",k);return()=>{removeEventListener("gm:credits",h);removeEventListener("keydown",k)}},[]);
@@ -7831,7 +7972,7 @@ function CreditPanel({auth,close,go,flash}){const [d,setD]=useState(null);const 
   ${S&&S.byKind.length>0&&html`<div class="crp-sec">Nereye harcandı (30 gün)</div>${S.byKind.map(k=>html`<div class="crp-bar" key=${k.kind}><span>${KIND_TR[k.kind]||k.kind}</span><i><em style=${{width:(k.s/max*100)+"%"}}></em></i><b>${k.s}</b></div>`)}`}
   <div class="crp-sec">Son işlemler</div>
   <div class="crp-list">${d?d.usage.slice(0,8).map((u,i)=>html`<div key=${i}><span>${KIND_TR[u.kind]||u.kind}<small>${shortModel(u.model||"")} · ${agoTR(u.created)}</small></span><b>${u.credits?"−"+u.credits:u.provider&&u.provider!=="gitmapp"?"kendi anahtar":"0"}</b></div>`):html`<div><span class="shimmer">Yükleniyor…</span></div>`}${d&&!d.usage.length&&html`<div><span>Henüz kredi harcanmadı</span></div>`}</div>
-  <div class="crp-f"><button class="btn s" onClick=${()=>{close();go("hesabim")}}><${Icon} n="card" s=${14}/> Kredi yükle / Hesabım</button><button class="btn g s" onClick=${()=>{close();go("modeller")}}><${Icon} n="cpu" s=${14}/> Model fiyatları</button></div>
+  <div class="crp-f"><button class="btn s" onClick=${()=>{close();dispatchEvent(new Event("gm:buy"))}}><${Icon} n="plus" s=${14}/> Kredi yükle</button><button class="btn g s" onClick=${()=>{close();go("hesabim")}}><${Icon} n="card" s=${14}/> Geçmiş</button><button class="btn g s" onClick=${()=>{close();go("modeller")}}><${Icon} n="cpu" s=${14}/> Model fiyatları</button></div>
   <small class="crp-n">Asistan, önizleme ve GitHub içe aktarma ücretsizdir. Geliştirme, kontrol, plan, tasarım önerisi ve yapay zekâ dönüşümü kredi kullanır.</small>
  </div></div>`}
 
@@ -7947,7 +8088,7 @@ function App(){
  }
  const installButton=()=>!installed&&html`<button class="btn g" onClick=${installApp}><${Icon} n="download" s=${15}/> Uygulamayı yükle</button>`;
 
- const CUST=["ana","magaza","studio","kreator","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","yapay-zeka","eposta","github-ayar","maliyetler","kullanicilar","yonetim-projeler","siparisler","radar","plan","kesfet","uretim-ajani","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const CUST=["ana","magaza","studio","kreator","sablonlar","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","yapay-zeka","eposta","github-ayar","maliyetler","odemeler","kullanicilar","yonetim-projeler","siparisler","radar","plan","kesfet","uretim-ajani","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1).split("?")[0];if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(true);const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
  useEffect(()=>{if(view!=="studio")return;
@@ -8014,6 +8155,10 @@ function App(){
  useEffect(()=>{if(auth.user)gsFromUser(auth.user)},[auth.user&&auth.user.id]);
  const togglePin=id=>{const p=GS.pins||[];gsSet({pins:p.includes(id)?p.filter(x=>x!==id):[id,...p].slice(0,30)})};
  const [ghTok,setGhTok]=useState(false);useEffect(()=>{const o=()=>setGhTok(true),t=e=>toast(e.detail);addEventListener("gm:ghtoken",o);addEventListener("gm:toast",t);return()=>{removeEventListener("gm:ghtoken",o);removeEventListener("gm:toast",t)}},[]);
+ const [buyOpen,setBuyOpen]=useState(null);const [billingPending,setBillingPending]=useState(0);
+ useEffect(()=>{const h=e=>{if(!auth.user){openAuth("Kredi yüklemek için giriş yap ya da ücretsiz hesap oluştur.");return}setCrOpen&&setCrOpen(false);setBuyOpen({focus:(e.detail||{}).focus||null})};addEventListener("gm:buy",h);return()=>removeEventListener("gm:buy",h)},[auth.user?.id]);
+ useEffect(()=>{const m=location.hash.match(/odeme=([A-Z0-9]{6,20})/);if(!m||!auth.user)return;const cancel=/iptal=1/.test(location.hash);try{history.replaceState(null,"",location.pathname+"#hesabim")}catch(e){}setBuyOpen({focus:{id:m[1],cancel}})},[auth.user?.id]);
+ useEffect(()=>{if(!auth.user?.admin)return;let t;const f=()=>api("GET","/api/admin/billing?status=pending").then(j=>setBillingPending(j.stats.notified||j.stats.pending.n||0)).catch(()=>{});f();t=setInterval(f,120000);return()=>clearInterval(t)},[auth.user?.id]);
  const [resetTok,setResetTok]=useState(null),[vbarOff,setVbarOff]=useState(()=>LS.get("vbarOff","")===new Date().toDateString()); const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState(()=>storeRoute(location.hash));const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
  useEffect(()=>{const h=()=>setMore(false);addEventListener("hashchange",h);return()=>removeEventListener("hashchange",h)},[]);
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
@@ -8097,10 +8242,10 @@ function App(){
   "Araçlar",["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],["$beceri","Beceriler"],"$more",
   "",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const MORE_NAV=[["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],["oyunlar","Oyunlar"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]];
- const NAVA=[["yonetim","Yönetim merkezi"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
+ const NAVA=[["yonetim","Yönetim merkezi"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["odemeler","Kredi ve ödemeler",billingPending],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
  const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){const storeOrigin=view==="magaza"?location.hash:history.state?.storeOrigin;setAppSlug(k.slice(4));setViewS("detay");history.pushState({storeOrigin,storeSteps:storeOrigin?(view==="magaza"?1:(history.state?.storeSteps||0)+1):0},"","#"+k);window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":view===k;
- const TITLES={"github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
+ const TITLES={odemeler:"Kredi ve ödemeler","github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
  const navList=(mobile=false,items=NAV)=>{let sec=null;return items.map(it=>{if(typeof it==="string"&&it&&it[0]!=="$"){sec=it;return it}if(it==="")sec=null;return !mobile&&sec&&secOff[sec]?null:it}).map((it,i)=>it===null?null:it==="$recent"?(myApps.length>0&&(()=>{const pins=gs.pins||[];const pinned=pins.map(id=>myApps.find(a=>a.id===id)).filter(Boolean);const rest=myApps.filter(a=>!pins.includes(a.id)).slice(0,5);
    const row=(a,on)=>html`<div key=${a.id} class="nav rec"><button type="button" class="rec-open" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>${!mobile&&html`<span class="rec-st" title=${a.url?"Yayında":a.github_repo?"GitHub deposuna bağlı":"Hesabında kayıtlı"}><${Icon} n=${a.url?"globe":a.github_repo?"github":"cloud"} s=${15}/></span>`}<button type="button" class=${"rec-pin"+(on?" on":"")} title=${on?"Sabitlemeyi kaldır":"Sabitle"} aria-label=${a.title+(on?" sabitlemesini kaldır":" projesini sabitle")} aria-pressed=${on} onClick=${e=>{e.stopPropagation();togglePin(a.id)}}><${Icon} n="pin" s=${13}/></button></div>`;
    const hd=(k,l)=>mobile?html`<div class="nav-sec">${l}</div>`:html`<button type="button" class="nav-sec cc-sec" aria-expanded=${!secOff[k]} onClick=${()=>togSec(k)}>${l}<${Icon} n="chevDown" s=${13}/></button>`;
@@ -8158,6 +8303,7 @@ function App(){
     <button class="btn g" onClick=${()=>switchMode("musteri")}>Kullanıcı alanına dön</button></section>`:html`<div key=${adminPage?auth.user?.id:"public"}>
    ${view==="yapay-zeka"&&html`<${AdminAI} toast=${toast}/>`}${view==="eposta"&&html`<${AdminMail} toast=${toast} auth=${auth}/>`}${view==="github-ayar"&&html`<${AdminGitHub} toast=${toast}/>`}
    ${view==="maliyetler"&&html`<${AdminCosts} toast=${toast}/>`}
+   ${view==="odemeler"&&html`<${AdminBilling} toast=${toast}/>`}
    ${view==="yonetim"&&html`<${AdminHome} request=${overview} go=${(page,status)=>{setProjectStatus(status);setView(page)}}/>`}
    ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
    ${view==="studio"&&html`<${Studio} key=${auth.user?.id||"guest"} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
@@ -8203,6 +8349,7 @@ function App(){
   ${newBuild&&html`<div class="upd-bar" role="status"><${Icon} n="download" s=${15}/><span>Yeni sürüm hazır: <b>v${newBuild}</b> (şu an v${VERSION})</span><button class="btn s" onClick=${()=>{if(window.__gmStudio?.calisiyor){toast("Stüdyo'da işlem sürüyor · bitince yenile, yoksa iş yarıda kalır");return}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()))}catch(e){}location.reload()}}>Yenile</button><button class="ib" aria-label="Kapat" onClick=${()=>setNewBuild(null)}><${Icon} n="x" s=${14}/></button></div>`}
   ${stOpen&&html`<${SettingsPanel} tab0=${stOpen} auth=${auth} toast=${toast} go=${navGo} health=${health} close=${()=>setStOpen(null)}/>`}
   ${crOpen&&auth.user&&html`<${CreditPanel} auth=${auth} close=${()=>setCrOpen(false)} go=${navGo} flash=${crFlash}/>`}
+  ${buyOpen&&auth.user&&html`<${BuyCredits} toast=${toast} focus=${buyOpen.focus} close=${()=>setBuyOpen(null)}/>`}
   ${msg&&html`<div class="toast">${msg}</div>`}
  </div>`;
 }

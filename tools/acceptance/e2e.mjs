@@ -52,6 +52,23 @@ function fakeAi() {
   return once(s, "listening").then(() => ({ base: "http://127.0.0.1:" + s.address().port + "/v1", close: () => s.close() }));
 }
 
+// ---------- Sahte Stripe: ödeme sayfası ödemeyi tamamlayıp success_url'e döner ----------
+function fakeStripe() {
+  const ses = new Map();
+  const s = http.createServer(async (req, res) => {
+    let body = ""; for await (const c of req) body += c; const f = Object.fromEntries(new URLSearchParams(body));
+    const send = (o, code = 200) => { res.writeHead(code, { "Content-Type": "application/json" }); res.end(JSON.stringify(o)); };
+    const base = "http://127.0.0.1:" + s.address().port;
+    if (req.url === "/v1/checkout/sessions") { const id = "cs_test_" + randomBytes(4).toString("hex"); ses.set(id, { id, amount_total: +f["line_items[0][price_data][unit_amount]"], payment_status: "unpaid", status: "open", success: f.success_url }); return send({ id, url: base + "/pay/" + id }); }
+    let m = req.url.match(/^\/pay\/(.+)$/); if (m) { const x = ses.get(m[1]); x.payment_status = "paid"; x.status = "complete"; res.writeHead(302, { Location: x.success }); return res.end(); }
+    m = req.url.match(/^\/v1\/checkout\/sessions\/(.+)$/); if (m) { const x = ses.get(decodeURIComponent(m[1])); return send({ ...x, payment_intent: "pi_" + x.id }); }
+    if (req.url === "/v1/balance") return send({ available: [{ currency: "try" }] });
+    send({ error: { message: "?" } }, 404);
+  });
+  s.listen(0, "127.0.0.1");
+  return once(s, "listening").then(() => ({ base: "http://127.0.0.1:" + s.address().port + "/v1", close: () => s.close() }));
+}
+
 // ---------- Statik site sunucusu (config.js yerel API'ye yönlendirilir) ----------
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".ico": "image/x-icon" };
 async function freePort() { const s = http.createServer(); s.listen(0, "127.0.0.1"); await once(s, "listening"); const p = s.address().port; s.close(); await once(s, "close"); return p; }
@@ -80,16 +97,16 @@ async function startApi(env) {
 }
 
 const CUST = ["ana", "magaza", "studio", "kreator", "sablonlar", "baglantilar", "eylem", "otomasyon", "uygulamalarim", "modeller", "hesabim", "dunya", "olustur", "paketler", "ai-destek", "siparislerim", "guncel"];
-const ADMIN = ["yonetim", "yapay-zeka", "eposta", "github-ayar", "maliyetler", "kullanicilar", "yonetim-projeler", "siparisler", "radar", "plan", "kesfet", "uretim-ajani", "kategori", "liste", "kuyruk", "ayar"];
+const ADMIN = ["odemeler", "yonetim", "yapay-zeka", "eposta", "github-ayar", "maliyetler", "kullanicilar", "yonetim-projeler", "siparisler", "radar", "plan", "kesfet", "uretim-ajani", "kategori", "liste", "kuyruk", "ayar"];
 
 async function main() {
   const dir = mkdtempSync(join(tmpdir(), "gitmapp-e2e-"));
-  const ai = await fakeAi();
+  const ai = await fakeAi(); const fstripe = await fakeStripe();
   const port = await freePort(); const siteBase = "http://127.0.0.1:" + port;
   const env = { ...process.env, PORT: "0", DB_PATH: join(dir, "db"), SECRET: randomBytes(32).toString("hex"), ADMIN_EMAIL: "yonetici@gitmapp.test",
     SITE_URL: siteBase, CORS_EXTRA: siteBase, API_URL: "http://127.0.0.1", AI_BASE: ai.base, AI_KEY: "test-key", AI_MODELS: "claude-sonnet-4.5", AI_MODEL: "claude-sonnet-4.5",
     COPILOT_MODEL: "claude-sonnet-4.5", AI_FALLBACKS: "", OPENROUTER_API_KEY: "", ANTHROPIC_API_KEY: "", OPENAI_API_KEY: "", GEMINI_API_KEY: "", DEEPSEEK_API_KEY: "", HOSTINGER_AI_KEY: "",
-    GITHUB_CLIENT_ID: "", GOOGLE_CLIENT_ID: "", CANVA_CLIENT_ID: "", SIGNUP_CREDITS: "50", CREATOR_TICK_MS: "3600000" };
+    GITHUB_CLIENT_ID: "", GOOGLE_CLIENT_ID: "", STRIPE_API_BASE: fstripe.base, STRIPE_SECRET_KEY: "", STRIPE_WEBHOOK_SECRET: "", CANVA_CLIENT_ID: "", SIGNUP_CREDITS: "50", CREATOR_TICK_MS: "3600000" };
   const api = await startApi(env); const apiBase = api.base;
   const site2 = await serveOn(port, apiBase);
 
@@ -173,13 +190,61 @@ async function main() {
       await p.close();
     }
     await visit(adm, "Yönetici", ADMIN, admin.token);
+    // ---------- Kredi ve ödeme ----------
+    {
+      const ap = await adm.newPage(); const errs = []; ap.on("pageerror", (e) => errs.push(e.message));
+      await ap.goto(siteBase + "/#odemeler"); await ap.waitForTimeout(1500);
+      await ap.fill('input[name="iban"]', "TR33 0006 1005 1978 6457 8413 26"); await ap.fill('input[name="accountName"]', "Gitmapp Test"); await ap.fill('input[name="bank"]', "Test Bankası");
+      await ap.locator("form:has(input[name=iban]) button.btn.s").click(); await ap.waitForTimeout(800);
+      await ap.fill('input[name="stripeSecret"]', "sk_test_" + "e2e".repeat(8)); await ap.fill('input[name="stripeWebhook"]', "whsec_" + "e2e".repeat(8));
+      await ap.locator("form[data-toggles] button.btn.s:has-text('Kaydet')").click(); await ap.waitForTimeout(800);
+      const set = (await api.req("GET", "admin/billing", null, admin.token)).settings;
+      rec("Ödeme", "Yönetici IBAN ve Stripe anahtarlarını panelden kaydetti", /^TR33/.test(set.iban) && set.stripe.mode === "test", set.iban + " · Stripe " + set.stripe.mode);
+      await ap.click("text=Bağlantıyı test et"); await ap.waitForTimeout(800);
+      await ap.screenshot({ path: join(SHOTS, "odeme-yonetici.png"), fullPage: true });
+      rec("Ödeme", "Kredi ve ödemeler sayfası", !errs.length, errs.join(" | ").slice(0, 200), "odeme-yonetici.png");
+
+      const p = await user.newPage(); const ue = []; p.on("pageerror", (e) => ue.push(e.message));
+      const bal = async () => (await api.req("GET", "billing", null, reg.token)).balance;
+      const b0 = await bal();
+      await p.goto(siteBase + "/#hesabim"); await p.waitForTimeout(1500);
+      await p.click("text=Kredi yükle"); await p.waitForSelector(".bc-pack"); await p.waitForTimeout(400);
+      await p.screenshot({ path: join(SHOTS, "odeme-paketler.png") });
+      rec("Ödeme", "Kredi yükle penceresi paketleri gösteriyor", (await p.locator(".bc-pack").count()) === 3, "", "odeme-paketler.png");
+      // Havale
+      await p.click(".bc-m button:has-text('Havale')"); await p.click(".bc-pay"); await p.waitForSelector(".bc-hbox");
+      await p.screenshot({ path: join(SHOTS, "odeme-havale.png") });
+      const code = (await p.locator(".bc-hr:has-text('Açıklama') b").textContent()).trim();
+      await p.click("text=Ödemeyi yaptım"); await p.waitForSelector(".bc-note.ok");
+      rec("Ödeme", "Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi", /^GM/.test(code), code, "odeme-havale.png");
+      await p.keyboard.press("Escape");
+      await ap.reload(); await ap.waitForTimeout(1500);
+      ap.once("dialog", (d) => d.accept("Dekont E2E"));
+      await ap.locator("tr:has-text('" + code + "') button:has-text('Onayla')").click(); await ap.waitForTimeout(1200);
+      const b1 = await bal();
+      rec("Ödeme", "Yönetici havaleyi onayladı, 330 kredi yüklendi", b1 - b0 === 330, b0 + " → " + b1);
+      // Kart (Stripe Checkout → dönüş)
+      await p.goto(siteBase + "/#hesabim"); await p.waitForTimeout(1200);
+      await p.click("text=Kredi yükle"); await p.waitForSelector(".bc-pack");
+      await p.locator(".bc-pack").first().click(); await p.click(".bc-m button:has-text('Kart')"); await p.click(".bc-pay");
+      await p.waitForURL(/#hesabim/, { timeout: 15000 }).catch(() => {}); await p.waitForSelector(".bc-ret b:has-text('Ödeme alındı')", { timeout: 15000 }).catch(() => {});
+      await p.screenshot({ path: join(SHOTS, "odeme-kart-sonuc.png") });
+      const b2 = await bal();
+      rec("Ödeme", "Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi", b2 - b1 === 100, b1 + " → " + b2, "odeme-kart-sonuc.png");
+      await p.keyboard.press("Escape"); await p.waitForTimeout(300);
+      await p.goto(siteBase + "/#hesabim"); await p.waitForTimeout(1500);
+      const rows = await p.locator(".bc-hist tbody tr").count();
+      await p.screenshot({ path: join(SHOTS, "odeme-gecmis.png"), fullPage: true });
+      rec("Ödeme", "Hesabım › Ödemelerim geçmişi", rows >= 2 && !ue.length, rows + " ödeme" + (ue.length ? " · JS: " + ue.join(" | ").slice(0, 200) : ""), "odeme-gecmis.png");
+      await p.close(); await ap.close();
+    }
     // Mobil
     const mob = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     await visit(mob, "Mobil", ["ana", "studio", "uygulamalarim", "hesabim"], reg.token);
     const wide = await mob.newPage(); await wide.goto(siteBase + "/#studio"); await wide.waitForTimeout(1500);
     const ov = await wide.evaluate(() => document.documentElement.scrollWidth - innerWidth); rec("Mobil", "Stüdyoda yatay taşma yok", ov <= 1, ov + " px");
   } finally {
-    await browser.close(); site2.close(); ai.close(); api.child.kill(); rmSync(dir, { recursive: true, force: true });
+    await browser.close(); site2.close(); ai.close(); fstripe.close(); api.child.kill(); rmSync(dir, { recursive: true, force: true });
   }
   const pass = results.filter((r) => r.ok).length;
   const md = ["# Uçtan uca test raporu", "", new Date().toISOString().slice(0, 16).replace("T", " ") + " · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`", "",

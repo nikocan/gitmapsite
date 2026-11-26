@@ -274,6 +274,13 @@
  },
  {
   "area": "Yönetici",
+  "name": "#odemeler",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-odemeler.png"
+ },
+ {
+  "area": "Yönetici",
   "name": "#yonetim",
   "ok": true,
   "note": "",
@@ -383,6 +390,55 @@
   "ok": true,
   "note": "",
   "shot": "y-netici-ayar.png"
+ },
+ {
+  "area": "Ödeme",
+  "name": "Yönetici IBAN ve Stripe anahtarlarını panelden kaydetti",
+  "ok": true,
+  "note": "TR33 0006 1005 1978 6457 8413 26 · Stripe test",
+  "shot": ""
+ },
+ {
+  "area": "Ödeme",
+  "name": "Kredi ve ödemeler sayfası",
+  "ok": true,
+  "note": "",
+  "shot": "odeme-yonetici.png"
+ },
+ {
+  "area": "Ödeme",
+  "name": "Kredi yükle penceresi paketleri gösteriyor",
+  "ok": true,
+  "note": "",
+  "shot": "odeme-paketler.png"
+ },
+ {
+  "area": "Ödeme",
+  "name": "Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi",
+  "ok": true,
+  "note": "GMXV70SP01FF",
+  "shot": "odeme-havale.png"
+ },
+ {
+  "area": "Ödeme",
+  "name": "Yönetici havaleyi onayladı, 330 kredi yüklendi",
+  "ok": true,
+  "note": "69 → 399",
+  "shot": ""
+ },
+ {
+  "area": "Ödeme",
+  "name": "Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi",
+  "ok": true,
+  "note": "399 → 499",
+  "shot": "odeme-kart-sonuc.png"
+ },
+ {
+  "area": "Ödeme",
+  "name": "Hesabım › Ödemelerim geçmişi",
+  "ok": true,
+  "note": "2 ödeme",
+  "shot": "odeme-gecmis.png"
  },
  {
   "area": "Mobil",
