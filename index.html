@@ -585,7 +585,13 @@ kbd{font:500 11px "JetBrains Mono",monospace;color:var(--label3);border:1px soli
 .cmdk-r{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:var(--txt);padding:10px 12px;border-radius:12px;cursor:pointer;text-align:left}.cmdk-r b{font-weight:500}.cmdk-r span{margin-left:auto;font-size:12.5px;color:var(--label3)}.cmdk-r.on{background:#1c1c1c}.cmdk-r.on svg{color:#e4ff3d}.cmdk-r kbd{margin-left:8px}
 /* görsel düzenleme, sürüm, ses */
 .ws-prev{position:relative}
-.picker-dock{position:absolute;z-index:5;display:flex;align-items:center;gap:4px;max-width:calc(100% - 16px);padding:3px;border-radius:24px;background:#18191d;box-shadow:0 2px 12px #0008;border:1px solid #64655d}
+.picker-dock{position:absolute;z-index:5;left:0;top:0;display:flex;align-items:center;gap:4px;max-width:calc(100% - 16px);padding:3px;border-radius:26px;background:rgba(24,25,29,.88);backdrop-filter:blur(10px);box-shadow:0 6px 20px #0009;border:1px solid rgba(228,255,61,.28);transition:transform .5s cubic-bezier(.34,1.45,.64,1),opacity .4s,box-shadow .3s;will-change:transform;touch-action:none}
+.picker-dock[data-side="r"]{flex-direction:row-reverse}.picker-dock.drag{transition:opacity .2s,box-shadow .2s;box-shadow:0 14px 34px #000b,0 0 0 1px rgba(228,255,61,.5);cursor:grabbing}.picker-dock.idle{opacity:.55}.picker-dock.idle:hover{opacity:1}
+.picker-handle{position:relative}.picker-handle .ph-glow{position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,rgba(228,255,61,.45),transparent 65%);opacity:.7;animation:ph-breathe 2.6s ease-in-out infinite;pointer-events:none}
+.picker-handle svg{position:relative}.picker-handle:hover{transform:scale(1.06)}.picker-handle:active{transform:scale(.94)}.picker-handle{transition:transform .15s}
+.picker-dock.drag .picker-handle{transform:scale(1.1)}.picker-menu button{display:inline-flex;align-items:center;gap:5px}
+@keyframes ph-breathe{0%,100%{transform:scale(.92);opacity:.45}50%{transform:scale(1.12);opacity:.85}}
+@media(prefers-reduced-motion:reduce){.picker-dock{transition:none}.picker-handle .ph-glow{animation:none}}html.rm .picker-handle .ph-glow{animation:none}
 .picker-dock[data-corner^="t"]{top:10px}.picker-dock[data-corner^="b"]{bottom:10px}.picker-dock[data-corner$="r"]{right:10px;flex-direction:row-reverse}.picker-dock[data-corner$="l"]{left:10px}
 .picker-handle{display:grid;place-items:center;flex:none;width:42px;height:42px;border:0;border-radius:50%;background:#e4ff3d;color:#12130d;touch-action:none;cursor:grab;animation:picker-glow 2.5s ease-in-out infinite}
 .picker-handle:active{cursor:grabbing}.picker-dock:not([data-mode="browse"]) .picker-handle{outline:2px solid white;outline-offset:-4px}
@@ -2800,6 +2806,23 @@ html.rm .ambient i{animation:none}
 .skd-micro{border-top:1px solid rgba(255,255,255,.06);padding-top:8px}.skd-micro summary{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12.5px;color:#cfcfca;list-style:none}.skd-micro summary::-webkit-details-marker{display:none}
 .skd-micro summary em{font-style:normal;color:var(--mut)}.skd-micro summary small{color:var(--mut);font-size:11.5px;margin-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.skd-micro[open] summary{margin-bottom:8px}
 .skd-body{max-height:min(34vh,300px)}.skd-lv{left:auto;right:44px;top:7px;font-size:11.5px;padding:3px 10px}
+
+/* v5.74 Model menüsü, şablon maliyetleri, destek düğmesi */
+.mdl-pop{min-width:330px}.mdl-i>svg:first-child,.mdl-i>.fam,.mdl-i>span:first-child{flex:none}
+.mdl-i b{display:flex;align-items:center;gap:6px}.mdl-t{font-style:normal;font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.08);color:#cfcfca}
+.mdl-t.dengeli{background:rgba(143,180,255,.16);color:#a9c4ff}.mdl-t.guclu{background:rgba(217,119,87,.18);color:#f0a585}.mdl-t.hizli{background:rgba(81,197,146,.16);color:#8fe0b8}
+.mdl-c{display:inline-flex;align-items:center;gap:3px;font-style:normal;font-size:12px;color:#d9d9d4;margin-left:auto;padding-left:8px;font-variant-numeric:tabular-nums}
+.gt-b{position:relative}.gt-b sup{position:absolute;top:-2px;right:-2px;font-size:9px;background:#e8743b;color:#fff;border-radius:8px;padding:0 4px;line-height:14px}
+.tpl-cost{display:grid;gap:12px}.tpl-cost h2{margin:0}.tpl-cost-top{display:grid;grid-template-columns:minmax(200px,1.2fr) repeat(3,minmax(150px,1fr));gap:10px;align-items:stretch}
+.tpl-cost-top label{display:grid;gap:4px;font-size:12px;color:var(--mut)}.tpl-kpi{display:grid;gap:2px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.tpl-kpi small,.tpl-kpi em{font-size:11.5px;color:var(--mut);font-style:normal}.tpl-kpi b{font-size:14px}.tpl-kpi b.ok{color:#51c592}.tpl-kpi b.bad{color:#ff8a8a}
+.tpl-cost-f{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.tpl-cost-f .skm-q{flex:1;min-width:200px;max-width:360px}.tpl-cost-f .depo-filter{margin:0}
+.tpl-cost td small{color:var(--mut);font-size:11.5px}.tpl-m{display:inline-block;min-width:44px;text-align:center;padding:2px 8px;border-radius:10px;font-weight:600;font-size:12.5px;background:rgba(255,255,255,.06)}
+.tpl-m.ok{background:rgba(81,197,146,.16);color:#8fe0b8}.tpl-m.mid{background:rgba(255,179,71,.16);color:#ffcf8a}.tpl-m.bad{background:rgba(255,107,107,.18);color:#ff9a9a}
+@media(max-width:760px){.tpl-cost-top{grid-template-columns:1fr 1fr}}
+
+.ccpop.mdl-pop{max-height:min(70vh,520px);overflow:auto}.sx .ccpop.mdl-pop,.studio-start .ccpop.mdl-pop{bottom:auto;top:calc(100% + 8px)}
+@media(max-width:820px){.sx .ccpop.mdl-pop,.studio-start .ccpop.mdl-pop{top:auto;bottom:84px}}
 </style>
 </head>
 <body>
@@ -2816,8 +2839,17 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.73.0";
+const VERSION="5.74.0";
 const CHANGELOG=[
+ {v:"5.74.0",date:"2026-11-28",items:[
+  "🧠 Model menüsü düzeltildi: “Otomatik” artık yeni projelerde de pahalı Opus yerine Sonnet kullanıyor (3 kredi); plan ve Asistan Haiku (1 kredi). Menüde üç model yan yana: Haiku · Hızlı (küçük düzeltme), Sonnet · Dengeli (önerilen), Opus · Güçlü (büyük, karmaşık iş), her birinin kredisi ve ne işe yaradığıyla",
+  "💹 Yönetim › Ayarlar › Şablon maliyetleri: elle TL tarife ve token tahmini girme kalktı. Her şablonun Stüdyo'da özelleştirme maliyeti gerçek model fiyatından, şablon dosyasının boyutundan ve istem önbelleğinden otomatik hesaplanıyor; kullanıcıdan alınan krediyle karşılaştırılıp marj (kâr/zarar) gösteriliyor. Model seçilebilir, şablonlar marja, boyuta ya da ada göre sıralanır",
+  "🏷️ Şablon kartlarında yanıltıcı TL tahmini yerine: “Önizleme ücretsiz · özelleştirme ~9 kredi”; şablon ayrıntısında istek başı kredi ve modeli yazıyor",
+  "✨ Sarı imleç (önizlemedeki seçici) yenilendi: ışıklı limon küre, nefes alan parıltı; önizleme içinde serbestçe sürüklenir, bırakınca yaylanarak en yakın kenara yapışır (dikey yeri korunur), hızlı savrulursa o yöne gider, yeri hatırlanır, ok tuşlarıyla taşınır. Sürüklerken takılmaz; bir süre dokunulmazsa hafifçe solar, üzerine gelince parlar. Menüsü kenara göre içeri açılır, Seç / Metin / Gezin ikonlu",
+  "🧾 Geliştirme akışında tekrar kaldırıldı: “İlk yanıt bekleniyor”, “Model hâlâ düşünüyor” ve akış satırı aynı şeyi üç kez söylüyordu. Artık ilerleme şeridi süreyi, hızı ve kalan süreyi; akış satırları da adımları gösteriyor; yazılan kodun son satırı yalnızca yazılırken çıkıyor",
+  "🔧 İstem kutusunun alt çubuğu: anlaşılmayan “GT” yazısı yerine anahtar ikonu (Teknik destek · GitmappGT, uyarı sayısı rozetli); simgeler kullanım sırasına göre: Ekle, Sesle yaz, Destek · sağda Model, Mod, Gönder",
+  "🗂️ Menü grupları düzenlendi: Yapı taşları (Şablonlar, Temalar, UI Kitler, Beceriler, Depo) · Keşfet ve öğren (Keşfet, Akademi) · Araçlar (Ara, Asistan, Bağlantılar). Beceriler artık şablon ve temaların yanında",
+  "📘 Dil Modelleri sayfasında eski bilgi düzeltildi: plan/yapılacaklar/Asistan hızlı modelle 1 kredi; önizleme ve şablon açmak ücretsiz"]},
  {v:"5.73.0",date:"2026-11-28",items:[
   "🧩 Beceriler artık geliştirirken kullanılıyor: Stüdyo'da istem kutusunun üstünde Beceriler paneli. Yüklü sektör becerisinin modülleri (ör. Klinik › Hasta kartı, Randevu, Tahsilat) tek tek görünüyor; uygulamada olanlar ✓, eksikler + ile. Bir modüle bas, istem yazmadan o modül becerinin veri alanları, ekranları ve iş kurallarıyla eklensin",
   "🚀 Uçtan uca tamamla: eksik modüllerin hepsi sırayla, tek tıkla ekleniyor (ajan gibi adım adım; Durdur ile istediğin an kesilir). /tamamla komutu da aynı işi yapar",
@@ -4645,6 +4677,46 @@ function SettingsEditor({toast,config}){
  if(!config.data)return html`<div><h1>Ayarlar</h1><${LoadState} request=${config}/></div>`;
  return html`<${Settings2} toast=${toast} initial=${siteSettings||config.data}/>`;
 }
+/* ---------- v5.74 Şablon maliyet tablosu: gerçek model fiyatı × şablon boyutu × kullanıcıdan alınan kredi ---------- */
+let PLATFORM_MODELS=null;
+const TPL_EDITS=3; // tipik özelleştirme: 3 değişiklik isteği
+function tplQuote(t){const P=PLATFORM_MODELS;const def=P?.platform?.find(m=>m.id===P.default)||P?.platform?.find(m=>m.tier==="dengeli");const per=def?.credits||(P?.tiers||{}).dengeli||3;return {credits:per*TPL_EDITS,per,model:def?.id||""}}
+function TemplateCostTable(){
+ const live=useRemoteData("/api/me/ai-live"),bill=useRemoteData("/api/billing");
+ const [sizes,setSizes]=useState({}),[sel,setSel]=useState(""),[q,setQ]=useState(""),[sort,setSort]=useState("marj");
+ useEffect(()=>{let a=true;Promise.all(TEMPLATE_LIB.map(t=>fetch("templates/"+t.id+".html").then(r=>r.ok?r.text():"").then(x=>[t.id,x.length]).catch(()=>[t.id,0]))).then(r=>a&&setSizes(Object.fromEntries(r)));return()=>{a=false}},[]);
+ const d=live.data;if(!d||!bill.data)return html`<section class="box tpl-cost"><h2>Şablon maliyetleri</h2><${LoadState} request=${!d?live:bill}/></section>`;
+ const models=d.routing.models.filter(m=>m.rate);const fx=d.spend?.fx||null;const model=models.find(m=>m.id===(sel||d.routing.roles[0].model))||models[0];
+ const packs=bill.data.packs||[];const tlPerCredit=packs.length?Math.min(...packs.map(p=>p.price/100/((p.credits||0)+(p.bonus||0)))):null;
+ if(!model)return html`<section class="box tpl-cost"><h2>Şablon maliyetleri</h2><p class="sub">Model fiyatları henüz yok. Yönetim › API maliyetleri › “Fiyat ve kuru güncelle” ile otomatik doldurun.</p></section>`;
+ const r=model.rate,usd=v=>(r.currency||"TRY")==="USD"?v:fx?v/fx:null;
+ const SYS=9000; // sistem talimatı + beceri + tasarım dili (token)
+ const rows=TEMPLATE_LIB.map(t=>{const bytes=sizes[t.id]||36000;const file=Math.round(bytes/3.6);const out=Math.min(Math.max(1200,Math.round(file*0.3)),8000);
+  // 1. istek: sistem + dosya önbelleğe yazılır (girdi ×1,25); sonraki istekler önbellekten okur; değişikliklerde yalnızca değişen parçalar yazılır
+  const first=((SYS+file)*r.input*1.25+out*r.output)/1e6, next=((SYS+file)*(r.cached??r.input*0.1)+800*r.input+out*r.output)/1e6;
+  const costU=usd(first+next*(TPL_EDITS-1));const credits=model.credits*TPL_EDITS;const revTl=tlPerCredit!=null?credits*tlPerCredit:null;const costTl=costU!=null&&fx?costU*fx:null;
+  const margin=revTl&&costTl!=null?Math.round((revTl-costTl)/revTl*100):null;
+  return {t,kb:bytes/1024,file,costU,costTl,credits,revTl,margin,per:usd(next)}});
+ const qq=q.trim().toLocaleLowerCase("tr");let list=rows.filter(x=>!qq||(x.t.name+" "+x.t.sector).toLocaleLowerCase("tr").includes(qq));
+ list=[...list].sort((a,b)=>sort==="marj"?(a.margin??999)-(b.margin??999):sort==="boyut"?b.kb-a.kb:a.t.name.localeCompare(b.t.name,"tr"));
+ const loss=rows.filter(x=>x.margin!=null&&x.margin<0).length,avg=rows.filter(x=>x.margin!=null);const avgM=avg.length?Math.round(avg.reduce((s,x)=>s+x.margin,0)/avg.length):null;
+ const tl=v=>v==null?"—":v.toLocaleString("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:2});
+ return html`<section class="box tpl-cost"><h2>Şablon maliyetleri</h2>
+  <p class="sub">Bir şablonu Stüdyo'da özelleştirmenin gerçek yapay zekâ maliyeti ile kullanıcıdan alınan kredinin karşılaştırması. Model fiyatları ve dolar kuru otomatik; şablon boyutu dosyadan ölçülür. Tipik özelleştirme = ${TPL_EDITS} değişiklik isteği (ilk istek dosyayı önbelleğe yazar, sonrakiler önbellekten okur, yalnızca değişen parçalar yazılır).</p>
+  <div class="tpl-cost-top">
+   <label>Model <select class="in" value=${model.id} onChange=${e=>setSel(e.target.value)}>${models.map(m=>html`<option key=${m.id} value=${m.id}>${shortModel(m.id)} · ${TIER_INFO[m.tier]?.l||m.tier} · ${m.credits} kredi</option>`)}</select></label>
+   <div class="tpl-kpi"><small>Fiyat (1M token)</small><b>${(r.currency==="USD"?"$":"₺")+r.input} giriş · ${(r.currency==="USD"?"$":"₺")+r.output} çıkış</b><em>önbellekten ${(r.currency==="USD"?"$":"₺")+(r.cached??"—")}</em></div>
+   <div class="tpl-kpi"><small>1 kredinin geliri</small><b>${tl(tlPerCredit)}</b><em>en ucuz paket üzerinden</em></div>
+   <div class="tpl-kpi"><small>Ortalama marj</small><b class=${avgM!=null&&avgM<20?"bad":"ok"}>${avgM==null?"—":(avgM<0?"−%"+Math.abs(avgM):"%"+avgM)}</b><em>${loss?loss+" şablon zararda":"zarar eden şablon yok"}</em></div>
+  </div>
+  <div class="tpl-cost-f"><label class="skm-q"><${Icon} n="search" s=${14}/><input aria-label="Şablon ara" placeholder="Şablon ara" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
+   <div class="depo-filter">${[["marj","Marja göre"],["boyut","Boyuta göre"],["ad","Ada göre"]].map(([k,l])=>html`<button key=${k} class=${"chip"+(sort===k?" on":"")} onClick=${()=>setSort(k)}>${l}</button>`)}</div></div>
+  <div class="adm-table"><table><thead><tr><th>Şablon</th><th>Boyut</th><th>İstek başı</th><th>Tipik özelleştirme</th><th>Alınan kredi</th><th>Marj</th></tr></thead><tbody>
+   ${list.map(x=>html`<tr key=${x.t.id}><td><b>${x.t.name}</b><br/><small>${x.t.sector}</small></td><td>${x.kb.toFixed(0)} KB<br/><small>~${(x.file/1000).toFixed(1).replace(".",",")}K token</small></td><td>${usdF(x.per)}</td><td>${usdF(x.costU)}<br/><small>${tl(x.costTl)}</small></td><td>${x.credits} kredi<br/><small>${tl(x.revTl)}</small></td><td><span class=${"tpl-m "+(x.margin==null?"":x.margin<0?"bad":x.margin<30?"mid":"ok")}>${x.margin==null?"—":(x.margin<0?"−%"+Math.abs(x.margin):"%"+x.margin)}</span></td></tr>`)}
+  </tbody></table></div>
+  ${!fx&&html`<p class="sub">Dolar kuru yok; TL karşılıkları için Yönetim › API maliyetleri › “Fiyat ve kuru güncelle”.</p>`}
+ </section>`;
+}
 function TemplatePricingEditor({initial,save,busy}){
  const [pricing,setPricing]=useState(initial),[id,setId]=useState(TEMPLATE_LIB[0].id);
  const [estimate,setEstimate]=useState(()=>initial?.estimates?.[id]||{});
@@ -4652,7 +4724,7 @@ function TemplatePricingEditor({initial,save,busy}){
  const field=(name,label,value,step,max,onInput)=>html`<label key=${name}>${label}<input class="in" name=${name} type="number" min="0" max=${max} step=${step} required value=${value??""} onInput=${onInput}/></label>`;
  const [rates,setRates]=useState(initial?.rates||{});
  const persist=async body=>{const settings=await save({templatePricing:body});if(settings)setPricing(settings.templatePricing)};
- const quote=tplQuote({id},pricing);
+ const quote=null;
  return html`<section class="box tpl-price-editor"><h2>Şablon token fiyatlandırması</h2>
   <p>Şablon detaylarındaki tahmin, beklenen giriş ve çıkış tokenlarıyla bu tarifeden otomatik hesaplanır.</p>
   <form onSubmit=${e=>{e.preventDefault();persist({rates:{input:number(rates.input),output:number(rates.output)}})}}>
@@ -4686,7 +4758,7 @@ function Settings2({toast,initial}){
    <button class="btn" disabled=${busy} onClick=${()=>persist({business:S})}>Kaydet</button></div>
   <div class="box"><b>Paket fiyatları (₺)</b><div style=${{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))",gap:10,marginTop:10}}>${Object.keys(PL).map(k=>html`<label>${PL[k]}<input class="in" type="number" style=${{width:"100%",marginTop:4}} value=${P[k]} onInput=${e=>setP({...P,[k]:+e.target.value||0})}/></label>`)}</div>
    <div style=${{display:"flex",gap:8,marginTop:10}}><button class="btn" disabled=${busy} onClick=${()=>persist({prices:P})}>Fiyatları kaydet</button><button class="btn g" disabled=${busy} onClick=${()=>{setP({...DEFAULT_PRICES});persist({prices:DEFAULT_PRICES})}}>Varsayılana dön</button></div></div>
-  <${TemplatePricingEditor} initial=${initial.templatePricing} save=${persist} busy=${busy}/>
+  <${TemplateCostTable}/>
   <div class="box"><b>GitHub token (isteğe bağlı)</b><p style=${{color:"var(--mut)",fontSize:12}}>Saatlik limit 60 → 5000. Sadece bu tarayıcıda saklanır, yetki gerekmez.</p>
    <div style=${{display:"flex",gap:8}}><input class="in" type="password" style=${{flex:1}} value=${t} onInput=${e=>setT(e.target.value)} placeholder="github_pat_…"/><button class="btn" onClick=${()=>{LS.set("token",t.trim());toast("Kaydedildi")}}>Kaydet</button></div></div>
   <div class="box"><b>Veri</b><p style=${{color:"var(--mut)",fontSize:12}}>Bu tarayıcıdaki proje listesi, kuyruk ve yerel talep kopyalarını temizleyebilirsiniz.</p><button class="btn g" onClick=${()=>{if(!confirm("Bu tarayıcıdaki yerel kayıtlar temizlensin mi?"))return;["saved","secs","builds","q","orders"].forEach(k=>LS.set(k,null));location.reload()}}>Yerel kayıtları temizle</button></div></div>`;
@@ -5070,7 +5142,7 @@ function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
  const stepEl=(s,i,last)=>html`<div class="cc-step" key=${s.k}>
   ${s.say&&html`<p class=${"cc-say"+(s.err?" err":"")}>${s.say}</p>`}
   ${s.label&&html`<${CcRow} label=${s.label} detail=${s.detail} icon=${s.icon} run=${s.run} err=${s.err} time=${s.run?Math.floor(now-(s.t0||0)):undefined}>${s.body}<//>`}
-  ${last&&stalled&&html`<p class="cc-note">Model hâlâ düşünüyor; ilk parçalar gelince burada görünecek.</p>`}
+
  </div>`;
  // Bitti: adımlar tek satırda toplanır (Claude Code: "Çalıştırıldı 6 komut ›")
  const doneHead=!log.running&&html`<button type="button" class="cc-rbtn cc-sum" aria-expanded=${isOpen} aria-controls=${flowId} onClick=${onToggle}>
@@ -6456,7 +6528,7 @@ function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,fast,
  return html`<div class="bs">
   <div class=${"bs-bar"+(pct?"":" ind")}><i style=${pct?{width:(pct*100).toFixed(1)+"%"}:undefined}></i></div>
   <div class="bs-l1"><${ClSpark} s=${15}/>${phm&&html`<span class="bs-step" title=${phm[2]}>Aşama ${phm[1]}</span>`}${todo?.running&&html`<span class="bs-step">Adım ${Math.min(todo.items.length,todo.items.filter(t=>t.state==="done").length+1)}/${todo.items.length}</span>`}<button type="button" class="flow-trigger" aria-label="İşlem akışı" aria-controls=${flowId} aria-expanded=${isOpen} onClick=${onFlow}><span class="shim">${verb}…</span><${Icon} n=${isOpen?"chevUp":"chevDown"} s=${13}/></button><span class="bs-meta">(${meta.join(" · ")} · <button type="button" onClick=${onStop}>esc ile durdur</button>)</span></div>
-  ${tail?html`<div class="bs-l2"><span class="bs-elb">⎿</span><code>${tail}</code><span class="caret"></span></div>`:html`<div class="bs-l2 dim"><span class="bs-elb">⎿</span><span>${ev.includes("connected")?"Model isteği aldı, ilk satırı yazmadan önce düşünüyor":"Model bağlantısı kuruluyor"}</span></div>`}
+  ${tail&&html`<div class="bs-l2"><span class="bs-elb">⎿</span><code>${tail}</code><span class="caret"></span></div>`}
   ${slow&&!fast&&!tipOff&&html`<div class="bs-l2 dim bs-sug"><span class="bs-elb">⎿</span><span>Büyük dosya yazılıyor; bu iş sürüyor. Sonraki istekler için</span><button type="button" class="bs-link" onClick=${()=>{setTipOff(true);onFaster&&onFaster()}}>Hızlı moda geç</button><button type="button" class="bs-x" aria-label="Öneriyi gizle" onClick=${()=>setTipOff(true)}>×</button></div>`}
   ${queue>0&&html`<div class="bs-l2 dim"><span class="bs-elb">⎿</span><span>Sırada ${queue} istek var · bu iş bitince başlayacak</span></div>`}
  </div>`;
@@ -6790,7 +6862,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(!(st.html||"").includes('<meta name="gitmapp-scenario" content="gitsap-production">'))return selected;
   return [...new Set([...selected,"gitsap-tedarik","gitsap-uretim","gitsap-fatura","gitsap-finans"])];
  }
- const aiBody=()=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n"),skills:skillIds(),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
+ const aiBody=()=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n"),skills:skillIds(),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -7126,10 +7198,14 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const adv=(runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli");
   return html`<span class="cmp" role="group" aria-label="Model ve çalışma modu">
    <span class="ccw"><button type="button" class=${"cmp-b"+(cmpOpen==="model"?" on":"")+(prefs.autoModel?" auto":"")} title="Dil modeli seç" aria-haspopup="menu" aria-expanded=${cmpOpen==="model"} onClick=${()=>tog("model")}>${!prefs.autoModel&&curInfo?html`<${FamLogo} f=${curInfo.family} s=${14}/>`:html`<${Icon} n=${prefs.autoModel?"sparkles":"cpu"} s=${14}/>`}<span class="cmp-l">${mName}</span><${Icon} n="chevDown" s=${12} w=${2}/></button>
-    ${cmpOpen==="model"&&html`<${CcPop} cls="r cmp-pop" close=${cl}><div class="ccpop-h">Dil modeli<small>${!prefs.autoModel&&curInfo?curInfo.credits+" kredi / işlem":"kodu yazan yapay zekâ"}</small></div>
-     ${it(prefs.autoModel,"sparkles","Otomatik","Yeni projede güçlü, küçük düzenlemede hızlı model seçilir",()=>{setPrefs(p=>({...p,autoModel:true}));cl()})}
-     ${it(!prefs.autoModel,"cpu",curModel?shortModel(curModel):"Sabit model",(curInfo?curInfo.credits+" kredi / işlem · ":"")+"her işte aynı model",()=>{setPrefs(p=>({...p,autoModel:false}));cl()})}
-     <div class="ccpop-sep"></div>${it(false,"layers","Tüm modeller…","Karşılaştır, değiştir ya da kendi anahtarını bağla",()=>{cl();setPicker(true)})}<//>`}</span>
+    ${cmpOpen==="model"&&(()=>{const plat=(md.platform||[]).slice().sort((a,b)=>({hizli:0,dengeli:1,guclu:2}[a.tier]??3)-({hizli:0,dengeli:1,guclu:2}[b.tier]??3));const auto=pickModel(md.platform,"dengeli")||{},help=plat.find(m=>m.tier==="hizli");
+     const USE={hizli:"Küçük düzeltme, metin ve renk değişikliği",dengeli:"Önerilen · iş uygulamaları, çok ekranlı siteler",guclu:"Büyük, karmaşık iş; zor hata ayıklama"};
+     return html`<${CcPop} cls="r cmp-pop mdl-pop" close=${cl}><div class="ccpop-h">Dil modeli<small>uygulamayı yazan yapay zekâ</small></div>
+     ${it(prefs.autoModel,"sparkles","Otomatik",(auto.id?"Uygulamayı "+shortModel(auto.id)+" yazar ("+auto.credits+" kredi)":"Dengeli model")+(help?"; plan ve Asistan "+shortModel(help.id)+" ("+help.credits+" kredi)":""),()=>{setPrefs(p=>({...p,autoModel:true}));cl()})}
+     <div class="ccpop-sep"></div>
+     ${plat.map(m=>html`<button type="button" key=${m.id} role="menuitemradio" aria-checked=${!prefs.autoModel&&curModel===m.id} class="ccpop-i two mdl-i" onClick=${()=>{setPrefs(p=>({...p,provider:"gitmapp",model:m.id,autoModel:false}));cl()}}><${FamLogo} f=${m.family} s=${16}/><span><b>${shortModel(m.id)} <em class=${"mdl-t "+m.tier}>${TIER_INFO[m.tier]?.l.split(" ")[0]||m.tier}</em></b><small>${USE[m.tier]||""}</small></span><i class="mdl-c">${m.credits}<${Icon} n="gem" s=${11}/></i>${!prefs.autoModel&&curModel===m.id?html`<${Icon} n="check" s=${15} w=${2.2} c="#8fb4ff"/>`:""}</button>`)}
+     ${!plat.length&&it(!prefs.autoModel,"cpu",curModel?shortModel(curModel):"Sabit model",(curInfo?curInfo.credits+" kredi / işlem · ":"")+"her işte aynı model",()=>{setPrefs(p=>({...p,autoModel:false}));cl()})}
+     <div class="ccpop-sep"></div>${it(false,"layers","Tüm modeller…","Karşılaştır ya da kendi anahtarını bağla",()=>{cl();setPicker(true)})}<//>`})()}</span>
    <span class="ccw"><button type="button" class=${"cmp-b cmp-mode"+(cmpOpen==="mode"?" on":"")+(prefs.autoMode?" auto":"")} title="Çalışma modu" aria-haspopup="menu" aria-expanded=${cmpOpen==="mode"} onClick=${()=>tog("mode")}><${Icon} n=${MI[modeEff]} s=${14}/><span class="cmp-l">${ML[modeEff]}</span>${adv&&html`<i class="cmp-dot" title="Gelişmiş ayar değiştirildi"></i>`}<${Icon} n="chevDown" s=${12} w=${2}/></button>
     ${cmpOpen==="mode"&&html`<${CcPop} cls="r cmp-pop" close=${cl}><div class="ccpop-h">Çalışma modu</div>
      ${it(modeEff==="oto","sparkles","Otomatik","Büyük yeni işte önce plan, düzenlemelerde doğrudan",()=>setMode("oto"))}
@@ -7148,7 +7224,6 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
     <b>${promptIntent(input,{html:!!st.html,plan:!!plan,todo:!!todo?.awaiting,last:lastAsk(),kind:prefs.kind,mode:prefs.mode,picked:!!picked}).l}</b>
     <span>${st.title||"Yeni proje"} · ${st.gitContext?.name||"Yerel taslak"} · ${MODE_TR[prefs.mode]}</span></div>`}
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
-    <button type="button" class="gatt" title="GitmappGT teknik destek" aria-label="GitmappGT teknik destek" onClick=${()=>setGtRequest(n=>n+1)}>GT${gtAlerts>0&&html`<sup role="status">${gtAlerts}</sup>`}</button>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
      ${plusOpen&&html`<${ComposerMenu}>
       <button type="button" role="menuitem" disabled=${atts.length>=3} onClick=${()=>{setPlusOpen(false);fileRef.current.click()}}><${Icon} n="paperclip" s=${18}/><span>Görsel ya da çizim ekle</span><kbd>⌘U</kbd></button>
@@ -7162,7 +7237,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);setInput("/");const t=document.querySelector(".gta");t&&t.focus()}}><${Icon} n="slash" s=${18}/><span>Komutlar</span><kbd>/</kbd></button>
       <button type="button" role="menuitem" onClick=${()=>{setPlusOpen(false);dispatchEvent(new Event("gm:cp"))}}><${Icon} n="headphones" s=${18}/><span>Asistanla konuş</span><kbd>⌘J</kbd></button>
      <//>`}</span>
-    <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
+    <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" aria-label="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
+    <button type="button" class="gatt gt-b" title="Teknik destek (GitmappGT): hata ve bağlantı sorunlarını teşhis eder" aria-label="Teknik destek" onClick=${()=>setGtRequest(n=>n+1)}><${Icon} n="wrench" s=${16}/>${gtAlerts>0&&html`<sup role="status">${gtAlerts}</sup>`}</button>
     <span class="gnote">${busy?html`<button type="button" class="pe-chip run" aria-label="İşlem adımlarını göster veya gizle" aria-expanded=${!!(latestWork&&flowOpen[flowId(latestWork)])} onClick=${()=>toggleFlow(latestWork,true)}><${ActivityIcon} size=${13}/> ${clTime(secs)}</button>`:input.trim()&&GS.engine?html`<${PromptEngine} open=${requestInfo} toggle=${()=>setRequestInfo(v=>!v)} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>${cmpBar()}
     ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/><span class="nx-qtx"> Sıraya ekle</span></button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}><${Icon} n="arrowUp" s=${17} w=${2.4}/></button>`}</div></div></form>`;
  const escCard=()=>esc&&!busy&&html`<div class="esc" role="alertdialog" aria-label="Model önerisi"><div class="esc-h"><${Icon} n="zap" s=${15}/><b>Bu iş için daha güçlü bir model önerilir</b></div>
@@ -8135,11 +8211,7 @@ async function loadTemplate(id,signal){
  if(!r.ok)throw new Error("Şablon yüklenemedi ("+r.status+")");
  return (await r.text()).replace(/"(\.\/art\/[a-z0-9-]+\.webp)"/g,(_,path)=>JSON.stringify(new URL(path,r.url).href));
 }
-function tplQuote(t,pricing=siteSettings?.templatePricing){
- const usage=pricing?.estimates?.[t.id],rates=pricing?.rates;
- if(!usage||!rates)return null;
- return {...usage,total:(usage.input*rates.input+usage.output*rates.output)/1e6};
-}
+
 function ProductMark({t}){
  return html`<span class="product-mark pm2"><${AppIcon2} emoji=${t.workflow?t.emoji:"brand_"+t.id} color=${t.pr} size=${46}/></span>`;
 }
@@ -8155,7 +8227,7 @@ function TplCard({t,onDemo,onUse}){
  return html`<article class="tpc">
  <div class="tpc-img"><${TplThumb} t=${t}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı önizlemeyi aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı önizleme</span></button></div>
  <div class="tpc-m"><${ProductMark} t=${t}/><div><b>${t.name}</b><span>${t.sector} · ${TPL_TYPES[t.type]}${t.premium?" · Premium":""}</span></div></div>
- <div class="tpl-card-info"><p>${t.desc}</p><small>${quote?"Tahmini AI maliyeti · "+tplMoney.format(quote.total):"Ücretsiz önizleme"}</small></div>
+ <div class="tpl-card-info"><p>${t.desc}</p><small>Önizleme ücretsiz · özelleştirme ~${quote.credits} kredi</small></div>
  <${TplSkillHint} t=${t}/>
  <div class="tpl-card-actions">
   <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"phone"})}><${Icon} n="phone" s=${14}/> Telefon</button>
@@ -8203,7 +8275,7 @@ function TplDemo({t,close,onUse,canAdapt=false}){
    <section><h2>Şablon hakkında</h2><p>${t.desc}</p><ul>${t.feat.map(f=>html`<li key=${f}>${f}</li>`)}</ul></section>
    <section><h2>Kullanım alanları</h2><p>${usage}</p><h3>Projenize uyarlayın</h3><p>${adapt}</p>${canAdapt&&html`<button class="getbtn" onClick=${()=>onUse({...t,appearance,adaptExisting:true})}>Açık projeye uyarlama isteği hazırla</button>`}</section>
    <section class="tpl-pricing"><h2>Yapay zekâ maliyeti</h2>
-    ${quote?html`<p><strong>${tplMoney.format(quote.total)}</strong> tahmini özelleştirme maliyeti</p><p>${tplNumber.format(quote.input)} giriş ve ${tplNumber.format(quote.output)} çıkış tokenı üzerinden hesaplanır.</p>`:html`<p>Bu şablon için özelleştirme tahmini henüz girilmedi.</p>`}
+    ${quote?html`<p><strong>~${quote.credits} kredi</strong> tipik özelleştirme</p><p>Şablonu açmak ve önizlemek ücretsiz. Stüdyo'da her değişiklik isteği ${quote.per} kredi${quote.model?" ("+shortModel(quote.model)+")":""}; tipik özelleştirme ${TPL_EDITS} istek sürer.</p>`:html`<p>Bu şablon için özelleştirme tahmini henüz girilmedi.</p>`}
     <p>Demoyu açmak ve şablonu Stüdyo’ya almak ücretsizdir. Yapay zekâ işlemlerinde seçilen modelin kredi tarifesi geçerlidir.</p>
    </section>
   </div>`}
@@ -8602,39 +8674,38 @@ function CommandPalette({close,go,openInStudio,onTpl,auth}){
 
 // Görsel düzenleme: önizlemeye eklenen küçük betik (yalnızca önizlemede, kayda girmez)
 function PickerDock({mode,onMode}){
- const corners=["br","bl","tl","tr"];
- const [corner,setCorner]=useState(()=>LS.get("pickerCorner2",null)||"bl");
- const [open,setOpen]=useState(false),[offset,setOffset]=useState(null);
- const dock=useRef(null),gesture=useRef(null),timer=useRef(null),dragged=useRef(false);
- const settle=k=>{setCorner(k);LS.set("pickerCorner2",k)};
- function idle(){
-   clearTimeout(timer.current);
-   timer.current=setTimeout(()=>{if(!gesture.current&&!dock.current?.querySelector(":focus-visible"))setOpen(false)},3500);
- }
- useEffect(()=>{if(open)idle();return ()=>clearTimeout(timer.current)},[open]);
- function begin(e){
-   if(e.button!==0)return;
-   const box=dock.current.getBoundingClientRect();
-   gesture.current={x:e.clientX,y:e.clientY,left:box.left,top:box.top};
-   dragged.current=false;e.currentTarget.setPointerCapture(e.pointerId);
- }
- function move(e){
-   const g=gesture.current;if(!g)return;
-   const dx=e.clientX-g.x,dy=e.clientY-g.y;
-   if(!dragged.current&&Math.hypot(dx,dy)<6)return;
-   dragged.current=true;
-   const el=dock.current,b=el.parentElement.getBoundingClientRect();
-   const fit=(v,max)=>Math.max(4,Math.min(v,max-4));
-   setOffset({left:fit(g.left-b.left+dx,b.width-el.offsetWidth),top:fit(g.top-b.top+dy,b.height-el.offsetHeight),right:"auto",bottom:"auto"});
- }
- function end(e){
-   if(!gesture.current)return;
-   if(dragged.current){const b=dock.current.parentElement.getBoundingClientRect();settle((e.clientY<b.top+b.height/2?"t":"b")+(e.clientX<b.left+b.width/2?"l":"r"))}
-   gesture.current=null;setOffset(null);idle();
- }
- return html`<div class="picker-dock" ref=${dock} data-corner=${corner} data-mode=${mode||"browse"} style=${offset} onPointerMove=${idle} onFocus=${idle} onBlur=${idle} onKeyDown=${e=>{if(e.key==="Escape"){onMode(null);setOpen(false);dock.current.firstElementChild.focus()}}}>
-  <button class="picker-handle" type="button" aria-label=${"Seçici araçları"+(mode==="text"?" · Metin":mode?" · Seçim":"")} aria-expanded=${open} title="Seçici araçları · Taşımak için sürükle" onPointerDown=${begin} onPointerMove=${move} onPointerUp=${end} onPointerCancel=${()=>{gesture.current=null;setOffset(null);idle()}} onClick=${e=>{if(!dragged.current||e.detail===0)setOpen(!open);dragged.current=false}}><${Icon} n="pointer" s=${20}/></button>
-  ${open&&html`<div class="picker-menu" role="group" aria-label="Önizleme araçları">${[["select","Seç"],["text","Metin"],[null,"Gezin"]].map(([key,label])=>html`<button key=${label} aria-pressed=${mode===key} onClick=${()=>{onMode(key);idle()}}>${label}</button>`)}<button title="Sonraki köşeye taşı" aria-label="Sonraki köşeye taşı" onClick=${()=>settle(corners[(corners.indexOf(corner)+1)%4])}><${Icon} n="move" s=${15}/> Köşe</button></div>`}
+ // v5.74 — Işıklı limon imleç: önizleme içinde serbest sürüklenir; bırakınca yaylanarak en yakın yan kenara yapışır,
+ // dikey konum korunur; hızlı savrulunca o yöne gider. Konum yüzde olarak hatırlanır. Ok tuşlarıyla da taşınır.
+ const [pos,setPos]=useState(()=>{const p=LS.get("pickerPos3",null);return p&&typeof p.y==="number"?p:{x:0,y:0.42}}); // varsayılan sol kenarın ortası: alttaki çıktı kartıyla çakışmaz
+ const [open,setOpen]=useState(false),[drag,setDrag]=useState(false),[idle,setIdle]=useState(false);
+ const dock=useRef(null),g=useRef(null),moved=useRef(false),timer=useRef(0),posRef=useRef(pos);posRef.current=pos;
+ const xy=(p,el)=>{const P=el.parentElement.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight,m=10;return [p.x?Math.max(m,P.width-W-m):m,m+Math.max(0,Math.min(1,p.y))*Math.max(0,P.height-H-2*m)]};
+ const apply=()=>{const el=dock.current;if(!el||g.current)return;const [X,Y]=xy(posRef.current,el);el.style.transform="translate3d("+X+"px,"+Y+"px,0)"};
+ useEffect(()=>{const el=dock.current;if(!el)return;el.style.transition="none";apply();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(dock.current)dock.current.style.transition=""})); // ilk yerleşim kaymadan
+  const ro=new ResizeObserver(apply);ro.observe(el);ro.observe(el.parentElement);return()=>ro.disconnect()},[]);
+ useEffect(()=>{apply()},[pos,open]);
+ const wake=()=>{setIdle(false);clearTimeout(timer.current);timer.current=setTimeout(()=>{if(!g.current){setIdle(true);setOpen(false)}},5000)};
+ useEffect(()=>{wake();return()=>clearTimeout(timer.current)},[]);
+ const settle=p=>{const n={x:p.x?1:0,y:Math.max(0,Math.min(1,p.y))};setPos(n);LS.set("pickerPos3",n)};
+ function begin(e){if(e.button!==0&&e.pointerType==="mouse")return;const el=dock.current;const m=/translate3d\(([-\d.]+)px,\s*([-\d.]+)px/.exec(el.style.transform)||[0,0,0];
+  g.current={x:e.clientX,y:e.clientY,ox:+m[1],oy:+m[2],t:performance.now(),hist:[]};moved.current=false;e.currentTarget.setPointerCapture(e.pointerId);wake()}
+ function move(e){const G=g.current;if(!G)return;const dx=e.clientX-G.x,dy=e.clientY-G.y;
+  if(!moved.current&&Math.hypot(dx,dy)<4)return;if(!moved.current){moved.current=true;setDrag(true);setOpen(false)}
+  const el=dock.current,P=el.parentElement.getBoundingClientRect();const X=Math.max(4,Math.min(G.ox+dx,P.width-el.offsetWidth-4)),Y=Math.max(4,Math.min(G.oy+dy,P.height-el.offsetHeight-4));
+  el.style.transform="translate3d("+X+"px,"+Y+"px,0)";G.hist.push({x:e.clientX,y:e.clientY,t:performance.now()});if(G.hist.length>5)G.hist.shift()}
+ function end(e){const G=g.current;if(!G)return;g.current=null;
+  if(moved.current){const el=dock.current,P=el.parentElement.getBoundingClientRect(),b=el.getBoundingClientRect();const h=G.hist,h0=h[0],h1=h[h.length-1];const dt=h1&&h0?Math.max(1,h1.t-h0.t):1;
+   const vx=h1&&h0?(h1.x-h0.x)/dt:0,vy=h1&&h0?(h1.y-h0.y)/dt:0; // px/ms
+   const cx=b.left+b.width/2-P.left+(Math.abs(vx)>0.5?vx*220:0),cy=b.top-P.top+vy*160;
+   settle({x:cx>P.width/2?1:0,y:(cy-10)/Math.max(1,P.height-b.height-20)});setDrag(false);requestAnimationFrame(apply)}
+  wake()}
+ const nudge=e=>{const k=e.key;if(k==="Escape"){onMode(null);setOpen(false);return}
+  if(!["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(k)||e.target!==dock.current.firstElementChild)return;e.preventDefault();const p=posRef.current;
+  settle(k==="ArrowLeft"?{...p,x:0}:k==="ArrowRight"?{...p,x:1}:{...p,y:p.y+(k==="ArrowUp"?-0.08:0.08)});wake()};
+ return html`<div class=${"picker-dock"+(drag?" drag":"")+(idle&&!open&&!mode?" idle":"")} ref=${dock} data-side=${pos.x?"r":"l"} data-mode=${mode||"browse"} onPointerEnter=${wake} onPointerMove=${()=>idle&&wake()} onFocus=${wake} onKeyDown=${nudge}>
+  <button class="picker-handle" type="button" aria-label=${"Seçici araçları"+(mode==="text"?" · Metin":mode?" · Seçim":"")+" · sürükle ya da ok tuşlarıyla taşı"} aria-expanded=${open} title="Seçici: öğe seç, metin düzenle · Sürükleyerek taşı"
+   onPointerDown=${begin} onPointerMove=${move} onPointerUp=${end} onPointerCancel=${end} onClick=${e=>{if(!moved.current||e.detail===0)setOpen(!open);moved.current=false}}><span class="ph-glow" aria-hidden="true"></span><${Icon} n=${mode==="text"?"type":mode?"cursor":"pointer"} s=${20}/></button>
+  ${open&&html`<div class="picker-menu" role="group" aria-label="Önizleme araçları">${[["select","cursor","Seç"],["text","type","Metin"],[null,"pointer","Gezin"]].map(([key,ic,label])=>html`<button key=${label} aria-pressed=${mode===key} onClick=${()=>{onMode(key);wake()}}><${Icon} n=${ic} s=${14}/> ${label}</button>`)}</div>`}
  </div>`;
 }
 
@@ -9389,7 +9460,7 @@ const CREDIT_PACKS=[[100,149],[300,399],[1000,1190]];
 
 function useModels(apiOn,userId){
  const [m,setM]=useState(null);
- const load=()=>{if(!API_ON)return;api("GET","/api/ai/models").then(setM).catch(()=>setM({platform:[],byok:[],tiers:{}}))};
+ const load=()=>{if(!API_ON)return;api("GET","/api/ai/models").then(j=>{PLATFORM_MODELS=j;setM(j)}).catch(()=>setM({platform:[],byok:[],tiers:{}}))};
  useEffect(load,[apiOn,userId]);
  return {data:m,reload:load};
 }
@@ -9421,7 +9492,7 @@ function ModelsPage({models,go}){
  return html`<div><h1>Dil Modelleri</h1><p class="sub">Uygulamanızı, sitenizi veya oyununuzu hangi yapay zekâyla yapacağınızı seçin. Her modelin güçlü olduğu alan farklıdır; emin değilseniz önerilen (⭐) modelle başlayın.</p>
   <h2>Nasıl ücretlendirilir?</h2>
   <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))"}}>
-   <div class="box" style=${{margin:0,lineHeight:1.6}}><b style=${{display:"flex",alignItems:"center",gap:6}}><${Icon} n="gem" s=${16}/> Gitmapp kredisi</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}>Hiçbir hesap açmadan tüm hazır modelleri kullanın. Her üretimde modelin seviyesine göre kredi düşer:</p>${Object.entries(TIER_INFO).map(([k,t])=>html`<div style=${{fontSize:13}}>${t.l}: <b>${(d.tiers||{})[k]||"?"} kredi</b> / üretim</div>`)}<div style=${{fontSize:12.5,color:"var(--mut)",marginTop:6}}>Planlama adımı yaklaşık üçte bir kredi tutar. Yeni hesaplara hoş geldin kredisi verilir.</div></div>
+   <div class="box" style=${{margin:0,lineHeight:1.6}}><b style=${{display:"flex",alignItems:"center",gap:6}}><${Icon} n="gem" s=${16}/> Gitmapp kredisi</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}>Hiçbir hesap açmadan tüm hazır modelleri kullanın. Her üretimde modelin seviyesine göre kredi düşer:</p>${Object.entries(TIER_INFO).map(([k,t])=>html`<div style=${{fontSize:13}}>${t.l}: <b>${(d.tiers||{})[k]||"?"} kredi</b> / üretim</div>`)}<div style=${{fontSize:12.5,color:"var(--mut)",marginTop:6}}>Plan, yapılacaklar listesi ve Asistan hızlı modelle çalışır (1 kredi); uygulamayı yazan üretim seçtiğin modelle. Önizleme ve şablon açmak ücretsiz. Yeni hesaplara hoş geldin kredisi verilir.</div></div>
    <div class="box" style=${{margin:0,lineHeight:1.6}}><b style=${{display:"flex",alignItems:"center",gap:6}}><${Icon} n="key" s=${16}/> Kendi API anahtarın</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}>Anthropic, OpenAI, Google Gemini, DeepSeek veya OpenRouter anahtarınızı bağlayın; ücreti doğrudan sağlayıcıya ödersiniz, <b>Gitmapp kredisi düşmez</b>. Anahtarınız şifreli saklanır, size bile geri gösterilmez.</p><button class="btn s" onClick=${()=>go("hesabim")}>Anahtarımı bağla</button></div>
    <div class="box" style=${{margin:0,lineHeight:1.6}}><b style=${{display:"flex",alignItems:"center",gap:6}}><${Icon} n="file" s=${16}/> Abonelikler hakkında</b><p style=${{color:"var(--mut)",fontSize:13,margin:"6px 0"}}><b>Claude Pro/Max</b> aboneliği Anthropic kuralları gereği başka uygulamalarda kullanılamaz; Claude için API anahtarı gerekir. <b>ChatGPT Plus/Pro</b> için OpenAI'ın "Sign in with ChatGPT" programı var; Gitmapp'in katılımı için başvuru gerekiyor, açıldığında burada duyuracağız.</p></div></div>
   <h2>Model aileleri</h2>
@@ -10267,9 +10338,10 @@ function App(){
   if(origin?.startsWith("#magaza")&&history.state?.storeSteps)history.go(-history.state.storeSteps);
   else goStore({},true);
  };
- const NAVC=[["ana","Yeni"],["studio","Geliştir"],["kreator","Kreatör Stüdyosu","YENİ"],["uygulamalarim","Projeler"],"$recent",
-  "Katalog",["sablonlar","Şablonlar"],["temalar","Temalar"],["ui-kitler","UI Kitler"],["magaza","Keşfet"],["depo","Depo","YENİ"],["$ara","Ara",0,"⌘K"],
-  "Araçlar ve beceriler",["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],["beceriler","Beceriler"],["akademi","Akademi","YENİ"],"$more",
+ const NAVC=[["ana","Yeni"],["studio","Geliştir"],["kreator","Kreatör Stüdyosu"],["uygulamalarim","Projeler"],"$recent",
+  "Yapı taşları",["sablonlar","Şablonlar"],["temalar","Temalar"],["ui-kitler","UI Kitler"],["beceriler","Beceriler"],["depo","Depo","YENİ"],
+  "Keşfet ve öğren",["magaza","Keşfet"],["akademi","Akademi","YENİ"],
+  "Araçlar",["$ara","Ara",0,"⌘K"],["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],"$more",
   "",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const MORE_NAV=[["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],["oyunlar","Oyunlar"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]];
  const NAVA=[["yonetim","Yönetim merkezi"],["ux","Kullanım ve UX"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["odemeler","Kredi ve ödemeler",billingPending],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],["musteri-avi","Müşteri Avı"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["beceri-avcisi","Beceri Avcısı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
