@@ -2568,6 +2568,37 @@ body{background:radial-gradient(1100px 560px at 50% -12%,rgba(255,255,255,.045),
  .sx-status button{display:inline-block;padding:11px 4px;margin:-11px 0}
  .sx-act,.sx-link{min-height:38px}
 }
+/* v5.67 İlk adımlar rehberi */
+.onb{width:min(760px,100%);margin:26px auto 0;padding:14px 16px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);text-align:left}
+.onb header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.onb header b{font-size:13.5px;font-weight:600;color:#ecebe6}
+.onb-p{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}.onb-p i{display:block;height:100%;background:linear-gradient(90deg,#f5f5f2,#e4ff3d);border-radius:3px;transition:width .6s var(--ease,ease)}
+.onb header small{color:#7d7d78;font-size:12px;font-variant-numeric:tabular-nums}
+.onb ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.onb li{display:flex;gap:10px;padding:12px;border-radius:14px;border:1px solid transparent;transition:border-color .3s,background .3s}
+.onb li.on{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+.onb-n{display:grid;place-items:center;width:24px;height:24px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.16);color:#bdbdb7;font-size:12px;font-weight:600}
+.onb li.ok .onb-n{background:#e4ff3d;border-color:#e4ff3d;color:#0a0a0a}
+.onb li.on .onb-n{border-color:#f5f5f2;color:#f5f5f2}
+.onb li>div{min-width:0}.onb li b{display:block;font-size:13.5px;font-weight:600;color:#ecebe6}.onb li.ok b{color:#8f8d88;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.25)}
+.onb li p{margin:3px 0 0;color:#8f8d88;font-size:12.5px;line-height:1.5}
+.onb-a{display:inline-flex;align-items:center;gap:6px;margin-top:9px;height:32px;padding:0 12px;border:0;border-radius:999px;background:#f5f5f2;color:#0a0a0a;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.swin-next{display:flex;align-items:center;gap:7px;margin:0;color:#c9c7c1;font-size:12.5px}.swin-next svg{color:#e4ff3d;flex:none}
+@media(max-width:820px){.onb{margin-top:20px;padding:12px}.onb ol{grid-template-columns:1fr;gap:4px}.onb li{padding:10px}.onb li:not(.on) p{display:none}.onb-a{height:38px}}
+/* v5.67 Projeler ve Keşfet: sade dil */
+.pj-shell{box-shadow:none!important}
+.pj-page .pj-shell{border:0!important;background:none!important;padding:0!important}
+.pj-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:8px 0 20px}
+.pj-head h1{margin:0;font-size:30px;font-weight:700;letter-spacing:-.6px}.pj-head p{margin:6px 0 0;color:#8f8d88;font-size:14px}
+.pj-newb{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 16px;border:0;border-radius:999px;background:#f5f5f2;color:#0a0a0a;font:inherit;font-weight:600;font-size:14px;cursor:pointer;flex:none}
+.pj-bar{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;border-color:rgba(255,255,255,.07)!important}.pj-bar::-webkit-scrollbar{display:none}
+.pj-t{white-space:nowrap;flex:none}.pj-all{white-space:nowrap;flex:none;display:inline-flex;align-items:center;gap:6px;padding:0 10px;min-height:38px}
+.pj-q{flex:0 1 200px}.pj-q input{width:100%!important}
+.store-nav{background:radial-gradient(120% 140% at 100% 0,rgba(255,255,255,.05),transparent 55%),var(--fill1)!important}
+.ks-go,.taste-go{background:#f5f5f2!important;color:#0a0a0a!important}
+.ks-field:focus-within{border-color:rgba(255,255,255,.35)!important;box-shadow:0 0 0 4px rgba(255,255,255,.05)!important}
+@media(max-width:820px){.pj-head{margin:4px 0 14px}.pj-head h1{font-size:25px}.pj-head p{font-size:13px}.pj-newb{height:40px;padding:0 14px}}
+@media(max-width:820px){.pj-head h1{display:none}.pj-head{justify-content:flex-end}.pj-head p{display:block;margin:0;flex:1}.pj-q{flex:0 0 132px}}
+@media(max-width:480px){.pj-head{align-items:center}}
 </style>
 </head>
 <body>
@@ -2584,8 +2615,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.66.0";
+const VERSION="5.67.0";
 const CHANGELOG=[
+ {v:"5.67.0",date:"2026-11-27",items:[
+  "🧭 Yeni: İlk adımlar rehberi. Açılış ekranında üç adım: Fikrini yaz → Önizlemede dene → Yayınla. Her adım sen gerçekten yaptığında kendiliğinden işaretleniyor, çubuk ilerliyor; sıradaki adımın düğmesi seni oraya götürüyor (“Örnekle dene” kutuya hazır bir fikir yazar). Üçü bitince ya da ✕ ile kapatınca kayboluyor",
+  "🚀 İlk önizlemen hazır olduğunda sağ alttaki çıktı penceresi sıradaki adımı söylüyor: “Beğendiysen sağ üstteki Yayınla ile canlıya al”",
+  "🧩 Pilot kartı ilk açılışta küçültülmüş başlıyor; önizlemeyi örtmüyor, istediğinde açabiliyorsun",
+  "📁 Projeler sayfası yenilendi: başlık, kısa açıklama ve beyaz “Yeni proje” düğmesi; sekmeler tek satırda, sığmazsa yana kayıyor; “Bugün en çok ziyaret edilenler” kısaldı: “Bugün popüler”. Çevredeki limon halka kaldırıldı. Telefonda başlık tekrar etmiyor, arama kutusu okunur genişlikte",
+  "🔎 Keşfet aynı sade dile geçti: üst alandaki limon ışık beyaza döndü, Ara ve “Bu tarzla yeni proje” düğmeleri beyaz, arama kutusu odakta beyaz çerçeve alıyor"]},
  {v:"5.66.0",date:"2026-11-27",items:[
   "💡 Stüdyo, açılış ekranıyla aynı tasarım dilinde: başlangıç kutusu düz, koyu bir yüzey. Kutuya dokununca ya da yapay zekâ çalışırken çevresinde aynı ince beyaz ışık dönüyor (iş sürerken daha hızlı); önceki mavi-mor-pembe çerçeve kaldırıldı",
   "🌑 Tüm sayfalarda arka plan sadeleşti: mavi ve pembe renk lekeleri yerine üstte yumuşak beyaz ışıklı koyu zemin; Stüdyo başlangıcındaki renkli parıltı kaldırıldı",
@@ -6416,7 +6453,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!e.defaultPrevented&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal,.pm-pop,.ui-dialog,[role=dialog],[role=menu],.compose-menu:popover-open"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{if(jobRef.current)return;e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
- async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;GMD.buzz(8);{const tx=String(text||input||"").trim();if(tx.length>8&&!tx.startsWith("/")&&!st.html)TASTE.note({type:"prompt",text:tx.slice(0,300),kind:prefsRef.current?.kind,w:1.5})}if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+ async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;GMD.buzz(8);ONB.mark("yaz");{const tx=String(text||input||"").trim();if(tx.length>8&&!tx.startsWith("/")&&!st.html)TASTE.note({type:"prompt",text:tx.slice(0,300),kind:prefsRef.current?.kind,w:1.5})}if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
@@ -6725,7 +6762,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  /* ---------- v5.44 Pilot: sağ üstte yüzen mini GitHub (dallar, durum, ısı, öncelik) ---------- */
  const pilotKey="pilot:"+(st.appId||"draft");
  const [pilot,setPilotS]=useState(()=>LS.get(pilotKey,null)||{b:{},order:[],auto:true});
- const [pilotUi,setPilotUi]=useState(()=>LS.get("pilotUi",{open:true,min:innerWidth<820,pos:null})||{open:true});
+ const [pilotUi,setPilotUi]=useState(()=>LS.get("pilotUi",{open:true,min:true,pos:null})||{open:true});
  const [pilotCat,setPilotCat]=useState(null),[pilotLand,setPilotLand]=useState(0),[pilotDrag,setPilotDrag]=useState(null),[pilotNew,setPilotNew]=useState(""),[pilotBusy,setPilotBusy]=useState("");
  useEffect(()=>{setPilotS(LS.get(pilotKey,null)||{b:{},order:[],auto:true})},[pilotKey]);
  const setPilot=f=>setPilotS(p=>{const n=typeof f==="function"?f(p):f;LS.set(pilotKey,n);return n});
@@ -6914,7 +6951,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const busySeen=useRef(false);
  useEffect(()=>{if(busy){busySeen.current=true;GMD.keepAwake(true);return}GMD.keepAwake(false);if(!busySeen.current)return;busySeen.current=false;
   const m=st.msgs.findLast(x=>x.log);if(!m||m.log.running)return;const bad=m.log.error||m.log.cut||m.log.stopped;if(m.log.stopped)return;
-  GMD.buzz(bad?[50,40,50]:[16,60,16]);
+  GMD.buzz(bad?[50,40,50]:[16,60,16]);if(!bad&&st.html)ONB.mark("onizle");
   if(document.hidden){GMD.notify(bad?"İşlem tamamlanamadı":(STUDIO_ACTIVITY[m.log.kind]?.done||"İşin bitti"),(st.title||"Projen")+" · "+(bad?"Yeniden denemek için dokun":"Önizlemeyi görmek için dokun"),"studio");GMD.badge(1)}
   else if(!bad&&GMD.touch())dispatchEvent(new Event("gm:ask-notify"))},[busy]);
  const statusWin=()=>{
@@ -6934,6 +6971,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
      <div class="swin-stats">${[m.log.res?.patched&&[m.log.res.patched,"parça değişti"],m.log.res?.fixed&&[m.log.res.fixed,"hata onarıldı"],o.imgs?.length&&[o.imgs.length,"yeni görsel"],o.links?.length&&[o.links.length,"yeni bağlantı"],m.log.secs&&[ccTime(m.log.secs),"süre"],Number.isFinite(m.log.spent)&&[m.log.spent,"kredi"]].filter(Boolean).map(([v,l])=>html`<div key=${l}><b>${v}</b><span>${l}</span></div>`)}</div>`}
     ${findings.length>0&&html`<ol class="swin-list">${findings.map((f,i)=>html`<li key=${i}>${f}</li>`)}</ol>`}
     ${probs.length>0&&html`<ul class="swin-probs">${probs.slice(0,5).map((p,i)=>html`<li key=${i} class=${p.lv}><b>${p.t}</b>${p.d&&html`<span>${String(p.d).slice(0,140)}</span>`}</li>`)}</ul>`}
+    ${o&&!probs.length&&!ONB.get().yayin&&html`<p class="swin-next"><${Icon} n="rocket" s=${13}/> Beğendiysen sıradaki adım: sağ üstteki <b>Yayınla</b> ile canlıya al.</p>`}
     <div class="swin-acts">
      ${o&&versions.length>0&&html`<button type="button" onClick=${()=>{setCode(true);setCompare(true);setPicked(null);setVeMode(null)}}><${Icon} n="swap" s=${13}/> Farkı gör</button>`}
      <button type="button" onClick=${()=>{setCode(true);setCompare(false)}}><${Icon} n="code" s=${13}/> Kod</button>
@@ -7116,7 +7154,7 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
  async function run(k,fn){if(busy)return;setBusy(k);setNotice(null);try{await fn()}catch(e){setNotice({text:e.message,error:true})}finally{setBusy("")}}
  const radarHold=!!a.meta?.radarOrigin&&!a.review;
  const approve=body=>run("review",async()=>{const j=await api("POST","/api/admin/radar-review/"+a.id,body);upd({...a,...j.app});setNotice({text:"Yayın incelemesi onaylandı"})});
- const pub=()=>run("pub",async()=>{const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed:a.status==="published"||a.published_at?a.listed:listedOnPublish,price:a.price});upd({...a,...j.app});setNotice({text:"Uygulama yayında"})});
+ const pub=()=>run("pub",async()=>{const j=await api("POST","/api/apps/"+a.id+"/publish",{slug:slugify2(slug||a.title),listed:a.status==="published"||a.published_at?a.listed:listedOnPublish,price:a.price});ONB.mark("yayin");upd({...a,...j.app});setNotice({text:"Uygulama yayında"})});
  const toGh=()=>run("gh",async()=>{const j=await api("POST","/api/apps/"+a.id+"/github");setGh(j);toast("GitHub'a kaydedildi")});
  const linkGh=()=>run("ghl",async()=>{if(ghNeedToken())return;const j=await api("POST","/api/auth/link");location.href=API+"/api/auth/oauth/github/start?link="+encodeURIComponent(j.link)});
  const chk=()=>run("dom",async()=>{const j=await api("GET","/api/domain/check?name="+encodeURIComponent(dom));setDomRes(j.results)});
@@ -8030,7 +8068,7 @@ const activeIntegrations=()=>{const st=connState();return [...CONN.filter(c=>!c.
 const agoTR=s=>{if(!s)return"";const d=(Date.now()-new Date(String(s).replace(" ","T")+"Z").getTime())/864e5;return d<1/24?"az önce":d<1?Math.round(d*24)+" saat önce":d<30?Math.round(d)+" gün önce":new Date(String(s).replace(" ","T")+"Z").toLocaleDateString("tr-TR")};
 function ProjThumb({a,w=380}){const s=w/1280;return a.url&&a.status==="published"?html`<div class="tpth" style=${{height:800*s}}><iframe title=${a.title} src=${a.url} loading="lazy" tabindex="-1" sandbox="allow-scripts allow-same-origin" style=${{width:1280,height:800,transform:"scale("+s+")"}}></iframe></div>`
  :html`<div class="pj-ph" style=${{height:800*s,background:"radial-gradient(circle at 30% 20%,"+(a.color||"#e4ff3d")+"55,transparent 60%),#121212"}}><${AppIcon2} emoji=${a.emoji} color=${a.color} size=${64}/><b>${a.title}</b><span>Taslak · önizleme için yayınla</span></div>`}
-function ProjectsPage({newProject,openDraft,auth,openAuth,toast,openInStudio,openPublish,health,go,onTpl}){
+function ProjectsPage({newProject,openDraft,auth,openAuth,toast,openInStudio,openPublish,health,go,onTpl,page}){
  const [apps,setApps]=useState(null);const [top,setTop]=useState(null);const [tab,setTab]=useState("mine");const [q,setQ]=useState("");const [menu,setMenu]=useState(null);const [del,setDel]=useState(null);const [tdemo,setTdemo]=useState(null);
  const load=()=>api("GET","/api/apps").then(j=>setApps(j.apps)).catch(e=>{toast(e.message);setApps([])});
  useEffect(()=>{if(auth.user)load();else setApps([])},[auth.user&&auth.user.id]);
@@ -8048,9 +8086,10 @@ function ProjectsPage({newProject,openDraft,auth,openAuth,toast,openInStudio,ope
    <div class="pj-img" onClick=${()=>own?edit(a):go("app/"+a.slug)}><${ProjThumb} a=${a}/>${a.status==="published"||!own?html`<span class="pj-badges"><span class="pj-b">Yayında</span>${(a.opens||0)>0&&html`<span class="pj-b lemon"><${Icon} n="rocket" s=${12}/> ${fmt(a.opens)}</span>`}</span>`:""}</div>
    <div class="pj-m"><span class="avatar" style=${{width:34,height:34,fontSize:12}}>${(own?(auth.user.name||"?"):(a.author||"?")).split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase()}</span><div style=${{flex:1,minWidth:0}}><b>${a.title}</b><span>${own?"Düzenlendi "+agoTR(a.updated):a.author+" · "+fmt(a.opens||0)+" ziyaret"}</span></div>
    ${own&&html`<span style=${{position:"relative"}}><button class="ib" onClick=${()=>setMenu(menu===a.id?null:a.id)}><${Icon} n="more" s=${16}/></button>${menu===a.id&&html`<div class="pj-menu glass" onMouseLeave=${()=>setMenu(null)}><button onClick=${()=>edit(a)}><${Icon} n="hammer" s=${15}/> Geliştir'de aç</button><button onClick=${()=>edit(a,true)}><${Icon} n="layers" s=${15}/> Tasarımı düzenle</button><button onClick=${()=>openPublish(a)}><${Icon} n="rocket" s=${15}/> Yayınla / ayarlar</button>${a.url&&html`<button onClick=${()=>window.open(a.url,"_blank","noopener")}><${Icon} n="external" s=${15}/> Canlı adresi aç</button>`}${a.url&&html`<button onClick=${async()=>{try{await navigator.clipboard.writeText(a.url);toast("Adres kopyalandı")}catch(e){}}}><${Icon} n="link" s=${15}/> Adresi kopyala</button>`}<button class="dang" onClick=${()=>rm(a)}><${Icon} n="trash" s=${15}/> ${del===a.id?"Emin misin? Tekrar tıkla":"Sil"}</button></div>`}</span>`}</div></div>`;
- return html`<div class="explore">
+ return html`<div class=${"explore"+(page?" pj-page":"")}>
+  ${page&&html`<header class="pj-head"><div><h1>Projeler</h1><p>Yaptığın uygulamalar, siteler ve oyunlar. Devam etmek için birine dokun.</p></div><button class="pj-newb" onClick=${newProject}><${Icon} n="plus" s=${16}/> Yeni proje</button></header>`}
   <div class="pj-shell">
-   <div class="pj-bar"><label class="pj-q"><${Icon} n="search" s=${16}/><input placeholder="Ara" value=${q} onInput=${e=>{setQ(e.target.value);if(tab!=="mine"&&tab!=="recent"&&tab!=="draft")setTab("mine")}}/></label>${[["mine","Projelerim"],["draft","Yerel taslaklar"],["recent","Son görüntülenenler"],["top","Bugün en çok ziyaret edilenler"],["tpl","Gitmapp şablonları"]].map(([k,l])=>html`<button key=${k} class=${"pj-t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}<span style=${{flex:1}}></span><a class="pj-all" href="#" onClick=${e=>{e.preventDefault();go(tab==="tpl"?"sablonlar":"magaza")}}>Tümüne göz at <${Icon} n="arrowRight" s=${16}/></a></div>
+   <div class="pj-bar"><label class="pj-q"><${Icon} n="search" s=${16}/><input placeholder="Ara" value=${q} onInput=${e=>{setQ(e.target.value);if(tab!=="mine"&&tab!=="recent"&&tab!=="draft")setTab("mine")}}/></label>${[["mine","Projelerim"],["draft","Yerel taslaklar"],["recent","Son görüntülenenler"],["top","Bugün popüler"],["tpl","Gitmapp şablonları"]].map(([k,l])=>html`<button key=${k} class=${"pj-t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${l}</button>`)}<span style=${{flex:1}}></span><a class="pj-all" href="#" onClick=${e=>{e.preventDefault();go(tab==="tpl"?"sablonlar":"magaza")}}>Tümüne göz at <${Icon} n="arrowRight" s=${16}/></a></div>
    ${tab==="draft"?html`<div class="pj-grid"><button class="pj pj-new" onClick=${newProject}><b>Yeni proje</b></button>${drafts.filter(d=>d.title.toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(d=>html`<button class="pj" key=${d.id} onClick=${()=>resumeDraft(d.id)}><b>${d.title}</b><small>Stüdyo’da aç</small></button>`)}</div>`:tab==="tpl"?html`<div class="pj-grid">${TEMPLATE_LIB.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setTdemo} onUse=${onTpl}/>`)}</div>`
    :!auth.user&&tab!=="top"?html`<div class="ex-empty"><${BrandMark} s=${56}/><h3>Projelerini görmek için giriş yap</h3><p>Yaptığın uygulamalar, siteler ve oyunlar burada durur.</p><button class="btn" onClick=${()=>openAuth("Projelerinizi görmek için giriş yapın.")}>Giriş yap / Kayıt ol</button></div>`
    :(tab==="top"?top:apps)===null?html`<div class="pj-grid">${[1,2,3].map(i=>html`<div class="pj" key=${i}><div class="pj-img sk-b" style=${{height:230}}></div></div>`)}</div>`
@@ -8250,6 +8289,33 @@ function enhancePrompt(v,kind){const sec=detectSector(v,kind);const s=sectorById
  return parts.join("\n")}
 
 /* ================= v4.1 — ANA SAYFA (Lovable akışı) ve GİRİŞ EKRANI ================= */
+/* ================= v5.67 — İLK ADIMLAR REHBERİ =================
+   Yeni kullanıcıya üç adımı gösterir: fikrini yaz → önizlemede dene → yayınla.
+   Her adım gerçekten yapıldığında kendiliğinden işaretlenir; hepsi bitince ya da kapatılınca gizlenir. */
+const ONB={
+ get:()=>LS.get("onb",{})||{},
+ mark(k){const o=ONB.get();if(o[k])return;o[k]=Date.now();LS.set("onb",o);dispatchEvent(new Event("gm:onb"))},
+ done:o=>!!(o.yaz&&o.onizle&&o.yayin),
+};
+const ONB_STEPS=[
+ {k:"yaz",ic:"pen",t:"Fikrini yaz",d:"Ne istediğini Türkçe anlat. Ne kadar ayrıntı verirsen sonuç o kadar sana göre olur.",a:"Örnekle dene"},
+ {k:"onizle",ic:"eye",t:"Önizlemede dene",d:"Uygulaman yanda canlı açılır. Bir öğeye dokunup “bunu büyüt” gibi kısa isteklerle düzelt.",a:"Stüdyo'yu aç"},
+ {k:"yayin",ic:"rocket",t:"Yayınla",d:"Beğenince Yayınla'ya bas. Uygulaman kendi adresinde açılır, bağlantısını paylaşabilirsin.",a:"Projelerim"},
+];
+function OnbSteps({onExample,go}){
+ const [o,setO]=useState(ONB.get);
+ useEffect(()=>{const h=()=>setO(ONB.get());addEventListener("gm:onb",h);return()=>removeEventListener("gm:onb",h)},[]);
+ if(o.off||ONB.done(o))return null;
+ const n=ONB_STEPS.filter(s=>o[s.k]).length,cur=ONB_STEPS.findIndex(s=>!o[s.k]);
+ const act=k=>k==="yaz"?onExample():k==="onizle"?go("studio"):go("uygulamalarim");
+ return html`<section class="onb" aria-labelledby="onb-h">
+  <header><b id="onb-h">İlk adımlar</b><span class="onb-p" aria-label=${n+" / 3 tamamlandı"}><i style=${{width:(n/3*100)+"%"}}></i></span><small>${n}/3</small>
+   <button type="button" class="ib sm" aria-label="Rehberi kapat" onClick=${()=>ONB.mark("off")}><${Icon} n="x" s=${13}/></button></header>
+  <ol>${ONB_STEPS.map((s,i)=>{const ok=!!o[s.k],on=i===cur;return html`<li key=${s.k} class=${(ok?"ok":"")+(on?" on":"")}>
+   <span class="onb-n" aria-hidden="true">${ok?html`<${Icon} n="check" s=${13} w=${2.6}/>`:i+1}</span>
+   <div><b>${s.t}</b><p>${s.d}</p>${on&&html`<button type="button" class="onb-a" onClick=${()=>act(s.k)}>${s.a} <${Icon} n="arrowRight" s=${13}/></button>`}</div></li>`})}</ol>
+ </section>`;
+}
 const HOME_CHIPS=[["chart","Pano","app","Satış, sipariş ve müşteri verilerimi grafiklerle gösteren, filtrelenebilir bir yönetim panosu"],["users","Portal","app","Müşterilerimin giriş yapıp taleplerini, faturalarını ve belgelerini görebildiği bir müşteri portalı"],["layers","Sunum","site","Şirketimi anlatan, kaydırarak ilerleyen 8 slaytlık modern bir tanıtım sunumu"],["box","İç araç","app","Ekibimin stok, görev ve izin taleplerini yönettiği basit bir iç araç"],["rocket","Açılış sayfası","site","Yeni ürünüm için başlık, özellikler, fiyatlar, SSS ve e-posta kayıt formu olan bir açılış sayfası"],["target","Satış","app","Teklif hazırlama, müşteri takibi ve satış hunisi olan bir satış uygulaması"],["gamepad","Oyun","game","Dokunmatik kontrollü, skor tablolu, giderek zorlaşan bir arcade oyunu"]];
 const HOME_PH=["bir randevu uygulaması","bir emlak sitesi","müşteri paneli","bir stok takip aracı","bir restoran menüsü","bir quiz oyunu"];
 function HomePage(props){const {auth,startTemplate,go}=props;
@@ -8265,7 +8331,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
   return ()=>{document.removeEventListener("pointerdown",outside);window.removeEventListener("keydown",escape)};
  },[modeOpen]);
  const setM=m=>{setMode(m);LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode:m});setModeOpen(false)};
- const submit=e=>{e&&e.preventDefault();const p=v.trim();if(!p)return;LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode,kind});startTemplate({prompt:p,kind})};
+ const submit=e=>{e&&e.preventDefault();const p=v.trim();if(!p)return;ONB.mark("yaz");LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode,kind});startTemplate({prompt:p,kind})};
  const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.interimResults=true;const base=v.trim()?v.replace(/\s+$/,"")+" ":"";r.onresult=e=>setV(base+speechText(e.results));r.onend=()=>setListening(false);setListening(true);r.start()};
  const first=auth.user&&auth.user.name?auth.user.name.split(" ")[0]:"";
  return html`<div class="home">
@@ -8286,6 +8352,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
      <button class="hbs" disabled=${!v.trim()} aria-label="Başlat" title=${GS.sendKey==="mod"?"Başlat (Ctrl/⌘+Enter)":"Başlat (Enter)"}><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
     </div></div></form></div>
    ${!v.trim()&&html`<ul class="home-trust" aria-label="Gitmapp ile"><li><${Icon} n="chat" s=${13}/>Türkçe anlat</li><li><${Icon} n="eye" s=${13}/>Canlı önizleme</li><li><${Icon} n="rocket" s=${13}/>Tek dokunuşla yayınla</li></ul>`}
+   ${!v.trim()&&html`<${OnbSteps} go=${go} onExample=${()=>{setV("Kuaför salonum için müşterilerin hizmet, personel ve saat seçip randevu alabildiği; benim de günlük randevuları görüp iptal edebildiğim bir uygulama");requestAnimationFrame(()=>{const t=document.querySelector("textarea.hta");t&&t.focus()})}}/>`}
    ${v.trim().length>4&&html`<div class="qadd" key="qa">${QUICK_ADD[kind].map(([ic,l,t],i)=>html`<button key=${l} style=${{animationDelay:i*40+"ms"}} onClick=${()=>setV(addTo(v,t))}><${Icon} n=${ic} s=${14}/>+ ${l}</button>`)}</div>`}
    ${!starter&&html`<div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class=${"hc"+(chip===l?" on":"")} onClick=${()=>{if(chip===l){setChip(null);return}setChip(l);setKind(k);setStarter(false);const t=document.querySelector("textarea.hta");t&&t.focus()}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>`}
    ${starter&&html`<${CatalogStarter} key=${kind} kind=${kind} text=${v} onDemo=${t=>setDesignDemo({...t,projectPrompt:v.trim()})} go=${go}/>`}
@@ -9575,7 +9642,7 @@ function App(){
    ${view==="modeller"&&html`<${ModelsPage} models=${models} go=${setView}/>`}
    ${view==="hesabim"&&html`<${Account} auth=${auth} health=${health} toast=${toast} models=${models} go=${setView}/>`}
    ${view==="magaza"&&html`<${Store} onTpl=${useTemplate} apiOn=${apiOn} healthError=${healthError} retry=${()=>retry(x=>x+1)} go=${navGo} filters=${sq} onFilters=${goStore} startTemplate=${startTemplate}/>`}
-   ${view==="uygulamalarim"&&html`<${ProjectsPage} openDraft=${openDraft} newProject=${newProject} go=${navGo} onTpl=${useTemplate} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
+   ${view==="uygulamalarim"&&html`<${ProjectsPage} page=${true} openDraft=${openDraft} newProject=${newProject} go=${navGo} onTpl=${useTemplate} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health}/>`}
    ${view==="dunya"&&(storeCat?html`<${StoreCat} cat=${storeCat} back=${()=>setStoreCat(null)} onPick=${(r,c)=>{track("app_want",{repo:r.full_name,category:c&&c.id});goWizard(r,null,c)}} onDetail=${r=>{track("app_view",{repo:r.full_name,category:storeCat&&storeCat.id});openRepo(r)}} secs=${secs} toast=${toast}/>`:html`<${StoreHome} openCat=${c=>{setStoreCat(c);window.scrollTo(0,0)}} goWizard=${goWizard}/>`)}
    ${view==="olustur"&&html`<${Wizard} key=${(pick&&pick.repo?pick.repo.full_name:"bos")+(pick&&pick.tier||"")} pick=${pick} setPick=${setPick} orders=${orders} setOrders=${setOrders} toast=${toast} go=${setView}/>`}
    ${view==="paketler"&&html`<${Packages} goWizard=${goWizard}/>`}
