@@ -2544,6 +2544,30 @@ html:has(.gt-dialog[open]),body:has(.gt-dialog[open]){overflow:hidden;max-width:
  .gbox.hg .hbw{min-width:38px;min-height:38px;justify-content:center}
 }
 @media(max-width:430px){.gbox.hg .seg.mini svg{display:none!important}.gbox.hg .seg.mini button{padding:5px 10px;font-size:12.5px}.gbox.hg .hbi{width:36px;height:36px}}
+/* ================= v5.66 — Stüdyo kutuları açılış ekranıyla aynı dilde ================= */
+/* Başlangıç ekranı: düz koyu yüzey; odakta ve iş sürerken tek ince beyaz ışık döner */
+.studio-start .gbox .gin{background:#141414!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.ws-in .gbox,.studio-start .gbox{background:rgba(255,255,255,.1)!important}
+.ws-in .gbox:focus-within,.studio-start .gbox:focus-within,.ws-in .gbox.busy,.studio-start .gbox.busy,.ws-in .gbox.sent,.studio-start .gbox.sent{
+ background:conic-gradient(from var(--a),transparent 0deg,transparent 250deg,rgba(255,255,255,.08) 290deg,rgba(255,255,255,.92) 330deg,rgba(255,255,255,.08) 350deg,transparent 360deg),linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1))!important;animation:gspin 6s linear infinite!important}
+.ws-in .gbox:focus-within::before,.studio-start .gbox:focus-within::before,.ws-in .gbox.busy::before,.studio-start .gbox.busy::before{
+ background:conic-gradient(from var(--a),transparent 0deg,transparent 280deg,rgba(255,255,255,.9) 330deg,transparent 360deg)!important;filter:blur(9px)!important}
+.ws-in .gbox:focus-within::before,.studio-start .gbox:focus-within::before{opacity:.22!important}
+.ws-in .gbox.busy,.studio-start .gbox.busy{animation-duration:2.8s!important}
+.ws-in .gbox.busy::before,.studio-start .gbox.busy::before{opacity:.4!important}
+@media(prefers-reduced-motion:reduce){.ws-in .gbox,.studio-start .gbox{animation:none!important;background:rgba(255,255,255,.14)!important}}
+.studio-start .sx-glow{display:none!important}
+body{background:radial-gradient(1100px 560px at 50% -12%,rgba(255,255,255,.045),transparent 62%),#0a0a0a!important}
+/* dokunmatik: kalan küçük hedefler */
+@media(pointer:coarse){
+ .cmp-b,.ccf-b{height:38px!important}
+ .getbtn,.theme-catalog-card .getbtn,.kit-actions .getbtn{min-height:40px}
+ .seeall{display:inline-flex;align-items:center;min-height:40px;padding:0 4px}
+ p>a[href="#"]{display:inline-block;padding:11px 0;margin:-11px 0}
+ .ccf-b{min-width:38px;justify-content:center}
+ .sx-status button{display:inline-block;padding:11px 4px;margin:-11px 0}
+ .sx-act,.sx-link{min-height:38px}
+}
 </style>
 </head>
 <body>
@@ -2560,8 +2584,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.65.0";
+const VERSION="5.66.0";
 const CHANGELOG=[
+ {v:"5.66.0",date:"2026-11-27",items:[
+  "💡 Stüdyo, açılış ekranıyla aynı tasarım dilinde: başlangıç kutusu düz, koyu bir yüzey. Kutuya dokununca ya da yapay zekâ çalışırken çevresinde aynı ince beyaz ışık dönüyor (iş sürerken daha hızlı); önceki mavi-mor-pembe çerçeve kaldırıldı",
+  "🌑 Tüm sayfalarda arka plan sadeleşti: mavi ve pembe renk lekeleri yerine üstte yumuşak beyaz ışıklı koyu zemin; Stüdyo başlangıcındaki renkli parıltı kaldırıldı",
+  "👆 Telefonda kalan küçük dokunma alanları büyüdü: Stüdyo'daki Model seç, Hızlı, Bulut, proje ve dal düğmeleri, “Temayı canlı dene”, “Tümünü Gör”, giriş ekranındaki “Şifremi unuttum” ve “Ücretsiz oluşturun”, bağlantı uyarısındaki “Şimdi dene”",
+  "🧭 Pilot kartı artık sağdaki Oturum panelinin üstüne açılmıyor; panel açıkken solunda duruyor. Kartı sürüklediysen yeri korunuyor",
+  "🔀 v5.65.0 dalı birleştirildi: bozuk ya da yarım HTML çalışan sayfanın yerine geçmiyor, önizlemede betik sızıntısı önlendi, 400 hatasında yedek sağlayıcıya geçiliyor"]},
  {v:"5.65.0",date:"2026-11-27",items:[
   "🛡️ Çalışan sayfa artık bozulmuyor: yapay zekânın yeni sürümü uygulanmadan önce denetleniyor. Yanıt yarıda kesilmişse, kod yapısı bozuksa (kapanmamış betik/stil), sayfaya kod yazı olarak sızmışsa, ekran boşsa ya da sayfanın büyük kısmı istemeden silinmişse yeni sürüm uygulanmaz; çalışan sürüm korunur ve nedeni yazılır. İstersen “Reddedilen sürümü göster” ile yine de açabilirsin",
   "🧹 Önizlemenin kendi seçim ve sürükle-bırak betikleri artık hiçbir koşulda sayfaya yazı olarak düşmüyor; yapay zekâya gönderilen koddan ve kayıtlı projeden de temizleniyor (ekranda “picker-mode…” gibi kod görünmesi sorunu)",
@@ -6738,7 +6768,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const [dragCard,setDragCard]=useState(null);
  const dropCard=(target,list)=>{if(!dragCard||dragCard===target)return;const names=list.map(c=>c.n).filter(n=>n!==dragCard);names.splice(names.indexOf(target),0,dragCard);setPilot(p=>({...p,order:names,auto:false}));setDragCard(null)};
  React.useLayoutEffect(()=>{const el=pilotRef.current;if(!el)return;el.querySelectorAll("[data-pc]").forEach(c=>{const k=c.dataset.pc,top=c.offsetTop,old=cardPos.current[k];if(old!=null&&old!==top){c.style.transition="none";c.style.transform=`translateY(${old-top}px)`;requestAnimationFrame(()=>{c.style.transition="";c.style.transform=""})}cardPos.current[k]=top})});
- const pilotUI=()=>{if(!st.html||!pilotUi.open)return null;const D=pilotData();const cur=D.cards.find(c=>c.cur)||{s:"basladi",heat:0};const pos=pilotDrag?{left:pilotDrag.x,top:pilotDrag.y}:pilotUi.pos?{[pilotUi.pos.side==="l"?"left":"right"]:16,top:Math.min(pilotUi.pos.y,innerHeight-80)}:{right:16,top:72};
+ const pilotUI=()=>{if(!st.html||!pilotUi.open)return null;const D=pilotData();const cur=D.cards.find(c=>c.cur)||{s:"basladi",heat:0};const pos=pilotDrag?{left:pilotDrag.x,top:pilotDrag.y}:pilotUi.pos?{[pilotUi.pos.side==="l"?"left":"right"]:16,top:Math.min(pilotUi.pos.y,innerHeight-80)}:{right:sessOpen&&innerWidth>820?(document.querySelector(".sp")?.offsetWidth||296)+28:16,top:72};
   const hot=h=>`hsl(${Math.round(210-210*h)} 95% ${55+h*5}%)`;const ago=t=>{if(!t)return"";const m=Math.round((Date.now()-t)/6e4);return m<1?"şimdi":m<60?m+" dk":Math.round(m/60)+" sa"};
   if(pilotUi.min)return html`<button type="button" class=${"plt-pill"+(pilotLand&&Date.now()-pilotLand<1500?" land":"")} style=${pos} onClick=${()=>setPUi({min:false})} title="Pilot'u aç"><i style=${{"--c":P_ST[cur.s][1]}}></i><${Icon} n="branch" s=${14}/><b>${curBr}</b><span class="plt-heat-mini" style=${{"--h":hot(cur.heat),width:Math.max(6,cur.heat*36)+"px"}}></span>${D.pri.length>0&&html`<em>${D.pri.length}</em>`}</button>`;
   return html`<aside ref=${pilotRef} key=${pilotLand} class=${"plt"+(pilotDrag?" drag":"")+(pilotLand&&Date.now()-pilotLand<1500?" land":"")} style=${pos} aria-label="Pilot: dallar ve iş durumu">
