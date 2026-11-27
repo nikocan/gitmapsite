@@ -249,4 +249,72 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     await github(ctx.user, "PATCH", base + "/git/refs/heads/" + name.split("/").map(encode).join("/"), { sha:commit.sha, force:false });
     return { head:commit.sha };
   });
+
+  // v5.80 — Oturum dalları: Gitmapp'te karşılaştır ve birleştir, GitHub'da PR durumu, PR aç ve birleştir
+  const ancestors = (id, head, limit = 400) => {
+    const seen = new Set(); let cur = head;
+    const parent = sql("SELECT parent FROM project_commits WHERE app_id=? AND sha=?");
+    while (cur && !seen.has(cur) && seen.size < limit) { seen.add(cur); cur = parent.get(id, cur)?.parent; }
+    return seen;
+  };
+  route("GET", root + "/compare", async ctx => {
+    const app = project(ctx);
+    const from = checkBranch(ctx.url.searchParams.get("from"), need);
+    const into = checkBranch(ctx.url.searchParams.get("into") || "main", need);
+    if (source(ctx) === "gitmapp") {
+      localInit(app);
+      const fh = localHead(app.id, from), ih = localHead(app.id, into);
+      need(fh && ih, 404, "Dal bulunamadı.");
+      const intoSet = ancestors(app.id, ih), fromSet = ancestors(app.id, fh);
+      const ahead = [...fromSet].filter(x => !intoSet.has(x)).length, behind = [...intoSet].filter(x => !fromSet.has(x)).length;
+      return { source:"gitmapp", from, into, ahead, behind, merged: intoSet.has(fh), head: fh };
+    }
+    const remote = binding(app, ctx);
+    need(remote && remote.repo === ctx.url.searchParams.get("repo"), 409, "Bağlı depo değişti. Paneli yenileyin.");
+    const base = "/repos/" + remote.repo, owner = remote.repo.split("/")[0];
+    const [cmp, pulls] = await Promise.all([
+      github(ctx.user, "GET", base + "/compare/" + encode(into) + "..." + encode(from)),
+      github(ctx.user, "GET", base + "/pulls?state=all&per_page=5&head=" + encode(owner + ":" + from))
+    ]);
+    const pr = (Array.isArray(pulls) ? pulls : []).find(p => p.head?.ref === from) || null;
+    return { source:"github", from, into, ahead: cmp.ahead_by || 0, behind: cmp.behind_by || 0, merged: !!pr?.merged_at,
+      pr: pr ? { number: pr.number, state: pr.merged_at ? "merged" : pr.state, url: pr.html_url, title: pr.title, draft: !!pr.draft, base: pr.base?.ref || into } : null };
+  });
+  route("POST", root + "/merge", async ctx => {
+    const app = project(ctx), { body } = ctx;
+    need(source(ctx) === "gitmapp", 400, "GitHub dalları çekme isteğiyle birleştirilir.");
+    const from = checkBranch(body.from, need), into = checkBranch(body.into || "main", need);
+    need(from !== into, 400, "Bir dal kendisiyle birleştirilemez.");
+    localInit(app);
+    return transaction(() => {
+      const fh = localHead(app.id, from), ih = localHead(app.id, into);
+      need(fh && ih, 404, "Dal bulunamadı.");
+      need(!body.head || body.head === fh, 409, changed);
+      need(!ancestors(app.id, ih).has(fh), 409, "Bu dal zaten birleştirilmiş.");
+      const { html } = sql("SELECT html FROM project_commits WHERE app_id=? AND sha=?").get(app.id, fh);
+      const next = insertCommit(app.id, ih, "Birleştir: " + from + " → " + into, html);
+      sql("UPDATE project_branches SET head=? WHERE app_id=? AND name=?").run(next, app.id, into);
+      // Birleştirilen dalın başı da birleştirme commit'ini gösterir: dal "birleştirildi" olarak görünür, üzerinde devam edilebilir
+      sql("UPDATE project_branches SET head=? WHERE app_id=? AND name=?").run(next, app.id, from);
+      if (into === "main") sql("UPDATE apps SET html=? WHERE id=?").run(html, app.id);
+      return { head: next, into, from };
+    });
+  });
+  route("POST", root + "/pulls", async ctx => {
+    const app = project(ctx), { body } = ctx;
+    const head = checkBranch(body.head, need), baseRef = checkBranch(body.base || "main", need);
+    const title = String(body.title || "").trim().slice(0, 200) || head;
+    const text = String(body.body || "").slice(0, 8000);
+    const path = target(app, ctx);
+    const pr = await github(ctx.user, "POST", path + "/pulls", { title, head, base: baseRef, body: text });
+    return { number: pr.number, url: pr.html_url, state: pr.state };
+  });
+  route("POST", root + "/pulls/:n/merge", async ctx => {
+    const app = project(ctx);
+    const n = Number(ctx.params.n);
+    need(Number.isSafeInteger(n) && n > 0, 400, "Geçersiz çekme isteği.");
+    const path = target(app, ctx);
+    const r = await github(ctx.user, "PUT", path + "/pulls/" + n + "/merge", { merge_method: "merge" });
+    return { merged: !!r.merged, sha: r.sha || null };
+  });
 }

@@ -426,12 +426,17 @@ function jobSubscribe(res, cors, j) {
   const off = () => { clearInterval(hb); j.subs.delete(w); };
   res.once("close", off); j.ends.add(() => { off(); if (!res.writableEnded) res.end(); });
 }
-async function aiJob({ res, cors, user }, rt, messages, finish, kind, label) {
+async function aiJob({ res, cors, user, body }, rt, messages, finish, kind, label) {
   const ctl = new AbortController();
-  const j = { id: rid(), uid: user.id, kind, model: rt.model, label: String(label || "").slice(0, 120), status: "running", text: "", phases: [], created: Date.now(), subs: new Set(), ends: new Set(), ctl };
+  // v5.80 — istemci iş kimliğini önceden verebilir: oturum bağlantı kurulmadan değişse de iş izlenebilir
+  const asked = typeof body?.jobId === "string" && /^[A-Za-z0-9]{16,40}$/.test(body.jobId) && !JOBS.has(body.jobId) && !q("SELECT 1 FROM ai_jobs WHERE id=?").get(body.jobId) ? body.jobId : null;
+  const j = { id: asked || rid(), uid: user.id, kind, model: rt.model, label: String(label || "").slice(0, 120), status: "running", text: "", phases: [], created: Date.now(), subs: new Set(), ends: new Set(), ctl };
   const emit = (o) => { for (const w of j.subs) w(o); };
-  const start = await streamChatWith(rt, messages, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal);
-  JOBS.set(j.id, j); j.phases.push("connected");
+  JOBS.set(j.id, j);
+  let start;
+  try { start = await streamChatWith(rt, messages, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal); }
+  catch (e) { j.status = "error"; j.code = e.code || 500; j.error = e instanceof HttpErr ? e.message : "Yapay zekâ bağlantısı kurulamadı."; j.finished = Date.now(); setTimeout(() => JOBS.delete(j.id), 15 * 60e3).unref?.(); throw e; }
+  j.phases.push("connected");
   q("INSERT INTO ai_jobs(id,user_id,kind,status,created) VALUES(?,?,?,?,?)").run(j.id, user.id, kind, "running", j.created);
   (async () => {
     try {
@@ -701,7 +706,7 @@ async function copilotModel() {
 
 // ---------- Harici API'ler ----------
 async function ghApi(token, method, p, body) {
-  const r = await fetch("https://api.github.com" + p, { method, signal: AbortSignal.timeout(20000), headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "User-Agent": "gitmapp", ...(body ? { "Content-Type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined });
+  const r = await fetch((E.TEST_GH_API || "https://api.github.com") + p, { method, signal: AbortSignal.timeout(20000), headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "User-Agent": "gitmapp", ...(body ? { "Content-Type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch { }
   return { status: r.status, ok: r.ok, data: j };
 }

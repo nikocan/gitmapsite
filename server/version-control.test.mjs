@@ -159,3 +159,45 @@ test("repository picker lists writable, active repositories and filters by searc
   assert.deepEqual(none,{setup:"account",repos:[]});
   await assert.rejects(direct("GET","/api/me/github/repos","",null),{status:401});
 });
+
+test("session branches: compare, merge into main updates the project draft, rejects stale and repeated merges", async t => {
+  const { db, run } = fixture(t);
+  const main = await run("GET", "/branch?name=main");
+  await run("POST", "/branches", { name:"gitmapp/oturum-1", base:"main", head:main.head });
+  const c1 = await run("POST", "/commits", { name:"gitmapp/oturum-1", head:main.head, message:"Renk", html:"<p>kırmızı</p>" });
+  const c2 = await run("POST", "/commits", { name:"gitmapp/oturum-1", head:c1.head, message:"Menü", html:"<p>kırmızı menü</p>" });
+  const cmp = await run("GET", "/compare?from=gitmapp%2Foturum-1&into=main");
+  assert.deepEqual([cmp.ahead, cmp.behind, cmp.merged], [2, 0, false]);
+  await assert.rejects(run("POST", "/merge", { from:"gitmapp/oturum-1", into:"main", head:c1.head }), { status:409 });
+  const merged = await run("POST", "/merge", { from:"gitmapp/oturum-1", into:"main", head:c2.head });
+  assert.equal(db.prepare("SELECT html FROM apps").get().html, "<p>kırmızı menü</p>");
+  assert.equal((await run("GET", "/branch?name=main")).html, "<p>kırmızı menü</p>");
+  const after = await run("GET", "/compare?from=gitmapp%2Foturum-1&into=main");
+  assert.deepEqual([after.ahead, after.merged, after.head], [0, true, merged.head]);
+  await assert.rejects(run("POST", "/merge", { from:"gitmapp/oturum-1", into:"main" }), { status:409 });
+  await assert.rejects(run("POST", "/merge", { from:"main", into:"main" }), { status:400 });
+  await assert.rejects(run("POST", "/merge?source=github", { from:"gitmapp/oturum-1" }), { status:400 });
+});
+
+test("GitHub session branch: PR status, open and merge through the bound repository", async t => {
+  const base = "/repos/owner/export", ok = data => ({ ok:true, status:200, data });
+  let opened = null, mergedN = null;
+  const { db, run } = fixture(t, async (token, method, path, body) => {
+    switch (method + " " + path) {
+      case "GET " + base + "/compare/main...gitmapp%2Fs1": return ok({ ahead_by:3, behind_by:1 });
+      case "GET " + base + "/pulls?state=all&per_page=5&head=owner%3Agitmapp%2Fs1":
+        return ok(opened ? [{ number:7, state:"open", html_url:"https://github.com/owner/export/pull/7", title:opened.title, head:{ ref:"gitmapp/s1" }, base:{ ref:"main" } }] : []);
+      case "POST " + base + "/pulls": opened = body; return ok({ number:7, html_url:"https://github.com/owner/export/pull/7", state:"open" });
+      case "PUT " + base + "/pulls/7/merge": mergedN = 7; assert.deepEqual(body, { merge_method:"merge" }); return ok({ merged:true, sha:"m".repeat(40) });
+      default: assert.fail("unexpected route: " + method + " " + path);
+    }
+  });
+  db.exec("UPDATE apps SET github_repo='https://github.com/owner/export'");
+  const before = await run("GET", "/compare?source=github&repo=owner%2Fexport&from=gitmapp%2Fs1&into=main");
+  assert.deepEqual([before.ahead, before.behind, before.pr], [3, 1, null]);
+  const pr = await run("POST", "/pulls?source=github", { repo:"owner/export", head:"gitmapp/s1", base:"main", title:"Kuaför oturumu", body:"- renk" });
+  assert.equal(pr.number, 7); assert.deepEqual(opened, { title:"Kuaför oturumu", head:"gitmapp/s1", base:"main", body:"- renk" });
+  const after = await run("GET", "/compare?source=github&repo=owner%2Fexport&from=gitmapp%2Fs1&into=main");
+  assert.deepEqual(after.pr, { number:7, state:"open", url:"https://github.com/owner/export/pull/7", title:"Kuaför oturumu", draft:false, base:"main" });
+  await assert.rejects(run("POST", "/pulls?source=github", { repo:"baska/depo", head:"gitmapp/s1" }), { status:409 });
+});
