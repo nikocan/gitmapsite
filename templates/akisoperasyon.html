@@ -1,0 +1,44 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Akış Operasyon</title>
+<!-- Gitmapp hazır şablonu · Operasyon UI kiti -->
+<style>
+:root{--pr:#394b8a;--ac:#6f7cc1;--bg:#edf1f9;--sf:#fff;--sf2:#e3e8f7;--tx:#181f36;--tx2:#465470;--ln:#ced7e8;--r:13px;background:var(--bg);color:var(--tx);font:15px/1.48 system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;display:grid;grid-template-columns:210px minmax(0,1fr);min-height:100vh}header{padding:25px 15px;background:var(--sf);border-right:1px solid var(--ln)}header strong{display:block;padding:0 7px 15px;font-size:22px;letter-spacing:-.05em}nav{display:grid;gap:7px}button,input,select{font:inherit;color:inherit}button{cursor:pointer;min-height:41px;padding:7px 11px;border:1px solid var(--ln);background:var(--sf);border-radius:7px;text-align:left}button[aria-current=true],.primary{background:var(--pr);border-color:var(--pr);color:white}:focus-visible{outline:2px solid var(--pr);outline-offset:3px}
+main{max-width:1200px;width:100%;padding:clamp(14px,4vw,42px);margin-inline:auto}h1{font-size:clamp(28px,5vw,48px);line-height:1.04;letter-spacing:-.05em;margin:0}h2,h3,p{margin:0}p,.muted{color:var(--tx2)}.box,.metric,.row-card{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:15px}.heading{display:flex;justify-content:space-between;align-items:end;gap:9px;flex-wrap:wrap;margin-bottom:15px}.heading p{margin-top:6px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:13px}.metric>b{display:block;font-size:28px}.list{display:grid;gap:7px}.row-card{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center}.row-card strong{display:block;overflow-wrap:anywhere}.state{display:inline-block;border-radius:25px;background:var(--sf2);padding:4px 8px;font-size:12px}.controls{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.controls label:first-child{flex:1}.controls label,.box form{display:grid;gap:6px}.controls select,.controls input,.box input,.box select{width:100%;min-height:42px;border:1px solid var(--ln);border-radius:7px;background:var(--sf);padding:7px}.box h2{margin-bottom:8px}.box button{margin-top:7px}[role=status]{min-height:1.5em}
+@media(max-width:630px){body{display:block}header{padding:10px 13px;border-right:0;border-bottom:1px solid var(--ln)}header strong{padding:0 0 7px}nav{display:flex;flex-wrap:wrap}nav button{font-size:13px}.row-card{grid-template-columns:minmax(0,1fr) auto;gap:6px}.row-card button{grid-column:1/-1}.metric{padding:8px}.metric>b{font-size:23px}.metric span{font-size:12px}}
+</style></head><body>
+<header><strong>Akış Operasyon</strong><nav aria-label="Operasyon paneli"><button data-view="home">Özet</button><button data-view="list">İş listesi</button><button data-view="new">Yeni iş</button></nav></header>
+<main><section id="surface"></section><p role="status" id="status"></p></main>
+<script>
+const key="gitmapp-akisoperasyon";
+const states=["Bekliyor","Sürüyor","Tamamlandı"];
+let records=[{id:1,title:"Depo stok sayımı",owner:"Operasyon",state:1},{id:2,title:"Mayıs satış raporu",owner:"Finans",state:0},{id:3,title:"Kargo anlaşması",owner:"Satış",state:2}];
+try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(Array.isArray(saved))records=saved.filter(r=>Number.isSafeInteger(r.id)&&typeof r.title==="string"&&typeof r.owner==="string"&&states[r.state])}catch{}
+const root=document.querySelector("#surface"),message=document.querySelector("#status");
+const escape=value=>String(value).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[x]);
+let screen="home",active=null,query="",filter="";
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(records))}catch{}};
+const headings=(title,desc)=>`<div class="heading"><div><h1>${title}</h1><p>${desc}</p></div></div>`;
+const rows=items=>items.length?items.map(r=>`<article class="row-card"><div><strong>${escape(r.title)}</strong><small class="muted">${escape(r.owner)}</small></div><span class="state">${states[r.state]}</span><button data-open="${r.id}">İşi aç</button></article>`).join(""):"<p>Bu filtreyle eşleşen iş yok.</p>";
+const filtered=()=>records.filter(r=>(filter===""||String(r.state)===filter)&&(r.title+" "+r.owner).toLocaleLowerCase("tr").includes(query.toLocaleLowerCase("tr")));
+function render(){
+ document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",String(b.dataset.view===screen)));
+ if(screen==="home"){
+  root.innerHTML=headings("Operasyon özeti","İşlerin durumuna göre güncel görünümü.")+`<section class="metrics">${states.map((state,i)=>`<div class="metric"><span>${state}</span><b>${records.filter(r=>r.state===i).length}</b></div>`).join("")}</section><h2>Son işler</h2><div class="list">${rows(records.slice(0,4))}</div>`;
+ }else if(screen==="list"){
+  root.innerHTML=headings("İş listesi","Ekibin kayıtlarını ara ve durumuna göre süz.")+`<div class="controls"><label>Ara<input id="query" type="search"></label><label>Durum<select id="filter"><option value="">Tümü</option>${states.map((state,i)=>`<option value="${i}">${state}</option>`).join("")}</select></label></div><div id="list" class="list">${rows(filtered())}</div>`;
+  root.querySelector("#query").value=query;root.querySelector("#filter").value=filter;
+ }else{
+  const r=active===null?null:records.find(item=>item.id===active);
+  root.innerHTML=headings(r?"İş detayı":"Yeni iş",r?"Sorumlu ve durum bilgilerini güncelle.":"Takip etmek istediğin işi ekle.")+`<section class="box"><form><label>İş başlığı<input name="title" required maxlength="90" value="${escape(r?.title||"")}"></label><label>Sorumlu ekip<input name="owner" required maxlength="80" value="${escape(r?.owner||"")}"></label><label>Durum<select name="state">${states.map((state,i)=>`<option value="${i}" ${i===(r?.state||0)?"selected":""}>${state}</option>`).join("")}</select></label><button class="primary">${r?"Güncelle":"İşi kaydet"}</button></form></section>`;
+ }
+}
+function go(next){screen=next;render();const h=root.querySelector("h1");h.tabIndex=-1;h.focus()}
+root.addEventListener("input",e=>{if(e.target.id==="query")query=e.target.value;else if(e.target.id==="filter")filter=e.target.value;else return;root.querySelector("#list").innerHTML=rows(filtered())});
+document.addEventListener("click",e=>{const d=e.target.closest("button")?.dataset;if(d?.view){active=null;go(d.view)}if(d?.open!==undefined){active=Number(d.open);go("detail")}});
+root.addEventListener("submit",e=>{
+ e.preventDefault();const f=new FormData(e.target),title=f.get("title").trim(),owner=f.get("owner").trim(),state=Number(f.get("state"));
+ if(!title||!owner){message.textContent="Başlık ve sorumlu ekip girin.";return}
+ if(active!==null)records=records.map(r=>r.id===active?{...r,title,owner,state}:r);
+ else records=[{id:Date.now(),title,owner,state},...records].slice(0,100);
+ save();active=null;filter="";query="";go("list");message.textContent="İş kaydedildi.";
+});render();
+</script></body></html>

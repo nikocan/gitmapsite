@@ -11,7 +11,10 @@ import { sendMail, layout } from "./mail.mjs";
 import { registerRadar } from "./radar.mjs";
 import { registerStoreSales } from "./store-sales.mjs";
 import { registerPayments } from "./payments.mjs";
+import { registerOutreach } from "./outreach.mjs";
+import { registerSkills } from "./skills.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
+import { registerDepo } from "./depo.mjs";
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import fs from "node:fs";
@@ -478,12 +481,15 @@ function designRule(d, kind = "app") {
   return `\n- TASARIM DİLİ “${name}”: Renk paleti → ${cols.join(", ")}. Bu renkleri Tailwind'de özel değerlerle (ör. bg-[${p.pr || "#000000"}]) tutarlı kullan. Yazı tipi: Google Fonts'tan “${font}” (<link> ile yükle, body'ye uygula). Köşe yuvarlaklığı yaklaşık ${radius}px. Stil: ${style}` + (kind === "game" ? " Bu bir oyun: tasarım dilini yalnızca oyun sahnesinin, karakterlerin, HUD'un ve menülerin renk ve havası için kullan; uygulama paneli, kart ızgarası, alt sekme çubuğu ya da sayfa alt bilgisi yapma." : "") + (blueprint ? `\n- EKRAN DÜZENİ (kullanıcının seçtiği panel şablonu; bu yerleşime sadık kal, bölümleri atlama): ${blueprint}` : "");
 }
 // Çalıştırma ayarları (AI Studio benzeri): yaratıcılık, ayrıntı düzeyi, ek talimatlar
-function runOpts(rt, body) {
+function runOpts(rt, body, user) {
   const t = body.settings || {};
+  // Sunucudaki test edilmiş beceriler kimlikle gelir, metni sunucu ekler; kullanım sonucu başarı oranına yazılır
+  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id) : { text: "", run: null };
+  rt.skillRun = sk.run;
   if (t.temperature != null && t.temperature !== "" && isFinite(+t.temperature)) rt.temperature = Math.max(0, Math.min(1.5, +t.temperature));
   rt.maxTokens = { kisa: 6000, dengeli: 12000, ayrintili: 20000 }[t.detail] || 12000;
   const ins = String(t.instructions || "").replace(/[<>`]/g, "").trim().slice(0, 3000);
-  return levelRule(t.level, true) + (ins ? "\n- Kullanıcının ek talimatları (yukarıdaki kurallarla çelişmedikçe uy): " + ins : "");
+  return levelRule(t.level, true) + sk.text + (ins ? "\n- Kullanıcının ek talimatları (yukarıdaki kurallarla çelişmedikçe uy): " + ins : "");
 }
 // Görseller (çizim/yerleşim, stil örneği, içerik görseli) → çok kipli kullanıcı mesajı
 const IMG_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
@@ -804,7 +810,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.59.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.62.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -900,14 +906,14 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const tokens = str(body.tokens, 1500, "Tasarım sistemi");
   const img = imageParts(body);
   const patch = cur && cur.length >= PATCH_MIN;
-  const opts = runOpts(rt, body); // önce kullanıcının ayrıntı ayarı; aşağıdaki alt sınırlar bunu düşüremez
+  const opts = runOpts(rt, body, user); // önce kullanıcının ayrıntı ayarı; aşağıdaki alt sınırlar bunu düşüremez
   rt.maxTokens = buildBudget(rt.maxTokens, { model: rt.model, strong: tierOf(rt.model) === "guclu", cur, patch, kind });
   rt.autoContinue = !patch;
   const messages = [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES[kind] + designRule(body.design, kind) + connRules(body.integrations, { kind, prompt: prompt + "\n" + plan, edit: !!cur || body.connExplicit === true }) + scopeRule(kind) + businessSkillInstructions(body.businessSkillIds) + opts + userRule(user, false, kind) + (tokens && cur ? "\n- TASARIM SİSTEMİ (tutarlılık zorunlu): bu projenin mevcut tasarım değişkenleri: " + tokens + ". Yeni eklenen her ekran ve bileşen aynı renkleri, yazı tipini, köşe yuvarlaklığını ve boşluk ritmini kullansın; yeni renk ya da yazı tipi uydurma." : "") + (img.parts.length ? "\n- Kullanıcı görsel ekledi:" + img.text : "") + (patch ? PATCH_RULE : "") }];
   const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages(projectBrief(body) + (history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages(projectBrief(body) + "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
-  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); const credits = charge(user, rt, "build", usage); return { ...out, model, provider: rt.provider, spent: rt.credits, credits, usage, swapped: rt.swapped || undefined }; };
+  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); SKILL_ENGINE.outcome(rt.skillRun, out); const credits = charge(user, rt, "build", usage); return { ...out, skillRun: rt.skillRun || undefined, model, provider: rt.provider, spent: rt.credits, credits, usage, swapped: rt.swapped || undefined }; };
   if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));
@@ -1871,6 +1877,17 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 // Mağaza
 const ownsSale = registerStoreSales({ db, route, need });
 const billing = registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, tiers: TIER_CREDITS, isAdmin });
+registerDepo({ db, route, need, dir: E.DEPO_DIR || path.join(path.dirname(path.resolve(CFG.db)), "depo"), allowLocal: E.DEPO_ALLOW_LOCAL === "1", publicBase: CFG.api });
+// Beceri motoru: sektör yazılımı planları, tasarım ve kalite becerileri; beceri avcısı, test ve kendi kendini iyileştirme
+const SKILL_ENGINE = registerSkills({ db, route, need, HttpErr, chat, scriptErrors, aiReady: () => !!CFG.aiKey,
+  generate: async (prompt, rule) => { const rt = { provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model: await defaultModel(), maxTokens: 12000 };
+    const { text, finish, model } = await chatWith(rt, [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES.app + scopeRule("app") + rule }, { role: "user", content: "Fikir: " + prompt }], 12000);
+    return extractHtml(text, { model, finish }).html; },
+  ghFetch: async (p, raw) => { const r = await fetch((E.TEST_GH_API || "https://api.github.com") + p, { headers: { Accept: raw ? "application/vnd.github.raw" : "application/vnd.github+json", "User-Agent": "gitmapp-skills", ...(GH_TOKEN_ENV ? { Authorization: "Bearer " + GH_TOKEN_ENV } : {}) }, signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new HttpErr(r.status === 403 || r.status === 429 ? 429 : 502, "GitHub: " + r.status + (r.status === 403 ? " (istek sınırı; GITHUB_TOKEN tanımlayın)" : "")); return raw ? r.text() : r.json(); } });
+// Müşteri Avı: Google Haritalar → site analizi → 10 adımlı teklif dizisi → otomatik yanıt → ödeme → Siparişler
+registerOutreach({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, chat, billing, adminEmail: () => CFG.admin, allowLocal: E.OUTREACH_ALLOW_LOCAL === "1", placesBase: E.PLACES_API_BASE,
+  mailReady: () => mailReady(), send: async (m) => { const r = await sendMail(mailCfg(), m); q("INSERT INTO mail_log(to_addr,kind,subject,status,via,tries,sent) VALUES(?,?,?,?,?,1,datetime('now'))").run(m.to, "musteri-avi", String(m.subject).slice(0, 200), "gonderildi", r.via); return r; } });
 route("GET", "/api/store", ({ url }) => {
   const cat = url.searchParams.get("cat"); const s = (url.searchParams.get("q") || "").trim().slice(0, 60); const sort = url.searchParams.get("sort") === "yeni" ? "a.published_at DESC" : "a.downloads DESC, a.opens DESC";
   let sql = "SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.status='published' AND a.listed=1"; const args = [];
@@ -2177,7 +2194,7 @@ route("GET", "/api/admin/radar", ({ user, url }) => {
 
 // ---------- Sunucu ----------
 async function readBody(req) {
-  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); req.rawBody = Buffer.concat(ch); try { const v = JSON.parse(req.rawBody.toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
+  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); req.rawBody = Buffer.concat(ch); if (/application\/x-www-form-urlencoded/i.test(req.headers["content-type"] || "")) return ok(Object.fromEntries(new URLSearchParams(req.rawBody.toString()))); try { const v = JSON.parse(req.rawBody.toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
 }
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
@@ -2225,7 +2242,7 @@ if (["create-admin","reset-admin"].includes(process.argv[2])) {
 }
 // ---------- E-posta: doğrulama, şifre sıfırlama, sipariş, yayın ve otomasyon bildirimleri ----------
 db.exec("CREATE TABLE IF NOT EXISTS mail_log(id INTEGER PRIMARY KEY AUTOINCREMENT, created TEXT DEFAULT (datetime('now')), to_addr TEXT, kind TEXT, subject TEXT, status TEXT, error TEXT, tries INTEGER DEFAULT 0, via TEXT, body TEXT, sent TEXT)");
-const MAIL_KINDS = { dogrulama: "E-posta doğrulama", sifre: "Şifre sıfırlama", "sifre-degisti": "Şifre değişti", siparis: "Talep alındı", "siparis-yonetici": "Yeni talep (yönetici)", yayin: "Uygulama yayında", "kreator-hata": "Otomatik paylaşım hatası", test: "Deneme" };
+const MAIL_KINDS = { "musteri-avi": "Müşteri Avı teklifi", dogrulama: "E-posta doğrulama", sifre: "Şifre sıfırlama", "sifre-degisti": "Şifre değişti", siparis: "Talep alındı", "siparis-yonetici": "Yeni talep (yönetici)", yayin: "Uygulama yayında", "kreator-hata": "Otomatik paylaşım hatası", test: "Deneme" };
 function mailPanel() { const r = q("SELECT v FROM server_settings WHERE k='mail_cfg'").get(); if (!r) return null; try { return JSON.parse(decKey(r.v)); } catch { return null; } }
 function mailCfg() {
   const p = mailPanel(); if (p && (p.host || p.resend)) return { ...p, source: "panel" };

@@ -7,6 +7,20 @@ GitHub'daki açık kaynak projelerden, lisansı ve güvenliği kontrol edilmiş 
 - Yönetici görünümü: Siparişler, İş Planı & Gelir, GitHub Radar, İş Kolları, Listem, Yapım Kuyruğu, Ayarlar
 - Sürüm notları: uygulama içinde **Güncellemeler** sekmesi
 
+## Keşif hafızası ve kişisel öneriler
+
+**Keşfet** sayfası kullanıcının aramalarını, açtığı uygulamaları, canlı denediği şablonları, baktığı temaları ve Stüdyo’ya yazdığı ilk fikirleri tarayıcıda (`localStorage`, `gms_taste`) tutar. Sunucuya veri gönderilmez. Her yeni sinyal eski sinyalleri biraz zayıflatır; böylece profil son ilgilere göre değişir.
+
+Profilden sektör ilgisi, renk eğilimi (ağırlıklı ton ortalaması), koyu/açık zemin tercihi ve en uygun tasarım dili hesaplanır. Bu profil şu yerlerde kullanılır:
+
+- **Senin tarzın** kartı: tahmin edilen tema, renk paleti, ilgi alanları, son aramalar ve **Bu tarzla yeni proje** düğmesi.
+- **Sana özel** rafı: şablonlar profile göre sıralanır, her önerinin gerekçesi yazılır; son denenen şablona benzeyenler ayrı rafta gösterilir.
+- Akıllı arama kutusu: yazarken geçmiş aramalar, şablon adları ve sektör sözcükleri önerilir; yazılan fikirden sektör ve tasarım tahmin edilip **Bu fikirle başla** sunulur.
+- Arama sonuçları: **İlgili aramalar** ve **Aramana uygun şablonlar**.
+- Stüdyo’da **Otomatik tasarım**: sektörün önerdiği temalar profile göre yeniden sıralanır.
+
+Kullanıcı kartın ⋯ menüsünden hafızayı sıfırlayabilir veya kapatabilir.
+
 ## Yönetici girişi
 
 Yönetim merkezini çalışma alanı menüsündeki **Yönetici** düğmesinden veya `/#yonetim` adresinden açın. Doğrudan bir yönetim sayfasına giden kullanıcı, girişten sonra aynı sayfaya döner.
@@ -32,6 +46,27 @@ Kullanıcılar **Kredi yükle** penceresinden paket seçer, kartla (Stripe Check
 Stripe kurulumu: dashboard.stripe.com › Developers › API keys sayfasındaki **Secret key**'i panele girin. Webhooks › Add endpoint adresi `https://api.gitmapp.com/api/payments/stripe/webhook`, olaylar `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`. Webhook'un **Signing secret** değerini (`whsec_…`) panele girin. Anahtarlar sunucuda şifreli saklanır; isterseniz `STRIPE_SECRET_KEY` ve `STRIPE_WEBHOOK_SECRET` ortam değişkenleri paneldeki değerin önüne geçer. Webhook gelmese de ödeme, kullanıcı Stripe'tan döndüğünde doğrulanır. Bir ödeme yalnızca bir kez krediye dönüşür.
 
 Testler: `node --test server/payments.test.mjs` (sahte Stripe ile) ve uçtan uca `node tools/acceptance/e2e.mjs`.
+
+## Müşteri Avı (Yönetim → Müşteri Avı)
+
+Gitmapp'in kendi müşterisini bulduğu satış hattı: **sektör araştırması → Google Haritalar'dan aday → site analizi → 10 adımlı teklif dizisi → gelen yanıta otomatik cevap → teklif sayfasında ödeme → Siparişler**.
+
+- **Google Places API (New)** anahtarı panelden girilir (şifreli saklanır) ya da `GOOGLE_PLACES_API_KEY` ile verilir. Haritalar sayfası kazınmaz.
+- Site analizi mobil uyum, https, hız, telif yılı, online randevu/WhatsApp eksikliğini ölçer ve siteden e-posta bulur; `AI_KEY` tanımlıysa yapay zekâ işletmeye özel 3 sorun ve uygulama fikri yazar. Sunucuda `playwright` kuruluysa telefon ekran görüntüsü alınır.
+- E-postalar mevcut **E-posta gönderimi** ayarlarıyla gider; her iletide firma unvanı, adres ve listeden çıkma bağlantısı (`/api/out/unsub/…`) bulunur; günlük sınır vardır.
+- Gelen yanıtlar `POST /api/out/inbound/<gizli>` adresine `{from, subject, text}` olarak gönderilir (Hostinger Mail webhook, Resend Inbound, Cloudflare Email Worker, Zapier). Telefon/WhatsApp/Facebook yanıtları aday kartından elle eklenir.
+- Teklif sayfası `GET /api/out/offer/<token>`: kart (mevcut Stripe anahtarı) ya da havale. Ödeme alınınca `orders` tablosuna “Ödendi · yapım bekliyor” durumunda sipariş açılır.
+- Zamanı gelen dizi adımları her 10 dakikada gönderilir (`OUTREACH_TICK_MS`). Testler: `node --test server/outreach.test.mjs`.
+
+## Beceriler ve Beceri Avcısı
+
+Kullanıcı Beceriler panelinden **uygulama planı** (CRM, ön muhasebe/e-Fatura, ERP, stok, B2B bayi, POS, İK, randevu, proje, helpdesk, EBYS, beyaz masa, saha servis, filo, okul, satın alma, klinik, e-ticaret), **tasarım** ve **kalite** becerisi yükler. İstemci yalnızca beceri kimliklerini gönderir (`settings.skills`); metni sunucu ekler. Plan becerisi seçilince bağlı tasarım becerisi ve temiz mimari kendiliğinden eklenir. Katalog: `server/skills-catalog.mjs`.
+
+- Her üretim `skill_runs` tablosuna yazılır: sonuç (temiz / otomatik onarıldı / sözdizimi hatası) ve kullanıcının 👍/👎 oyu (`POST /api/skills/feedback`) başarı oranını oluşturur.
+- **Beceri Avcısı** (Yönetim): GitHub'da lisanslı, güncel, 200+ yıldızlı açık kaynak muadilleri bulur; README'den öğrendiği işlevlerle aday sürüm yazar (kod kopyalanmaz). `GITHUB_TOKEN` tanımlanırsa arama sınırı yükselir.
+- **Test:** aday ve yayındaki sürüm aynı test istemiyle üretilir; beklenen kavramlar, sözdizimi, mobil uyum ve içerik miktarıyla 0–100 puanlanır; aday eşit ya da daha iyiyse yayına alınır.
+- **İyileştirme:** 8+ kullanımı olup başarısı %70'in altında kalan beceriler 6 saatte bir hata notlarından yeniden yazılıp test edilir (`SKILLS_TICK_MS`). Tüm sürümler saklanır.
+- Testler: `node --test server/skills.test.mjs`.
 
 ## Yapay zekâ sağlayıcıları ve maliyet
 
@@ -65,3 +100,9 @@ Radar’dan gelen taslaklarda **Yayın Merkezi** lisans ve güvenlik doğrulamas
 **Yönetim → Üretim ajanı** varsayılan olarak GitHub, MDN ve Smashing Magazine’i 24 saatte bir tarar. Aralık ve zamanlama panelden değiştirilebilir. Yapay zekâ üretimi panelden açılır. Günde en fazla bir özgün taslak üretir, aylık kredi sınırını kullanır ve sonucu yönetici projelerine kaydeder.
 
 Mağazada ücretli ürünler için alıcı talep açar. Ödeme dış sağlayıcıda tamamlandığında yönetici **Üretim ajanı → Mağaza satışları** ekranında işlem referansını kaydeder. Teyit, alıcının düzenlenebilir kopyasına erişim verir.
+
+## Depo (site görsellerini indir ve ayrıştır)
+
+**Katalog › Depo** bir site adresini 1–25 sayfa tarar; görselleri (img, srcset, data-src, CSS arka planları, og:image, favicon, satır içi SVG) indirir, dosya imzasından doğrular, tekrarları ayıklar ve Logo, İkon, Banner, Ürün, Galeri, Kişi, Arka plan, Paylaşım görseli olarak ayrıştırır. Menü kategorilerini, renk/yazı tipi temasını (Tema CSS), betiksiz ekran kopyasını ve bölüm bileşenlerini çıkarır. Depodan Stüdyo'ya şablon açılır, her şey ZIP olarak indirilir.
+
+Dosyalar `DEPO_DIR` (varsayılan: veritabanının yanında `depo/`) altında tutulur ve `/api/depo/f/...` adresinden herkese açık sunulur. Yalnız herkese açık adresler taranır; `DEPO_ALLOW_LOCAL=1` yalnızca testler içindir. robots.txt kurallarına uyulur. Testler: `node --test server/depo.test.mjs` ve tarayıcıda `node tools/acceptance/depo.mjs`.

@@ -214,5 +214,6 @@ export function registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg
     return { ok: true };
   });
 
-  return { signupCredits: () => readS().signupCredits, refCredits: () => readS().refCredits };
+  // Müşteri Avı modülü kendi teklif ödemeleri için aynı Stripe hesabını ve havale bilgisini kullanır
+  return { signupCredits: () => readS().signupCredits, refCredits: () => readS().refCredits, stripe, cardOn, havale: () => { const s = readS(); return havaleOn() ? { iban: s.iban, name: s.accountName, bank: s.bank } : null; } };
 }
