@@ -7,6 +7,13 @@ GitHub'daki açık kaynak projelerden, lisansı ve güvenliği kontrol edilmiş 
 - Yönetici görünümü: Siparişler, İş Planı & Gelir, GitHub Radar, İş Kolları, Listem, Yapım Kuyruğu, Ayarlar
 - Sürüm notları: uygulama içinde **Güncellemeler** sekmesi
 
+## Geliştirme akışı ve otomatik kayıt (v5.78)
+
+- Akış Claude Code düzenindedir: son işin adımları açık, öncekiler tek özet satırında (adım sayısı, süre, boyut, model, kredi); tıklayınca açılır. “Kod yazıldı” adımı modelin yazdığı kodun son 4.000 karakterini gösterir.
+- Çıktı tek satırdır (index.html +/−, önizle/kod/commit simgeleri). Tasarım denetimi sorun yoksa tek satır; önizleme üstündeki durum penceresi yalnızca sorun veya kod kontrolü bulgusunda açılır. Beceriler çubuğu Stüdyo'da kapalı başlar (`skDockWs`).
+- **Otomatik kayıt:** giriş yapılmışsa taslak ve yayınlanmamış projeler değişiklikten ~2,5 sn sonra sessizce `POST/PUT /api/apps` ile kaydedilir (art arda 3 hatada durur). Yayındaki projeler canlı adresi değiştirmemek için otomatik kaydedilmez; **Yayınla** ile güncellenir. Dal üzerinde çalışırken kayıt commit ile yapılır.
+- Test: `node tools/acceptance/v578.mjs`.
+
 ## Yeni sohbet, ortam seçici ve sık kullanılanlar (v5.77)
 
 Claude Code (claude.ai/code) ve ChatGPT Codex düzenini izler: her sohbet bir **ortamda** (depo + dal) çalışır.
