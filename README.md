@@ -33,6 +33,17 @@ Stripe kurulumu: dashboard.stripe.com › Developers › API keys sayfasındaki 
 
 Testler: `node --test server/payments.test.mjs` (sahte Stripe ile) ve uçtan uca `node tools/acceptance/e2e.mjs`.
 
+## Müşteri Avı (Yönetim → Müşteri Avı)
+
+Gitmapp'in kendi müşterisini bulduğu satış hattı: **sektör araştırması → Google Haritalar'dan aday → site analizi → 10 adımlı teklif dizisi → gelen yanıta otomatik cevap → teklif sayfasında ödeme → Siparişler**.
+
+- **Google Places API (New)** anahtarı panelden girilir (şifreli saklanır) ya da `GOOGLE_PLACES_API_KEY` ile verilir. Haritalar sayfası kazınmaz.
+- Site analizi mobil uyum, https, hız, telif yılı, online randevu/WhatsApp eksikliğini ölçer ve siteden e-posta bulur; `AI_KEY` tanımlıysa yapay zekâ işletmeye özel 3 sorun ve uygulama fikri yazar. Sunucuda `playwright` kuruluysa telefon ekran görüntüsü alınır.
+- E-postalar mevcut **E-posta gönderimi** ayarlarıyla gider; her iletide firma unvanı, adres ve listeden çıkma bağlantısı (`/api/out/unsub/…`) bulunur; günlük sınır vardır.
+- Gelen yanıtlar `POST /api/out/inbound/<gizli>` adresine `{from, subject, text}` olarak gönderilir (Hostinger Mail webhook, Resend Inbound, Cloudflare Email Worker, Zapier). Telefon/WhatsApp/Facebook yanıtları aday kartından elle eklenir.
+- Teklif sayfası `GET /api/out/offer/<token>`: kart (mevcut Stripe anahtarı) ya da havale. Ödeme alınınca `orders` tablosuna “Ödendi · yapım bekliyor” durumunda sipariş açılır.
+- Zamanı gelen dizi adımları her 10 dakikada gönderilir (`OUTREACH_TICK_MS`). Testler: `node --test server/outreach.test.mjs`.
+
 ## Yapay zekâ sağlayıcıları ve maliyet
 
 Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Router) üzerinden yapılır. `AI_BASE` OpenAI uyumlu herhangi bir uç nokta olabilir; örneğin doğrudan OpenRouter için `AI_BASE=https://openrouter.ai/api/v1`, `AI_KEY=sk-or-…` ve `AI_MODELS` içinde OpenRouter model adları (`anthropic/claude-sonnet-4.5,openai/gpt-5.2`).

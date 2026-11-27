@@ -8,6 +8,7 @@ import { sendMail, layout } from "./mail.mjs";
 import { registerRadar } from "./radar.mjs";
 import { registerStoreSales } from "./store-sales.mjs";
 import { registerPayments } from "./payments.mjs";
+import { registerOutreach } from "./outreach.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
@@ -801,7 +802,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.59.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.60.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1781,6 +1782,9 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 // Mağaza
 const ownsSale = registerStoreSales({ db, route, need });
 const billing = registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, tiers: TIER_CREDITS, isAdmin });
+// Müşteri Avı: Google Haritalar → site analizi → 10 adımlı teklif dizisi → otomatik yanıt → ödeme → Siparişler
+registerOutreach({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, chat, billing, adminEmail: () => CFG.admin, allowLocal: E.OUTREACH_ALLOW_LOCAL === "1", placesBase: E.PLACES_API_BASE,
+  mailReady: () => mailReady(), send: async (m) => { const r = await sendMail(mailCfg(), m); q("INSERT INTO mail_log(to_addr,kind,subject,status,via,tries,sent) VALUES(?,?,?,?,?,1,datetime('now'))").run(m.to, "musteri-avi", String(m.subject).slice(0, 200), "gonderildi", r.via); return r; } });
 route("GET", "/api/store", ({ url }) => {
   const cat = url.searchParams.get("cat"); const s = (url.searchParams.get("q") || "").trim().slice(0, 60); const sort = url.searchParams.get("sort") === "yeni" ? "a.published_at DESC" : "a.downloads DESC, a.opens DESC";
   let sql = "SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.status='published' AND a.listed=1"; const args = [];
@@ -2087,7 +2091,7 @@ route("GET", "/api/admin/radar", ({ user, url }) => {
 
 // ---------- Sunucu ----------
 async function readBody(req) {
-  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); req.rawBody = Buffer.concat(ch); try { const v = JSON.parse(req.rawBody.toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
+  return new Promise((ok, bad) => { let n = 0; const ch = []; req.on("data", (c) => { n += c.length; if (n > 2_600_000) { bad(new HttpErr(413, "İstek çok büyük")); req.destroy(); } else ch.push(c); }); req.on("end", () => { if (!ch.length) return ok({}); req.rawBody = Buffer.concat(ch); if (/application\/x-www-form-urlencoded/i.test(req.headers["content-type"] || "")) return ok(Object.fromEntries(new URLSearchParams(req.rawBody.toString()))); try { const v = JSON.parse(req.rawBody.toString()); ok(v && typeof v === "object" ? v : {}); } catch { bad(new HttpErr(400, "Geçersiz JSON")); } }); req.on("error", bad); });
 }
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
@@ -2135,7 +2139,7 @@ if (["create-admin","reset-admin"].includes(process.argv[2])) {
 }
 // ---------- E-posta: doğrulama, şifre sıfırlama, sipariş, yayın ve otomasyon bildirimleri ----------
 db.exec("CREATE TABLE IF NOT EXISTS mail_log(id INTEGER PRIMARY KEY AUTOINCREMENT, created TEXT DEFAULT (datetime('now')), to_addr TEXT, kind TEXT, subject TEXT, status TEXT, error TEXT, tries INTEGER DEFAULT 0, via TEXT, body TEXT, sent TEXT)");
-const MAIL_KINDS = { dogrulama: "E-posta doğrulama", sifre: "Şifre sıfırlama", "sifre-degisti": "Şifre değişti", siparis: "Talep alındı", "siparis-yonetici": "Yeni talep (yönetici)", yayin: "Uygulama yayında", "kreator-hata": "Otomatik paylaşım hatası", test: "Deneme" };
+const MAIL_KINDS = { "musteri-avi": "Müşteri Avı teklifi", dogrulama: "E-posta doğrulama", sifre: "Şifre sıfırlama", "sifre-degisti": "Şifre değişti", siparis: "Talep alındı", "siparis-yonetici": "Yeni talep (yönetici)", yayin: "Uygulama yayında", "kreator-hata": "Otomatik paylaşım hatası", test: "Deneme" };
 function mailPanel() { const r = q("SELECT v FROM server_settings WHERE k='mail_cfg'").get(); if (!r) return null; try { return JSON.parse(decKey(r.v)); } catch { return null; } }
 function mailCfg() {
   const p = mailPanel(); if (p && (p.host || p.resend)) return { ...p, source: "panel" };
