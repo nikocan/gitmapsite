@@ -1,4 +1,4 @@
-// v5.79 kabul testi: Oturumlar (sol menü, depo grupları, arka planda süren iş ve durum simgeleri), oturum başına dal, otomatik commit, Gitmapp birleştirme, GitHub PR aç ve birleştir
+// v5.80 kabul testi: Oturumlar (sol menü, depo grupları, arka planda süren iş ve durum simgeleri), oturum başına dal, otomatik commit, Gitmapp birleştirme, GitHub PR aç ve birleştir
 import http from "node:http";
 import { spawn, execFileSync } from "node:child_process";
 import { once } from "node:events";
@@ -11,7 +11,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { chromium, devices } = require("playwright");
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
-const SHOTS = join(ROOT, "validation/screens/v579"); mkdirSync(SHOTS, { recursive: true });
+const SHOTS = join(ROOT, "validation/screens/v580"); mkdirSync(SHOTS, { recursive: true });
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".json": "application/json" };
 const ok = (c, m) => { console.log((c ? "✔ " : "✘ ") + m); if (!c) process.exitCode = 1; };
 const listen = async (s) => { s.listen(0, "127.0.0.1"); await once(s, "listening"); return s.address().port; };
@@ -47,7 +47,7 @@ const ghSrv = http.createServer(async (req, res) => { let b = ""; for await (con
   send({ message: "not found " + req.method + " " + p }, 404); });
 const ghPort = await listen(ghSrv);
 const aiPort = await listen(ai), rPort = await listen(rates), fxPort = await listen(fx);
-const dir = mkdtempSync(join(tmpdir(), "gitmapp-v579-")); const apiPort = await freePort(), webPort = await freePort();
+const dir = mkdtempSync(join(tmpdir(), "gitmapp-v580-")); const apiPort = await freePort(), webPort = await freePort();
 const apiBase = "http://127.0.0.1:" + apiPort, webBase = "http://127.0.0.1:" + webPort;
 const env = { ...process.env, PORT: String(apiPort), DB_PATH: join(dir, "db"), SECRET: randomBytes(32).toString("hex"), ADMIN_EMAIL: "y@gitmapp.test", SITE_URL: webBase, CORS_EXTRA: webBase, API_URL: apiBase, GITHUB_CLIENT_ID: "", GOOGLE_CLIENT_ID: "", AI_BASE: "http://127.0.0.1:" + aiPort + "/v1", AI_KEY: "k-test-123456789012", AI_MODEL: "", AI_MODELS: "claude-sonnet-5-5,claude-opus-5-5,claude-haiku-5-5", AI_FALLBACKS: "", ANTHROPIC_API_KEY: "", OPENROUTER_API_KEY: "", AI_PROFILE_AUTO: "0", RATES_URL: "http://127.0.0.1:" + rPort + "/m", FX_URL: "http://127.0.0.1:" + fxPort + "/fx", SIGNUP_CREDITS: "200", TEST_GH_API: "http://127.0.0.1:" + ghPort };
 const adminPw = execFileSync(process.execPath, [join(ROOT, "server/server.mjs"), "create-admin"], { env, encoding: "utf8" }).match(/Şifre: (\S+)/)[1];
