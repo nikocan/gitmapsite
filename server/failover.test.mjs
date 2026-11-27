@@ -138,3 +138,14 @@ test("birincil 400 verirse yedek sağlayıcı denenir; boş mesajlar gönderilme
   assert.match(j2.error, /isteği reddetti \(400.*text content blocks must be non-empty/);
   assert.doesNotMatch(j2.error, /\{"error"/);
 });
+
+test("arayüz dili (lang) sistem mesajına dil kuralı olarak eklenir; Türkçede eklenmez", async (t) => {
+  const prov = await fake((url) => url.endsWith("/models") ? [200, { data: [{ id: "claude-sonnet-4.5" }] }] : [200, { choices: [{ message: { content: "ok" }, finish_reason: "stop" }], usage: { total_tokens: 3 } }]);
+  t.after(() => prov.close());
+  const api = await start(t, { AI_BASE: prov.base, AI_KEY: "k", AI_MODELS: "claude-sonnet-4.5", COPILOT_MODEL: "claude-sonnet-4.5", AI_FALLBACKS: "" });
+  const ask = (lang) => fetch("http://127.0.0.1:" + api.port + "/api/ai/copilot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang, messages: [{ role: "user", content: "hi" }] }) }).then((r) => r.json());
+  await ask("en"); await ask("tr");
+  const calls = prov.seen.filter((x) => x.url.endsWith("/chat/completions")).map((x) => { const c = x.body.messages[0].content; return typeof c === "string" ? c : c.map((p) => p.text).join(""); });
+  assert.match(calls[0], /DİL \(bu kural.*Kullanıcının arayüz dili English/);
+  assert.doesNotMatch(calls[1], /Kullanıcının arayüz dili/);
+});

@@ -148,9 +148,9 @@ async function main() {
       }
       return page;
     };
-    const guest = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const guest = await browser.newContext({ locale: "tr-TR", timezoneId: "Europe/Istanbul", viewport: { width: 1440, height: 900 } });
     await visit(guest, "Misafir", ["ana", "dunya", "paketler", "studio", "guncel"], "");
-    const user = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const user = await browser.newContext({ locale: "tr-TR", timezoneId: "Europe/Istanbul", viewport: { width: 1440, height: 900 } });
     const up = await visit(user, "Müşteri", CUST, reg.token);
 
     // Stüdyo akışı: istem yaz → gönder → önizleme → kaydet
@@ -180,7 +180,7 @@ async function main() {
       }
     }
     // Arayüzden giriş (yönetici)
-    const adm = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const adm = await browser.newContext({ locale: "tr-TR", timezoneId: "Europe/Istanbul", viewport: { width: 1440, height: 900 } });
     {
       const p = await adm.newPage(); await p.goto(siteBase + "/#yonetim"); await p.waitForTimeout(1500);
       const email = await p.$('input[type="email"][autocomplete="username"]');
@@ -238,8 +238,16 @@ async function main() {
       rec("Ödeme", "Hesabım › Ödemelerim geçmişi", rows >= 2 && !ue.length, rows + " ödeme" + (ue.length ? " · JS: " + ue.join(" | ").slice(0, 200) : ""), "odeme-gecmis.png");
       await p.close(); await ap.close();
     }
+    // Dil: tarayıcı diline göre otomatik seçim, RTL ve çeviri
+    for (const [loc, tz, want, ph] of [["en-US", "America/New_York", "en", /^Describe an app/], ["ar-SA", "Asia/Riyadh", "ar", /^صف تطبيقًا/], ["fr-CH", "Europe/Zurich", "de", /^Beschreibe eine App/]]) {
+      const c = await browser.newContext({ locale: loc, timezoneId: tz, viewport: { width: 1440, height: 900 } }); const p = await c.newPage(); const errs = []; p.on("pageerror", (e) => errs.push(e.message));
+      await p.goto(siteBase + "/#studio"); await p.waitForTimeout(1800);
+      const i = await p.evaluate(() => ({ lang: document.documentElement.lang, dir: document.documentElement.dir, ph: document.querySelector("textarea.gta")?.placeholder || "" }));
+      const shot = "dil-" + want + ".png"; await p.screenshot({ path: join(SHOTS, shot) });
+      rec("Dil", loc + " / " + tz + " → " + want, i.lang === want && ph.test(i.ph) && (want !== "ar" || i.dir === "rtl") && !errs.length, i.ph.slice(0, 40) + (errs.length ? " · JS: " + errs[0].slice(0, 100) : ""), shot); await c.close();
+    }
     // Mobil
-    const mob = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const mob = await browser.newContext({ locale: "tr-TR", timezoneId: "Europe/Istanbul", viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     await visit(mob, "Mobil", ["ana", "studio", "uygulamalarim", "hesabim"], reg.token);
     const wide = await mob.newPage(); await wide.goto(siteBase + "/#studio"); await wide.waitForTimeout(1500);
     const ov = await wide.evaluate(() => document.documentElement.scrollWidth - innerWidth); rec("Mobil", "Stüdyoda yatay taşma yok", ov <= 1, ov + " px");

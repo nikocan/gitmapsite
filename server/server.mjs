@@ -16,6 +16,7 @@ import { registerSkills } from "./skills.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
 import { registerDepo } from "./depo.mjs";
 import crypto from "node:crypto";
+import { AsyncLocalStorage } from "node:async_hooks";
 import dns from "node:dns/promises";
 import fs from "node:fs";
 import path from "node:path";
@@ -227,7 +228,11 @@ const KEY_ENC = crypto.createHash("sha256").update(CFG.secret + ":byok").digest(
 const encKey = (plain) => { const iv = crypto.randomBytes(12); const c = crypto.createCipheriv("aes-256-gcm", KEY_ENC, iv); const e = Buffer.concat([c.update(plain, "utf8"), c.final()]); return [iv, c.getAuthTag(), e].map((b) => b.toString("base64")).join("."); };
 const decKey = (s) => { const [iv, tag, e] = s.split(".").map((x) => Buffer.from(x, "base64")); const d = crypto.createDecipheriv("aes-256-gcm", KEY_ENC, iv); d.setAuthTag(tag); return Buffer.concat([d.update(e), d.final()]).toString("utf8"); };
 // İsteği hangi sağlayıcı/modelle yapacağımızı çöz, ücreti belirle
-async function resolveRoute(user, body, req, kind) {
+const LANG_NAMES = { en: "English", es: "Español (Spanish)", de: "Deutsch (German)", ar: "العربية (Arabic)" };
+const REQ_CTX = new AsyncLocalStorage();
+const langOf = (body) => { const l = String(body?.lang || body?.settings?.lang || "").slice(0, 2).toLowerCase(); return LANG_NAMES[l] ? l : ""; };
+async function resolveRoute(user, body, req, kind) { const rt0 = await resolveRoute0(user, body, req, kind); rt0.lang = langOf(body); return rt0; }
+async function resolveRoute0(user, body, req, kind) {
   const provider = PROVIDERS[body.provider] ? body.provider : "gitmapp";
   if (provider === "gitmapp") {
     need(CFG.aiKey, 503, "Yapay zekâ henüz yapılandırılmadı (AI_KEY eksik)");
@@ -294,6 +299,9 @@ async function postChat(rt, payload, signal) {
   if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
   const body = { model: rt.model, ...payload, ...(rt.temperature != null ? { temperature: rt.temperature } : {}) };
   if (Array.isArray(body.messages)) body.messages = cleanMessages(body.messages);
+  const lang = rt.lang || REQ_CTX.getStore()?.lang;
+  if (lang && Array.isArray(body.messages) && body.messages[0]?.role === "system" && typeof body.messages[0].content === "string")
+    body.messages = [{ ...body.messages[0], content: body.messages[0].content + "\n- DİL (bu kural “Türkçe konuş/yaz” talimatlarının yerine geçer): Kullanıcının arayüz dili " + LANG_NAMES[lang] + ". Kullanıcıya yazdığın bütün açıklama, rapor, plan ve sohbet yanıtlarını bu dilde yaz. Üretilen uygulamanın içindeki metinleri de kullanıcı açıkça başka bir dil istemedikçe bu dilde yaz. (Yukarıdaki Türkçe kurallar yalnızca senin için talimattır.)" }, ...body.messages.slice(1)];
   let r;
   try { r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(rt.provider === "gitmapp" ? withPromptCache("gitmapp", rt.base, body) : body) }); }
   catch (e) { if (rt.provider !== "gitmapp" || signal?.aborted) throw e; r = new Response(JSON.stringify({ error: "ağ hatası: " + e.message }), { status: 503 }); }
@@ -839,7 +847,7 @@ route("POST", "/api/auth/login", ({ body }) => {
   return { token: sign({ uid: u.id, version:u.session_version }), user: pubUser(u) };
 });
 route("GET", "/api/auth/me", ({ user }) => ({ user: pubUser(user) }));
-const PREF_KEYS = { reduceMotion: "b", sendKey: ["enter", "mod"], voice: "b", guide: "b", engine: "b", listed: "b", analytics: "b", ghost: "b", pins: "a" };
+const PREF_KEYS = { lang: ["tr", "en", "es", "de", "ar"], currency: ["auto", "try", "usd"], reduceMotion: "b", sendKey: ["enter", "mod"], voice: "b", guide: "b", engine: "b", listed: "b", analytics: "b", ghost: "b", pins: "a" };
 route("PATCH", "/api/me/profile", ({ user, body }) => {
   need(user, 401, "Giriş yapın");
   const set = {};
@@ -2265,7 +2273,7 @@ const server = http.createServer(async (req, res) => {
       need(user, 401, "Yönetici hesabınızla giriş yapın.");
       need(isAdmin(user), 403, "Bu hesabın yönetici yetkisi yok.");
     }
-    const out = await r.fn({ req, res, url, params, body, cors, user });
+    const out = await REQ_CTX.run({ lang: langOf(body) }, () => r.fn({ req, res, url, params, body, cors, user }));
     if (out !== null && out !== undefined) send(200, out);
   } catch (e) {
     if (res.destroyed) return;

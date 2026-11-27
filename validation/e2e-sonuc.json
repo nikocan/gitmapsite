@@ -430,21 +430,21 @@
   "area": "Ödeme",
   "name": "Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi",
   "ok": true,
-  "note": "GMYSOIJMBCBB",
+  "note": "GMYTOAA1D1F5",
   "shot": "odeme-havale.png"
  },
  {
   "area": "Ödeme",
   "name": "Yönetici havaleyi onayladı, 330 kredi yüklendi",
   "ok": true,
-  "note": "66 → 396",
+  "note": "69 → 399",
   "shot": ""
  },
  {
   "area": "Ödeme",
   "name": "Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi",
   "ok": true,
-  "note": "396 → 496",
+  "note": "399 → 499",
   "shot": "odeme-kart-sonuc.png"
  },
  {
@@ -453,6 +453,27 @@
   "ok": true,
   "note": "2 ödeme",
   "shot": "odeme-gecmis.png"
+ },
+ {
+  "area": "Dil",
+  "name": "en-US / America/New_York → en",
+  "ok": true,
+  "note": "Describe an app: class schedule and book",
+  "shot": "dil-en.png"
+ },
+ {
+  "area": "Dil",
+  "name": "ar-SA / Asia/Riyadh → ar",
+  "ok": true,
+  "note": "صف تطبيقًا: جدول الحصص والحجوزات لاستودي",
+  "shot": "dil-ar.png"
+ },
+ {
+  "area": "Dil",
+  "name": "fr-CH / Europe/Zurich → de",
+  "ok": true,
+  "note": "Beschreibe eine App: Kursplan und Buchun",
+  "shot": "dil-de.png"
  },
  {
   "area": "Mobil",
