@@ -815,7 +815,7 @@ body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#10
 .mobile-promo-visual{position:relative;align-self:stretch;display:grid;grid-template-rows:1fr auto;min-height:330px;margin:12px 12px 12px 0;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse at 54% 44%,color-mix(in srgb,var(--promo-color) 53%,#17231c),#151c18 72%);border:1px solid #fff2}
 .mobile-promo-visual::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff0e 1px,transparent 1px),linear-gradient(90deg,#ffffff0e 1px,transparent 1px);background-size:32px 32px;mask-image:radial-gradient(ellipse,black,transparent 78%)}
 .mobile-promo-stage{position:relative;min-height:290px;display:grid;place-items:center;perspective:850px;contain:layout}
-.mobile-promo-phone{position:absolute;width:clamp(102px,34%,186px);aspect-ratio:300/569;box-sizing:content-box;border:4px solid #202925;border-radius:clamp(16px,2.5vw,29px);overflow:hidden;box-shadow:0 24px 44px #0008,0 0 0 1px #ffffff39;background:#1c2620;margin:0}
+.mobile-promo-phone{position:absolute;padding:0;cursor:pointer;width:clamp(102px,34%,186px);aspect-ratio:300/569;box-sizing:content-box;border:4px solid #202925;border-radius:clamp(16px,2.5vw,29px);overflow:hidden;box-shadow:0 24px 44px #0008,0 0 0 1px #ffffff39;background:#1c2620;margin:0}
 .mobile-promo-phone img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 .mobile-promo-phone.front{z-index:2;transform:translateX(-18%) rotate(-6deg);animation:mobile-promo-front .62s cubic-bezier(.2,.8,.3,1) both}
 .mobile-promo-phone.back{width:clamp(90px,28%,154px);transform:translate(65%,4%) rotate(12deg);opacity:.84;animation:mobile-promo-back .68s cubic-bezier(.2,.8,.3,1) both}
@@ -2963,7 +2963,7 @@ html.rm .ambient i{animation:none}
 .dq-ok{display:flex;align-items:center;gap:6px;margin:6px 2px;color:var(--label3);font-size:12.5px}.dq-ok svg{color:var(--ok)}
 .skd:not(.open) .skd-chips{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 </style>
-<link rel="stylesheet" href="catalog/gallery.css?v=575">
+<link rel="stylesheet" href="catalog/gallery.css?v=5772">
 <link rel="stylesheet" href="catalog/sector-design.css?v=5761">
 </head>
 <body>
@@ -2978,10 +2978,10 @@ html.rm .ambient i{animation:none}
 <script src="skills/panel.js?v=576"></script>
 <script src="skills/gt-context.js"></script>
 <script src="skills/gt-studio.js"></script>
-<script src="catalog/gallery.js?v=575"></script>
+<script src="catalog/gallery.js?v=5772"></script>
 <script src="catalog/topics.js?v=5761"></script>
 <script src="catalog/curated.js?v=5761"></script>
-<script src="catalog/template-theme.js?v=5761"></script>
+<script src="catalog/template-theme.js?v=5772"></script>
 <script src="catalog/template-screens.js?v=5761"></script>
 <script src="skills/engineering.js?v=575"></script>
 <script>
@@ -2997,6 +2997,7 @@ const CHANGELOG=[
   "✅ Tasarım ajanı sorun bulmadıysa tek satır; önizlemenin üstündeki “Bu adımın çıktısı” penceresi yalnızca sorun ya da kod kontrolü bulgusu varsa açılır",
   "📐 Beceriler çubuğu geliştirme alanında kapalı başlar (tek satır, öneri adıyla); akış alanı yaklaşık iki kat büyüdü",
   "💾 Otomatik kayıt: giriş yapmışsan taslak ve yayınlanmamış projeler her değişiklikten birkaç saniye sonra sessizce hesabına kaydedilir. “Kaydedildi” bildirimi ve “Kaydedilmemiş çalışma” onay pencereleri çıkmaz. Yayındaki projede canlı sürüm, sen Yayınla deyene kadar değişmez"]},
+ {v:"5.77.2",date:"2026-11-27",items:["Keşfet, şablonlar ve tema galerisi gerçek uygulama ekranlarını gösterir. Şablon Stüdyo’ya aktarılırken tema, açık veya koyu görünüm ve cihaz seçimi korunur."]},
  {v:"5.77.1",date:"2026-11-27",items:["Keşfet ve Şablonlar: hareketli telefon vitrini, canlı demolar ve 560 Figma referansı. Şablon kataloğunda 50 yeni tema görünümü ve sektörlere göre HTML dosyaları."]},
  {v:"5.77.0",date:"2026-11-27",items:[
   "💬 Yeni sohbet (Claude Code ve Codex mantığı): sol menünün en üstündeki “Yeni sohbet” düğmesi ya da ⌘/Ctrl+Shift+O. Pencerede üç başlangıç var: Bu projede yeni sohbet (dosyalar, sürümler ve dal aynı kalır, sohbet tertemiz başlar), Boş sayfa (yeni proje) ve Bir depodan",
@@ -5608,13 +5609,14 @@ function designPayload(t,kind,sector){
  const own=t.sector===sector||(kind==="game"&&t.sector==="oyun");
  const profile=catalogProfile(t,t.sector||sector);
  const mode=t.previewMode||"light";
- const palette=t.dash||!t.sector&&!t.previewMode?t.p:catalogPalette(base,profile,mode);
+ const palette=t.dash||!t.sector&&!t.previewMode?t.p:catalogPalette(t,profile,mode);
  const screens=profile.screens.map((screen,i)=>[
   screen.label+" (örnek: "+screen.example+")",
   "yerleşim "+(i===0?compositions[t.layout||0]:["","görselli liste","fotoğraf ve kayıt detayı","sıralı plan"][i]),
   "görsel "+new URL(catalogPhoto(screen.photo),document.baseURI).href
  ].join(", ")).join(" / ");
- const blueprint=t.blueprint||(t.sector&&own?"Dört ekran: "+screens+". Hedef kullanıcılar: "+profile.audience+". "+profile.setup+".":undefined);
+ const typography=catalogHeading(t)==="Georgia,serif"?" Başlıklarda Georgia, gövde metninde "+t.font+" kullan.":"";
+ const blueprint=t.blueprint||(t.sector&&own?"Dört ekran: "+screens+". Hedef kullanıcılar: "+profile.audience+". "+profile.setup+"."+typography:undefined);
  const style=(base||t).style+(t.dash?"":" Her iki görünüm için erişilebilir açık ve koyu renk paleti, tema geçiş düğmesi ve kalıcı tercih ekle."+ (mode==="dark"?" Başlangıç görünümü koyu.":""));
  return {id:t.id,name:(base||t).name,font:t.font,radius:t.r,palette,style,...(blueprint?{blueprint}: {})};
 }
@@ -5867,10 +5869,11 @@ const catalogPhoto=key=>"catalog/"+key+".webp";
 function CatalogPhoto({photo,...props}){
  return html`<img src=${catalogPhoto(photo)} loading="lazy" decoding="async" alt="" ...${props}/>`;
 }
+const catalogHeading=t=>/-(lux|doga)(-koyu)?$|^(lux|doga)$/.test(t.id)?"Georgia,serif":"inherit";
 function CatalogScreen({t,profile,screen=0,kind="app",mode="light"}){
  const p=catalogPalette(t,profile,mode),s=profile.screens[screen];
  const values=profile.related.slice(0,3);
- const vars={"--cx-heading":/-(lux|doga)(-koyu)?$|^(lux|doga)$/.test(t.id)?"Georgia,serif":"inherit","--cx-bg":p.bg,"--cx-sf":p.sf,"--cx-tx":p.tx,"--cx-pr":p.pr,"--cx-ac":p.ac,"--cx-radius":Math.max(3,t.r/2)+"px",fontFamily:"'"+t.font+"',system-ui,sans-serif"};
+ const vars={"--cx-heading":catalogHeading(t),"--cx-bg":p.bg,"--cx-sf":p.sf,"--cx-tx":p.tx,"--cx-pr":p.pr,"--cx-ac":p.ac,"--cx-radius":Math.max(3,t.r/2)+"px",fontFamily:"'"+t.font+"',system-ui,sans-serif"};
  const shot=html`<${CatalogPhoto} photo=${s.photo}/>`;
  const rows=html`<div class="cx-rows">${values.map(([label,example],i)=>html`<div key=${label}><${CatalogPhoto} photo=${profile.screens[i].photo}/><span><b>${example}</b><small>${label}</small></span><span aria-hidden="true">›</span></div>`)}</div>`;
  const detail=html`<div class="cx-detail"><b>${s.example}</b><small>${profile.label}</small></div>`;
@@ -5952,7 +5955,7 @@ function CuratedCatalog(){
   <div class="cx-gallery-title"><div><h3>Ücretsiz temalar</h3><p>Kaynağı, lisansı ve dört gerçek demo ekranı incelenebilen tasarımlar.</p></div></div>
   <div class="cx-grid">${curatedThemes.map(t=>html`
    <button key=${t.id} type="button" class="cx-card" onClick=${()=>setItem(t)} aria-label=${t.name+" · 4 ekranı incele"}>
-    <div class=${"cx-cover cx-curated-cover cx-"+t.id}><${CatalogPhoto} photo=${t.photo}/><img class="cx-curated-thumb" src=${curatedShot(t,"light",0)} alt="" loading="lazy"/>
+    <div class=${"cx-cover cx-curated-cover cx-"+t.id}><img class="cx-curated-thumb" src=${curatedShot(t,"light",0)} alt="" loading="lazy"/>
     <span class="cx-count">4 ekran</span></div>
     <div class="cx-card-meta"><small>${t.kind}</small><b>${t.name}</b><span>${t.author} · ${t.license}</span><${Icon} n="arrowRight" s=${15}/></div>
    </button>`)}</div>
@@ -6010,7 +6013,11 @@ function DesignGallery({kind,sel,sector,onPick,onStart,onTpl,go,close}){
      <nav class="dg-page cx-pages" aria-label="Tasarım sayfaları"><button disabled=${page===0} onClick=${()=>changePage(page-1)}>Önceki</button><span role="status">${page+1} / ${Math.ceil(total/limit)}</span><button disabled=${(page+1)*limit>=total} onClick=${()=>changePage(page+1)}>Sonraki</button></nav>
     </section></div>`}
     ${detail&&html`<${CatalogDesignDetail} t=${detail} kind=${k} sector=${activeSpec?.sector.id} mode=${mode} setMode=${setMode} close=${()=>setDetail(null)}
-     apply=${()=>onPick(detail.id+(mode==="dark"?"-koyu":""),detail.sector||null,k)}/>`}
+     apply=${()=>{
+      const profile=catalogProfile(detail,activeSpec?.sector.id);
+      const board=detail.sector?detail:lookupDesign(profile.id+"-0-0-"+detail.id)||detail;
+      onPick(board.id+(mode==="dark"?"-koyu":""),board.sector||null,k);
+     }}/>`}
   </div></${UiDialog}>
   ${sample&&html`<${TplDemo} t=${sample} close=${()=>setSample(null)} onUse=${t=>{close();onTpl(t)}}/>`}`;
 }
@@ -6328,7 +6335,26 @@ function frameDoc(h,extra){if(!extra)return h;const sh=htmlShape(h);if(sh.closed
  if(_norm.k!==h){try{const d=new DOMParser().parseFromString(h,"text/html");_norm.k=h;_norm.v="<!doctype html>"+d.documentElement.outerHTML}catch(e){_norm.k=h;_norm.v=h}}
  return atBodyEnd(_norm.v,extra)}
 function withQA(h){if(!h||h.includes("data-gm-qa"))return h;const m=/<head[^>]*>/i.exec(h);return m?h.slice(0,m.index+m[0].length)+QA_STYLE+QA_SCRIPT+h.slice(m.index+m[0].length):QA_STYLE+QA_SCRIPT+h}
-function designTokens(h){h=String(h||"");const out=[];const root=h.match(/:root\s*\{([^}]{0,3000})\}/);if(root){const v=root[1].match(/--[\w-]+\s*:\s*[^;]{1,60}/g)||[];out.push(...v.slice(0,18).map(x=>x.replace(/\s+/g," ").trim()))}
+function designTokens(h){
+ h=String(h||"");
+ const out=[];
+ const root=h.match(/:root\s*\{([^}]{0,3000})\}/)?.[1]||"";
+ const tag=h.match(/<html\b[^>]*>/i)?.[0]||"";
+ const variant=tag.match(/\bdata-gm-template-theme="([a-z-]+)"/)?.[1];
+ const mode=tag.match(/\bdata-gm-initial-mode="(light|dark)"/)?.[1];
+ const custom=variant&&TPL_THEMES.get(variant);
+ const theme=custom?`--pr:${custom.primary};--ac:${custom.accent};--bg:${custom.background};--sf:${custom.surface};--tx:${custom.text};--ln:${custom.line}`
+  :variant?new RegExp(':root\\[data-gm-template-theme="'+variant+'"\\]\\s*\\{([^}]+)\\}').exec(h)?.[1]||"":"";
+ const overrides=mode==="dark"&&!h.includes('id="th"')?
+  h.match(/html\[data-gm-mode=dark\]:not\(\[data-gm-native\]\)\{([^}]+)\}/)?.[1]||"":"";
+ if(variant)out.push("aktif şablon teması: "+variant);
+ if(mode)out.push("başlangıç görünümü: "+(mode==="dark"?"koyu":"açık"));
+ const variables=new Map();
+ for(const line of (root+";"+theme+";"+overrides).match(/--[\w-]+\s*:\s*[^;]{1,60}/g)||[]){
+  const normalized=line.replace(/\s+/g," ").trim(),key=normalized.split(":")[0].trim();
+  variables.set(key,normalized);
+ }
+ out.push(...[...variables.values()].slice(0,24));
  const ff=h.match(/font-family\s*:\s*([^;}{]{3,90})/i);if(ff)out.push("font-family: "+ff[1].trim());
  const rads={};(h.match(/border-radius\s*:\s*(\d+px)/gi)||[]).forEach(x=>{const k=x.split(":")[1].trim();rads[k]=(rads[k]||0)+1});const rad=Object.entries(rads).sort((a,b)=>b[1]-a[1])[0];if(rad)out.push("ana köşe yuvarlaklığı: "+rad[0]);
  return out.join("; ").slice(0,1400)}
@@ -6369,12 +6395,12 @@ const designPresets={
 function validTarget(path){
  return Array.isArray(path)&&path.length>0&&path.length<=100&&path.every(p=>p&&typeof p.tag==="string"&&/^[a-z][a-z0-9-]*$/.test(p.tag)&&(typeof p.id==="string"&&p.id.length>0&&p.id.length<=255||Number.isSafeInteger(p.index)&&p.index>0));
 }
-function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAuth,account,autoModel}) {
+function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAuth,account,autoModel,stage}) {
  const [initial]=useState(()=>readDesign(project.html));
  const [rules,setRules]=useState(initial.rules), [history,setHistory]=useState([]);
  const [src]=useState(()=>withStoreShim(taskPreview(designDocument(resolve(initial.base),initial.rules,true))));
  const [target,setTarget]=useState(null),[delta,setDelta]=useState({}),[selecting,setSelecting]=useState(true);
- const [device,setDevice]=useState("auto"),[prompt,setPrompt]=useState(""),[asking,setAsking]=useState(false),[figma,setFigma]=useState(false);
+ const [device,setDevice]=useState(()=>stage==="phone"?"390":stage==="tablet"?"768":"auto"),[prompt,setPrompt]=useState(""),[asking,setAsking]=useState(false),[figma,setFigma]=useState(false);
  const [feedback,setFeedback]=useState(""),[skill,setSkill]=useState("");
  const [catalog,setCatalog]=useState([]),[recipe,setRecipe]=useState(null),[saving,setSaving]=useState(false);
  useEffect(()=>{
@@ -7180,8 +7206,27 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    if(!LS.set(recordKey,e.data.rows))toast("Cihaz depolaması dolu. Önizleme kayıtları bu oturumda tutulacak.")};
   addEventListener("message",receive);return()=>removeEventListener("message",receive);
  },[recordKey]);
- const preview=h=>withStoreShim(taskPreview(resolve(h)));
- useEffect(()=>{if(incoming){proposedTitle.current="";const source=incoming.draftId&&incoming.assets?{html:incoming.html,assets:incoming.assets}:studioSource(incoming.html);const {openDesign,templatePrompt,...project}=incoming;setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);switchProject({...project,...source});if(templatePrompt)setInput(templatePrompt);setPrefs(p=>({...p,kind:incoming.kind||p.kind,theme:incoming.theme&&lookupDesign(incoming.theme)?incoming.theme:"auto",sector:"auto"}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
+ const templateKey=st.html?.includes("data-catalog-theme")&&!st.html.includes("/* gitmapp-task-records */")
+  ?st.html.match(/const key="(gitmapp-[a-f0-9-]{36})";/)?.[1]:null;
+ const templateStateKey="templateState:"+scope;
+ const initialTemplateState=useMemo(()=>LS.get(templateStateKey,null),[templateStateKey,st.html]);
+ useEffect(()=>{
+  if(!templateKey)return;
+  const receive=e=>{
+   const data=e.data;
+   if(e.source!==frameRef.current?.contentWindow||data?.gm!=="template-storage"||data.scope!==scope||data.key!==templateKey)return;
+   if(data.value===null){LS.del(templateStateKey);return}
+   if(typeof data.value==="string"&&data.value.length<=48000&&!LS.set(templateStateKey,data.value))toast("Önizleme kaydı bu tarayıcıda saklanamadı.");
+  };
+  addEventListener("message",receive);
+  return()=>removeEventListener("message",receive);
+ },[scope,templateKey]);
+ const preview=(h,persist=false)=>{
+  const markup=withStoreShim(taskPreview(resolve(h)));
+  if(!templateKey)return markup;
+  return markup.replace(STORE_SHIM,()=>STORE_SHIM+templatePreviewStorage(templateKey,scope,persist?initialTemplateState:LS.get(templateStateKey,null)));
+ };
+ useEffect(()=>{if(incoming){proposedTitle.current="";const source=incoming.draftId&&incoming.assets?{html:incoming.html,assets:incoming.assets}:studioSource(incoming.html);const {openDesign,templatePrompt,previewDevice,...project}=incoming;if(TPL_DEVICES.some(([device])=>device===previewDevice))setStage(previewDevice);setDesignOpen(openDesign===true);setInput("");setAtts([]);setPlan(null);switchProject({...project,...source});if(templatePrompt)setInput(templatePrompt);setPrefs(p=>({...p,kind:incoming.kind||p.kind,theme:incoming.theme&&lookupDesign(incoming.theme)?incoming.theme:"auto",sector:"auto"}));setVersions([]);setTodo(null);clearIncoming()}},[incoming]);
  useEffect(()=>{if(!busy)return;const i=setInterval(()=>{setTick(x=>x+1);setLive(liveRef.current)},500);return()=>clearInterval(i)},[busy]);
  useEffect(()=>{
   const chat=chatRef.current;
@@ -7380,7 +7425,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const ticket=epoch.current;setSaving(true);const body={title:st.title||"Adsız uygulama",html:resolve(st.html),emoji:st.emoji,color:st.color,prompt_log:st.msgs.filter(m=>m.content).map(m=>({role:m.role,content:m.content})).slice(-50),meta:{source:st.source,radarOrigin:st.radarOrigin,purpose:st.purpose||firstUser?.content?.slice(0,220),model:curModel||undefined,kind:prefs.kind,theme:effTheme.id,provider:prefs.provider}};
   try{let j;try{j=st.appId?await api("PUT","/api/apps/"+st.appId,body):await api("POST","/api/apps",body)}catch(e){if(st.appId&&(e.status===404||e.status===403))j=await api("POST","/api/apps",body);else throw e}
    if(ticket!==epoch.current||detachRef.current)return null;
-   if(!st.appId||j.app.id!==st.appId){const nextKey=studioScope(account,{...st,appId:j.app.id});LS.set("cp:"+nextKey,LS.get("cp:"+scope,[]));LS.set("templateRows:"+nextKey,LS.get(recordKey,[]))}
+   if(!st.appId||j.app.id!==st.appId){const nextKey=studioScope(account,{...st,appId:j.app.id});LS.set("cp:"+nextKey,LS.get("cp:"+scope,[]));LS.set("templateRows:"+nextKey,LS.get(recordKey,[]));if(templateKey)LS.set("templateState:"+nextKey,LS.get(templateStateKey,null))}
    const live=!!(j.app.url||j.app.status==="published");setSaved({...st,appId:j.app.id,live,prefs,userId:auth.user.id});setSaveFailed(false);setSt(s=>({...s,appId:j.app.id,live}));if(!silent)toast("Kaydedildi");setSaving(false);return j.app}catch(e){if(ticket!==epoch.current||detachRef.current)return null;setSaveFailed(true);if(!silent)toast(e.message);setSaving(false);return null}}
  async function publish(){const a=await save();if(a)openPublish(a)}
  function undo(){if(!versions.length)return;const v=versions[versions.length-1];setVersions(versions.slice(0,-1));setSt(s=>({...s,html:v,msgs:[...s.msgs,{role:"assistant",content:"Önceki sürüme dönüldü.",anim:true}]}))}
@@ -7967,8 +8012,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   switchProject({...st,gitContext:null,msgs:[]});
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
- const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${frameDoc(ve?withQA(preview(st.html)):preview(st.html),ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gtPanel}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
+ const frameEl=(sg,ve)=>{const iframe=html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${frameDoc(ve?withQA(preview(st.html,true)):preview(st.html),ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;return st.html?.includes("data-catalog-theme")?html`<${TemplateViewport} device=${sg}>${iframe}</${TemplateViewport}>`:iframe};
+ return html`<div class="ws">${gtPanel}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} stage=${stage} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -8215,7 +8260,7 @@ function StoreSearch({value,onChange,onSubmit,onClear,onIntent,onDemo}){
   ${show&&html`<div class="ks-pop" id="ks-list" role="listbox" aria-label="Arama önerileri">
    ${!value&&items.length>0&&html`<div class="ks-cap">Son aramaların</div>`}
    ${items.map((x,i)=>html`<button type="button" role="option" id=${"ks-o"+i} aria-selected=${i===act} key=${x.w} class=${"ks-opt"+(i===act?" on":"")} onMouseEnter=${()=>setAct(i)} onClick=${()=>choose(x)}>
-    ${x.kind==="tpl"&&x.id?html`<img class="ks-mini" alt="" src=${CATALOG_ART+x.id+".webp"}/>`:html`<${Icon} n=${x.kind==="recent"?"clock":x.kind==="cat"?"grid":"search"} s=${14}/>`}<span>${x.w}</span><em>${{recent:"geçmiş",tpl:"şablon",sec:"sektör",cat:"kategori",word:"öneri"}[x.kind]}</em></button>`)}
+    ${x.kind==="tpl"&&x.id?html`<img class="ks-mini" alt="" src=${"templates/previews/"+x.id+".webp"}/>`:html`<${Icon} n=${x.kind==="recent"?"clock":x.kind==="cat"?"grid":"search"} s=${14}/>`}<span>${x.w}</span><em>${{recent:"geçmiş",tpl:"şablon",sec:"sektör",cat:"kategori",word:"öneri"}[x.kind]}</em></button>`)}
    ${sug.intent&&html`<div class="ks-intent"><span class="ks-pal" aria-hidden="true">${[sug.intent.theme.p.bg,sug.intent.theme.p.pr,sug.intent.theme.p.ac].map(c=>html`<i key=${c} style=${{background:c}}></i>`)}</span><div><b>${sug.intent.sec.l} için bir şey arıyor gibisin</b><span>Tahmin edilen tasarım: ${sug.intent.theme.name} · ${sug.intent.theme.tag}</span></div>
     <button type="button" class="ks-start" onClick=${()=>{setOpen(false);onIntent(sug.intent,value.trim())}}><${Icon} n="wand" s=${14}/> Bu fikirle başla</button></div>`}
   </div>`}
@@ -8322,7 +8367,7 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
  const recent=fresh.filter(a=>!shown.has(a.slug)).slice(0,6);
  const filtered=cat||q||full;
  const filtersBar=html`<${CollectionNav} page="magaza" go=${go}/>
-  <${CollectionHero} title="Keşfet" copy="İşine uygun uygulamaları, mobil tasarımları ve geliştirme araçlarını keşfet." image=${filtered?"discover":"forma"} caption=${filtered?"Katalog seçkisi":"Forma mağazasının mobil ve web tasarımı"} action=${!filtered&&(()=>setTdemo({...catalogTemplate("forma"),showDetails:true}))} cta="Forma Mağaza’yı incele"/>
+  <${CollectionHero} title="Keşfet" copy="İşine uygun uygulamaları, mobil tasarımları ve geliştirme araçlarını keşfet." image="discover" template=${!filtered&&catalogTemplate("forma")} caption=${filtered?"Katalog seçkisi":"Forma mağazasının mobil ve web tasarımı"} action=${!filtered&&(()=>setTdemo({...catalogTemplate("forma"),showDetails:true}))} cta="Forma Mağaza’yı incele"/>
   <section class="store-nav gallery-search" aria-label="Katalogda ara">
   <${StoreSearch} onDemo=${setTdemo} value=${draft} onChange=${setDraft} onSubmit=${v=>{setDraft(v);onFilters({...filters,q:v})}} onClear=${()=>{setDraft("");onFilters({...filters,q:"",sort:cat||full?sort:"pop"})}} onIntent=${(it,text)=>{TASTE.note({type:"intent",text,sector:it.sec.id,theme:it.theme.id,w:2});startTemplate({kind:it.sec.id==="oyun"?"game":"app",theme:it.theme.id,sector:it.sec.id,prompt:text.length>12?text:undefined})}}/>
   <div class="store-categories" role="group" aria-label="Kategoriler">
@@ -8567,6 +8612,7 @@ const TEMPLATE_USE_CASES={
 const TPL_URL=id=>"templates/"+id+".html";
 const templateSectorSlug=name=>name.toLocaleLowerCase("tr").replace(/ı/g,"i").normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const TPL_TYPES={panel:"Yönetim paneli",site:"Web sitesi"};
+const TPL_WIDTHS={phone:390,tablet:768,desktop:1280};
 const TPL_DEVICES=[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]];
 const TPL_APPEARANCES=[
  ["","Özgün"],
@@ -8575,7 +8621,6 @@ const TPL_APPEARANCES=[
  ["studio","Studio Grid"],
  ["atelier","Atelier"]
 ];
-const recommendedAppearance=t=>t.type==="panel"?"studio":"atelier";
 const TPL_STYLES=[
  ["editorial","Editoryal"],
  ["gallery","Galeri"],
@@ -8812,6 +8857,8 @@ function templateAppearance(source,appearance,preview=false){
  const sheet='<style data-gm-tpl-theme>'+((legacy||preview)?TPL_THEME_CSS:"")+((theme||preview)?TPL_COLLECTION_CSS:"")+properties+'</style>';
  return themed.replace(/<\/head\s*>/i,close=>sheet+(preview?TPL_THEME_PREVIEW_SCRIPT:"")+close);
 }
+const templateDocument=(source,appearance,mode,preview=false)=>
+ prepareCatalogTemplate(templateAppearance(source,appearance,preview),preview,mode);
 const activeTemplateProject=account=>LS.get("studio:"+(account||"guest"),null)||(account?null:LS.get("studio",null));
 const tplNumber=new Intl.NumberFormat("tr-TR");
 const tplMoney=new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:4});
@@ -8826,9 +8873,13 @@ function ProductMark({t}){
 }
 function TplThemeThumbnail({id,appearance,container}){
  const [source,setSource]=useState("");
- const [visible,setVisible]=useState(false);
+ const [visible,setVisible]=useState(false),[failed,setFailed]=useState(false);
  useEffect(()=>{
-  const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting));
+  const observer=new IntersectionObserver(([entry])=>{
+   if(!entry.isIntersecting)return;
+   setVisible(true);
+   observer.disconnect();
+  });
   observer.observe(container.current);
   return ()=>observer.disconnect();
  },[container]);
@@ -8837,16 +8888,17 @@ function TplThemeThumbnail({id,appearance,container}){
   const controller=new AbortController();
   loadTemplate(id,controller.signal)
    .then(source=>{if(!controller.signal.aborted)setSource(source)})
-   .catch(()=>{});
+   .catch(()=>{if(!controller.signal.aborted)setFailed(true)});
   return ()=>controller.abort();
  },[id,visible]);
- if(!source||!visible)return null;
- const preview=templateAppearance(source,appearance);
+ if(!visible)return null;
+ if(!source)return html`<span class="tpl-thumb-message">${failed?"Önizleme yüklenemedi":"Önizleme yükleniyor…"}</span>`;
+ const preview=prepareCatalogTemplate(templateAppearance(source,appearance),true,"light");
  return html`<${TplThumbFrame} mode="desktop" source=${preview}/><${TplThumbFrame} mode="phone" source=${preview}/>`;
 }
 function TplThumbFrame({mode,source}){
  const box=useRef(null),[scale,setScale]=useState(0),[ready,setReady]=useState(false);
- const width=mode==="desktop"?1160:390;
+ const width=TPL_WIDTHS[mode];
  useEffect(()=>{
   const observer=new ResizeObserver(([entry])=>setScale(entry.contentRect.width/width));
   observer.observe(box.current);
@@ -8860,28 +8912,49 @@ function TplThumbFrame({mode,source}){
 function TplThumb({t,eager=false}){
  const art=useRef(null);
  const theme=TPL_THEMES.get(t.appearance);
- const base="templates/previews/"+t.id+(!theme&&t.appearance?"-"+t.appearance:"");
+ const base="templates/previews/"+t.id+(t.appearance?"-"+t.appearance:"");
  return html`<div class="tpl-device-art" ref=${art} style=${{"--tpl-color":theme?.primary||t.pr}}>
-  <img class="tpl-web-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" masaüstü görünümü"} src=${base+".webp"}/>
-  ${theme&&html`<${TplThemeThumbnail} key=${t.id} id=${t.id} appearance=${t.appearance} container=${art}/>`}
-  <img class="tpl-phone-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" mobil görünümü"} src=${base+"-mobile.webp"}/>
+  ${theme?html`<${TplThemeThumbnail} key=${t.id} id=${t.id} appearance=${t.appearance} container=${art}/>`:html`
+   <img class="tpl-web-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" masaüstü görünümü"} src=${base+".webp"} key=${base} onError=${e=>{e.currentTarget.hidden=true}}/>
+   <img class="tpl-phone-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" mobil görünümü"} src=${base+"-mobile.webp"} key=${base+"-mobile"} onError=${e=>{e.currentTarget.hidden=true}}/>`}
  </div>`;
 }
+const templateScreenUrl=(id,mode,index)=>"templates/previews/"+id+"-"+mode+"-"+index+".webp";
 function TemplateScreens({t,mode}){
- const [active,setActive]=useState(0);
+ const [active,setActive]=useState(t.initialScreen||0);
  const labels=templateScreenLabels[t.id];
  if(!labels)return html`<${TplThumb} t=${t}/>`;
- const render=i=>html`<img src=${"templates/previews/"+t.id+"-"+mode+"-"+i+".webp"} alt=${labels[i]} decoding="async"/>`;
+ const render=i=>html`<img src=${templateScreenUrl(t.id,mode,i)} alt=${labels[i]} decoding="async"/>`;
  return html`<div class="cx-template-screens">
   <div class="cx-template-spot"><div class="cx-template-shot" key=${active+mode}>${render(active)}</div></div>
   <${CatalogStory} items=${labels} active=${active} setActive=${setActive} render=${render}/>
  </div>`;
 }
 function TplCard({t,onDemo}){return html`<${TemplateTile} t=${t} onDemo=${onDemo}/>`}
+function TemplateViewport({device,children}){
+ const root=useRef(null);
+ const [size,setSize]=useState(null);
+ React.useLayoutEffect(()=>{
+  const element=root.current;
+  const measure=()=>setSize({w:element.clientWidth,h:element.clientHeight});
+  const observer=new ResizeObserver(measure);
+  observer.observe(element);
+  measure();
+  return()=>observer.disconnect();
+ },[]);
+ const width=device==="phone"&&size?.w?Math.min(TPL_WIDTHS.phone,size.w):TPL_WIDTHS[device]||TPL_WIDTHS.desktop;
+ const scale=size?.w?Math.min(1,size.w/width):1;
+ return html`<div class="template-viewport" ref=${root}>
+  <div class="template-viewport-frame" style=${{width,height:size?.h?size.h/scale:"100%",zoom:scale}}>${children}</div>
+ </div>`;
+}
 function TplDemo({t,close,onUse,canAdapt=false}){
- const [dev,setDev]=useState(t.previewDevice||"desktop"),[details,setDetails]=useState(!!t.showDetails),dialog=useRef(null);
+ const [dev,setDev]=useState(t.previewDevice||(matchMedia("(max-width:700px)").matches?"phone":"desktop")),[details,setDetails]=useState(!!t.showDetails),dialog=useRef(null);
  const [source,setSource]=useState(""),[failure,setFailure]=useState(""),[appearance,setAppearance]=useState(t.appearance||"");
  const frame=useRef(null),[mode,setMode]=useState(t.previewMode||"light");
+ const liveVisible=!details||!!appearance;
+ const compiled=useMemo(()=>source?withStoreShim(templateDocument(source,t.appearance,t.previewMode||"light",true)):"",[source,t.appearance,t.previewMode]);
+ const useCurrent=options=>onUse({...t,appearance,previewMode:mode,previewDevice:dev,templateSource:source,...options});
  useEffect(()=>{TASTE.note({type:"demo",id:t.id,title:t.name,text:[t.sector,t.desc].join(" "),colors:[t.pr,t.ac,...(CATALOG_THEMES[t.appearance]?.colors||[]).slice(1)],kind:t.kind==="site"?"site":t.kind==="game"?"game":"app",w:1.5})},[t.id]);
  useEffect(()=>{if(appearance&&appearance!==t.appearance&&CATALOG_THEMES[appearance])TASTE.note({type:"theme",colors:CATALOG_THEMES[appearance].colors,w:1.2})},[appearance]);
  const applyAppearance=()=>{
@@ -8897,13 +8970,13 @@ function TplDemo({t,close,onUse,canAdapt=false}){
   return ()=>{el.close();if(trigger?.isConnected)trigger.focus({preventScroll:true})};
  },[]);
  useEffect(()=>{
-  if(details||source||failure)return;
+  if(!liveVisible||source||failure)return;
   const controller=new AbortController();
   loadTemplate(t.id,controller.signal)
-   .then(h=>{if(!controller.signal.aborted)setSource(withStoreShim(prepareCatalogTemplate(templateAppearance(h,t.appearance,true),true)))})
+   .then(h=>{if(!controller.signal.aborted)setSource(h)})
    .catch(e=>{if(!controller.signal.aborted)setFailure(e.message)});
   return()=>controller.abort();
- },[details,t.id,source,failure]);
+ },[liveVisible,t.id,source,failure]);
  return ReactDOM.createPortal(html`<dialog class=${"tpl-dialog"+(details?" gallery-detail":"")} ref=${dialog} onClick=${e=>{if(e.target===dialog.current)close()}} aria-label=${t.name+" · Şablon"} onCancel=${e=>{e.preventDefault();close()}}>
   <header class="product-intro" style=${{"--brand":t.pr,"--accent":t.ac}}>
    <div class="product-heading"><${ProductMark} t=${t}/><div><small>${t.sector} · ${TPL_TYPES[t.type]}</small><h1>${t.name}</h1></div>
@@ -8911,30 +8984,31 @@ function TplDemo({t,close,onUse,canAdapt=false}){
    <div class="product-controls">
     <div class="seg" role="group" aria-label="Şablon görünümü">
      <button class=${!details?"on":""} aria-pressed=${!details} onClick=${()=>setDetails(false)}>Canlı önizleme</button>
-     <button class=${details?"on":""} aria-pressed=${details} onClick=${()=>setDetails(true)}>4 ekran ve detaylar</button>
+     <button class=${details?"on":""} aria-pressed=${details} onClick=${()=>setDetails(true)}>${appearance?"Ayrıntılar":"4 ekran ve detaylar"}</button>
     </div>
     <${CatalogMode} mode=${mode} setMode=${setMode}/>
-    <button class="getbtn" onClick=${()=>onUse({...t,appearance,previewMode:mode,openDesign:true})}>Tasarımı düzenle</button>
-    <button class="getbtn solid" onClick=${()=>onUse({...t,appearance,previewMode:mode})}>Bu şablonla başla <${Icon} n="arrowRight" s=${16}/></button>
+    <label class="tpl-theme-label">Tema <select aria-label="Önizleme teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}>${templateThemeOptions()}</select></label>
+    <button class="getbtn" onClick=${()=>useCurrent({openDesign:true})}>Tasarımı düzenle</button>
+    <button class="getbtn solid" onClick=${()=>useCurrent()}>Bu şablonla başla <${Icon} n="arrowRight" s=${16}/></button>
    </div>
   </header>
+  <div class="product-caption tpl-preview-tools" hidden=${!liveVisible}>
+   <div class="seg" role="group" aria-label="Önizleme cihazı">${TPL_DEVICES.map(([k,ic,l])=>html`<button key=${k} aria-label=${l} aria-pressed=${dev===k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${16}/>${l}</button>`)}</div>
+   ${!appearance&&mode==="light"&&html`<a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" aria-label="Demoyu yeni sekmede aç" title="Demoyu yeni sekmede aç"><${Icon} n="external" s=${16}/></a>`}
+  </div>
+  <div class="fp-stage product-stage" hidden=${!liveVisible}>
+   ${failure?html`<p role="alert">${failure} <button class="btn s" onClick=${()=>setFailure("")}>Tekrar dene</button></p>`:source?html`<${TemplateViewport} device=${dev}><iframe ref=${frame} onLoad=${applyAppearance} title=${t.name} srcDoc=${compiled} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe></${TemplateViewport}>`:html`<p role="status">Önizleme yükleniyor…</p>`}
+  </div>
   ${details&&html`<div class="tpl-details">
-   <section class="gallery-detail-preview"><${TemplateScreens} t=${{...t,appearance}} mode=${mode}/><div class="adapter-actions">${[["phone","Telefon"],["desktop","Masaüstü"]].map(([key,label])=>html`<button type="button" class="chip" key=${key} onClick=${()=>{setDev(key);setDetails(false)}}>${label} önizlemesi</button>`)}</div></section>
+   ${!appearance&&html`<section class="gallery-detail-preview"><${TemplateScreens} t=${t} mode=${mode}/><div class="adapter-actions">${[["phone","Telefon"],["desktop","Masaüstü"]].map(([key,label])=>html`<button type="button" class="chip" key=${key} onClick=${()=>{setDev(key);setDetails(false)}}>${label} önizlemesi</button>`)}</div></section>`}
    <section><h2>Şablon hakkında</h2><p>${t.desc}</p><ul>${t.feat.map(f=>html`<li key=${f}>${f}</li>`)}</ul><${TplSkillHint} t=${t}/></section>
-   <section><h2>Kullanım alanları</h2><p>${usage}</p><h3>Projenize uyarlayın</h3><p>${adapt}</p>${canAdapt&&html`<button class="getbtn" onClick=${()=>onUse({...t,appearance,adaptExisting:true})}>Açık projeye uyarlama isteği hazırla</button>`}</section>
+   <section><h2>Kullanım alanları</h2><p>${usage}</p><h3>Projenize uyarlayın</h3><p>${adapt}</p>${canAdapt&&html`<button class="getbtn" onClick=${()=>useCurrent({adaptExisting:true})}>Açık projeye uyarlama isteği hazırla</button>`}</section>
    <section class="tpl-pricing"><h2>Yapay zekâ maliyeti</h2>
     ${quote?html`<p><strong>~${quote.credits} kredi</strong> tipik özelleştirme</p><p>Şablonu açmak ve önizlemek ücretsiz. Stüdyo'da her değişiklik isteği ${quote.per} kredi${quote.model?" ("+shortModel(quote.model)+")":""}; tipik özelleştirme ${TPL_EDITS} istek sürer.</p>`:html`<p>Bu şablon için özelleştirme tahmini henüz girilmedi.</p>`}
     <p>Demoyu açmak ve şablonu Stüdyo’ya almak ücretsizdir. Yapay zekâ işlemlerinde seçilen modelin kredi tarifesi geçerlidir.</p>
    </section>
   </div>`}
-  <div class="product-caption tpl-preview-tools" hidden=${details}>
-   <div class="seg" role="group" aria-label="Önizleme cihazı">${TPL_DEVICES.map(([k,ic,l])=>html`<button key=${k} aria-label=${l} aria-pressed=${dev===k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${16}/>${l}</button>`)}</div>
-   <label class="tpl-theme-label">Tema <select aria-label="Önizleme teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}>${templateThemeOptions()}</select></label>
-   ${!appearance&&html`<a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" aria-label="Demoyu yeni sekmede aç" title="Demoyu yeni sekmede aç"><${Icon} n="external" s=${16}/></a>`}
-  </div>
-  <div class="fp-stage product-stage" hidden=${details}>
-   ${failure?html`<p role="alert">${failure} <button class="btn s" onClick=${()=>setFailure("")}>Tekrar dene</button></p>`:source?html`<iframe ref=${frame} onLoad=${applyAppearance} title=${t.name} srcDoc=${source} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe>`:html`<p role="status">Önizleme yükleniyor…</p>`}
-  </div></dialog>`,document.body);
+  </dialog>`,document.body);
 }
 const MOBILE_PROMO_SCENES=[
  {id:"sofra",secondary:"adisyon",color:"#925134",caption:"Menü ve masa rezervasyonu"},
@@ -8964,21 +9038,22 @@ function MobileTemplatePromo({compact=false,onDemo,onReferences}){
   return ()=>clearInterval(timer);
  },[rotating]);
  const choose=delta=>{setPlaying(false);move(delta)};
- const openDemo=()=>onDemo({...template,previewDevice:"phone",appearance:catalogTemplateAppearance(template,"recommended")});
+ const openDemo=(chosen=template)=>onDemo({...chosen,previewDevice:"phone"});
+ const secondary=catalogTemplate(scene.secondary);
  return html`<section class=${"mobile-promo"+(compact?" mobile-promo-compact":"")} aria-label="Mobil uygulama şablonları" style=${{"--promo-color":scene.color}}>
   <div class="mobile-promo-copy">
    <p class="mobile-promo-kicker"><${Icon} n="phone" s=${15}/> ${compact?"Mobil şablon seçkisi":"Gitmapp şablonları"}</p>
    <${heading}>${compact?"Uygulamanı telefonda dene.":"İşin, müşterinin cebinde."}</${heading}>
    <p class="mobile-promo-lead">${compact?"Sipariş, rezervasyon ve randevu akışlarını keşfet.":"Siparişten rezervasyona, müşterinin kullanacağı ekranları canlı dene. Beğendiğin şablonu Stüdyo’da düzenle."}</p>
    <div class="mobile-promo-actions">
-    <button class="mobile-promo-main" type="button" onClick=${openDemo}><${Icon} n="play" s=${16}/> Telefonda dene</button>
+    <button class="mobile-promo-main" type="button" onClick=${()=>openDemo()}><${Icon} n="play" s=${16}/> Telefonda dene</button>
     <button class="mobile-promo-secondary" type="button" onClick=${onReferences}>Figma referansları <${Icon} n="arrowRight" s=${16}/></button>
    </div>
   </div>
   <div class="mobile-promo-visual" ref=${stage}>
-   <div class="mobile-promo-stage" aria-hidden="true" key=${scene.id}>
-    <figure class="mobile-promo-phone back"><img alt="" width="300" height="569" loading=${compact?"lazy":"eager"} src=${"templates/previews/"+scene.secondary+"-mobile.webp"}/></figure>
-    <figure class="mobile-promo-phone front"><img alt="" width="300" height="569" loading=${compact?"lazy":"eager"} src=${"templates/previews/"+scene.id+"-mobile.webp"}/></figure>
+   <div class="mobile-promo-stage" key=${scene.id}>
+    <button type="button" class="mobile-promo-phone back" aria-label=${secondary.name+" · Telefonda dene"} onClick=${()=>openDemo(secondary)}><img alt="" width="300" height="569" loading=${compact?"lazy":"eager"} src=${"templates/previews/"+scene.secondary+"-mobile.webp"}/></button>
+    <button type="button" class="mobile-promo-phone front" aria-label=${template.name+" · Telefonda dene"} onClick=${()=>openDemo(template)}><img alt="" width="300" height="569" loading=${compact?"lazy":"eager"} src=${"templates/previews/"+scene.id+"-mobile.webp"}/></button>
    </div>
    ${!compact&&html`<div class="mobile-promo-caption">
     <div aria-live=${rotating?"off":"polite"}><strong>${template.name}</strong><span>${scene.caption}</span></div>
@@ -9045,13 +9120,13 @@ function MobileReferences({close,initialSector=""}){
 }
 
 function TemplatesPage({onUse,canAdapt,go}){
- const [type,setType]=useState(""),[sector,setSector]=useState(""),[demo,setDemo]=useState(null),[appearance,setAppearance]=useState("recommended");
+ const [type,setType]=useState(""),[sector,setSector]=useState(""),[demo,setDemo]=useState(null),[appearance,setAppearance]=useState("");
  const [premiumOnly,setPremiumOnly]=useState(false),[search,setSearch]=useState(""),[filtersOpen,setFiltersOpen]=useState(false),[references,setReferences]=useState(false);
  const query=search.trim().toLocaleLowerCase("tr");
  const sectors=[...new Set(TEMPLATE_LIB.map(t=>t.sector))].sort((a,b)=>a.localeCompare(b,"tr"));
  const ordered=[...featuredTemplates.map(catalogTemplate).filter(Boolean),...TEMPLATE_LIB.filter(t=>!featuredTemplates.includes(t.id))];
  const matches=ordered.filter(t=>(!sector||t.sector===sector)&&(!type||t.type===type)&&(!premiumOnly||t.premium)&&[t.name,t.sector,t.desc,...t.feat].join(" ").toLocaleLowerCase("tr").includes(query));
- const themed=t=>({...t,editorial:appearance==="recommended",appearance:appearance==="recommended"?recommendedAppearance(t):appearance});
+ const themed=t=>({...t,appearance:catalogTemplateAppearance(t,appearance)});
  return html`<div class="explore tpl-catalog gallery-page">
   <${CollectionNav} page="sablonlar" go=${go}/>
   <${MobileTemplatePromo} onDemo=${setDemo} onReferences=${()=>setReferences(true)}/>
@@ -9059,7 +9134,7 @@ function TemplatesPage({onUse,canAdapt,go}){
   <${CatalogNav} page="sablonlar" go=${go}/>
   <div class="tp-filter gallery-filters">
    <input type="search" class="in" aria-label="Şablon ara" placeholder="Şablon ara" value=${search} onInput=${e=>setSearch(e.target.value)}/>
-   <button type="button" class="chip filter-toggle" aria-expanded=${filtersOpen} aria-controls="template-filter-options" onClick=${()=>setFiltersOpen(!filtersOpen)}><${Icon} n="sliders" s=${15}/> Filtreler${[type,sector,premiumOnly,appearance!=="recommended"].filter(Boolean).length||""}</button>
+   <button type="button" class="chip filter-toggle" aria-expanded=${filtersOpen} aria-controls="template-filter-options" onClick=${()=>setFiltersOpen(!filtersOpen)}><${Icon} n="sliders" s=${15}/> Filtreler${[type,sector,premiumOnly,appearance].filter(Boolean).length||""}</button>
    <div id="template-filter-options" class=${"gallery-filter-options"+(filtersOpen?" show":"")}><div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Paneller"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <button class=${"chip"+(premiumOnly?" on":"")} aria-pressed=${premiumOnly} onClick=${()=>setPremiumOnly(!premiumOnly)}>Premium koleksiyon</button>
    <label class="tpl-theme-label">Tema <select aria-label="Katalog teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}><option value="recommended">Önerilen</option>${templateThemeOptions()}</select></label>
@@ -9073,9 +9148,9 @@ function TemplatesPage({onUse,canAdapt,go}){
 }
 
 const CATALOG_KITS=[
- {id:"forma",spec:"Mağaza UI kiti",screens:["Katalog ve filtreler","Ürün detayı","Favoriler","Sepet","Teslimat","Sipariş onayı"],shots:[["catalog","Katalog"],["product","Ürün detayı"],["cart","Sepet"]]},
- {id:"molaseans",spec:"Randevu UI kiti",screens:["Seans listesi","Tarih ve saat","Randevu onayı","Randevu iptali"],shots:[["catalog","Seans listesi"],["product","Tarih ve saat"],["cart","Randevularım"]]},
- {id:"akisoperasyon",spec:"Yönetim UI kiti",screens:["Operasyon özeti","İş listesi","İş detayı","Yeni iş"],shots:[["catalog","Operasyon özeti"],["product","İş listesi"],["cart","İş detayı"]]},
+ {id:"forma",spec:"Mağaza UI kiti",screens:["Katalog ve filtreler","Ürün detayı","Favoriler","Sepet","Teslimat","Sipariş onayı"],shots:[0,1,3]},
+ {id:"molaseans",spec:"Randevu UI kiti",screens:["Seans listesi","Tarih ve saat","Randevu onayı","Randevu iptali"],shots:[0,1,3]},
+ {id:"akisoperasyon",spec:"Yönetim UI kiti",screens:["Operasyon özeti","İş listesi","İş detayı","Yeni iş"],shots:[0,1,2]},
 ];
 const CATALOG_THEMES={
  ivory:{label:"Fildişi",desc:"Sıcak nötrler, serif başlıklar ve kısa gölgeler. Portföy, konaklama ve yemek sitelerine uygun.",fonts:"Georgia + sistem sans",colors:["#f7f1e8","#6e4e36","#a4744c"],example:"mimari"},
@@ -9106,7 +9181,7 @@ function CatalogStarter({kind,text="",onDemo,go}){
  return html`<section class="catalog-starter">
   <div class="catalog-starter-head"><div><h2>${kind==="site"?"Web sitesi örnekleri":"Uygulama örnekleri"}</h2><p>${selected?selected[0]:"Çalışan bir örnek açarak başlayın."}</p></div>
   <label>Konu <select aria-label="Örnek konusu" class="in" value=${selected?.[0]||""} onChange=${e=>setTopic(e.target.value)}><option value="">Genel</option>${CATALOG_CONTEXT.map(([name])=>html`<option key=${name}>${name}</option>`)}</select></label></div>
-  <div class="catalog-starter-grid">${choices.map(t=>html`<${GalleryTile} cls="catalog-example" key=${t.id} title=${t.name} meta=${t.sector} description=${t.desc} art=${html`<${GalleryCover} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>onDemo({...t,showDetails:true,appearance:recommendedAppearance(t),previewDevice:kind==="site"?"desktop":"phone",projectKind:kind})}/>`)}</div>
+  <div class="catalog-starter-grid">${choices.map(t=>html`<${GalleryTile} cls="catalog-example" key=${t.id} title=${t.name} meta=${t.sector} description=${t.desc} art=${html`<${TplThumb} t=${t}/>`} action=${()=>onDemo({...t,showDetails:true,previewDevice:kind==="site"?"desktop":"phone",projectKind:kind})}/>`)}</div>
   <${CatalogNav} go=${go}/>
  </section>`;
 }
@@ -9121,7 +9196,7 @@ function DesignCatalog({page,go,onUse,canAdapt}){
   <div class="theme-catalog-grid">${Object.entries(CATALOG_THEMES).map(([id,theme])=>{
    const t={...catalogTemplate(sample||theme.example),appearance:id};
    return html`<article class="theme-catalog-card" key=${id}>
-    <${TplThumb} t=${t}/><div class="theme-catalog-info"><h2>${theme.label}</h2><p>${theme.desc}</p><div class="theme-spec"><span>${theme.fonts}</span><span class="theme-palette" aria-label=${"Renkler "+theme.colors.join(", ")}>${theme.colors.map(color=>html`<i key=${color} style=${{background:color}}></i>`)}</span></div>
+    <button type="button" class="catalog-image-action" aria-label=${theme.label+" · "+t.name+" önizlemesi"} onClick=${()=>setDemo(t)}><${TplThumb} t=${t}/></button><div class="theme-catalog-info"><h2>${theme.label}</h2><p>${theme.desc}</p><div class="theme-spec"><span>${theme.fonts}</span><span class="theme-palette" aria-label=${"Renkler "+theme.colors.join(", ")}>${theme.colors.map(color=>html`<i key=${color} style=${{background:color}}></i>`)}</span></div>
     <button class="getbtn" onClick=${()=>setDemo(t)}>Temayı canlı dene</button></div>
    </article>`;
   })}</div>`:html`
@@ -9130,7 +9205,7 @@ function DesignCatalog({page,go,onUse,canAdapt}){
    const t=catalogTemplate(kit.id);
    return html`<article key=${kit.id} class="kit-catalog-card"><div class="kit-catalog-copy"><small>${kit.spec}</small><h2>${t.name}</h2><p>${t.desc}</p><ul>${kit.screens.map(s=>html`<li key=${s}>${s}</li>`)}</ul>
    <div class="kit-actions"><button class="getbtn solid" onClick=${()=>setDemo({...t,previewDevice:"phone"})}>Akışı canlı dene</button><button class="getbtn" onClick=${()=>onUse(t)}>Stüdyo’da aç</button></div></div>
-   <div class="kit-screen-gallery" style=${{"--kit-color":t.pr}}>${kit.shots.map(([shot,label])=>html`<img loading="lazy" key=${shot} src=${"templates/previews/"+kit.id+"-screen-"+shot+".webp"} alt=${label}/>`)}</div></article>`;
+   <div class="kit-screen-gallery" style=${{"--kit-color":t.pr}}>${kit.shots.map(index=>{const label=templateScreenLabels[t.id][index];return html`<button type="button" class="catalog-image-action" key=${index} aria-label=${label+" ekranını incele"} onClick=${()=>setDemo({...t,showDetails:true,initialScreen:index,previewDevice:"phone"})}><img loading="lazy" src=${templateScreenUrl(t.id,"light",index)} alt=${label}/></button>`})}</div></article>`;
   })}`}
  ${demo&&html`<${TplDemo} t=${demo} canAdapt=${canAdapt} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
  </main>`;
@@ -9939,7 +10014,7 @@ function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry,onSectorPlans}){
    <label class="skm-q skl-q"><${Icon} n="search" s=${16}/><input aria-label="Beceri ara" placeholder="Sektör ya da iş ara: eczane, aidat, hakediş, kuaför…" value=${q} onInput=${e=>setQ(e.target.value)}/></label></div>
   ${qq?html`<div><p class="sub">${list.length} beceri bulundu</p><div class="skl-grid">${list.map(card)}</div>${!list.length&&html`<div class="box skl-empty">Bu aramayla beceri yok. Aradığın sektörü <b>Yeni</b> ekranında anlatman yeterli; yapay zekâ genel becerilerle yine de üretir.</div>`}</div>`:
   cur?html`<div><div class="skl-top"><button class="btn g s" onClick=${()=>pick("")}><${Icon} n="arrowLeft" s=${15}/> Tüm sektörler</button><${Tile} n=${cur.icon} s=${40}/><div><h2>${cur.name}</h2><p class="sub">${cur.desc}</p></div></div><div class="skl-grid">${list.map(card)}</div></div>`:
-  html`<div><div class="gallery-grid skl-secs">${sectors.map(s=>{const n=plans.filter(p=>p.sector===s.id).length;const t=catalogTemplate(sectorExample[s.id]||"crm");return html`<${GalleryTile} key=${s.id} cls="skl-tile" title=${s.name} meta=${n+" beceri"} description=${s.desc} art=${html`<${GalleryCover} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>pick(s.id)}/>`})}</div>
+  html`<div><div class="gallery-grid skl-secs">${sectors.map(s=>{const n=plans.filter(p=>p.sector===s.id).length;const t=catalogTemplate(sectorExample[s.id]||"crm");return html`<${GalleryTile} key=${s.id} cls="skl-tile" title=${s.name} meta=${n+" beceri"} description=${s.desc} art=${html`<${TplThumb} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>pick(s.id)}/>`})}</div>
    <div class="box skl-more"><${Icon} n="brain" s=${20}/><div><b>Tasarım, kalite ve iş süreci becerileri</b><span>Kurumsal panel, kamu portalı, temiz mimari, KVKK, erişilebilirlik ve daha fazlası. Sektör planı yüklediğinde uygun tasarım ve kalite becerisi kendiliğinden eklenir.</span></div><button class="btn g s" onClick=${()=>dispatchEvent(new CustomEvent("gm:beceri",{detail:"manage"}))}>Tümünü yönet</button></div></div>`}
  ${selected&&html`<${UiDialog} label=${selected.name} width="660px" close=${()=>setOpen("")}><div class="skill-detail"><div class="eng-head"><h2>${selected.name}</h2><button class="ib" aria-label="Kapat" onClick=${()=>setOpen("")}><${Icon} n="x"/></button></div><p>${selected.who}</p>
  <div class="skl-m"><span>v${selected.version}</span><span>${selected.uses} kullanım</span>${selected.score!=null&&html`<span>Test ${selected.score}/100</span>`}${selected.success!=null&&html`<span>Başarı %${selected.success}</span>`}</div>
@@ -11168,10 +11243,10 @@ function App(){
     setView("studio");
     return;
    }
-   const h=prepareCatalogTemplate(templateAppearance(await loadTemplate(t.id),t.appearance),false,t.previewMode);if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});TASTE.note({type:"use",id:t.id,title:t.name,text:t.sector,colors:[t.pr,t.ac],kind:t.kind==="site"?"site":"app",w:3});
+   const h=templateDocument(t.templateSource||await loadTemplate(t.id),t.appearance,t.previewMode||"light");if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});TASTE.note({type:"use",id:t.id,title:t.name,text:t.sector,colors:[t.pr,t.ac],kind:t.kind==="site"?"site":"app",w:3});
    const draftId=crypto.randomUUID();
    const projectHtml=t.workflow?h.replace('const key="gitmapp-'+t.id+'";','const key="gitmapp-'+draftId+'";'):h;
-   setIncoming({draftId,openDesign:t.openDesign===true,templatePrompt:t.projectPrompt,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.projectKind||t.kind,purpose:t.desc,appId:null,msgs:[]});setView("studio")}catch(e){toast(e.message)}};
+   setIncoming({draftId,openDesign:t.openDesign===true,templatePrompt:t.projectPrompt,previewDevice:t.previewDevice,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.projectKind||t.kind,purpose:t.desc,appId:null,msgs:[]});setView("studio")}catch(e){toast(e.message)}};
  const openDraft=draft=>{setIncoming(draft);setView("studio")};
  const newProject=()=>startTemplate({kind:"app"});
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};

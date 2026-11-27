@@ -6,11 +6,6 @@ const sectorExample = {
  otomotiv:"detaygaraj","finans-hukuk":"oracle-teshis","kamu-stk":"sira",tarim:"cicek",
  "enerji-teknik":"usta","etkinlik-medya":"fotostudyo",kurumsal:"akisoperasyon"
 };
-function GalleryCover({t,photograph=true}){
- if(photograph&&(!t.appearance||t.editorial)&&catalogTemplate(t.id))
-  return html`<img class="gallery-cover" src=${CATALOG_ART+t.id+".webp"} loading="lazy" decoding="async" alt=${t.name+" · ürün sunumu"}/>`;
- return html`<${TplThumb} t=${t}/>`;
-}
 function GalleryTile({title,meta,description,art,preview,action,tag,cls="",features=[],label}){
  const anchor=useRef(null),popup=useRef(null),timer=useRef(null);
  const [position,setPosition]=useState(null);
@@ -52,15 +47,16 @@ function GalleryTile({title,meta,description,art,preview,action,tag,cls="",featu
 }
 function TemplateTile({t,onDemo,reason}){
  return html`<${GalleryTile} title=${t.name} meta=${reason||t.sector+" · "+TPL_TYPES[t.type]} description=${t.desc} features=${t.feat}
-  cls="tpc" art=${html`<${GalleryCover} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>onDemo({...t,showDetails:true})}/>`;
+  cls="tpc" art=${html`<${TplThumb} t=${t}/>`} action=${()=>onDemo({...t,showDetails:true})}/>`;
 }
 function CollectionNav({page,go}){
  const entries=[["magaza","Keşfet"],["sablonlar","Şablonlar"],["baglantilar","Eklentiler"],["bagdastiricilar","Bağdaştırıcılar"],["beceriler","Beceriler"],["muhendis","Oracle ve SAP"]];
  return html`<nav class="collection-nav" aria-label="Koleksiyonlar">${entries.map(([id,name])=>html`<button type="button" key=${id} aria-current=${page===id?"page":undefined} onClick=${()=>go(id)}>${name}</button>`)}</nav>`;
 }
-function CollectionHero({title,copy,image,caption,action,cta}){
+function CollectionHero({title,copy,image,caption,action,cta,template}){
  return html`<header class="collection-hero"><div><h1>${title}</h1><p>${copy}</p>${action&&html`<button type="button" class="hero-action" onClick=${action}>${cta}</button>`}</div>
- <figure><img src=${CATALOG_ART+image+".webp"} alt=${caption} fetchpriority="high"/></figure></header>`;
+ <figure>${template&&action?html`<button type="button" class="catalog-image-action" aria-label=${template.name+" · Önizlemeyi aç"} onClick=${action}><${TplThumb} t=${template} eager=${true}/></button>`
+ :html`<img src=${CATALOG_ART+image+".webp"} alt=${caption} fetchpriority="high"/>`}</figure></header>`;
 }
 function ConnectorArt({c,adapter}){
  const src=CATALOG_ART+(adapter&&adapter!=="github"?"adapter-"+adapter:"conn-"+c.id)+".webp";
@@ -89,5 +85,7 @@ function SkillCover({skill}){
  const family={Oracle:"oracle-teshis",GitSap:"gitsap",GitmappGT:"engineering",ERP:"gitsap",Otomasyon:"automation",SaaS:"connectors",Sektör:"discover"};
  const base=example||family[skill.group]||({tasarim:"mimari",kalite:"analytics",hizli:"automation",is:"plugins"}[skill.kind])||"skills";
  const module=skillParts(skill.body)["MODÜLLER"]?.split(",")[0];
+ const template=catalogTemplate(example);
+ if(template)return html`<span class="skill-art"><${TplThumb} t=${template}/><span>${"Örnek · "+template.name}</span></span>`;
  return html`<span class="skill-art"><img loading="lazy" decoding="async" alt="" src=${CATALOG_ART+base+".webp"}/>${module&&html`<span>${module}</span>`}</span>`;
 }

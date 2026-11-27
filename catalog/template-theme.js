@@ -44,8 +44,28 @@ html[data-gm-mode=dark]:not([data-gm-native]) :is(button,.btn){background:#c7dab
 
 function prepareCatalogTemplate(source,preview=false,mode){
  if(source.includes("data-catalog-theme"))return source;
- const attributes=(preview?' data-gm-preview':'')+(mode==="dark"?' data-gm-initial-mode="dark"':'');
+ const attributes=(preview?' data-gm-preview':'')+(["light","dark"].includes(mode)?' data-gm-initial-mode="'+mode+'"':'');
  const html=attributes?source.replace(/<html\b/i,"<html"+attributes):source;
  const end=html.toLowerCase().lastIndexOf("</body>");
  return end<0?html+catalogTemplateTheme:html.slice(0,end)+catalogTemplateTheme+html.slice(end);
+}
+
+function templatePreviewStorage(key, scope, initial) {
+ return '<script data-gm-template-storage>(' + function(key, scope, initial) {
+  if (typeof initial === "string") localStorage.setItem(key, initial);
+  const set = localStorage.setItem.bind(localStorage);
+  const remove = localStorage.removeItem.bind(localStorage);
+  const clear = localStorage.clear.bind(localStorage);
+  const notify = value => parent.postMessage({gm:"template-storage",scope,key,value},"*");
+  localStorage.setItem = (name,value) => {
+   set(name,value);
+   if (name === key) notify(String(value));
+  };
+  localStorage.removeItem = name => {
+   remove(name);
+   if (name === key) notify(null);
+  };
+  localStorage.clear = () => { clear(); notify(null); };
+ }.toString() + ')(' + JSON.stringify(key) + ',' + JSON.stringify(scope).replaceAll("<","\\u003c") +
+ ',' + JSON.stringify(initial).replaceAll("<","\\u003c") + ');<\/script>';
 }
