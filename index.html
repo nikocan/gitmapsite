@@ -1274,6 +1274,50 @@ dialog.ui-dialog{padding:0;border:0;background:transparent;color:var(--ink);widt
 .store-nav{position:relative;margin-bottom:22px;padding:26px 26px 18px;border:1px solid var(--sep);border-radius:22px;background:radial-gradient(120% 140% at 100% 0,rgba(228,255,61,.07),transparent 55%),var(--fill1)}
 .store-nav h1{font-size:30px;margin:0;letter-spacing:-.6px;font-weight:700}
 .sn-head p{margin:6px 0 0;color:var(--label2);font-size:14px}
+/* v5.63 Claude Code tarzı akış */
+.studio-activity.cc{display:flex;flex-direction:column;gap:2px;margin:2px 0 6px}
+.cc-task{margin:0 0 6px;font-size:13px;font-weight:500;color:#8f8d88}
+.cc-flow{display:flex;flex-direction:column;gap:14px}
+.cc-flow[hidden]{display:none}
+.cc-step{display:flex;flex-direction:column;gap:8px}
+@media(prefers-reduced-motion:no-preference){.cc-step{animation:ccIn .28s var(--ease,ease-out) both}}
+@keyframes ccIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.cc-say{margin:0;color:#ecebe6;font-size:15px;font-weight:400;line-height:1.6;letter-spacing:-.05px}
+.cc-say.err{color:#f0c674}
+.cc-say small{color:#8f8d88;font-size:13px}
+.cc-done{display:flex;align-items:baseline;gap:7px;margin-top:6px;flex-wrap:wrap}.cc-done>svg{color:#7ee2a8;align-self:center}
+.cc-note{margin:0;color:#8f8d88;font-size:13px}
+.cc-rbtn{display:inline-flex;align-items:center;gap:9px;width:fit-content;max-width:100%;padding:2px 0;border:0;background:none;color:#8f8d88;font:inherit;font-size:15px;font-weight:400;text-align:left;cursor:pointer}
+.cc-rbtn:disabled{cursor:default}
+.cc-rbtn:not(:disabled):hover{color:#c9c7c1}
+.cc-rbtn>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-rbtn time{color:#8f8d88;font-variant-numeric:tabular-nums}
+.cc-rbtn>svg{flex:none;color:#76746f}
+.cc-row.run .cc-rbtn{color:#c9c7c1}
+.cc-row.err .cc-rbtn,.cc-sum>svg:first-child{color:#e3b341}
+.cc-body{margin:8px 0 2px 2px;padding:10px 12px;border-radius:12px;background:#1d1d1b;border:1px solid #2c2c29;font-size:12.5px}
+.cc-dots{display:inline-grid;grid-template-columns:repeat(2,5px);gap:4px;flex:none;margin-right:2px}
+.cc-dots i{width:5px;height:5px;border-radius:50%;background:#e8743b}
+.cc-dots i:nth-child(2),.cc-dots i:nth-child(3){background:#f5b83d}
+@media(prefers-reduced-motion:no-preference){.cc-dots i{animation:ccDot 1.2s ease-in-out infinite}.cc-dots i:nth-child(2){animation-delay:.15s}.cc-dots i:nth-child(4){animation-delay:.3s}.cc-dots i:nth-child(3){animation-delay:.45s}}
+@keyframes ccDot{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+.studio-response .studio-message-text{color:#ecebe6;font-size:15px;line-height:1.6}
+/* v5.63 önizleme durum penceresi */
+.ws-prev{position:relative}
+.swin{position:absolute;right:14px;bottom:14px;z-index:12;width:min(340px,calc(100% - 28px));border-radius:16px;background:rgba(24,24,22,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #34342f;box-shadow:0 20px 50px rgba(0,0,0,.5);color:#ecebe6;font-size:13px}
+@media(prefers-reduced-motion:no-preference){.swin{animation:swIn .32s var(--ease,ease-out)}}
+@keyframes swIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.swin.bad{border-color:rgba(232,116,59,.55)}
+.swin header{display:flex;align-items:center;gap:8px;padding:10px 10px 10px 12px}
+.swin header b{flex:1;font-size:13.5px;font-weight:600}
+.swin-ic{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#2a2a26;color:#f5b83d}.swin.bad .swin-ic{color:#e8743b}
+.swin-b{display:flex;flex-direction:column;gap:10px;padding:0 12px 12px}
+.swin-file{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:#1f1f1c}.swin-file>span:nth-of-type(1){flex:1}.swin-file small{color:#8f8d88}
+.swin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.swin-stats div{display:flex;flex-direction:column;padding:7px 8px;border-radius:10px;background:#1f1f1c}.swin-stats b{font-size:15px;font-variant-numeric:tabular-nums}.swin-stats span{color:#8f8d88;font-size:11px}
+.swin-list{margin:0;padding-left:18px;color:#d6d4ce;line-height:1.5}.swin-list li+li{margin-top:4px}
+.swin-probs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.swin-probs li{display:flex;flex-direction:column;gap:2px;padding:7px 10px;border-radius:10px;background:#1f1f1c;border-left:3px solid #f5b83d}.swin-probs li.err{border-left-color:#e8743b}.swin-probs span{color:#a9a7a1;font-size:12px;overflow-wrap:anywhere}
+.swin-acts{display:flex;gap:6px;flex-wrap:wrap}.swin-acts button{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 11px;border-radius:9px;border:1px solid #3a3a35;background:#22221f;color:#ecebe6;font:inherit;font-size:12.5px;cursor:pointer}.swin-acts button:hover{background:#2c2c28}.swin-acts .hot{background:linear-gradient(90deg,#e8743b,#f5b83d);border-color:transparent;color:#1a1208;font-weight:600}
+@media(max-width:640px){.swin{right:8px;bottom:8px;width:calc(100% - 16px)}.cc-say,.cc-rbtn,.studio-response .studio-message-text{font-size:14.5px}}
 /* v5.62 akıllı arama */
 .store-categories{display:flex;flex-wrap:wrap;gap:6px}
 .ks-form{position:relative;margin:18px 0 14px}
@@ -2409,8 +2453,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.62.0";
+const VERSION="5.63.0";
 const CHANGELOG=[
+ {v:"5.63.0",date:"2026-11-27",items:[
+  "💬 Stüdyo'da işlem akışı yenilendi: her adımda önce ne yaptığını anlatan kısa bir cümle (“Model isteği aldı. Önce yapıyı kuruyorum, ardından stilleri ve etkileşimleri yazacağım.”), altında gri, açılır bir işlem satırı (“Gönderdi istek · model”, “Yazdı kod · HTML yapısı, stiller”, “Çalıştırdı kontrol · 1 hata onarıldı”). Satıra dokununca isteği, canlı kodu ya da hatayı görürsün",
+  "🟠 Çalışan adımda turuncu-sarı nokta göstergesi ve canlı süre (“Yazıyor kod · HTML yapısı 16sn”, dakikada “4d 17sn”). Adımlar akarak tek tek beliriyor; model uzun süre sessiz kalırsa “hâlâ düşünüyor” notu çıkıyor",
+  "📚 İş bitince adımlar “Çalıştırıldı 3 adım · 38sn ›” satırında toplanıyor; altında sonuç, boyut, model, kredi ve süre. Yanıt metni de akışla aynı yazı rengi, boyutu ve ağırlığında",
+  "🪟 Önizlemede durum penceresi: her üretimden sonra sağ altta “Bu adımın çıktısı” açılıyor; index.html +eklenen / −silinen satır, değişen parça, onarılan hata, yeni görsel ve bağlantı sayısı, süre ve kredi. Kod kontrolünde bulgular, önizlemede hata ya da boş ekran görülürse sorun listesi ve tek dokunuşla “Düzelt”. Pencere küçültülebilir ve kapatılabilir",
+  "☁️ Keşif hafızası artık hesabına kaydediliyor: giriş yapınca bu cihazdaki ve hesabındaki hafıza birleşir, sonraki her arama ve beğeni birkaç saniye içinde hesabına yazılır; telefon ve bilgisayarda aynı “Senin tarzın” ve aynı öneriler. Hafızayı kapatırsan ya da sıfırlarsan tüm cihazlarında uygulanır"]},
  {v:"5.62.0",date:"2026-11-27",items:[
   "🧠 Yeni: Keşif hafızası. Keşfet'te ne aradığını, hangi uygulamayı açtığını, hangi şablonu canlı denediğini, hangi temaya baktığını ve Stüdyo'ya yazdığın fikirleri hatırlıyor; buradan ilgilendiğin sektörleri, sevdiğin renk tonlarını, koyu/açık zemin ve tasarım dili tercihini tahmin ediyor",
   "✨ Keşfet'te yeni “Senin tarzın” kartı: tahmin edilen tasarım dili, renk paletin, ilgi alanların ve son aramaların tek yerde. “Bu tarzla yeni proje” ile Stüdyo doğrudan senin stilinle açılıyor; kartın üzerindeki çizgi seni ne kadar tanıdığımızı gösteriyor",
@@ -4395,10 +4445,52 @@ function ActivityIcon({name="monitor",size=17}){
 }
 function ClStepRow({title,state,children,open0=false,activityIcon}){const [o,setO]=useState(open0);const has=!!children;
  return html`<div class=${"cx-step "+(state||"")}><button type="button" class="cx-row" disabled=${!has} aria-expanded=${has?o:undefined} onClick=${()=>has&&setO(!o)}><span class="cx-ic">${state==="run"?html`<${ActivityIcon} name=${activityIcon} size=${13}/>`:state==="err"?html`<${Icon} n="alert" s=${13}/>`:html`<${Icon} n="check" s=${13} w=${2.4}/>`}</span><span class=${state==="run"?"shimmer":""}>${title}</span>${has&&html`<${Icon} n=${o?"chevDown":"chevRight"} s=${14}/>`}</button>${o&&has&&html`<div class="cx-body">${children}</div>`}</div>`}
+// v5.63 — Claude Code tarzı akış: kısa anlatım cümlesi + gri, açılır işlem satırı ("Çalıştırdı bir komut ›").
+// Çalışan satırda turuncu-sarı nokta göstergesi ve süre ("4d 17sn"); bitince adımlar "Çalıştırıldı N adım ›" altında toplanır.
+const ccTime=s=>{s=Math.max(0,Math.floor(s||0));return s>=60?Math.floor(s/60)+"d "+(s%60)+"sn":s+"sn"};
+function CcDots(){return html`<span class="cc-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>`}
+function CcRow({label,run,err,time,children,open0=false}){
+ const [o,setO]=useState(open0);const has=!!children;
+ return html`<div class=${"cc-row"+(run?" run":"")+(err?" err":"")}>
+  <button type="button" class="cc-rbtn" aria-expanded=${has?o:undefined} disabled=${!has&&!run} onClick=${()=>has&&setO(!o)}>
+   ${run&&html`<${CcDots}/>`}${err&&html`<${Icon} n="alert" s=${14}/>`}
+   <span class=${run?"shimmer":""}>${label}</span>${run&&Number.isFinite(time)&&html`<time>${ccTime(time)}</time>`}${has&&html`<${Icon} n=${o?"chevDown":"chevRight"} s=${15}/>`}
+  </button>${o&&has&&html`<div class="cc-body">${children}</div>`}</div>`}
+const CC_SAY={
+ build:"Fikrini inceleyip çalışan ilk sürüm için bir üretim isteği hazırlıyorum.",
+ update:"Mevcut index.html üzerinde istediğin değişikliği hazırlıyorum.",
+ review:"Kodu baştan sona kontrol edeceğim; hata ve eksikleri tek tek not ediyorum.",
+ plan:"Önce işi parçalara ayırıp bir yapım planı çıkarıyorum.",
+ agent:"İşi küçük, sırayla yapılabilir adımlara bölüyorum."
+};
+// Olaylardan sırayla "anlatım + işlem satırı" adımları üretir
+function ccSteps(log,live){
+ const ev=log.events||[],at=log.at||{},rq=log.req||{},run=!!log.running,failed=log.error||log.cut||log.stopped;
+ const steps=[];const parts=["structure","styles","scripts"].filter(k=>ev.includes(k)).map(k=>({structure:"HTML yapısı",styles:"stiller",scripts:"JavaScript"})[k]);
+ const reqLines=[["tür",CX_KIND[rq.tur]||rq.tur],["mod",MODE_TR[rq.mod]||rq.mod],["model",log.model&&shortModel(log.model)],["tasarım",rq.design],["profil",rq.profil],["görsel",log.images?log.images+" görsel":""],["dosya",rq.size?"index.html ("+rq.size+" KB)"+(Number(rq.size)>=9?" · yalnızca değişen parçalar":""):""]].filter(x=>x[1]);
+ const connected=ev.includes("connected");
+ steps.push({k:"sent",say:CC_SAY[log.kind]||"İsteğini hazırlayıp modele gönderiyorum.",label:connected||!run?"Gönderdi istek"+(log.model?" · "+shortModel(log.model):""):"Gönderiyor istek",run:run&&!connected,t0:0,
+  body:html`<${ClIO} label="İstek"><div class="cx-kv">${reqLines.map(([k,v])=>html`<div key=${k}><b>${k}</b> ${v}</div>`)}</div>${rq.text&&html`<div class="cx-prompt">${rq.text}</div>`}<//>`});
+ if(connected||ev.includes("receiving")){
+  const writing=run&&!ev.includes("processing");const big=rq.size&&Number(rq.size)>=9;
+  const tail=(run?live:log.res?.tail)||"";
+  steps.push({k:"code",say:log.kind==="plan"||log.kind==="agent"?"Model isteği aldı; adımları yazıyor.":big?"Model isteği aldı. Sayfanın tamamını değil, yalnızca değişecek parçaları yazdırıyorum.":"Model isteği aldı. Önce yapıyı kuruyorum, ardından stilleri ve etkileşimleri yazacağım.",
+   label:(writing?(log.kind==="plan"||log.kind==="agent"?"Yazıyor plan":"Yazıyor kod"):(log.kind==="plan"||log.kind==="agent"?"Yazdı plan":"Yazdı kod"))+(parts.length?" · "+parts.join(", "):""),run:writing,t0:at.connected??at.receiving,
+   body:tail?html`<${ClIO} label=${writing?"Yanıt (canlı)":"Yanıt (son kısım)"}><code>${tail.slice(-700)}</code>${writing&&html`<span class="caret"></span>`}<//>`:null});
+ }
+ if(ev.includes("continuing"))steps.push({k:"cont",say:"Yanıt uzunluk sınırına geldi; kaldığı yerden devam ettiriyorum.",label:"Devam ettirdi yanıt",t0:at.continuing});
+ if(ev.includes("processing")||!run&&!failed&&!log.asked&&connected){
+  const fx=[log.res?.patched&&log.res.patched+" parça değişti",log.res?.fixed&&log.res.fixed+" hata onarıldı"].filter(Boolean);
+  steps.push({k:"proc",say:log.kind==="review"?"Bulguları derleyip önem sırasına koyuyorum.":"Kod geldi. Hataları kontrol edip önizlemeyi hazırlıyorum.",label:(run?"Çalıştırılıyor kontrol":"Çalıştırdı kontrol")+(fx.length?" · "+fx.join(", "):""),run,t0:at.processing});
+ }
+ if(log.asked)steps.push({k:"ask",say:"Kod yazmadan önce bir şeyi netleştirmem gerekiyor; sorumu aşağıya yazdım. Kredi harcanmadı.",label:null});
+ if(failed)steps.push({k:"err",say:log.stopped?"İşlemi durdurdun; kredi harcanmadı.":log.cut?"Sayfa yenilendiği ya da kapandığı için işlem yarıda kaldı. Yeniden dene ile kaldığı yerden sürdürebilirsin.":"İşlem tamamlanamadı.",label:log.res?.error?"Hata ayrıntısı":null,err:true,body:log.res?.error?html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`:null});
+ return steps;
+}
 function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
- const status=studioStatus(log,lastAt);
- const [creditFlash,setCreditFlash]=useState(false);
+ const [creditFlash,setCreditFlash]=useState(false);const [,tick]=useState(0);
  const wasRunning=useRef(log.running);
+ useEffect(()=>{if(!log.running)return;const t=setInterval(()=>tick(x=>x+1),1000);return()=>clearInterval(t)},[log.running]);
  useEffect(()=>{
   const finished=wasRunning.current&&!log.running;
   wasRunning.current=log.running;
@@ -4409,35 +4501,25 @@ function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
  },[log.running,log.spent]);
  const kind=STUDIO_ACTIVITY[log.kind];
  const failed=log.error||log.cut||log.stopped;
-
- const elapsed=log.running?Math.max(0,Math.floor((Date.now()-log.start)/1000)):log.secs||0;
- const rq=log.req||{};const ev=log.events||[];const tail=(log.running?live:log.res?.tail)||"";
- const reqLines=[["tür",CX_KIND[rq.tur]||rq.tur],["mod",MODE_TR[rq.mod]||rq.mod],["model",log.model&&shortModel(log.model)],["tasarım",rq.design],["profil",rq.profil?rq.profil+" (Ayarlar › Profil)":""],["görsel",log.images?log.images+" görsel eklendi · model içeriğini bağlam olarak kullanır":""],["dosya",rq.size?"index.html ("+rq.size+" KB) — "+(Number(rq.size)>=9?"yalnızca değişen parçalar istendi":"tamamı yeniden yazılacak"):""]].filter(x=>x[1]);
- const meta=[log.kb&&log.kb+" KB",log.res?.patched?log.res.patched+" parça değiştirildi":"",log.res?.fixed?log.res.fixed+" kod hatası otomatik onarıldı":"",log.model&&shortModel(log.model),log.spent?log.spent+" kredi":"",clTime(log.secs||0)].filter(Boolean);
- const steps=[];
- steps.push(html`<${ClStepRow} key="req" title=${kind?.sending||"İstek gönderildi"} state="ok"><${ClIO} label="İstek"><div class="cx-kv">${reqLines.map(([k,v])=>html`<div key=${k}><b>${k}</b> ${v}</div>`)}</div>${rq.text&&html`<div class="cx-prompt">${rq.text}</div>`}<//><//>`);
- if(ev.includes("connected"))steps.push(html`<${ClStepRow} key="con" title=${STUDIO_EVENTS.connected} state="ok"/>`);
- if(ev.includes("receiving")||log.running&&ev.includes("connected")){const writing=log.running&&!ev.includes("processing");
-  const parts=["structure","styles","scripts"].filter(k=>ev.includes(k)).map(k=>({structure:"HTML yapısı",styles:"stiller",scripts:"JavaScript"})[k]);
-  steps.push(html`<${ClStepRow} key="rcv" title=${writing?(log.req?.size&&Number(log.req.size)>=9?"Değişen parçaları yazıyor":"Kodu yazıyor")+(parts.length?" · "+parts.join(", "):""):"Yanıt alındı"+(parts.length?" · "+parts.join(", "):"")} state=${writing?"run":"ok"} activityIcon="file">${tail&&html`<${ClIO} label=${writing?"Yanıt (canlı)":"Yanıt (son kısım)"}><code>${tail.slice(-700)}</code>${writing&&html`<span class="caret"></span>`}<//>`}<//>`)}
- if(ev.includes("continuing"))steps.push(html`<${ClStepRow} key="cont" title=${STUDIO_EVENTS.continuing} state="ok"/>`);
- if(ev.includes("processing")&&log.running)steps.push(html`<${ClStepRow} key="proc" title=${STUDIO_EVENTS.processing} state="run"/>`);
- if(log.asked)steps.push(html`<${ClStepRow} key="ask" title="Soru soruldu · yanıtını bekliyor, kredi harcanmadı" state="ok"/>`);
- if(!log.running&&!failed&&!log.asked)steps.push(html`<${ClStepRow} key="done" title=${ev.includes("unchanged")?STUDIO_EVENTS.unchanged:ev.includes("plan")?STUDIO_EVENTS.plan:ev.includes("agent")?STUDIO_EVENTS.agent:STUDIO_EVENTS.preview} state="ok" open0=${false}>${(log.res?.summary||meta.length)&&html`<${ClIO} label="Sonuç" mono=${false}>${log.res?.summary&&html`<p>${log.res.summary}</p>`}<small class="cx-meta">${meta.join(" · ")}</small><//>`}<//>`);
- if(failed)steps.push(html`<${ClStepRow} key="err" title=${log.stopped?"Durdurdun · kredi harcanmadı":log.cut?"Sayfa yenilendiği ya da kapandığı için yarıda kaldı · Yeniden dene ile devam et":"Hata"} state="err">${log.res?.error&&html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`}<//>`);
- return html`<div class="studio-activity cx">
-  ${log.task&&html`<h3>${log.task}</h3>`}
-  <button type="button" class="cx-head" aria-expanded=${isOpen} aria-controls=${flowId} onClick=${onToggle}>
-   <span class=${"cx-hic"+(failed?" issue":log.running?"":" ok")}>${log.running?html`<${ActivityIcon} name=${log.phase==="processing"?"check":"monitor"}/>`:html`<${Icon} n=${failed?log.stopped?"stop":"alert":"check"} s=${15} w=${2.4}/>`}</span>
-   <span class=${"cx-status"+(log.running?" shimmer":"")} role="status">${status}</span>${!log.running&&log.start<PAGE_T0-60000&&failed&&html`<em class="cx-old" title=${new Date(log.start).toLocaleString("tr-TR")}>önceki oturum · ${new Date(log.start).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</em>`}<time aria-label=${"Geçen süre "+clTime(elapsed)}>${clTime(elapsed)}</time><${Icon} n=${isOpen?"chevDown":"chevRight"} s=${15}/></button>
-  <div id=${flowId} hidden=${!isOpen} class="flow-panel">
-   ${isOpen&&html`${log.running&&html`<p class="flow-update" role="status">${ev.includes("processing")?"Yanıt geldi. Sonuç hazırlanıyor.":ev.includes("receiving")?(log.kind==="plan"||log.kind==="agent"?"Planın adımları geliyor.":"Yanıt geliyor. Aşağıda tamamlanan adımları görebilirsin."):ev.includes("connected")?"İstek modele ulaştı. İlk yanıt bekleniyor.":"İsteğin gönderiliyor."}</p>`}<ol class="flow-list" aria-label="İşlem akışı">
-    ${[{key:"sent",label:kind?.sending||"İstek gönderildi"},...ev.filter(k=>STUDIO_EVENTS[k]).map(k=>({key:k,label:STUDIO_EVENTS[k]})),...(!log.running&&(failed||log.asked)?[{key:"end",label:status}]:[])].map(({key,label},i)=>{
-      const t=key==="sent"?0:key==="end"?elapsed:log.at?.[key];
-      return html`<li key=${i}><span class="flow-dot" aria-hidden="true"></span><span>${label}</span>${Number.isFinite(t)&&html`<time>${clTime(t)}</time>`}</li>`})}
-   </ol><details class="flow-detail"><summary>İstek ve yanıt ayrıntıları</summary><div class="cx-card">${steps}</div></details>`}
-  </div>
-  ${Number.isFinite(log.spent)&&(isOpen||creditFlash)&&html`<table class=${"flow-credit"+(creditFlash&&!isOpen?" flash":"")} aria-label="İşlem maliyeti"><tbody><tr><th scope="row"><${Icon} n="gem" s=${13}/> Harcanan kredi</th><td>${log.spent} kredi</td></tr></tbody></table>`}
+ const now=Math.max(0,(Date.now()-log.start)/1000);
+ const elapsed=log.running?Math.floor(now):log.secs||0;
+ const steps=ccSteps(log,live);
+ const stalled=log.running&&Date.now()-(lastAt||log.last||log.start)>7000&&!(log.events||[]).includes("processing");
+ const meta=[log.kb&&log.kb+" KB",log.model&&shortModel(log.model),Number.isFinite(log.spent)&&log.spent+" kredi",ccTime(log.secs||0)].filter(Boolean);
+ const stepEl=(s,i,last)=>html`<div class="cc-step" key=${s.k}>
+  ${s.say&&html`<p class=${"cc-say"+(s.err?" err":"")}>${s.say}</p>`}
+  ${s.label&&html`<${CcRow} label=${s.label} run=${s.run} err=${s.err} time=${s.run?Math.floor(now-(s.t0||0)):undefined}>${s.body}<//>`}
+  ${last&&stalled&&html`<p class="cc-note">Model hâlâ düşünüyor; ilk parçalar gelince burada görünecek.</p>`}
+ </div>`;
+ // Bitti: adımlar tek satırda toplanır (Claude Code: "Çalıştırıldı 6 komut ›")
+ const doneHead=!log.running&&html`<button type="button" class="cc-rbtn cc-sum" aria-expanded=${isOpen} aria-controls=${flowId} onClick=${onToggle}>
+   ${failed?html`<${Icon} n=${log.stopped?"stop":"alert"} s=${14}/>`:""}<span>${failed?studioStatus(log,lastAt):"Çalıştırıldı "+steps.filter(s=>s.label).length+" adım"} · ${ccTime(elapsed)}</span><${Icon} n=${isOpen?"chevDown":"chevRight"} s=${15}/></button>`;
+ return html`<div class="studio-activity cc" aria-live="polite">
+  ${log.task&&html`<h3 class="cc-task">${log.task}</h3>`}
+  ${log.running?html`<div id=${flowId} class="cc-flow">${steps.map((s,i)=>stepEl(s,i,i===steps.length-1))}</div>`
+  :html`${doneHead}<div id=${flowId} hidden=${!isOpen} class="cc-flow">${isOpen&&steps.map((s,i)=>stepEl(s,i,false))}</div>
+   ${!failed&&!log.asked&&html`<p class="cc-say cc-done"><${Icon} n="check" s=${14} w=${2.4}/> ${(log.events||[]).includes("unchanged")?STUDIO_EVENTS.unchanged:kind?.done||"İşlem tamamlandı"}${meta.length?html` <small>${meta.join(" · ")}</small>`:""}</p>`}`}
+  ${Number.isFinite(log.spent)&&creditFlash&&html`<table class="flow-credit flash" aria-label="İşlem maliyeti"><tbody><tr><th scope="row"><${Icon} n="gem" s=${13}/> Harcanan kredi</th><td>${log.spent} kredi</td></tr></tbody></table>`}
   ${failed&&retry&&html`<button type="button" class="btn g s studio-activity-retry" onClick=${retry}><${Icon} n="refresh" s=${14}/> Yeniden dene</button>`}
  </div>`;
 }
@@ -4631,8 +4713,8 @@ const tasteEmit=()=>{try{dispatchEvent(new Event("gm-taste"))}catch(e){}};
 const TASTE={
  on:()=>LS.get("tasteOn",true)!==false,
  get:()=>({...tasteBlank(),...(LS.get("taste",null)||{})}),
- setOn(v){LS.set("tasteOn",!!v);if(!v)LS.set("taste",tasteBlank());tasteEmit()},
- clear(){LS.set("taste",tasteBlank());tasteEmit()},
+ setOn(v){LS.set("tasteOn",!!v);if(!v)LS.set("taste",tasteBlank());tasteEmit();tastePush(true)},
+ clear(){LS.set("taste",tasteBlank());tasteEmit();tastePush(true)},
  // sig: {type,text,sector,theme,colors,kind,id,title,w}
  note(sig){
   if(!TASTE.on()||!sig)return;
@@ -4647,9 +4729,22 @@ const TASTE={
   d.col=d.col.slice(-48);
   if(sig.type==="search"&&sig.text){const q=String(sig.text).trim().slice(0,60);d.q=[q,...d.q.filter(x=>x.toLocaleLowerCase("tr")!==q.toLocaleLowerCase("tr"))].slice(0,8)}
   if(sig.id&&/^(demo|use)$/.test(sig.type))d.last={id:sig.id,title:sig.title||"",at:Date.now()};
-  d.n++;d.t=Date.now();LS.set("taste",d);tasteEmit();
+  d.n++;d.t=Date.now();LS.set("taste",d);tasteEmit();tastePush();
  }
 };
+// v5.63 — Hesapla eşitleme: girişte hesap ve cihaz hafızası birleşir, değişiklikler birkaç saniyede hesaba yazılır
+const TASTE_SYNC={uid:null,ready:false,timer:0};
+function tasteMerge(a,b){const o={...tasteBlank(),n:Math.max(a.n||0,b.n||0),t:Math.max(a.t||0,b.t||0)};
+ for(const k of ["sec","th","kind","terms","items"]){o[k]={...(b[k]||{})};for(const [x,v] of Object.entries(a[k]||{}))o[k][x]=Math.max(v,o[k][x]||0)}
+ const seen=new Map();for(const c of [...(b.col||[]),...(a.col||[])]){const key=c.c+(c.bg?"b":"");seen.delete(key);seen.set(key,c)}o.col=[...seen.values()].slice(-48);
+ o.q=[...new Set([...(a.q||[]),...(b.q||[])])].slice(0,8);o.last=(a.last?.at||0)>=(b.last?.at||0)?a.last||b.last:b.last;return o}
+function tastePush(now){if(!TASTE_SYNC.uid||!TASTE_SYNC.ready||!API_ON)return;clearTimeout(TASTE_SYNC.timer);const uid=TASTE_SYNC.uid;
+ TASTE_SYNC.timer=setTimeout(()=>{if(TASTE_SYNC.uid===uid)api("PUT","/api/me/taste",{on:TASTE.on(),taste:TASTE.get()}).catch(()=>{})},now?0:2500)}
+async function tasteSync(uid){clearTimeout(TASTE_SYNC.timer);TASTE_SYNC.uid=uid||null;TASTE_SYNC.ready=false;tasteEmit();if(!uid||!API_ON)return;
+ try{const r=await api("GET","/api/me/taste");if(TASTE_SYNC.uid!==uid)return;
+  if(r.on===false&&r.updated){LS.set("tasteOn",false);LS.set("taste",tasteBlank())}
+  else if(TASTE.on()&&r.taste)LS.set("taste",tasteMerge(TASTE.get(),r.taste));
+  TASTE_SYNC.ready=true;tasteEmit();if(TASTE.on())tastePush(true)}catch(e){}}
 function useTaste(){const [d,setD]=useState(TASTE.get);useEffect(()=>{const h=()=>setD(TASTE.get());addEventListener("gm-taste",h);addEventListener("storage",h);return()=>{removeEventListener("gm-taste",h);removeEventListener("storage",h)}},[]);return d}
 const topOf=(o,n=3)=>Object.entries(o||{}).sort((a,b)=>b[1]-a[1]).slice(0,n);
 // Profil: renk eğilimi, koyu/açık tercihi, sektörler, önerilen tasarım dili
@@ -6565,6 +6660,32 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    ${o.links?.length>0&&html`<div class="oc-sec"><small>Bağlantılar · ${o.links.length}</small><div class="oc-links">${o.links.map(u=>html`<a key=${u} href=${u} target="_blank" rel="noopener noreferrer" title=${u}><${Icon} n="external" s=${12}/>${u.replace(/^https?:\/\/(www\.)?/,"").slice(0,38)}</a>`)}</div></div>`}
    ${last&&html`<div class="oc-acts"><button type="button" onClick=${()=>{setCode(false);setCompare(false);stageRef.current?.scrollIntoView({block:"start",behavior:"smooth"})}}><${Icon} n="eye" s=${13}/>Önizle</button><button type="button" onClick=${()=>{setCode(true);setCompare(false)}}><${Icon} n="code" s=${13}/>Kod</button><button type="button" class="hot" disabled=${busy} onClick=${()=>{setCommitDraft(msg1);setGitOpen(vcSource==="github"?"github":true)}}><${Icon} n="branch" s=${13}/>Commit</button></div>`}
   </div>`};
+ // v5.63 — Önizlemede durum penceresi: son adımın çıktısı, kod kontrolü bulguları ve önizleme hataları
+ const [winOff,setWinOff]=useState("");const [winMin,setWinMin]=useState(false);
+ const statusWin=()=>{
+  if(busy||code)return null;
+  const m=st.msgs.findLast(x=>x.role==="assistant"&&x.log&&!x.log.running);if(!m)return null;
+  const o=m.log.out,isReview=m.log.kind==="review",probs=qa&&qa.source===st.html?[...qa.errors.map(t=>({t:"JavaScript hatası",d:t,lv:"err"})),...qa.issues.map(i=>({t:i.t||String(i),d:i.d||"",lv:"warn"}))]:[];
+  const id=(m.id||m.log.start)+":"+probs.length;
+  if(winOff===id||(!o&&!isReview&&!probs.length))return null;
+  const findings=isReview?String(m.content||"").split(/\n+/).map(l=>l.replace(/^[-•*\d.)\s]+/,"").trim()).filter(l=>l.length>8).slice(0,6):[];
+  const title=probs.some(p=>p.lv==="err")?"Önizlemede sorun bulundu":isReview?"Kod kontrolü":"Bu adımın çıktısı";
+  return html`<aside class=${"swin"+(winMin?" min":"")+(probs.some(p=>p.lv==="err")?" bad":"")} role="dialog" aria-label=${title}>
+   <header><span class="swin-ic"><${Icon} n=${probs.some(p=>p.lv==="err")?"alert":isReview?"search":"layers"} s=${14}/></span><b>${title}</b>
+    <button type="button" class="ib sm" aria-label=${winMin?"Genişlet":"Küçült"} onClick=${()=>setWinMin(!winMin)}><${Icon} n=${winMin?"chevUp":"chevDown"} s=${13}/></button>
+    <button type="button" class="ib sm" aria-label="Kapat" onClick=${()=>setWinOff(id)}><${Icon} n="x" s=${13}/></button></header>
+   ${!winMin&&html`<div class="swin-b">
+    ${o&&html`<div class="swin-file"><${Icon} n="file" s=${13}/><span>index.html</span>${o.first?html`<em class="oc-new">yeni</em>`:""}<span class="oc-a">+${o.add}</span><span class="oc-d">−${o.del}</span><small>${o.kb} KB</small></div>
+     <div class="swin-stats">${[m.log.res?.patched&&[m.log.res.patched,"parça değişti"],m.log.res?.fixed&&[m.log.res.fixed,"hata onarıldı"],o.imgs?.length&&[o.imgs.length,"yeni görsel"],o.links?.length&&[o.links.length,"yeni bağlantı"],m.log.secs&&[ccTime(m.log.secs),"süre"],Number.isFinite(m.log.spent)&&[m.log.spent,"kredi"]].filter(Boolean).map(([v,l])=>html`<div key=${l}><b>${v}</b><span>${l}</span></div>`)}</div>`}
+    ${findings.length>0&&html`<ol class="swin-list">${findings.map((f,i)=>html`<li key=${i}>${f}</li>`)}</ol>`}
+    ${probs.length>0&&html`<ul class="swin-probs">${probs.slice(0,5).map((p,i)=>html`<li key=${i} class=${p.lv}><b>${p.t}</b>${p.d&&html`<span>${String(p.d).slice(0,140)}</span>`}</li>`)}</ul>`}
+    <div class="swin-acts">
+     ${o&&versions.length>0&&html`<button type="button" onClick=${()=>{setCode(true);setCompare(true);setPicked(null);setVeMode(null)}}><${Icon} n="swap" s=${13}/> Farkı gör</button>`}
+     <button type="button" onClick=${()=>{setCode(true);setCompare(false)}}><${Icon} n="code" s=${13}/> Kod</button>
+     ${probs.length>0&&html`<button type="button" class="hot" onClick=${()=>{setWinOff(id);build("OTOMATİK HATA DÜZELTME — önizlemede şu sorunlar görüldü, nedenini bulup düzelt:\n- "+probs.map(p=>p.t+(p.d?": "+p.d:"")).join("\n- ")+"\n\nBaşka hiçbir şeyi değiştirme.",null,"Önizleme sorunlarını düzelt")}}><${Icon} n="wand" s=${13}/> Düzelt</button>`}
+    </div></div>`}
+  </aside>`;
+ };
  const msgEl=(m,i)=>m.role==="user"?html`<article class="studio-user-message" aria-label="Sen" key=${"user-"+i}>
   <span class="studio-user-label">Sen</span>
   ${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<button type="button" key=${j} class="mu-img" title="Büyüt" onClick=${()=>setZoom(u)}><img src=${u} alt=${"Eklenen görsel "+(j+1)}/></button>`)}</div>`}
@@ -6689,6 +6810,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
     :frameEl(stage,true)}
     ${stagePend&&!code&&html`<div class="stg-bar" role="dialog" aria-label="Görsel yerleştirme"><img src=${stagePend.item.thumb||stagePend.item.url} alt=""/><span><b>Görsel yerleştirildi</b><small>→ ${stagePend.target.alt||"<"+stagePend.target.tag+">"} · sahnede böyle görünecek</small></span><button type="button" class="btn s" onClick=${confirmStage}>Onayla</button><button type="button" class="btn g s" onClick=${undoStage}>Geri al</button></div>`}
     ${placeSel&&!code&&html`<div class="stg-hint"><${Icon} n="pointer" s=${14}/><span>Görseli koymak istediğin öğeye önizlemede dokun</span><button type="button" class="ib sm" aria-label="Vazgeç" onClick=${()=>setPlaceSel(null)}><${Icon} n="x" s=${12}/></button></div>`}
+    ${statusWin()}
     ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
    </div></section>${sessOpen&&sessPanel()}${pilotUI()}${kokOpen&&html`<${Kokpit} close=${()=>setKokOpen(false)} user=${auth.user} html=${st.html} model=${curModel} health=${cHealth} reHealth=${reHealth} applyFix=${applyFix} buildFix=${(p,l)=>build(p,null,"Bağlantı düzeltme: "+l)} go=${go} toast=${toast}/>`}</div>
   ${zoom&&html`<div class="zoom-bg" role="dialog" aria-label="Görsel" onClick=${()=>setZoom(null)}><img src=${zoom} alt="Eklenen görsel"/></div>`}
@@ -6886,13 +7008,13 @@ function StoreSearch({value,onChange,onSubmit,onClear,onIntent}){
 const tasteKind=k=>k==="game"?"Oyun":k==="site"?"Web sitesi":k?"Uygulama":"";
 function TasteCard({p,startTemplate,compact,onSearch}){
  const [menu,setMenu]=useState(false);const on=TASTE.on();
- if(!on)return html`<div class="taste-card off"><div class="taste-ic"><${Icon} n="brain" s=${18}/></div><div class="taste-b"><b>Keşif hafızası kapalı</b><p>Açarsan aramalarından ve beğendiğin şablonlardan tarzını öğrenip öneri sunarız. Veriler yalnızca bu cihazda kalır.</p></div><button class="btn g" onClick=${()=>TASTE.setOn(true)}>Hafızayı aç</button></div>`;
+ if(!on)return html`<div class="taste-card off"><div class="taste-ic"><${Icon} n="brain" s=${18}/></div><div class="taste-b"><b>Keşif hafızası kapalı</b><p>Açarsan aramalarından ve beğendiğin şablonlardan tarzını öğrenip öneri sunarız. ${TASTE_SYNC.ready?" Hesabına kaydedilir, cihazların arasında taşınır.":" Veriler bu cihazda kalır; giriş yaparsan hesabına taşınır."}</p></div><button class="btn g" onClick=${()=>TASTE.setOn(true)}>Hafızayı aç</button></div>`;
  const pct=Math.round(p.conf*100);
  return html`<section class=${"taste-card"+(compact?" compact":"")} aria-label="Senin tarzın">
   <div class="taste-top"><span class="taste-eyebrow"><${Icon} n="sparkles" s=${13}/> Senin tarzın</span>
    <div class="taste-meter" title=${"Profil güveni %"+pct} aria-label=${"Seni yüzde "+pct+" tanıyoruz"}><i style=${{width:Math.max(6,pct)+"%"}}></i></div>
    <div class="taste-menu"><button class="ib sm" aria-label="Hafıza ayarları" aria-expanded=${menu} onClick=${()=>setMenu(!menu)}><${Icon} n="more" s=${15}/></button>
-    ${menu&&html`<div class="taste-pop" role="menu"><button role="menuitem" onClick=${()=>{TASTE.clear();setMenu(false)}}><${Icon} n="refresh" s=${14}/> Hafızayı sıfırla</button><button role="menuitem" onClick=${()=>{TASTE.setOn(false);setMenu(false)}}><${Icon} n="x" s=${14}/> Hafızayı kapat</button><small>Yalnızca bu tarayıcıda saklanır.</small></div>`}</div></div>
+    ${menu&&html`<div class="taste-pop" role="menu"><button role="menuitem" onClick=${()=>{TASTE.clear();setMenu(false)}}><${Icon} n="refresh" s=${14}/> Hafızayı sıfırla</button><button role="menuitem" onClick=${()=>{TASTE.setOn(false);setMenu(false)}}><${Icon} n="x" s=${14}/> Hafızayı kapat</button><small>${TASTE_SYNC.ready?"Hesabında saklanır, giriş yaptığın her cihazda aynı.":"Bu tarayıcıda saklanır. Giriş yaparsan hesabına taşınır."}</small></div>`}</div></div>
   ${p.n<2?html`<div class="taste-b"><b>Gezdikçe seni tanıyacağız</b><p>Ara, bir şablonu canlı dene ya da bir temaya bak. Renk, stil ve sektör tercihlerini hatırlayıp sana özel öneriler göstereceğiz.</p></div>`:html`
   <div class="taste-body">
    ${p.best&&html`<div class="taste-mock"><${ThemeMock} t=${p.best} kind=${p.kind==="game"?"game":"app"} w=${compact?72:92}/></div>`}
@@ -9094,6 +9216,7 @@ function App(){
  const openDraft=draft=>{setIncoming(draft);setView("studio")};
  const newProject=()=>startTemplate({kind:"app"});
  const startTemplate=o=>{setSeed({...o,n:Date.now()});setView("studio")};
+ useEffect(()=>{tasteSync(auth.user?.id||null)},[auth.user?.id,apiOn]);
  const goStore=(o={},fromBack=false)=>{
   if(!canLeaveStudio("magaza"))return;
   const params=new URLSearchParams();
