@@ -58,6 +58,8 @@ test("beceri üretime eklenir, sonuç ve oy ölçülür, avcı aday bulur, test 
   const gen = await req("POST", "ai/generate", { prompt: "Satış ekibim için CRM", kind: "app", settings: { skills: ["plan-crm", "yok-boyle"] } }, user);
   assert.equal(gen.status, 200); assert.ok(gen.skillRun);
   const sys = prompts.at(-1); assert.match(sys, /YÜKLÜ BECERİLER/); assert.match(sys, /CRM · müşteri ve satış takibi/); assert.match(sys, /Kurumsal yönetim paneli/); assert.match(sys, /Temiz mimari/);
+  assert.deepEqual(gen.skills.map((x) => x.id).slice(0, 3), ["plan-crm", "tasarim-kurumsal-panel", "kalite-temiz-mimari"], "kullanılan beceriler yanıtta döner");
+  assert.ok(!/ODAK MODÜL/.test(sys));
   let a = await req("GET", "admin/skills", null, admin); let crm = a.skills.find((s) => s.id === "plan-crm");
   assert.equal(crm.uses, 1); assert.equal(crm.success, 100); assert.equal(a.runs.ok, 1);
   // Kullanıcı beğenmezse başarı düşer; başkasının kaydına oy verilemez
@@ -78,6 +80,10 @@ test("beceri üretime eklenir, sonuç ve oy ölçülür, avcı aday bulur, test 
   const imp = await req("POST", "admin/skills/plan-crm/improve", null, admin); assert.ok(imp.version);
   assert.match(prompts.at(-1), /tablo bozuk/);
   assert.equal((await req("POST", "admin/skills/versions/" + imp.version + "/reject", null, admin)).status, 200);
+  // Odak modül: Stüdyo'daki modül düğmesi yalnızca o modülü istetir
+  const focused = await req("POST", "ai/generate", { prompt: "Teklifler modülünü ekle", kind: "app", settings: { skills: ["plan-crm"], skillFocus: { skill: "plan-crm", module: "Teklifler" } } }, user);
+  assert.equal(focused.status, 200); assert.deepEqual(focused.skillFocus, { skill: "plan-crm", name: "CRM · müşteri ve satış takibi", module: "Teklifler" });
+  assert.match(prompts.at(-1), /ODAK MODÜL: “CRM · müşteri ve satış takibi” becerisinin “Teklifler” modülü/);
 });
 
 test("sektör kütüphanesi: her plan bir sektörde, her sektörün becerisi var", async () => {

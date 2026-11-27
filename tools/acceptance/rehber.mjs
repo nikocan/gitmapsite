@@ -46,7 +46,7 @@ try {
   // Beceri kartında uygun şablon ve yol haritası
   await page.goto(webBase + "/#beceriler?sektor=yeme-icme"); await page.reload(); await page.locator(".skl-card").first().waitFor({ timeout: 15000 });
   const card = page.locator(".skl-card", { hasText: "POS · adisyon" }); ok(/Uygun şablon/.test(await card.innerText()), "beceri kartında uygun şablon");
-  await card.getByRole("button", { name: "Nasıl kullanılır" }).click(); ok((await card.locator(".howto li").count()) === 5, "yol haritası 5 adım"); await card.scrollIntoViewIfNeeded(); await page.screenshot({ path: join(SHOTS, "5-yol-haritasi.png") });
+  await card.getByRole("button", { name: "Nasıl kullanılır" }).click(); ok((await card.locator(".howto li").count()) === 6, "yol haritası 6 adım"); await card.scrollIntoViewIfNeeded(); await page.screenshot({ path: join(SHOTS, "5-yol-haritasi.png") });
   // Anlatıcı modu
   await page.locator(".nr-fab").click(); await page.locator(".nr-menu").waitFor(); await page.screenshot({ path: join(SHOTS, "6-rehber-menu.png") });
   await page.locator(".nr-sw", { hasText: "Anlatıcı modu" }).locator("input").check(); await page.locator(".nr-fab").click();

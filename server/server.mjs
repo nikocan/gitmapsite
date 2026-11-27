@@ -503,8 +503,8 @@ function designRule(d, kind = "app") {
 function runOpts(rt, body, user) {
   const t = body.settings || {};
   // Sunucudaki test edilmiş beceriler kimlikle gelir, metni sunucu ekler; kullanım sonucu başarı oranına yazılır
-  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id) : { text: "", run: null };
-  rt.skillRun = sk.run;
+  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id, t.skillFocus) : { text: "", run: null, used: [] };
+  rt.skillRun = sk.run; rt.skillsUsed = sk.used?.length ? sk.used : undefined; rt.skillFocus = sk.focus || undefined;
   if (t.temperature != null && t.temperature !== "" && isFinite(+t.temperature)) rt.temperature = Math.max(0, Math.min(1.5, +t.temperature));
   rt.maxTokens = { kisa: 6000, dengeli: 12000, ayrintili: 20000 }[t.detail] || 12000;
   const ins = String(t.instructions || "").replace(/[<>`]/g, "").trim().slice(0, 3000);
@@ -885,7 +885,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,apiUsd,totalUsd:apiUsd+(fx?integTry/fx:0),fx,fxManual:!!q("SELECT 1 FROM server_settings WHERE k='usd_try_manual'").get(),settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.72.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.73.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -988,7 +988,7 @@ route("POST", "/api/ai/generate", async (ctx) => {
   const history = Array.isArray(body.history) ? body.history.filter((x) => typeof x === "string" && x.trim()).slice(-4).map((x) => x.replace(/[<>`]/g, "").slice(0, 300)) : [];
   if (cur) messages.push({ role: "user", content: "Mevcut dosya:\n" + cur }, { role: "user", content: withImages(projectBrief(body) + (history.length ? "Bu projede daha önce istenenler (yalnızca bağlam için; bunları yeniden uygulama, mevcut dosyada zaten var):\n- " + history.join("\n- ") + "\n\n" : "") + "İstenen değişiklik: " + prompt, img) });
   else messages.push({ role: "user", content: withImages(projectBrief(body) + "Fikir: " + prompt + (plan ? "\n\nOnaylanmış plan (buna sadık kal):\n" + plan : ""), img) });
-  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); SKILL_ENGINE.outcome(rt.skillRun, out); const credits = charge(user, rt, "build", usage); return { ...out, skillRun: rt.skillRun || undefined, model, provider: rt.provider, spent: rt.credits, credits, usage, swapped: rt.swapped || undefined }; };
+  const fin = async ({ text, model, usage, finish }) => { const out = await repairScripts(rt, patch ? extractEdit(text, cur, { model, finish }) : extractHtml(text, { model, finish })); SKILL_ENGINE.outcome(rt.skillRun, out); const credits = charge(user, rt, "build", usage); return { ...out, skills: rt.skillsUsed, skillFocus: rt.skillFocus, skillRun: rt.skillRun || undefined, model, provider: rt.provider, spent: rt.credits, credits, usage, swapped: rt.swapped || undefined }; };
   if (body.stream === true && body.job === true && user) return aiJob(ctx, rt, messages, fin, cur ? "update" : "build", prompt.slice(0, 120));
   if (body.stream === true) return aiStream(ctx, rt, messages, fin);
   return fin(await chatWith(rt, messages));

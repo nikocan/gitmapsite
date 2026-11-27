@@ -2762,6 +2762,44 @@ html.rm .ambient i{animation:none}
 .ail-bm{display:grid;gap:5px}.ail-bm>div{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr auto auto;gap:8px;align-items:center;font-size:12.5px}.ail-bm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ail-bm em{font-style:normal;color:#ffb347;font-size:11px}
 .ail-bm i{height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}.ail-bm u{display:block;height:100%;background:var(--acc);border-radius:4px}.ail-bm>div>small{color:var(--mut)}
 .ai-prof{border-color:rgba(228,255,61,.35)}.ai-prof.ok{border-color:rgba(81,197,146,.5)}.ai-prof-st{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:#ccc;margin:6px 0 10px}.ai-prof-st .bad{color:#ff8a8a}.ai-prof-act{display:flex;flex-wrap:wrap;gap:6px}
+/* v5.73 Akış satırı ikonu + beceri paneli */
+.cc-ico{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;flex:none;color:#8f8d88;background:rgba(255,255,255,.04)}
+.cc-ico.run{color:#e8743b;background:rgba(232,116,59,.10)}
+.cc-ico.run::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:1.5px solid transparent;border-top-color:#e8743b;border-right-color:rgba(232,116,59,.35);animation:cc-spin .9s linear infinite}
+@keyframes cc-spin{to{transform:rotate(360deg)}}
+.cc-row.err .cc-ico{color:#e3b341;background:rgba(227,179,65,.12)}
+.cc-det{color:#6f6d68;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.cc-det::before{content:"·";margin:0 7px 0 1px;color:#55534f}
+.cc-rbtn time{color:#6f6d68;font-size:12.5px;font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){.cc-ico.run::after{animation:none;border-color:#e8743b}}html.rm .cc-ico.run::after{animation:none}
+.skd{margin:0 0 8px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(20,20,22,.7);backdrop-filter:blur(10px);overflow:hidden;position:relative}
+.skd-bar{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 10px;min-width:0}
+.skd-tg{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:#e9e9e6;font:inherit;font-size:13px;cursor:pointer;padding:2px 0;flex:none}
+.skd-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}.skd-chips::-webkit-scrollbar{display:none}
+.skd-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#cfcfca;white-space:nowrap;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.1)}.skd-chip em{font-style:normal;color:var(--acc);font-variant-numeric:tabular-nums}
+.skd-mute{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skd-go{display:inline-flex;align-items:center;gap:6px;flex:none;border:0;border-radius:20px;padding:5px 11px;background:var(--acc);color:#101211;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}.skd-go em{font-style:normal;background:rgba(0,0,0,.15);border-radius:10px;padding:0 6px}.skd-go:disabled{opacity:.45;cursor:default}
+.skd-body{display:grid;gap:10px;padding:4px 10px 10px;max-height:min(42vh,360px);overflow:auto}
+.skd-sug{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;padding:8px 10px;border-radius:12px;background:rgba(228,255,61,.07);border:1px solid rgba(228,255,61,.25)}.skd-sug span{flex:1;min-width:180px}
+.skd-sk{display:grid;gap:7px}.skd-sk-h{display:flex;gap:8px;align-items:center;font-size:13px}.skd-sk-h b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.skd-sk-h small{color:var(--mut);white-space:nowrap}
+.skd-meter{flex:1;min-width:50px;height:5px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}.skd-meter i{display:block;height:100%;background:linear-gradient(90deg,#a3e635,var(--acc));border-radius:4px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.skd-mods{display:flex;flex-wrap:wrap;gap:6px}
+.skd-mod{display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:12.5px;padding:5px 10px;border-radius:20px;cursor:pointer;color:#e6e6e2;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.2);transition:border-color .2s,background .2s,transform .15s}
+.skd-mod:hover:not(:disabled){border-color:var(--acc);border-style:solid;background:rgba(228,255,61,.07);transform:translateY(-1px)}.skd-mod:disabled{opacity:.45;cursor:default}
+.skd-mod.ok{border-style:solid;border-color:rgba(81,197,146,.4);color:#bfe8d3}.skd-mod.ok svg{color:#51c592}.skd-mod.mi{border-style:solid;border-color:rgba(255,255,255,.1)}
+.skd-micro small{display:block;font-size:11.5px;color:var(--mut);margin-bottom:6px}
+.skd-start{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+.skd-imp{display:flex;flex-direction:column;gap:6px}.skd-imp>.btn{align-self:flex-start}.skd-lib{font-size:12px;color:var(--mut);align-self:flex-start}
+.skd-list{display:grid;gap:4px}.skd-list button{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:8px;text-align:left;background:none;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:7px 10px;color:#eee;font:inherit;cursor:pointer}.skd-list button:hover{border-color:var(--acc)}
+.skd-list b{font-size:13px;font-weight:600}.skd-list small{grid-row:2;color:var(--mut);font-size:11.5px}.skd-list svg{grid-row:1/3;grid-column:2;align-self:center}
+.skd-lv{position:absolute;right:10px;top:-2px;transform:translateY(-100%);display:inline-flex;gap:6px;align-items:center;font-size:12.5px;font-weight:600;color:#101211;background:var(--acc);border-radius:20px;padding:5px 12px;box-shadow:0 8px 24px rgba(228,255,61,.35);animation:skd-pop 2.6s cubic-bezier(.2,.8,.2,1) forwards;pointer-events:none;z-index:3}
+.skd{overflow:visible}.skd-lv{top:6px;transform:none}
+@keyframes skd-pop{0%{opacity:0;transform:translateY(8px) scale(.9)}12%{opacity:1;transform:translateY(-4px) scale(1.04)}20%{transform:translateY(0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+.skd.busy .skd-go{animation:none}
+
+.cc-rbtn>span:not(.cc-ico):not(.cc-det){flex:none;white-space:nowrap}.cc-rbtn{min-width:0}
+.skd-micro{border-top:1px solid rgba(255,255,255,.06);padding-top:8px}.skd-micro summary{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12.5px;color:#cfcfca;list-style:none}.skd-micro summary::-webkit-details-marker{display:none}
+.skd-micro summary em{font-style:normal;color:var(--mut)}.skd-micro summary small{color:var(--mut);font-size:11.5px;margin-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.skd-micro[open] summary{margin-bottom:8px}
+.skd-body{max-height:min(34vh,300px)}.skd-lv{left:auto;right:44px;top:7px;font-size:11.5px;padding:3px 10px}
 </style>
 </head>
 <body>
@@ -2778,8 +2816,17 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.72.0";
+const VERSION="5.73.0";
 const CHANGELOG=[
+ {v:"5.73.0",date:"2026-11-28",items:[
+  "🧩 Beceriler artık geliştirirken kullanılıyor: Stüdyo'da istem kutusunun üstünde Beceriler paneli. Yüklü sektör becerisinin modülleri (ör. Klinik › Hasta kartı, Randevu, Tahsilat) tek tek görünüyor; uygulamada olanlar ✓, eksikler + ile. Bir modüle bas, istem yazmadan o modül becerinin veri alanları, ekranları ve iş kurallarıyla eklensin",
+  "🚀 Uçtan uca tamamla: eksik modüllerin hepsi sırayla, tek tıkla ekleniyor (ajan gibi adım adım; Durdur ile istediğin an kesilir). /tamamla komutu da aynı işi yapar",
+  "📈 Seviye: her becerinin “Seviye 3/7” göstergesi var; bir modül eklenince “Seviye atladın” efekti çıkıyor",
+  "✨ Küçük beceriler tek tıkla uygulanıyor: KVKK, SEO, koyu tema, PDF/yazdır, CSV, PWA, WhatsApp sipariş, çok dilli, erişilebilirlik, boş durumlar, ince animasyonlar, yönetici panosu…",
+  "💡 Projeye uyan sektör becerisi kendiliğinden öneriliyor (“Bu proje Klinik becerisine uyuyor · İçe aktar”); panelden kütüphanede arayıp beceri içe aktarabilirsin. /beceri komutu paneli açar",
+  "🎯 Odak modül: modül düğmesiyle yapılan istekte yapay zekâya yalnızca o modülü eklemesi, diğerlerini bozmaması ve mevcut kayıtlarla bağlaması söyleniyor; büyük sayfalarda yalnızca değişen parçalar yazılıyor",
+  "🧾 Geliştirme akışı yenilendi (Claude Code düzeni): her işlem tek satır · tutarlı ikon · doğal fiil · kısa ayrıntı · süre. “İstek gönderildi · claude-sonnet-5-5”, “Beceri modülü uygulandı · Klinik › Tahsilat”, “Kod yazılıyor · HTML yapısı → stiller · 2,4K token”, “Kontrol edildi · 2 parça değişti”, “Önizleme güncellendi · 38 KB”. Çalışan adımda ikonun etrafında ince halka döner, yazı parlar",
+  "🛠️ Tasarım ajanı kartı artık yalnızca gerçekten otomatik düzeltirken “kendiliğinden düzeltiyor” diyor; küçük uyarılar öneri olarak kalıyor"]},
  {v:"5.72.0",date:"2026-11-28",items:[
   "🧠 Ana yapay zekâ artık Claude (Anthropic) — doğrudan bağlantı. Uygulama üretimi Sonnet, Güçlü mod Opus, plan/yapılacaklar/Asistan/Rehber Haiku ile çalışıyor. Anthropic anahtarı tanımlıysa sunucu bir kez kendiliğinden bu yapılandırmaya geçer; önce anahtarı doğrular, önceki ayarları saklar",
   "💾 İstem önbelleği Claude'da gerçekten çalışıyor: Anthropic'in kendi API'sine bağlanan yeni çevirici sayesinde sabit talimatlar ve düzenlenen sayfa önbellekten okunuyor; tekrar okunan girdi ~%90 daha ucuz. (OpenAI uyumlu katman önbelleği desteklemediği için bu çevirici yazıldı.) Canlı akış da aynen çalışıyor",
@@ -4956,42 +5003,49 @@ function ClStepRow({title,state,children,open0=false,activityIcon}){const [o,set
 // Çalışan satırda turuncu-sarı nokta göstergesi ve süre ("4d 17sn"); bitince adımlar "Çalıştırıldı N adım ›" altında toplanır.
 const ccTime=s=>{s=Math.max(0,Math.floor(s||0));return s>=60?Math.floor(s/60)+"d "+(s%60)+"sn":s+"sn"};
 function CcDots(){return html`<span class="cc-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>`}
-function CcRow({label,run,err,time,children,open0=false}){
+// v5.73 — tek satırlık işlem: [ikon] Fiil · ayrıntı   süre ›  (çalışırken ikon halkası döner, yazı parlar)
+function CcRow({label,detail,icon,run,err,time,children,open0=false}){
  const [o,setO]=useState(open0);const has=!!children;
  return html`<div class=${"cc-row"+(run?" run":"")+(err?" err":"")}>
   <button type="button" class="cc-rbtn" aria-expanded=${has?o:undefined} disabled=${!has&&!run} onClick=${()=>has&&setO(!o)}>
-   ${run&&html`<${CcDots}/>`}${err&&html`<${Icon} n="alert" s=${14}/>`}
-   <span class=${run?"shimmer":""}>${label}</span>${run&&Number.isFinite(time)&&html`<time>${ccTime(time)}</time>`}${has&&html`<${Icon} n=${o?"chevDown":"chevRight"} s=${15}/>`}
+   <span class=${"cc-ico"+(run?" run":"")}><${Icon} n=${err?"alert":icon||"dot"} s=${13}/></span>
+   <span class=${run?"shimmer":""}>${label}</span>${detail&&html`<span class="cc-det">${detail}</span>`}${Number.isFinite(time)&&html`<time>${ccTime(time)}</time>`}${has&&html`<${Icon} n=${o?"chevDown":"chevRight"} s=${15}/>`}
   </button>${o&&has&&html`<div class="cc-body">${children}</div>`}</div>`}
 const CC_SAY={
- build:"Fikrini inceleyip çalışan ilk sürüm için bir üretim isteği hazırlıyorum.",
- update:"Mevcut index.html üzerinde istediğin değişikliği hazırlıyorum.",
- review:"Kodu baştan sona kontrol edeceğim; hata ve eksikleri tek tek not ediyorum.",
- plan:"Önce işi parçalara ayırıp bir yapım planı çıkarıyorum.",
- agent:"İşi küçük, sırayla yapılabilir adımlara bölüyorum."
+ build:"Fikrini çalışan ilk sürüme çeviriyorum.",
+ update:"İstediğin değişikliği mevcut sayfaya uyguluyorum.",
+ review:"Kodu baştan sona denetliyorum.",
+ plan:"İşi parçalara ayırıp yapım planı çıkarıyorum.",
+ agent:"İşi sırayla yapılabilir küçük adımlara bölüyorum."
 };
+const fmtTok=n=>n>=1000?(n/1000).toFixed(1).replace(".",",")+"K":String(n);
 // Olaylardan sırayla "anlatım + işlem satırı" adımları üretir
 function ccSteps(log,live){
  const ev=log.events||[],at=log.at||{},rq=log.req||{},run=!!log.running,failed=log.error||log.cut||log.stopped;
  const steps=[];const parts=["structure","styles","scripts"].filter(k=>ev.includes(k)).map(k=>({structure:"HTML yapısı",styles:"stiller",scripts:"JavaScript"})[k]);
  const reqLines=[["tür",CX_KIND[rq.tur]||rq.tur],["mod",MODE_TR[rq.mod]||rq.mod],["model",log.model&&shortModel(log.model)],["tasarım",rq.design],["profil",rq.profil],["görsel",log.images?log.images+" görsel":""],["dosya",rq.size?"index.html ("+rq.size+" KB)"+(Number(rq.size)>=9?" · yalnızca değişen parçalar":""):""]].filter(x=>x[1]);
  const connected=ev.includes("connected");
- steps.push({k:"sent",say:CC_SAY[log.kind]||"İsteğini hazırlayıp modele gönderiyorum.",label:connected||!run?"Gönderdi istek"+(log.model?" · "+shortModel(log.model):""):"Gönderiyor istek",run:run&&!connected,t0:0,
+ steps.push({k:"sent",say:CC_SAY[log.kind]||"İsteğini hazırlayıp modele gönderiyorum.",icon:"send",label:connected||!run?"İstek gönderildi":"İstek hazırlanıyor",detail:log.model?shortModel(log.model):"",run:run&&!connected,t0:0,
   body:html`<${ClIO} label="İstek"><div class="cx-kv">${reqLines.map(([k,v])=>html`<div key=${k}><b>${k}</b> ${v}</div>`)}</div>${rq.text&&html`<div class="cx-prompt">${rq.text}</div>`}<//>`});
+ // Beceri satırı: hangi beceri (ve odak modül) üretime uzmanlık olarak eklendi
+ const sk=log.res?.skills||rq.skills;const fo=log.res?.skillFocus||rq.focus;
+ if(sk&&sk.length)steps.push({k:"skill",icon:"brain",label:fo?"Beceri modülü uygulandı":"Beceri yüklendi",detail:fo?skShort(fo.name)+" › "+fo.module:sk.map(x=>skShort(x.name||x)).slice(0,3).join(", ")+(sk.length>3?" +"+(sk.length-3):""),t0:0});
  if(connected||ev.includes("receiving")){
   const writing=run&&!ev.includes("processing");const big=rq.size&&Number(rq.size)>=9;
   const tail=(run?live:log.res?.tail)||"";
   steps.push({k:"code",say:log.kind==="plan"||log.kind==="agent"?"Model isteği aldı; adımları yazıyor.":big?"Model isteği aldı. Sayfanın tamamını değil, yalnızca değişecek parçaları yazdırıyorum.":"Model isteği aldı. Önce yapıyı kuruyorum, ardından stilleri ve etkileşimleri yazacağım.",
-   label:(writing?(log.kind==="plan"||log.kind==="agent"?"Yazıyor plan":"Yazıyor kod"):(log.kind==="plan"||log.kind==="agent"?"Yazdı plan":"Yazdı kod"))+(parts.length?" · "+parts.join(", "):""),run:writing,t0:at.connected??at.receiving,
+   icon:log.kind==="plan"||log.kind==="agent"?"list":"code",label:writing?(log.kind==="plan"||log.kind==="agent"?"Plan yazılıyor":"Kod yazılıyor"):(log.kind==="plan"||log.kind==="agent"?"Plan yazıldı":"Kod yazıldı"),
+   detail:[parts.join(" → "),writing&&tail?fmtTok(Math.round(tail.length/3.6))+" token":"",big?"yalnızca değişen parçalar":""].filter(Boolean).join(" · "),run:writing,t0:at.connected??at.receiving,
    body:tail?html`<${ClIO} label=${writing?"Yanıt (canlı)":"Yanıt (son kısım)"}><code>${tail.slice(-700)}</code>${writing&&html`<span class="caret"></span>`}<//>`:null});
  }
- if(ev.includes("continuing"))steps.push({k:"cont",say:"Yanıt uzunluk sınırına geldi; kaldığı yerden devam ettiriyorum.",label:"Devam ettirdi yanıt",t0:at.continuing});
+ if(ev.includes("continuing"))steps.push({k:"cont",say:"Yanıt uzunluk sınırına geldi; kaldığı yerden sürdürüyorum.",icon:"refresh",label:"Yanıt sürdürüldü",detail:"uzunluk sınırı",t0:at.continuing});
  if(ev.includes("processing")||!run&&!failed&&!log.asked&&connected){
   const fx=[log.res?.patched&&log.res.patched+" parça değişti",log.res?.fixed&&log.res.fixed+" hata onarıldı"].filter(Boolean);
-  steps.push({k:"proc",say:log.kind==="review"?"Bulguları derleyip önem sırasına koyuyorum.":"Kod geldi. Hataları kontrol edip önizlemeyi hazırlıyorum.",label:(run?"Çalıştırılıyor kontrol":"Çalıştırdı kontrol")+(fx.length?" · "+fx.join(", "):""),run,t0:at.processing});
+  steps.push({k:"proc",say:log.kind==="review"?"Bulguları önem sırasına koyuyorum.":"Kod geldi; hataları denetleyip önizlemeyi hazırlıyorum.",icon:"shield",label:run?"Kontrol ediliyor":"Kontrol edildi",detail:fx.length?fx.join(", "):run?"sözdizimi · güvenlik · önizleme":"sorun yok",run,t0:at.processing});
+  if(!run&&!failed&&log.kind!=="plan"&&log.kind!=="agent")steps.push({k:"prev",icon:"eye",label:"Önizleme güncellendi",detail:log.kb?log.kb+" KB":"",t0:0});
  }
  if(log.asked)steps.push({k:"ask",say:"Kod yazmadan önce bir şeyi netleştirmem gerekiyor; sorumu aşağıya yazdım. Kredi harcanmadı.",label:null});
- if(failed)steps.push({k:"err",say:log.stopped?"İşlemi durdurdun; kredi harcanmadı.":log.cut?"Sayfa yenilendiği ya da kapandığı için işlem yarıda kaldı. Yeniden dene ile kaldığı yerden sürdürebilirsin.":"İşlem tamamlanamadı.",label:log.res?.error?"Hata ayrıntısı":null,err:true,body:log.res?.error?html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`:null});
+ if(failed)steps.push({k:"err",say:log.stopped?"İşlemi durdurdun; kredi harcanmadı.":log.cut?"Sayfa yenilendiği ya da kapandığı için işlem yarıda kaldı. Yeniden dene ile kaldığı yerden sürdürebilirsin.":"İşlem tamamlanamadı.",icon:"alert",label:log.res?.error?"Hata ayrıntısı":null,err:true,body:log.res?.error?html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`:null});
  return steps;
 }
 function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
@@ -5015,7 +5069,7 @@ function WorkLog({log,lastAt,retry,onToggle,live,isOpen,flowId}){
  const meta=[log.kb&&log.kb+" KB",log.model&&shortModel(log.model),Number.isFinite(log.spent)&&log.spent+" kredi",ccTime(log.secs||0)].filter(Boolean);
  const stepEl=(s,i,last)=>html`<div class="cc-step" key=${s.k}>
   ${s.say&&html`<p class=${"cc-say"+(s.err?" err":"")}>${s.say}</p>`}
-  ${s.label&&html`<${CcRow} label=${s.label} run=${s.run} err=${s.err} time=${s.run?Math.floor(now-(s.t0||0)):undefined}>${s.body}<//>`}
+  ${s.label&&html`<${CcRow} label=${s.label} detail=${s.detail} icon=${s.icon} run=${s.run} err=${s.err} time=${s.run?Math.floor(now-(s.t0||0)):undefined}>${s.body}<//>`}
   ${last&&stalled&&html`<p class="cc-note">Model hâlâ düşünüyor; ilk parçalar gelince burada görünecek.</p>`}
  </div>`;
  // Bitti: adımlar tek satırda toplanır (Claude Code: "Çalıştırıldı 6 komut ›")
@@ -5655,7 +5709,7 @@ function TodoCard({todo,busy,onStart,onStop,onCancel}){
 }
 
 // ---- Eğik çizgi komutları ----
-const SLASH=[["/github","github","GitHub deposunu önizle, Geliştir'e ya da Tasarım'a al"],["/devral","rocket","GitHub projesini devral ve yayınla"],["/ajan","list","Ajan modu: yapılacaklar listesi çıkar, adım adım yap"],["/plan","compass","Önce plan yaz, onayla, sonra yap"],["/kontrol","shield","Kodu incele ve hataları düzelt"],["/gorsel","image","Çizim ya da görsel ekle"],["/tasarim","palette","Tasarım stüdyosunu aç"],["/model","cpu","Dil modelini değiştir"],["/ayarlar","sliders","Çalıştırma ayarları"],["/geri","undo","Önceki sürüme dön"],["/kaydet","save","Uygulamayı kaydet"],["/yayinla","rocket","Yayınla"],["/yeni","plus","Yeni proje başlat"],["/yardim","help","Tüm komutları göster"]];
+const SLASH=[["/tamamla","rocket","Yüklü becerinin eksik modüllerini sırayla ekler"],["/beceri","layers","Beceri panelini aç, beceri içe aktar"],["/github","github","GitHub deposunu önizle, Geliştir'e ya da Tasarım'a al"],["/devral","rocket","GitHub projesini devral ve yayınla"],["/ajan","list","Ajan modu: yapılacaklar listesi çıkar, adım adım yap"],["/plan","compass","Önce plan yaz, onayla, sonra yap"],["/kontrol","shield","Kodu incele ve hataları düzelt"],["/gorsel","image","Çizim ya da görsel ekle"],["/tasarim","palette","Tasarım stüdyosunu aç"],["/model","cpu","Dil modelini değiştir"],["/ayarlar","sliders","Çalıştırma ayarları"],["/geri","undo","Önceki sürüme dön"],["/kaydet","save","Uygulamayı kaydet"],["/yayinla","rocket","Yayınla"],["/yeni","plus","Yeni proje başlat"],["/yardim","help","Tüm komutları göster"]];
 
 // Figma can import these vectors without a network connection or an account token.
 function sceneVectors() {
@@ -6587,6 +6641,57 @@ function Kokpit({close,user,html:h,model,radar,health,reHealth,applyFix,buildFix
     <div class="kok-learn"><${Icon} n="sparkles" s=${13}/><span>Öğrenen sistem: <b>${mt.s}</b> görüldü · <b>${mt.f}</b> sen düzelttin · <b>${mt.a}</b> otomatik · <b>${mt.d}</b> yoksayıldı. 3 kez düzelttiğin tür kendiliğinden düzelir; 2 kez yoksaydığın susturulur.</span>${mt.s+mt.f+mt.d>0&&html`<button type="button" class="kok-link" onClick=${()=>{LS.set("rdrMem",{});tick(x=>x+1);toast("Öğrenilenler sıfırlandı")}}>Sıfırla</button>`}</div>
    </section>
   </div></div></div>`}
+/* (beceri paneli) */
+/* ================= v5.73 STÜDYO BECERİ PANELİ: modül modül ekle, seviye atla, uçtan uca tamamla ================= */
+let SKILL_FOCUS=null; // o anki üretimde odaklanılan beceri modülü {skill,module}
+const MICRO_LABEL={kvkk:"KVKK",seo:"SEO","koyu-tema":"Koyu tema",pwa:"PWA",yazdir:"PDF / yazdır",csv:"CSV","whatsapp-siparis":"WhatsApp sipariş",erisilebilirlik:"Erişilebilirlik","mobil-once":"Mobil öncelikli","tr-para":"TR biçimleri","cok-dil":"TR / EN",pano:"Yönetici panosu","bos-durum":"Boş durumlar",animasyon:"Animasyonlar","kurumsal-dil":"Kurumsal dil"};
+const skShort=n=>String(n||"").split(/ [·(]| ve /)[0];
+const MICRO_IC={kvkk:"lock",seo:"search","koyu-tema":"moon",pwa:"device",yazdir:"print",csv:"table","whatsapp-siparis":"chat",erisilebilirlik:"eye","mobil-once":"phone","tr-para":"coins","cok-dil":"globe",pano:"chart","bos-durum":"inbox",animasyon:"sparkles","kurumsal-dil":"briefcase","oyun-hissi":"gamepad"};
+const SK_STOP=new Set("ve ile için ile veya bir bu her ana alt ön son yönetimi takibi takip listesi ekranı ekranları raporu raporlar kartı kartları planı özeti özet sayfası".split(" "));
+const modWords=m=>String(m).toLocaleLowerCase("tr").replace(/\([^)]*\)/g," ").split(/[\s/,·.-]+/).filter(w=>w.length>=3&&!SK_STOP.has(w));
+const skillMods=s=>(skillParts(s.body)["MODÜLLER"]||"").split(/,\s*/).map(x=>x.replace(/\.$/,"").trim()).filter(Boolean);
+const htmlText=h=>String(h||"").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi," ").replace(/<[^>]+>/g," ").toLocaleLowerCase("tr");
+// Modül uygulamada var mı: modül adındaki ana kelime sayfa metninde ya da kodda geçiyor mu
+function modCovered(m,txt,code){const w=modWords(m);if(!w.length)return false;return w.slice(0,2).some(x=>txt.includes(x)||code.includes(x.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ı/g,"i")))}
+const modPrompt=(s,m)=>`Beceri modülü ekle — ${s.name} › ${m}. Bu uygulamaya “${m}” modülünü eksiksiz ekle: becerideki ilgili veri alanlarını, ekranları ve iş kurallarını uygula, menüye/gezinmeye ekle, örnek verilerle doldur ve diğer modüllerle bağla. Mevcut özellikleri ve tasarımı bozma.`;
+// Projeye uyan sektör becerisini tahmin et (ad, kullanıcı ve modül kelimeleri)
+function suggestSkill(plans,text){const t=String(text||"").toLocaleLowerCase("tr");if(t.length<6)return null;let best=null,score=0;
+ for(const s of plans){const words=[...modWords(s.name),...modWords(s.who||"")];let n=0;for(const w of new Set(words))if(w.length>=4&&t.includes(w))n+=2;for(const m of skillMods(s))if(modWords(m).some(w=>w.length>=4&&t.includes(w)))n+=1;if(n>score){score=n;best=s}}
+ return score>=3?best:null}
+function StudioSkillDock({html:h,busy,projectText,onModule,onComplete,onMicro,onStart,toast,start=false}){
+ const idx=useSkillIdx();const [open,setOpen]=useState(()=>LS.get("skDock",true)!==false);const [q,setQ]=useState("");const [pick,setPick]=useState(false);const [,tick]=useState(0);const [lv,setLv]=useState(null);const prev=useRef({});const [usedMicro,setUsedMicro]=useState([]);
+ useEffect(()=>{LS.set("skDock",open)},[open]);
+ useEffect(()=>{const f=()=>tick(x=>x+1);addEventListener("gm:skills",f);const d=e=>{if(e.detail==="open"){setOpen(true);setPick(true)}};addEventListener("gm:skilldock",d);return()=>{removeEventListener("gm:skills",f);removeEventListener("gm:skilldock",d)}},[]);
+ const all=Object.values(idx);const plans=all.filter(s=>s.kind==="gelistirme");const on=skillsOn();
+ const loaded=plans.filter(s=>on.includes(s.id));
+ const txt=useMemo(()=>htmlText(h),[h]);const code=useMemo(()=>String(h||"").toLowerCase(),[h]);
+ const rows=loaded.map(s=>{const mods=skillMods(s).map(m=>({m,ok:!!h&&modCovered(m,txt,code)}));return {s,mods,done:mods.filter(x=>x.ok).length}});
+ // Seviye atlama efekti: kapsanan modül sayısı artınca
+ useEffect(()=>{for(const r of rows){const p=prev.current[r.s.id];if(p!=null&&r.done>p){setLv({name:r.s.name,n:r.done,t:r.mods.length,k:Date.now()});GMD.buzz&&GMD.buzz(12)}prev.current[r.s.id]=r.done}},[rows.map(r=>r.s.id+":"+r.done).join("|")]);
+ useEffect(()=>{if(!lv)return;const t=setTimeout(()=>setLv(null),2600);return()=>clearTimeout(t)},[lv]);
+ const sug=!loaded.length?suggestSkill(plans,projectText+" "+txt.slice(0,4000)):null;
+ const micro=SKILLS.filter(x=>!x.group&&x.id!=="oyun-hissi");
+ const qq=q.trim().toLocaleLowerCase("tr");const found=pick?plans.filter(s=>!on.includes(s.id)&&(!qq||(s.name+" "+s.who+" "+(skillParts(s.body)["MODÜLLER"]||"")).toLocaleLowerCase("tr").includes(qq))).slice(0,8):[];
+ const missing=rows.flatMap(r=>r.mods.filter(x=>!x.ok).map(x=>({s:r.s,m:x.m})));
+ if(start&&!rows.length&&!sug&&!pick)return null;
+ const head=rows.length?rows.map(r=>html`<span class="skd-chip" key=${r.s.id} title=${r.s.name}><${Icon} n="brain" s=${12}/>${skShort(r.s.name)}<em>${r.done}/${r.mods.length}</em></span>`):html`<span class="skd-mute">Beceri yok · modülleri tek tıkla eklemek için bir beceri içe aktar</span>`;
+ return html`<div class=${"skd"+(open?" open":"")+(busy?" busy":"")}>
+  <div class="skd-bar"><button type="button" class="skd-tg" aria-expanded=${open} onClick=${()=>setOpen(!open)}><${Icon} n="layers" s=${14}/><b>Beceriler</b></button><div class="skd-chips">${head}</div>
+   ${missing.length>0&&h&&html`<button type="button" class="skd-go" disabled=${busy} title="Eksik modülleri sırayla, istem yazmadan ekler" onClick=${()=>onComplete(missing)}><${Icon} n="rocket" s=${13}/> Uçtan uca tamamla <em>${missing.length}</em></button>`}
+   <button type="button" class="ib sm" aria-label=${open?"Beceri panelini kapat":"Beceri panelini aç"} onClick=${()=>setOpen(!open)}><${Icon} n=${open?"chevDown":"chevUp"} s=${14}/></button></div>
+  ${lv&&html`<div class="skd-lv" key=${lv.k}><${Icon} n="sparkles" s=${13}/> Seviye ${lv.n}/${lv.t} · ${skShort(lv.name)}</div>`}
+  ${open&&html`<div class="skd-body">
+   ${sug&&html`<div class="skd-sug"><${Icon} n="lightbulb" s=${14}/><span>Bu proje <b>${sug.name}</b> becerisine uyuyor: modülleri ve iş kuralları hazır.</span><button class="btn s" onClick=${()=>{loadSkill(sug.id,toast,sug.name)}}>İçe aktar</button></div>`}
+   ${rows.map(r=>html`<div class="skd-sk" key=${r.s.id}><div class="skd-sk-h"><b>${r.s.name}</b><span class="skd-meter" title=${r.done+"/"+r.mods.length+" modül uygulamada"}><i style=${{width:(r.mods.length?r.done/r.mods.length*100:0)+"%"}}></i></span><small>Seviye ${r.done}/${r.mods.length}</small>
+     <button class="ib sm" title="Beceriyi kaldır" aria-label=${r.s.name+" becerisini kaldır"} onClick=${()=>{LS.set("skills",skillsOn().filter(x=>x!==r.s.id));dispatchEvent(new Event("gm:skills"))}}><${Icon} n="x" s=${12}/></button></div>
+    ${!h?html`<div class="skd-start"><span>Henüz uygulama yok.</span><button class="btn s" disabled=${busy} onClick=${()=>onStart(r.s)}><${Icon} n="sparkles" s=${13}/> Bu beceriyle başlat</button></div>`:html`<div class="skd-mods">${r.mods.map(x=>html`<button type="button" key=${x.m} class=${"skd-mod"+(x.ok?" ok":"")} disabled=${busy} title=${x.ok?"Uygulamada var · yine de geliştirmek için tıkla":"Tek tıkla ekle: "+x.m} onClick=${()=>onModule(r.s,x.m)}><${Icon} n=${x.ok?"checkCircle":"plusCircle"} s=${13}/>${x.m.replace(/\s*\([^)]*\)/,"")}</button>`)}</div>`}</div>`)}
+   ${h&&html`<details class="skd-micro" open=${!rows.length}><summary><${Icon} n="sparkles" s=${13}/> Küçük beceriler <em>${micro.length}</em><small>KVKK, SEO, koyu tema, PDF… tek tıkla</small></summary><div class="skd-mods">${micro.map(x=>html`<button type="button" key=${x.id} class=${"skd-mod mi"+(usedMicro.includes(x.id)?" ok":"")} disabled=${busy} title=${x.d} onClick=${()=>{setUsedMicro(u=>[...u,x.id]);onMicro(x)}}><${Icon} n=${usedMicro.includes(x.id)?"checkCircle":MICRO_IC[x.id]||"sparkles"} s=${13}/>${MICRO_LABEL[x.id]||x.n}</button>`)}</div></details>`}
+   <div class="skd-imp">${pick?html`<label class="skm-q"><${Icon} n="search" s=${14}/><input autoFocus aria-label="Beceri ara" placeholder="Beceri ara: randevu, stok, aidat, eczane…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
+    <div class="skd-list">${found.map(s=>html`<button type="button" key=${s.id} onClick=${()=>{loadSkill(s.id,toast,s.name);setPick(false);setQ("")}}><b>${s.name}</b><small>${s.who}</small><${Icon} n="plus" s=${14}/></button>`)}${!found.length&&html`<p class="skd-mute">Sonuç yok.</p>`}</div>`
+    :html`<button type="button" class="btn g s" onClick=${()=>setPick(true)}><${Icon} n="plus" s=${13}/> Beceri içe aktar</button><a class="skd-lib" href="#beceriler">Kütüphane</a>`}</div>
+  </div>`}
+ </div>`;
+}
 function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
@@ -6685,7 +6790,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(!(st.html||"").includes('<meta name="gitmapp-scenario" content="gitsap-production">'))return selected;
   return [...new Set([...selected,"gitsap-tedarik","gitsap-uretim","gitsap-fatura","gitsap-finans"])];
  }
- const aiBody=()=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n"),skills:skillIds()},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
+ const aiBody=()=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n"),skills:skillIds(),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -6698,7 +6803,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   abortRef.current=controller;
   lastRetry.current={id,run:retry};
   followChat.current=true;
-  const log={kind,running:true,start,last:start,events:[],images,model:curModel,task,req:{text:String(req?.text??userText??"").slice(0,1500),size:req?.size||0,design:req?.design||"",tur:prefs.kind,mod:prefs.mode,profil:auth.user?[auth.user.role&&"iş alanı: "+auth.user.role,auth.user.instructions&&"talimat: “"+String(auth.user.instructions).slice(0,90)+(String(auth.user.instructions).length>90?"…":"")+"”"].filter(Boolean).join(" · "):""}};
+  const log={kind,running:true,start,last:start,events:[],images,model:curModel,task,req:{skills:skillIds().map(id=>({id,name:SKILL_NAMES[id]||id})),focus:SKILL_FOCUS?{name:SKILL_NAMES[SKILL_FOCUS.skill]||"",module:SKILL_FOCUS.module}:null,text:String(req?.text??userText??"").slice(0,1500),size:req?.size||0,design:req?.design||"",tur:prefs.kind,mod:prefs.mode,profil:auth.user?[auth.user.role&&"iş alanı: "+auth.user.role,auth.user.instructions&&"talimat: “"+String(auth.user.instructions).slice(0,90)+(String(auth.user.instructions).length>90?"…":"")+"”"].filter(Boolean).join(" · "):""}};
   streamClock.current={id,last:start};
   const request=userText?[{role:"user",content:userText,imgs}]:[];
   setSt(s=>({...s,msgs:[...s.msgs,...request,{role:"assistant",id,log,retry:legacyRetry}]}));
@@ -6732,7 +6837,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    if(result.skillRun)LS.set("lastSkillRun",{id:result.skillRun,at:Date.now()});
    const endEvent=typeof finalEvent==="function"?finalEvent(result):finalEvent;
    if(endEvent)record(endEvent);
-   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,out:result.html?outOf(prevHtmlForOut,result.html):null,res:{summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,fixed:result.autoFixed||0,jsErr:result.scriptErrors||null,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
+   finish({model:result.model||curModel,kb:result.html?(new Blob([result.html]).size/1024).toFixed(1):"",spent:result.spent,out:result.html?outOf(prevHtmlForOut,result.html):null,res:{skills:result.skills||null,skillFocus:result.skillFocus||null,summary:String(typeof message==="string"?message:result.summary||"").slice(0,600),patched:result.patched||0,fixed:result.autoFixed||0,jsErr:result.scriptErrors||null,title:result.title||"",tail:liveRef.current.slice(-700)}},message);
    return result;
   }catch(error){
    if(!valid())return null;
@@ -6823,11 +6928,18 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    setTodo({prompt:text,im,per:result.per,awaiting:true,running:false,items:result.todos.map(t=>({...t,state:"wait"}))});
   },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>agent(text,im,true),finalEvent:"agent"});
  }
+ useEffect(()=>{if(todo?.auto&&todo.awaiting&&!todo.running&&!busy)runTodos()},[todo,busy]);
+ // v5.73 — Beceri paneli eylemleri
+ const skMod=async(sk,m)=>{if(busy)return;loadSkill(sk.id);SKILL_FOCUS={skill:sk.id,module:m};try{await build(modPrompt(sk,m),null,"Beceri · "+skShort(sk.name)+" › "+m)}finally{SKILL_FOCUS=null}};
+ const skStart=sk=>{if(busy)return;loadSkill(sk.id);gen(sk.test||sk.name+" uygulaması yap; örnek verilerle dolu olsun.")};
+ const skMicro=x=>{if(busy)return;build(x.p,null,"Küçük beceri · "+(MICRO_LABEL[x.id]||x.n))};
+ const skComplete=missing=>{if(busy||todo?.running||!missing.length)return;const by=missing[0].s;setTodo({prompt:by.test||by.name,auto:true,awaiting:true,running:false,items:missing.map(x=>({title:skShort(x.s.name)+" › "+x.m,detail:modPrompt(x.s,x.m),focus:{skill:x.s.id,module:x.m},state:"wait"}))});toast(missing.length+" modül sırayla eklenecek · Durdur ile istediğin an kesebilirsin")};
+
  async function runTodos(){const ticket=epoch.current,t=todo;if(!t||t.running||abortRef.current)return;stopRef.current=false;let items=t.items.map(x=>({...x}));const put=()=>setTodo(o=>o&&{...o,items:items.map(x=>({...x}))});
   setTodo(o=>({...o,awaiting:false,running:true}));let html=st.html;const all=items.map((x,i)=>(i+1)+". "+x.title).join("\n");
   for(let i=0;i<items.length;i++){if(stopRef.current)break;if(items[i].state==="done")continue;items[i].state="run";put();
    const first=!html;const prompt=first?t.prompt+"\n\nTüm yapılacaklar:\n"+all+"\n\nŞimdi yalnız şu adımı yap: "+items[i].detail:"Yapılacaklar listesindeki "+(i+1)+". adımı uygula: "+items[i].detail+"\n(Önceki adımları bozma.)";
-   const r=await build(prompt,null,"Adım "+(i+1)+": "+items[i].title,false,i===0&&t.im?{...t.im,thumbs:undefined}:null,html||"");
+   SKILL_FOCUS=items[i].focus||null;const r=await build(prompt,null,"Adım "+(i+1)+": "+items[i].title,false,i===0&&t.im?{...t.im,thumbs:undefined}:null,html||"");SKILL_FOCUS=null;
    if(ticket!==epoch.current)return;
    if(!r){items[i].state=stopRef.current?"wait":"err";put();break}html=r;items[i].state="done";put()}
   setTodo(o=>o&&{...o,running:false});toast(items.some(x=>x.state==="err")?"Bir adım başarısız oldu":items.every(x=>x.state==="done")?"Ajan tamamlandı":"Ajan durduruldu")}
@@ -6837,6 +6949,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(c==="/ajan"){if(!arg){setPrefs(p=>({...p,mode:"ajan"}));toast("Ajan modu açık");return}setPrefs(p=>({...p,mode:"ajan"}));prefsRef.current={...prefsRef.current,mode:"ajan"};return agent(arg)}
   if(c==="/plan"){setPrefs(p=>({...p,mode:"planli"}));if(arg){prefsRef.current={...prefsRef.current,mode:"planli"};setTimeout(()=>gen(arg),0)}return}
   if(c==="/github"){dispatchEvent(new CustomEvent("gm:gh",{detail:{url:arg||"",auto:false}}));return}if(c==="/devral"){if(!ghFind(arg)){say("Kullanım: /devral github.com/kullanici/depo");return}dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(arg),auto:true}}));return}if(c==="/kontrol")return review();if(c==="/geri")return undo();if(c==="/kaydet")return save();if(c==="/yayinla")return publish();
+  if(c==="/beceri"){dispatchEvent(new CustomEvent("gm:skilldock",{detail:"open"}));return}
+  if(c==="/tamamla"){const btn=document.querySelector(".skd-go");if(btn)btn.click();else say("Tamamlanacak modül yok. Önce /beceri ile bir sektör becerisi içe aktar.");return}
   if(c==="/gorsel")return fileRef.current&&fileRef.current.click();if(c==="/tasarim")return setGallery(true);if(c==="/model")return setPicker(true);if(c==="/ayarlar")return setTimeout(()=>setRunOpen(true),0);
   if(c==="/yeni"){if(st.html&&!st.appId&&!confirm("Kaydedilmemiş çalışma silinsin mi?"))return;setInput("");setAtts([]);switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setVersions([]);setPlan(null);setTodo(null);return}
   say("Komutlar:\n"+SLASH.map(([k,,d])=>k+" — "+d).join("\n"))}
@@ -7326,6 +7440,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   <section class="sx-main" aria-label="Yeni proje">
    <div class="start-type">${typeSwitch()}</div>
    ${escCard()}${prompt(true)}${ccFoot()}
+   <${StudioSkillDock} start=${true} html=${""} busy=${busy} projectText=${input} onModule=${skMod} onComplete=${skComplete} onMicro=${skMicro} onStart=${skStart} toast=${toast}/>
    <div class="sx-chips" role="group" aria-label="Hızlı başlangıç">${starters.map(([ic,l,p])=>html`<button type="button" class="sx-chip" key=${kind+l} onClick=${()=>fill(p)}><${Icon} n=${ic} s=${16}/><span>${l}</span></button>`)}</div>
    <div class="sx-acts">
     <button type="button" class="sx-act" disabled=${busy} title="Bir fikir seçer ve üretimi başlatır" onClick=${()=>doForMe()}><${Icon} n="cursor" s=${14}/> Benim için yap</button>
@@ -7402,9 +7517,10 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
     <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
     <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
   const fix=()=>build(fixPrompt(probs),null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
-  if(autoFix&&probs.length&&!autoTurn())return html`<div class="dq-card auto" role="status"><div class="dq-h"><span class="ccspin"></span><b>Tasarım ajanı</b><span>${probs.length} sorunu kendiliğinden düzeltiyor…</span><button type="button" class="dq-stop" onClick=${()=>{setAutoFix(false);toast("Otomatik düzeltme kapatıldı; sorunları elle düzeltebilirsin")}}>Durdur</button></div></div>`;
+  if(autoFix&&probs.length&&qaCritical()&&!autoTurn())return html`<div class="dq-card auto" role="status"><div class="dq-h"><span class="ccspin"></span><b>Tasarım ajanı</b><span>${probs.length} sorunu kendiliğinden düzeltiyor…</span><button type="button" class="dq-stop" onClick=${()=>{setAutoFix(false);toast("Otomatik düzeltme kapatıldı; sorunları elle düzeltebilirsin")}}>Durdur</button></div></div>`;
   if(autoFix&&probs.length&&autoTurn())return html`<details class="dq-card left"><summary><${Icon} n="info" s=${13}/><b>Tasarım ajanı</b><span>düzeltti · ${probs.length} küçük uyarı kaldı</span></summary><ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn g s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Bir kez daha dene</button></details>`;
   return html`<div class=${"dq-card"+(probs.length?" warn":"")} role="status"><div class="dq-h"><${Icon} n=${probs.length?"alert":"check"} s=${14}/><b>Tasarım ajanı</b><span>${probs.length?probs.length+" sorun buldu":"önizlemeyi denetledi · sorun yok"}</span>${st.tokens&&html`<em title=${st.tokens}>tasarım sistemi kayıtlı</em>`}</div>${probs.length>0&&html`<ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Ajan düzeltsin</button>`}</div>`})()}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
+    <${StudioSkillDock} html=${st.html} busy=${busy||!!todo?.running} projectText=${[st.title,...st.msgs.filter(m=>m.role==="user").slice(-6).map(m=>String(m.content||""))].join(" ")} onModule=${skMod} onComplete=${skComplete} onMicro=${skMicro} onStart=${skStart} toast=${toast}/>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const lw=latestWork,canRetry=lw&&!busy&&(lw.log?.cut||lw.err)&&(lastRetry.current?.id===lw.id&&lastRetry.current.run||lw.retry&&(lw.retry.text||lw.retry.kind==="review"));
   const resume=[...(rejected&&!busy?[{ic:"eye",l:"Reddedilen sürümü göster",p:"Uygulanmayan yeni sürüm: "+rejected.why,act:"forceApply",hot:1}]:[]),...(canRetry?[{ic:"refresh",l:"Yarım kalanı sürdür",p:"Son iş yarıda kaldı; kaldığı yerden yeniden çalıştırır",act:"retry",hot:1}]:[]),...(plan&&!busy?[{ic:"check",l:"Planı onayla ve başla",p:"onayla",act:"send",hot:1}]:[]),...(todo?.awaiting?[{ic:"play",l:"Yapılacakları başlat",p:"başla",act:"send",hot:1}]:[]),...(todo&&!todo.running&&!todo.awaiting&&todo.items?.some(t=>t.state!=="done")?[{ic:"list",l:"Kalan "+todo.items.filter(t=>t.state!=="done").length+" adımı sürdür",p:"Yapılacaklar listesinde kalan adımlara devam et: "+todo.items.filter(t=>t.state!=="done").map(t=>t.title).join(", "),hot:1}]:[])];
   const nx=[...resume,...nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked})];
@@ -8785,8 +8901,9 @@ const SECTOR_CONN={
  "etkinlik-medya":[["Ödeme (Stripe)","Bilet ve kapora tahsilatı."],["Canva","Afiş ve davetiye."]],
  kurumsal:[["GitHub","Kod ve sürüm yönetimi."],["Google","Google ile kurumsal giriş."]],
 };
-let SKILL_IDX=null;const skillIdx=()=>SKILL_IDX||(SKILL_IDX=API_ON?api("GET","/api/skills").then(j=>Object.fromEntries((j.skills||[]).map(s=>[s.id,s]))).catch(()=>{SKILL_IDX=null;return {}}):Promise.resolve({}));
-function useSkillIdx(){const [m,setM]=useState(null);useEffect(()=>{let a=true;skillIdx().then(x=>a&&setM(x));return()=>{a=false}},[]);return m||{}}
+let SKILL_IDX=null,SKILL_NAMES={};const skillIdx=()=>!API_ON?Promise.resolve(null):SKILL_IDX||(SKILL_IDX=api("GET","/api/skills").then(j=>{const m=Object.fromEntries((j.skills||[]).map(s=>[s.id,s]));for(const s of j.skills||[])SKILL_NAMES[s.id]=s.name;return m}).catch(()=>{SKILL_IDX=null;return {}}));
+// Sunucu bağlantısı henüz kurulmadıysa boş sonucu saklamadan kısa aralıklarla yeniden dener
+function useSkillIdx(){const [m,setM]=useState(null);useEffect(()=>{let a=true,t=0;const go=()=>skillIdx().then(x=>{if(!a)return;if(x)setM(x);else t=setTimeout(go,700)});go();return()=>{a=false;clearTimeout(t)}},[]);return m||{}}
 const loadSkill=(id,toast,name)=>{const on=skillsOn();if(!on.includes(id)){LS.set("skills",[...on,id]);dispatchEvent(new Event("gm:skills"))}toast&&toast((name||"Beceri")+" yüklendi · Stüdyo'daki üretimlerde kullanılacak")};
 // Şablon kartındaki önerilen beceri satırı
 function TplSkillHint({t}){const idx=useSkillIdx();const ids=(TPL_SKILL[t.id]||[]).filter(id=>idx[id]);const [,f]=useState(0);useEffect(()=>{const h=()=>f(x=>x+1);addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
@@ -8799,6 +8916,7 @@ function SkillHowTo({s,sector,onTpl,go,toast}){
  const conn=SECTOR_CONN[sector]||[];
  return html`<ol class="howto">
   <li><b>Başla</b>${tpls.length?html`<span>Hazır şablonla hızlı başla; beceri otomatik yüklenir:</span><div class="howto-row">${tpls.map(t=>html`<button key=${t.id} class="chip" onClick=${()=>{loadSkill(s.id);onTpl(t)}}>${t.emoji||"✨"} ${t.name}</button>`)}</div>`:html`<span>Bu sektör için şablon yok; <b>Bununla uygulama yap</b> sıfırdan üretir.</span>`}</li>
+  <li><b>Modülleri tek tıkla ekle</b><span>Stüdyo'da istem kutusunun üstündeki <b>Beceriler</b> panelinde bu becerinin modülleri görünür: eksik olana bas, istem yazmadan eklensin; <b>Uçtan uca tamamla</b> hepsini sırayla bitirir.</span></li>
   <li><b>Stüdyo'da iste</b><span>Önizlemeye bakarak sohbetten değişiklik iste. Hazır istemler (kopyalanır):</span><div class="howto-row">${prompts.map(x=>html`<button key=${x} class="chip" onClick=${()=>copyText(x,toast,"İstem kopyalandı · Stüdyo'daki kutuya yapıştır")}>${x}</button>`)}</div></li>
   <li><b>Bağla</b><span>${conn.length?conn.map(([n,d])=>n+": "+d).join(" · "):"Gerekirse Bağlantılar'dan GitHub, Google ya da Hostinger'ı bağla."}</span><button class="btn g s" onClick=${()=>go("baglantilar")}>Bağlantılar</button></li>
   <li><b>Kaydet ve sürümle</b><span>Proje hesabına kaydedilir; GitHub bağlıysa her değişiklik bir commit olur, dallarla güvenle denersin.</span></li>

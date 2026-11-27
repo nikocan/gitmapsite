@@ -39,17 +39,21 @@ export function registerSkills({ db, route, need, HttpErr, chat, generate, scrip
 
   // ---------- Üretime enjekte etme ve kullanım kaydı ----------
   // Plan becerisi seçilince bağlı tasarım becerisi ve temel kalite becerisi kendiliğinden eklenir.
-  function inject(ids, userId) {
-    if (!Array.isArray(ids) || !ids.length) return { text: "", run: null };
+  // focus: { skill, module } — Stüdyo'daki beceri modülü düğmesi; yalnızca o modül eklenir, becerinin ilgili kısımları uygulanır
+  function inject(ids, userId, focus) {
+    if (!Array.isArray(ids) || !ids.length) return { text: "", run: null, used: [] };
     const want = []; for (const id of ids.slice(0, 6)) { const s = q("SELECT * FROM skills WHERE id=? AND status='yayinda'").get(String(id)); if (!s || want.some((w) => w.id === s.id)) continue; want.push(s);
       if (s.design && !ids.includes(s.design)) { const d = q("SELECT * FROM skills WHERE id=? AND status='yayinda'").get(s.design); if (d && !want.some((w) => w.id === d.id)) want.push(d); } }
     if (want.some((s) => s.kind === "gelistirme") && !want.some((s) => s.id === "kalite-temiz-mimari")) { const k = q("SELECT * FROM skills WHERE id='kalite-temiz-mimari' AND status='yayinda'").get(); if (k) want.push(k); }
-    if (!want.length) return { text: "", run: null };
+    if (!want.length) return { text: "", run: null, used: [] };
     let text = "", used = [];
     for (const s of want) { const part = "\n### " + s.name + " (beceri " + s.id + " v" + s.version + ")\n" + s.body + "\n"; if (text.length + part.length > MAX_INJECT) break; text += part; used.push(s); }
     const run = Number(q("INSERT INTO skill_runs(user_id,skill_ids,versions) VALUES(?,?,?)").run(userId || null, JSON.stringify(used.map((s) => s.id)), JSON.stringify(used.map((s) => s.version))).lastInsertRowid);
     q(`UPDATE skills SET uses=uses+1 WHERE id IN (${used.map(() => "?").join(",")})`).run(...used.map((s) => s.id));
-    return { run, text: "\n- YÜKLÜ BECERİLER (Gitmapp tarafından test edilmiş uzmanlık; isteğe uygun olduğu ölçüde uygula, kullanıcının açık isteği önceliklidir; kapsamı küçük bir istekte tüm modülleri zorla ekleme):" + text };
+    const f = focus && typeof focus === "object" ? { skill: clip(focus.skill, 80), module: clip(focus.module, 80) } : null;
+    const fs = f && f.module && used.find((s) => s.id === f.skill);
+    const focusText = fs ? `\n- ODAK MODÜL: “${fs.name}” becerisinin “${f.module}” modülü. Bu istekte YALNIZCA bu modülü uygulamaya eksiksiz ekle ya da tamamla: becerideki bu modülle ilgili VERİ alanlarını, EKRANLARI ve İŞ KURALLARINI uygula, menüye/gezinmeye ekle, örnek verilerle doldur, diğer modüllerle (ör. aynı müşteri/hasta kaydı) bağla. Mevcut modülleri, tasarımı ve verileri bozma; diğer eksik modülleri bu istekte ekleme.` : "";
+    return { run, used: used.map((s) => ({ id: s.id, name: s.name, version: s.version, kind: s.kind })), focus: fs ? { skill: fs.id, name: fs.name, module: f.module } : null, text: "\n- YÜKLÜ BECERİLER (Gitmapp tarafından test edilmiş uzmanlık; isteğe uygun olduğu ölçüde uygula, kullanıcının açık isteği önceliklidir; kapsamı küçük bir istekte tüm modülleri zorla ekleme):" + text + focusText };
   }
   const bump = (ids, col, n = 1) => ids.length && q(`UPDATE skills SET ${col}=MAX(0,${col}+?) WHERE id IN (${ids.map(() => "?").join(",")})`).run(n, ...ids);
   // Üretim bitince otomatik sonuç: temiz = başarı, otomatik onarıldı = başarı (not düşülür), sözdizimi hatası kaldıysa = başarısız

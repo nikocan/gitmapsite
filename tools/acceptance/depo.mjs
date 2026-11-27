@@ -71,7 +71,7 @@ const site = await fakeSite(await images(browser));
 try {
   const reg = await (await fetch(apiBase + "/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "depo@gitmapp.test", password: "parola-1234", name: "Depo Test" }) })).json();
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 2 }); const page = await ctx.newPage(); const errs = []; page.on("pageerror", (e) => errs.push(e.message));
-  await page.goto(webBase + "/#ana"); await page.evaluate((t) => { localStorage.setItem("gms_tok", JSON.stringify(t)); localStorage.setItem("gms_seenVer", JSON.stringify("999")); }, reg.token);
+  await page.goto(webBase + "/#ana"); await page.evaluate((t) => { localStorage.setItem("gms_tok", JSON.stringify(t)); localStorage.setItem("gms_seenVer", JSON.stringify("999")); localStorage.setItem("gms_installSnooze", JSON.stringify(9e15)); localStorage.setItem("gms_nrSeen", "true"); }, reg.token);
   await page.goto(webBase + "/#depo"); await page.reload();
   await page.getByLabel("Site adresi").waitFor({ timeout: 20000 });
   await page.getByLabel("Site adresi").fill(site.base + "/"); await page.locator(".depo-ok input").check();
@@ -92,7 +92,7 @@ try {
   await page.getByRole("button", { name: /Şablon oluştur/ }).click(); await page.waitForFunction(() => location.hash.startsWith("#studio"), null, { timeout: 15000 }); await page.waitForTimeout(2500);
   ok(true, "şablon Stüdyo'da açıldı"); await page.screenshot({ path: join(SHOTS, "8-studyo-sablon.png") });
   const m = await browser.newContext({ ...require("playwright").devices["iPhone 13"] }); const mp = await m.newPage();
-  await mp.goto(webBase + "/#ana"); await mp.evaluate((t) => { localStorage.setItem("gms_tok", JSON.stringify(t)); localStorage.setItem("gms_seenVer", JSON.stringify("999")); }, reg.token);
+  await mp.goto(webBase + "/#ana"); await mp.evaluate((t) => { localStorage.setItem("gms_tok", JSON.stringify(t)); localStorage.setItem("gms_seenVer", JSON.stringify("999")); localStorage.setItem("gms_installSnooze", JSON.stringify(9e15)); localStorage.setItem("gms_nrSeen", "true"); }, reg.token);
   await mp.goto(webBase + "/#depo"); await mp.reload(); await mp.locator(".depo-card").first().waitFor({ timeout: 20000 }); await mp.locator(".depo-card").first().click(); await mp.locator(".depo-asset img").first().waitFor(); await mp.waitForTimeout(600);
   const sw = await mp.evaluate(() => document.documentElement.scrollWidth - innerWidth); ok(sw <= 1, "telefonda yatay taşma yok (" + sw + "px)"); await mp.screenshot({ path: join(SHOTS, "9-telefon.png") });
   ok(!errs.length, "sayfa hatası yok" + (errs.length ? ": " + errs.join(" | ") : ""));
