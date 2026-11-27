@@ -1418,6 +1418,36 @@ button.adp-mini{color:inherit;text-align:left}
 .bg-pill span{display:flex;flex-direction:column;text-align:left;line-height:1.25}.bg-pill b{font-size:13px}.bg-pill small{font-size:11.5px;color:#a3a29b;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bg-pill.done{border-color:rgba(48,209,88,.5)}.bg-pill.done svg{color:#30d158}.bg-pill.error svg,.bg-pill.canceled svg{color:#ffb347}
 @media(max-width:820px){.bg-pill{bottom:84px}}
+.ws-in .bs{background:none!important;border:0!important;border-radius:0!important;padding:4px 4px 6px!important;margin:0 0 6px!important;box-shadow:none!important}
+.ws-in .bs .bs-bar{height:2px;border-radius:2px;margin:0 0 8px;opacity:.85}
+.bs-sug{flex-wrap:wrap;align-items:center}.bs-link{border:0;background:none;padding:0 2px;color:#8fb4ff;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}.bs-x{border:0;background:none;color:#6c6b66;font:inherit;font-size:15px;cursor:pointer;padding:0 4px;margin-left:2px}.bs-x:hover{color:#ecebe6}
+.ws-in .gbox.busy{animation:none!important;background:linear-gradient(90deg,rgba(79,140,255,.55),rgba(139,123,255,.55),rgba(244,114,182,.45))!important}
+.ws-in .gbox.busy::before{opacity:.12!important;animation:none!important}
+.gbox .gbar{flex-wrap:nowrap;overflow:hidden}.gbox .gbar>*{min-width:0}.gbox .gbar .cmp{flex:0 1 auto;min-width:0;overflow:hidden}.gbox .gbar .cmp-l{max-width:96px}
+.gbox .nx-qbtn{flex:none;margin-right:2px;padding:5px 10px;font-size:12.5px;white-space:nowrap}
+.gbox .gsend{flex:none;position:relative}.gbox .gsend.stop::after,.gbox .gsend.stop::before{max-width:100%;max-height:100%}
+@container (max-width:420px){.gbox .nx-qbtn .nx-qtx{display:none}.gbox .gbar .cmp-l{max-width:64px}}
+.ws-in{container-type:inline-size}
+.pm-w{position:relative;flex:0 1 auto;min-width:0}
+.ws-top{flex-wrap:nowrap!important;min-width:0}.ws-top .ws-title{flex:0 1 170px;min-width:72px;width:auto!important}
+.pm-btn{max-width:min(290px,24vw)!important}
+@media(max-width:1500px){.pm-btn .pm-th,.pm-btn .pm-th+i,.pm-btn svg+.pm-t+i{display:none}}
+@media(max-width:1280px){.ws-top .studio-save{display:none}}
+.nx-q .nx-qn{display:none!important}.nx-q .nx-qt::before{content:"⎿  ";color:#5a5954}
+.nx-queue small{padding-left:18px!important}
+.ws-top .studio-save{white-space:nowrap}
+@media(min-width:821px){.ws-chat>.ws-ctrl{display:none!important}}
+.pm-btn{position:relative;display:inline-flex;align-items:center;gap:7px;height:34px;max-width:min(360px,36vw);padding:0 12px;border-radius:99px;border:1px solid transparent;background:linear-gradient(#171716,#171716) padding-box,linear-gradient(120deg,#4f8cff,#a78bfa,#f472b6,#e4ff3d) border-box;color:#ecebe6;font:inherit;font-size:12.5px;cursor:pointer;overflow:hidden;transition:transform .15s,box-shadow .2s}
+.pm-btn:hover{box-shadow:0 0 0 3px rgba(167,139,250,.14),0 8px 22px -10px rgba(167,139,250,.6)}.pm-btn.on{box-shadow:0 0 0 3px rgba(228,255,61,.18)}
+.pm-btn>svg:first-of-type{color:#e4ff3d;flex:none}.pm-btn i{width:3px;height:3px;border-radius:50%;background:#5a5954;flex:none}.pm-btn>svg:last-child{opacity:.6;flex:none}
+.pm-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.pm-th{max-width:120px}
+.pm-glow{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.08) 50%,transparent 70%);transform:translateX(-100%);animation:pmShine 5s ease-in-out infinite;pointer-events:none}
+@keyframes pmShine{0%,70%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.pm-glow{animation:none}}
+.pm-pop{position:absolute;z-index:60;top:calc(100% + 10px);left:0;width:min(440px,92vw);padding:6px;border-radius:20px;background:#141413;border:1px solid #2e2e2c;box-shadow:0 30px 70px -20px rgba(0,0,0,.85);animation:ccIn .16s ease-out}
+.pm-pop .su{margin:0!important;border:0!important;background:none!important;box-shadow:none!important}
+@media(max-width:820px){.pm-btn .pm-th,.pm-btn i,.pm-btn .pm-t+i+svg{display:none}.pm-pop{position:fixed;left:10px;right:10px;top:64px;width:auto}}
+.rp-foot{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #2a2a28}
 .ctl-sum{position:relative;display:flex;align-items:center;gap:6px;width:100%;min-width:0;padding:8px 12px;border:1px solid #2a2a28;border-radius:12px;background:#171716;color:#d6d5cf;font:inherit;font-size:13px;cursor:pointer;text-align:left}
 .ctl-sum:hover{border-color:#45443f;background:#1c1c1b}.ctl-sum span{flex:0 1 auto;max-width:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:2ch}.ctl-sum .k{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.ctl-sum i{width:3px;height:3px;border-radius:50%;background:#5a5954;flex:none}.ctl-sum>svg:last-child{margin-left:auto;flex:none;color:#8a8882}
 .ctl-close{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;border:0;border-radius:99px;background:transparent;color:#8a8882;font:inherit;font-size:12px;cursor:pointer}.ctl-close:hover{color:#ecebe6;background:#1f1f1e}
@@ -1432,7 +1462,8 @@ button.adp-mini{color:inherit;text-align:left}
 .nx-chip:hover{background:#232322;border-color:#45443f;color:#fff}.nx-chip svg{flex-shrink:0;color:#a3a29b}.nx-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nx-chip em{font-style:normal;font-size:10.5px;color:#0a0a0a;background:#e4ff3d;border-radius:99px;padding:1px 6px}
 .nx-qbtn{margin-right:6px;border-radius:99px;padding:6px 12px}
-.nx-queue{display:flex;flex-direction:column;gap:4px;margin:0 0 8px;padding:8px;border:1px dashed #3a3937;border-radius:12px;background:#161615}
+.nx-queue{display:flex;flex-direction:column;gap:2px;margin:0 2px 8px;padding:0;border:0;background:none}
+.nx-queue .ib{width:22px;height:22px;opacity:.55}.nx-queue .ib:hover{opacity:1}.nx-q .nx-qn{background:none!important;color:#8a8882;width:auto!important}.nx-q .nx-qn::before{content:"⎿ ";color:#5a5954}
 .nx-q{display:flex;align-items:center;gap:8px;font-size:13px}.nx-qn{width:18px;height:18px;border-radius:50%;background:#2a2a28;display:grid;place-items:center;font-size:11px;color:#bdbcb5;flex-shrink:0}
 .nx-qt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d6d5cf}.nx-queue small{color:#8a8882;font-size:11.5px;padding-left:26px}
 .cx-old{font-style:normal;font-size:12px;color:#8a8882;padding:2px 8px;border-radius:99px;border:1px solid #3a3937}
@@ -2246,8 +2277,16 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.58.0";
+const VERSION="5.59.0";
 const CHANGELOG=[
+ {v:"5.59.0",date:"2026-11-27",items:[
+  "🔗 Önizlemede bağlantılar düzeldi: sayfa içi (#bölüm) bağlantı tıklayınca çerçeve siyah ekrana dönüp Gitmapp'i açıyordu. Artık # bağlantıları sayfada kayıyor, dış bağlantılar yeni sekmede açılıyor, e-posta/telefon/WhatsApp kendi uygulamasında açılıyor; uygulamada olmayan bir sayfaya giden bağlantı ekranı bozmuyor, “bu sayfayı ekle” önerisini istem kutusuna yazıyor. Formlar gönderilince önizleme boşalmıyor. Tam ekran, tasarım ve prototip önizlemelerinde de geçerli",
+  "✨ Proje ayarları (tür, şablon, eklentiler) sohbet sütunundan kalktı; üst çubukta parlayan proje düğmesine taşındı (“Uygulama · Material You · 2 eklenti”). Tıklayınca açılır, dışarı tıklayınca ya da Esc ile kapanır. Sohbet alanı geliştirme akışına ayrıldı",
+  "🧾 Geliştirme akışı sadeleşti: ilerleme satırı kutu içinde değil, Claude Code gibi akışın içinde; sıradaki istekler çerçevesiz “⎿” satırları olarak görünüyor",
+  "⌨️ İstem kutusunda taşma giderildi: model/mod seçicileri daralıyor, “Sıraya ekle” dar alanda simgeye dönüşüyor, durdur düğmesi kutunun içinde kalıyor. Kod yazılırken kutunun etrafındaki dönen ışık duruyor, sabit ve sakin bir çerçeve kalıyor",
+  "🐢 “Model büyük dosya yazıyor · Hızlandır” uyarısı öneri satırına dönüştü: yalnızca Hızlı modda değilsen bir kez görünür, “Hızlı moda geç” sonraki istekleri hızlandırır (süren iş devam eder), × ile gizlenir",
+  "⚙️ Çalıştırma ayarları: değişiklikler artık “Kaydet” ile uygulanıyor; “Kaydet ve geliştir” ayarları kaydedip sayfayı geliştirir ve eksikleri tamamlar; “Varsayılana dön” eklendi; her ayrıntı düzeyinin ne işe yaradığı yazıyor",
+  "⎋ Açık bir panel ya da menüyü Esc ile kapatırken süren iş artık yanlışlıkla durmuyor"]},
  {v:"5.58.0",date:"2026-11-26",items:[
   "💳 Kredi satın alma artık gerçek ödeme ile: “Kredi yükle” penceresinde paket seçip kart (Stripe) ya da Havale/EFT ile ödüyorsun. Kartla ödemede Stripe'ın güvenli sayfasına gidip dönüyorsun, kredi anında yükleniyor; kart bilgin Gitmapp'e gelmiyor",
   "🏦 Havale/EFT: IBAN, alıcı ve tutarla birlikte sana özel bir açıklama kodu veriliyor (kopyala düğmeli). “Ödemeyi yaptım” deyince yöneticiye düşüyor, onaylanınca kredi otomatik yükleniyor; bekleyen talebi iptal edebilirsin",
@@ -4930,7 +4969,22 @@ function designTokens(h){h=String(h||"");const out=[];const root=h.match(/:root\
  const ff=h.match(/font-family\s*:\s*([^;}{]{3,90})/i);if(ff)out.push("font-family: "+ff[1].trim());
  const rads={};(h.match(/border-radius\s*:\s*(\d+px)/gi)||[]).forEach(x=>{const k=x.split(":")[1].trim();rads[k]=(rads[k]||0)+1});const rad=Object.entries(rads).sort((a,b)=>b[1]-a[1])[0];if(rad)out.push("ana köşe yuvarlaklığı: "+rad[0]);
  return out.join("; ").slice(0,1400)}
-function withStoreShim(h){if(!h||h.includes("data-gm-shim"))return h;const m=/<head[^>]*>/i.exec(h);if(m)return h.slice(0,m.index+m[0].length)+STORE_SHIM+h.slice(m.index+m[0].length);const d=/<!DOCTYPE[^>]*>/i.exec(h);return d?h.slice(0,d.index+d[0].length)+STORE_SHIM+h.slice(d.index+d[0].length):STORE_SHIM+h}
+// v5.59 — Önizlemede bağlantılar: srcdoc çerçevesi üst sayfanın adresini temel aldığı için "#bolum" bağlantısı Gitmapp'i çerçevenin içine açıyor (siyah ekran).
+// Bu betik bağlantıları çerçeve içinde ele alır: # → kaydır/hash yönlendirme, dış bağlantı → yeni sekme, başka sayfa → bölüm varsa kaydır yoksa bilgi; formlar çerçeveyi boşaltmaz.
+const LINK_SHIM=String.raw`<script data-gm-links>(function(){function note(t){var n=document.getElementById("gm-link-note");if(!n){n=document.createElement("div");n.id="gm-link-note";n.setAttribute("role","status");n.style.cssText="position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:2147483647;max-width:88vw;padding:9px 14px;border-radius:12px;background:rgba(20,20,20,.92);color:#fff;font:13px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35);pointer-events:none;transition:opacity .2s";document.documentElement.appendChild(n)}n.textContent=t;n.style.opacity="1";clearTimeout(n._t);n._t=setTimeout(function(){n.style.opacity="0"},2600)}
+function goHash(h){var id=decodeURIComponent(h.slice(1));try{if(location.hash!==h){location.hash=h;return}}catch(x){}var t=id&&(document.getElementById(id)||document.getElementsByName(id)[0]);if(t)t.scrollIntoView({behavior:"smooth",block:"start"});else if(!id)scrollTo({top:0,behavior:"smooth"})}
+document.addEventListener("click",function(e){if(e.defaultPrevented||e.button>0)return;var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(!a)return;var h=(a.getAttribute("href")||"").trim();if(!h||/^javascript:/i.test(h))return;
+ if(h.charAt(0)==="#"){e.preventDefault();goHash(h);return}
+ if(/^(mailto:|tel:|sms:|whatsapp:)/i.test(h)){e.preventDefault();try{window.open(h,"_blank")}catch(x){}return}
+ if(/^(https?:)?\/\//i.test(h)){e.preventDefault();try{window.open(h,"_blank","noopener")}catch(x){}note("Dış bağlantı yeni sekmede açıldı");return}
+ e.preventDefault();var base=h.split(/[?#]/)[0].replace(/^\.?\//,"").replace(/\.html?$/i,"").toLowerCase();var frag=h.indexOf("#")>=0?h.slice(h.indexOf("#")):"";
+ if(frag&&frag.length>1){goHash(frag);return}
+ var t=base&&(document.getElementById(base)||document.querySelector('[data-page="'+base+'"],[data-route="'+base+'"],[data-view="'+base+'"]'));
+ if(t){t.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(!base){scrollTo({top:0,behavior:"smooth"});return}
+ note("“"+h+"” ayrı bir sayfa; bu uygulamada henüz yok");try{parent.postMessage({gm:"link",href:h},"*")}catch(x){}},false);
+addEventListener("submit",function(e){if(e.defaultPrevented)return;var f=e.target;if(f&&f.getAttribute&&/^(https?:)?\/\//i.test(f.getAttribute("action")||""))return;e.preventDefault();note("Form gönderildi (önizleme)")},false)})()`+"<"+"/script>";
+function withStoreShim(h){if(!h||h.includes("data-gm-shim"))return h;const m=/<head[^>]*>/i.exec(h);if(m)return h.slice(0,m.index+m[0].length)+STORE_SHIM+LINK_SHIM+h.slice(m.index+m[0].length);const d=/<!DOCTYPE[^>]*>/i.exec(h);return d?h.slice(0,d.index+d[0].length)+STORE_SHIM+LINK_SHIM+h.slice(d.index+d[0].length):STORE_SHIM+LINK_SHIM+h}
 function designDocument(base,rules,editing=false) {
  if(!editing&&!rules.length) return base;
  const data=JSON.stringify(rules).replace(/</g,"\\u003c");
@@ -5328,7 +5382,8 @@ function ComposerMenu({children,commands=false}){
  },[]);
  return html`<div ref=${menu} class=${(commands?"slashm":"amenu")+" compose-menu"} popover="manual" role="menu">${children}</div>`;
 }
-function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,queue,flowId,isOpen,onFlow}){
+function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,fast,queue,flowId,isOpen,onFlow}){
+ const [tipOff,setTipOff]=useState(false);
 
  const ev=log?.events||[],kind=log?.kind||"build",len=live.length,writing=len>0;
  const full=/<!doctype|<html/i.test(live.slice(0,3000));const patch=writing&&hasHtml&&!full&&len>1500;
@@ -5349,7 +5404,7 @@ function BuildStatus({log,secs,live,liveStart,hasHtml,todo,onStop,onFaster,queue
   <div class=${"bs-bar"+(pct?"":" ind")}><i style=${pct?{width:(pct*100).toFixed(1)+"%"}:undefined}></i></div>
   <div class="bs-l1"><${ClSpark} s=${15}/>${phm&&html`<span class="bs-step" title=${phm[2]}>Aşama ${phm[1]}</span>`}${todo?.running&&html`<span class="bs-step">Adım ${Math.min(todo.items.length,todo.items.filter(t=>t.state==="done").length+1)}/${todo.items.length}</span>`}<button type="button" class="flow-trigger" aria-label="İşlem akışı" aria-controls=${flowId} aria-expanded=${isOpen} onClick=${onFlow}><span class="shim">${verb}…</span><${Icon} n=${isOpen?"chevUp":"chevDown"} s=${13}/></button><span class="bs-meta">(${meta.join(" · ")} · <button type="button" onClick=${onStop}>esc ile durdur</button>)</span></div>
   ${tail?html`<div class="bs-l2"><span class="bs-elb">⎿</span><code>${tail}</code><span class="caret"></span></div>`:html`<div class="bs-l2 dim"><span class="bs-elb">⎿</span><span>${ev.includes("connected")?"Model isteği aldı, ilk satırı yazmadan önce düşünüyor":"Model bağlantısı kuruluyor"}</span></div>`}
-  ${slow&&html`<div class="bs-tip"><${Icon} n="zap" s=${13}/><span>Model büyük bir dosya yazıyor. Daha hızlı sonuç için Hızlı mod ya da daha hızlı bir model seçebilirsin.</span><button type="button" onClick=${onFaster}>Hızlandır</button></div>`}
+  ${slow&&!fast&&!tipOff&&html`<div class="bs-l2 dim bs-sug"><span class="bs-elb">⎿</span><span>Büyük dosya yazılıyor; bu iş sürüyor. Sonraki istekler için</span><button type="button" class="bs-link" onClick=${()=>{setTipOff(true);onFaster&&onFaster()}}>Hızlı moda geç</button><button type="button" class="bs-x" aria-label="Öneriyi gizle" onClick=${()=>setTipOff(true)}>×</button></div>`}
   ${queue>0&&html`<div class="bs-l2 dim"><span class="bs-elb">⎿</span><span>Sırada ${queue} istek var · bu iş bitince başlayacak</span></div>`}
  </div>`;
 }
@@ -5579,6 +5634,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{detachRef.current=false;return()=>{detachRef.current=true;try{abortRef.current&&abortRef.current.abort()}catch(e){}}},[]);
  useEffect(()=>{if(!auth.user||!API_ON)return;const m=st.msgs.findLast(x=>x.log&&x.log.running&&x.log.job);if(m){const t=setTimeout(()=>resumeJob(m),50);return()=>clearTimeout(t)}},[scope,auth.user?.id]);
  const [queue,setQueue]=useState(()=>LS.get("studioQueue:"+scope,[])||[]);useEffect(()=>{LS.set("studioQueue:"+scope,queue)},[queue]);const [ctrlOpen,setCtrlOpen]=useState(false);useEffect(()=>{if(busy)setCtrlOpen(false)},[busy]);const [qa,setQa]=useState(null);
+ useEffect(()=>{const h=e=>{const d=e.data;if(!d||d.gm!=="link"||typeof d.href!=="string")return;const nm=d.href.split(/[?#]/)[0].replace(/^\.?\//,"").replace(/\.html?$/i,"").replace(/[-_]/g," ").trim().slice(0,40);if(!nm)return;setInput(x=>x.trim()?x:"“"+nm+"” sayfasını ekle: menüdeki bağlantı bu ekrana gitsin, mevcut tasarımla uyumlu ve örnek içerikle dolu olsun.");toast("“"+nm+"” sayfası henüz yok · eklemek için istem kutusuna öneri yazdım")};addEventListener("message",h);return()=>removeEventListener("message",h)},[]);
  useEffect(()=>{const h=e=>{const d=e.data;if(!d||d.gm!=="qa"||!frameRef.current||e.source!==frameRef.current.contentWindow)return;setQa({source:st.html,screens:Array.isArray(d.screens)?d.screens.slice(0,12).map(v=>String(v).slice(0,70)):[],len:(st.html||"").length,errors:Array.isArray(d.errors)?d.errors.slice(0,5).map(String):[],issues:Array.isArray(d.issues)?d.issues.slice(0,6):[]})};addEventListener("message",h);return()=>removeEventListener("message",h)},[st.html]);const [picker,setPicker]=useState(false);const [plan,setPlan]=useState(null);const [editPlan,setEditPlan]=useState(false);const lastRetry=useRef(null);const streamClock=useRef(null);
  const [live,setLive]=useState("");const liveRef=useRef("");const liveStartRef=useRef(0);const codeEnd=useRef(null);
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput:"+scope,input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
@@ -5707,7 +5763,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  useEffect(()=>{dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:busy||!!todo?.running}}))},[busy,todo?.running]);
  useEffect(()=>()=>{stopRef.current=true;abortRef.current?.abort();dispatchEvent(new CustomEvent("gm:busy",{detail:{busy:false}}))},[]);
  function stopGen(){stopRef.current=true;const jid=jobRef.current;if(jid)api("POST","/api/ai/jobs/"+jid+"/cancel",{}).catch(()=>{});const a=abortRef.current;if(a){try{a.abort()}catch(e){}}}
- useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
+ useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!e.defaultPrevented&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal,.pm-pop,.ui-dialog,[role=dialog],[role=menu],.compose-menu:popover-open"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{if(jobRef.current)return;e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
  async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
@@ -5900,7 +5956,13 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  /* ---------- v5.50 Proje ayar paneli: model, şablon, eklentiler, mod — her birinde yardım ve Oto ---------- */
  const [suHelp,setSuHelp]=useState(null);const [suMin,setSuMin]=useState(()=>!!LS.get("suMin",false));useEffect(()=>{LS.set("suMin",suMin)},[suMin]);
  useEffect(()=>{if(!suHelp)return;const h=e=>{if(!e.target.closest(".su-t"))setSuHelp(null)};addEventListener("pointerdown",h);return()=>removeEventListener("pointerdown",h)},[suHelp]);
- const setupBar=()=>{const conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);const modeEff=prefs.autoMode?"oto":prefs.mode;
+ const [pmOpen,setPmOpen]=useState(false);
+ useEffect(()=>{if(!pmOpen)return;const h=e=>{if(!e.target.closest(".pm-w")&&!e.target.closest(".ui-dialog")&&!e.target.closest(".gallery, .tg, [role=dialog]"))setPmOpen(false)};const k=e=>{if(e.key==="Escape")setPmOpen(false)};addEventListener("pointerdown",h);addEventListener("keydown",k);return()=>{removeEventListener("pointerdown",h);removeEventListener("keydown",k)}},[pmOpen]);
+ const projMagic=()=>{const conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);
+  return html`<span class="pm-w"><button type="button" class=${"pm-btn"+(pmOpen?" on":"")} aria-haspopup="dialog" aria-expanded=${pmOpen} onClick=${()=>{setSuMin(false);setPmOpen(o=>!o)}} title="Proje: tür, şablon, eklentiler ve çalıştırma ayarları">
+   <span class="pm-glow" aria-hidden="true"></span><${Icon} n="sparkles" s=${14}/><span class="pm-t">${CX_KIND[prefs.kind]||"Uygulama"}</span><i></i><${Swatches} t=${effTheme} s=${7}/><span class="pm-t pm-th">${effTheme.name}</span>${conns.length>0&&html`<i></i><span class="pm-t">${conns.length} eklenti</span>`}<${Icon} n="chevDown" s=${12}/></button>
+   ${pmOpen&&html`<div class="pm-pop" role="dialog" aria-label="Proje ayarları">${setupBar(true)}</div>`}</span>`};
+ const setupBar=(force)=>{const conns=CONN.filter(c=>!c.soon&&(connState()[c.id]||{}).on);const modeEff=prefs.autoMode?"oto":prefs.mode;
   const T=[
    {k:"model",ic:curInfo?html`<${FamLogo} f=${curInfo.family} s=${18}/>`:html`<${Icon} n="cpu" s=${17}/>`,l:"Dil modeli",v:prefs.autoModel?"Otomatik":curModel?shortModel(curModel):"Seç",d:prefs.autoModel?"İşe göre güçlü ya da hızlı model":curInfo?curInfo.credits+" kredi / işlem":prefs.provider!=="gitmapp"?"Kendi anahtarın":"Kodu yazan yapay zekâ",
     auto:!!prefs.autoModel,setAuto:v=>setPrefs(p=>({...p,autoModel:v})),open:()=>setPicker(true),
@@ -5916,7 +5978,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     help:"Hızlı: komutu hemen uygular. Planlı: önce ne yapılacağını yazar, onaylarsan üretir. Ajan: işi görevlere böler, her adımı onayınla uygular.",autoTxt:"Oto açıkken uzun ve yeni bir proje anlatırsan önce plan gösterilir; düzenlemeler doğrudan uygulanır."}];
   T.splice(0,T.length,...T.filter(t=>t.k==="tema"||t.k==="ek"));
   const mods=(runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli");
-  if(suMin)return html`<button type="button" class="su-mini" onClick=${()=>setSuMin(false)} title="Proje ayarlarını aç">${T.map(t=>html`<span key=${t.k} class=${t.auto?"a":""}>${t.ic}<b>${t.v}</b></span>`)}<${Icon} n="chevDown" s=${13}/></button>`;
+  if(suMin&&!force)return html`<button type="button" class="su-mini" onClick=${()=>setSuMin(false)} title="Proje ayarlarını aç">${T.map(t=>html`<span key=${t.k} class=${t.auto?"a":""}>${t.ic}<b>${t.v}</b></span>`)}<${Icon} n="chevDown" s=${13}/></button>`;
   return html`<section class="su" aria-label="Proje ayarları">
    <div class="su-h"><b>Proje ayarları</b><small>Her bölümde 🐿 yardım, cam anahtarla otomatik</small>
     <button type="button" class=${"su-ib"+(mods?" on":"")} onClick=${()=>setRunOpen(true)} title="Gelişmiş: yaratıcılık, ayrıntı, özel talimat"><${Icon} n="sliders" s=${14}/></button>
@@ -5929,7 +5991,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     ${suHelp===t.k&&html`<div class="su-pop" role="note"><${BrandMark} s=${22}/><div><p>${t.help}</p><p class="su-auto"><b>Oto:</b> ${t.autoTxt}</p><div class="su-pa">${!t.auto&&html`<button type="button" class="btn s" onClick=${()=>{t.setAuto(true);setSuHelp(null);toast(t.l+" otomatiğe alındı")}}>Benim yerime seç</button>`}<button type="button" class="btn g s" onClick=${()=>{setSuHelp(null);t.open()}}>Elle değiştir</button></div></div></div>`}
     ${t.k==="mod"&&suHelp==="mod-pick"&&html`<div class="su-pop pick">${[["hizli","zap","Hızlı","Doğrudan üretir"],["planli","compass","Planlı","Önce plan, onaylayınca üretir"],["ajan","list","Ajan","Adım adım, onaylı"]].map(([k,ic,l,d])=>html`<button type="button" key=${k} data-k=${k} class=${!prefs.autoMode&&prefs.mode===k?"on":""} onClick=${()=>{setPrefs(p=>({...p,mode:k,autoMode:false}));setSuHelp(null)}}><${Icon} n=${ic} s=${15}/><span><b>${l}</b><small>${d}</small></span></button>`)}</div>`}
    </div>`)}</div></section>`};
- const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)}/>`;
+ const runEl=()=>runOpen&&html`<${RunSettings} v=${runSet} set=${setRunSet} close=${()=>setRunOpen(false)} onImprove=${st.html&&!busy?()=>setTimeout(()=>gen("Sayfayı geliştir ve eksikleri tamamla: çalışmayan düğme ve bağlantıları düzelt, boş kalan bölümleri örnek içerikle doldur, mobil uyumu ve tasarım tutarlılığını iyileştir; mevcut içerik ve özellikler korunsun."),80):null}/>`;
  const galEl=()=>gallery&&html`<${DesignGallery} kind=${prefs.kind} sel=${prefs.theme==="auto"?effTheme.id:prefs.theme} sector=${sector} onPick=${pickTheme} onStart=${startPanel} close=${()=>setGallery(false)}/>`;
  const pickerEl=()=>picker&&html`<${ModelPicker} models=${models} sel=${{provider:prefs.provider,model:curModel}} setSel=${x=>setPrefs(p=>({...p,...x,...(x.model?{autoModel:false}:{})}))} close=${()=>setPicker(false)} auth=${auth} toast=${toast} go=${go}/>`;
  const [cmpOpen,setCmpOpen]=useState(null);
@@ -5978,7 +6040,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
      <//>`}</span>
     <button type="button" class=${"gatt"+(listening?" rec":"")} disabled=${busy} title="Sesle yaz" onClick=${mic}><${Icon} n="mic" s=${16}/></button>
     <span class="gnote">${busy?html`<button type="button" class="pe-chip run" aria-label="İşlem adımlarını göster veya gizle" aria-expanded=${!!(latestWork&&flowOpen[flowId(latestWork)])} onClick=${()=>toggleFlow(latestWork,true)}><${ClSpark} s=${13}/> ${clTime(secs)}</button>`:input.trim()&&GS.engine?html`<${PromptEngine} open=${requestInfo} toggle=${()=>setRequestInfo(v=>!v)} text=${input} ctx=${{last:lastAsk(),html:!!st.html,plan:!!plan,todo:!!(todo&&todo.awaiting),kind:prefs.kind,mode:prefs.mode,picked:!!picked,credits:curInfo?(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):0}}/>`:auth.user?html`<${Icon} n="gem" s=${12}/> ${auth.user.credits??0} kredi${curInfo?" · bu işlem "+(prefs.mode==="planli"&&!st.html?Math.max(1,Math.round(curInfo.credits*.34)):curInfo.credits):""}`:"Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi"}</span><span style=${{flex:1}}></span>${cmpBar()}
-    ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/> Sıraya ekle</button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}><${Icon} n="arrowUp" s=${17} w=${2.4}/></button>`}</div></div></form>`;
+    ${busy&&input.trim()?html`<button type="button" class="btn s nx-qbtn" title="Sıraya ekle (Enter)" onClick=${()=>gen()}><${Icon} n="plus" s=${13}/><span class="nx-qtx"> Sıraya ekle</span></button>`:""}${busy?html`<button type="button" class="gsend stop" title="Durdur (Esc)" aria-label="Durdur" onClick=${stopGen}><span class="gstop-ring"></span><${Icon} n="stop" s=${12} c="currentColor"/></button>`:html`<button class="gsend" disabled=${!input.trim()&&!atts.length} aria-label="Gönder" title=${GS.sendKey==="mod"?"Gönder (Ctrl/⌘+Enter)":"Gönder (Enter)"}><${Icon} n="arrowUp" s=${17} w=${2.4}/></button>`}</div></div></form>`;
  const escCard=()=>esc&&!busy&&html`<div class="esc" role="alertdialog" aria-label="Model önerisi"><div class="esc-h"><${Icon} n="zap" s=${15}/><b>Bu iş için daha güçlü bir model önerilir</b></div>
   <p><b>${shortModel(curModel)}</b> hızlı ama küçük bir model; ${st.html?"büyük değişikliklerde":"sıfırdan uygulama yazarken"} kod hatası ve yarıda kesilme riski yüksek. <b>${shortModel(esc.best)}</b> ile yapmanı öneririm (${esc.credits} kredi).</p>
   <div class="esc-a"><button type="button" class="btn s" onClick=${()=>{const t=esc.text;setPrefs(p=>({...p,model:esc.best}));escOk.current=true;setEsc(null);setTimeout(()=>genRef.current&&genRef.current(t),60)}}>${shortModel(esc.best)} ile yap</button><button type="button" class="btn g s" onClick=${()=>{const t=esc.text;escOk.current=true;setEsc(null);genRef.current&&genRef.current(t)}}>Seçili modelle devam et</button><button type="button" class="btn g s" title="Her işte en uygun modeli Gitmapp seçsin: yeni uygulamada güçlü, küçük düzenlemede dengeli" onClick=${()=>{const t=esc.text;setPrefs(p=>({...p,autoModel:true}));escOk.current=true;setEsc(null);setTimeout(()=>genRef.current&&genRef.current(t),60)}}>Hep otomatik seç</button><button type="button" class="ib sm" aria-label="Kapat" onClick=${()=>setEsc(null)}><${Icon} n="x" s=${13}/></button></div></div>`;
@@ -6271,6 +6333,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
    <input class="in ws-title" value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
+   ${projMagic()}
    ${proposedTitle.current&&proposedTitle.current!==st.title&&!busy&&html`<button class="chip" title="Üretilen başlığı kullan" onClick=${()=>setSt(x=>({...x,title:proposedTitle.current}))}>${proposedTitle.current}</button>`}
    <span style=${{flex:1}}></span>
    ${seg([["phone","phone","","Telefon"],["tablet","tablet","","Tablet"],["desktop","monitor","","Masaüstü"]],stage,setStage)}
@@ -6287,7 +6350,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
    <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
   <div class=${"ws-grid studio-grid"+(sessOpen?" sp-on":"")}>
    <div class="ws-chat">
-    <div class="ws-ctrl">${setupBar()}<button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
+    <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
     <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map(msgEl)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
   const fix=()=>build(fixPrompt(probs),null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   if(autoFix&&probs.length&&!autoTurn())return html`<div class="dq-card auto" role="status"><div class="dq-h"><span class="ccspin"></span><b>Tasarım ajanı</b><span>${probs.length} sorunu kendiliğinden düzeltiyor…</span><button type="button" class="dq-stop" onClick=${()=>{setAutoFix(false);toast("Otomatik düzeltme kapatıldı; sorunları elle düzeltebilirsin")}}>Durdur</button></div></div>`;
@@ -6296,7 +6359,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const lw=latestWork,canRetry=lw&&!busy&&(lw.log?.cut||lw.err)&&(lastRetry.current?.id===lw.id&&lastRetry.current.run||lw.retry&&(lw.retry.text||lw.retry.kind==="review"));
   const resume=[...(canRetry?[{ic:"refresh",l:"Yarım kalanı sürdür",p:"Son iş yarıda kaldı; kaldığı yerden yeniden çalıştırır",act:"retry",hot:1}]:[]),...(plan&&!busy?[{ic:"check",l:"Planı onayla ve başla",p:"onayla",act:"send",hot:1}]:[]),...(todo?.awaiting?[{ic:"play",l:"Yapılacakları başlat",p:"başla",act:"send",hot:1}]:[]),...(todo&&!todo.running&&!todo.awaiting&&todo.items?.some(t=>t.state!=="done")?[{ic:"list",l:"Kalan "+todo.items.filter(t=>t.state!=="done").length+" adımı sürdür",p:"Yapılacaklar listesinde kalan adımlara devam et: "+todo.items.filter(t=>t.state!=="done").map(t=>t.title).join(", "),hot:1}]:[])];
   const nx=[...resume,...nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked})];
-  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri" onWheel=${e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.currentTarget.scrollLeft+=e.deltaY}}}>${nx.map(x=>html`<button type="button" role="listitem" class=${"nx-chip"+(x.hot?" hot":"")} key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}if(x.act==="retry"){retryMsg(lw);return}if(x.act==="send"){genRef.current&&genRef.current(x.p);return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli"}));setPicker(true)}}/>`}${prompt(false)}${ccFoot()}
+  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri" onWheel=${e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.currentTarget.scrollLeft+=e.deltaY}}}>${nx.map(x=>html`<button type="button" role="listitem" class=${"nx-chip"+(x.hot?" hot":"")} key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}if(x.act==="retry"){retryMsg(lw);return}if(x.act==="send"){genRef.current&&genRef.current(x.p);return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} fast=${prefs.mode==="hizli"&&!prefs.autoMode} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli",autoMode:false}));toast("Sonraki istekler Hızlı modda çalışacak · süren iş tamamlanıyor")}}/>`}${prompt(false)}${ccFoot()}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>
@@ -6667,8 +6730,10 @@ function AppDetail({slug,go,backToStore,auth,openAuth,openInStudio,toast,apiOn,h
 }
 
 // Çalıştırma ayarları (AI Studio benzeri)
-function RunSettings({v,set,close}){
- const t=v.temperature;
+function RunSettings({v:v0,set:setReal,close,onImprove}){
+ const [v,set]=useState(()=>({...v0}));const t=v.temperature;const dirty=JSON.stringify(v)!==JSON.stringify(v0);
+ const DET={kisa:"Kısa: az ve öz kod, hızlı sonuç; küçük düzenlemeler için ideal",dengeli:"Dengeli: çoğu iş için önerilen; hız ve kapsam dengeli",ayrintili:"Ayrıntılı: daha uzun ve kapsamlı kod, daha çok ekran ve özellik (daha uzun sürer)"};
+ const save=(then)=>{setReal(v);try{window.__gmToast&&window.__gmToast(dirty?"Çalıştırma ayarları kaydedildi · sonraki üretimde kullanılacak":"Ayarlar değişmedi")}catch(e){}close();then&&then()};
  return html`<${UiDialog} label="Çalıştırma ayarları" width="400px" close=${close}><div class="runpanel glass">
   <div class="rp-h"><${Icon} n="sliders" s=${16}/><h2>Çalıştırma ayarları</h2><button class="ib sm" aria-label="Ayarları kapat" onClick=${close}><${Icon} n="x" s=${14}/></button></div>
   <label class="rp-l" for="run-temperature"><span><${Icon} n="thermo" s=${14}/> Yaratıcılık</span><em>${t==null?"Model varsayılanı":t.toFixed(1)}</em></label>
@@ -6676,10 +6741,11 @@ function RunSettings({v,set,close}){
   <div class="rp-hint">Düşük: tutarlı ve sade · Yüksek: daha özgün ve sürprizli</div>
   <div class="rp-l"><span><${Icon} n="brain" s=${14}/> Ayrıntı düzeyi</span></div>
   <div class="seg" role="group" aria-label="Ayrıntı düzeyi" style=${{width:"100%"}}>${[["kisa","Kısa"],["dengeli","Dengeli"],["ayrintili","Ayrıntılı"]].map(([k,l])=>html`<button key=${k} style=${{flex:1,justifyContent:"center"}} aria-pressed=${(v.detail||"dengeli")===k} class=${(v.detail||"dengeli")===k?"on":""} onClick=${()=>set({...v,detail:k})}>${l}</button>`)}</div>
-  <div class="rp-hint">Ayrıntılı: daha uzun ve kapsamlı kod (daha uzun sürer)</div>
+  <div class="rp-hint">${DET[v.detail||"dengeli"]}</div>
   <label class="rp-l" for="run-instructions"><span><${Icon} n="file" s=${14}/> Sistem talimatları</span><em>${(v.instructions||"").length}/1500</em></label>
   <textarea id="run-instructions" class="in" rows="3" maxlength="1500" placeholder="Örn: Tüm metinler resmi dille olsun, logo yerine “Eczabirlik” yazısı kullan, sayfalar sekmeli olsun…" value=${v.instructions||""} onInput=${e=>set({...v,instructions:e.target.value})}></textarea>
-  <div class="rp-hint">Her üretimde modele ek kural olarak iletilir.</div>
+  <div class="rp-hint">Her üretimde modele ek kural olarak iletilir. Örn. dil, marka adı, sayfa düzeni, kaçınılacak şeyler.</div>
+  <div class="rp-foot"><button type="button" class="btn g s" onClick=${()=>set({temperature:null,detail:"dengeli",instructions:""})}>Varsayılana dön</button><span style=${{flex:1}}></span>${onImprove&&html`<button type="button" class="btn g s" title="Ayarları kaydet ve mevcut sayfayı bu ayarlarla geliştir" onClick=${()=>save(onImprove)}><${Icon} n="sparkles" s=${13}/> Kaydet ve geliştir</button>`}<button type="button" class="btn s" onClick=${()=>save()}>Kaydet</button></div>
  </div></${UiDialog}>`;
 }
 
