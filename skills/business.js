@@ -20,11 +20,39 @@ const businessSkills = [
   ["oto-hata","Otomasyon","Başarısız işleri yeniden deneme","Hata kuyruğu, yeniden deneme ve işlem geçmişi üretir.","auto","Her çalışmaya kimlik ver. Geçici hatada sınırlı sayıda yeniden dene. Kalıcı hatayı nedeni ve son denemesiyle inceleme kuyruğuna taşı. Tekrar çalıştırırken tamamlanmış adımları atla."]
 ].map(([id, group, n, d, source, p])=>({id, group, n, d, p, src:"gitmapp", source:businessSkillSources[source]}));
 
+const sapProcesses = "https://learning.sap.com/courses/exploring-end-to-end-business-processes-in-sap";
+const sapProduction = "https://learning.sap.com/courses/exploring-business-processes-in-sap-s-4hana-production-planning";
+const gitSapSkills = [
+  ["organizasyon","Holding ve yetki","Şirket, tesis, depo ve maliyet merkezini ortak kimliklerle bağla. Rol kapsamını şirket ve işlem türünde doğrula.","A şirketinin depo görevlisi B şirketinin stok belgesini doğrudan kimliğiyle açamaz."],
+  ["ana-veri","Malzeme ve iş ortağı ana verisi","Malzeme, varyant, birim dönüşümü ve şirket bazlı tedarikçi koşullarını sürümlü tut.","1 koli 12 adetken 3 koli kabul 36 adet artırır. Sonraki birim değişikliği geçmiş belgeyi değiştirmez."],
+  ["tedarik","Satın alma talebinden siparişe","Talep, onay ve sipariş satırlarını ilişkilendir. Talep miktarını aşan siparişi gerekçeli onaya gönder.","100 adetlik talebin 60 adedi siparişe dönüşürse açık talep 40 olur."],
+  ["fatura","Üç yönlü fatura eşleştirme","Sipariş, mal kabul ve faturayı satır, miktar, birim ve para birimiyle eşleştir. Tolerans dışını incelemeye al.","100 sipariş, 85 teslim ve 100 fatura örneğinde 15 adet fark görünür."],
+  ["stok","Depolar arası sevk ve teslim","Sevk, yoldaki stok, teslim, hasar ve ters hareketleri ayrı belgelerde izle.","80 sevk ve 75 teslim sonrasında 5 birim yoldadır. Aynı teslim tekrar gelince bakiye değişmez."],
+  ["mrp","Malzeme ihtiyaç planlaması","Tarihli talep, kullanılabilir stok, kesinleşmiş giriş, emniyet stoku ve tedarik süresinden net öneri hesapla.","100 talep, 20 stok, zamanında 30 giriş ve 10 emniyet stoku için ihtiyaç 60 olur.",sapProduction],
+  ["recete","Ürün ağacı ve reçete sürümü","Üretim tarihindeki geçerli reçeteyi seç. Alt bileşenleri aç, birimleri dönüştür ve döngüsel reçeteyi reddet.","Birim başına 2 kapak gereken 70 ürün için 140 kapak planlanır.",sapProduction],
+  ["kapasite","İş merkezi ve kapasite","Operasyon sırası, hazırlık süresi, vardiya, bakım ve çalışma takvimine göre kapasiteyi hesapla.","8 saatlik vardiyada 1 saat bakım varsa 8 saatlik iş en az 1 saat taşar.",sapProduction],
+  ["uretim","Üretim emri ve fiili sarf","Rezervasyon, sarf, kısmi mamul girişi, hurda ve tamamlamayı aynı emre bağla.","100 hedef, 80 sağlam ve 5 hurdayı ayrı göster. Tekrar gelen üretim bildirimi yeni giriş yaratmaz.",sapProduction],
+  ["fason","Fason üretim mutabakatı","Fasoncu stoklarını malzeme ve birim bazında izle. Gönderim, tüketim, iade ve farkı aynı siparişe bağla.","100 kg krem ve 2000 kavanoz gönder. 1900 adet × 50 g teslimde açıklanacak 5 kg ve 100 kavanoz kalır.","https://help.sap.com/docs/SAP_ERP/b704a8db767040a08100adc846218964/dd61bd534f22b44ce10000000a174cb4.html"],
+  ["lot","Parti soyağacı ve geri çağırma","Hammadde, ara ürün, mamul ve sevkiyat partileri arasında miktarlı bağlar kur. İleri ve geri sorgu sun.","İki mamule bölünen hammadde partisinden etkilenen iki sevkiyatı getir. İlgisiz partiyi dışarıda tut.","https://help.sap.com/docs/SAP_ERP/96bf9ad642cf4b26a29595e3d573fb8c/64feb753128eb44ce10000000a174cb4.html"],
+  ["kalite","Kalite muayenesi ve serbest bırakma","Örnekleme sonucu, karar, karantina, red ve serbest stoku ayrı kaydet.","100 birimin 90 tanesi serbest ve 10 tanesi karantinadaysa 95 birimlik sevki karşılanmış gösterme."],
+  ["satis","Siparişten teslimat ve faturaya","Müşteri siparişi, teslimat, mal çıkışı, fatura, iade ve açık miktarı satır bazında izle.","10 siparişin 6 adedi sevk edilirse teslimata bağlı faturaya en çok 6 birim taşı."],
+  ["finans","Yevmiye, açık kalem ve ters kayıt","Borç ve alacak toplamlarını para birimi bazında doğrula. Tahsilatı açık kaleme bağla. İptali bağlantılı ters fişle yap.","1000 tutarındaki faturaya 300 tahsilatta 700 açık kalır. Tahsilat ters çevrilince açık tutar 1000 olur."],
+  ["maliyet","Üretim maliyeti ve sapma","Malzeme, işçilik ve genel gideri emre bağla. Standart ve gerçekleşen maliyeti aynı çıktı miktarında karşılaştır.","100 sağlam ürün için 12000 gerçekleşen ve 10000 standart maliyet varsa birim sapma 20 olur."],
+  ["grup","Şirketler arası mutabakat","İki şirketin belgelerini ortak işlem kimliği, para birimi ve dönemle eşleştir. Açık farkları konsolidasyon öncesi göster.","A şirketinde 500 alacak ve B şirketinde 480 borç varsa 20 farkı kapanmış gösterme."],
+  ["bakim","Varlık bakımı ve hizmet emri","Arıza, iş emri, görevlendirme, duruş, yedek parça sarfı ve teknik tamamlama kaydet.","Aynı pompa için açık arızaya ikinci bildirim gelince mevcut emre bağlanabilsin."],
+  ["proje","Proje bütçesi ve gerçekleşen maliyet","İş kırılımına bütçe, satın alma taahhüdü ve gerçekleşen maliyet bağla. Faturaya dönüşen taahhüdü serbest bırak.","100 bütçe ve 40 taahhüdün 30 birimi faturalanınca kalan bütçe 60 ve açık taahhüt 10 olur."]
+].map(([id,n,d,check,source=sapProcesses])=>({
+  id:"gitsap-"+id, group:"GitSap", n, d, check, source, src:"gitmapp",
+  p:d+" Kabul senaryosu: "+check
+}));
+businessSkills.push(...gitSapSkills);
+
 function businessSkillInstructions(ids) {
   if (!Array.isArray(ids)) return "";
   const selected = businessSkills.filter(skill => ids.includes(skill.id));
   if (!selected.length) return "";
   return "\nSeçili iş becerilerinden yalnız bu projeye ve istenen değişikliğe uyanları kullan. Dış bağlantı yoksa örnek veriyle çalış ve simülasyonu belirt.\n"+
+    (selected.some(skill=>skill.group==="GitSap")?"GitSap: Seçilen süreçlerde ortak şirket, malzeme, belge ve satır kimlikleri kullan. Hareketleri kaynak belgeye bağla. Çift bildirimi ve ters kaydı örnek verilerle denetle.\n":"")+
     selected.map(skill => skill.n+" — "+skill.p).join("\n");
 }
 if (typeof module !== "undefined" && module.exports) module.exports = {businessSkills,businessSkillInstructions};
