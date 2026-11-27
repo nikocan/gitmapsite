@@ -19,12 +19,40 @@ function gtTestHtml(source){
  });
 }
 const gtSectorProjects = [
- {name:"Sigorta", flow:"Hasar ihbarı, poliçe kontrolü, eksper ataması ve ödeme mutabakatı"},
- {name:"Üretim", flow:"Satın alma talebi, sipariş, mal kabul ve fatura eşleştirme"},
- {name:"Perakende", flow:"Sipariş, stok rezervasyonu, sevkiyat ve iade"}
+ {"name":"Sigorta","icon":"☂","flow":"İhbar › İnceleme › Ödeme","skills":[["Poliçe kontrolü","Olay tarihindeki teminatı kontrol et."],["Eksper atama","Atama, yeniden atama ve bekleme durumlarını modelle."],["Ödeme eşleme","Onaylanan hasarı ödeme kaydıyla eşleştir."]]},
+ {"name":"Üretim","icon":"⚙","flow":"Talep › Sipariş › Mal kabul","skills":[["Talep onayı","Tutar ve tesise göre onay sırasını tanımla."],["Kısmi teslim","Teslim alınan miktarı açık siparişten düş."],["Fatura kontrolü","Sipariş, teslim ve fatura farkını göster."]]},
+ {"name":"Perakende","icon":"▤","flow":"Sipariş › Sevk › İade","skills":[["Stok ayırma","Son ürün için eşzamanlı talepleri test et."],["Sevk takibi","Parçalı gönderileri siparişe bağla."],["İade kabulü","Kısmi iadede tutar ve stoğu uzlaştır."]]},
+ {"name":"Lojistik","icon":"▣","flow":"Alım › Aktarma › Teslim","skills":[["Rota atama","Gönderiyi kapasitesi uygun rotaya ata."],["Aktarma kaydı","Merkezler arası devir zamanını kaydet."],["Teslim kanıtı","Teslim kaydını doğru gönderiye bağla."]]},
+ {"name":"Sağlık","icon":"✚","flow":"Randevu › Kabul › Hizmet","skills":[["Randevu planı","Çakışan zaman dilimlerini denetle."],["Kabul kaydı","Randevu ve kabul ilişkisini kur."],["Birim devri","Birimler arası devir yetkisini ve kaydını tanımla."]]},
+ {"name":"Eczane dağıtımı","icon":"⚕","flow":"Teklif › Sipariş › Dağıtım","skills":[["Lot takibi","Lot ve son kullanma tarihine göre izlenebilirlik kur."],["Barem hesabı","Miktar eşiğinde teklif koşulunu uygula."],["Kargo mutabakatı","Gönderi ücretini ilgili siparişle eşleştir."]]},
+ {"name":"Finans","icon":"◈","flow":"Başvuru › İnceleme › Tahsilat","skills":[["Başvuru kaydı","Eksik belgeleri başvuruya bağla."],["Çift onay","Talep sahibi ile son onaylayıcıyı ayır."],["Tahsilat eşleme","Kısmi ödemeyi açık bakiyeden düş."]]},
+ {"name":"Enerji","icon":"ϟ","flow":"Sayaç › Okuma › Fatura","skills":[["Okuma alımı","Tekrarlanan sayaç okumasını ayıkla."],["Tüketim hesabı","Ardışık okumalar arasındaki farkı kontrol et."],["İtiraz takibi","Fatura itirazını ilgili okumaya bağla."]]},
+ {"name":"İnşaat","icon":"▧","flow":"Keşif › İmalat › Hakediş","skills":[["Metraj","Ölçülen miktarı iş kalemine bağla."],["Saha onayı","İmalat kabulünü yetkili saha rolüne ata."],["Hakediş hesabı","Önceki dönemde ödenen miktarı ayır."]]},
+ {"name":"Otomotiv","icon":"◎","flow":"Kabul › Servis › Teslim","skills":[["İş emri","Araç ve servis talebini ilişkilendir."],["Parça ayırma","Kullanılan parçayı iş emrine işle."],["Teslim kontrolü","Açık işlem varsa teslim öncesi göster."]]},
+ {"name":"Eğitim","icon":"▥","flow":"Kayıt › Ders › Değerlendirme","skills":[["Kontenjan","Son kontenjan için eşzamanlı kayıtları test et."],["Ders atama","Eğitmen ve derslik çakışmasını kontrol et."],["Sonuç yayını","Sonucu yalnız ilgili öğrenci ve yetkili role aç."]]},
+ {"name":"Turizm","icon":"✦","flow":"Rezervasyon › Giriş › Çıkış","skills":[["Oda ayırma","Tarih aralıklarında çift rezervasyonu kontrol et."],["Giriş işlemi","Hazır odayı doğrulanmış rezervasyona ata."],["Hesap kapama","Ek hizmetleri çıkış bakiyesine işle."]]}
 ];
-function gtSectorQuestion(project){
- return project.flow+" için holding şirketleri arasında yürütülebilecek bir geliştirme planı hazırla. Yüklenen proje bağlamındaki kanıtları belirt, eksik entegrasyonları açık soru olarak kaydet. Her aşamada sorumlu rolü, şirket bazlı veri erişimini, önkoşulları ve paralel ilerleyebilecek işleri göster. Veri modeli, API, arayüz ve entegrasyon görevlerine ayrı kabul testleri ata. Yinelenen olay ve kesinti sonrası devam senaryolarını ekle.";
+function gtSectorQuestion(project, selected){
+ const scope=project.skills.filter(([name])=>selected.includes(name)).map(([name,task])=>name+": "+task);
+ return [project.name+" · "+project.flow, ...scope,
+ "Seçilen kapsam için şirket, rol, veri sahibi ve entegrasyonları proje bağlamındaki kanıtlara bağla. Bilinmeyenleri soru olarak listele.",
+ "Veri modeli, API ve ekran görevlerini bağımlılık sırasına koy. Paralel işleri belirt. Ekranda ana eylemi, boş, yükleniyor ve hata durumlarını tanımla.",
+ "Her beceri için girdi, çıktı ve ölçülebilir kabul testi yaz. Şirketler arası yetki ayrımı, yinelenen olay ve kesinti sonrası devamı test planına ekle."].join("\n");
+}
+function GtSectorPicker({question,onApply,busy}){
+ const [index,setIndex]=useState(0),[selected,setSelected]=useState([]);
+ const project=gtSectorProjects[index];
+ const proposal=gtSectorQuestion(project,selected);
+ const combined=question.trim()?question.trimEnd()+"\n\n"+proposal:proposal;
+ return html`<details><summary>Sektör ve beceri seç</summary>
+ <fieldset disabled=${busy}><legend>Proje kapsamı</legend>
+ <label>Sektör<select value=${index} onChange=${e=>{setIndex(Number(e.target.value));setSelected([])}}>${gtSectorProjects.map((p,i)=>html`<option key=${p.name} value=${i}>${p.icon} · ${p.name}</option>`)}</select></label>
+ <p aria-label="İş akışı">${project.flow}</p>
+ <fieldset><legend>Beceriler</legend>${project.skills.map(([name])=>html`<label key=${name}><input type="checkbox" checked=${selected.includes(name)} onChange=${e=>{const checked=e.target.checked;setSelected(old=>checked?[...old,name]:old.filter(n=>n!==name))}}/> ${name}</label>`)}</fieldset>
+ ${selected.length>0&&html`<details><summary>Komutu önizle</summary><p style=${{whiteSpace:"pre-line"}}>${proposal}</p></details>`}
+ <button type="button" disabled=${!selected.length||combined.length>1500} onClick=${()=>{onApply(combined);setSelected([])}}>Teknik soruya ekle</button>
+ ${selected.length>0&&combined.length>1500&&html`<p role="status">Teknik soru 1500 karakteri aşıyor. Mevcut metni kısaltın.</p>`}
+ </fieldset></details>`;
 }
 function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT,openEngineering}){
  const [open,setOpen]=useState(false),[enabled,setEnabled]=useState(false);
@@ -101,9 +129,7 @@ function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT,ope
  <details open=${!ctx}><summary>Sistem bağlamı</summary><p>Tablo ve sütun adları, ilişkiler ve toplu olay sayaçları içeren JSON yükleyin. Örnek dosya sigorta senaryosunu gösterir.</p><button onClick=${sample}>Örnek JSON indir</button> <label>Şema ve sinyalleri yükle<input type="file" accept=".json" onChange=${e=>{load(e.target.files[0]);e.target.value=""}}/></label>
  ${ctx&&html`<p>${ctx.modules.join(" · ")}</p><ul>${ctx.tables.map(t=>html`<li key=${t.name}>${t.name} · ${t.columns.join(", ")}</li>`)}</ul>`}</details>
  ${alerts>0&&html`<section role="status"><b>Açık sinyaller</b><ul>${signals.map(s=>html`<li key=${s.code}>${s.code} · ${s.severity} · ${s.count}</li>`)}${errors.map((s,i)=>html`<li key=${i}>Önizleme · ${s}</li>`)}</ul></section>`}
- <details><summary>Sektörel proje başlat</summary><p>Bir iş akışı seçerek teknik soruyu doldurun. Kapsamı ekibinize göre düzenleyebilirsiniz.</p>
- ${gtSectorProjects.map(project=>html`<button type="button" key=${project.name} disabled=${job||Boolean(question.trim())} onClick=${()=>{setQuestion(gtSectorQuestion(project));setReply("");setTests([])}}>${project.name} · ${project.flow}</button>`)}
- </details>
+ <${GtSectorPicker} question=${question} busy=${job} onApply=${value=>{setQuestion(value);setReply("");setTests([])}}/>
  <label>Teknik soru<textarea maxlength="1500" value=${question} onInput=${e=>{serial.current++;setJob(false);setQuestion(e.target.value);setReply("");setTests([])}} disabled=${job} placeholder="Hasar ödemeleri hangi aşamada bekliyor?"></textarea></label>
  <button disabled=${job} onClick=${listen}>${voice?"Dinlemeyi bitir":"Sesle sor"}</button> <button disabled=${job||!ctx||!question.trim()} onClick=${ask}>GT’ye sor</button>
  ${reply&&html`<p class="gt-answer">${reply}</p><button onClick=${()=>{if(!window.speechSynthesis){setStatus("Sesli okuma desteklenmiyor.");return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(reply);u.lang="tr-TR";speechSynthesis.speak(u)}}>Yanıtı dinle</button> <button disabled=${job||busy} onClick=${create}>Taslakta geliştir ve test et</button>`}
