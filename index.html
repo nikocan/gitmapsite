@@ -2840,6 +2840,27 @@ html.rm .ambient i{animation:none}
 .cc-det{color:#6f6d68;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.cc-det::before{content:"·";margin:0 7px 0 1px;color:#55534f}
 .cc-rbtn time{color:#6f6d68;font-size:12.5px;font-variant-numeric:tabular-nums}
 @media(prefers-reduced-motion:reduce){.cc-ico.run::after{animation:none;border-color:#e8743b}}html.rm .cc-ico.run::after{animation:none}
+.mpk{background:#19191b;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(14px,3vw,22px);display:grid;grid-template-columns:minmax(0,1fr);gap:14px}.mpk>*,.mpk-s>*{min-width:0}
+.mpk-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mpk-steps{display:flex;gap:6px;list-style:none;margin:0;padding:0;font-size:12px;color:var(--mut)}.mpk-steps li{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.1)}
+.mpk-steps li.done{color:#cfcfca}.mpk-steps li.cur{background:var(--acc);color:#101211;border-color:transparent;font-weight:600}
+.mpk h2{margin:0;font-size:20px;line-height:1.25}.mpk-sub{margin:-6px 0 0;color:var(--mut);font-size:13.5px;line-height:1.5}
+.mpk-s{display:grid;gap:8px;padding:12px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06)}
+.mpk-sh{display:flex;align-items:center;gap:8px;font-size:13px}.mpk-sh b{display:inline-flex;align-items:center;gap:6px;font-weight:600}.mpk-sh small{color:var(--mut);font-variant-numeric:tabular-nums}
+.mpk-l{margin-left:auto;background:none;border:0;color:var(--acc);font:inherit;font-size:12.5px;cursor:pointer;padding:2px 4px}
+.mpk-g{display:flex;flex-wrap:wrap;gap:6px}
+.mpk-c{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:6px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#cfcfca;font:inherit;font-size:13px;cursor:pointer;transition:background .15s,border-color .15s}
+.mpk-c span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mpk-c:hover{border-color:rgba(255,255,255,.3)}
+.mpk-c.on{background:rgba(228,255,61,.1);border-color:rgba(228,255,61,.45);color:#f2f2ee}.mpk-c.on .gm-icon{color:var(--acc)}
+.mpk-more summary{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;list-style:none}.mpk-more summary::-webkit-details-marker{display:none}
+.mpk-more summary em{font-style:normal;color:var(--acc);font-weight:500}.mpk-more summary small{color:var(--mut);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.mpk-grp{display:grid;gap:6px;margin-top:8px}.mpk-grp>small{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+.mpk-in{display:flex;gap:6px;flex:1;min-width:200px}.mpk-in input{flex:1;min-width:0;background:#111;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 12px;color:inherit;font:inherit;font-size:13px}
+.mpk-in .btn{display:inline-flex;align-items:center;gap:4px;border-radius:20px}
+.mpk-f{position:sticky;bottom:-22px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 0 2px;background:linear-gradient(transparent,#19191b 30%)}.mpk-f span{flex:1;font-size:13px;color:var(--mut)}.mpk-f b{color:#f2f2ee}
+.mpk-f .btn{display:inline-flex;align-items:center;gap:6px}
+.skd-next{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 8px;border-radius:10px;background:rgba(228,255,61,.06);border:1px solid rgba(228,255,61,.18)}.skd-next span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.skd-next.ok{background:rgba(57,255,136,.05);border-color:rgba(57,255,136,.18)}.skd-next.ok .gm-icon{color:#39ff88}
+.skd-mod.pre{cursor:default;opacity:.85}
 .skd{margin:0 0 8px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(20,20,22,.7);backdrop-filter:blur(10px);overflow:hidden;position:relative}
 .skd-bar{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 10px;min-width:0}
 .skd-tg{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:#e9e9e6;font:inherit;font-size:13px;cursor:pointer;padding:2px 0;flex:none}
@@ -3074,8 +3095,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.81.0";
+const VERSION="5.82.0";
 const CHANGELOG=[
+ {v:"5.82.0",date:"2026-11-28",items:[
+  "🧩 Yeni: Modül seçici. Beceriler'den bir uygulama planı seçince (ör. Filo ve araç takibi) önce modül penceresi açılır: Plan › Modüller › Kur. Planın modüllerinden yalnız istediklerini işaretlersin; hepsini yapmak zorunda değilsin",
+  "✨ Bu işe önerilen ek modüller: plan metnine ve proje fikrine göre en uygun 8 ek modül önerilir (filo için kiralama takvimi, sözleşme, konum, gider…). “Hepsini ekle” ile tek dokunuşla eklenir",
+  "📚 Modül kütüphanesi: 27 hazır modül 6 grupta — Kayıtlar (müşteri, ürün, personel, tedarikçi, belge), Zaman (ajanda, randevu, rezervasyon/kiralama, görev, vardiya), Para (teklif, sözleşme, fatura, tahsilat, kapora, gider), İletişim, Operasyon, Yönetim. Listede olmayanı “Kendi modülün” alanına yazarsın",
+  "🚀 “Seçimle devam et”: Stüdyo açılır ve uygulama yalnız seçtiğin modüllerle kurulur; sunucu da seçimi yapay zekâya “KAPSAM” olarak iletir, seçilmeyen modüller kendiliğinden eklenmez. Uygulama zaten varsa eksik seçili modüller sırayla eklenir",
+  "➡️ Akış sürer: Beceriler çubuğunda seviye sayacı artık seçtiğin modüller üzerinden; “Sıradaki modül: … Ekle” satırı bir sonraki adımı gösterir, hepsi bitince “Modül ekle” ile seçiciyi yeniden açarsın. Her planın yanındaki ayar simgesiyle seçimi istediğin an değiştirirsin; seçim tarayıcıda saklanır"]},
  {v:"5.81.0",date:"2026-11-28",items:[
   "🧰 Stüdyo üst çubuğu düzeldi: dar ekranda (iPad, sol menü açıkken) düğmeler artık birbirinin üstüne binmiyor ve dışarı taşmıyor. Proje adı en az 110 piksel ve gerekirse “…” ile kısalıyor (“Akış O” gibi kesilmiyor). Proje ayarları düğmesi cihaz düğmelerinin altına girmiyor",
   "⋯ Yeni “Daha fazla” menüsü: yer azaldıkça Tam ekran, Yeni sekmede aç, Önceki sürüme dön, Sürüm geçmişi, Yeni sohbet ve Projeye ekle bu menüye geçiyor; hiçbir araç kaybolmuyor. Daha da daralınca Asistan düğmesi (sağ alttaki Asistan zaten açık), sohbet listesi (sol menüde Oturumlar) gizleniyor ve Yayınla yalnızca simgeyle gösteriliyor",
@@ -7194,11 +7221,92 @@ const skillMods=s=>(skillParts(s.body)["MODÜLLER"]||"").split(/,\s*/).map(x=>x.
 const htmlText=h=>String(h||"").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi," ").replace(/<[^>]+>/g," ").toLocaleLowerCase("tr");
 // Modül uygulamada var mı: modül adındaki ana kelime sayfa metninde ya da kodda geçiyor mu
 function modCovered(m,txt,code){const w=modWords(m);if(!w.length)return false;return w.slice(0,2).some(x=>txt.includes(x)||code.includes(x.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ı/g,"i")))}
-const modPrompt=(s,m)=>`Beceri modülü ekle — ${s.name} › ${m}. Bu uygulamaya “${m}” modülünü eksiksiz ekle: becerideki ilgili veri alanlarını, ekranları ve iş kurallarını uygula, menüye/gezinmeye ekle, örnek verilerle doldur ve diğer modüllerle bağla. Mevcut özellikleri ve tasarımı bozma.`;
+const modPrompt=(s,m)=>{const ex=SK_EXTRA.find(x=>x.n===m);return `Beceri modülü ekle — ${s.name} › ${m}. Bu uygulamaya “${m}” modülünü eksiksiz ekle: ${ex?ex.d+"; ":""}becerideki ilgili veri alanlarını, ekranları ve iş kurallarını uygula, menüye/gezinmeye ekle, örnek verilerle doldur ve diğer modüllerle bağla. Mevcut özellikleri ve tasarımı bozma.`};
 // Projeye uyan sektör becerisini tahmin et (ad, kullanıcı ve modül kelimeleri)
 function suggestSkill(plans,text){const t=String(text||"").toLocaleLowerCase("tr");if(t.length<6)return null;let best=null,score=0;
  for(const s of plans){const words=[...modWords(s.name),...modWords(s.who||"")];let n=0;for(const w of new Set(words))if(w.length>=4&&t.includes(w))n+=2;for(const m of skillMods(s))if(modWords(m).some(w=>w.length>=4&&t.includes(w)))n+=1;if(n>score){score=n;best=s}}
  return score>=3?best:null}
+/* ================= v5.82 MODÜL SEÇİCİ: plan becerisini seç → işine uyan modülleri seç → akış seçilenlerle sürer ================= */
+const SK_EXTRA=[
+ {id:"musteri",g:"Kayıtlar",n:"Müşteri kaydı",ic:"users",d:"Ad, telefon, e-posta, adres, notlar ve geçmiş işlemler; arama ve filtre",kw:["müşteri","misafir","hasta","cari","üye","kiralama","satış","sipariş","randevu","danışan","öğrenci","veli"]},
+ {id:"urun",g:"Kayıtlar",n:"Ürün kaydı",ic:"box",d:"Ürün/hizmet kartı: kod, ad, kategori, fiyat, KDV, görsel ve stok durumu",kw:["ürün","stok","menü","katalog","sipariş","satış","hizmet","fiyat","sepet"]},
+ {id:"personel",g:"Kayıtlar",n:"Personel kaydı",ic:"userRound",d:"Çalışan kartı: görev, iletişim, yetki, çalışma saatleri; işlere atama",kw:["personel","çalışan","sürücü","usta","ekip","teknisyen","kurye","garson","öğretmen","doktor","temsilci"]},
+ {id:"tedarikci",g:"Kayıtlar",n:"Tedarikçi kaydı",ic:"truck",d:"Tedarikçi kartı, alış fiyatları, sipariş ve ödeme geçmişi",kw:["tedarik","satın alma","alış","depo","üretim","malzeme"]},
+ {id:"belge",g:"Kayıtlar",n:"Belge ve dosya arşivi",ic:"folder",d:"Kayda bağlı dosya ve fotoğraf yükleme; bitiş tarihi olan belgelerde uyarı",kw:["belge","sözleşme","evrak","muayene","sigorta","ruhsat","dosya","kasko"]},
+ {id:"ajanda",g:"Zaman",n:"Ajanda",ic:"calendar",d:"Gün/hafta/ay görünümlü takvim; etkinlik, not ve hatırlatmalar",kw:["takvim","tarih","muayene","bakım","etkinlik","toplantı","görüşme","plan"]},
+ {id:"randevu",g:"Zaman",n:"Randevu",ic:"clock",d:"Hizmet, çalışan ve saat seçimiyle randevu; çakışma kontrolü",kw:["randevu","seans","muayene","servis","danışman","kuaför","klinik"]},
+ {id:"rezervasyon",g:"Zaman",n:"Rezervasyon ve kiralama takvimi",ic:"cal",d:"Tarih aralığıyla kiralama/rezervasyon, müsaitlik ve doluluk takvimi",kw:["kiralama","rezervasyon","araç","oda","masa","filo","ekipman","konaklama","kira"]},
+ {id:"gorev",g:"Zaman",n:"Görev ve hatırlatıcı",ic:"checkCircle",d:"Atanabilir görevler, son tarih, öncelik ve gecikme uyarıları",kw:["görev","takip","bakım","iş emri","proje","talep","hatırlat"]},
+ {id:"vardiya",g:"Zaman",n:"Vardiya planı",ic:"history",d:"Haftalık vardiya çizelgesi, izin ve mesai özeti",kw:["vardiya","mesai","puantaj","sürücü","nöbet"]},
+ {id:"teklif",g:"Para",n:"Teklif",ic:"file",d:"Kalemli teklif, KDV, geçerlilik tarihi, yazdır/PDF; teklifi siparişe çevir",kw:["teklif","satış","proje","kiralama","b2b","fiyat"]},
+ {id:"sozlesme",g:"Para",n:"Sözleşme",ic:"pen",d:"Şablondan sözleşme, başlangıç/bitiş, imza durumu ve yenileme uyarısı",kw:["sözleşme","kiralama","kira","abonelik","üyelik","kurum","filo"]},
+ {id:"fatura",g:"Para",n:"Fatura",ic:"receipt",d:"Satış faturası, KDV dökümü, fatura numarası ve yazdırılabilir çıktı",kw:["fatura","muhasebe","tahsilat","kdv","cari"]},
+ {id:"tahsilat",g:"Para",n:"Tahsilat ve ödeme",ic:"wallet",d:"Nakit/kart/havale tahsilatı, kısmi ödeme, vadesi geçen alacaklar",kw:["ödeme","tahsilat","kapora","aidat","borç","alacak","kiralama","sipariş"]},
+ {id:"depozito",g:"Para",n:"Kapora ve depozito",ic:"coins",d:"Ön ödeme/depozito alma, iade ve kesinti kaydı",kw:["kapora","depozito","kiralama","rezervasyon","kira"]},
+ {id:"gider",g:"Para",n:"Gider takibi",ic:"chart",d:"Kategori bazlı giderler, aylık özet, kayıt başına maliyet",kw:["gider","maliyet","yakıt","bakım","masraf","bütçe"]},
+ {id:"bildirim",g:"İletişim",n:"WhatsApp / SMS bildirimleri",ic:"chat",d:"Hazır mesaj şablonları; hatırlatma ve durum bildirimi bağlantıları",kw:["hatırlat","bildirim","randevu","sipariş","teslim","kiralama","uyarı"]},
+ {id:"portal",g:"İletişim",n:"Müşteri portalı",ic:"globe",d:"Müşterinin kendi kayıtlarını, taleplerini ve ödemelerini gördüğü ekran",kw:["bayi","portal","online","talep","rezervasyon","veli"]},
+ {id:"anket",g:"İletişim",n:"Değerlendirme ve anket",ic:"star",d:"İş sonrası puan ve yorum toplama, memnuniyet raporu",kw:["memnuniyet","hizmet","servis","destek"]},
+ {id:"konum",g:"Operasyon",n:"Konum ve harita",ic:"mapPin",d:"Adres/konum alanı, harita bağlantısı, rota ve bölge",kw:["konum","adres","rota","araç","kurye","saha","teslimat","filo","harita"]},
+ {id:"qr",g:"Operasyon",n:"QR / barkod",ic:"scan",d:"Kayıt için QR kod üret, kamerayla okut ve kaydı aç",kw:["barkod","qr","stok","envanter","demirbaş","bilet"]},
+ {id:"hasar",g:"Operasyon",n:"Hasar ve servis kaydı",ic:"wrench",d:"Fotoğraflı hasar/arıza kaydı, servis süreci ve maliyeti",kw:["hasar","arıza","bakım","servis","onarım","araç","filo","kiralama"]},
+ {id:"envanter",g:"Operasyon",n:"Envanter ve stok",ic:"stockroom",d:"Giriş-çıkış hareketleri, kritik seviye uyarısı",kw:["stok","envanter","depo","malzeme","yedek parça"]},
+ {id:"rapor",g:"Yönetim",n:"Raporlar ve pano",ic:"trend",d:"Özet kartlar, grafikler, tarih aralığı filtresi ve dışa aktarım",kw:["rapor","pano","özet","analiz","maliyet"]},
+ {id:"rol",g:"Yönetim",n:"Kullanıcı rolleri ve yetki",ic:"shield",d:"Yönetici/çalışan/müşteri rolleri; ekran ve işlem yetkileri",kw:["yetki","yönetici","onay","ekip","kurum","şube"]},
+ {id:"csv",g:"Yönetim",n:"Excel / CSV aktarım",ic:"table",d:"Kayıtları CSV ile içe ve dışa aktarma, örnek şablon dosya",kw:["liste","csv","excel","içe aktar"]},
+ {id:"denetim",g:"Yönetim",n:"İşlem geçmişi (denetim izi)",ic:"policy",d:"Kim, ne zaman, neyi değiştirdi; kayıt bazlı geçmiş",kw:["onay","kamu","muhasebe","evrak","denetim"]}
+];
+const modSelAll=()=>{const v=LS.get("skillMods",{});return v&&typeof v==="object"?v:{}};
+const modSel=id=>{const v=modSelAll()[id];return v&&Array.isArray(v.mods)?v:null};
+const saveModSel=(id,v)=>{const all=modSelAll();if(v)all[id]=v;else delete all[id];LS.set("skillMods",all);dispatchEvent(new Event("gm:skills"))};
+const openModPick=(id,ctx)=>dispatchEvent(new CustomEvent("gm:modpick",{detail:{id,ctx:String(ctx||"").slice(0,4000)}}));
+const modNames=v=>[...(v.mods||[]),...(v.extra||[]).map(id=>SK_EXTRA.find(x=>x.id===id)?.n).filter(Boolean),...(v.custom||[])];
+// Planın seçili modülleri + ek modüller; seçim yapılmamışsa planın tüm modülleri
+function skillModList(s){const base=skillMods(s),v=modSel(s.id);if(!v)return base.map(m=>({m}));
+ return [...base.filter(m=>v.mods.includes(m)).map(m=>({m})),...(v.extra||[]).map(id=>SK_EXTRA.find(x=>x.id===id)).filter(Boolean).map(x=>({m:x.n,x})),...(v.custom||[]).map(m=>({m,custom:true}))]}
+// Sunucuya giden kapsam: {becerId:[modül adları]}
+const skillScope=ids=>{const o={};for(const id of ids){const v=modSel(id);if(v)o[id]=modNames(v).slice(0,24)}return Object.keys(o).length?o:undefined};
+const extraDup=(x,base)=>{const w=modWords(x.n)[0]||"";return base.some(m=>modWords(m).some(v=>v.slice(0,5)===w.slice(0,5)))};
+// Ek modülleri plan metni ve proje fikriyle uyumuna göre sırala
+function rankExtras(s,ctx){const t=(s.name+" "+s.who+" "+s.body+" "+ctx).toLocaleLowerCase("tr");const base=skillMods(s);
+ return SK_EXTRA.filter(x=>!extraDup(x,base)).map(x=>({x,sc:x.kw.reduce((n,k)=>n+(t.includes(k)?1:0),0)+(ctx&&String(ctx).toLocaleLowerCase("tr").includes(modWords(x.n)[0]||"\u0000")?3:0)})).sort((a,b)=>b.sc-a.sc)}
+function ModulePicker({s,ctx,close,toast,onDone}){
+ const base=skillMods(s),prev=modSel(s.id);
+ const [mods,setMods]=useState(()=>prev?prev.mods.filter(m=>base.includes(m)):base);
+ const [extra,setExtra]=useState(()=>prev?.extra||[]);const [custom,setCustom]=useState(()=>prev?.custom||[]);const [cin,setCin]=useState("");
+ const ranked=useMemo(()=>rankExtras(s,ctx||""),[s.id]);
+ const rec=ranked.filter(r=>r.sc>0).slice(0,8).map(r=>r.x),rest=ranked.map(r=>r.x).filter(x=>!rec.includes(x));
+ const groups=[...new Set(rest.map(x=>x.g))];
+ const tg=(arr,set,v)=>set(arr.includes(v)?arr.filter(x=>x!==v):[...arr,v]);
+ const total=mods.length+extra.length+custom.length;
+ const addCustom=()=>{const v=cin.replace(/[<>`]/g,"").trim().slice(0,40);if(!v)return;if(!custom.includes(v))setCustom([...custom,v]);setCin("")};
+ const save=go=>{if(!total){toast("En az bir modül seç");return}saveModSel(s.id,{mods,extra,custom,at:Date.now()});close();toast(total+" modül seçildi · "+skShort(s.name)+" akışı bu modüllerle sürecek");onDone&&onDone(go)};
+ const chip=(on,label,ic,d,onClick,key)=>html`<button type="button" key=${key} class=${"mpk-c"+(on?" on":"")} aria-pressed=${on} title=${d||label} onClick=${onClick}><${Icon} n=${on?"checkCircle":ic||"plusCircle"} s=${14}/><span>${label}</span></button>`;
+ const recOn=rec.filter(x=>extra.includes(x.id)).length;
+ return html`<${UiDialog} label=${s.name+" · modül seç"} width="700px" close=${close}><div class="mpk">
+  <div class="mpk-h"><ol class="mpk-steps" aria-label="Adımlar"><li class="done"><${Icon} n="check" s=${12}/>Plan</li><li class="cur">Modüller</li><li>Kur</li></ol>
+   <button type="button" class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  <h2>${s.name}</h2><p class="mpk-sub">Uygulamana hangi modüller girsin? Hepsini yapmak zorunda değilsin: seçtiklerinle başlarsın, kalanları sonra Beceriler çubuğundan eklersin.</p>
+  <section class="mpk-s"><div class="mpk-sh"><b><${Icon} n="brain" s=${14}/>Planın modülleri</b><small>${mods.length}/${base.length}</small><button type="button" class="mpk-l" onClick=${()=>setMods(mods.length===base.length?[]:base)}>${mods.length===base.length?"Hiçbiri":"Tümü"}</button></div>
+   <div class="mpk-g">${base.map(m=>chip(mods.includes(m),m.replace(/\s*\([^)]*\)/,""),"plusCircle","",()=>tg(mods,setMods,m),m))}</div></section>
+  ${rec.length>0&&html`<section class="mpk-s"><div class="mpk-sh"><b><${Icon} n="sparkles" s=${14}/>Bu işe önerilen ek modüller</b><small>${recOn}/${rec.length}</small><button type="button" class="mpk-l" onClick=${()=>setExtra(recOn===rec.length?extra.filter(id=>!rec.some(x=>x.id===id)):[...new Set([...extra,...rec.map(x=>x.id)])])}>${recOn===rec.length?"Kaldır":"Hepsini ekle"}</button></div>
+   <div class="mpk-g">${rec.map(x=>chip(extra.includes(x.id),x.n,x.ic,x.d,()=>tg(extra,setExtra,x.id),x.id))}</div></section>`}
+  <details class="mpk-s mpk-more"><summary><${Icon} n="layers" s=${14}/>Modül kütüphanesi<em>${rest.length}</em><small>müşteri, ürün, personel, ajanda, randevu…</small></summary>
+   ${groups.map(g=>html`<div class="mpk-grp" key=${g}><small>${g}</small><div class="mpk-g">${rest.filter(x=>x.g===g).map(x=>chip(extra.includes(x.id),x.n,x.ic,x.d,()=>tg(extra,setExtra,x.id),x.id))}</div></div>`)}</details>
+  <section class="mpk-s"><div class="mpk-sh"><b><${Icon} n="pen" s=${14}/>Kendi modülün</b></div>
+   <div class="mpk-g">${custom.map(m=>chip(true,m,"","Kaldırmak için tıkla",()=>setCustom(custom.filter(x=>x!==m)),"c:"+m))}
+    <form class="mpk-in" onSubmit=${e=>{e.preventDefault();addCustom()}}><input aria-label="Kendi modülünü yaz" placeholder="ör. Araç teslim formu" value=${cin} onInput=${e=>setCin(e.target.value)}/><button type="submit" class="btn g s" disabled=${!cin.trim()}><${Icon} n="plus" s=${13}/>Ekle</button></form></div></section>
+  <div class="mpk-f"><span><b>${total}</b> modül seçildi</span><button type="button" class="btn g" onClick=${()=>save(false)}>Kaydet</button><button type="button" class="btn" disabled=${!total} onClick=${()=>save(true)}><${Icon} n="rocket" s=${14}/> Seçimle devam et</button></div>
+ </div></${UiDialog}>`;
+}
+// Uygulamanın kökünde: “gm:modpick” olayıyla açılır; “Seçimle devam et” Stüdyo'ya “gm:skgo” gönderir
+function ModulePickerHost({toast}){const idx=useSkillIdx();const [cur,setCur]=useState(null);
+ useEffect(()=>{const h=e=>setCur(e.detail||null);addEventListener("gm:modpick",h);return()=>removeEventListener("gm:modpick",h)},[]);
+ const s=cur&&idx[cur.id];if(!s||s.kind!=="gelistirme")return null;
+ return html`<${ModulePicker} key=${s.id} s=${s} ctx=${cur.ctx} toast=${toast} close=${()=>setCur(null)} onDone=${go=>{if(!go)return;const ev=new CustomEvent("gm:skgo",{detail:{id:s.id,handled:false}});dispatchEvent(ev);if(!ev.detail.handled){LS.set("skGo",s.id);location.hash="#studio"}}}/>`}
+const skStartPrompt=sk=>{const v=modSel(sk.id);if(!v)return sk.test||sk.name+" uygulaması yap; örnek verilerle dolu olsun.";
+ const list=skillModList(sk).map(o=>o.m+(o.x?" ("+o.x.d+")":"")).join("; ");
+ return `${sk.name} uygulaması yap. Kapsam — yalnızca şu modülleri kur: ${list}. Planın seçilmeyen modüllerini şimdilik ekleme; menüde yalnızca bu modüller olsun, modüller birbirine bağlı çalışsın (ör. aynı müşteri kaydı), örnek verilerle dolu olsun.`};
 function StudioSkillDock({html:h,busy,projectText,onModule,onComplete,onMicro,onStart,toast,start=false}){
  const idx=useSkillIdx();const dockKey=start?"skDock":"skDockWs";const [open,setOpen]=useState(()=>start?LS.get(dockKey,true)!==false:LS.get(dockKey,false)===true);const [q,setQ]=useState("");const [pick,setPick]=useState(false);const [,tick]=useState(0);const [lv,setLv]=useState(null);const prev=useRef({});const [usedMicro,setUsedMicro]=useState([]);
  useEffect(()=>{LS.set(dockKey,open)},[open]);
@@ -7206,7 +7314,7 @@ function StudioSkillDock({html:h,busy,projectText,onModule,onComplete,onMicro,on
  const all=Object.values(idx);const plans=all.filter(s=>s.kind==="gelistirme");const on=skillsOn();
  const loaded=plans.filter(s=>on.includes(s.id));
  const txt=useMemo(()=>htmlText(h),[h]);const code=useMemo(()=>String(h||"").toLowerCase(),[h]);
- const rows=loaded.map(s=>{const mods=skillMods(s).map(m=>({m,ok:!!h&&modCovered(m,txt,code)}));return {s,mods,done:mods.filter(x=>x.ok).length}});
+ const rows=loaded.map(s=>{const mods=skillModList(s).map(o=>({...o,ok:!!h&&modCovered(o.m,txt,code)}));return {s,mods,done:mods.filter(x=>x.ok).length,picked:!!modSel(s.id)}});
  // Seviye atlama efekti: kapsanan modül sayısı artınca
  useEffect(()=>{for(const r of rows){const p=prev.current[r.s.id];if(p!=null&&r.done>p){setLv({name:r.s.name,n:r.done,t:r.mods.length,k:Date.now()});GMD.buzz&&GMD.buzz(12)}prev.current[r.s.id]=r.done}},[rows.map(r=>r.s.id+":"+r.done).join("|")]);
  useEffect(()=>{if(!lv)return;const t=setTimeout(()=>setLv(null),2600);return()=>clearTimeout(t)},[lv]);
@@ -7222,13 +7330,15 @@ function StudioSkillDock({html:h,busy,projectText,onModule,onComplete,onMicro,on
    <button type="button" class="ib sm" aria-label=${open?"Beceri panelini kapat":"Beceri panelini aç"} onClick=${()=>setOpen(!open)}><${Icon} n=${open?"chevDown":"chevUp"} s=${14}/></button></div>
   ${lv&&html`<div class="skd-lv" key=${lv.k}><${Icon} n="sparkles" s=${13}/> Seviye ${lv.n}/${lv.t} · ${skShort(lv.name)}</div>`}
   ${open&&html`<div class="skd-body">
-   ${sug&&html`<div class="skd-sug"><${Icon} n="lightbulb" s=${14}/><span>Bu proje <b>${sug.name}</b> becerisine uyuyor: modülleri ve iş kuralları hazır.</span><button class="btn s" onClick=${()=>{loadSkill(sug.id,toast,sug.name)}}>İçe aktar</button></div>`}
+   ${sug&&html`<div class="skd-sug"><${Icon} n="lightbulb" s=${14}/><span>Bu proje <b>${sug.name}</b> becerisine uyuyor: modülleri ve iş kuralları hazır.</span><button class="btn s" onClick=${()=>{loadSkill(sug.id,toast,sug.name,projectText)}}>İçe aktar</button></div>`}
    ${rows.map(r=>html`<div class="skd-sk" key=${r.s.id}><div class="skd-sk-h"><b>${r.s.name}</b><span class="skd-meter" title=${r.done+"/"+r.mods.length+" modül uygulamada"}><i style=${{width:(r.mods.length?r.done/r.mods.length*100:0)+"%"}}></i></span><small>Seviye ${r.done}/${r.mods.length}</small>
+     <button class="ib sm" title="Modülleri seç" aria-label=${r.s.name+" modüllerini seç"} onClick=${()=>openModPick(r.s.id,projectText)}><${Icon} n="sliders" s=${12}/></button>
      <button class="ib sm" title="Beceriyi kaldır" aria-label=${r.s.name+" becerisini kaldır"} onClick=${()=>{LS.set("skills",skillsOn().filter(x=>x!==r.s.id));dispatchEvent(new Event("gm:skills"))}}><${Icon} n="x" s=${12}/></button></div>
-    ${!h?html`<div class="skd-start"><span>Henüz uygulama yok.</span><button class="btn s" disabled=${busy} onClick=${()=>onStart(r.s)}><${Icon} n="sparkles" s=${13}/> Bu beceriyle başlat</button></div>`:html`<div class="skd-mods">${r.mods.map(x=>html`<button type="button" key=${x.m} class=${"skd-mod"+(x.ok?" ok":"")} disabled=${busy} title=${x.ok?"Uygulamada var · yine de geliştirmek için tıkla":"Tek tıkla ekle: "+x.m} onClick=${()=>onModule(r.s,x.m)}><${Icon} n=${x.ok?"checkCircle":"plusCircle"} s=${13}/>${x.m.replace(/\s*\([^)]*\)/,"")}</button>`)}</div>`}</div>`)}
+    ${!h?html`<div class="skd-mods">${r.mods.map(x=>html`<span key=${x.m} class="skd-mod pre"><${Icon} n=${x.x?x.x.ic:x.custom?"pen":"dot"} s=${12}/>${x.m.replace(/\s*\([^)]*\)/,"")}</span>`)}</div>
+     <div class="skd-start"><span>${r.picked?r.mods.length+" modül seçildi":"Planın tüm modülleri seçili"}</span><button type="button" class="btn g s" onClick=${()=>openModPick(r.s.id,projectText)}><${Icon} n="sliders" s=${13}/> Modülleri seç</button><button class="btn s" disabled=${busy||!r.mods.length} onClick=${()=>onStart(r.s)}><${Icon} n="sparkles" s=${13}/> Bu modüllerle başlat</button></div>`:html`${(()=>{const nx=r.mods.find(x=>!x.ok);return nx?html`<div class="skd-next"><${Icon} n="arrowRight" s=${13}/><span>Sıradaki modül: <b>${nx.m.replace(/\s*\([^)]*\)/,"")}</b></span><button type="button" class="btn s" disabled=${busy} onClick=${()=>onModule(r.s,nx.m)}>Ekle</button></div>`:html`<div class="skd-next ok"><${Icon} n="checkCircle" s=${13}/><span>Seçilen tüm modüller uygulamada</span><button type="button" class="btn g s" onClick=${()=>openModPick(r.s.id,projectText)}>Modül ekle</button></div>`})()}<div class="skd-mods">${r.mods.map(x=>html`<button type="button" key=${x.m} class=${"skd-mod"+(x.ok?" ok":"")} disabled=${busy} title=${x.ok?"Uygulamada var · yine de geliştirmek için tıkla":"Tek tıkla ekle: "+x.m} onClick=${()=>onModule(r.s,x.m)}><${Icon} n=${x.ok?"checkCircle":"plusCircle"} s=${13}/>${x.m.replace(/\s*\([^)]*\)/,"")}</button>`)}</div>`}</div>`)}
    ${h&&html`<details class="skd-micro" open=${!rows.length}><summary><${Icon} n="sparkles" s=${13}/> Küçük beceriler <em>${micro.length}</em><small>KVKK, SEO, koyu tema, PDF… tek tıkla</small></summary><div class="skd-mods">${micro.map(x=>html`<button type="button" key=${x.id} class=${"skd-mod mi"+(usedMicro.includes(x.id)?" ok":"")} disabled=${busy} title=${x.d} onClick=${()=>{setUsedMicro(u=>[...u,x.id]);onMicro(x)}}><${Icon} n=${usedMicro.includes(x.id)?"checkCircle":MICRO_IC[x.id]||"sparkles"} s=${13}/>${MICRO_LABEL[x.id]||x.n}</button>`)}</div></details>`}
    <div class="skd-imp">${pick?html`<label class="skm-q"><${Icon} n="search" s=${14}/><input autoFocus aria-label="Beceri ara" placeholder="Beceri ara: randevu, stok, aidat, eczane…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
-    <div class="skd-list">${found.map(s=>html`<button type="button" key=${s.id} onClick=${()=>{loadSkill(s.id,toast,s.name);setPick(false);setQ("")}}><b>${s.name}</b><small>${s.who}</small><${Icon} n="plus" s=${14}/></button>`)}${!found.length&&html`<p class="skd-mute">Sonuç yok.</p>`}</div>`
+    <div class="skd-list">${found.map(s=>html`<button type="button" key=${s.id} onClick=${()=>{loadSkill(s.id,toast,s.name,projectText);setPick(false);setQ("")}}><b>${s.name}</b><small>${s.who}</small><${Icon} n="plus" s=${14}/></button>`)}${!found.length&&html`<p class="skd-mute">Sonuç yok.</p>`}</div>`
     :html`<button type="button" class="btn g s" onClick=${()=>setPick(true)}><${Icon} n="plus" s=${13}/> Beceri içe aktar</button><a class="skd-lib" href="#beceriler">Kütüphane</a>`}</div>
   </div>`}
  </div>`;
@@ -7365,7 +7475,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(!(st.html||"").includes('<meta name="gitmapp-scenario" content="gitsap-production">'))return selected;
   return [...new Set([...selected,"gitsap-tedarik","gitsap-uretim","gitsap-fatura","gitsap-finans"])];
  }
- const aiBody=(request="")=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:sectorSkillText([runRef.current.instructions,skillText()].filter(Boolean).join("\n"),[request,proje.amac].filter(Boolean).join(" ")),skills:skillIds(),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,"dengeli")||{}).id||curModel:curModel)||undefined});
+ const aiBody=(request="")=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:sectorSkillText([runRef.current.instructions,skillText()].filter(Boolean).join("\n"),[request,proje.amac].filter(Boolean).join(" ")),skills:skillIds(),skillScope:skillScope(skillIds()),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -7507,7 +7617,14 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  useEffect(()=>{if(todo?.auto&&todo.awaiting&&!todo.running&&!busy)runTodos()},[todo,busy]);
  // v5.73 — Beceri paneli eylemleri
  const skMod=async(sk,m)=>{if(busy)return;loadSkill(sk.id);SKILL_FOCUS={skill:sk.id,module:m};try{await build(modPrompt(sk,m),null,"Beceri · "+skShort(sk.name)+" › "+m)}finally{SKILL_FOCUS=null}};
- const skStart=sk=>{if(busy)return;loadSkill(sk.id);gen(sk.test||sk.name+" uygulaması yap; örnek verilerle dolu olsun.")};
+ const skStart=sk=>{if(busy)return;loadSkill(sk.id);gen(skStartPrompt(sk))};
+ // v5.82 — Modül seçiciden “Seçimle devam et”: uygulama yoksa seçilen modüllerle başlat, varsa eksik seçili modülleri sırayla ekle
+ const skIdx=useSkillIdx();const skGoRef=useRef(null);
+ skGoRef.current=sk=>{if(busy||todo?.running){toast("Önce süren iş bitsin · seçimin kaydedildi");return}if(!st.html){skStart(sk);return}
+  const txt=htmlText(st.html),code=st.html.toLowerCase();const miss=skillModList(sk).filter(o=>!modCovered(o.m,txt,code)).map(o=>({s:sk,m:o.m}));
+  if(miss.length)skComplete(miss);else toast("Seçilen modüllerin hepsi uygulamada")};
+ useEffect(()=>{const h=e=>{const sk=SKILL_IDX&&skIdx[e.detail.id];if(!sk)return;e.detail.handled=true;loadSkill(sk.id);skGoRef.current(sk)};addEventListener("gm:skgo",h);return()=>removeEventListener("gm:skgo",h)},[skIdx]);
+ useEffect(()=>{const id=LS.get("skGo",null);if(!id||!skIdx[id])return;LS.set("skGo",null);loadSkill(id);const t=setTimeout(()=>skGoRef.current(skIdx[id]),400);return()=>clearTimeout(t)},[skIdx]);
  const skMicro=x=>{if(busy)return;build(x.p,null,"Küçük beceri · "+(MICRO_LABEL[x.id]||x.n))};
  const skComplete=missing=>{if(busy||todo?.running||!missing.length)return;const by=missing[0].s;setTodo({prompt:by.test||by.name,auto:true,awaiting:true,running:false,items:missing.map(x=>({title:skShort(x.s.name)+" › "+x.m,detail:modPrompt(x.s,x.m),focus:{skill:x.s.id,module:x.m},state:"wait"}))});toast(missing.length+" modül sırayla eklenecek · Durdur ile istediğin an kesebilirsin")};
 
@@ -10006,7 +10123,9 @@ const SECTOR_CONN={
 let SKILL_IDX=null,SKILL_NAMES={};const skillIdx=()=>!API_ON?Promise.resolve(null):SKILL_IDX||(SKILL_IDX=api("GET","/api/skills").then(j=>{const m=Object.fromEntries((j.skills||[]).map(s=>[s.id,s]));for(const s of j.skills||[])SKILL_NAMES[s.id]=s.name;return m}).catch(()=>{SKILL_IDX=null;return {}}));
 // Sunucu bağlantısı henüz kurulmadıysa boş sonucu saklamadan kısa aralıklarla yeniden dener
 function useSkillIdx(){const [m,setM]=useState(null);useEffect(()=>{let a=true,t=0;const go=()=>skillIdx().then(x=>{if(!a)return;if(x)setM(x);else t=setTimeout(go,700)});go();return()=>{a=false;clearTimeout(t)}},[]);return m||{}}
-const loadSkill=(id,toast,name)=>{const on=skillsOn();if(!on.includes(id)){LS.set("skills",[...on,id]);dispatchEvent(new Event("gm:skills"))}toast&&toast((name||"Beceri")+" yüklendi · Stüdyo'daki üretimlerde kullanılacak")};
+const loadSkill=(id,toast,name,ctx)=>{const on=skillsOn(),fresh=!on.includes(id);if(fresh){LS.set("skills",[...on,id]);dispatchEvent(new Event("gm:skills"))}toast&&toast((name||"Beceri")+" yüklendi · şimdi işine uyan modülleri seç");
+ // v5.82 — yeni yüklenen uygulama planında modül seçiciyi aç
+ if(fresh&&!modSel(id))skillIdx().then(m=>{if(m&&m[id]?.kind==="gelistirme")openModPick(id,ctx)})};
 // Şablon kartındaki önerilen beceri satırı
 function TplSkillHint({t}){const idx=useSkillIdx();const ids=(TPL_SKILL[t.id]||[]).filter(id=>idx[id]);const [,f]=useState(0);useEffect(()=>{const h=()=>f(x=>x+1);addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
  if(!ids.length)return null;const on=skillsOn();
@@ -10193,8 +10312,9 @@ function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry,onSectorPlans}){
  useEffect(()=>{const h=()=>setOn(skillsOn());addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
  const pick=id=>{setSec(id);setOpen("");history.replaceState(null,"","#beceriler"+(id?"?sektor="+id:""));window.scrollTo(0,0)};
  const save=n=>{setOn(n);LS.set("skills",n);dispatchEvent(new Event("gm:skills"))};
- const tog=s=>{const has=on.includes(s.id);save(has?on.filter(x=>x!==s.id):[...on,s.id]);toast(has?"Beceri kaldırıldı":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
- const start=s=>{if(!on.includes(s.id))save([...on.filter(x=>!(data.skills.find(y=>y.id===x)?.kind==="gelistirme")),s.id]);toast(s.name+" becerisiyle başlıyor");go("studio",{prompt:s.test||s.name+" uygulaması yap; örnek verilerle dolu olsun."})};
+ const tog=s=>{const has=on.includes(s.id);save(has?on.filter(x=>x!==s.id):[...on,s.id]);toast(has?"Beceri kaldırıldı":"Beceri yüklendi · işine uyan modülleri seç");if(!has&&s.kind==="gelistirme"){setOpen("");openModPick(s.id)}};
+ // v5.82 — önce modül seçici: “Seçimle devam et” Stüdyo'yu açar ve seçilen modüllerle üretimi başlatır
+ const start=s=>{if(!on.includes(s.id))save([...on.filter(x=>!(data.skills.find(y=>y.id===x)?.kind==="gelistirme")),s.id]);setOpen("");openModPick(s.id)};
  const heading=html`<${CollectionNav} page="beceriler" go=${go}/><${CollectionHero} title="Beceriler" copy="Sektörünü seç. Uygun iş kurallarını, ekranları ve veri modelini projene ekle." image="skills" caption="Sektörel beceri kütüphanesi"/>
  <div class="box skl-more sector-plan-link"><${Icon} n="layers" s=${20}/><div><b>Sektör kurulum planları</b><span>24 sektörde 240 uygulama akışı ve aşama aşama kurulum desteği.</span></div><button class="btn s" onClick=${onSectorPlans}>Kurulum planlarını keşfet</button></div>`;
  if(err||healthError||!data)return html`<section class="explore gallery-page">${heading}<p role="status">${err||(healthError?"Beceriler yüklenemedi.":"Beceriler yükleniyor…")}</p>${(err||healthError)&&html`<button type="button" class="btn g" onClick=${()=>{if(healthError)retry();else {setErr("");api("GET","/api/skills").then(setData).catch(e=>setErr(e.message))}}}>Tekrar dene</button>`}</section>`;
@@ -10228,7 +10348,7 @@ function SkillsModal({close,toast,account}){
  useEffect(()=>{const h=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal"))close()};addEventListener("keydown",h);if(API_ON)api("GET","/api/skills").then(j=>setSrv(j.skills||[])).catch(()=>setSrv([]));else setSrv([]);return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(tab!=="sahne")return;let active=true;setDesign([]);setDesignError("");api("GET","/api/design-skills").then(j=>{if(active)setDesign(j.skills)}).catch(e=>{if(active)setDesignError(e.message)});return()=>{active=false}},[tab,account]);
  const all=[...(srv||[]).map(x=>({...x,srv:true,n:x.name,d:x.who})),...SKILLS.map(x=>({...x,kind:x.group?"is":"hizli"}))];
- const tog=id=>{const n=on.includes(id)?on.filter(x=>x!==id):[...on,id];setOn(n);LS.set("skills",n);dispatchEvent(new Event("gm:skills"));const x=all.find(s=>s.id===id);toast(on.includes(id)?"Beceri kaldırıldı":x&&x.kind==="gelistirme"?"Uygulama planı yüklendi · tasarım ve temiz mimari becerileri de birlikte uygulanır":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
+ const tog=id=>{const n=on.includes(id)?on.filter(x=>x!==id):[...on,id];setOn(n);LS.set("skills",n);dispatchEvent(new Event("gm:skills"));const x=all.find(s=>s.id===id);if(!on.includes(id)&&x&&x.kind==="gelistirme"&&!modSel(id)){setOpen("");openModPick(id)}toast(on.includes(id)?"Beceri kaldırıldı":x&&x.kind==="gelistirme"?"Uygulama planı yüklendi · tasarım ve temiz mimari becerileri de birlikte uygulanır":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
  const vote=good=>{api("POST","/api/skills/feedback",{run:last.id,good}).then(()=>{toast(good?"Teşekkürler · beceri puanı arttı":"Teşekkürler · beceri bu nota göre iyileştirilecek");LS.set("lastSkillRun",null);setLast(null)}).catch(e=>toast(e.message))};
  const qq=q.toLocaleLowerCase("tr");
  const list=all.filter(x=>(tab==="yuklu"?on.includes(x.id):x.kind===tab)&&(tab!=="is"||!group||x.group===group)&&(!q||(x.n+" "+x.d+" "+(x.group||"")+" "+(x.body||"")).toLocaleLowerCase("tr").includes(qq)));
@@ -11646,6 +11766,7 @@ function App(){
   ${authModal!==null&&html`<${AuthScreen} auth=${auth} health=${health} toast=${toast} reason=${authModal} close=${()=>setAuthModal(null)}/>`}
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
   ${skills==="manage"&&html`<${SkillsModal} account=${auth.user?.id} close=${()=>setSkills(false)} toast=${toast}/>`}
+  <${ModulePickerHost} toast=${toast}/>
   ${skills==="sector"&&html`<${SectorSkillsDialog} close=${()=>setSkills(false)} toast=${toast} onManage=${()=>setSkills("manage")}
     onStudio=${(skillRequest,skillKind)=>{setSeed({skillRequest,skillKind});setView("studio")}}
     onAssistant=${text=>{setSkillAssistantDraft(text);setCp(true)}}/>`}

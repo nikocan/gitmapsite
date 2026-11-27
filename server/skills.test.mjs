@@ -84,6 +84,12 @@ test("beceri üretime eklenir, sonuç ve oy ölçülür, avcı aday bulur, test 
   const focused = await req("POST", "ai/generate", { prompt: "Teklifler modülünü ekle", kind: "app", settings: { skills: ["plan-crm"], skillFocus: { skill: "plan-crm", module: "Teklifler" } } }, user);
   assert.equal(focused.status, 200); assert.deepEqual(focused.skillFocus, { skill: "plan-crm", name: "CRM · müşteri ve satış takibi", module: "Teklifler" });
   assert.match(prompts.at(-1), /ODAK MODÜL: “CRM · müşteri ve satış takibi” becerisinin “Teklifler” modülü/);
+  assert.ok(!/KAPSAM: kullanıcı/.test(prompts.at(-1)));
+  // Modül seçici: kullanıcının seçtiği kapsam isteme eklenir, ilgisiz beceri kimlikleri ve işaretler yok sayılır
+  const scoped = await req("POST", "ai/generate", { prompt: "Satış ekibim için CRM", kind: "app", settings: { skills: ["plan-crm"], skillScope: { "plan-crm": ["Kişiler", "Fırsatlar", "Ajanda", "<b>Randevu</b>"], "plan-yok": ["X"] } } }, user);
+  assert.equal(scoped.status, 200);
+  assert.match(prompts.at(-1), /KAPSAM: kullanıcı “CRM · müşteri ve satış takibi” planında yalnızca şu modülleri seçti: Kişiler, Fırsatlar, Ajanda, bRandevu\/b\./);
+  assert.ok(!/plan-yok/.test(prompts.at(-1)));
 });
 
 test("sektör kütüphanesi: her plan bir sektörde, her sektörün becerisi var", async () => {

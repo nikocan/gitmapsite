@@ -39,7 +39,7 @@ try {
   await p.goto(webBase + "/#ana"); await p.evaluate((t) => { for (const [k, v] of Object.entries({ tok: t, seenVer: "999", nrSeen: true, vbarOff: true, skills: ["plan-klinik"], autoFix: false })) localStorage.setItem("gms_" + k, JSON.stringify(v)); }, user);
   await p.goto(webBase + "/#studio"); await p.reload(); await p.locator(".skd").waitFor({ timeout: 20000 }); await p.locator(".skd-sk").waitFor({ timeout: 15000 });
   ok(/Klinik ve hasta yönetimi/.test(await p.locator(".skd").innerText()), "panel: yüklü beceri görünüyor"); await p.screenshot({ path: join(SHOTS, "1-panel-bos.png") });
-  await p.getByRole("button", { name: /Bu beceriyle başlat/ }).click();
+  await p.getByRole("button", { name: /Bu modüllerle başlat/ }).click();
   await p.waitForFunction(() => /Seviye 2\/7/.test(document.querySelector(".skd")?.innerText || ""), null, { timeout: 30000 });
   ok(true, "beceriyle başlatıldı · Seviye 2/7"); await p.waitForTimeout(800); await p.screenshot({ path: join(SHOTS, "2-ilk-surum.png") });
   await p.locator(".skd-mod", { hasText: "Tahsilat" }).click();

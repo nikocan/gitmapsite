@@ -40,7 +40,7 @@ export function registerSkills({ db, route, need, HttpErr, chat, generate, scrip
   // ---------- Üretime enjekte etme ve kullanım kaydı ----------
   // Plan becerisi seçilince bağlı tasarım becerisi ve temel kalite becerisi kendiliğinden eklenir.
   // focus: { skill, module } — Stüdyo'daki beceri modülü düğmesi; yalnızca o modül eklenir, becerinin ilgili kısımları uygulanır
-  function inject(ids, userId, focus) {
+  function inject(ids, userId, focus, scope) {
     if (!Array.isArray(ids) || !ids.length) return { text: "", run: null, used: [] };
     const want = []; for (const id of ids.slice(0, 6)) { const s = q("SELECT * FROM skills WHERE id=? AND status='yayinda'").get(String(id)); if (!s || want.some((w) => w.id === s.id)) continue; want.push(s);
       if (s.design && !ids.includes(s.design)) { const d = q("SELECT * FROM skills WHERE id=? AND status='yayinda'").get(s.design); if (d && !want.some((w) => w.id === d.id)) want.push(d); } }
@@ -53,7 +53,12 @@ export function registerSkills({ db, route, need, HttpErr, chat, generate, scrip
     const f = focus && typeof focus === "object" ? { skill: clip(focus.skill, 80), module: clip(focus.module, 80) } : null;
     const fs = f && f.module && used.find((s) => s.id === f.skill);
     const focusText = fs ? `\n- ODAK MODÜL: “${fs.name}” becerisinin “${f.module}” modülü. Bu istekte YALNIZCA bu modülü uygulamaya eksiksiz ekle ya da tamamla: becerideki bu modülle ilgili VERİ alanlarını, EKRANLARI ve İŞ KURALLARINI uygula, menüye/gezinmeye ekle, örnek verilerle doldur, diğer modüllerle (ör. aynı müşteri/hasta kaydı) bağla. Mevcut modülleri, tasarımı ve verileri bozma; diğer eksik modülleri bu istekte ekleme.` : "";
-    return { run, used: used.map((s) => ({ id: s.id, name: s.name, version: s.version, kind: s.kind })), focus: fs ? { skill: fs.id, name: fs.name, module: f.module } : null, text: "\n- YÜKLÜ BECERİLER (Gitmapp tarafından test edilmiş uzmanlık; isteğe uygun olduğu ölçüde uygula, kullanıcının açık isteği önceliklidir; kapsamı küçük bir istekte tüm modülleri zorla ekleme):" + text + focusText };
+    // Kullanıcının modül seçiciyle belirlediği kapsam: {becerId: [modül adları]}
+    let scopeText = ""; const sc = scope && typeof scope === "object" && !Array.isArray(scope) ? scope : null;
+    if (sc) for (const s of used) { if (s.kind !== "gelistirme" || !Array.isArray(sc[s.id])) continue;
+      const list = [...new Set(sc[s.id].map((x) => clip(x, 60).replace(/[<>`]/g, "").trim()).filter(Boolean))].slice(0, 24);
+      if (list.length) scopeText += `\n- KAPSAM: kullanıcı “${s.name}” planında yalnızca şu modülleri seçti: ${list.join(", ")}. Uygulamada bu modüller olsun; seçilmeyen plan modüllerini kendiliğinden ekleme (kullanıcı açıkça isterse ekle). Plan dışı ek modülleri becerinin veri modeline bağla.`; }
+    return { run, used: used.map((s) => ({ id: s.id, name: s.name, version: s.version, kind: s.kind })), focus: fs ? { skill: fs.id, name: fs.name, module: f.module } : null, text: "\n- YÜKLÜ BECERİLER (Gitmapp tarafından test edilmiş uzmanlık; isteğe uygun olduğu ölçüde uygula, kullanıcının açık isteği önceliklidir; kapsamı küçük bir istekte tüm modülleri zorla ekleme):" + text + scopeText + focusText };
   }
   const bump = (ids, col, n = 1) => ids.length && q(`UPDATE skills SET ${col}=MAX(0,${col}+?) WHERE id IN (${ids.map(() => "?").join(",")})`).run(n, ...ids);
   // Üretim bitince otomatik sonuç: temiz = başarı, otomatik onarıldı = başarı (not düşülür), sözdizimi hatası kaldıysa = başarısız

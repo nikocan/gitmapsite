@@ -519,7 +519,7 @@ function extraInstructionRule(value) {
 function runOpts(rt, body, user) {
   const t = body.settings || {};
   // Sunucudaki test edilmiş beceriler kimlikle gelir, metni sunucu ekler; kullanım sonucu başarı oranına yazılır
-  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id, t.skillFocus) : { text: "", run: null, used: [] };
+  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id, t.skillFocus, t.skillScope) : { text: "", run: null, used: [] };
   rt.skillRun = sk.run; rt.skillsUsed = sk.used?.length ? sk.used : undefined; rt.skillFocus = sk.focus || undefined;
   if (t.temperature != null && t.temperature !== "" && isFinite(+t.temperature)) rt.temperature = Math.max(0, Math.min(1.5, +t.temperature));
   rt.maxTokens = { kisa: 6000, dengeli: 12000, ayrintili: 20000 }[t.detail] || 12000;

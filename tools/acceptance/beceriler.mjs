@@ -38,7 +38,7 @@ try {
   const found = await page.locator(".skl-card .gallery-caption b").allInnerTexts(); ok(found.some((t) => /Site ve apartman/.test(t)) && found.some((t) => /Spor kulübü/.test(t)), "“aidat” araması: " + found.join(", "));
   await page.screenshot({ path: join(SHOTS, "3-arama.png") });
   await page.getByLabel("Beceri ara").fill(""); await page.locator(".skl-tile", { hasText: "Otomotiv" }).click();
-  await page.locator(".skl-card", { hasText: "Lastikçi" }).click(); await page.locator(".skill-detail").getByRole("button", { name: /Bununla uygulama yap/ }).click();
+  await page.locator(".skl-card", { hasText: "Lastikçi" }).click(); await page.locator(".skill-detail").getByRole("button", { name: /Bununla uygulama yap/ }).click(); await page.locator(".mpk").getByRole("button", { name: /Seçimle devam et/ }).click();
   await page.waitForFunction(() => location.hash.startsWith("#studio"), null, { timeout: 15000 }); await page.waitForTimeout(1500);
   const loaded = await page.evaluate(() => JSON.parse(localStorage.getItem("gms_skills") || "[]")); ok(loaded.includes("plan-lastik-oteli"), "beceri yüklendi ve Stüdyo açıldı: " + loaded.join(","));
   await page.screenshot({ path: join(SHOTS, "4-studyo.png") });

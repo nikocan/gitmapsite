@@ -1,0 +1,68 @@
+// v5.82 Modül seçici kabul testi: plan seç → modül seç → Stüdyo seçilen modüllerle başlar. Çalıştırma: node tools/acceptance/v582.mjs
+import http from "node:http";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { randomBytes } from "node:crypto";
+import { mkdtempSync, rmSync, mkdirSync, readFileSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, extname, normalize } from "node:path";
+import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { chromium, devices } = require("playwright");
+const ROOT = fileURLToPath(new URL("../../", import.meta.url));
+const SHOTS = join(ROOT, "validation/screens/v582"); mkdirSync(SHOTS, { recursive: true });
+const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".json": "application/json" };
+const freePort = async () => { const s = http.createServer(); s.listen(0, "127.0.0.1"); await once(s, "listening"); const p = s.address().port; s.close(); await once(s, "close"); return p; };
+const ok = (c, m) => { console.log((c ? "✔ " : "✘ ") + m); if (!c) process.exitCode = 1; };
+const dir = mkdtempSync(join(tmpdir(), "gitmapp-mpk-")); const apiPort = await freePort(), webPort = await freePort();
+const apiBase = "http://127.0.0.1:" + apiPort, webBase = "http://127.0.0.1:" + webPort;
+const api = spawn(process.execPath, [join(ROOT, "server/server.mjs")], { env: { ...process.env, PORT: String(apiPort), DB_PATH: join(dir, "db"), SECRET: randomBytes(32).toString("hex"), ADMIN_EMAIL: "y@gitmapp.test", SITE_URL: webBase, CORS_EXTRA: webBase, API_URL: apiBase, GITHUB_CLIENT_ID: "", GOOGLE_CLIENT_ID: "", AI_KEY: "" }, stdio: ["ignore", "pipe", "inherit"] }); await once(api.stdout, "data");
+const web = http.createServer((req, res) => { let p = decodeURIComponent(new URL(req.url, "http://x").pathname); if (p === "/config.js") { res.writeHead(200, { "Content-Type": "text/javascript" }); return res.end(`window.GMS_CONFIG={api:${JSON.stringify(apiBase)}};`); } if (p === "/sw.js") { res.writeHead(404); return res.end(); } if (p.endsWith("/")) p += "index.html"; const f = normalize(join(ROOT, p)); if (!f.startsWith(ROOT) || !existsSync(f)) { res.writeHead(404); return res.end(); } res.writeHead(200, { "Content-Type": MIME[extname(f)] || "application/octet-stream" }); res.end(readFileSync(f)); }); web.listen(webPort, "127.0.0.1"); await once(web, "listening");
+const browser = await chromium.launch();
+try {
+  const reg = await (await fetch(apiBase + "/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "m@gitmapp.test", password: "parola-1234", name: "Modül" }) })).json();
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 2 }); const page = await ctx.newPage(); const errs = []; page.on("pageerror", (e) => errs.push(e.message));
+  await page.goto(webBase + "/#ana"); await page.evaluate((t) => { localStorage.setItem("gms_tok", JSON.stringify(t)); localStorage.setItem("gms_seenVer", JSON.stringify("999")); localStorage.setItem("gms_vbarOff", "true"); }, reg.token);
+  await page.goto(webBase + "/#beceriler"); await page.reload(); await page.locator(".skl-tile").first().waitFor({ timeout: 20000 });
+  await page.getByLabel("Beceri ara").fill("filo"); await page.locator(".skl-card", { hasText: "Filo ve araç" }).click();
+  await page.locator(".skill-detail").getByRole("button", { name: /Bununla uygulama yap/ }).click();
+  const dlg = page.locator(".mpk"); await dlg.waitFor({ timeout: 10000 });
+  ok(/Filo ve araç takibi/.test(await dlg.locator("h2").innerText()), "plan seçilince modül seçici açıldı");
+  const planChips = await dlg.locator(".mpk-s").first().locator(".mpk-c").allInnerTexts();
+  ok(planChips.length === 7 && planChips.some((t) => /Araçlar/.test(t)), "planın modülleri: " + planChips.join(", "));
+  const recs = await dlg.locator(".mpk-s").nth(1).locator(".mpk-c").allInnerTexts();
+  ok(recs.some((t) => /Rezervasyon ve kiralama/.test(t)) && recs.some((t) => /Sözleşme/.test(t)), "filo için önerilen ek modüller: " + recs.join(", "));
+  await page.screenshot({ path: join(SHOTS, "1-modul-secici.png") });
+  // Kendi seçimini yap: plan modüllerinden yalnız Araçlar, Sürücüler, Bakım; ek: Müşteri, Rezervasyon, Ajanda (kütüphaneden), kendi modülü
+  await dlg.getByRole("button", { name: "Hiçbiri" }).click();
+  for (const n of ["Araçlar", "Sürücüler", "Bakım"]) await dlg.locator(".mpk-s").first().locator(".mpk-c", { hasText: new RegExp("^" + n + "$") }).click();
+  await dlg.locator(".mpk-c", { hasText: "Rezervasyon ve kiralama" }).click(); await dlg.locator(".mpk-c", { hasText: /^Ajanda$/ }).click();
+  await dlg.locator(".mpk-more summary").click(); await dlg.locator(".mpk-more .mpk-c", { hasText: "Müşteri kaydı" }).click();
+  await dlg.getByLabel("Kendi modülünü yaz").fill("Araç teslim formu"); await dlg.getByLabel("Kendi modülünü yaz").press("Enter");
+  const total = await dlg.locator(".mpk-f b").innerText(); ok(total === "7", "seçilen modül sayısı: " + total);
+  await page.screenshot({ path: join(SHOTS, "2-secim.png") });
+  await dlg.getByRole("button", { name: /Seçimle devam et/ }).click();
+  await page.waitForFunction(() => location.hash.startsWith("#studio"), null, { timeout: 15000 });
+  const sel = await page.evaluate(() => JSON.parse(localStorage.getItem("gms_skillMods") || "{}")["plan-filo"]);
+  ok(sel && sel.mods.join() === "Araçlar,Sürücüler,Bakım" && sel.extra.includes("musteri") && sel.extra.includes("rezervasyon") && sel.custom[0] === "Araç teslim formu", "seçim kaydedildi: " + JSON.stringify(sel));
+  await page.waitForFunction(() => document.body.innerText.includes("Kapsam — yalnızca şu modülleri kur"), null, { timeout: 15000 }).then(() => ok(true, "Stüdyo seçilen modüllerle üretimi başlattı"), () => ok(false, "Stüdyo kapsamlı istemi göndermedi"));
+  const msg = await page.evaluate(() => document.body.innerText.match(/Filo ve araç takibi uygulaması yap\. Kapsam[\s\S]*?dolu olsun\./)?.[0] || ""); console.log("  istem: " + msg.slice(0, 400));
+  ok(/Müşteri kaydı/.test(msg) && /Araç teslim formu/.test(msg) && !/Yakıt/.test(msg), "istemde yalnız seçilen modüller var");
+  await page.waitForTimeout(1500); await page.screenshot({ path: join(SHOTS, "3-studyo.png") });
+  // Beceriler çubuğu: seçilen modüller, düzenle düğmesi
+  await page.evaluate(() => dispatchEvent(new CustomEvent("gm:skilldock", { detail: "open" }))); await page.waitForTimeout(400);
+  const dock = await page.locator(".skd").first().innerText().catch(() => "");
+  ok(/Filo/.test(dock), "Beceriler çubuğunda plan görünüyor");
+  await page.locator(".skd").first().getByRole("button", { name: /modüllerini seç/ }).first().click(); await dlg.waitFor({ timeout: 5000 });
+  ok((await dlg.locator(".mpk-f b").innerText()) === "7", "düzenleyince önceki seçim geliyor");
+  await page.screenshot({ path: join(SHOTS, "4-duzenle.png") }); await dlg.getByRole("button", { name: "Kapat" }).first().click();
+  const m = await browser.newContext({ ...devices["iPhone 13"] }); const mp = await m.newPage();
+  await mp.goto(webBase + "/#ana"); await mp.evaluate((t) => { localStorage.setItem("gms_tok", JSON.stringify(t)); localStorage.setItem("gms_seenVer", JSON.stringify("999")); }, reg.token);
+  await mp.goto(webBase + "/#beceriler"); await mp.reload(); await mp.locator(".skl-tile").first().waitFor({ timeout: 20000 });
+  await mp.getByLabel("Beceri ara").fill("randevu"); await mp.locator(".skl-card").first().click(); await mp.locator(".skill-detail").getByRole("button", { name: /Bununla uygulama yap/ }).click();
+  await mp.locator(".mpk").waitFor({ timeout: 10000 }); await mp.waitForTimeout(300);
+  const sw = await mp.evaluate(() => { const d = document.querySelector("dialog.ui-dialog"); return Math.max(document.documentElement.scrollWidth - innerWidth, d ? d.scrollWidth - d.clientWidth : 0); }); ok(sw <= 1, "telefonda modül seçicide yatay taşma yok (" + sw + "px)");
+  await mp.screenshot({ path: join(SHOTS, "5-telefon.png") });
+  ok(!errs.length, "sayfa hatası yok" + (errs.length ? ": " + errs.join(" | ") : ""));
+} finally { await browser.close(); api.kill(); web.close(); rmSync(dir, { recursive: true, force: true }); }

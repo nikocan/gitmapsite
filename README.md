@@ -7,6 +7,15 @@ GitHub'daki açık kaynak projelerden, lisansı ve güvenliği kontrol edilmiş 
 - Yönetici görünümü: Siparişler, İş Planı & Gelir, GitHub Radar, İş Kolları, Listem, Yapım Kuyruğu, Ayarlar
 - Sürüm notları: uygulama içinde **Güncellemeler** sekmesi
 
+## Modül seçici (v5.82)
+
+- Bir **uygulama planı** becerisi (kind `gelistirme`) yeni yüklenince modül seçici açılır (`gm:modpick` olayı, `ModulePickerHost` uygulama kökünde). Adımlar: Plan › Modüller › Kur.
+- Bölümler: planın `MODÜLLER` satırı (varsayılan hepsi seçili), plan ve proje fikrine göre puanlanan en fazla 8 **önerilen ek modül**, 27 modüllük **modül kütüphanesi** (`SK_EXTRA`: Kayıtlar, Zaman, Para, İletişim, Operasyon, Yönetim) ve serbest **kendi modülün**.
+- Seçim `localStorage` `skillMods` anahtarında `{becerId:{mods,extra,custom}}` olarak tutulur. Beceriler çubuğu yalnız seçilen modülleri izler, “Sıradaki modül” satırını gösterir; ayar simgesi seçiciyi yeniden açar.
+- **Seçimle devam et** Stüdyo'ya `gm:skgo` gönderir (Stüdyo açık değilse `skGo` anahtarı + `#studio`): uygulama yoksa seçilen modüllerle üretim başlar, varsa eksik seçili modüller sırayla eklenir.
+- Üretim isteğinde `settings.skillScope` gönderilir; sunucu (`server/skills.mjs` `inject`) bunu “KAPSAM” satırı olarak ekler, seçilmeyen plan modüllerini kendiliğinden eklememesini söyler.
+- Testler: `node --test server/skills.test.mjs`, tarayıcıda `node tools/acceptance/v582.mjs`.
+
 ## Oturumlar, oturum dalları ve PR (v5.80)
 
 - **Oturumlar:** sol menüde çalışma geçmişi (`localStorage` `sessions:<hesap>`), depo/çalışma alanına göre gruplanır ve son etkinliğe göre sıralanır. Ayrılırken oturumun son hâli `sessSnap:<kapsam>` olarak saklanır (son 10 oturum); tıklayınca yüklenir.
