@@ -35,7 +35,7 @@
   <symbol id="publish" viewBox="0 0 24 24">
     <path d="M4 10.5 21 3l-5.3 17.9-4.3-6.3L4 10.5Zm7.4 4.1L21 3M3 17l3-2m0 6 3-3"/>
   </symbol>
-  <!-- v5.76 — Yeni sohbet, sık kullanılanlar ve ortam simgeleri (iki tonlu: dolgu %18, çizgi currentColor) -->
+  <!-- v5.77 — Yeni sohbet, sık kullanılanlar ve ortam simgeleri (iki tonlu: dolgu %18, çizgi currentColor) -->
   <symbol id="newchat" viewBox="0 0 24 24">
     <path d="M12.6 3.6H7a4 4 0 0 0-4 4v6.2a4 4 0 0 0 4 4h.8v3.1l4.1-3.1H15a4 4 0 0 0 4-4v-2.6" fill="currentColor" fill-opacity=".18"/>
     <path d="M18.3 2.6v6.2M15.2 5.7h6.2"/><path d="M7.4 10.2h5.2M7.4 13.3h3.2"/>

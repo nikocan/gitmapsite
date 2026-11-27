@@ -87,7 +87,7 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     need(current && ctx.body.repo === current.repo, 409, "Bağlı depo değişti. Sürüm panelini yenileyin.");
     return "/repos/" + current.repo;
   }
-  // v5.76 — Yeni sohbet penceresindeki depo seçici: bağlı hesabın yazabildiği depolar (Claude Code tarzı ortam seçimi)
+  // v5.77 — Yeni sohbet penceresindeki depo seçici: bağlı hesabın yazabildiği depolar (Claude Code tarzı ortam seçimi)
   route("GET", "/api/me/github/repos", async ctx => {
     need(ctx.user, 401, "Depoları görmek için giriş yapın.");
     if (!ctx.user.github_token) return { setup:"account", repos:[] };
