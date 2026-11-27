@@ -915,16 +915,51 @@ const designChoices = {
   flexDirection: ["row", "column"], justifyContent: ["flex-start", "center", "space-between", "flex-end"],
   icon: ["★", "→", "✓", "◆", "✦", "●"]
 };
+const studioSkills = [
+  {name:"Mobil menüyü düzenle", tags:["nav","header","ul"], instruction:"Gezinme öğesinin boşluk ve hizalamasını küçük ekran için düzenle. Bağlantı adlarını koru."},
+  {name:"Marka stilini uygula", tags:["button","a","section"], instruction:"Projenin mevcut renkleri ve tipografisiyle görsel tutarlılık sağla."},
+  {name:"Formu sadeleştir", tags:["form","fieldset","label","input"], instruction:"Form alanlarında boşluk, hizalama ve okunabilirliği iyileştir. Etiketlerin anlamını koru."},
+  ...["Görsel hiyerarşi","Marka dili","Okunabilirlik","Menü ve buton tasarımı"].map(name=>({name,tags:[],instruction:name}))
+];
+db.exec("CREATE TABLE IF NOT EXISTS design_skills(owner TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL, instruction TEXT NOT NULL, PRIMARY KEY(owner,name))");
+function designCatalog(user) {
+  const personal = user ? q("SELECT name,instruction FROM design_skills WHERE owner=? ORDER BY name").all(user.id) : [];
+  return [...studioSkills,...personal.map(row=>({...row,personal:true,tags:[]}))];
+}
+route("GET","/api/design-skills",({user})=>({skills:designCatalog(user)}));
+route("POST","/api/design-skills",({user,body})=>{
+  need(user,401,"Beceriyi hesabınıza kaydetmek için giriş yapın");
+  const name=str(body.name,80,"Ad",true).trim(), instruction=str(body.instruction,600,"Talimat",true).trim();
+  need(name && instruction,400,"Ad ve talimat gerekli");
+  const catalog=designCatalog(user);
+  const existing=catalog.find(item=>item.name===name);
+  if(existing?.personal && existing.instruction===instruction)return {skill:existing};
+  need(!existing,409,"Bu ad kullanılıyor. Başka bir beceri adı seçin.");
+  need(catalog.length-studioSkills.length<100,409,"Kişisel beceri sınırına ulaştınız");
+  q("INSERT INTO design_skills VALUES(?,?,?)").run(user.id,name,instruction);
+  return {skill:{name,instruction,personal:true,tags:[]}};
+});
 route("POST", "/api/ai/design", async ({ body, user, req }) => {
   const prompt = str(body.prompt, 2000, "İstek", true);
   const target = { tag: str(body.tag, 60, "Öğe", true), label: str(body.label, 120, "Etiket"), current: JSON.stringify(body.current ?? {}).slice(0, 1800) };
   const skill = str(body.skill, 120, "Beceri");
-  const rt = await resolveRoute(user, body, req, "plan"); rt.kind = "design";
+  const catalog = designCatalog(user);
+  const selected = catalog.find(item=>item.name===skill);
+  const candidates = selected ? [selected] : studioSkills;
+  let routeBody = body;
+  if (body.autoModel === true && (!body.provider || body.provider === "gitmapp") && CFG.aiKey) {
+    const ids = await listModels("gitmapp", CFG.aiKey);
+    const preferred = [E.SKILL_MODEL, "qwen2.5-coder:3b"].filter(Boolean);
+    const model = preferred.map(name=>ids.find(id=>id===name)).find(Boolean) || ids.find(id=>tierOf(id)==="hizli") || await defaultModel();
+    routeBody = {...body,model};
+  }
+  const rt = await resolveRoute(user, routeBody, req, "plan"); rt.kind = "design";
   const instructions = String(body.settings?.instructions || "").slice(0, 2500);
   const system = "Seçilen arayüz öğesinin tasarımını iyileştir. Yalnız değişen özellikleri tek bir JSON nesnesinde döndür. " +
     "color, backgroundColor: #RRGGBB. padding, gap, borderRadius: 0-96 arasında tamsayı piksel. fontSize: 1-96. " +
-    (body.leaf === true ? "text: en çok 500 karakter düz metin. " : "") + "Diğer seçenekler: " + JSON.stringify(designChoices);
-  const { text, usage } = await chatWith(rt, [{ role: "system", content: system }, { role: "user", content: projectBrief(body) + JSON.stringify({ target, prompt, skill, instructions }) }], 700);
+    (body.leaf === true ? "text: en çok 500 karakter düz metin. " : "") + "Diğer seçenekler: " + JSON.stringify(designChoices) +
+    " Ayrıca skillName alanında isteğe en uygun adayın adını, recipe alanında başka projelerde kullanılabilecek kısa bir Türkçe tasarım talimatını ver. Özel adları ve proje metinlerini tarife taşıma.";
+  const { text, usage } = await chatWith(rt, [{ role: "system", content: system }, { role: "user", content: projectBrief(body) + JSON.stringify({ target, prompt, skill, candidates, instructions }) }], 700);
   let raw;
   try { raw = JSON.parse(text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "")); } catch {}
   need(raw && typeof raw === "object" && !Array.isArray(raw), 502, "Tasarım önerisi okunamadı");
@@ -936,7 +971,9 @@ route("POST", "/api/ai/design", async ({ body, user, req }) => {
     if (k === "text" && body.leaf === true && typeof v === "string" && v.length <= 500) values.text = v;
   }
   need(Object.keys(values).length, 502, "Model uygulanabilir bir özellik önermedi");
-  return { values, credits: charge(user, rt, "design", usage), spent: rt.credits };
+  const matched = selected || candidates.find(item=>item.name===raw.skillName) || candidates.find(item=>item.tags.includes(target.tag));
+  return { values, skill:matched?.name || skill, model:rt.model, recipe:typeof raw.recipe==="string"?raw.recipe.trim().slice(0,600):matched?.instruction,
+    credits: charge(user, rt, "design", usage), spent: rt.credits };
 });
 route("POST", "/api/ai/plan", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
