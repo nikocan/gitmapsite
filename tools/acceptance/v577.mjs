@@ -41,18 +41,9 @@ try {
   await prep(p, admin); await p.goto(webBase + "/#uygulamalarim"); await p.reload();
   // 1) Sol menü: Yeni sohbet + Sık kullanılanlar
   await p.locator(".cc-newchat").waitFor({ timeout: 20000 });
-  ok(await p.locator(".cc-fav-grid .fav-i").count() === 6, "sık kullanılanlar: varsayılan 6 kısayol");
-  const favTxt = await p.locator(".cc-fav-grid").innerText(); ok(/Yeni sohbet[\s\S]*Geliştir[\s\S]*Projeler[\s\S]*Planla[\s\S]*Şablonlar[\s\S]*Ara/.test(favTxt), "kısayollar: Yeni sohbet · Geliştir · Projeler · Planla · Şablonlar · Ara");
-  const icons = await p.locator(".cc-fav-grid use").evaluateAll(us => us.map(u => u.getAttribute("href")));
-  ok(icons.some(h => h.endsWith("#newchat")) && icons.some(h => h.endsWith("#plan")), "yeni iki tonlu simgeler kullanılıyor (newchat, plan)");
   const symOk = await p.evaluate(async () => { const t = await (await fetch("./brand/ecosystem.svg")).text(); return ["newchat","chats","plan","environment","repo","branch","favorites"].every(id => t.includes('id="' + id + '"')); });
   ok(symOk, "ecosystem.svg yeni sembolleri içeriyor");
-  await p.locator(".fav-edit-b").click(); await p.locator(".fav-edit").waitFor();
-  await p.locator(".fav-edit button", { hasText: "Akademi" }).click(); await p.locator(".fav-edit button", { hasText: "Ara" }).first().click();
-  await p.screenshot({ path: join(SHOTS, "1-sik-kullanilanlar-duzenle.png"), clip: { x: 0, y: 0, width: 420, height: 960 } });
-  await p.keyboard.press("Escape"); await p.reload(); await p.locator(".cc-fav-grid").waitFor();
-  const fav2 = await p.locator(".cc-fav-grid").innerText(); ok(/Akademi/.test(fav2) && !/\bAra\b/.test(fav2), "düzenleme kaydedildi ve yenilemeden sonra korundu");
-  await p.screenshot({ path: join(SHOTS, "2-sol-menu.png"), clip: { x: 0, y: 0, width: 420, height: 960 } });
+  ok(await p.locator(".cc-fav-grid").count() === 0, "sık kullanılanlar ızgarası yerine Oturumlar listesi (v5.80)");
   // 2) Yeni sohbet penceresi (kısayol), boş sayfa + Hızlı + ilk mesaj
   await p.keyboard.press("Control+Shift+O"); await p.locator(".ns").waitFor();
   ok(await p.locator('.ns-card[data-k="ayni"]').isDisabled(), "açık proje yokken “Bu projede yeni sohbet” kapalı");
@@ -66,13 +57,13 @@ try {
   await p.keyboard.press("Enter");
   await p.locator(".picker-handle").waitFor({ timeout: 30000 }); ok(true, "ilk mesaj gönderildi, sayfa üretildi");
   // 3) Aynı projede yeni sohbet
-  if (await p.locator(".studio-side-toggle").first().getAttribute("aria-expanded") === "false") await p.locator(".studio-side-toggle").first().click(); await p.locator(".cc-chats").waitFor({ timeout: 8000 });
-  ok(/Kuaför randevu/.test(await p.locator(".cc-chats").innerText()), "sol menüde açık sohbet listeleniyor");
+  if (await p.locator(".studio-side-toggle").first().getAttribute("aria-expanded") === "false") await p.locator(".studio-side-toggle").first().click(); await p.locator(".cc-sess").waitFor({ timeout: 8000 });
+  ok(/Kuaför randevu/.test(await p.locator(".cc-sess").innerText()), "sol menüde oturum listeleniyor");
   await p.locator(".cc-newchat").click(); await p.locator(".ns").waitFor();
   ok(await p.locator('.ns-card[data-k="ayni"]').getAttribute("aria-checked") === "true", "proje açıkken varsayılan: Bu projede yeni sohbet");
+  if (await p.locator(".ns-br-tg input").isChecked()) await p.locator(".ns-br-tg input").uncheck();
   await p.locator(".ns-go").click(); await p.locator(".chat-fresh").waitFor({ timeout: 8000 });
   ok(await p.locator(".ws-prev iframe").count() > 0, "yeni sohbette proje dosyası (önizleme) korunuyor");
-  await p.waitForTimeout(300); const nChat = await p.locator(".cc-chats .cc-chat").count(); ok(nChat === 2, "sol menüde 2 sohbet: açık + önceki (" + nChat + ")");
   ok((await p.locator(".ws-chats > b").innerText()) === "2", "üst çubuk sohbet rozeti: 2");
   await p.screenshot({ path: join(SHOTS, "5-ayni-projede-yeni-sohbet.png") });
   await p.locator(".ws-chats").click(); await p.locator(".chatm").waitFor(); await p.screenshot({ path: join(SHOTS, "6-sohbet-menusu.png") });
@@ -80,8 +71,8 @@ try {
   await p.waitForTimeout(300); ok(/Kuaför randevu uygulaması/.test(await p.locator(".ws-msgs").innerText()), "önceki sohbete dönüldü, mesajlar geri geldi");
   // 4) Kaydet → Bulut ortamında listelenir
   await p.locator('.ib[title="Kaydet"]').first().click(); await p.waitForTimeout(1500);
-  await p.locator(".cc-newchat").click(); await p.locator('.ns-card[data-k="depo"]').click(); await p.locator('.ns-env [role="tab"]', { hasText: "Bulut" }).click();
-  await p.locator(".ns-row").first().waitFor({ timeout: 8000 }); ok(await p.locator(".ns-row").count() >= 1, "Bulut sekmesinde kayıtlı proje listeleniyor");
+  await p.locator(".cc-newchat").click(); await p.locator('.ns-card[data-k="depo"]').click(); await p.locator('.ns-env [role="tab"]', { hasText: "Gitmapp" }).click();
+  await p.locator(".ns-row").first().waitFor({ timeout: 8000 }); ok(await p.locator(".ns-row").count() >= 1, "Gitmapp sekmesinde kayıtlı proje listeleniyor");
   await p.locator(".ns .ib[aria-label=Kapat]").click();
   // 5) Boş sayfa → sayfa üret → projeye ekle
   await p.locator(".cc-newchat").click(); await p.locator('.ns-card[data-k="bos"]').click(); await p.locator(".ns-ta").fill("Kampanya sayfası"); await p.keyboard.press("Enter");

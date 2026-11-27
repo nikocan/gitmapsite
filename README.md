@@ -7,6 +7,14 @@ GitHub'daki açık kaynak projelerden, lisansı ve güvenliği kontrol edilmiş 
 - Yönetici görünümü: Siparişler, İş Planı & Gelir, GitHub Radar, İş Kolları, Listem, Yapım Kuyruğu, Ayarlar
 - Sürüm notları: uygulama içinde **Güncellemeler** sekmesi
 
+## Oturumlar, oturum dalları ve PR (v5.80)
+
+- **Oturumlar:** sol menüde çalışma geçmişi (`localStorage` `sessions:<hesap>`), depo/çalışma alanına göre gruplanır ve son etkinliğe göre sıralanır. Ayrılırken oturumun son hâli `sessSnap:<kapsam>` olarak saklanır (son 10 oturum); tıklayınca yüklenir.
+- **Arka plan:** giriş yapmış kullanıcının üretimleri sunucu işi olarak sürer. İstemci iş kimliğini önceden (`jobId`) gönderir, sunucu işi bağlantı kurulmadan kaydeder. Sol menü süren işleri `GET /api/ai/jobs/:id` ile 4 sn'de bir yoklar ve sürüyor/bitti/hata simgesini gösterir.
+- **Oturum dalı:** yeni oturum varsayılan olarak yeni dalda açılır (`gitmapp/<proje>-xxxx`). Dalda her üretimden sonra otomatik commit atılır.
+- **Uç noktalar:** `GET /api/apps/:id/git/compare` (önde/geride, PR), `POST /api/apps/:id/git/merge` (yalnız Gitmapp; main'e birleşince proje taslağı güncellenir), `POST /api/apps/:id/git/pulls`, `POST /api/apps/:id/git/pulls/:n/merge`.
+- Testler: `node --test server/version-control.test.mjs`, tarayıcıda `node tools/acceptance/v580.mjs` (sahte GitHub sunucusu `TEST_GH_API` ile).
+
 ## Geliştirme akışı ve otomatik kayıt (v5.78)
 
 - Akış Claude Code düzenindedir: son işin adımları açık, öncekiler tek özet satırında (adım sayısı, süre, boyut, model, kredi); tıklayınca açılır. “Kod yazıldı” adımı modelin yazdığı kodun son 4.000 karakterini gösterir.
