@@ -885,7 +885,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,apiUsd,totalUsd:apiUsd+(fx?integTry/fx:0),fx,fxManual:!!q("SELECT 1 FROM server_settings WHERE k='usd_try_manual'").get(),settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.73.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.74.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -2291,7 +2291,7 @@ route("GET", "/api/me/ai-live", async ({ user }) => {
   need(user, 401, "Giriş yapın");
   let ids = []; try { ids = await listModels("gitmapp", CFG.aiKey); } catch { }
   const def = await defaultModel().catch(() => null), help = await helperModel().catch(() => null), vis = await visionModel().catch(() => null);
-  const admin = isAdmin(user); const rateOf = (m) => { const r = m && rateFor(m); return r ? { input: r.input, output: r.output, cached: r.cached } : null; };
+  const admin = isAdmin(user); const rateOf = (m) => { const r = m && rateFor(m); return r ? { input: r.input, output: r.output, cached: r.cached, currency: r.currency || "TRY" } : null; };
   const routing = { primary: primaryName(), direct: isAnthropicUrl(CFG.aiBase + "/x"), cache: E.PROMPT_CACHE !== "0",
     roles: [{ id: "build", label: "Uygulama üretimi ve düzenleme", model: def, note: "Stüdyo'da seçtiğin model; seçmezsen bu" }, { id: "helper", label: "Plan · yapılacaklar · Asistan · Rehber", model: help || def }, { id: "vision", label: "Görsel okuma", model: vis }],
     fallbacks: fallbackChain().map((p) => FALLBACK_NAMES[p] || p),
