@@ -18,6 +18,14 @@ function gtTestHtml(source){
   document.body.append(frame);
  });
 }
+const gtSectorProjects = [
+ {name:"Sigorta", flow:"Hasar ihbarı, poliçe kontrolü, eksper ataması ve ödeme mutabakatı"},
+ {name:"Üretim", flow:"Satın alma talebi, sipariş, mal kabul ve fatura eşleştirme"},
+ {name:"Perakende", flow:"Sipariş, stok rezervasyonu, sevkiyat ve iade"}
+];
+function gtSectorQuestion(project){
+ return project.flow+" için holding şirketleri arasında yürütülebilecek bir geliştirme planı hazırla. Yüklenen proje bağlamındaki kanıtları belirt, eksik entegrasyonları açık soru olarak kaydet. Her aşamada sorumlu rolü, şirket bazlı veri erişimini, önkoşulları ve paralel ilerleyebilecek işleri göster. Veri modeli, API, arayüz ve entegrasyon görevlerine ayrı kabul testleri ata. Yinelenen olay ve kesinti sonrası devam senaryolarını ekle.";
+}
 function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT,openEngineering}){
  const [open,setOpen]=useState(false),[enabled,setEnabled]=useState(false);
  const [ctx,setCtx]=useState(null),[rev,setRev]=useState(0),[question,setQuestion]=useState(""),[reply,setReply]=useState("");
@@ -93,6 +101,9 @@ function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT,ope
  <details open=${!ctx}><summary>Sistem bağlamı</summary><p>Tablo ve sütun adları, ilişkiler ve toplu olay sayaçları içeren JSON yükleyin. Örnek dosya sigorta senaryosunu gösterir.</p><button onClick=${sample}>Örnek JSON indir</button> <label>Şema ve sinyalleri yükle<input type="file" accept=".json" onChange=${e=>{load(e.target.files[0]);e.target.value=""}}/></label>
  ${ctx&&html`<p>${ctx.modules.join(" · ")}</p><ul>${ctx.tables.map(t=>html`<li key=${t.name}>${t.name} · ${t.columns.join(", ")}</li>`)}</ul>`}</details>
  ${alerts>0&&html`<section role="status"><b>Açık sinyaller</b><ul>${signals.map(s=>html`<li key=${s.code}>${s.code} · ${s.severity} · ${s.count}</li>`)}${errors.map((s,i)=>html`<li key=${i}>Önizleme · ${s}</li>`)}</ul></section>`}
+ <details><summary>Sektörel proje başlat</summary><p>Bir iş akışı seçerek teknik soruyu doldurun. Kapsamı ekibinize göre düzenleyebilirsiniz.</p>
+ ${gtSectorProjects.map(project=>html`<button type="button" key=${project.name} disabled=${job||Boolean(question.trim())} onClick=${()=>{setQuestion(gtSectorQuestion(project));setReply("");setTests([])}}>${project.name} · ${project.flow}</button>`)}
+ </details>
  <label>Teknik soru<textarea maxlength="1500" value=${question} onInput=${e=>{serial.current++;setJob(false);setQuestion(e.target.value);setReply("");setTests([])}} disabled=${job} placeholder="Hasar ödemeleri hangi aşamada bekliyor?"></textarea></label>
  <button disabled=${job} onClick=${listen}>${voice?"Dinlemeyi bitir":"Sesle sor"}</button> <button disabled=${job||!ctx||!question.trim()} onClick=${ask}>GT’ye sor</button>
  ${reply&&html`<p class="gt-answer">${reply}</p><button onClick=${()=>{if(!window.speechSynthesis){setStatus("Sesli okuma desteklenmiyor.");return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(reply);u.lang="tr-TR";speechSynthesis.speak(u)}}>Yanıtı dinle</button> <button disabled=${job||busy} onClick=${create}>Taslakta geliştir ve test et</button>`}
