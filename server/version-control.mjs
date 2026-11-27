@@ -87,6 +87,20 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     need(current && ctx.body.repo === current.repo, 409, "Bağlı depo değişti. Sürüm panelini yenileyin.");
     return "/repos/" + current.repo;
   }
+  // v5.76 — Yeni sohbet penceresindeki depo seçici: bağlı hesabın yazabildiği depolar (Claude Code tarzı ortam seçimi)
+  route("GET", "/api/me/github/repos", async ctx => {
+    need(ctx.user, 401, "Depoları görmek için giriş yapın.");
+    if (!ctx.user.github_token) return { setup:"account", repos:[] };
+    const q = String(ctx.url.searchParams.get("q") || "").trim().toLowerCase().slice(0, 80);
+    const list = await github(ctx.user, "GET", "/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator");
+    const repos = (Array.isArray(list) ? list : [])
+      .filter(r => r && r.full_name && !r.archived && !r.disabled && r.permissions?.push !== false)
+      .filter(r => !q || r.full_name.toLowerCase().includes(q) || String(r.description || "").toLowerCase().includes(q))
+      .slice(0, 50)
+      .map(r => ({ full_name:r.full_name, name:r.name, private:!!r.private, default_branch:r.default_branch || "main",
+        description:String(r.description || "").slice(0, 140), pushed_at:r.pushed_at || null, url:r.html_url }));
+    return { login:ctx.user.github_login || null, repos };
+  });
   const root = "/api/apps/:id/git";
   route("POST", root + "/link", async ctx => {
     const app = project(ctx);
