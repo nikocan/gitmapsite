@@ -1,6 +1,6 @@
 # Uçtan uca test raporu
 
-2026-11-27 09:52 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
+2026-11-27 09:57 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
 
 **70 / 70 kontrol geçti.**
 
@@ -67,9 +67,9 @@
 | Ödeme | Yönetici IBAN ve Stripe anahtarlarını panelden kaydetti | ✅ | TR33 0006 1005 1978 6457 8413 26 · Stripe test |
 | Ödeme | [Kredi ve ödemeler sayfası](screens/e2e/odeme-yonetici.png) | ✅ |  |
 | Ödeme | [Kredi yükle penceresi paketleri gösteriyor](screens/e2e/odeme-paketler.png) | ✅ |  |
-| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMYSYU3W098F |
-| Ödeme | Yönetici havaleyi onayladı, 330 kredi yüklendi | ✅ | 66 → 396 |
-| Ödeme | [Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi](screens/e2e/odeme-kart-sonuc.png) | ✅ | 396 → 496 |
+| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMYT52A1086C |
+| Ödeme | Yönetici havaleyi onayladı, 330 kredi yüklendi | ✅ | 69 → 399 |
+| Ödeme | [Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi](screens/e2e/odeme-kart-sonuc.png) | ✅ | 399 → 499 |
 | Ödeme | [Hesabım › Ödemelerim geçmişi](screens/e2e/odeme-gecmis.png) | ✅ | 2 ödeme |
 | Mobil | [#ana](screens/e2e/mobil-ana.png) | ✅ |  |
 | Mobil | [#studio](screens/e2e/mobil-studio.png) | ✅ |  |

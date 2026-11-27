@@ -2388,7 +2388,7 @@ button.adp-mini{color:inherit;text-align:left}
 .cmp-l{max-width:120px;overflow:hidden;text-overflow:ellipsis}
 .cmp-dot{width:6px;height:6px;border-radius:50%;background:#8fb4ff}
 .ccpop.cmp-pop{left:auto;right:0;min-width:280px}
-@container (max-width:520px){.gbox .gnote{display:none}}
+@container (max-width:520px){.gbox .gnote{flex:0 1 auto;max-width:46%}.gbox .gnote .pe-chip{max-width:100%}}
 @container (max-width:340px){.cmp-l{display:none}.cmp-b{padding:0 6px}}
 @media(max-width:380px){.cmp-l{display:none}.cmp-b{padding:0 6px}}
 .ghx{z-index:2}.gh-k{pointer-events:auto;cursor:pointer;color:#8fb4ff!important;border-color:rgba(143,180,255,.4)!important}
@@ -2598,8 +2598,12 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.66.0";
+const VERSION="5.67.0";
 const CHANGELOG=[
+ {v:"5.67.0",date:"2026-11-27",items:[
+  "🛑 Kendiliğinden başlayan istekler durduruldu: otomatik tasarım ajanı, proje açılırken ya da sen yazarken “ekranın ortası boş / yatay taşma” gibi yanlış alarm verebilen uyarılar yüzünden kendi kendine düzeltme başlatıyor, kredi harcıyor ve bazen çalışan sayfayı bozuyordu. Artık yalnızca bu oturumda yeni biten bir üretimden sonra gerçek bir JavaScript hatası çıkarsa ve yazı alanı boşken bir kez çalışıyor; tasarım uyarıları gösteriliyor, düzeltmeyi sen başlatıyorsun",
+  "🩹 Giriş alanındaki istek bilgisi geri geldi: dar sohbet sütununda “Okuyor → Mevcut uygulama güncellenecek · ~N kredi” çipi ve kredi notu gizleniyordu; artık sığacak şekilde görünüyor ve dokununca isteğin nasıl yorumlanacağını gösteriyor"
+ ]},
  {v:"5.66.0",date:"2026-11-27",items:[
   "🧭 Birleşik yan panel (Claude Code tarzı): Oturum paneli, Radar, Pilot, Kokpit özeti ve “Bu adımın çıktısı” tek panelde dört sekmede toplandı — Genel, Çıktılar, Bağlantılar, Pilot. Üst çubuktaki panel düğmesi açıp kapatıyor; dikkat isteyen iş sayısı ve yeni çıktı noktası rozet olarak görünüyor",
   "🎛️ Genel sekmesi canlı gösterge gibi: bu oturumda harcanan kredi ve karşılığı (₺ ya da $), bakiye, bağlam doluluğu, bağlantı sağlığı ve Radar bulguları tek tıkla çözülecek şekilde. Panelin üst çizgisi ve durum ışığı işe göre renk alıyor: hazır yeşil, çalışırken mavi ve akan, bekleyen iş sarı, sorun kırmızı",
@@ -6749,7 +6753,9 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const autoTurn=()=>/^(Otomatik düzeltme|Tasarım ajanı)/.test(lastUserAsk());
  const qaProbs=()=>qa&&qa.source===st.html?[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)]:[];
  const fixPrompt=probs=>"TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun (rozet ve etiketlerde de); başka hiçbir şeyi değiştirme.";
- useEffect(()=>{const probs=qaProbs();const key=st.html.length+":"+st.msgs.length;if(!autoFix||busy||todo?.running||!st.html||!probs.length||autoTurn()||autoFixed.current===key)return;
+ // Yalnızca gerçek JavaScript hatası, bu oturumda yeni biten bir üretimden sonra ve kullanıcı yazmıyorken (yanlış alarm ve kredi koruması)
+ useEffect(()=>{const probs=qa&&qa.source===st.html?qa.errors.map(t=>"JavaScript hatası: "+t):[];const key=st.html.length+":"+st.msgs.length;const lw=st.msgs.findLast(m=>m.log);
+  if(!autoFix||busy||todo?.running||!st.html||!probs.length||autoTurn()||autoFixed.current===key||inputRef.current?.trim()||!lw||lw.err||lw.log.running||!(lw.log.start>PAGE_T0)||Date.now()-(lw.log.start+(lw.log.secs||0)*1000)>120000)return;
   const t=setTimeout(()=>{if(autoFixed.current===key)return;autoFixed.current=key;build(fixPrompt(probs),null,"Otomatik düzeltme: tasarım ajanı "+probs.length+" sorunu düzeltiyor")},1400);return()=>clearTimeout(t)},[qa,autoFix,busy,scope,st.html,todo?.running]);
  // ---------- Radar: projeyi sürekli tarar, bulguları önem sırasıyla gösterir ve tek tıkla doğru yere yönlendirir ----------
  /* ---------- v5.44 Pilot: sağ üstte yüzen mini GitHub (dallar, durum, ısı, öncelik) ---------- */
@@ -6909,7 +6915,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    <div class="sp-row ccw"><${Icon} n="file" s=${18}/><button type="button" class="sp-t sp-tb" disabled=${!dirty||!versions.length} title=${dirty?"Değişiklikleri gör":""} onClick=${()=>{setCode(true);setCompare(true)}}><span class="sp-diff">${dirty?html`<em class="a">+${diff.add}</em> <em class="d">−${diff.del}</em>`:"Değişiklik yok"}</span><small>${st.appId?(dirty?"Son kayıttan bu yana":"Hesaptaki kayıtla aynı"):"Kaydedilmemiş taslak"}</small></button>
     <span class="sp-split"><button type="button" class="btn s" disabled=${busy||saving||!st.html} onClick=${st.gitContext?()=>setGitOpen(st.gitContext.source==="github"?"github":true):vcSource==="github"&&st.appId?()=>setGitOpen("github"):save}>${st.gitContext?"Commit":vcSource==="github"&&st.appId?"PR oluştur":saving?"Kaydediliyor…":"Kaydet"}</button><button type="button" class="btn s sp-dd" aria-label="Diğer seçenekler" aria-haspopup="menu" aria-expanded=${spDiff} disabled=${busy||!st.html} onClick=${()=>setSpDiff(!spDiff)}><${Icon} n="chevDown" s=${14}/></button>
     ${spDiff&&html`<${CcPop} close=${()=>setSpDiff(false)} cls="r"><button type="button" class="ccpop-i" onClick=${()=>{setSpDiff(false);save()}}><${Icon} n="save" s=${16}/><span>Hesaba kaydet</span></button><button type="button" class="ccpop-i" disabled=${!versions.length} onClick=${()=>{setSpDiff(false);setCode(true);setCompare(true)}}><${Icon} n="eye" s=${16}/><span>Değişiklikleri gör</span></button><button type="button" class="ccpop-i" onClick=${()=>{setSpDiff(false);setGitOpen("github")}}><${Icon} n="github" s=${16}/><span>GitHub'a commit / PR</span></button><div class="ccpop-sep"></div><button type="button" class="ccpop-i" disabled=${!!st.gitContext} onClick=${()=>{setSpDiff(false);publish()}}><${Icon} n="rocket" s=${16}/><span>Kaydet ve yayınla</span></button><//>`}</span></div>
-   <label class="sp-tg"><input type="checkbox" checked=${autoFix} onChange=${e=>setAutoFix(e.target.checked)}/><span><b>Hataları otomatik düzelt</b><small>Tasarım ajanı JavaScript hatası, kontrast, taşma ya da boş ekran bulursa istek başına bir kez kendiliğinden düzeltir (kredi kullanır)</small></span></label>
+   <label class="sp-tg"><input type="checkbox" checked=${autoFix} onChange=${e=>setAutoFix(e.target.checked)}/><span><b>Hataları otomatik düzelt</b><small>Yeni bir üretimden sonra önizlemede JavaScript hatası çıkarsa bir kez kendiliğinden düzeltilir (kredi kullanır). Tasarım uyarıları yalnızca gösterilir; düzeltmeyi sen başlatırsın.</small></span></label>
   </section>`:T==="bag"?html`  <section><h3>Ortam</h3>
    <div class="sp-row"><${Icon} n=${vcSource==="github"?"github":"cloud"} s=${18}/><span class="sp-t"><b>${vcSource==="github"?"GitHub":"Gitmapp bulutu"}</b><small>${st.appId?"Proje hesabında kayıtlı":"Cihazda taslak"}</small></span><button type="button" class="sp-ib" title="Sürüm kontrolü ayarları" aria-label="Sürüm kontrolü ayarları" disabled=${!st.html} onClick=${()=>setGitOpen(vcSource==="github"?"github":true)}><${Icon} n="cog" s=${16}/></button></div>
    <div class="sp-row ccw"><${Icon} n="book" s=${18}/><span class="sp-t"><b>${st.title||"Yeni proje"}</b><small>${CX_KIND[prefs.kind]}${st.html?" · "+(html0.length/1024).toFixed(1)+" KB":""}</small></span><button type="button" class="sp-ib" title="Proje değiştir ya da yeni proje" aria-label="Projeler" onClick=${()=>setCcMenu(m=>m==="sp-proj"?null:"sp-proj")}><${Icon} n="plus" s=${16}/></button>${ccMenu==="sp-proj"&&html`<${ProjectMenu} auth=${auth} openAuth=${openAuth} cur=${st.appId} title=${st.title} close=${()=>setCcMenu(null)} go=${go} toast=${toast} onNew=${()=>{switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setCcMenu(null)}}/>`}</div>

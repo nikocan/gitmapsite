@@ -430,21 +430,21 @@
   "area": "Ödeme",
   "name": "Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi",
   "ok": true,
-  "note": "GMYSYU3W098F",
+  "note": "GMYT52A1086C",
   "shot": "odeme-havale.png"
  },
  {
   "area": "Ödeme",
   "name": "Yönetici havaleyi onayladı, 330 kredi yüklendi",
   "ok": true,
-  "note": "66 → 396",
+  "note": "69 → 399",
   "shot": ""
  },
  {
   "area": "Ödeme",
   "name": "Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi",
   "ok": true,
-  "note": "396 → 496",
+  "note": "399 → 499",
   "shot": "odeme-kart-sonuc.png"
  },
  {
