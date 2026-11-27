@@ -86,7 +86,11 @@ Kullanıcı Beceriler panelinden **uygulama planı** (CRM, ön muhasebe/e-Fatura
 
 ## Yapay zekâ sağlayıcıları ve maliyet
 
-Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Router) üzerinden yapılır. `AI_BASE` OpenAI uyumlu herhangi bir uç nokta olabilir; örneğin doğrudan OpenRouter için `AI_BASE=https://openrouter.ai/api/v1`, `AI_KEY=sk-or-…` ve `AI_MODELS` içinde OpenRouter model adları (`anthropic/claude-sonnet-4.5,openai/gpt-5.2`).
+**Önerilen yapılandırma (v5.72):** ana sağlayıcı Claude (Anthropic, doğrudan). `ANTHROPIC_API_KEY` tanımlıysa sunucu bir kez kendiliğinden bu yapılandırmaya geçer (önce anahtarı doğrular, önceki ayarları saklar; `AI_PROFILE_AUTO=0` ile kapatılır). Roller: Sonnet uygulama üretimi, Opus güçlü mod, Haiku plan/yapılacaklar/Asistan/Rehber; yedek sırası OpenRouter → OpenAI → Gemini. Anthropic isteklerinde sunucu yerel Messages API'yi kullanır (`server/anthropic.mjs`), çünkü OpenAI uyumlu katman istem önbelleğini desteklemez. Yönetim › Yapay zekâ sağlayıcıları sayfasındaki "Önerilen yapılandırma" kartından uygulanır, yenilenir ya da önceki ayarlara dönülür.
+
+**Maliyet:** API giderleri dolar olarak kaydedilir (giriş, önbellekten okunan, önbelleğe yazılan ve çıkış token'ları ayrı). Model fiyatları OpenRouter'ın herkese açık listesinden günde bir otomatik güncellenir (`AUTO_RATES=0` kapatır; panelden girilen tarife önceliklidir). Dolar/TL kuru günde iki kez otomatik alınır, panelden elle de girilebilir. Kokpit'te "Canlı · modeller ve harcama" bölümü anlık durumu gösterir.
+
+Eski düzende platform çağrıları `AI_BASE` / `AI_KEY` (Hostinger AI Router) üzerinden yapılırdı. `AI_BASE` OpenAI uyumlu herhangi bir uç nokta olabilir; örneğin doğrudan OpenRouter için `AI_BASE=https://openrouter.ai/api/v1`, `AI_KEY=sk-or-…` ve `AI_MODELS` içinde OpenRouter model adları (`anthropic/claude-sonnet-4.5,openai/gpt-5.2`).
 
 **Yedek sağlayıcı zinciri:** birincil sağlayıcı 402 (bakiye bitti), 403, 404 (model yok), 408, 429 ya da 5xx döndürürse istek sırayla aşağıdaki anahtarlı sağlayıcılara aynı ya da en yakın modelle gider. Tanımlanmayan sağlayıcı atlanır.
 
