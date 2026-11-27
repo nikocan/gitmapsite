@@ -3139,6 +3139,21 @@ html.rm .ambient i{animation:none}
 .side-foot .cc-me{padding-right:56px!important}
 .sheet-st .avatar{flex:none!important;width:30px!important;height:30px!important;border-radius:50%!important}
 .sheet .hist .hrow .rec-open{padding:8px 34px 8px 10px}
+
+/* ================= v5.85 — çalışmanın yeri: Taslak / Proje / Depo ================= */
+.loc-w{position:relative;flex:none}
+.loc-chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:none;color:#c9c7c1;font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap;max-width:220px}
+.loc-chip>span{overflow:hidden;text-overflow:ellipsis}
+.loc-chip.taslak{border-style:dashed;color:#a9a7a1}
+.loc-chip.proje{color:#ecebe6}.loc-chip.proje svg:first-child{color:#e4ff3d}
+.loc-chip.depo{color:#ecebe6}.loc-chip.depo svg:first-child{color:#8fb4ff}
+.loc-chip:hover,.loc-chip.on{background:rgba(255,255,255,.06);color:#fff}
+.ccpop-h small{display:block;font-weight:400;color:#8f8d88;font-size:11.5px;margin-top:2px}
+@container wstop (max-width:1000px){.loc-chip>span,.loc-chip>svg:last-child{display:none}.loc-chip{padding:0 9px}}
+@media(pointer:coarse){.loc-chip{height:38px}}
+.hist .sess-t small{display:flex;align-items:center;gap:4px}.hist .sess-t small svg{flex:none;opacity:.75}
+.h-sep{padding:6px 10px 3px;font-size:11px;letter-spacing:.3px;text-transform:uppercase;color:#7d7b76}
+.h-sep:empty{height:1px;padding:0;margin:4px 6px;background:#3a3a37}
 </style>
 <link rel="stylesheet" href="catalog/gallery.css?v=5772">
 <link rel="stylesheet" href="catalog/sector-design.css?v=5761">
@@ -3166,8 +3181,15 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.84.0";
+const VERSION="5.85.0";
 const CHANGELOG=[
+ {v:"5.85.0",date:"2026-11-28",items:[
+  "📍 Sol menü Faz 2 — her çalışmanın bir yeri var: Stüdyo'nun üst çubuğunda yeni “yer” düğmesi çalışmanın nerede durduğunu gösteriyor: Taslak (yalnızca bu cihazda), Proje (hesabında kayıtlı) ya da Depo (çalışma alanı · dal)",
+  "📦 Yer düğmesine dokununca “Bu çalışma nerede dursun?” menüsü: Yeni proje olarak kaydet / Projeye kaydet, Var olan bir projeye ekle (sayfa o projeye yeni ekran olarak eklenir), Çalışma alanına (depoya) kaydet",
+  "🕘 Geçmiş satırının ⋯ menüsünde aynı taşıma seçenekleri: çalışmayı açmadan projeye ekleyebilir, yeni proje yapabilir ya da depoya kaydedebilirsin. Satırın altında yerin simgesiyle yazıyor (taslak kalemi, proje klasörü, depo dalı)",
+  "💬 Asistan sohbetleri de Geçmiş'te: projeye bağlı olmayan her sohbet ilk sorundan başlık alarak listeleniyor; tıklayınca Asistan açılıyor",
+  "🎬 Kreatör çalışmaları da Geçmiş'te: konu ve sahne kaydediliyor, sürüyor/bitti durumu görünüyor; satıra tıklayınca Kreatör aynı konuyla açılıyor",
+  "⌨️ Açılır pencereler artık Esc ile kapanıyor"]},
  {v:"5.84.0",date:"2026-11-28",items:[
   "🗂️ Sol menü Claude düzeninde (Faz 1): üstte solda Gitmapp logosu, sağda arama (⌘K) ve menüyü kapat; logonun yanındaki sıkışık Asistan/Geliştir düğmeleri kaldırıldı (ikisi de menüde). Altında limon sarısı kalemli “Yeni çalışma” düğmesi",
   "🕘 Yeni “Geçmiş” bölümü: “Oturumlar” ve “Son kullanılanlar” yerine tek liste. Bütün çalışmaların son işleme göre sıralı; her satırda tür simgesi (</> geliştirme), sabit başlık ve altında yeri (proje adı ya da Taslak), dalı, durumu ve zamanı. İlk 10 çalışma görünür, gerisi “Tümünü görüntüle” ile açılır",
@@ -5377,7 +5399,7 @@ function ResetBox({token,auth,toast,close}){const [pw,setPw]=useState(""),[pw2,s
  return html`<div><h2 class="auth-h">Yeni şifre belirle</h2><p class="auth-s">En az 8 karakter. Diğer cihazlardaki oturumlar kapatılacak.</p>
   <form onSubmit=${go} style=${{display:"flex",flexDirection:"column",gap:9}}><input class="in" type="password" autocomplete="new-password" aria-label="Yeni şifre" required minLength="8" placeholder="Yeni şifre" value=${pw} onInput=${e=>setPw(e.target.value)}/><input class="in" type="password" autocomplete="new-password" aria-label="Yeni şifre (tekrar)" required minLength="8" placeholder="Yeni şifre (tekrar)" value=${pw2} onInput=${e=>setPw2(e.target.value)}/>
   ${error&&html`<p role="alert">${error}</p>`}<button class="btn" disabled=${busy}>${busy?"Kaydediliyor…":"Şifreyi değiştir"}</button></form></div>`}
-const Modal=({close,children,w=440})=>html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`;
+const Modal=({close,children,w=440})=>{useEffect(()=>{const k=e=>{if(e.key==="Escape"){e.stopPropagation();close()}};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[close]);return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" role="dialog" aria-modal="true" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" aria-label="Kapat" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`};
 
 const START_CHIPS={
  app:[["calendar","Randevu","Müşterilerin hizmet ve saat seçip randevu alabildiği, benim de günlük randevuları yönetebildiğim bir uygulama"],["chart","Dashboard","Satış, sipariş ve müşteri verilerini KPI kartları, grafikler ve filtrelenebilir tabloyla gösteren bir yönetim paneli"],["userRound","Müşteri portalı","Müşterilerin giriş yapıp siparişlerini, faturalarını ve destek taleplerini takip ettiği bir müşteri portalı"],["wrench","Dahili araç","Ekibimin iş taleplerini oluşturup atadığı, durumunu güncellediği ve raporladığı bir dahili iş takip aracı"],["package","Stok & sipariş","Ürün listesi, stok adedi, kritik stok uyarısı ve günlük satış kaydı olan bir stok uygulaması"]],
@@ -7812,6 +7834,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(a.t==="yap"){const m=String(a.metin||inputRef.current||"").trim();if(!m)throw new Error("İstem kutusu boş");return g(".gsend",()=>gen(m))}
   if(a.t==="kontrol"){if(!st.html)throw new Error("Önce bir uygulama yapılmalı");return g(".sugg .chip.on",()=>review())}
   if(a.t==="kaydet")return g('.ib[title="Kaydet"]',()=>save());
+  if(a.t==="depo"){setGitOpen(true);return}
   if(a.t==="yayinla")return g(".ws-top .btn.s",()=>publish());
   if(a.t==="panel"){if(a.ad==="model")return g('[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.cmp-mode',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));if(a.ad==="oturum"){setSessOpen(true);return}return}
   if(a.t==="oturumDal"){if(!auth.user)throw new Error("Dalda çalışmak için giriş yap");let appId=st.appId;if(!appId){const app=await save({silent:true});appId=app?.id;if(!appId)throw new Error("Proje kaydedilemedi")}
@@ -8384,6 +8407,12 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
    <input class="in ws-title" value=${st.title} placeholder="Uygulama adı" onInput=${e=>setSt(s=>({...s,title:e.target.value.slice(0,80)}))}/>
    ${projMagic()}
+   ${(st.html||st.msgs.length>0)&&(()=>{const w=st.gitContext?{k:"depo",ic:"branch",l:(st.gitContext.source==="github"?st.gitContext.repo||"GitHub":"Gitmapp")+" · "+st.gitContext.name,d:"Çalışma alanında (depo dalı)"}:st.appId?{k:"proje",ic:"folder",l:"Proje",d:"Hesabındaki projede kayıtlı"}:{k:"taslak",ic:"edit",l:"Taslak",d:"Yalnızca bu cihazda; kaydedince projeye dönüşür"};
+    return html`<span class="loc-w" key="loc"><button type="button" class=${"loc-chip "+w.k+(ccMenu==="loc"?" on":"")} aria-haspopup="menu" aria-expanded=${ccMenu==="loc"} title=${w.d+" · nereye kaydedileceğini seç"} onClick=${()=>setCcMenu(m=>m==="loc"?null:"loc")}><${Icon} n=${w.ic} s=${13}/><span>${w.l}</span><${Icon} n="chevDown" s=${12}/></button>
+     ${ccMenu==="loc"&&html`<${CcPop} cls="dn" close=${()=>setCcMenu(null)}><div class="ccpop-h">Bu çalışma nerede dursun?<small>${w.d}</small></div>
+      <button type="button" role="menuitem" class="ccpop-i" disabled=${!st.html||saving} onClick=${()=>{setCcMenu(null);save()}}><${Icon} n="folder" s=${15}/><span>${st.appId?"Projeye kaydet":"Yeni proje olarak kaydet"}</span></button>
+      <button type="button" role="menuitem" class="ccpop-i" disabled=${!st.html||busy} onClick=${()=>{setCcMenu(null);dispatchEvent(new CustomEvent("gm:addpage",{detail:{html:resolve(st.html),title:st.title||"Yeni sayfa",appId:st.appId||null}}))}}><${Icon} n="layers" s=${15}/><span>Var olan bir projeye ekle</span></button>
+      <button type="button" role="menuitem" class="ccpop-i" disabled=${!st.html||saving} onClick=${()=>{setCcMenu(null);setGitOpen(true)}}><${Icon} n="branch" s=${15}/><span>Çalışma alanına (depoya) kaydet</span></button><//>`}</span>`})()}
    ${proposedTitle.current&&proposedTitle.current!==st.title&&!busy&&html`<button class="chip" title="Üretilen başlığı kullan" onClick=${()=>setSt(x=>({...x,title:proposedTitle.current}))}>${proposedTitle.current}</button>`}
    <span style=${{flex:1}}></span>
    ${seg([["phone","phone","","Telefon"],["tablet","tablet","","Tablet"],["desktop","monitor","","Masaüstü"]],stage,setStage)}
@@ -9672,9 +9701,13 @@ function KreatorPage({auth,toast,openAuth,go}){
  const load=()=>u&&api("GET","/api/creator/posts").then(j=>{setPosts(j.posts);setHook(j.hook)}).catch(e=>setErr(e.message));
  useEffect(()=>{load()},[u?.id]);
  const need=()=>{if(!u){openAuth("Kreatör Stüdyosu'nu kullanmak için giriş yap.");return false}return true};
- const pick=s=>{setScene(s);LS.set("crScene",s.id);setPl(s.pl);setTab("icerik");setOut(null);setMedia([]);setEditId(null)};
+ const krKey=useRef(null);
+ const krSess=(state)=>{const acct=u?.id||"guest";if(!topic.trim())return;if(!krKey.current)krKey.current="kr:"+Date.now().toString(36);const prev=sessList(acct).find(x=>x.key===krKey.current);
+  sessPut(acct,{key:krKey.current,kind:"kreator",ws:{kind:"kreator",id:"kreator",label:"Kreatör"},name:prev?.named?prev.name:scShort(topic,46),topic,scene:scene.id,prompt:topic.slice(0,80),status:state,unread:state!=="running"&&document.hidden,note:state==="error"?"Üretilemedi":"",at:Date.now()})};
+ useEffect(()=>{const take=()=>{const o=LS.get("crOpen",null);if(!o)return;LS.set("crOpen",null);if(o.topic)setTopic(o.topic);const sc=CR_SCENES.find(x=>x.id===o.scene);if(sc){setScene(sc);setPl(sc.pl)}krKey.current=o.key||null;setTab("icerik")};take();addEventListener("gm:cropen",take);return()=>removeEventListener("gm:cropen",take)},[]);
+ const pick=s=>{krKey.current=null;setScene(s);LS.set("crScene",s.id);setPl(s.pl);setTab("icerik");setOut(null);setMedia([]);setEditId(null)};
  const togPl=p=>setPl(x=>x.includes(p)?x.filter(y=>y!==p):[...x,p]);
- const compose=async()=>{if(!need())return;setErr("");setBusy("compose");try{const j=await api("POST","/api/creator/compose",{topic,platforms:pl,tone,brand,scene:scene.n,format:scene.fmt,goal:scene.goal});setOut(j);if(j.credits!=null)auth.patch({credits:j.credits});toast("İçerik hazır · "+j.spent+" kredi")}catch(e){setErr(e.message)}setBusy("")};
+ const compose=async()=>{if(!need())return;setErr("");setBusy("compose");krSess("running");try{const j=await api("POST","/api/creator/compose",{topic,platforms:pl,tone,brand,scene:scene.n,format:scene.fmt,goal:scene.goal});setOut(j);krSess("done");if(j.credits!=null)auth.patch({credits:j.credits});toast("İçerik hazır · "+j.spent+" kredi")}catch(e){setErr(e.message);krSess("error")}setBusy("")};
  const poll=async(fn,done,ms=2500,max=240)=>{for(let k=0;k<max&&alive.current;k++){const j=await fn();if(done(j))return j;await wait(ms)}throw new Error("İşlem çok uzun sürdü, sonra tekrar dene")};
  const genMedia=async type=>{if(!need())return;if(!u.higgsfield){setErr("Görsel/video üretimi için önce Higgsfield anahtarını Bağlantılar sayfasından bağla.");return}setErr("");setBusy("media");
   try{const j=await api("POST","/api/media/higgsfield",{prompt:out?.gorsel_istem||topic,type,aspect:scene.ar});setJob({id:j.id,status:j.status,type});
@@ -9742,7 +9775,7 @@ function KreatorPage({auth,toast,openAuth,go}){
      ${out.etiketler?.length>0&&html`<div class="cr-tags">${out.etiketler.map(t=>html`<span key=${t}>${t}</span>`)}<button type="button" class="cr-mini" onClick=${()=>copy(out.etiketler.join(" "))}>Tümünü kopyala</button></div>`}
      ${out.video_senaryo?.length>0&&html`<details class="cr-script" open=${scene.type==="video"}><summary><${Icon} n="video" s=${14}/>Video senaryosu · ${out.video_senaryo.length} sahne${out.muzik?" · 🎵 "+out.muzik:""}</summary><ol>${out.video_senaryo.map((s,i)=>html`<li key=${i}><em>${s.sn} sn</em><span><b>${s.sahne}</b><small>${s.ses}</small></span></li>`)}</ol></details>`}
      <div class="cr-meta">${out.zaman&&html`<span><${Icon} n="clock" s=${13}/>${out.zaman}</span>`}${out.cta&&html`<span><${Icon} n="target" s=${13}/>${out.cta}</span>`}</div>
-     ${out.fikirler?.length>0&&html`<div class="cr-ideas"><small>Sıradaki içerik fikirleri</small>${out.fikirler.map(f=>html`<button type="button" key=${f} onClick=${()=>{setTopic(f);setOut(null);setMedia([]);setEditId(null)}}>${f}</button>`)}</div>`}
+     ${out.fikirler?.length>0&&html`<div class="cr-ideas"><small>Sıradaki içerik fikirleri</small>${out.fikirler.map(f=>html`<button type="button" key=${f} onClick=${()=>{krKey.current=null;setTopic(f);setOut(null);setMedia([]);setEditId(null)}}>${f}</button>`)}</div>`}
     </div>`}
    </section>
    <div class="cr-split" role="separator" aria-orientation="vertical" aria-label="Alanları yeniden boyutlandır (sürükle ya da ← →)" tabindex="0" onPointerDown=${dragSplit} onDblClick=${()=>setL({mode:"denge"})} onKeyDown=${e=>{if(e.key==="ArrowLeft")setL({mode:"ozel",split:Math.max(.34,(lay.mode==="ozel"?lay.split:.58)-.03)});if(e.key==="ArrowRight")setL({mode:"ozel",split:Math.min(.74,(lay.mode==="ozel"?lay.split:.58)+.03)})}}><i></i></div>
@@ -10861,6 +10894,10 @@ function Copilot(props){
  const scope=props.ctx().studyo.scope||studioScope(props.auth.user?.id||"guest",null);
  return html`<${CopilotThread} key=${scope} scope=${scope} ...${props}/>`;
 }
+// v5.85 — Asistan sohbetleri Geçmiş'te: projeye bağlı olmayan sohbet "Asistan" kaydı olarak görünür
+function cpSessNote(auth,scope,msgs,running){try{const acct=auth.user?.id||"guest";const proj=JSON.parse(scope);if(proj[1])return;const first=msgs.find(m=>m.role==="user"&&m.content);if(!first)return;
+ const key="chat:"+scope;const prev=sessList(acct).find(x=>x.key===key);
+ sessPut(acct,{key,kind:"chat",ws:{kind:"chat",id:"chat",label:"Asistan"},name:prev?.named?prev.name:scShort(first.content,46),prompt:String(msgs.filter(m=>m.role==="user").at(-1)?.content||"").slice(0,80),status:running?"running":"done",unread:!running&&prev?.status==="running"&&document.hidden,at:Date.now()})}catch(e){}}
 function CopilotThread({scope,close,run,ctx,auth,openAuth,toast,skillDraft,consumeSkillDraft}){const [,setSb]=useState(0);useEffect(()=>{const h=()=>setSb(x=>x+1);addEventListener("gm:studio",h);return()=>removeEventListener("gm:studio",h)},[]);
  const [msgs,setMsgs]=useState(()=>(LS.get("cp:"+scope,[])||[]).map(m=>m.st?{...m,st:m.st.map(x=>x==="run"||x==="ask"?"wait":x)}:m));
  const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
@@ -10883,7 +10920,7 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast,skillDraft,consu
  },[skillDraft]);
 
 
- useEffect(()=>{LS.set("cp:"+scope,msgs)},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
+ useEffect(()=>{LS.set("cp:"+scope,msgs)},[msgs]);useEffect(()=>{cpSessNote(auth,scope,msgs,busy)},[msgs.length,busy]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
  useEffect(()=>{const list=endRef.current?.parentElement;if(list)list.scrollTop=list.scrollHeight},[msgs.length,live,busy,asking,interim]);
  useEffect(()=>{const v=window.speechSynthesis;if(v&&v.getVoices)v.getVoices();return()=>{stopAll()}},[]);
  useEffect(()=>{const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal")&&!R.current.voice)close()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[]);
@@ -11614,6 +11651,8 @@ function App(){
    else setTimeout(()=>document.querySelector("textarea.gta")?.focus(),300);
   }catch(e){toast(e.message||"Oturum başlatılamadı")}};
  const openSession=async rec=>{setMore(false);
+  if(rec.kind==="chat"){if(rec.unread)sessPatch(sessAcct,rec.key,{unread:false});setCp(true);return}
+  if(rec.kind==="kreator"){if(rec.unread)sessPatch(sessAcct,rec.key,{unread:false});LS.set("crOpen",{topic:rec.topic||"",scene:rec.scene||"",key:rec.key});navGo("kreator");dispatchEvent(new Event("gm:cropen"));return}
   if(view==="studio"&&window.__gmChats?.scope===rec.key)return;
   if(window.__gmStudio?.calisiyor&&view==="studio")toast("Bu iş arka planda sürüyor · sol menüden izleyebilirsin");
   const snap=LS.get("sessSnap:"+rec.key,null);
@@ -11730,7 +11769,12 @@ function App(){
 
  // v5.84 — Geçmiş: tüm çalışmalar son işleme göre tek listede (Claude sol menüsü gibi)
  const sessName=r=>r.name||scShort(r.prompt||r.title||"Yeni çalışma",46);
- const sessWhere=r=>r.ws?.kind==="github"?r.ws.label:r.ws?.kind==="gitmapp"?r.ws.label:"Taslak";
+ const sessWhere=r=>r.kind==="chat"?"Asistan":r.kind==="kreator"?"Kreatör":r.ws?.kind==="github"?r.ws.label:r.ws?.kind==="gitmapp"?r.ws.label:"Taslak";
+ const sessWhereIc=r=>r.kind==="chat"?"msgSpark":r.kind==="kreator"?"video":r.git||r.ws?.kind==="github"?"branch":r.ws?.kind==="gitmapp"?"folder":"edit";
+ const sessSnapOf=r=>LS.get("sessSnap:"+r.key,null)||LS.get("localDraft:"+r.key,null);
+ const sessMove=async(r,act)=>{setHMenu(null);
+  if(act==="addpage"){const sn=sessSnapOf(r);if(!sn?.html){toast("Bu çalışmanın sayfası bu cihazda bulunamadı");return}setAddPage({html:sn.html,title:sessName(r),appId:r.appId||null});return}
+  await openSession(r);await wait(900);window.dispatchEvent(new CustomEvent("gm:act",{detail:{a:{t:act==="depo"?"depo":"kaydet"},done:()=>{},active:()=>true}}))};
  const sessSt=r=>r.status==="running"?"run":r.status==="error"&&r.unread?"err":r.unread?"done":"";
  const histEl=(mobile)=>{if(!sessions.length)return null;const cur=view==="studio"?chats?.scope:null;const list=[...sessions].sort((x,y)=>(y.at||0)-(x.at||0));const shown=sessAll?list:list.slice(0,10);
   const run=list.filter(r=>r.status==="running").length,done=list.filter(r=>r.unread&&r.status!=="error").length;
@@ -11739,11 +11783,16 @@ function App(){
     return html`<div key=${r.key} class=${"nav rec sess hrow"+(on?" on":"")+(st?" st-"+st:"")} data-status=${st||"idle"}>
      <button type="button" class="rec-open" aria-current=${on?"true":undefined} title=${name+" · "+sessWhere(r)} onClick=${()=>{setHMenu(null);openSession(r)}}>
       <span class="h-ic" aria-hidden="true"><${Icon} n=${r.kind==="chat"?"msgSpark":r.kind==="kreator"?"video":"codeXml"} s=${15}/></span>
-      <span class="sess-t"><b>${name}</b><small>${[sessWhere(r),r.git?.name&&r.git.name!=="main"?r.git.name:"",st==="run"?"sürüyor":st==="err"?(r.note||"hata"):st==="done"?"bitti":"",nsAgo(r.at)].filter(Boolean).join(" · ")}</small></span>
+      <span class="sess-t"><b>${name}</b><small><${Icon} n=${sessWhereIc(r)} s=${11}/>${[sessWhere(r),r.git?.name&&r.git.name!=="main"?r.git.name:"",st==="run"?"sürüyor":st==="err"?(r.note||"hata"):st==="done"?"bitti":"",nsAgo(r.at)].filter(Boolean).join(" · ")}</small></span>
       <span class=${"h-st "+st} aria-label=${st==="run"?"Sürüyor":st==="done"?"Bitti, görülmedi":st==="err"?"Hata":""}>${st==="run"?html`<i class="sess-spin"></i>`:st==="done"?html`<i class="sess-dot"></i>`:st==="err"?html`<${Icon} n="alert" s=${13}/>`:""}</span></button>
      <button type="button" class="rec-pin h-more" aria-haspopup="menu" aria-expanded=${hMenu===r.key} aria-label=${name+" seçenekleri"} onClick=${e=>{e.stopPropagation();setHMenu(hMenu===r.key?null:r.key)}}><${Icon} n="more" s=${14}/></button>
      ${hMenu===r.key&&html`<div class="h-menu" role="menu">
       <button type="button" role="menuitem" onClick=${()=>{setHMenu(null);openSession(r)}}><${Icon} n="external" s=${14}/>Aç</button>
+      ${(!r.kind||r.kind==="dev")&&html`<div class="h-sep">Nerede dursun?</div>
+      ${!r.appId&&html`<button type="button" role="menuitem" onClick=${()=>sessMove(r,"save")}><${Icon} n="folder" s=${14}/>Yeni proje olarak kaydet</button>`}
+      <button type="button" role="menuitem" onClick=${()=>sessMove(r,"addpage")}><${Icon} n="layers" s=${14}/>Var olan projeye ekle</button>
+      <button type="button" role="menuitem" onClick=${()=>sessMove(r,"depo")}><${Icon} n="branch" s=${14}/>Çalışma alanına (depoya) kaydet</button>
+      <div class="h-sep"></div>`}
       <button type="button" role="menuitem" onClick=${()=>{setHMenu(null);const nm=prompt("Çalışmanın adı",name);if(nm&&nm.trim())sessPatch(sessAcct,r.key,{name:nm.trim().slice(0,80),named:true})}}><${Icon} n="edit" s=${14}/>Yeniden adlandır</button>
       <button type="button" role="menuitem" class="danger" onClick=${()=>{setHMenu(null);sessDel(sessAcct,r.key)}}><${Icon} n="trash" s=${14}/>Geçmişten kaldır</button></div>`}</div>`})}
    ${(mobile||!secOff.$sess)&&list.length>10&&html`<button type="button" class="sess-more" onClick=${()=>setSessAll(!sessAll)}>${sessAll?"Daha az göster":"Tümünü görüntüle ("+list.length+")"}<${Icon} n=${sessAll?"chevUp":"chevRight"} s=${13}/></button>`}
