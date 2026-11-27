@@ -787,9 +787,13 @@ body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#10
 .tpc{min-width:0;gap:11px;padding:9px;border:1px solid var(--sep);border-radius:23px;background:var(--card,#161616)}
 .tpc-img{border-radius:15px;box-shadow:none}
 .tpl-device-art{position:relative;aspect-ratio:1.7;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 17% 0%,color-mix(in srgb,var(--tpl-color) 45%,#faf6e8),transparent 71%),radial-gradient(ellipse at 92% 85%,color-mix(in srgb,var(--tpl-color) 70%,#121215),transparent 64%),color-mix(in srgb,var(--tpl-color) 55%,#242629)}
-.tpl-device-art img{position:absolute;display:block;object-fit:cover;object-position:top;background:#f4f5f6;box-shadow:0 12px 26px #0007}
+.tpl-device-art :is(img,.tpl-thumb-frame){position:absolute;display:block;object-fit:cover;object-position:top;background:#f4f5f6;box-shadow:0 12px 26px #0007}
 .tpl-web-shot{width:80%;height:79%;top:10%;left:5%;border:3px solid #27282a;border-top-width:8px;border-radius:8px}
 .tpl-phone-shot{width:24%;height:81%;top:15%;right:5%;border:3px solid #27282a;border-radius:clamp(6px,1vw,12px)}
+.tpl-thumb-frame{overflow:hidden;pointer-events:none;z-index:1}
+.tpl-thumb-frame.tpl-phone-shot{z-index:2}
+.tpl-thumb-frame:not(.tpl-phone-shot){z-index:0}
+.tpl-thumb-frame iframe{display:block;border:0;transform-origin:top left;pointer-events:none}
 .tpc .tpc-m,.tpl-card-info,.tpl-card-actions{margin-inline:6px}
 .tpc .tpc-m b{font-size:17px}
 .tpl-card-info{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:7px}
@@ -798,6 +802,64 @@ body:has(.tpl-dialog:modal){overflow:hidden}.tpl-dialog::backdrop{background:#10
 .tpl-card-actions{display:flex;flex-wrap:wrap;gap:5px;padding-bottom:5px}
 .tpl-card-actions button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:38px}
 .tpl-card-actions .getbtn{flex:1 0 auto}
+.mobile-promo{isolation:isolate;position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:10px;border:1px solid #3c4840;border-radius:26px;overflow:hidden;background:#111915;color:#f8f9f3;min-height:440px}
+.mobile-promo::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 91% 36%,color-mix(in srgb,var(--promo-color) 36%,#111915),transparent 62%),linear-gradient(140deg,#151d18,#0d1210)}
+.mobile-promo-copy{padding:clamp(22px,4vw,56px);min-width:0}
+.mobile-promo-kicker{display:flex;align-items:center;gap:8px;color:#d2e788;font-size:12px;font-weight:750;letter-spacing:.095em;text-transform:uppercase;margin:0 0 12px}
+.mobile-promo :is(h1,h2){font-size:clamp(36px,5.3vw,74px);font-weight:760;line-height:.99;letter-spacing:-.062em;margin:0 0 14px;text-wrap:balance;color:#f8f9f3}
+.mobile-promo-lead{margin:0;color:#d5ded6;line-height:1.55;max-width:43ch;font-size:clamp(14px,1.6vw,17px)}
+.mobile-promo-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:23px}
+.mobile-promo-actions button{font:inherit;font-size:13px;font-weight:710;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;min-height:44px;padding:9px 13px;cursor:pointer}
+.mobile-promo-main{background:#e4ff61;color:#15200e;border:1px solid #e4ff61}.mobile-promo-main:hover{background:#f0ffab}
+.mobile-promo-secondary{color:#f3f5eb;border:1px solid #81917d;background:#19231c}.mobile-promo-secondary:hover{background:#2b3d30}
+.mobile-promo-visual{position:relative;align-self:stretch;display:grid;grid-template-rows:1fr auto;min-height:330px;margin:12px 12px 12px 0;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse at 54% 44%,color-mix(in srgb,var(--promo-color) 53%,#17231c),#151c18 72%);border:1px solid #fff2}
+.mobile-promo-visual::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff0e 1px,transparent 1px),linear-gradient(90deg,#ffffff0e 1px,transparent 1px);background-size:32px 32px;mask-image:radial-gradient(ellipse,black,transparent 78%)}
+.mobile-promo-stage{position:relative;min-height:290px;display:grid;place-items:center;perspective:850px;contain:layout}
+.mobile-promo-phone{position:absolute;width:clamp(102px,34%,186px);aspect-ratio:300/569;box-sizing:content-box;border:4px solid #202925;border-radius:clamp(16px,2.5vw,29px);overflow:hidden;box-shadow:0 24px 44px #0008,0 0 0 1px #ffffff39;background:#1c2620;margin:0}
+.mobile-promo-phone img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.mobile-promo-phone.front{z-index:2;transform:translateX(-18%) rotate(-6deg);animation:mobile-promo-front .62s cubic-bezier(.2,.8,.3,1) both}
+.mobile-promo-phone.back{width:clamp(90px,28%,154px);transform:translate(65%,4%) rotate(12deg);opacity:.84;animation:mobile-promo-back .68s cubic-bezier(.2,.8,.3,1) both}
+@keyframes mobile-promo-front{from{opacity:.35;transform:translate(-18%,7%) rotate(-3deg) scale(.96)}to{opacity:1;transform:translateX(-18%) rotate(-6deg)}}
+@keyframes mobile-promo-back{from{opacity:.32;transform:translate(78%,8%) rotate(15deg) scale(.94)}to{opacity:.84;transform:translate(65%,4%) rotate(12deg)}}
+.mobile-promo-caption{z-index:3;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px;background:#101712ed;border-top:1px solid #fff2}
+.mobile-promo-caption span{display:block;color:#ced8ca;font-size:12px}.mobile-promo-caption strong{font-size:15px;display:block}
+.mobile-promo-controls{display:flex;gap:4px;align-items:center}
+.mobile-promo-controls button{font:inherit;display:grid;place-items:center;min-width:40px;min-height:40px;padding:3px;border-radius:8px;border:1px solid #637367;background:#1d2821;color:#f7f9f2;cursor:pointer}
+.mobile-promo-controls button:hover{background:#35453b}.mobile-promo :is(button,a):focus-visible{outline:2px solid #e4ff61;outline-offset:3px}
+.mobile-promo-compact{grid-template-columns:minmax(0,1.4fr) minmax(0,.75fr);min-height:230px;margin:20px 0 28px}
+.mobile-promo-compact :is(h1,h2){font-size:clamp(29px,3.8vw,47px)}.mobile-promo-compact .mobile-promo-copy{padding:clamp(18px,3vw,34px)}
+.mobile-promo-compact .mobile-promo-visual{min-height:200px;margin:8px 8px 8px 0}
+.mobile-promo-compact .mobile-promo-stage{min-height:200px}.mobile-promo-compact .mobile-promo-phone{width:clamp(68px,28%,101px)}
+.mobile-promo-compact .mobile-promo-phone.back{width:clamp(61px,25%,92px)}
+@media(max-width:750px){
+ .mobile-promo{min-height:0;grid-template-columns:1fr}
+ .mobile-promo-visual,.mobile-promo-compact .mobile-promo-visual{margin:0 8px 8px}
+ .mobile-promo-visual{min-height:0}
+ .mobile-promo-stage{min-height:clamp(245px,68vw,350px)}
+ .mobile-promo-compact .mobile-promo-stage{min-height:182px}
+ .mobile-promo-compact .mobile-promo-visual{min-height:0}
+}
+@media(prefers-reduced-motion:reduce){.mobile-promo-phone.front,.mobile-promo-phone.back{animation:none}}
+
+.mobile-references{box-sizing:border-box;width:min(940px,calc(100% - 24px));max-height:calc(100dvh - 28px);padding:clamp(15px,3vw,29px);border:1px solid #48564c;border-radius:18px;color:#f4f7ef;background:#141b17;overflow:auto;overscroll-behavior:contain;color-scheme:dark}
+.mobile-references::backdrop{background:#080b09ba}body:has(.mobile-references:modal){overflow:hidden}
+.mobile-references [hidden]{display:none}.mobile-ref-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.mobile-ref-header h2{margin:0;font-size:clamp(23px,4vw,41px);line-height:1.1;letter-spacing:-.04em}
+.mobile-ref-header p,.mobile-ref-count{margin:8px 0;color:#c5d2c8;line-height:1.5;font-size:14px}.mobile-ref-header .ib{flex:none}
+.mobile-ref-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end;gap:9px;margin-top:19px}
+.mobile-ref-filters label{display:grid;gap:4px;font-size:13px;font-weight:620}
+.mobile-ref-filters .in{width:100%;min-width:0;min-height:42px;border:1px solid #708175}
+.mobile-ref-filters .mobile-ref-check{display:flex;align-items:center;gap:7px;min-height:42px}.mobile-ref-check input{accent-color:#e4ff61;width:17px;height:17px}
+.mobile-ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px}
+.mobile-ref-card{min-width:0;display:flex;flex-direction:column;gap:8px;align-items:start;padding:14px;border:1px solid #3a4b41;border-radius:12px;background:#1d2a23}
+.mobile-ref-card h3{font-size:16px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.mobile-ref-card p,.mobile-ref-card small{font-size:12px;line-height:1.45;color:#d2ded5;margin:0;overflow-wrap:anywhere}
+.mobile-ref-card .mobile-ref-date{color:#d9f38b}.mobile-ref-card a{margin-top:auto;display:inline-flex;align-items:center;gap:6px;min-height:36px;color:#e4ff82;text-underline-offset:3px}
+.mobile-ref-palette{display:flex;gap:3px}.mobile-ref-palette span{width:24px;height:16px;background:var(--swatch);border:1px solid #ffffff48;border-radius:3px}
+.mobile-ref-footer{display:flex;justify-content:center;margin-top:15px}
+.mobile-references :is(button,a,input,select):focus-visible{outline:2px solid #e4ff61;outline-offset:3px}
+@media(max-width:610px){.mobile-ref-filters{grid-template-columns:1fr}.mobile-ref-filters .mobile-ref-check{min-height:32px}.mobile-ref-header p{font-size:13px}}
+
 .tpl-catalog-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:clamp(16px,4vw,66px);align-items:center;border:1px solid var(--sep);border-radius:26px;padding:clamp(21px,3vw,44px);background:radial-gradient(ellipse at 84% 12%,#253934,transparent 60%),#161b19;color:#f7f8f4}
 .tpl-catalog-hero h1{font-size:clamp(32px,4.5vw,65px);letter-spacing:-.06em;line-height:1.05;margin:0 0 12px}
 .tpl-catalog-hero p{max-width:40ch;line-height:1.5;margin:0;color:#d5ded7}
@@ -2846,8 +2908,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.76.0";
+const VERSION="5.76.1";
 const CHANGELOG=[
+ {v:"5.76.1",date:"2026-11-27",items:["Keşfet ve Şablonlar: hareketli telefon vitrini, canlı demolar ve 560 Figma referansı. Şablon kataloğunda 50 yeni tema görünümü ve sektörlere göre HTML dosyaları."]},
  {v:"5.76.0",date:"2026-11-27",items:["Beceriler: 24 sektör, 240 kurulum planı ve 4.800 sektörel görev. Bir iş ara, planı adım adım izle, Stüdyo’ya aktar veya Asistana danış."]},
  {v:"5.75.1",date:"2026-11-27",items:["Oracle ve SAP atölyesinde kod önerisi, teknik açıklama ve kabul adımları sağlayıcıya tanımlanan ortak yanıt biçimiyle alınıyor."]},
  {v:"5.75.0",date:"2026-11-27",items:[
@@ -7915,7 +7978,7 @@ function DiscoveryExtras({go,startTemplate}){
 function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl}){
  const {cat,q,sort,full}=filters;
  const [draft,setDraft]=useState(q);
- const [tdemo,setTdemo]=useState(null);
+ const [tdemo,setTdemo]=useState(null),[references,setReferences]=useState(false);
  const [result,setResult]=useState(null);const [fresh,setFresh]=useState([]);const [request,reload]=useState(0);
  const query=new URLSearchParams({cat,q,sort:sort==="yeni"?"yeni":""}).toString();
  const current=result?.query===query?result:null;
@@ -7961,6 +8024,8 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
   </div>`;
 
  return html`<div class="explore gallery-page">${filtersBar}
+  <${MobileTemplatePromo} compact=${true} onDemo=${setTdemo} onReferences=${()=>setReferences(true)}/>
+  ${references&&html`<${MobileReferences} close=${()=>setReferences(false)}/>`}
   <${ForYou} startTemplate=${startTemplate} onDemo=${setTdemo} onUse=${onTpl} go=${go} onSearch=${w=>{setDraft(w);onFilters({...filters,q:w})}}/>
   ${popular.length>0&&html`<${Shelf} title="Popüler uygulamalar" more=${()=>onFilters({...filters,sort:"pop",full:true})}>${popular.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
   ${games.length>0&&html`<${Shelf} title="Oyunlar" more=${()=>onFilters({...filters,cat:"oyun",full:false})}>${games.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
@@ -8182,6 +8247,7 @@ const TEMPLATE_USE_CASES={
  restoran:["Restoran ve kafelerde dijital menü, rezervasyon ve sipariş alma","Menü fotoğraflarını, fiyatları, çalışma saatlerini ve WhatsApp numaranızı değiştirin."],
 };
 const TPL_URL=id=>"templates/"+id+".html";
+const templateSectorSlug=name=>name.toLocaleLowerCase("tr").replace(/ı/g,"i").normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const TPL_TYPES={panel:"Yönetim paneli",site:"Web sitesi"};
 const TPL_DEVICES=[["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]];
 const TPL_APPEARANCES=[
@@ -8192,6 +8258,62 @@ const TPL_APPEARANCES=[
  ["atelier","Atelier"]
 ];
 const recommendedAppearance=t=>t.type==="panel"?"studio":"atelier";
+const TPL_STYLES=[
+ ["editorial","Editoryal"],
+ ["gallery","Galeri"],
+ ["card-grid","Kart düzeni"],
+ ["compact","Kompakt"],
+ ["blueprint","Teknik plan"],
+ ["studio","Stüdyo"],
+ ["poster","Afiş"],
+ ["soft","Organik"],
+ ["mono","Monospace"],
+ ["contrast","Yüksek kontrast"]
+];
+const TPL_PALETTES=[
+ ["linen","Keten","#6a4232","#9c624b","#f6efe6","#fffaf3","#31241c","#d7c7b5"],
+ ["botanical","Botanik","#285343","#37705a","#eaf2eb","#f8fcf8","#182e25","#bdcfc3"],
+ ["ocean","Okyanus","#254e80","#3a66a0","#ebf1f9","#f8fbff","#19293e","#bfcdde"],
+ ["plum","Erik","#6c365f","#91417b","#f7edf4","#fff9fd","#372338","#dec4d7"],
+ ["graphite","Grafit","#394854","#526c7b","#edf0f2","#fafcfd","#1e2a34","#c4cfd5"]
+];
+const TPL_THEME_GROUPS=TPL_STYLES.map(([style,label])=>({
+ label,
+ options:TPL_PALETTES.map(([palette,name,primary,accent,background,surface,text,line])=>({
+  id:style+"-"+palette,label:label+" · "+name,style,primary,accent,background,surface,text,line
+ }))
+}));
+const TPL_THEMES=new Map(TPL_THEME_GROUPS.flatMap(({options})=>options.map(theme=>[theme.id,theme])));
+const TPL_SECTOR_APPEARANCES={
+ "mimarlik-ic-mekan":"gallery-linen",
+ "cicekcilik-hediyelik":"soft-botanical",
+ "spor-wellness":"soft-graphite",
+ "etkinlik-organizasyon":"poster-plum",
+ "otomotiv-detailing":"contrast-graphite",
+ "kahve-kavurma-gurme":"editorial-linen",
+ "veteriner-evcil-hayvan":"soft-botanical",
+ "fotograf-produksiyon":"studio-plum",
+ "yemek-kafe":"editorial-linen",
+ "perakende-e-ticaret":"card-grid-botanical",
+ "kuafor-guzellik":"studio-plum",
+ "saglik":"card-grid-ocean",
+ "egitim":"blueprint-ocean",
+ "emlak":"gallery-botanical",
+ "otel-turizm":"gallery-ocean",
+ "teknik-servis":"blueprint-graphite",
+ "finans-muhasebe":"compact-ocean",
+ "ajans-crm":"card-grid-plum",
+ "is-satis":"compact-botanical",
+ "stok-depo":"mono-graphite",
+ "sigorta":"contrast-ocean"
+};
+const catalogTemplateAppearance=(template,appearance)=>appearance==="recommended"
+ ?TPL_SECTOR_APPEARANCES[templateSectorSlug(template.sector)]||"card-grid-linen"
+ :appearance;
+function templateThemeOptions(){
+ return html`${TPL_APPEARANCES.map(([id,label])=>html`<option key=${id} value=${id}>${label}</option>`)}
+  ${TPL_THEME_GROUPS.map(({label,options})=>html`<optgroup key=${label} label=${label}>${options.map(theme=>html`<option key=${theme.id} value=${theme.id}>${theme.label}</option>`)}</optgroup>`)}`;
+}
 const TPL_THEME_CSS=`
 :root[data-gm-template-theme]{--panel:var(--sf);--r:14px;--sh:0 16px 35px -27px #2c2118a0}
 :root[data-gm-template-theme="ivory"]{--pr:#6e4e36;--ac:#a4744c;--bg:#f7f1e8;--sf:#fffaf1;--sf2:#efe4d7;--tx:#30241e;--tx2:#564537;--tx3:#5f5043;--ln:#d8cabb;--cover:#5b402d}
@@ -8215,13 +8337,162 @@ const TPL_THEME_CSS=`
 :root[data-gm-template-theme="atelier"] :is(h1,.big){letter-spacing:-.063em}
 :root[data-gm-template-theme="atelier"] :is(.product,.offer,.history){border-radius:var(--r)}
 `;
-const TPL_THEME_SWITCH='<script>addEventListener("message",function(event){var d=event.data;if(event.source!==parent||d?.gm!=="template-theme")return;if(["ivory","noir","studio","atelier"].includes(d.theme))document.documentElement.dataset.gmTemplateTheme=d.theme;else delete document.documentElement.dataset.gmTemplateTheme});<\/script>';
+const TPL_COLLECTION_CSS=`
+:root[data-gm-template-style]{
+ --pr:var(--gm-pr);--ac:var(--gm-ac);--bg:var(--gm-bg);--sf:var(--gm-sf);--sf2:color-mix(in srgb,var(--gm-bg) 65%,var(--gm-ln));
+ --tx:var(--gm-tx);--tx2:color-mix(in srgb,var(--gm-tx) 83%,var(--gm-bg));--tx3:var(--tx2);--ln:var(--gm-ln);
+ --panel:var(--sf);--paper:var(--bg);--ink:var(--tx);--line:var(--ln);
+ --r:var(--gm-radius,12px);--sh:var(--gm-shadow,0 8px 22px -19px var(--tx));
+ --gm-display:system-ui,sans-serif;--gm-weight:750;--gm-tracking:-.042em;--gm-space:clamp(22px,4.2vw,58px);
+ color:var(--tx);background:var(--bg)
+}
+:root[data-gm-template-style][data-theme="dark"]{
+ --bg:#101820;--sf:#1c2730;--sf2:#263441;--tx:#f1f5f7;--ln:#435460;
+ --pr:color-mix(in srgb,var(--gm-pr) 70%,#111);--ac:color-mix(in srgb,var(--gm-ac) 40%,#fff)
+}
+[data-gm-template-style] :is(h1,h2,.big){font-family:var(--gm-display);font-weight:var(--gm-weight);letter-spacing:var(--gm-tracking);overflow-wrap:anywhere}
+[data-gm-template-style] :is(.hero h1,.hero h2){text-wrap:balance}
+[data-gm-template-style] :is(.card,.surface,.history,main>div.grid>article,main>div.grid>form,.workflow>form,.work>form,.offer,.kc,.kcard,.lcard){
+ background:var(--sf);color:var(--tx);border:var(--gm-border,1px) solid var(--ln);border-radius:var(--r);box-shadow:var(--sh)
+}
+[data-gm-template-style] :is(.work,.workflow,main>.grid,.pg>.grid,.lgrid,.bento){gap:var(--gm-gap,18px)}
+[data-gm-template-style] :is(.tb,.sb,.nav-in,body>header){background:var(--sf);color:var(--tx);border-color:var(--ln)}
+[data-gm-template-style] body>header>a{background:var(--sf2);color:var(--tx)}
+[data-gm-template-style] body>header{gap:12px}
+[data-gm-template-style] :is(.lead,.offer small,small.muted,footer):not(.hero *){color:var(--tx2)}
+[data-gm-template-style] :is(input,textarea,select):not([type=checkbox],[type=radio],[type=range]){
+ background:var(--sf);color:var(--tx);border-color:var(--ln);accent-color:var(--pr)
+}
+[data-gm-template-style] :is(button[type=submit],.btn:not(.g,.d,.w)){background:var(--gm-pr);color:white;border-radius:var(--gm-button,8px)}
+[data-gm-template-style] :focus-visible{outline:3px solid var(--gm-focus,var(--gm-ac));outline-offset:3px}
+[data-gm-template-style] .hero:has(.hero-copy){border-radius:var(--r);overflow:hidden}
+[data-gm-template-style] .hero-copy{padding:var(--gm-space);background:var(--gm-pr);color:#fff}
+[data-gm-template-style] .hero-copy p{color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) {
+ color:white;background:var(--gm-pr);border-radius:var(--r);padding:var(--gm-space);isolation:isolate;
+ position:relative;overflow:hidden;margin-bottom:var(--gm-gap,18px)
+}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p,.lead,a){color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g))::after{opacity:var(--gm-art-opacity,.75)}
+[data-gm-template-style] .hero-g{gap:var(--gm-space)}
+[data-gm-template-style] .hero-g h1 em{background:none;color:var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .hero-g h1 em{color:var(--ac)}
+[data-gm-template-style] .offer[aria-pressed="true"]{background:var(--sf2);border-color:var(--gm-pr);box-shadow:inset 4px 0 var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .nv.on{color:var(--ac)}
+[data-gm-template-style][data-theme="dark"] .doc{--ln:#c4cfd5;color-scheme:light}
+[data-gm-template-style] .hero-art{background-position:var(--gm-photo,center);filter:var(--gm-filter,none)}
+
+[data-gm-template-style="editorial"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:2px;--gm-gap:24px;--gm-shadow:none;--gm-button:2px}
+[data-gm-template-style="editorial"] :is(.tb,.nav-in,body>header){border-block-end:2px solid var(--gm-pr)}
+[data-gm-template-style="editorial"] :is(h1.big,.hero h1){max-width:17ch}
+[data-gm-template-style="editorial"] .hero-art{--gm-photo:center 44%;--gm-filter:saturate(.78)}
+
+[data-gm-template-style="gallery"]{--gm-radius:18px;--gm-gap:24px;--gm-space:clamp(25px,5vw,76px);--gm-shadow:0 16px 32px -26px var(--tx)}
+[data-gm-template-style="gallery"] .hero:has(.hero-copy){display:flex;flex-direction:column;min-height:0}
+[data-gm-template-style="gallery"] .hero-art{order:-1;min-height:clamp(210px,36vw,450px);--gm-photo:center 59%}
+[data-gm-template-style="gallery"] .hero-copy{align-self:stretch}
+[data-gm-template-style="gallery"] :is(.hero-g .lim,.kpi){border-bottom:5px solid var(--gm-ac)}
+[data-gm-template-style="gallery"] .hero:not(:has(.hero-copy,.hero-g)){min-height:clamp(240px,31vw,390px);display:grid;align-content:center}
+
+[data-gm-template-style="card-grid"]{--gm-radius:20px;--gm-gap:12px;--gm-button:12px;--gm-shadow:0 9px 19px -17px var(--tx)}
+[data-gm-template-style="card-grid"] :is(.card,.offer,.surface,.history){border-block-start:4px solid var(--gm-ac)}
+[data-gm-template-style="card-grid"] :is(.tb,.nav-in,.hero-copy){border-radius:var(--r)}
+@media(min-width:761px){
+ [data-gm-template-style="card-grid"] .hero:has(.hero-copy){grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:12px;background:transparent}
+ [data-gm-template-style="card-grid"] .hero-art{border-radius:var(--r)}
+ [data-gm-template-style="card-grid"] .work{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+[data-gm-template-style="compact"]{--gm-radius:7px;--gm-gap:8px;--gm-space:clamp(16px,2.7vw,35px);--gm-tracking:-.03em;--gm-shadow:none}
+[data-gm-template-style="compact"] :is(.card,.offer,.surface,.history){padding:clamp(10px,1.6vw,18px)}
+[data-gm-template-style="compact"] .hero:has(.hero-copy){min-height:300px}
+[data-gm-template-style="compact"] .hero-art{min-height:clamp(150px,29vw,225px)}
+[data-gm-template-style="compact"] .hero:not(:has(.hero-copy,.hero-g)){min-height:0}
+[data-gm-template-style="compact"] :is(.hero h1,h1.big){font-size:clamp(29px,5vw,52px)}
+@media(min-width:980px){[data-gm-template-style="compact"] .sb{width:211px}}
+
+[data-gm-template-style="blueprint"]{--gm-radius:4px;--gm-shadow:none;--gm-button:4px;--gm-gap:16px}
+[data-gm-template-style="blueprint"] .hero-copy,[data-gm-template-style="blueprint"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:repeating-linear-gradient(0deg,transparent 0 23px,#fff2 24px 25px),repeating-linear-gradient(90deg,transparent 0 23px,#fff2 24px 25px)
+}
+[data-gm-template-style="blueprint"] :is(.card,.surface,.history,.offer){border-inline-start:4px solid var(--gm-ac)}
+[data-gm-template-style="blueprint"] .hero-art{--gm-filter:contrast(1.14) saturate(.7)}
+
+[data-gm-template-style="studio"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:26px;--gm-gap:22px;--gm-button:99px}
+[data-gm-template-style="studio"] .hero-art{--gm-photo:center 35%;--gm-filter:saturate(.89)}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)){text-align:center}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p){margin-inline:auto}
+[data-gm-template-style="studio"] :is(.tb,.nav-in,.kpi){border-block-start:3px solid var(--gm-ac)}
+@media(min-width:761px){
+ [data-gm-template-style="studio"] .hero:has(.hero-copy){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ [data-gm-template-style="studio"] .hero-art{grid-column:1;grid-row:1}
+ [data-gm-template-style="studio"] .hero-copy{grid-column:2;grid-row:1}
+}
+
+[data-gm-template-style="poster"]{--gm-display:"Arial Black",system-ui,sans-serif;--gm-weight:900;--gm-radius:0px;--gm-gap:20px;--gm-border:2px;--gm-button:0px;--gm-shadow:none}
+[data-gm-template-style="poster"] :is(.hero h1,h1.big){line-height:.96;font-size:clamp(37px,6.3vw,84px);max-width:15ch}
+[data-gm-template-style="poster"] :is(.hero-copy,.tb,body>header,.nav-in){border-inline-start:7px solid var(--gm-ac)}
+[data-gm-template-style="poster"] .hero-art{--gm-filter:contrast(1.13) saturate(1.12)}
+
+[data-gm-template-style="soft"]{--gm-display:system-ui,sans-serif;--gm-weight:650;--gm-radius:30px;--gm-gap:22px;--gm-button:99px;--gm-shadow:0 16px 40px -31px var(--tx)}
+[data-gm-template-style="soft"] .hero-copy,[data-gm-template-style="soft"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--gm-pr) 55%,var(--gm-ac)),transparent 67%)
+}
+[data-gm-template-style="soft"] :is(.nav-in,.kpi,.offer){border-radius:var(--r)}
+[data-gm-template-style="soft"] .hero-art{--gm-filter:saturate(.83) brightness(1.04)}
+
+[data-gm-template-style="mono"]{--gm-display:ui-monospace,monospace;--gm-weight:700;--gm-radius:3px;--gm-tracking:-.06em;--gm-gap:16px;--gm-shadow:none}
+[data-gm-template-style="mono"] :is(.eyb,.sector,.card h3,.offer small,footer){font-family:var(--gm-display)}
+[data-gm-template-style="mono"] :is(.kpi,.offer,.history){border-style:dashed}
+[data-gm-template-style="mono"] .hero-art{--gm-filter:grayscale(.82) contrast(1.08)}
+[data-gm-template-style="mono"] .hero:not(:has(.hero-copy,.hero-g))::after{filter:grayscale(.6)}
+
+[data-gm-template-style="contrast"]{--gm-radius:5px;--gm-gap:20px;--gm-border:2px;--gm-weight:850;--gm-shadow:4px 4px 0 var(--gm-ln);--gm-focus:#0d57ca}
+[data-gm-template-style="contrast"] :is(.tb,.nav-in,body>header,.sb){border-color:var(--tx);box-shadow:none}
+[data-gm-template-style="contrast"] :is(.card,.surface,.history,.offer){border-color:var(--tx)}
+[data-gm-template-style="contrast"] .hero-art{--gm-filter:contrast(1.16) saturate(.95)}
+[data-gm-template-style="contrast"] :is(.hero-copy,.hero:not(:has(.hero-copy,.hero-g))){background-color:var(--gm-pr);--gm-art-opacity:.57}
+@media(max-width:480px){
+ [data-gm-template-style]{--gm-gap:12px}
+ [data-gm-template-style] .hero-copy{padding:22px}
+ [data-gm-template-style] .hero-g{gap:18px}
+ [data-gm-template-style="poster"] :is(.hero h1,h1.big){font-size:clamp(31px,9.5vw,48px)}
+}
+@media print{
+ [data-gm-template-style]{--sh:none}
+ [data-gm-template-style] :is(.hero,.hero-copy){background:#fff!important;color:#111!important}
+ [data-gm-template-style] .hero :is(h1,h2,p){color:#111!important}
+}
+`;
+function templateThemeProperties({primary,accent,background,surface,text,line}){
+ return {"--gm-pr":primary,"--gm-ac":accent,"--gm-bg":background,"--gm-sf":surface,"--gm-tx":text,"--gm-ln":line};
+}
+const TPL_THEME_PREVIEW_SCRIPT='<script data-gm-tpl-preview>('+function(themes,legacy){
+ const root=document.documentElement;
+ addEventListener("message",event=>{
+  const d=event.data;
+  if(event.source!==parent||d?.gm!=="template-theme")return;
+  const theme=Object.hasOwn(themes,d.theme)?themes[d.theme]:null;
+  if(theme||legacy.includes(d.theme))root.dataset.gmTemplateTheme=d.theme;
+  else delete root.dataset.gmTemplateTheme;
+  if(theme){
+   root.dataset.gmTemplateStyle=theme.style;
+   Object.entries(theme.properties).forEach(([k,v])=>root.style.setProperty(k,v));
+  }else{
+   delete root.dataset.gmTemplateStyle;
+   for(const key of ["--gm-pr","--gm-ac","--gm-bg","--gm-sf","--gm-tx","--gm-ln"])root.style.removeProperty(key);
+  }
+ });
+}.toString()+')('+JSON.stringify(Object.fromEntries([...TPL_THEMES].map(([id,theme])=>[id,{style:theme.style,properties:templateThemeProperties(theme)}])))+','+JSON.stringify(TPL_APPEARANCES.map(([id])=>id).filter(Boolean))+');<\/script>';
 function templateAppearance(source,appearance,preview=false){
- const active=TPL_APPEARANCES.some(([id])=>id&&id===appearance);
- if(!active&&!preview)return source;
- const sheet='<style data-gm-tpl-theme>'+TPL_THEME_CSS+'</style>';
- const themed=active?source.replace(/<html\b/i,'<html data-gm-template-theme="'+appearance+'"'):source;
- return themed.replace(/<\/head\s*>/i,close=>sheet+(preview?TPL_THEME_SWITCH:"")+close);
+ const theme=TPL_THEMES.get(appearance);
+ const legacy=TPL_APPEARANCES.some(([id])=>id&&id===appearance);
+ if(!theme&&!legacy&&!preview)return source;
+ const attributes=theme?' data-gm-template-theme="'+theme.id+'" data-gm-template-style="'+theme.style+'"':legacy?' data-gm-template-theme="'+appearance+'"':"";
+ const themed=attributes?source.replace(/<html\b/i,open=>open+attributes):source;
+ const properties=theme?':root{'+Object.entries(templateThemeProperties(theme)).map(([key,value])=>key+':'+value).join(';')+'}':"";
+ const sheet='<style data-gm-tpl-theme>'+((legacy||preview)?TPL_THEME_CSS:"")+((theme||preview)?TPL_COLLECTION_CSS:"")+properties+'</style>';
+ return themed.replace(/<\/head\s*>/i,close=>sheet+(preview?TPL_THEME_PREVIEW_SCRIPT:"")+close);
 }
 const activeTemplateProject=account=>LS.get("studio:"+(account||"guest"),null)||(account?null:LS.get("studio",null));
 const tplNumber=new Intl.NumberFormat("tr-TR");
@@ -8235,10 +8506,46 @@ async function loadTemplate(id,signal){
 function ProductMark({t}){
  return html`<span class="product-mark pm2"><${AppIcon2} emoji=${t.workflow?t.emoji:"brand_"+t.id} color=${t.pr} size=${46}/></span>`;
 }
+function TplThemeThumbnail({id,appearance,container}){
+ const [source,setSource]=useState("");
+ const [visible,setVisible]=useState(false);
+ useEffect(()=>{
+  const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting));
+  observer.observe(container.current);
+  return ()=>observer.disconnect();
+ },[container]);
+ useEffect(()=>{
+  if(!visible)return;
+  const controller=new AbortController();
+  loadTemplate(id,controller.signal)
+   .then(source=>{if(!controller.signal.aborted)setSource(source)})
+   .catch(()=>{});
+  return ()=>controller.abort();
+ },[id,visible]);
+ if(!source||!visible)return null;
+ const preview=templateAppearance(source,appearance);
+ return html`<${TplThumbFrame} mode="desktop" source=${preview}/><${TplThumbFrame} mode="phone" source=${preview}/>`;
+}
+function TplThumbFrame({mode,source}){
+ const box=useRef(null),[scale,setScale]=useState(0),[ready,setReady]=useState(false);
+ const width=mode==="desktop"?1160:390;
+ useEffect(()=>{
+  const observer=new ResizeObserver(([entry])=>setScale(entry.contentRect.width/width));
+  observer.observe(box.current);
+  return ()=>observer.disconnect();
+ },[width]);
+ return html`<div ref=${box} class=${"tpl-thumb-frame "+(mode==="desktop"?"tpl-web-shot":"tpl-phone-shot")} aria-hidden="true" style=${{opacity:ready?1:0}}>
+  ${scale>0&&html`<iframe title="Tema önizlemesi" tabIndex="-1" sandbox="allow-scripts" scrolling="no" srcDoc=${withStoreShim(source)}
+   style=${{width,height:960,transform:"scale("+scale+")"}} onLoad=${()=>setReady(true)}></iframe>`}
+ </div>`;
+}
 function TplThumb({t,eager=false}){
- const base="templates/previews/"+t.id+(t.appearance?"-"+t.appearance:"");
- return html`<div class="tpl-device-art" style=${{"--tpl-color":t.pr}}>
+ const art=useRef(null);
+ const theme=TPL_THEMES.get(t.appearance);
+ const base="templates/previews/"+t.id+(!theme&&t.appearance?"-"+t.appearance:"");
+ return html`<div class="tpl-device-art" ref=${art} style=${{"--tpl-color":theme?.primary||t.pr}}>
   <img class="tpl-web-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" masaüstü görünümü"} src=${base+".webp"}/>
+  ${theme&&html`<${TplThemeThumbnail} key=${t.id} id=${t.id} appearance=${t.appearance} container=${art}/>`}
   <img class="tpl-phone-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" mobil görünümü"} src=${base+"-mobile.webp"}/>
  </div>`;
 }
@@ -8289,16 +8596,124 @@ function TplDemo({t,close,onUse,canAdapt=false}){
   </div>`}
   <div class="product-caption tpl-preview-tools" hidden=${details}>
    <div class="seg" role="group" aria-label="Önizleme cihazı">${TPL_DEVICES.map(([k,ic,l])=>html`<button key=${k} aria-label=${l} aria-pressed=${dev===k} class=${dev===k?"on":""} onClick=${()=>setDev(k)}><${Icon} n=${ic} s=${16}/>${l}</button>`)}</div>
-   <label class="tpl-theme-label">Tema <select aria-label="Önizleme teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}>${TPL_APPEARANCES.map(([id,label])=>html`<option key=${id} value=${id}>${label}</option>`)}</select></label>
+   <label class="tpl-theme-label">Tema <select aria-label="Önizleme teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}>${templateThemeOptions()}</select></label>
    ${!appearance&&html`<a class="ib" href=${TPL_URL(t.id)} target="_blank" rel="noopener" aria-label="Demoyu yeni sekmede aç" title="Demoyu yeni sekmede aç"><${Icon} n="external" s=${16}/></a>`}
   </div>
   <div class="fp-stage product-stage" hidden=${details}>
    ${failure?html`<p role="alert">${failure} <button class="btn s" onClick=${()=>setFailure("")}>Tekrar dene</button></p>`:source?html`<iframe ref=${frame} onLoad=${applyAppearance} title=${t.name} srcDoc=${source} sandbox="allow-scripts allow-forms allow-modals allow-popups" class=${"frame-"+(dev==="phone"?"m":dev==="tablet"?"t":"d")}></iframe>`:html`<p role="status">Önizleme yükleniyor…</p>`}
   </div></dialog>`,document.body);
 }
+const MOBILE_PROMO_SCENES=[
+ {id:"sofra",secondary:"adisyon",color:"#925134",caption:"Menü ve masa rezervasyonu"},
+ {id:"percem",secondary:"sira",color:"#865364",caption:"Hizmet ve randevu seçimi"},
+ {id:"konak",secondary:"rota",color:"#328385",caption:"Oda seçimi ve konaklama talebi"}
+];
+function MobileTemplatePromo({compact=false,onDemo,onReferences}){
+ const heading=compact?"h2":"h1";
+ const [active,setActive]=useState(0),[playing,setPlaying]=useState(true);
+ const [visible,setVisible]=useState(false),[reduced,setReduced]=useState(()=>matchMedia("(prefers-reduced-motion: reduce)").matches);
+ const stage=useRef(null);
+ const scene=MOBILE_PROMO_SCENES[active],template=TEMPLATE_LIB.find(t=>t.id===scene.id);
+ const move=delta=>setActive(n=>(n+delta+MOBILE_PROMO_SCENES.length)%MOBILE_PROMO_SCENES.length);
+ const rotating=!compact&&playing&&!reduced&&visible;
+ useEffect(()=>{
+  if(compact)return;
+  const motion=matchMedia("(prefers-reduced-motion: reduce)");
+  const update=()=>setReduced(motion.matches);
+  const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting),{threshold:.25});
+  observer.observe(stage.current);
+  motion.addEventListener("change",update);
+  return ()=>{observer.disconnect();motion.removeEventListener("change",update)};
+ },[compact]);
+ useEffect(()=>{
+  if(!rotating)return;
+  const timer=setInterval(()=>{if(!document.hidden)move(1)},6500);
+  return ()=>clearInterval(timer);
+ },[rotating]);
+ const choose=delta=>{setPlaying(false);move(delta)};
+ const openDemo=()=>onDemo({...template,previewDevice:"phone",appearance:catalogTemplateAppearance(template,"recommended")});
+ return html`<section class=${"mobile-promo"+(compact?" mobile-promo-compact":"")} aria-label="Mobil uygulama şablonları" style=${{"--promo-color":scene.color}}>
+  <div class="mobile-promo-copy">
+   <p class="mobile-promo-kicker"><${Icon} n="phone" s=${15}/> ${compact?"Mobil şablon seçkisi":"Gitmapp şablonları"}</p>
+   <${heading}>${compact?"Uygulamanı telefonda dene.":"İşin, müşterinin cebinde."}</${heading}>
+   <p class="mobile-promo-lead">${compact?"Sipariş, rezervasyon ve randevu akışlarını keşfet.":"Siparişten rezervasyona, müşterinin kullanacağı ekranları canlı dene. Beğendiğin şablonu Stüdyo’da düzenle."}</p>
+   <div class="mobile-promo-actions">
+    <button class="mobile-promo-main" type="button" onClick=${openDemo}><${Icon} n="play" s=${16}/> Telefonda dene</button>
+    <button class="mobile-promo-secondary" type="button" onClick=${onReferences}>Figma referansları <${Icon} n="arrowRight" s=${16}/></button>
+   </div>
+  </div>
+  <div class="mobile-promo-visual" ref=${stage}>
+   <div class="mobile-promo-stage" aria-hidden="true" key=${scene.id}>
+    <figure class="mobile-promo-phone back"><img alt="" width="300" height="569" loading=${compact?"lazy":"eager"} src=${"templates/previews/"+scene.secondary+"-mobile.webp"}/></figure>
+    <figure class="mobile-promo-phone front"><img alt="" width="300" height="569" loading=${compact?"lazy":"eager"} src=${"templates/previews/"+scene.id+"-mobile.webp"}/></figure>
+   </div>
+   ${!compact&&html`<div class="mobile-promo-caption">
+    <div aria-live=${rotating?"off":"polite"}><strong>${template.name}</strong><span>${scene.caption}</span></div>
+    <div class="mobile-promo-controls" role="group" aria-label="Mobil tanıtım kontrolleri">
+     <button type="button" aria-label="Önceki mobil şablon" onClick=${()=>choose(-1)}><${Icon} n="chevLeft" s=${17}/></button>
+     <button type="button" aria-label="Sonraki mobil şablon" onClick=${()=>choose(1)}><${Icon} n="chevRight" s=${17}/></button>
+     ${!reduced&&html`<button type="button" aria-label=${playing?"Otomatik geçişi durdur":"Otomatik geçişi başlat"} onClick=${()=>setPlaying(v=>!v)}><span aria-hidden="true">${playing?"Ⅱ":"▶"}</span></button>`}
+    </div>
+   </div>`}
+  </div>
+ </section>`;
+}
+const mobileRefNormalize=value=>value.toLocaleLowerCase("tr").normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/ı/g,"i");
+const MOBILE_REF_STEP=12;
+function MobileReferences({close,initialSector=""}){
+ const dialog=useRef(null);
+ const [items,setItems]=useState(null),[failed,setFailed]=useState(false),[attempt,retry]=useState(0);
+ const [sector,setSector]=useState(initialSector),[query,setQuery]=useState(""),[recent,setRecent]=useState(false),[limit,setLimit]=useState(MOBILE_REF_STEP);
+ useEffect(()=>{
+  const el=dialog.current,trigger=document.activeElement;
+  el.showModal();
+  return ()=>{el.close();if(trigger?.isConnected)trigger.focus({preventScroll:true})};
+ },[]);
+ useEffect(()=>{
+  const controller=new AbortController();
+  fetch("templates/mobile-references.json",{signal:controller.signal}).then(response=>{
+   if(!response.ok)throw new Error("Referanslar yüklenemedi");
+   return response.json();
+  }).then(data=>{
+   if(!Array.isArray(data))throw new Error("Referanslar okunamadı");
+   if(!controller.signal.aborted)setItems(data);
+  }).catch(()=>{if(!controller.signal.aborted)setFailed(true)});
+  return ()=>controller.abort();
+ },[attempt]);
+ const sectors=[...new Set((items||[]).flatMap(row=>[row.sector,...row.related]))].sort((a,b)=>a.localeCompare(b,"tr"));
+ const words=mobileRefNormalize(query).trim().split(/\s+/).filter(Boolean);
+ const matches=(items||[]).filter(row=>{
+  if((sector&&row.sector!==sector&&!row.related.includes(sector))||(recent&&!row.recent))return false;
+  const text=mobileRefNormalize([row.title,row.sector,...row.related,row.note].join(" "));
+  return words.every(word=>text.includes(word));
+ });
+ return ReactDOM.createPortal(html`<dialog class="mobile-references" ref=${dialog} aria-labelledby="mobile-ref-title" onCancel=${e=>{e.preventDefault();close()}}>
+  <header class="mobile-ref-header">
+   <div><h2 id="mobile-ref-title">Mobil tasarım referansları</h2><p>Envato’daki Figma uyumlu ekranları sektörüne göre incele. Her kart kaynak ürünün önizlemesini açar.</p></div>
+   <button type="button" class="ib" aria-label="Referansları kapat" onClick=${close}><${Icon} n="x" s=${18}/></button>
+  </header>
+  ${failed?html`<div role="alert"><p>Referanslar yüklenemedi.</p><button type="button" class="btn g" onClick=${()=>{setFailed(false);retry(n=>n+1)}}>Tekrar dene</button></div>`:
+   !items?html`<p role="status" class="mobile-ref-count">Referanslar yükleniyor…</p>`:html`
+   <div class="mobile-ref-filters">
+    <label>Referans sektörü<select class="in" value=${sector} onChange=${e=>{setSector(e.target.value);setLimit(MOBILE_REF_STEP)}}><option value="">Tüm sektörler</option>${sectors.map(name=>html`<option key=${name} value=${name}>${name}</option>`)}</select></label>
+    <label>Referans ara<input type="search" class="in" placeholder="Ör. rezervasyon" value=${query} onInput=${e=>{setQuery(e.target.value);setLimit(MOBILE_REF_STEP)}}/></label>
+    <label class="mobile-ref-check"><input type="checkbox" checked=${recent} onChange=${e=>{setRecent(e.target.checked);setLimit(MOBILE_REF_STEP)}}/> 2026’da eklenenler</label>
+   </div>
+   <p class="mobile-ref-count" role="status">${matches.length?tplNumber.format(matches.length)+" referans":"Bu filtrelere uygun referans bulunamadı."}</p>
+   <div class="mobile-ref-grid">${matches.slice(0,limit).map(row=>html`<article key=${row.url} class="mobile-ref-card">
+    <small>${row.sector} · ${row.kind}</small><h3>${row.title}</h3><small>${row.formats}</small>
+    <small class=${row.recent?"mobile-ref-date":""}>${row.recent?"2026 · Envato’nun son 6 ay filtresi":"Yayın tarihi belirtilmemiş"}</small>
+    ${row.colors.length>0&&html`<div class="mobile-ref-palette" role="img" aria-label=${"Yaklaşık renk paleti "+row.colors.join(", ")}>${row.colors.map(color=>html`<span key=${color} style=${{"--swatch":color}}></span>`)}</div>`}
+    ${row.note&&html`<p>${row.note}</p>`}
+    <a href=${row.url} target="_blank" rel="noopener noreferrer" aria-label=${row.title+" · Envato’da önizle (yeni sekme)"}>Envato’da önizle <${Icon} n="external" s=${14}/></a>
+   </article>`)} </div>
+   ${matches.length>limit&&html`<div class="mobile-ref-footer"><button type="button" class="btn g" onClick=${()=>setLimit(n=>n+MOBILE_REF_STEP)}>Daha fazla referans göster</button></div>`}`}
+ </dialog>`,document.body);
+}
+
 function TemplatesPage({onUse,canAdapt,go}){
  const [type,setType]=useState(""),[sector,setSector]=useState(""),[demo,setDemo]=useState(null),[appearance,setAppearance]=useState("recommended");
- const [premiumOnly,setPremiumOnly]=useState(false),[search,setSearch]=useState(""),[filtersOpen,setFiltersOpen]=useState(false);
+ const [premiumOnly,setPremiumOnly]=useState(false),[search,setSearch]=useState(""),[filtersOpen,setFiltersOpen]=useState(false),[references,setReferences]=useState(false);
  const query=search.trim().toLocaleLowerCase("tr");
  const sectors=[...new Set(TEMPLATE_LIB.map(t=>t.sector))].sort((a,b)=>a.localeCompare(b,"tr"));
  const ordered=[...featuredTemplates.map(catalogTemplate).filter(Boolean),...TEMPLATE_LIB.filter(t=>!featuredTemplates.includes(t.id))];
@@ -8306,15 +8721,17 @@ function TemplatesPage({onUse,canAdapt,go}){
  const themed=t=>({...t,editorial:appearance==="recommended",appearance:appearance==="recommended"?recommendedAppearance(t):appearance});
  return html`<div class="explore tpl-catalog gallery-page">
   <${CollectionNav} page="sablonlar" go=${go}/>
-  <${CollectionHero} title="Şablonlar" copy="Web ve mobil tasarımları incele. Seçtiğin şablonu canlı dene, ardından Stüdyo’da kendi projenle kullan." image="mimari" caption="Mimari portföyünün web ve telefon sunumu" action=${()=>setDemo({...themed(catalogTemplate("mimari")),showDetails:true})} cta="Portföy şablonunu incele"/>
+  <${MobileTemplatePromo} onDemo=${setDemo} onReferences=${()=>setReferences(true)}/>
+  ${references&&html`<${MobileReferences} initialSector=${sector} close=${()=>setReferences(false)}/>`}
   <${CatalogNav} page="sablonlar" go=${go}/>
   <div class="tp-filter gallery-filters">
    <input type="search" class="in" aria-label="Şablon ara" placeholder="Şablon ara" value=${search} onInput=${e=>setSearch(e.target.value)}/>
    <button type="button" class="chip filter-toggle" aria-expanded=${filtersOpen} aria-controls="template-filter-options" onClick=${()=>setFiltersOpen(!filtersOpen)}><${Icon} n="sliders" s=${15}/> Filtreler${[type,sector,premiumOnly,appearance!=="recommended"].filter(Boolean).length||""}</button>
    <div id="template-filter-options" class=${"gallery-filter-options"+(filtersOpen?" show":"")}><div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Paneller"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <button class=${"chip"+(premiumOnly?" on":"")} aria-pressed=${premiumOnly} onClick=${()=>setPremiumOnly(!premiumOnly)}>Premium koleksiyon</button>
-   <label class="tpl-theme-label">Tema <select aria-label="Katalog teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}><option value="recommended">Önerilen</option>${TPL_APPEARANCES.map(([id,label])=>html`<option key=${id} value=${id}>${label}</option>`)}</select></label>
+   <label class="tpl-theme-label">Tema <select aria-label="Katalog teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}><option value="recommended">Önerilen</option>${templateThemeOptions()}</select></label>
    <label class="tpl-sector">Kategori <select class="in" aria-label="Kategori" value=${sector} onChange=${e=>setSector(e.target.value)}><option value="">Tüm kategoriler</option>${sectors.map(s=>html`<option key=${s} value=${s}>${s}</option>`)}</select></label>
+   <a class="chip" href=${"templates/sectors/index.html"+(sector?"#"+templateSectorSlug(sector):"")}>Sektör HTML dosyaları</a>
   </div></div>
   <section class="tpl-group"><div class="gallery-heading"><h2>${sector||"Şablon koleksiyonu"}</h2><small role="status">${matches.length} şablon</small></div><div class="gallery-grid tp-grid">${matches.map(t=>html`<${TplCard} key=${t.id} t=${themed(t)} onDemo=${setDemo}/>`)}</div></section>
   ${!matches.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSector("");setPremiumOnly(false);setSearch("")}}>Filtreleri temizle</button></div>`}
@@ -10329,7 +10746,7 @@ function App(){
  const useTemplate=async (t,active=()=>true)=>{try{
    if(t.adaptExisting){
     if(!activeTemplateProject(auth.user?.id)?.html)throw new Error("Önce Stüdyo’da uyarlamak istediğiniz projeyi açın.");
-    const theme=TPL_APPEARANCES.find(([id])=>id===(t.appearance||""))?.[1];
+    const theme=TPL_THEMES.get(t.appearance)?.label||TPL_APPEARANCES.find(([id])=>id===(t.appearance||""))?.[1]||"Özgün";
     setSeed({templateRequest:`“${t.name}” şablonunun iş akışını açık projeme uyarla. ${t.desc} Özellikler: ${t.feat.join(", ")}. Görünüm: ${theme}. Mevcut sayfaları ve verileri koruyarak yeni iş akışını ayrı bir bölüm olarak ekle.`});
     setView("studio");
     return;

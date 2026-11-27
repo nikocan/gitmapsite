@@ -143,3 +143,11 @@ Katalog 24 sektör, 240 ayrı iş akışı ve sektör başına 200 uygulama gör
 - Keşif, ayrıntı ve uygulama arasındaki geçiş için aşamalı gösterim kullanıldı. Kullanıcı aktarmadan önce çıktıyı ve kabul koşulunu görür. Klavye ve telefon kullanımına uygun yerleşim için W3C’nin diyalog ve erişilebilirlik kılavuzlarından yararlanıldı. [Agent Skills](https://agentskills.io/specification) · [Microsoft Human–AI Interaction](https://www.microsoft.com/en-us/haxtoolkit/ai-guidelines/) · [W3C modal diyalog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) · [WCAG 2.2](https://www.w3.org/TR/WCAG22/)
 
 Sektörel kaynaklar veri ve iş akışlarını araştırmak için referanstır. Katalogdaki özgün yönergeler Stüdyo’nun örnek veriyle başlatılan uygulama üretimine yön verir. Canlı ödeme, bildirim ve dış sistem akışları ilgili proje bağlantılarının kurulmasını gerektirir. Beceri tercihleri tarayıcıda saklanır. Planlama, Ajan ve üretim isteklerine ilgili etkin sektör becerilerinden en fazla ikisi, istem bütçesi içinde eklenir.
+
+## Sektör şablonları
+
+**Şablonlar** sayfasında kategori ve tema seçerek telefon, tablet veya masaüstü önizlemesini açın. **Sektör HTML dosyaları** seçilen kategorinin 50 görünümünü ayrı dosyalar olarak listeler.
+
+Bir şablon veya tema değiştiğinde sektör dosyalarını tekrar üretmek için `node tools/build_sector_themes.mjs` çalıştırın. Dosyalar `templates/sectors/` altında üretilir. Sektör dizini ve Stüdyo aktarımı `python tools/acceptance/sector_themes.py` ile doğrulanır.
+
+**Keşfet** ve **Şablonlar** içindeki **Figma referansları** seçkisini güncellemek için `validation/catalog/envato-mobil-2026.csv` dosyasını düzenleyip `python tools/build_mobile_references.py` çalıştırın.

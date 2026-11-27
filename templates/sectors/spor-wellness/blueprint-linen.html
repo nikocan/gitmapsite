@@ -1,0 +1,171 @@
+<!doctype html><html data-gm-template-theme="blueprint-linen" data-gm-template-style="blueprint" lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mola Seans · Teknik plan · Keten</title>
+<!-- Gitmapp hazır şablonu · Randevu UI kiti -->
+<style>
+:root{--pr:#285448;--ac:#a39b6d;--bg:#eaf1ed;--sf:#fafffa;--sf2:#dcebe3;--tx:#152b24;--tx2:#405b50;--ln:#c8ddd1;--r:18px;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,sans-serif}*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1120px;margin:auto;padding:18px clamp(15px,4vw,45px)}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ln);gap:12px}header strong{font:600 26px Georgia,serif}nav{display:flex;gap:6px}button,input{font:inherit}button{cursor:pointer;min-height:42px;padding:8px 12px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:9px}.primary,button[aria-current=true],button[aria-pressed=true]{background:var(--pr);color:white;border-color:var(--pr)}button:disabled{opacity:.55;cursor:default}:focus-visible{outline:2px solid var(--pr);outline-offset:3px}.hero{display:grid;grid-template-columns:1fr 1fr;background:var(--sf2);border-radius:var(--r);overflow:hidden}.hero>div{padding:clamp(19px,4vw,50px);align-self:center}.art{min-height:260px;background:var(--sf) url("../../art/pilates.webp") center/cover}.split,.offer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.card{padding:clamp(13px,3vw,28px);background:var(--sf);border:1px solid var(--ln);border-radius:var(--r)}.card>*+*,.hero p,.card time{margin-top:11px}h1{font:500 clamp(34px,6vw,66px)/1 Georgia,serif;letter-spacing:-.04em;margin:0}h2,h3,p{margin:0}p,footer{color:var(--tx2)}.slot-list{display:flex;flex-wrap:wrap;gap:6px}.date input{display:block;margin-top:4px;min-height:42px;padding:7px;border:1px solid var(--ln);border-radius:7px;color:var(--tx);background:var(--sf)}.visit{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.visit+.visit{margin-top:10px}[role=status]{min-height:1.5em}@media(max-width:620px){header button{font-size:13px;padding-inline:8px}.hero,.split,.offer-list{grid-template-columns:1fr}.art{min-height:178px;order:-1}}
+</style><style data-gm-tpl-theme>
+:root[data-gm-template-style]{
+ --pr:var(--gm-pr);--ac:var(--gm-ac);--bg:var(--gm-bg);--sf:var(--gm-sf);--sf2:color-mix(in srgb,var(--gm-bg) 65%,var(--gm-ln));
+ --tx:var(--gm-tx);--tx2:color-mix(in srgb,var(--gm-tx) 83%,var(--gm-bg));--tx3:var(--tx2);--ln:var(--gm-ln);
+ --panel:var(--sf);--paper:var(--bg);--ink:var(--tx);--line:var(--ln);
+ --r:var(--gm-radius,12px);--sh:var(--gm-shadow,0 8px 22px -19px var(--tx));
+ --gm-display:system-ui,sans-serif;--gm-weight:750;--gm-tracking:-.042em;--gm-space:clamp(22px,4.2vw,58px);
+ color:var(--tx);background:var(--bg)
+}
+:root[data-gm-template-style][data-theme="dark"]{
+ --bg:#101820;--sf:#1c2730;--sf2:#263441;--tx:#f1f5f7;--ln:#435460;
+ --pr:color-mix(in srgb,var(--gm-pr) 70%,#111);--ac:color-mix(in srgb,var(--gm-ac) 40%,#fff)
+}
+[data-gm-template-style] :is(h1,h2,.big){font-family:var(--gm-display);font-weight:var(--gm-weight);letter-spacing:var(--gm-tracking);overflow-wrap:anywhere}
+[data-gm-template-style] :is(.hero h1,.hero h2){text-wrap:balance}
+[data-gm-template-style] :is(.card,.surface,.history,main>div.grid>article,main>div.grid>form,.workflow>form,.work>form,.offer,.kc,.kcard,.lcard){
+ background:var(--sf);color:var(--tx);border:var(--gm-border,1px) solid var(--ln);border-radius:var(--r);box-shadow:var(--sh)
+}
+[data-gm-template-style] :is(.work,.workflow,main>.grid,.pg>.grid,.lgrid,.bento){gap:var(--gm-gap,18px)}
+[data-gm-template-style] :is(.tb,.sb,.nav-in,body>header){background:var(--sf);color:var(--tx);border-color:var(--ln)}
+[data-gm-template-style] body>header>a{background:var(--sf2);color:var(--tx)}
+[data-gm-template-style] body>header{gap:12px}
+[data-gm-template-style] :is(.lead,.offer small,small.muted,footer):not(.hero *){color:var(--tx2)}
+[data-gm-template-style] :is(input,textarea,select):not([type=checkbox],[type=radio],[type=range]){
+ background:var(--sf);color:var(--tx);border-color:var(--ln);accent-color:var(--pr)
+}
+[data-gm-template-style] :is(button[type=submit],.btn:not(.g,.d,.w)){background:var(--gm-pr);color:white;border-radius:var(--gm-button,8px)}
+[data-gm-template-style] :focus-visible{outline:3px solid var(--gm-focus,var(--gm-ac));outline-offset:3px}
+[data-gm-template-style] .hero:has(.hero-copy){border-radius:var(--r);overflow:hidden}
+[data-gm-template-style] .hero-copy{padding:var(--gm-space);background:var(--gm-pr);color:#fff}
+[data-gm-template-style] .hero-copy p{color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) {
+ color:white;background:var(--gm-pr);border-radius:var(--r);padding:var(--gm-space);isolation:isolate;
+ position:relative;overflow:hidden;margin-bottom:var(--gm-gap,18px)
+}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p,.lead,a){color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g))::after{opacity:var(--gm-art-opacity,.75)}
+[data-gm-template-style] .hero-g{gap:var(--gm-space)}
+[data-gm-template-style] .hero-g h1 em{background:none;color:var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .hero-g h1 em{color:var(--ac)}
+[data-gm-template-style] .offer[aria-pressed="true"]{background:var(--sf2);border-color:var(--gm-pr);box-shadow:inset 4px 0 var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .nv.on{color:var(--ac)}
+[data-gm-template-style][data-theme="dark"] .doc{--ln:#c4cfd5;color-scheme:light}
+[data-gm-template-style] .hero-art{background-position:var(--gm-photo,center);filter:var(--gm-filter,none)}
+
+[data-gm-template-style="editorial"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:2px;--gm-gap:24px;--gm-shadow:none;--gm-button:2px}
+[data-gm-template-style="editorial"] :is(.tb,.nav-in,body>header){border-block-end:2px solid var(--gm-pr)}
+[data-gm-template-style="editorial"] :is(h1.big,.hero h1){max-width:17ch}
+[data-gm-template-style="editorial"] .hero-art{--gm-photo:center 44%;--gm-filter:saturate(.78)}
+
+[data-gm-template-style="gallery"]{--gm-radius:18px;--gm-gap:24px;--gm-space:clamp(25px,5vw,76px);--gm-shadow:0 16px 32px -26px var(--tx)}
+[data-gm-template-style="gallery"] .hero:has(.hero-copy){display:flex;flex-direction:column;min-height:0}
+[data-gm-template-style="gallery"] .hero-art{order:-1;min-height:clamp(210px,36vw,450px);--gm-photo:center 59%}
+[data-gm-template-style="gallery"] .hero-copy{align-self:stretch}
+[data-gm-template-style="gallery"] :is(.hero-g .lim,.kpi){border-bottom:5px solid var(--gm-ac)}
+[data-gm-template-style="gallery"] .hero:not(:has(.hero-copy,.hero-g)){min-height:clamp(240px,31vw,390px);display:grid;align-content:center}
+
+[data-gm-template-style="card-grid"]{--gm-radius:20px;--gm-gap:12px;--gm-button:12px;--gm-shadow:0 9px 19px -17px var(--tx)}
+[data-gm-template-style="card-grid"] :is(.card,.offer,.surface,.history){border-block-start:4px solid var(--gm-ac)}
+[data-gm-template-style="card-grid"] :is(.tb,.nav-in,.hero-copy){border-radius:var(--r)}
+@media(min-width:761px){
+ [data-gm-template-style="card-grid"] .hero:has(.hero-copy){grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:12px;background:transparent}
+ [data-gm-template-style="card-grid"] .hero-art{border-radius:var(--r)}
+ [data-gm-template-style="card-grid"] .work{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+[data-gm-template-style="compact"]{--gm-radius:7px;--gm-gap:8px;--gm-space:clamp(16px,2.7vw,35px);--gm-tracking:-.03em;--gm-shadow:none}
+[data-gm-template-style="compact"] :is(.card,.offer,.surface,.history){padding:clamp(10px,1.6vw,18px)}
+[data-gm-template-style="compact"] .hero:has(.hero-copy){min-height:300px}
+[data-gm-template-style="compact"] .hero-art{min-height:clamp(150px,29vw,225px)}
+[data-gm-template-style="compact"] .hero:not(:has(.hero-copy,.hero-g)){min-height:0}
+[data-gm-template-style="compact"] :is(.hero h1,h1.big){font-size:clamp(29px,5vw,52px)}
+@media(min-width:980px){[data-gm-template-style="compact"] .sb{width:211px}}
+
+[data-gm-template-style="blueprint"]{--gm-radius:4px;--gm-shadow:none;--gm-button:4px;--gm-gap:16px}
+[data-gm-template-style="blueprint"] .hero-copy,[data-gm-template-style="blueprint"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:repeating-linear-gradient(0deg,transparent 0 23px,#fff2 24px 25px),repeating-linear-gradient(90deg,transparent 0 23px,#fff2 24px 25px)
+}
+[data-gm-template-style="blueprint"] :is(.card,.surface,.history,.offer){border-inline-start:4px solid var(--gm-ac)}
+[data-gm-template-style="blueprint"] .hero-art{--gm-filter:contrast(1.14) saturate(.7)}
+
+[data-gm-template-style="studio"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:26px;--gm-gap:22px;--gm-button:99px}
+[data-gm-template-style="studio"] .hero-art{--gm-photo:center 35%;--gm-filter:saturate(.89)}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)){text-align:center}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p){margin-inline:auto}
+[data-gm-template-style="studio"] :is(.tb,.nav-in,.kpi){border-block-start:3px solid var(--gm-ac)}
+@media(min-width:761px){
+ [data-gm-template-style="studio"] .hero:has(.hero-copy){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ [data-gm-template-style="studio"] .hero-art{grid-column:1;grid-row:1}
+ [data-gm-template-style="studio"] .hero-copy{grid-column:2;grid-row:1}
+}
+
+[data-gm-template-style="poster"]{--gm-display:"Arial Black",system-ui,sans-serif;--gm-weight:900;--gm-radius:0px;--gm-gap:20px;--gm-border:2px;--gm-button:0px;--gm-shadow:none}
+[data-gm-template-style="poster"] :is(.hero h1,h1.big){line-height:.96;font-size:clamp(37px,6.3vw,84px);max-width:15ch}
+[data-gm-template-style="poster"] :is(.hero-copy,.tb,body>header,.nav-in){border-inline-start:7px solid var(--gm-ac)}
+[data-gm-template-style="poster"] .hero-art{--gm-filter:contrast(1.13) saturate(1.12)}
+
+[data-gm-template-style="soft"]{--gm-display:system-ui,sans-serif;--gm-weight:650;--gm-radius:30px;--gm-gap:22px;--gm-button:99px;--gm-shadow:0 16px 40px -31px var(--tx)}
+[data-gm-template-style="soft"] .hero-copy,[data-gm-template-style="soft"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--gm-pr) 55%,var(--gm-ac)),transparent 67%)
+}
+[data-gm-template-style="soft"] :is(.nav-in,.kpi,.offer){border-radius:var(--r)}
+[data-gm-template-style="soft"] .hero-art{--gm-filter:saturate(.83) brightness(1.04)}
+
+[data-gm-template-style="mono"]{--gm-display:ui-monospace,monospace;--gm-weight:700;--gm-radius:3px;--gm-tracking:-.06em;--gm-gap:16px;--gm-shadow:none}
+[data-gm-template-style="mono"] :is(.eyb,.sector,.card h3,.offer small,footer){font-family:var(--gm-display)}
+[data-gm-template-style="mono"] :is(.kpi,.offer,.history){border-style:dashed}
+[data-gm-template-style="mono"] .hero-art{--gm-filter:grayscale(.82) contrast(1.08)}
+[data-gm-template-style="mono"] .hero:not(:has(.hero-copy,.hero-g))::after{filter:grayscale(.6)}
+
+[data-gm-template-style="contrast"]{--gm-radius:5px;--gm-gap:20px;--gm-border:2px;--gm-weight:850;--gm-shadow:4px 4px 0 var(--gm-ln);--gm-focus:#0d57ca}
+[data-gm-template-style="contrast"] :is(.tb,.nav-in,body>header,.sb){border-color:var(--tx);box-shadow:none}
+[data-gm-template-style="contrast"] :is(.card,.surface,.history,.offer){border-color:var(--tx)}
+[data-gm-template-style="contrast"] .hero-art{--gm-filter:contrast(1.16) saturate(.95)}
+[data-gm-template-style="contrast"] :is(.hero-copy,.hero:not(:has(.hero-copy,.hero-g))){background-color:var(--gm-pr);--gm-art-opacity:.57}
+@media(max-width:480px){
+ [data-gm-template-style]{--gm-gap:12px}
+ [data-gm-template-style] .hero-copy{padding:22px}
+ [data-gm-template-style] .hero-g{gap:18px}
+ [data-gm-template-style="poster"] :is(.hero h1,h1.big){font-size:clamp(31px,9.5vw,48px)}
+}
+@media print{
+ [data-gm-template-style]{--sh:none}
+ [data-gm-template-style] :is(.hero,.hero-copy){background:#fff!important;color:#111!important}
+ [data-gm-template-style] .hero :is(h1,h2,p){color:#111!important}
+}
+:root{--gm-pr:#6a4232;--gm-ac:#9c624b;--gm-bg:#f6efe6;--gm-sf:#fffaf3;--gm-tx:#31241c;--gm-ln:#d7c7b5}</style></head><body>
+<header><strong>Mola</strong><nav aria-label="Randevu uygulaması"><button data-view="services">Seanslar</button><button data-view="visits">Randevularım</button></nav></header>
+<main id="main"></main><footer><p id="status" role="status"></p>Deneme randevuları bu tarayıcıda tutulur.</footer>
+<script>
+const key="gitmapp-molaseans";
+const services=[["Reformer","Küçük grup, 50 dakika",750],["Özel pilates","Bire bir, 50 dakika",1490],["Esneme","Başlangıç grubu, 35 dakika",550]];
+const hours=["09:00","10:30","13:00","15:00","17:00"];
+const now=new Date();
+const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
+const formatDate=date=>date.split("-").reverse().join(".");
+const today=dateKey(now),money=new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:0});
+let visits=[];
+try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(Array.isArray(saved))visits=saved.filter(r=>services[r.service]&&typeof r.day==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(r.day)&&hours.includes(r.hour))}catch{}
+let screen="services",choice=0,day=today,hour="";
+const main=document.querySelector("#main"),statusLine=document.querySelector("#status");
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(visits))}catch{}};
+const booked=(date,time)=>visits.some(r=>r.day===date&&r.hour===time);
+function render(){
+ document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",String(b.dataset.view===screen)));
+ if(screen==="services"){
+  main.innerHTML=`<section class="hero"><div><h1>Kendinize zaman ayırın.</h1><p>Hareket, denge ve esneme seanslarını keşfedin.</p></div><div class="art" role="img" aria-label="Pilates stüdyosu"></div></section><section class="offer-list">${services.map(([name,desc,price],i)=>`<article class="card"><h2>${name}</h2><p>${desc}</p><p>${money.format(price)}</p><button class="primary" data-choice="${i}">Seans seç</button></article>`).join("")}</section>`;
+ }else if(screen==="booking"){
+  const [name,desc,price]=services[choice];
+  main.innerHTML=`<h1>Saat seçin</h1><div class="split"><section class="card"><label class="date">Randevu günü<input id="day" type="date" min="${today}" value="${day}" required></label><div class="slot-list" aria-label="Müsait saatler">${hours.map(t=>`<button data-hour="${t}" aria-pressed="${hour===t}" ${!day||booked(day,t)?"disabled":""}>${t}</button>`).join("")}</div></section><section class="card"><h2>${name}</h2><p>${desc} · ${money.format(price)}</p><p id="summary">${formatDate(day)}${hour?" · "+hour:""}</p><button class="primary" data-confirm ${hour?"":"disabled"}>Randevuyu onayla</button></section></div>`;
+ }else if(screen==="done"){
+  main.innerHTML=`<section class="card"><h1>Randevu kaydedildi.</h1><p>${services[choice][0]} · ${formatDate(day)} · ${hour}</p><button class="primary" data-view="visits">Randevularıma git</button></section>`;
+ }else{
+  main.innerHTML=`<h1>Randevularım</h1><div class="card">${visits.length?visits.map((r,i)=>`<article class="visit"><div><h2>${services[r.service][0]}</h2><p>${formatDate(r.day)} · ${r.hour}</p></div><button data-cancel="${i}">İptal et</button></article>`).join(""):'<p>Henüz bir randevunuz yok.</p>'}</div>`;
+ }
+}
+function go(next){screen=next;render();const h=main.querySelector("h1");h.tabIndex=-1;h.focus()}
+document.addEventListener("change",e=>{if(e.target.id!=="day")return;day=e.target.validity.valid?e.target.value:"";hour="";render();main.querySelector("#day").focus()});
+document.addEventListener("click",e=>{
+ const d=e.target.closest("button")?.dataset;if(!d)return;
+ if(d.view){go(d.view);return}
+ if(d.choice!==undefined){choice=Number(d.choice);hour="";go("booking");return}
+ if(d.hour){hour=d.hour;render();main.querySelector('[aria-pressed="true"]').focus();return}
+ if(d.confirm!==undefined&&hour&&!booked(day,hour)){visits=[{service:choice,day,hour},...visits].slice(0,50);save();go("done");return}
+ if(d.cancel!==undefined){visits=visits.filter((_,i)=>i!==Number(d.cancel));save();go("visits");statusLine.textContent="Randevu iptal edildi."}
+});render();
+</script></body></html>
