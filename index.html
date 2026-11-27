@@ -3013,6 +3013,40 @@ html.rm .ambient i{animation:none}
 .drop-zone{position:absolute;inset:0;z-index:21;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(10,10,10,.72);color:#f5f5f2;pointer-events:none;border-radius:18px}
 .drop-zone small{color:#a9a7a1}
 .apnl-m[draggable="true"]{cursor:grab}
+
+/* ================= v5.81 — Stüdyo üst çubuğu: sıkışma yok, dar alanda "Daha fazla" menüsü ================= */
+.ws-top{container-type:inline-size;container-name:wstop;gap:6px!important}
+.ws-top>*{flex-shrink:0}
+.ws-top>.ws-title{flex:1 1 150px!important;min-width:110px!important;max-width:320px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.ws-top .pm-btn{flex-shrink:1;min-width:44px;overflow:hidden}
+.ws-top .ccw.rdr-w{display:inline-flex;margin:0!important;flex-shrink:0}
+.ws-more{display:none}
+.ccpop .ccpop-i{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:8px 10px;border:0;border-radius:10px;background:none;color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.ccpop .ccpop-i:hover:not(:disabled){background:rgba(255,255,255,.07)}.ccpop .ccpop-i:disabled{opacity:.4;cursor:default}
+.ccpop .m-t-full,.ccpop .m-t-tab,.ccpop .m-t-undo,.ccpop .m-t-hist,.ccpop .m-ws-newchat,.ccpop .m-ws-addpage{display:none}
+@container wstop (max-width:1120px){.ws-top .t-tab,.ws-top .t-undo,.ws-top .studio-save{display:none!important}.ws-more{display:inline-flex}.ccpop .m-t-tab,.ccpop .m-t-undo{display:flex}}
+@container wstop (max-width:1000px){.ws-top .t-full,.ws-top .t-hist,.ws-top .ws-addpage{display:none!important}.ccpop .m-t-full,.ccpop .m-t-hist,.ccpop .m-ws-addpage{display:flex}}
+@container wstop (max-width:880px){.ws-top .ws-newchat{display:none!important}.ccpop .m-ws-newchat{display:flex}.ws-top .vc-trigger>span{display:none}.ws-top .vc-trigger{padding:0 10px}}
+@container wstop (max-width:900px){.ws-top .t-cp{display:none!important}}
+@container wstop (max-width:760px){.ws-top .ws-chats{display:none!important}.ws-top .t-pub>span{display:none}.ws-top .t-pub{padding:0 11px}}
+@container wstop (max-width:740px){.ws-top .pm-btn{max-width:44px!important}.ws-top .pm-btn>:not(svg):not(.pm-glow):not(.gm-icon){display:none}}
+/* sarı imleç boştayken daha silik ve küçük; üzerine gelince ya da sürüklerken tam görünür */
+.picker-dock:not(.drag):not(:hover):not(:focus-within){opacity:.72}
+.picker-dock{transition:opacity .2s,transform .5s cubic-bezier(.34,1.45,.64,1)}
+.picker-handle .ph-glow{opacity:.45}
+/* sağ alt: rehber pusulası Asistan'ın solunda aynı hizada; Stüdyo çıktı penceresi bu düğmelerin üstünde kalır */
+@media(min-width:821px){.nr-fabw{bottom:18px!important;right:calc(18px + var(--cpw,150px) + 10px)!important}.swin{bottom:72px}}
+
+/* v5.81 proje ayarları kartı: sade yardım düğmesi ve okunur Oto anahtarı */
+.su-side .su-help{width:26px!important;height:26px!important;background:rgba(255,255,255,.06)!important;box-shadow:none!important;color:#a9a7a1;border:1px solid rgba(255,255,255,.08)!important}
+.su-side .su-help:hover{background:rgba(255,255,255,.12)!important;color:#fff;transform:none}
+.su-t.help .su-side .su-help{background:#f5f5f2!important;color:#0a0a0a}
+.su-t{display:flex!important;flex-direction:column}
+.su-t .su-side{position:static!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:0 10px 9px 12px!important;margin-top:-2px}
+.su-side .su-sw span{display:inline!important;font-size:11px;margin-left:4px}
+.su-sw i{width:30px!important;height:17px!important}
+.su-t .su-tx{padding-right:0!important;min-width:0}
+.su-t .su-tx b,.su-t .su-tx em{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 <link rel="stylesheet" href="catalog/gallery.css?v=5772">
 <link rel="stylesheet" href="catalog/sector-design.css?v=5761">
@@ -3040,8 +3074,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.80.0";
+const VERSION="5.81.0";
 const CHANGELOG=[
+ {v:"5.81.0",date:"2026-11-28",items:[
+  "🧰 Stüdyo üst çubuğu düzeldi: dar ekranda (iPad, sol menü açıkken) düğmeler artık birbirinin üstüne binmiyor ve dışarı taşmıyor. Proje adı en az 110 piksel ve gerekirse “…” ile kısalıyor (“Akış O” gibi kesilmiyor). Proje ayarları düğmesi cihaz düğmelerinin altına girmiyor",
+  "⋯ Yeni “Daha fazla” menüsü: yer azaldıkça Tam ekran, Yeni sekmede aç, Önceki sürüme dön, Sürüm geçmişi, Yeni sohbet ve Projeye ekle bu menüye geçiyor; hiçbir araç kaybolmuyor. Daha da daralınca Asistan düğmesi (sağ alttaki Asistan zaten açık), sohbet listesi (sol menüde Oturumlar) gizleniyor ve Yayınla yalnızca simgeyle gösteriliyor",
+  "🧭 Pilot artık önizlemenin üstüne binmiyor: küçültülmüş Pilot için ayrıca yüzen “main” etiketi çizilmiyor; Pilot'u yazma kutusunun altındaki çubuktaki düğmeden açıp kapatıyorsun",
+  "⚙️ Proje ayarları kartları sadeleşti: her anahtarın yanındaki sarı sincap rozeti yerine sade “?” yardım düğmesi; yardım ve “Oto” anahtarı kartın alt satırında, böylece şablon ve eklenti adları kesilmeden okunuyor. Başlık: “? ile açıklama · Oto ile Gitmapp senin yerine seçer”",
+  "🎯 Sarı imleç boştayken daha silik; üzerine gelince ya da sürüklerken tam görünür. Sağ alttaki rehber pusulası Asistan düğmesinin soluna aynı hizaya alındı; Stüdyo'daki çıktı penceresi bu düğmelerin üstünde kalıyor"]},
  {v:"5.80.0",date:"2026-11-27",items:[
   "🗂️ Oturumlar (Claude Code / Codex): “Sık kullanılanlar” yerine sol menüde çalışma geçmişi. Her çalışma bir oturum; depo/çalışma alanına göre gruplanır (Gitmapp projesi, GitHub deposu, Taslaklar) ve en son yapılana göre sıralanır. Satırda son istek, dal adı, PR/birleştirme durumu ve zaman",
   "⏳ Arka planda çalışma: bir iş sürerken başka oturuma ya da boş sayfaya geçebilirsin; iş sunucuda sürer. Sol menüde dönen turuncu halka “sürüyor”, yeşil onay “bitti (okunmamış)”, kırmızı “hata” demek; başlıkta sürüyor/bitti sayaçları",
@@ -7656,13 +7696,13 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const mods=(runSet.temperature!=null||runSet.instructions||runSet.detail&&runSet.detail!=="dengeli");
   if(suMin&&!force)return html`<button type="button" class="su-mini" onClick=${()=>setSuMin(false)} title="Proje ayarlarını aç">${T.map(t=>html`<span key=${t.k} class=${t.auto?"a":""}>${t.ic}<b>${t.v}</b></span>`)}<${Icon} n="chevDown" s=${13}/></button>`;
   return html`<section class="su" aria-label="Proje ayarları">
-   <div class="su-h"><b>Proje ayarları</b><small>Her bölümde 🐿 yardım, cam anahtarla otomatik</small>
+   <div class="su-h"><b>Proje ayarları</b><small>? ile açıklama · Oto ile Gitmapp senin yerine seçer</small>
     <button type="button" class=${"su-ib"+(mods?" on":"")} onClick=${()=>setRunOpen(true)} title="Gelişmiş: yaratıcılık, ayrıntı, özel talimat"><${Icon} n="sliders" s=${14}/></button>
     ${st.msgs.length>0&&html`<button type="button" class="su-ib" onClick=${()=>setSuMin(true)} title="Daralt"><${Icon} n="chevUp" s=${14}/></button>`}</div>
    ${!st.html&&html`<div class="su-kind">${typeSwitch()}</div>`}
    <div class="su-g">${T.map(t=>html`<div key=${t.k} class=${"su-t"+(t.auto?" auto":"")+(suHelp===t.k?" help":"")}>
     <button type="button" class="su-main" onClick=${t.open} title=${t.l+" · değiştir"}><span class="su-ic">${t.ic}</span><span class="su-tx"><small>${t.l}</small><b>${t.v}</b><em>${t.d}</em></span></button>
-    <div class="su-side"><button type="button" class="su-help" onClick=${()=>setSuHelp(h=>h===t.k?null:t.k)} aria-label=${t.l+" hakkında yardım"} title="Yardım"><${BrandMark} s=${16}/></button>
+    <div class="su-side"><button type="button" class="su-help" onClick=${()=>setSuHelp(h=>h===t.k?null:t.k)} aria-label=${t.l+" hakkında yardım"} title="Yardım"><${Icon} n="help" s=${14}/></button>
      <label class="su-sw" title=${t.auto?"Otomatik açık":"Otomatik kapalı"}><input type="checkbox" checked=${t.auto} onChange=${e=>{t.setAuto(e.target.checked);toast(t.l+": "+(e.target.checked?"otomatik":"elle"))}}/><i></i><span>Oto</span></label></div>
     ${suHelp===t.k&&html`<div class="su-pop" role="note"><${BrandMark} s=${22}/><div><p>${t.help}</p><p class="su-auto"><b>Oto:</b> ${t.autoTxt}</p><div class="su-pa">${!t.auto&&html`<button type="button" class="btn s" onClick=${()=>{t.setAuto(true);setSuHelp(null);toast(t.l+" otomatiğe alındı")}}>Benim yerime seç</button>`}<button type="button" class="btn g s" onClick=${()=>{setSuHelp(null);t.open()}}>Elle değiştir</button></div></div></div>`}
     ${t.k==="mod"&&suHelp==="mod-pick"&&html`<div class="su-pop pick">${[["hizli","zap","Hızlı","Doğrudan üretir"],["planli","compass","Planlı","Önce plan, onaylayınca üretir"],["ajan","list","Ajan","Adım adım, onaylı"]].map(([k,ic,l,d])=>html`<button type="button" key=${k} data-k=${k} class=${!prefs.autoMode&&prefs.mode===k?"on":""} onClick=${()=>{setPrefs(p=>({...p,mode:k,autoMode:false}));setSuHelp(null)}}><${Icon} n=${ic} s=${15}/><span><b>${l}</b><small>${d}</small></span></button>`)}</div>`}
@@ -7802,7 +7842,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  React.useLayoutEffect(()=>{const el=pilotRef.current;if(!el)return;el.querySelectorAll("[data-pc]").forEach(c=>{const k=c.dataset.pc,top=c.offsetTop,old=cardPos.current[k];if(old!=null&&old!==top){c.style.transition="none";c.style.transform=`translateY(${old-top}px)`;requestAnimationFrame(()=>{c.style.transition="";c.style.transform=""})}cardPos.current[k]=top})});
  const pilotUI=()=>{if(!st.html||!pilotUi.open)return null;const D=pilotData();const cur=D.cards.find(c=>c.cur)||{s:"basladi",heat:0};const pos=pilotDrag?{left:pilotDrag.x,top:pilotDrag.y}:pilotUi.pos?{[pilotUi.pos.side==="l"?"left":"right"]:16,top:Math.min(pilotUi.pos.y,innerHeight-80)}:{right:sessOpen&&innerWidth>820?(document.querySelector(".sp")?.offsetWidth||296)+28:16,top:72};
   const hot=h=>`hsl(${Math.round(210-210*h)} 95% ${55+h*5}%)`;const ago=t=>{if(!t)return"";const m=Math.round((Date.now()-t)/6e4);return m<1?"şimdi":m<60?m+" dk":Math.round(m/60)+" sa"};
-  if(pilotUi.min)return html`<button type="button" class=${"plt-pill"+(pilotLand&&Date.now()-pilotLand<1500?" land":"")} style=${pos} onClick=${()=>setPUi({min:false})} title="Pilot'u aç"><i style=${{"--c":P_ST[cur.s][1]}}></i><${Icon} n="branch" s=${14}/><b>${curBr}</b><span class="plt-heat-mini" style=${{"--h":hot(cur.heat),width:Math.max(6,cur.heat*36)+"px"}}></span>${D.pri.length>0&&html`<em>${D.pri.length}</em>`}</button>`;
+  if(pilotUi.min)return null; // v5.81: küçültülmüş Pilot alt çubuktaki düğmede durur, önizlemenin üstüne binmez
   return html`<aside ref=${pilotRef} key=${pilotLand} class=${"plt"+(pilotDrag?" drag":"")+(pilotLand&&Date.now()-pilotLand<1500?" land":"")} style=${pos} aria-label="Pilot: dallar ve iş durumu">
    <header class="plt-h" onPointerDown=${pDown}><span class="plt-logo"><${Icon} n="pilot" s=${15}/></span><span class="plt-t"><b>Pilot</b><small>${vcSource==="github"?"GitHub":"Gitmapp"}${pilotCat?.repo?" · "+pilotCat.repo:""}</small></span>
     <button type="button" class=${"plt-auto"+(pilot.auto?" on":"")} onClick=${()=>setPilot(p=>({...p,auto:!p.auto}))} title=${pilot.auto?"Otomatik dizilim açık: öncelik ve ısıya göre sıralanır":"Elle sıralama: kartları sürükleyip bırak"}><${Icon} n="sparkles" s=${12}/>${pilot.auto?"Oto":"Elle"}</button>
@@ -8148,11 +8188,17 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    ${proposedTitle.current&&proposedTitle.current!==st.title&&!busy&&html`<button class="chip" title="Üretilen başlığı kullan" onClick=${()=>setSt(x=>({...x,title:proposedTitle.current}))}>${proposedTitle.current}</button>`}
    <span style=${{flex:1}}></span>
    ${seg([["phone","phone","","Telefon"],["tablet","tablet","","Tablet"],["desktop","monitor","","Masaüstü"]],stage,setStage)}
-   <button class="ib" disabled=${!st.html} onClick=${()=>setFull(true)} title="Tam ekran önizleme"><${Icon} n="expand" s=${15}/></button>
-   <button class="ib" disabled=${!st.html} onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button>
+   <button class="ib t-full" disabled=${!st.html} onClick=${()=>setFull(true)} title="Tam ekran önizleme" aria-label="Tam ekran önizleme"><${Icon} n="expand" s=${15}/></button>
+   <button class="ib t-tab" disabled=${!st.html} onClick=${openTab} title="Yeni sekmede aç" aria-label="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button>
 
-   <span style=${{position:"relative"}}><button class="ib" disabled=${!versions.length||busy} onClick=${()=>setHist(!hist)} title="Sürüm geçmişi"><${Icon} n="history" s=${16}/></button>${hist&&html`<div class="histm glass" onMouseLeave=${()=>setHist(false)}><b>Sürüm geçmişi</b>${versions.map((v,i)=>({v,i})).reverse().map(({v,i})=>html`<button key=${i} onClick=${()=>{setVersions(x=>[...x.slice(0,i),st.html]);setSt(s=>({...s,html:v}));setHist(false);toast("Sürüm "+(i+1)+" geri yüklendi")}}><span class="hist-n">${i+1}</span><span>Sürüm ${i+1}<small>${(v.length/1024).toFixed(1)} KB</small></span><${Icon} n="undo" s=${14}/></button>`)}</div>`}</span>
-   <button class="ib" disabled=${!versions.length||busy} onClick=${undo} title="Önceki sürüm"><${Icon} n="undo" s=${16}/></button>
+   <span class="t-hist" style=${{position:"relative"}}><button class="ib" disabled=${!versions.length||busy} onClick=${()=>setHist(!hist)} title="Sürüm geçmişi" aria-label="Sürüm geçmişi"><${Icon} n="history" s=${16}/></button>${hist&&html`<div class="histm glass" onMouseLeave=${()=>setHist(false)}><b>Sürüm geçmişi</b>${versions.map((v,i)=>({v,i})).reverse().map(({v,i})=>html`<button key=${i} onClick=${()=>{setVersions(x=>[...x.slice(0,i),st.html]);setSt(s=>({...s,html:v}));setHist(false);toast("Sürüm "+(i+1)+" geri yüklendi")}}><span class="hist-n">${i+1}</span><span>Sürüm ${i+1}<small>${(v.length/1024).toFixed(1)} KB</small></span><${Icon} n="undo" s=${14}/></button>`)}</div>`}</span>
+   <button class="ib t-undo" disabled=${!versions.length||busy} onClick=${undo} title="Önceki sürüm" aria-label="Önceki sürüm"><${Icon} n="undo" s=${16}/></button>
+   <span class="ws-more" style=${{position:"relative"}}><button class=${"ib"+(ccMenu==="more"?" on":"")} aria-haspopup="menu" aria-expanded=${ccMenu==="more"} aria-label="Daha fazla araç" title="Daha fazla" onClick=${()=>setCcMenu(m=>m==="more"?null:"more")}><${Icon} n="more" s=${17}/></button>
+    ${ccMenu==="more"&&html`<${CcPop} cls="r dn" close=${()=>setCcMenu(null)}><div class="ccpop-h">Araçlar</div>${[
+     ["expand","Tam ekran önizleme",()=>setFull(true),!st.html,"t-full"],["external","Yeni sekmede aç",openTab,!st.html,"t-tab"],["undo","Önceki sürüme dön",undo,!versions.length||busy,"t-undo"],
+     ["history","Sürüm geçmişi",()=>setHist(true),!versions.length||busy,"t-hist"],["plus","Yeni sohbet",()=>dispatchEvent(new CustomEvent("gm:newsess",{detail:{}})),saving,"ws-newchat"],
+     ["folder","Bu sayfayı projeye ekle",()=>st.html&&dispatchEvent(new CustomEvent("gm:addpage",{detail:{html:resolve(st.html),title:st.title||"Yeni sayfa",appId:st.appId||null}})),busy||!st.html,"ws-addpage"]
+    ].map(([ic,l,fn,dis,k])=>html`<button type="button" role="menuitem" key=${l} class=${"ccpop-i m-"+k} disabled=${dis} onClick=${()=>{setCcMenu(null);fn()}}><${Icon} n=${ic} s=${15}/><span>${l}</span></button>`)}<//>`}</span>
    <button class="ib ws-newchat" disabled=${saving} onClick=${()=>dispatchEvent(new CustomEvent("gm:newsess",{detail:{}}))} title="Yeni sohbet (⌘/Ctrl+Shift+O)" aria-label="Yeni sohbet"><${EcosystemIcon} name="newchat" s=${18}/></button>
    <span style=${{position:"relative"}}><button class=${"ib ws-chats"+(chatList.length?" has":"")} aria-haspopup="menu" aria-expanded=${ccMenu==="chats"} onClick=${()=>setCcMenu(ccMenu==="chats"?null:"chats")} title="Bu projedeki sohbetler" aria-label="Sohbetler"><${EcosystemIcon} name="chats" s=${18}/>${chatList.length>0&&html`<b>${chatList.length+1}</b>`}</button>${ccMenu==="chats"&&html`<div class="histm glass chatm" role="menu" onMouseLeave=${()=>setCcMenu(null)}><b>Bu projedeki sohbetler</b>
     <button type="button" role="menuitem" class="on" onClick=${()=>setCcMenu(null)}><span class="hist-n"><${EcosystemIcon} name="chats" s=${14}/></span><span>${chatTitle(st.msgs)}<small>Açık sohbet · ${userTurns} mesaj</small></span></button>
@@ -8162,8 +8208,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    <button class="btn g s vc-trigger" disabled=${saving||!st.html} onClick=${()=>setGitOpen(true)} title="Sürüm kontrolü" aria-label="Sürüm kontrolü"><${Icon} n="branch" s=${16}/><span>${st.gitContext?.name||"Dallar"}</span></button>
    <span class="studio-save" role="status">${st.gitContext?(localOk?"Dal taslağı":"Cihaza kaydedilemedi"):saveLabel}</span><button class="ib" disabled=${saving||busy||!st.html} onClick=${()=>save()} title=${st.gitContext?"Dala commit kaydet":"Kaydet"}><${Icon} n="save" s=${16}/></button>
    <span class="ccw rdr-w">${(()=>{const n=radarScan().items.filter(i=>i.lv>=2).length;return html`<button class=${"ib"+(ccMenu==="radar"||sessOpen?" on":"")} aria-haspopup="menu" aria-expanded=${ccMenu==="radar"} onClick=${()=>setCcMenu(m=>m==="radar"?null:"radar")} title="Radar: değişiklikler, çıktılar, kaynaklar ve bekleyen işler"><${Icon} n="list" s=${16}/>${n>0&&html`<i class="rdr-badge">${n}</i>`}</button>`})()}${ccMenu==="radar"&&radarPop()}${ccMenu==="sp-br"&&!sessOpen&&html`<${BranchMenu} appId=${st.appId} source=${vcSource} setSource=${setVcSource} active=${st.gitContext} content=${resolve(st.html)} auth=${auth} openAuth=${openAuth} toast=${toast} close=${()=>setCcMenu(null)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch} openPanel=${()=>{setCcMenu(null);setGitOpen(vcSource==="github"?"github":true)}}/>`}</span>
-   <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
-   <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
+   <button class="ib t-cp" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)" aria-label="Asistan"><${Icon} n="panelR" s=${16}/></button>
+   <button class="btn s t-pub" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":"Yayınla"} onClick=${publish} aria-label="Yayınla"><${EcosystemIcon} name="publish" s=${15}/><span> Yayınla</span></button></div>
   <div class=${"ws-grid studio-grid"+((st.html||"").includes("Gitmapp hazır şablonu")?" template-stage-first":"")+(sessOpen?" sp-on":"")}>
    <div class="ws-chat">
     <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
