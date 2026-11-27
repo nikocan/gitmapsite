@@ -1,0 +1,30 @@
+id	uygulama	akış	kabul
+jewelry	Kuyumcu stok ve atölye	Gram ve ayar kaydı > işçilik ve kur anlık görüntüsü > satış ve iade > gram mutabakatı	10 gram 750 milyem parça 7,5 gram saf karşılık verir; iade iki kez işlendiğinde stok bir kez artar.
+market	Hal parti ve cari takibi	Üretici ve künye > tartım ve dara > fire > parti bazında satış > cari ekstre	100 kg brüt, 5 kg dara ve 3 kg fire sonrası satılabilir miktar 92 kg olur.
+clinic	Poliklinik ve randevu yönetimi	Cetvel > randevu > kabul > hekim iş listesi > ziyaret kapanışı	Aynı hekim ve saat için ikinci rezervasyon engellenir; başka birimin kaydı yetkisiz oturuma görünmez.
+care	Bakım vardiyası ve devir	Görev atama > zamanlı kontrol listesi > birimler arası devir	Devredilen görevin önceki ve sonraki sorumlusu ayrı kaydedilir.
+education	Ders ve uygulama atölyesi	Eğitim hedefi > ders planı > yoklama > uygulama değerlendirmesi	Son kontenjana gelen iki isteğin yalnız biri kesinleşir.
+software	Yazılım teslim ve sürüm panosu	Gereksinim > dal > derleme > test > sürüm	Derleme başarısızken sürüm yayımlanamaz; hata kaydı ilgili değişikliği gösterir.
+media	İçerik ve kampanya stüdyosu	Brief > içerik taslağı > hak ve marka onayı > zamanlama > performans	Onaysız içerik yayına gitmez; yeniden denemede ikinci yayın oluşmaz.
+agriculture	Parsel ve üretim günlüğü	Parsel > iş planı > saha kaydı > hasat partisi	İki parselin hasadı aynı gün kaydedilse de parti kökeni ayrı izlenir.
+animals	Sürü ve bakım kayıtları	Hayvan veya grup kimliği > bakım takvimi > yem tüketimi > devir	Aynı yem çıkışı tekrar iletildiğinde depo miktarı bir kez azalır.
+fish	Av ve ürün parti defteri	Sefer > av kaydı > tartım > soğuk depo > teslim	Parti iki alıcıya bölündüğünde teslim toplamı tartımı aşamaz.
+construction	Şantiye imalat ve saha kabulü	İş kalemi > metraj > saha kabulü > dönem raporu	Önceki dönemde kabul edilen miktar ikinci kez hakedişe eklenmez.
+factory	Üretim ve kalite takip ekranı	İş emri > girdi lotu > miktar ve fire > kalite kabulü	Kalite bekleyen lot sevke ayrılamaz; girdi ve çıktı ilişkisi korunur.
+repair	Servis ve bakım iş emri	Arıza bildirimi > cihaz ve teknisyen > parça kullanımı > teslim	Tekrar gelen servis olayı aynı parçayı iki kez stoktan düşmez.
+logistics	Sevkiyat ve teslim takibi	Gönderi > rota ve araç > devir > teslim kanıtı	Kısmi teslimde eksik miktar açık kalır.
+warehouse	Depo ve stok hareketleri	Mal kabul > raf > toplama > sayım transferi	İki raf arası transfer toplam depo miktarını değiştirmez.
+finance	Cari hesap ve dönem mutabakatı	Belge > borç veya alacak > tahsilat eşleme > fark listesi	1000 TL borca 600 TL ödeme sonrası 400 TL açık kalır.
+retail	Satış ve sipariş ekranı	Teklif > stok ayırma > satış > kısmi iade	Son birim eşzamanlı iki siparişe ayrılamaz.
+hospitality	Rezervasyon ve hizmet çizelgesi	Kapasite > rezervasyon > hizmet ataması > hesap kapama	Aynı kapasite aynı zaman diliminde iki kez satılamaz.
+food	Reçete ve mutfak üretimi	Reçete > porsiyon planı > lot ve tüketim > servis	10 porsiyonluk reçete 20 porsiyona çıkarılınca girdi ihtiyacı ikiye katlanır.
+legal	Dosya ve süre takip ekranı	Dosya açma > görev ve tarih > belge sürümü > kapanış	Belgenin yeni sürümü önceki sürümün kimliğini ve tarihini korur.
+design	Tasarım ve revizyon yönetimi	Brief > sürüm > müşteri yorumu > onay > teslim	Onaylanmış sürüm değişirse yeni sürüm yeniden onaya düşer.
+engineering	Teknik proje ve inceleme	Şartname > tasarım girdileri > inceleme > kabul bulguları	Açık kritik bulgu varsa teslim durumu tamamlandı olamaz.
+lab	Numune ve ölçüm kayıtları	Numune kabul > yöntem ve cihaz > ölçüm > sonuç onayı	İki numunenin ölçümü kaynak kimliği üzerinden ayrı izlenir.
+hr	Personel ve vardiya yönetimi	Yetkinlik > vardiya > çakışma denetimi > devir	Aynı kişi kesişen iki vardiyaya atanamaz.
+office	Belge ve başvuru iş listesi	Başvuru > evrak > sorumlu > yanıt ve arşiv	Yinelenen başvuru referansı ikinci dosya oluşturmaz.
+management	Birim hedef ve görev panosu	Hedef > sorumlu > bütçe ve tarih > gerçekleşme	Birim yöneticisi yalnız yetkili olduğu şirketin detayını görebilir.
+service	Randevulu müşteri hizmetleri	Talep > süre ve personel > hizmet kaydı > müşteri teslimi	Personeli dolu zaman dilimi rezervasyona kapanır.
+field	Saha görevi ve kontrol listesi	İş talebi > görev yeri > kontrol listesi > doğrulanmış teslim	Çevrimdışı kaydın tekrar eşitlenmesi ikinci teslim oluşturmaz.
+events	Organizasyon ve etkinlik yönetimi	Brief > mekân ve tarih > tedarikçi > kapasite ve katılım	Son davetiye için iki kayıt alındığında kapasite aşılmaz.
