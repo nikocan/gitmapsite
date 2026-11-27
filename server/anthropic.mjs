@@ -38,6 +38,9 @@ export function toAnthropic(body) {
   if (last.role === "assistant") { const t = last.content[last.content.length - 1]; if (t?.type === "text") t.text = t.text.replace(/\s+$/, ""); } // ön doldurma sonda boşluk kabul etmez
   const out = { model: body.model, max_tokens: Math.max(1, Math.min(+body.max_tokens || 4096, 128000)), messages };
   if (system.length) out.system = system;
+  if (body.response_format?.type === "json_schema") {
+    out.output_config = {format:{type:"json_schema",schema:body.response_format.json_schema.schema}};
+  }
   if (body.temperature != null) out.temperature = Math.max(0, Math.min(1, +body.temperature));
   if (body.stream) out.stream = true;
   return out;

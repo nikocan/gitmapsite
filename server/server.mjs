@@ -360,7 +360,14 @@ function visionErr(r, t, messages) {
 }
 async function chatWith(rt, messages, maxTokens = 12000, signal) {
   const timeout = AbortSignal.timeout(240000);
-  const r = await postChat(rt, { messages, max_tokens: rt.maxTokens || maxTokens }, signal ? AbortSignal.any([timeout, signal]) : timeout);
+  const request = { messages, max_tokens: rt.maxTokens || maxTokens };
+  const stop = signal ? AbortSignal.any([timeout, signal]) : timeout;
+  if(rt.responseFormat)request.response_format=rt.responseFormat;
+  let r=await postChat(rt,request,stop);
+  if(rt.responseFormat&&[400,422].includes(r.status)&&/response_format|output_config|json_schema|structured output/i.test(await r.clone().text())){
+    delete request.response_format;
+    r=await postChat(rt,request,stop);
+  }
   const t = await r.text(); visionErr(r, t, messages);
   need(r.ok, r.status === 429 ? 429 : r.status >= 400 && r.status < 500 ? 400 : 502, aiErr(rt, r.status, t));
   const j = JSON.parse(t);
@@ -1926,9 +1933,18 @@ route("POST","/api/ai/engineering",async({user,body,req,res})=>{
     "Kod kısmına markdown veya eksik bırakılan satırlar koyma. Mevcut kaynağın tamamını sığdıramıyorsan code boş olsun.";
   const rt=await resolveRoute(user,body,req,"plan");
   rt.kind="engineering";
-  const result=await chatWith(rt,[{role:"system",content:system},{role:"user",content:JSON.stringify({platform,code,log,goal})}],5500,responseSignal(res));
+  rt.responseFormat={type:"json_schema",json_schema:{name:"engineering_suggestion",strict:true,schema:{
+    type:"object",additionalProperties:false,required:["review","code","tests"],
+    properties:{review:{type:"string"},code:{type:"string"},tests:{type:"array",items:{type:"string"}}}
+  }}};
+  const expected={review:"Türkçe teknik açıklama",code:"Uygulanacak tam kaynak metni",tests:["Somut kabul adımı"]};
+  const instructions=system+" Alan adlarını çevirmeden aynen review, code ve tests olarak kullan. Yanıt şeması: "+JSON.stringify(expected);
+  const input=JSON.stringify({platform,code,log,goal,istenenYanitBicimi:expected});
+  const result=await chatWith(rt,[{role:"system",content:instructions},{role:"user",content:input}],5500,responseSignal(res));
   let suggestion;
-  try{suggestion=JSON.parse(result.text.trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,""))}catch{}
+  const raw=result.text.trim();
+  const fenced=raw.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/i);
+  try{suggestion=JSON.parse(fenced?.[1]||raw)}catch{}
   need(result.finish!=="length"&&typeof suggestion?.review==="string"&&suggestion.review.trim()&&typeof suggestion.code==="string"&&suggestion.code.length<=24000&&Array.isArray(suggestion.tests),502,"Öneri eksik geldi. İsteği daha küçük bir kod bölümüyle tekrarlayın.");
   const tests=suggestion.tests.filter(t=>typeof t==="string"&&t.trim()).slice(0,8).map(t=>t.slice(0,800));
   need(tests.length,502,"Doğrulama adımları alınamadı. Tekrar deneyin.");
