@@ -71,7 +71,10 @@ with sync_playwright() as playwright:
                     return saved.includes("10:30");
                 }""")
                 page.reload(wait_until="domcontentloaded")
-                studio.get_by_role("button", name="Randevularım", exact=True).click()
+                visits = studio.get_by_role("button", name="Randevularım", exact=True)
+                visits.scroll_into_view_if_needed()
+                visits.click()
+                expect(studio.get_by_role("heading", name="Randevularım")).to_be_visible()
                 expect(studio.get_by_role("button", name="İptal et")).to_have_count(1)
 
         page.goto(BASE_URL + "/#sablonlar", wait_until="domcontentloaded")
