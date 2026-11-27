@@ -21,6 +21,12 @@ Profilden sektör ilgisi, renk eğilimi (ağırlıklı ton ortalaması), koyu/a�
 
 Kullanıcı kartın ⋯ menüsünden hafızayı sıfırlayabilir veya kapatabilir.
 
+Giriş yapmış kullanıcının hafızası hesabında da tutulur (`user_taste` tablosu; `GET`, `PUT`, `DELETE /api/me/taste`). Girişte cihazdaki ve hesaptaki profil birleştirilir, sonraki değişiklikler birkaç saniye gecikmeyle yazılır. Sunucu gelen veriyi temizler: yalnızca beklenen alanlar, sınırlı sayıda anahtar, geçerli renk kodları ve en fazla 32 KB. Hafıza kapatıldığında hesaptaki veri de boşaltılır. Testler: `node --test server/taste.test.mjs`.
+
+## Stüdyo işlem akışı
+
+Her üretim adımı kısa bir anlatım cümlesi ve altında açılır bir işlem satırı olarak gösterilir. Çalışan satırda turuncu-sarı nokta göstergesi ve süre bulunur. İş bitince adımlar "Çalıştırıldı N adım" satırında toplanır. Önizlemenin sağ altındaki durum penceresi son adımın çıktısını (satır farkı, onarılan hatalar, süre, kredi), kod kontrolü bulgularını ve önizleme sorunlarını gösterir; sorun varsa **Düzelt** ile otomatik onarım başlatılır.
+
 ## Yönetici girişi
 
 Yönetim merkezini çalışma alanı menüsündeki **Yönetici** düğmesinden veya `/#yonetim` adresinden açın. Doğrudan bir yönetim sayfasına giden kullanıcı, girişten sonra aynı sayfaya döner.

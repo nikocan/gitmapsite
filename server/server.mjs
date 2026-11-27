@@ -810,7 +810,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.62.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.63.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1331,6 +1331,45 @@ setInterval(async () => {
   try { for (const r of q("SELECT * FROM creator_posts WHERE status='planlandi' AND scheduled_at<=? ORDER BY scheduled_at LIMIT 20").all(new Date().toISOString())) { if (q("SELECT 1 FROM user_keys WHERE user_id=? AND provider='creator_hook'").get(r.user_id)) await crDispatch(r); } }
   catch (e) { console.error("creator", e.message); } finally { crBusy = false; }
 }, +E.CREATOR_TICK_MS || 60000).unref();
+// v5.63 — Keşif hafızası: giriş yapmış kullanıcının zevk profili hesabında tutulur, cihazlar arasında taşınır
+db.exec("CREATE TABLE IF NOT EXISTS user_taste(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, data TEXT NOT NULL, enabled INTEGER NOT NULL DEFAULT 1, updated INTEGER NOT NULL)");
+const TASTE_MAPS = ["sec", "th", "kind", "terms", "items"];
+function cleanTaste(t) {
+  t = t && typeof t === "object" && !Array.isArray(t) ? t : {};
+  const out = { v: 1 };
+  const nums = (m, max) => Object.fromEntries(Object.entries(m && typeof m === "object" && !Array.isArray(m) ? m : {})
+    .filter(([k, v]) => k.length > 0 && k.length <= 60 && Number.isFinite(+v) && +v > 0)
+    .sort((a, b) => b[1] - a[1]).slice(0, max).map(([k, v]) => [k, Math.min(1000, Math.round(+v * 1000) / 1000)]));
+  for (const k of TASTE_MAPS) out[k] = nums(t[k], k === "terms" || k === "items" ? 80 : 30);
+  out.col = (Array.isArray(t.col) ? t.col : []).filter(x => x && /^#[0-9a-f]{6}$/i.test(String(x.c)) && Number.isFinite(+x.w) && +x.w > 0)
+    .slice(-48).map(x => ({ c: String(x.c).toLowerCase(), w: Math.min(100, +x.w), ...(x.bg ? { bg: 1 } : {}) }));
+  out.q = [...new Set((Array.isArray(t.q) ? t.q : []).filter(x => typeof x === "string").map(x => x.trim().slice(0, 60)).filter(Boolean))].slice(0, 8);
+  const l = t.last;
+  out.last = l && typeof l === "object" && typeof l.id === "string" && l.id.length <= 80 ? { id: l.id, title: String(l.title || "").slice(0, 80), at: Number.isFinite(+l.at) ? +l.at : 0 } : null;
+  out.n = Math.max(0, Math.min(1e6, Math.floor(+t.n || 0)));
+  out.t = Math.max(0, Math.floor(+t.t || 0));
+  return out;
+}
+route("GET", "/api/me/taste", ({ user }) => {
+  need(user, 401, "Giriş yapın");
+  const r = q("SELECT data, enabled, updated FROM user_taste WHERE user_id=?").get(user.id);
+  return r ? { taste: JSON.parse(r.data), on: !!r.enabled, updated: r.updated } : { taste: null, on: true, updated: 0 };
+});
+route("PUT", "/api/me/taste", ({ user, body }) => {
+  need(user, 401, "Giriş yapın");
+  need(body && typeof body === "object", 400, "Geçersiz veri");
+  const on = body.on !== false;
+  const data = JSON.stringify(on ? cleanTaste(body.taste) : cleanTaste({}));
+  need(data.length <= 32000, 413, "Hafıza çok büyük");
+  const updated = Date.now();
+  q("INSERT INTO user_taste(user_id, data, enabled, updated) VALUES(?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET data=excluded.data, enabled=excluded.enabled, updated=excluded.updated").run(user.id, data, on ? 1 : 0, updated);
+  return { ok: true, on, updated };
+});
+route("DELETE", "/api/me/taste", ({ user }) => {
+  need(user, 401, "Giriş yapın");
+  q("DELETE FROM user_taste WHERE user_id=?").run(user.id);
+  return { ok: true };
+});
 route("GET", "/api/me/usage", ({ user }) => {
   need(user, 401, "Giriş yapın");
   const sum = (since) => q("SELECT COALESCE(SUM(credits),0) s, COUNT(*) n FROM usage WHERE user_id=? AND created>=?").get(user.id, since);
