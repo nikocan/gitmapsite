@@ -47,6 +47,35 @@ const gitSapSkills = [
 }));
 businessSkills.push(...gitSapSkills);
 
+const oracleSources = {
+ architecture:"https://docs.oracle.com/cd/E26401_01/doc.122/e22949/T120505T120508.htm",
+ compiler:"https://docs.oracle.com/en/database/oracle/oracle-database/18/refrn/ALL_ERRORS.html",
+ plan:"https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_XPLAN.html",
+ queue:"https://docs.oracle.com/cd/E26401_01/doc.122/e22953/T174296T575591.htm",
+ ap:"https://docs.oracle.com/cd/E26401_01/doc.122/e48763.pdf",
+ sla:"https://docs.oracle.com/en/applications/e-business-suite/readiness/financial-management/12.2/whats-new/ebs-fin-wn-f47980.htm",
+ fusion:"https://docs.oracle.com/en/cloud/saas/financials/25d/fausl/resolving-issues-with-transferring-journal-entries-to-general-ledger.html",
+ ford:"https://www.gtech.com.tr/en/story/ford-otosan-budget-planning-and-financial-reporting-version-upgrade-project/",
+ akbank:"https://www.oracle.com/customers/akbank/",
+ enerjisa:"https://www.redington.com.tr/uploads/2021/05/51.pdf",
+ kocsistem:"https://www.aa.com.tr/tr/isdunyasi/sirketler/kocsistem-ve-oracle-dan-guvenli-bulut-icin-turkiye-de-oracle-exadata-cloud-customer-is-birligi/674266"
+};
+const oracleSkills = [
+ ["tiers","EBS 12.2 · İşlem izini katmanlar arasında takip","İş olayı, uygulama isteği, arka plan işi ve veritabanı kaydını ortak zaman aralığında eşleştir. İnteraktif ekran yanıtı ile asenkron işin tamamlanmasını ayır.","Kayıt ekranda görünürken rapor üretilmemişse, önce rapor isteğinin oluştuğunu ve durumunu doğrula.","architecture"],
+ ["plsql","PL/SQL · Derleme hatasını yerelleştirme","Nesne sahibi, nesne tipi ve sürümle hata listesini eşleştir. ALL_ERRORS içindeki sıra, satır, konum ve mesajdan ilk anlamlı hatayı ve onu izleyen türev hataları ayır.","Aynı adlı paket ve paket gövdesinin hatalarını ayır; test ortamında düzeltmeden sonra derleme durumunu ve çağıran işin sonucunu doğrula.","compiler"],
+ ["sql","Oracle Database · Yavaş sorgu teşhisi","Aynı iş yükü ve parametrelerle süre, satır ve yürütme planını karşılaştır. İlgili cursor planından tahmin ve varsa fiili satır sayısını oku. Eksik çalışma istatistiklerini belirt.","Plan değişikliği gözlendiğinde veri hacmi, filtre seçiciliği ve tekrar ölçümü olmadan indeks değişikliğini kesin çözüm olarak sunma.","plan"],
+ ["ap","EBS 12.2 · Fatura blokajı","Sipariş, kabul ve faturayı satır ve birim bazında karşılaştır. Eşleştirme düzeyini, toleransı ve gerçek blokaj nedenini al.","Üç yönlü, sıfır toleranslı 100 sipariş / 85 teslim / 100 fatura örneğinde 15 birim farkı göster. İki yönlü eşleştirmede aynı teslim farkı tek başına blokaj kanıtı olamaz.","ap"],
+ ["queue","EBS 12.2 · Bekleyen iş","İstek kimliği, faz, durum, planlanan başlangıç ve uygun yönetici sayısını birlikte değerlendir. Normal bekleme, zamanlama ve yönetici yokluğunu ayır.","Pending / Normal için yönetici yok sonucuna atlama. Inactive / No Manager için atama ve uygunluk kontrolünü öner.","queue"],
+ ["sla","EBS · Muhasebeleşmeyen olay","İşlem kimliğinden muhasebe olayına ilerle. Taslak, geçersiz ve nihai kayıtları ayır. Mevcut sürümün desteklediği dönem kapanış raporunu kullan.","Nihai kayıt yokken GL fişinin kaybolduğu sonucuna varma. Kaynak olay ile rapor satırını eşleştir.","sla"],
+ ["fusion","Fusion Financials · Deftere aktarım","Muhasebe durumunu, aktarım sürecini, içe aktarma raporunu ve hedef defteri ayrı kontrol et.","Nihai alt defter kaydı mevcutsa aktarım çıktısı ile hedef toplu kayıt kimliğini kontrol et; yeniden çalıştırmadan önce önceki sonucu doğrula.","fusion"],
+ ["epm","Hyperion · Yükseltme doğrulaması","Eski ve yeni ortamda aynı dönem, senaryo, sürüm, birim ve hesap kesitini karşılaştır. Veri, metadata ve kimlik doğrulamasını ayrı test et.","Toplam eşleşse bile bir maliyet merkezinden diğerine kaymış tutarı üye bazında ortaya çıkar.","ford"],
+ ["hfm","EPM · Konsolidasyon farkı","Kaynak bakiye, eşleme, çevrim, grup içi eliminasyon ve rapor döneminin her birini doğrula. Farkın ilk oluştuğu aşamayı belirle.","Aynı dönem ve para biriminde 500 alacak ile 480 borç arasındaki 20 fark için karşı taraf kayıtlarını iste.","enerjisa"],
+ ["migration","Exadata · Veri geçişi mutabakatı","Kaynak ve hedefi aynı zaman kesitinde anahtar, belge sayısı, alan tipi, boş değer ve örnek sorgu sonuçlarıyla karşılaştır.","Satır sayıları eşitken bir belgenin anahtar veya tutarı değişmişse doğrulamayı başarısız say.","akbank"],
+ ["capacity","Oracle altyapı · Hizmet sınırı","Uygulama, veritabanı ve yönetilen altyapı sorumlularını ayır. İşlem süresi ve veri tazeliği için aynı pencereye ait önce/sonra ölçümü iste.","Uygulama gecikmesi tek başına altyapı arızasını kanıtlamaz. Destek kaydına etkilenen işlem ve karşılaştırma aralığını ekle.","kocsistem"]
+].map(([id,n,d,check,source])=>({id:"oracle-"+id,group:"Oracle",src:"gitmapp",n,d,check,source:oracleSources[source],
+ p:d+" Örnek doğrulama: "+check+" Bulguyu, eksik kanıtı, sonraki kontrolü ve düzelmenin ölçütünü yaz. Canlı sisteme erişildiğini varsayma."}));
+businessSkills.push(...oracleSkills);
+
 function businessSkillInstructions(ids) {
   if (!Array.isArray(ids)) return "";
   const selected = businessSkills.filter(skill => ids.includes(skill.id));

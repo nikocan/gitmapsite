@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Gitmapp hazır şablonu"><meta name="gitmapp-scenario" content="oracle-diagnostics"><title>Oracle Teşhis Atölyesi</title><style>
+*{box-sizing:border-box}body{margin:0;background:var(--bg,#f5f2ee);color:var(--tx,#302938);font:16px/1.55 system-ui,sans-serif}main{max-width:860px;margin:auto;padding:clamp(14px,4vw,44px)}header,section,details{padding:clamp(16px,3vw,28px);border-radius:14px;margin-bottom:14px}header{background:var(--cover,#392b3f);color:white}h1{margin:0;font-size:clamp(25px,4vw,38px)}h2{font-size:19px;margin:0 0 10px}section,details{background:var(--sf,white);border:1px solid #d8d1d8}fieldset{padding:0;border:0;display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}fieldset[hidden]{display:none}label{display:grid;gap:4px;flex:1;min-width:125px}select,input{width:100%;padding:10px;color:inherit;font:inherit;border:1px solid #968995;border-radius:6px}button{padding:10px 16px;border:0;background:#513749;color:white;border-radius:7px;font:inherit}summary{cursor:pointer;font-weight:650}dt{font-weight:650}dd{margin:0 0 12px}a{color:#66364a}
+</style></head><body><main><header><h1>Oracle Teşhis Atölyesi</h1><span>Örnek olaylar · Oturumluk çalışma</span></header>
+<section><form id="caseForm"><label>İncelenen olay<select id="kind"><option value="ap">EBS · Fatura eşleştirme</option><option value="job">EBS · İş kuyruğu</option><option value="group">EPM · Grup içi mutabakat</option></select></label>
+<fieldset id="ap"><legend>Sıfır tolerans · Aynı sipariş satırı ve birim</legend><label>Eşleştirme<select id="match"><option value="3">Üç yönlü</option><option value="2">İki yönlü</option></select></label><label>Sipariş adedi<input id="ordered" type="number" required min="0" max="9999999" value="100"></label><label>Teslim adedi<input id="received" type="number" required min="0" max="9999999" value="85"></label><label>Fatura adedi<input id="billed" type="number" required min="0" max="9999999" value="100"></label></fieldset>
+<fieldset id="job" hidden disabled><legend>İsteğin son gözlenen fazı ve durumu</legend><label>Faz / durum<select id="phase"><option>Pending / Normal</option><option>Inactive / No Manager</option><option>Pending / Scheduled</option></select></label></fieldset>
+<fieldset id="group" hidden disabled><legend>Aynı dönem ve para birimi · Tutarlar TL</legend><label>Alacak<input id="debit" type="number" min="0" max="999999999" step=".01" value="500" required></label><label>Karşı taraf borcu<input id="credit" type="number" min="0" max="999999999" step=".01" value="480" required></label></fieldset>
+<button>Kanıtı değerlendir</button></form></section>
+<section aria-live="polite"><h2>Teşhis kaydı</h2><dl><dt>Bulgu</dt><dd id="finding"></dd><dt>Sonraki kontrol</dt><dd id="next"></dd><dt>Kapanış ölçütü</dt><dd id="closeCase"></dd></dl></section>
+<details><summary>Bir EBS işleminin izini sür</summary><p>EBS 12.2’de kullanıcı isteği istemciden uygulama katmanına gider. İş verisi veritabanında tutulur. Yoğun raporlar ve toplu işlemler uygulama katmanındaki arka plan süreçlerinde çalışabilir. <a href="https://docs.oracle.com/cd/E26401_01/doc.122/e22949/T120505T120508.htm">Oracle EBS mimarisi</a></p><ol><li>Kullanıcı, şirket, dönem, belge satırı ve olay saatini tanımla.</li><li>Belge kaydedilmişse ilgili doğrulama isteğinin kimliğini, fazını ve sonucunu incele.</li><li>Muhasebe olayını kaynağıyla eşleştir; dönem, kayıt durumu ve hedef defteri karşılaştır.</li><li>Rapor başka bir sisteme yükleniyorsa son başarılı yükleme zamanını ve aynı kesitteki toplamı doğrula.</li></ol><p>Bu genel inceleme yolu için kurumun kullandığı ürün, sürüm ve bağlantılar ayrıca doğrulanır.</p></details>
+<details><summary>Türkiye’den belgelenmiş mimari örnekler</summary><p>Ford Otosan’ın bütçe projesinde Hyperion Planning ve Financial Reporting sürümleri yükseltildi. Kontrol noktaları veri, metadata ve kullanıcı girişiydi. <a href="https://www.gtech.com.tr/en/story/ford-otosan-budget-planning-and-financial-reporting-version-upgrade-project/">Proje kaydı</a></p><p>Akbank’ın kredi skorlama uygulaması Couchbase’den mevcut Exadata platformuna taşındı. Oracle Database API for MongoDB uygulama bağlantısının korunmasına yardımcı oldu. <a href="https://www.oracle.com/customers/akbank/">Oracle müşteri vakası</a></p><p>Enerjisa’nın 2012 tarihli kurumsal karne vakasında Oracle Scorecard and Strategy Management kullanımı ve o tarihte süren Hyperion Financial Management konsolidasyon projesi anlatılıyor. <a href="https://www.redington.com.tr/uploads/2021/05/51.pdf">Dönemin proje söyleşisi</a></p><p>KoçSistem’in 2022 duyurusu, Exadata Cloud@Customer için müşteri veri merkezinde kurulum ve yönetilen hizmet seçeneklerini açıklıyor. <a href="https://www.aa.com.tr/tr/isdunyasi/sirketler/kocsistem-ve-oracle-dan-guvenli-bulut-icin-turkiye-de-oracle-exadata-cloud-customer-is-birligi/674266">Hizmet duyurusu</a></p></details>
+</main><script>
+const el=id=>document.getElementById(id);
+function diagnose(){
+ const kind=el("kind").value;
+ if(kind==="ap"){
+  const ordered=el("ordered").valueAsNumber, received=el("received").valueAsNumber, billed=el("billed").valueAsNumber;
+  const orderGap=Math.max(0,billed-ordered), receiptGap=el("match").value==="3"?Math.max(0,billed-received):0;
+  return [[orderGap?"Sipariş aşımı "+orderGap+" adet.":"",receiptGap?"Teslim farkı "+receiptGap+" adet.":""].filter(Boolean).join(" ")||"Bu miktarlarda eşleştirme farkı görünmüyor.","Fatura satırı, ölçü birimi, tolerans ve fiilî blokaj kodunu karşılaştır.","Yetkili düzeltme sonrası fatura doğrulamasında ilgili blokajın kalktığını teyit et."];
+ }
+ if(kind==="group"){
+  const gap=Math.round(el("debit").valueAsNumber*100)-Math.round(el("credit").valueAsNumber*100);
+  return [gap?"Alacak eksi borç farkı "+(gap/100).toLocaleString("tr-TR")+" TL.":"İki tutar eşleşiyor.","Kaynak belgelerin karşı tarafını, kurunu, dönemini ve hesap eşlemesini kontrol et.","Aynı kesitte kaynak toplamları ve konsolidasyon raporunu yeniden uzlaştır."];
+ }
+ const checks={
+  "Pending / Normal":["İstek sırada, tek gözlem gecikmenin nedenini belirlemez.","Uygun yöneticinin kapasitesini ve önceki zaman diliminin bekleme sürelerini karşılaştır."],
+  "Inactive / No Manager":["İsteği çalıştırmaya uygun yönetici bulunamadı.","Programın yönetici uzmanlık kurallarını, vardiyasını ve durumunu kontrol et."],
+  "Pending / Scheduled":["İstek zamanlanmış.","Planlanan başlangıç saatini ve raporlama saat dilimini karşılaştır."]
+ };
+ return [...checks[el("phase").value],"Aynı istek kimliğinin sonraki fazını ve tamamlanma sonucunu doğrula."];
+}
+function render(){const result=diagnose();["finding","next","closeCase"].forEach((id,i)=>el(id).textContent=result[i])}
+el("kind").onchange=()=>{for(const field of document.querySelectorAll("fieldset"))field.disabled=field.hidden=field.id!==el("kind").value;render()};
+el("caseForm").oninput=()=>{el("finding").textContent="Girdi değişti. Yeniden değerlendirin.";el("next").textContent="—";el("closeCase").textContent="—"};
+el("caseForm").onsubmit=e=>{e.preventDefault();render()};render();
+</script></body></html>
