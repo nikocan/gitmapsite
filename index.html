@@ -2697,6 +2697,59 @@ body{background:radial-gradient(1100px 560px at 50% -12%,rgba(255,255,255,.045),
 .skl-body{margin:0;display:grid;gap:8px;font-size:13px;line-height:1.5}.skl-body dt{font-weight:700;font-size:12px;color:var(--acc)}.skl-body dd{margin:2px 0 0;color:var(--label2,#ddd)}
 .skl-act{display:flex;gap:6px;flex-wrap:wrap}.skl-empty{color:var(--mut)}
 @media(max-width:560px){.skl-grid,.skl-secs{grid-template-columns:1fr}}
+/* v5.70 Canlı arka plan, sayfa geçişleri, anlatıcı, Akademi, UX */
+.ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.ambient i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.16;will-change:transform,opacity;animation:amb-drift 34s ease-in-out infinite alternate,amb-breathe 9s ease-in-out infinite}
+.ambient i:nth-child(1){width:46vmax;height:46vmax;left:-12vmax;top:-14vmax;background:radial-gradient(circle,#e4ff3d 0,transparent 66%)}
+.ambient i:nth-child(2){width:40vmax;height:40vmax;right:-10vmax;top:8vh;background:radial-gradient(circle,#7c5cff 0,transparent 66%);animation-duration:41s,11s;animation-delay:-6s,-3s}
+.ambient i:nth-child(3){width:36vmax;height:36vmax;left:22vw;bottom:-18vmax;background:radial-gradient(circle,#22d3ee 0,transparent 66%);animation-duration:47s,13s;animation-delay:-12s,-5s}
+.ambient i:nth-child(4){width:22vmax;height:22vmax;right:18vw;bottom:6vh;background:radial-gradient(circle,#ff6fae 0,transparent 66%);opacity:.09;animation-duration:38s,7s;animation-delay:-20s,-2s}
+.ambient.calm i{opacity:.07;animation-play-state:paused}
+@keyframes amb-drift{0%{transform:translate3d(0,0,0) rotate(0)}50%{transform:translate3d(6vw,4vh,0) rotate(20deg)}100%{transform:translate3d(-4vw,8vh,0) rotate(-12deg)}}
+@keyframes amb-breathe{0%,100%{opacity:.11}50%{opacity:.2}}
+.view-in{animation:view-in .42s cubic-bezier(.2,.8,.2,1) both}
+@keyframes view-in{from{opacity:0;transform:translateY(10px) scale(.995);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+.box,.skl-tile,.ak-card,.tpc{transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.skl-tile:hover,.ak-tour:hover,.ak-card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.25)}
+@media(prefers-reduced-motion:reduce){.ambient i{animation:none}.view-in{animation:none}}
+html.rm .ambient i{animation:none}
+.nr-spot{position:fixed;z-index:9990;border-radius:14px;pointer-events:none;box-shadow:0 0 0 2px var(--acc),0 0 0 9999px rgba(0,0,0,.42),0 0 28px 6px rgba(228,255,61,.35);transition:all .38s cubic-bezier(.2,.8,.2,1);animation:nr-pulse 2.2s ease-in-out infinite}
+@keyframes nr-pulse{50%{box-shadow:0 0 0 3px var(--acc),0 0 0 9999px rgba(0,0,0,.42),0 0 40px 10px rgba(228,255,61,.45)}}
+.nr-bub{position:fixed;z-index:9995;width:min(360px,calc(100vw - 24px));background:rgba(22,22,22,.96);backdrop-filter:blur(14px);border:1px solid rgba(228,255,61,.35);border-radius:18px;padding:14px 16px 12px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:nr-in .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes nr-in{from{opacity:0;transform:translateY(8px) scale(.98)}}
+.nr-bub[style*="translateX"]{animation:none}
+.nr-bub b{display:block;font-size:15px;margin-bottom:4px}.nr-bub p{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:#ddd}
+.nr-ctl{display:flex;align-items:center;gap:4px}.nr-dots{display:flex;gap:4px}.nr-dots i{width:6px;height:6px;border-radius:50%;background:#444}.nr-dots i.d{background:#888}.nr-dots i.a{background:var(--acc);width:16px;border-radius:4px}
+.nr-n{display:block;margin-top:6px;font-size:11px;color:var(--mut)}
+.nr-fabw{position:fixed;z-index:9980;right:18px;bottom:78px;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.nr-fab{display:flex;align-items:center;gap:6px;height:44px;min-width:44px;padding:0 12px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:rgba(24,24,24,.9);backdrop-filter:blur(12px);color:#fff;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.nr-fab:hover{border-color:var(--acc)}.nr-fab.on{border-color:var(--acc);color:var(--acc)}.nr-fab em{font-style:normal;font-size:12px}
+.nr-hint{display:grid;gap:2px;text-align:left;position:relative;max-width:260px;padding:12px 34px 12px 14px;border-radius:16px;border:1px solid rgba(228,255,61,.4);background:rgba(24,24,24,.95);color:#fff;cursor:pointer;box-shadow:0 16px 40px rgba(0,0,0,.4);animation:nr-in .5s .8s both}
+.nr-hint span{font-size:12.5px;color:#ccc}.nr-hint i{position:absolute;right:10px;top:8px;font-style:normal;color:#999;padding:2px}
+.nr-menu{width:min(330px,calc(100vw - 32px));max-height:70vh;overflow:auto;background:rgba(22,22,22,.97);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px;display:grid;gap:4px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:nr-in .25s}
+.nr-menu>b{padding:4px 8px;font-size:13px;color:var(--mut)}.nr-menu button{display:flex;gap:10px;align-items:flex-start;text-align:left;background:none;border:0;color:#fff;padding:8px;border-radius:10px;cursor:pointer;font:inherit;font-size:13.5px}.nr-menu button:hover{background:rgba(255,255,255,.06)}
+.nr-menu small,.nr-sw small{display:block;color:var(--mut);font-size:11.5px;margin-top:2px}.nr-sw{display:flex;gap:10px;align-items:flex-start;padding:8px;font-size:13.5px;cursor:pointer}.nr-sw input{margin-top:3px;accent-color:var(--acc)}
+.nr-tipd{margin:4px 8px;font-size:12.5px;color:#ccc;line-height:1.5;border-left:2px solid var(--acc);padding-left:8px}
+@media(max-width:900px){.nr-fabw{bottom:150px;right:12px}}
+.tsh{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:0 14px 10px;font-size:12px;color:var(--mut)}.tsh>span{display:inline-flex;gap:4px;align-items:center}
+.tsh-b{border:1px dashed rgba(228,255,61,.45);background:none;color:#e9f7a8;border-radius:20px;padding:3px 9px;font-size:11.5px;cursor:pointer}.tsh-b.on{border-style:solid;background:rgba(228,255,61,.12)}
+.skl-tpl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.skl-tpl small{color:var(--mut)}
+.howto{margin:0;padding:12px 12px 4px 30px;display:grid;gap:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;font-size:13px}
+.howto li>b{display:block;margin-bottom:2px}.howto li>span{color:#ccc;display:block;margin-bottom:6px;line-height:1.5}.howto-row{display:flex;flex-wrap:wrap;gap:6px}.howto .chip{text-align:left}
+.ak-tours{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin:14px 0 18px}
+.ak-tour{display:flex;gap:12px;align-items:center;text-align:left;cursor:pointer;color:inherit;font:inherit;margin:0;width:100%;border-color:rgba(228,255,61,.25)}.ak-tour span:nth-child(2){flex:1;display:grid;gap:2px}.ak-tour small{color:var(--mut);font-size:12px}.ak-tour em{font-style:normal;font-size:11px;color:var(--acc)}
+.ak-play{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--acc);color:#101211;flex-shrink:0}
+.ak-bar{display:grid;gap:10px;margin-bottom:14px}.ak-bar .skm-q{max-width:560px}
+.ak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:12px;align-items:start}
+.ak-card{display:grid;gap:8px;margin:0;min-width:0}.ak-card>p{margin:0;color:#ccc;font-size:13.5px;line-height:1.55}.ak-h{display:flex;gap:10px;align-items:center}.ak-h small{color:var(--mut);font-size:11px}.ak-h h3{margin:0;font-size:15.5px}
+.ak-steps{margin:0;padding-left:20px;display:grid;gap:5px;font-size:13px;line-height:1.5}.ak-cmds{display:grid;gap:6px;margin-top:8px}
+.ak-cmd{display:flex;gap:8px;align-items:center;justify-content:space-between;text-align:left;background:#0b0b0b;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:#e8e8e8;cursor:pointer;font:inherit}.ak-cmd code{font-size:12px;white-space:pre-wrap;word-break:break-word}.ak-cmd:hover{border-color:var(--acc)}
+.ux-wrap{display:grid;gap:12px}.ux .adm-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.ux .adm-stats .box{margin:0;display:grid;gap:4px}.ux .adm-stats small{color:var(--mut)}.ux .adm-stats b{font-size:24px}
+.ux-t{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}.ux-t th{text-align:left;color:var(--mut);font-weight:500;font-size:12px;padding:4px 6px}.ux-t td{padding:6px;border-top:1px solid var(--line);vertical-align:middle}
+.ux-bar{display:inline-block;width:70px;height:6px;border-radius:4px;background:rgba(255,255,255,.07);vertical-align:middle;margin-right:6px;overflow:hidden}.ux-bar i{display:block;height:100%;background:var(--acc);border-radius:4px}
+.ux-ins{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px}.ux-ins li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.5;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03)}
+.ux-ins li span{font-size:11px;padding:2px 8px;border-radius:20px;background:#333;white-space:nowrap}.ux-ins li.yuksek span{background:#ff6b6b;color:#111}.ux-ins li.orta span{background:#ffb347;color:#111}
+.ux-fb{margin:8px 0 0;font-size:13px;border-left:2px solid var(--acc);padding-left:8px}.ux-fb small{display:block;color:var(--mut);font-size:11px}
 </style>
 </head>
 <body>
@@ -2713,8 +2766,19 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.69.0";
+const VERSION="5.70.0";
 const CHANGELOG=[
+ {v:"5.70.0",date:"2026-11-28",items:[
+  "🧭 Yeni: Rehber. Sağ alttaki pusula düğmesi turları başlatır. Anlatımlı turda imleç menüye basıp sayfaları kendisi gezer, her ekranda ilgili düğmeyi ışıkla işaretler ve ne işe yaradığını yazıyla ve istersen sesli (tarayıcının Türkçe sesi) anlatır. Otomatik oynar; ileri/geri, duraklat, sesi kapat ve Esc ile çık",
+  "🎬 Dört tur: Gitmapp'i tanı (11 adım, tüm ekranlar) · İlk uygulamanı yap (fikir → beceri → şablon → Stüdyo → önizleme → yayın) · Yayına al (GitHub, alan adı, hosting) · Şablon ve beceri eşleştirme. İlk girişte “Gitmapp'te yeni misin?” daveti çıkar",
+  "🗣️ Anlatıcı modu: açıkken bastığın her düğmenin, sekmenin ve menünün ne anlama geldiğini yanında söyler (işlemi engellemez). “Bu sayfayı anlat” o an bulunduğun ekranı açıklar",
+  "🔗 Şablon ↔ beceri eşleştirme: 41 şablonun her birine uygun sektör becerisi bağlandı. Şablon kartında “Önerilen beceri” tek tıkla yüklenir; beceri kartında “Uygun şablon” beceriyi yükleyip şablonu Stüdyo'da açar",
+  "🗺️ Beceri kartında “Nasıl kullanılır” yol haritası: 1) şablonla başla 2) Stüdyo'da hazır istemler (kopyalanır) 3) o sektöre önerilen bağlantılar 4) kaydet ve sürümle 5) yayınla · “Bana göster” ile tura geçer",
+  "📚 Yeni: Akademi. Başlarken, yapay zekâ (iyi istem, model seçimi, beceriler), bağlantılar (connector nedir, hangisi ne işe yarar), GitHub (repo, commit, dal, PR, Pages), alan adı ve hosting (DNS A/CNAME, SSL), tasarım akılları, yerleşim, erişilebilirlik, kısayollar ve hazır istem kalıpları. Komutlar tek tıkla kopyalanır; derslerden tura geçilir",
+  "💡 Stüdyo'dayken rehber menüsünde günün tasarım aklı görünür (kontrast, 8'li boşluk, tek ana eylem, mobil önce…)",
+  "🌌 Canlı arka plan: ekranın arkasında yavaşça süzülen ve nefes alan renk bulutları; sayfalar arası yumuşak geçiş, kartlarda hafif yükselme. Stüdyo'da sakin moda geçer, Ayarlar › Hareketi azalt ve sistem tercihine uyar",
+  "📊 Yönetim › Kullanım ve UX: sayfa ziyaretleri, ortalama kalma süresi, 5 sn altı çıkışlar, en sık sayfa geçişleri, tur başlatma/bitirme ve en çok bırakılan adım, anlatıcı modunda en çok açıklama istenen öğeler, kullanıcı tarayıcısındaki hatalar ve “Sorun bildir” geri bildirimleri. Bu verilerden öncelik sıralı iyileştirme önerileri otomatik çıkar",
+  "🔒 Ölçüm Ayarlar'daki analitik tercihine uyar; kişisel veri toplanmaz (oturum kimliği, sayfa adı, süre). “Sorun bildir” yalnızca senin yazdığını gönderir"]},
  {v:"5.69.0",date:"2026-11-28",items:[
   "🧠 Yeni: Beceri Kütüphanesi. Sol menüde Araçlar › Beceriler artık tam sayfa: 17 sektör, 78 uygulama planı. Sektörünü seç, o işin yazılımını baştan sona bilen beceriyi gör, “Bununla uygulama yap” ile tek tıkla Stüdyo'da üretimi başlat",
   "🏪 60 yeni sektör becerisi: restoran rezervasyonu, paket servis, sadakat kartı, pastane, catering; diş kliniği, eczane (lot/miat), veteriner, diyetisyen, psikolog, laboratuvar, evde bakım; kuaför, güzellik merkezi; spor salonu, pilates, spor kulübü; kurs merkezi, online eğitim, anaokulu, sürücü kursu",
@@ -7383,7 +7447,7 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
 /* ================= v3.3 — APP STORE TARZI KEŞFET, CAM KENAR ÇUBUĞU, HAYALET İMLEÇ ================= */
 
 // iOS / Material tarzı renkli ikon karoları
-const TILE={beceriler:["brain","#a855f7,#ec4899"],depo:["box","#f59e0b,#ef4444"],odemeler:["card",""],"beceri-avcisi":["brain",""],"musteri-avi":["target",""],"github-ayar":["github",""],kreator:["video",""],eposta:["mail",""],"yapay-zeka":["cpu",""],maliyetler:["chart",""],"uretim-ajani":["bot",""],yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],temalar:["palette",""],"ui-kitler":["grid",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={ux:["chart",""],akademi:["bookOpen","#22d3ee,#6366f1"],beceriler:["brain","#a855f7,#ec4899"],depo:["box","#f59e0b,#ef4444"],odemeler:["card",""],"beceri-avcisi":["brain",""],"musteri-avi":["target",""],"github-ayar":["github",""],kreator:["video",""],eposta:["mail",""],"yapay-zeka":["cpu",""],maliyetler:["chart",""],"uretim-ajani":["bot",""],yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],temalar:["palette",""],"ui-kitler":["grid",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
 const NAV_TONE={kreator:"#ff3bd4","$beceri":"#c084fc","$asistan":"#22d3ee",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
@@ -7902,6 +7966,7 @@ function TplCard({t,onDemo,onUse}){
  <div class="tpc-img"><${TplThumb} t=${t}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı önizlemeyi aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı önizleme</span></button></div>
  <div class="tpc-m"><${ProductMark} t=${t}/><div><b>${t.name}</b><span>${t.sector} · ${TPL_TYPES[t.type]}${t.premium?" · Premium":""}</span></div></div>
  <div class="tpl-card-info"><p>${t.desc}</p><small>${quote?"Tahmini AI maliyeti · "+tplMoney.format(quote.total):"Ücretsiz önizleme"}</small></div>
+ <${TplSkillHint} t=${t}/>
  <div class="tpl-card-actions">
   <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"phone"})}><${Icon} n="phone" s=${14}/> Telefon</button>
   <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"desktop"})}><${Icon} n="monitor" s=${14}/> Masaüstü</button>
@@ -8335,7 +8400,7 @@ function Automations({toast}){const [w,setW]=useState(()=>LS.get("autoWish",[])|
 function CommandPalette({close,go,openInStudio,onTpl,auth}){
  const [q,setQ]=useState("");const [i,setI]=useState(0);const [apps,setApps]=useState([]);const [store,setStore]=useState([]);const ref=useRef(null);
  useEffect(()=>{ref.current&&ref.current.focus();if(API_ON){if(auth.user)api("GET","/api/apps").then(j=>setApps(j.apps)).catch(()=>{});api("GET","/api/store").then(j=>setStore(j.apps)).catch(()=>{})}},[]);
- const P=[["studio","hammer","Yeni proje","Geliştir"],["uygulamalarim","folder","Projeler",""],["sablonlar","layers","Şablonlar",""],["temalar","palette","Temalar",""],["ui-kitler","grid","UI Kitler",""],["depo","box","Depo","Site görsellerini indir ve ayrıştır"],["beceriler","brain","Beceri Kütüphanesi","Sektörüne göre hazır uygulama becerileri"],["baglantilar","plug","Bağlantılar",""],["magaza","star","Keşfet",""],["eylem","bell","Eylem merkezi",""],["modeller","cpu","Dil modelleri",""],["hesabim","user","Hesabım",""],["guncel","download","Güncellemeler",""]];
+ const P=[["studio","hammer","Yeni proje","Geliştir"],["uygulamalarim","folder","Projeler",""],["sablonlar","layers","Şablonlar",""],["temalar","palette","Temalar",""],["ui-kitler","grid","UI Kitler",""],["depo","box","Depo","Site görsellerini indir ve ayrıştır"],["beceriler","brain","Beceri Kütüphanesi","Sektörüne göre hazır uygulama becerileri"],["akademi","bookOpen","Akademi","Dersler, komutlar ve anlatımlı turlar"],["baglantilar","plug","Bağlantılar",""],["magaza","star","Keşfet",""],["eylem","bell","Eylem merkezi",""],["modeller","cpu","Dil modelleri",""],["hesabim","user","Hesabım",""],["guncel","download","Güncellemeler",""]];
  const ql=q.toLocaleLowerCase("tr");const m=s=>!ql||String(s).toLocaleLowerCase("tr").includes(ql);
  const res=[...P.filter(p=>m(p[2])).map(p=>({g:"Sayfalar",ic:p[1],t:p[2],s:p[3],run:()=>go(p[0])})),...apps.filter(a=>m(a.title)).slice(0,6).map(a=>({g:"Projelerin",ic:"folder",t:a.title,s:a.status==="published"?"Yayında":"Taslak",run:async()=>{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}})),...TEMPLATE_LIB.filter(t=>m(t.name+" "+t.sector)).map(t=>({g:"Şablonlar",ic:"layers",t:t.name,s:t.sector,run:()=>onTpl(t)})),...store.filter(a=>ql&&m(a.title)).slice(0,6).map(a=>({g:"Mağaza",ic:"apps",t:a.title,s:a.author,run:()=>go("app/"+a.slug)})),...(ghFind(q)?[{g:"GitHub",ic:"github",t:"Önizle: "+ghShort(ghFind(q)),s:"Geliştir ve Tasarım'a al",run:()=>dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(q),auto:false}}))},{g:"GitHub",ic:"rocket",t:"Projeyi devral: "+ghShort(ghFind(q)),s:"Kontrol et ve canlıya al",run:()=>dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(q),auto:true}}))}]:[]),...(ql?[{g:"Yapay zekâ",ic:"sparkles",t:"“"+q+"” için uygulama yap",s:"Geliştir'de başlat",run:()=>go("studio",{prompt:q})}]:[])];
  const pick=r=>{close();r&&r.run()};
@@ -8621,11 +8686,215 @@ const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>!x.group&&on.in
 // v5.61 — sunucudaki test edilmiş beceriler (uygulama planları, tasarım, kalite) kimlikle gönderilir; metni sunucu ekler
 const skillIds=()=>{const on=skillsOn();return on.filter(id=>!SKILLS.some(x=>x.id===id)).slice(0,6)};
 const SK_KIND={gelistirme:["Uygulama planları","layers"],tasarim:["Tasarım","palette"],kalite:["Kalite","check"]};
+let TITLES_ALL={};
+/* ================= v5.70 REHBER: şablon-beceri eşleştirme, anlatıcı tur, anlatıcı modu, Akademi ================= */
+// Şablon → uygun sektör becerileri (uygulama planları)
+const TPL_SKILL={"oracle-teshis":["plan-on-muhasebe","plan-erp-uretim"],gitsap:["plan-erp-uretim","plan-satin-alma","plan-stok"],forma:["plan-e-ticaret","plan-butik-giyim"],iade:["plan-e-ticaret","plan-butik-giyim"],dukkan:["plan-e-ticaret","plan-market-veresiye"],molaseans:["plan-yoga-pilates","plan-spor-salonu"],pilates:["plan-yoga-pilates"],akisoperasyon:["plan-proje","plan-crm"],mesai:["plan-ik"],firsat:["plan-crm"],mimari:["plan-tadilat","plan-proje"],cicek:["plan-cicekci"],etkinlik:["plan-etkinlik-bilet","plan-dugun-organizasyon"],detaygaraj:["plan-oto-servis"],kavurma:["plan-e-ticaret","plan-sadakat-kart"],patik:["plan-veteriner"],fotostudyo:["plan-fotograf-studyo"],adisyon:["plan-pos-adisyon"],sofra:["plan-paket-servis","plan-restoran-rezervasyon"],restoran:["plan-restoran-rezervasyon","plan-paket-servis"],sira:["plan-kuafor-salon","plan-randevu"],percem:["plan-kuafor-salon","plan-guzellik-merkezi"],takip:["plan-klinik","plan-diyetisyen"],muayene:["plan-klinik","plan-dis-klinigi"],klinik:["plan-klinik"],yoklama:["plan-okul","plan-kurs-merkezi"],derslik:["plan-online-egitim","plan-kurs-merkezi"],kiyas:["plan-emlak-ofisi"],ziyaret:["plan-emlak-ofisi"],emlak:["plan-emlak-ofisi"],rota:["plan-tur-acentesi"],konak:["plan-otel-pms"],bakim:["plan-saha-servis","plan-bakim-onarim"],usta:["plan-saha-servis","plan-tadilat"],kasa:["plan-on-muhasebe","plan-market-veresiye"],fatura:["plan-on-muhasebe"],muhasebe:["plan-on-muhasebe","plan-mali-musavir"],crm:["plan-crm"],stok:["plan-stok"],sigorta:["plan-sigorta-acentesi"],sigortasite:["plan-sigorta-acentesi"]};
+const tplsForSkill=id=>TEMPLATE_LIB.filter(t=>(TPL_SKILL[t.id]||[]).includes(id));
+// Sektöre göre önerilen bağlantılar (Bağlantılar sayfasındakiler + yaygın dış servisler)
+const SECTOR_CONN={
+ "yeme-icme":[["WhatsApp","Sipariş ve rezervasyon onayını müşteriye hazır mesajla gönder."],["Google","Google ile giriş ve Haritalar konumu."]],
+ saglik:[["Google","Google Takvim ile randevuları eşitle."],["WhatsApp","Randevu hatırlatma mesajı."]],
+ guzellik:[["WhatsApp","Randevu hatırlatma."],["Higgsfield","Hizmet tanıtım görseli ve videosu üret."]],
+ spor:[["WhatsApp","Ders ve üyelik bitiş hatırlatması."],["Canva","Ders programı afişi."]],
+ egitim:[["Google","Google ile giriş, Drive'dan ders dosyası."],["WhatsApp","Veli bilgilendirme."]],
+ perakende:[["Ödeme (Stripe)","Kartla ödeme için ödeme sağlayıcısı."],["Higgsfield","Ürün fotoğrafı ve tanıtım videosu."]],
+ turizm:[["Google","Haritalar ve takvim."],["Ödeme (Stripe)","Kapora tahsilatı."]],
+ "insaat-emlak":[["Higgsfield","İlan görselleri."],["WhatsApp","İlan paylaşımı ve randevu."]],
+ uretim:[["GitHub","Kodun sürüm geçmişiyle saklanır; ekip birlikte çalışır."],["Google","E-tablolardan veri aktarımı."]],
+ lojistik:[["Google","Haritalar ve adres."],["WhatsApp","Teslim bilgisi."]],
+ otomotiv:[["WhatsApp","Araç hazır bildirimi ve fiyat onayı."],["Higgsfield","İlan görselleri."]],
+ "finans-hukuk":[["Google","Takvim ile son tarih ve duruşma hatırlatma."],["GitHub","Kayıt ve sürüm geçmişi."]],
+ "kamu-stk":[["Google","Form ve takvim."],["GitHub","Açık ve denetlenebilir kod."]],
+ tarim:[["WhatsApp","Ekip ve alıcı iletişimi."],["Google","Hava ve harita."]],
+ "enerji-teknik":[["Google","Saha ekibi için harita ve takvim."],["WhatsApp","Arıza bildirimi."]],
+ "etkinlik-medya":[["Ödeme (Stripe)","Bilet ve kapora tahsilatı."],["Canva","Afiş ve davetiye."]],
+ kurumsal:[["GitHub","Kod ve sürüm yönetimi."],["Google","Google ile kurumsal giriş."]],
+};
+let SKILL_IDX=null;const skillIdx=()=>SKILL_IDX||(SKILL_IDX=API_ON?api("GET","/api/skills").then(j=>Object.fromEntries((j.skills||[]).map(s=>[s.id,s]))).catch(()=>{SKILL_IDX=null;return {}}):Promise.resolve({}));
+function useSkillIdx(){const [m,setM]=useState(null);useEffect(()=>{let a=true;skillIdx().then(x=>a&&setM(x));return()=>{a=false}},[]);return m||{}}
+const loadSkill=(id,toast,name)=>{const on=skillsOn();if(!on.includes(id)){LS.set("skills",[...on,id]);dispatchEvent(new Event("gm:skills"))}toast&&toast((name||"Beceri")+" yüklendi · Stüdyo'daki üretimlerde kullanılacak")};
+// Şablon kartındaki önerilen beceri satırı
+function TplSkillHint({t}){const idx=useSkillIdx();const ids=(TPL_SKILL[t.id]||[]).filter(id=>idx[id]);const [,f]=useState(0);useEffect(()=>{const h=()=>f(x=>x+1);addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
+ if(!ids.length)return null;const on=skillsOn();
+ return html`<div class="tsh"><span><${Icon} n="brain" s=${13}/> Önerilen beceri</span>${ids.map(id=>html`<button type="button" key=${id} class=${"tsh-b"+(on.includes(id)?" on":"")} title="Yükle: Stüdyo'da bu şablonu geliştirirken yapay zekâ bu sektörün kurallarını bilir" onClick=${()=>loadSkill(id,window.__gmToast,idx[id].name)}>${on.includes(id)?"✓ ":"+ "}${idx[id].name.split(/ [·(]/)[0]}</button>`)}</div>`}
+// Beceri kartı için "Nasıl kullanılır" yol haritası
+function SkillHowTo({s,sector,onTpl,go,toast}){
+ const tpls=tplsForSkill(s.id);const p=skillParts(s.body);const mods=(p["MODÜLLER"]||"").split(/,\s*/).map(x=>x.replace(/\.$/,"")).filter(Boolean);
+ const prompts=[`Örnek verileri kendi işletmeme göre değiştir; işletmemin adı: …`,mods[1]&&`${mods[1]} ekranına arama, filtre ve CSV dışa aktarma ekle`,mods[2]&&`${mods[2]} için yazdırılabilir (PDF) rapor ekle`,`Telefonda tek elle kullanılacak şekilde düzenle ve koyu tema ekle`].filter(Boolean);
+ const conn=SECTOR_CONN[sector]||[];
+ return html`<ol class="howto">
+  <li><b>Başla</b>${tpls.length?html`<span>Hazır şablonla hızlı başla; beceri otomatik yüklenir:</span><div class="howto-row">${tpls.map(t=>html`<button key=${t.id} class="chip" onClick=${()=>{loadSkill(s.id);onTpl(t)}}>${t.emoji||"✨"} ${t.name}</button>`)}</div>`:html`<span>Bu sektör için şablon yok; <b>Bununla uygulama yap</b> sıfırdan üretir.</span>`}</li>
+  <li><b>Stüdyo'da iste</b><span>Önizlemeye bakarak sohbetten değişiklik iste. Hazır istemler (kopyalanır):</span><div class="howto-row">${prompts.map(x=>html`<button key=${x} class="chip" onClick=${()=>copyText(x,toast,"İstem kopyalandı · Stüdyo'daki kutuya yapıştır")}>${x}</button>`)}</div></li>
+  <li><b>Bağla</b><span>${conn.length?conn.map(([n,d])=>n+": "+d).join(" · "):"Gerekirse Bağlantılar'dan GitHub, Google ya da Hostinger'ı bağla."}</span><button class="btn g s" onClick=${()=>go("baglantilar")}>Bağlantılar</button></li>
+  <li><b>Kaydet ve sürümle</b><span>Proje hesabına kaydedilir; GitHub bağlıysa her değişiklik bir commit olur, dallarla güvenle denersin.</span></li>
+  <li><b>Yayınla</b><span>Stüdyo'nun sağ üstündeki <b>Yayınla</b> ile canlı adres al; alan adı ve Hostinger ile kendi adresinde yayınla.</span><button class="btn g s" onClick=${()=>startTour("yayin")}>Bana göster</button></li>
+ </ol>`;
+}
+
+/* ---------- Anlatıcı: turlar ---------- */
+const NV=v=>'.side .nav[data-v="'+v+'"]';
+const TOURS={
+ genel:{name:"Gitmapp'i tanı",dur:"2 dk",desc:"Tüm ana ekranları gezip her birinin ne işe yaradığını anlatır.",steps:[
+  {v:"ana",sel:".home-box",t:"Her şey bir cümleyle başlar",s:"Bu kutuya ne yapmak istediğini kendi cümlelerinle yaz. Örneğin: kuaförüm için randevu uygulaması. Gitmapp yapay zekâyla uygulamayı senin için kurar."},
+  {v:"ana",sel:NV("studio"),t:"Geliştir: Stüdyo",s:"Uygulaman burada şekillenir. Solda sohbet ederek değişiklik istersin, sağda canlı önizlemeyi telefon ya da masaüstü boyutunda görürsün."},
+  {v:"uygulamalarim",sel:"main h1",t:"Projeler",s:"Yaptığın her uygulama burada saklanır. Tekrar açıp düzenleyebilir, yayın durumunu görebilirsin."},
+  {v:"sablonlar",sel:".tpc",t:"Şablonlar",s:"Sıfırdan başlamak istemiyorsan hazır bir şablon seç. Canlı önizleme ile dene, Stüdyo'da kullan ile kendi markana uyarla. Altındaki önerilen beceri, yapay zekâya o sektörün kurallarını öğretir."},
+  {v:"beceriler",sel:".skl-tile",t:"Beceriler",s:"Sektörünü seç. Her beceri o işin yazılımını baştan sona bilir: modüller, ekranlar ve Türkiye'ye özgü kurallar. Yüklediğin beceri her üretimde kullanılır."},
+  {v:"depo",sel:".depo-scan,main h1",t:"Depo",s:"Var olan bir sitenin görsellerini, renklerini ve bölümlerini toplar. Bunları kendi şablonunda ve projelerinde kullanırsın."},
+  {v:"baglantilar",sel:".ccard",t:"Bağlantılar",s:"GitHub, Google, Hostinger, Canva gibi hesaplarını buradan bağlarsın. Kodun GitHub'da saklanır, siten kendi alan adında yayına çıkar."},
+  {v:"magaza",sel:"main h1,main",t:"Keşfet",s:"Topluluğun yayınladığı uygulamaları incele. Beğendiğini kopyalayıp kendine uyarlayabilirsin."},
+  {v:"akademi",sel:".ak-grid",t:"Akademi",s:"Yapay zekâ, bağlantılar, GitHub, alan adı, hosting ve tasarım hakkında kısa dersler ve kopyalanabilir komutlar burada."},
+  {v:"guncel",sel:"main h1",t:"Güncellemeler",s:"Gitmapp'e eklenen her yenilik sürüm sürüm burada yazar."},
+  {sel:".nr-fab",t:"Rehber hep yanında",s:"Bu düğmeyle turları yeniden başlatabilirsin. Anlatıcı modunu açarsan bastığın her düğmenin ne işe yaradığını söylerim."}]},
+ ilk:{name:"İlk uygulamanı yap",dur:"90 sn",desc:"Fikir → beceri → şablon → Stüdyo → önizleme → yayın akışı.",steps:[
+  {v:"ana",sel:".home-box",t:"1. Fikrini yaz",s:"Ne yapmak istediğini bir iki cümleyle anlat. Kimin kullanacağını ve en önemli üç işlevi yazarsan sonuç daha iyi olur."},
+  {v:"beceriler",sel:".skl-tile",t:"2. Sektör becerisi yükle",s:"İşine uygun sektörü aç ve beceriyi yükle. Yapay zekâ böylece o sektörün iş kurallarını bilerek üretir."},
+  {v:"sablonlar",sel:".tpc",t:"3. İstersen şablonla başla",s:"Benzer bir şablon varsa Stüdyo'da kullan de. Şablonla başlamak daha hızlıdır, sonra sohbetle değiştirirsin."},
+  {v:"studio",sel:"textarea",t:"4. Sohbetle geliştir",s:"Bu kutuya değişiklik isteğini yaz. Kısa ve tek tek isteklerle ilerle: önce düzen, sonra içerik, sonra renkler."},
+  {v:"studio",sel:"txt:Önizleme",t:"5. Önizlemede dene",s:"Önizleme sekmesinde uygulamanı gerçekten kullan. Düğmelere bas, form doldur; bir hata görürsen sohbete yaz."},
+  {v:"studio",sel:"txt:Yayınla",t:"6. Yayınla",s:"Beğendiysen Yayınla ile canlı adres al. İstersen alan adı bağlayıp kendi adresinde yayınlarsın."}]},
+ yayin:{name:"Yayına al: GitHub, alan adı, hosting",dur:"1 dk",desc:"Kodunu sakla, kendi adresinde yayınla.",steps:[
+  {v:"baglantilar",sel:".ccard",t:"Hesaplarını bağla",s:"GitHub bağlarsan projenin kodu bir depoda saklanır ve her değişiklik commit olarak geçmişe yazılır. Hostinger bağlarsan alan adı ve barındırmayı buradan yönetirsin."},
+  {v:"akademi",sel:'[data-topic="domain"]',t:"Alan adı nasıl bağlanır",s:"Alan adı satın aldığın yerde DNS ayarlarına A ve CNAME kayıtlarını eklersin. Akademi'deki bu ders adım adım anlatır."},
+  {v:"studio",sel:"txt:Yayınla",t:"Yayınla düğmesi",s:"Stüdyo'da sağ üstteki Yayınla, uygulamanı canlı adrese çıkarır. Sonraki her yayın yeni sürümü yayına alır."}]},
+ eslestir:{name:"Şablon ve beceri eşleştirme",dur:"45 sn",desc:"Hangi şablonu hangi beceriyle kullanacağını gösterir.",steps:[
+  {v:"sablonlar",sel:".tsh",t:"Şablonun önerilen becerisi",s:"Her şablonun altında ona uygun sektör becerisi yazar. Artı işaretine basınca beceri yüklenir; Stüdyo'da bu şablonu geliştirirken yapay zekâ o sektörün kurallarını uygular."},
+  {v:"beceriler",sel:".skl-tile",t:"Becerinin uygun şablonları",s:"Bir sektöre girip beceri kartında Nasıl kullanılır dersen, uygun şablonlar, hazır istemler, önerilen bağlantılar ve yayın adımları sırayla çıkar."}]},
+};
+const PAGE_HELP={ana:"Yeni proje başlattığın açılış ekranı. Fikrini yaz ya da bir öneri seç.",studio:"Stüdyo: sohbetle uygulamanı geliştirir, önizler, kaydeder ve yayınlarsın.",kreator:"Kreatör Stüdyosu: sosyal medya içeriklerini üretir ve zamanlarsın.",uygulamalarim:"Projelerin: kaydettiğin tüm uygulamalar.",sablonlar:"Şablonlar: hazır uygulama ve site başlangıçları. Önizle, Stüdyo'da kullan.",temalar:"Temalar: renk ve yazı tipi takımları.","ui-kitler":"UI Kitler: hazır arayüz parçaları.",magaza:"Keşfet: topluluğun yayınladığı uygulamalar.",depo:"Depo: bir sitenin görsellerini, temasını ve bölümlerini indirip ayrıştırır.",beceriler:"Beceri Kütüphanesi: sektörüne göre test edilmiş uygulama becerileri.",baglantilar:"Bağlantılar: GitHub, Google, Hostinger, Canva gibi hesapları bağladığın yer.",akademi:"Akademi: yapay zekâ, bağlantılar, GitHub, alan adı, hosting ve tasarım dersleri.",guncel:"Güncellemeler: sürüm notları.",eylem:"Eylem merkezi: bekleyen işler ve bildirimler.",otomasyon:"Otomasyonlar: zamanlanmış ve tetiklenen işler.",modeller:"Dil modelleri: hangi yapay zekâ modelinin ne işe yaradığı.",hesabim:"Hesabım: profil, kredi ve tercihler.",paketler:"Paketler: hazır hizmet paketleri ve fiyatlar.",olustur:"Bize yaptır: uygulamanı ekibimize sipariş et.","ai-destek":"Yapay zekâ rehberi: hangi işe hangi model.",siparislerim:"Taleplerim: verdiğin siparişlerin durumu.",dunya:"Hazır kodlar: açık kaynak projelerden uygulamalar."};
+// Anlatıcı modu sözlüğü: düğme yazısı → anlamı
+const HELP_TXT={"yayınla":"Uygulamanı canlı bir internet adresine çıkarır. Sonraki yayınlar yeni sürümü yayına alır.","önizleme":"Uygulamanı gerçek kullanıcı gibi denediğin canlı görünüm.","tasarım":"Sayfadaki öğeleri seçip doğrudan düzenlediğin görsel mod.","kod":"Uygulamanın HTML kodu. Bilmen gerekmez; meraklıysan buradan bakarsın.","değişiklikler":"Son istekte nelerin değiştiğini satır satır gösterir.","kaydet":"Projeni hesabına kaydeder; başka cihazdan da açabilirsin.","dallar":"Aynı projenin farklı denemelerini ayrı tutar; beğenmezsen ana sürüm bozulmaz.","commit":"Bu andaki sürümü bir notla geçmişe kaydeder (GitHub dilinde commit).","bağla":"Hesabını Gitmapp'e bağlar; şifren Gitmapp'e gelmez, izin verilen işlemler yapılır.","yükle":"Beceriyi açar; Stüdyo'daki üretimlerde yapay zekâ bu bilgiyi kullanır.","kaldır":"Beceriyi kapatır.","bununla uygulama yap":"Bu beceriyi yükleyip Stüdyo'da örnek verili bir uygulama üretimini başlatır.","stüdyo’da kullan":"Şablonu bir proje olarak Stüdyo'da açar; sonra sohbetle kendine uyarlarsın.","stüdyo'da kullan":"Şablonu bir proje olarak Stüdyo'da açar; sonra sohbetle kendine uyarlarsın.","canlı önizleme":"Şablonu açmadan önce gerçek haliyle dener.","telefon":"Telefon ekranı boyutunda gösterir.","masaüstü":"Bilgisayar ekranı boyutunda gösterir.","detaylar":"Şablonun içerdiği özellikleri ve kimler için uygun olduğunu gösterir.","sıraya ekle":"Yapay zekâ çalışırken yeni isteğini sıraya koyar; bitince o da yapılır.","model seç":"Hangi yapay zekâ modeliyle üretileceğini seçer. Hızlı ucuzdur, güçlü daha özenlidir.","tara ve ayrıştır":"Siteyi tarar, görselleri indirip logo, banner, ürün gibi gruplara ayırır.","tümünü indir (zip)":"Depodaki her şeyi tek dosya olarak indirir.","şablon oluştur":"Depodaki logo, görsel ve renklerle hazır bir başlangıç sayfası üretir.","nasıl kullanılır":"Bu becerinin adım adım kullanım yolunu açar.","ayrıntı":"Becerinin ekranlarını, iş kurallarını ve veri modelini gösterir.","kredi yükle":"Yapay zekâ üretimleri için kredi satın alırsın.","giriş yap":"Hesabına girersin; projelerin kaydedilir.","durdur":"Süren işi durdurur."};
+const TOUR_NAMES=Object.fromEntries(Object.entries(TOURS).map(([k,v])=>[k,v.name]));
+const startTour=(id,i=0)=>dispatchEvent(new CustomEvent("gm:tour",{detail:{id,i}}));
+function nrFind(sel){if(!sel)return null;for(const one of sel.split(",")){if(one.startsWith("txt:")){const w=one.slice(4).toLocaleLowerCase("tr");const el=[...document.querySelectorAll("button,a,[role=tab]")].find(b=>b.offsetParent&&b.textContent.trim().toLocaleLowerCase("tr").startsWith(w));if(el)return el;continue}
+ const el=[...document.querySelectorAll(one.trim())].find(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0});if(el)return el}return null}
+const nrVoices=()=>{try{return speechSynthesis.getVoices().filter(v=>/^tr/i.test(v.lang))}catch(e){return[]}};
+function nrSpeak(text,on,done){try{speechSynthesis.cancel()}catch(e){}if(!on||!("speechSynthesis" in window)){done&&done(false);return}const u=new SpeechSynthesisUtterance(text);u.lang="tr-TR";u.rate=1.02;const v=nrVoices()[0];if(v)u.voice=v;u.onend=()=>done&&done(true);u.onerror=()=>done&&done(false);speechSynthesis.speak(u)}
+const DESIGN_TIPS=["Bir ekranda tek bir ana eylem olsun; en önemli düğme en belirgin olandır.","Metin ile zemin arasında yeterli kontrast bırak (WCAG AA: 4.5:1).","Boşluklar 8'in katı olsun (8, 16, 24, 32); düzen kendiliğinden toparlanır.","En fazla iki yazı tipi ve tek vurgu rengi kullan.","Önce telefonu tasarla; dokunma alanları en az 44 piksel.","Boş listeler için açıklama ve bir eylem düğmesi koy: kullanıcı ne yapacağını bilsin.","Formda hata mesajını alanın hemen altında ve açık dille göster.","Yükleniyor durumunda iskelet göster; ekran boş kalmasın.","İstemi küçük adımlarla ver: önce düzen, sonra içerik, sonra renk ve hareket.","Hareket ölçülü olsun ve 'hareketi azalt' tercihine uysun."];
+
+function Narrator({go,view}){
+ const [tour,setTour]=useState(null),[i,setI]=useState(0),[auto,setAuto]=useState(true),[voice,setVoice]=useState(()=>LS.get("nrVoice",true)!==false),[menu,setMenu]=useState(false),[explain,setExplain]=useState(()=>!!LS.get("nrExplain",false)),[pos,setPos]=useState(null),[tip,setTip]=useState(null),[hint,setHint]=useState(()=>!LS.get("nrSeen",false));
+ const viewRef=useRef(view);viewRef.current=view;const elRef=useRef(null);const timer=useRef(0);const runId=useRef(0);
+ const steps=tour?TOURS[tour].steps:[];const st=steps[i];
+ const close=(why)=>{if(tour)track("tour",{category:tour,query:why||"exit",meta:{i}});try{speechSynthesis.cancel()}catch(e){}clearTimeout(timer.current);setTour(null);setPos(null);elRef.current=null;ghostHide()};
+ useEffect(()=>{const h=e=>{const d=e.detail||{};if(!TOURS[d.id])return;setMenu(false);setHint(false);LS.set("nrSeen",true);setTour(d.id);setI(d.i||0);setAuto(true);track("tour",{category:d.id,query:"start"})};addEventListener("gm:tour",h);return()=>removeEventListener("gm:tour",h)},[]);
+ useEffect(()=>{const h=e=>{if(e.key==="Escape"&&tour)close("exit")};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[tour,i]);
+ // Adımı çalıştır: gerekirse menüden sayfaya git (imleç menüye basar), öğeyi bul, işaretle, anlat
+ useEffect(()=>{if(!tour||!st)return;const my=++runId.current;clearTimeout(timer.current);setPos(null);
+  (async()=>{
+   if(st.v&&st.v!==viewRef.current){const nav=nrFind(NV(st.v));if(nav){ghostPoint(nav);await wait(650);const g=document.getElementById("ghost");g&&g.classList.add("click");await wait(160);g&&g.classList.remove("click")}go(st.v);await wait(450)}
+   let el=null;for(let k=0;k<25&&my===runId.current;k++){el=nrFind(st.sel);if(el)break;await wait(120)}
+   if(my!==runId.current)return;elRef.current=el;
+   if(el){el.scrollIntoView({block:"center",behavior:GS.reduceMotion?"auto":"smooth"});await wait(260);ghostPoint(el)}else ghostHide();
+   place();track("tour",{category:tour,query:"step",meta:{i}});
+   const words=(st.t+". "+st.s);const minMs=Math.max(4200,words.length*62);const t0=Date.now();
+   nrSpeak(words,voice,()=>{if(my!==runId.current||!auto)return;timer.current=setTimeout(next,Math.max(900,minMs-(Date.now()-t0)))});
+   if(!voice&&auto)timer.current=setTimeout(next,minMs);
+  })();
+  return()=>{clearTimeout(timer.current)};
+ },[tour,i]);
+ useEffect(()=>{if(!tour)return;if(!auto){clearTimeout(timer.current);try{speechSynthesis.cancel()}catch(e){}}},[auto]);
+ const place=()=>{const el=elRef.current;if(!el||!el.isConnected){setPos({c:true});return}const r=el.getBoundingClientRect();setPos({x:r.left,y:r.top,w:r.width,h:r.height})};
+ useEffect(()=>{if(!tour)return;let raf=0;const h=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(place)};addEventListener("resize",h);addEventListener("scroll",h,true);return()=>{removeEventListener("resize",h);removeEventListener("scroll",h,true)}},[tour]);
+ const next=()=>{if(i+1>=steps.length){close("done");return}setI(x=>x+1)};
+ const prev=()=>setI(x=>Math.max(0,x-1));
+ // Anlatıcı modu: basılan öğenin ne işe yaradığını söyle (işlemi engellemez)
+ useEffect(()=>{LS.set("nrExplain",explain);if(!explain)return;const h=e=>{const el=e.target.closest&&e.target.closest("button,a,[role=tab],select,label,.nav");if(!el||el.closest(".nr-ui"))return;
+  const v=el.dataset&&el.dataset.v;const raw=(el.getAttribute("aria-label")||el.textContent||el.title||"").replace(/\s+/g," ").trim();const key=raw.toLocaleLowerCase("tr").replace(/^[✓+•\s]+/,"").replace(/\s*(yeni|\d+)$/i,"").trim();
+  let msg=v&&PAGE_HELP[v]?PAGE_HELP[v]:HELP_TXT[key]||Object.entries(HELP_TXT).find(([k])=>key.startsWith(k))?.[1]||(el.title&&el.title!==raw?el.title:"");
+  if(!msg)msg=raw?`“${raw.slice(0,40)}”: bu düğme ${raw.length<30?"bu işlemi başlatır":"ilgili işlemi yapar"}. Ne olduğunu ekranda izle; bir şey ters giderse rehber menüsünden sorun bildirebilirsin.`:"";
+  if(!msg)return;const r=el.getBoundingClientRect();setTip({x:r.left,y:r.top,w:r.width,h:r.height,t:raw.slice(0,40)||"Bilgi",s:msg,k:Date.now()});nrSpeak(msg,voice);track("help_click",{query:(v?"menü:"+v:raw).slice(0,80),category:viewRef.current})};
+  document.addEventListener("click",h,true);return()=>document.removeEventListener("click",h,true)},[explain,voice]);
+ useEffect(()=>{if(!tip)return;const t=setTimeout(()=>setTip(null),5200);return()=>clearTimeout(t)},[tip]);
+ const report=async()=>{setMenu(false);const t=prompt("Ne ters gitti ya da ne kafanı karıştırdı? Kısaca yaz; geliştiriciye iletilir.","");if(!t||!t.trim())return;try{await api("POST","/api/events",{session_id:SID,type:"feedback",query:t.trim().slice(0,200),category:viewRef.current,meta:{w:innerWidth,ua:navigator.userAgent.slice(0,80)}});window.__gmToast&&window.__gmToast("Teşekkürler, geliştiriciye iletildi")}catch(e){window.__gmToast&&window.__gmToast(e.message)}};
+ const bubble=(p,title,text,extra)=>{const mob=innerWidth<640;let style;if(mob||!p||p.c){style={left:"50%",bottom:mob?84:28,transform:"translateX(-50%)"}}else{const below=p.y+p.h+14,w=360;const top=below+190<innerHeight?below:Math.max(12,p.y-14-190);style={left:Math.max(12,Math.min(innerWidth-w-12,p.x+p.w/2-w/2)),top}}
+  return html`<div class="nr-ui nr-bub" style=${style} role="dialog" aria-live="polite" aria-label=${title}><b>${title}</b><p>${text}</p>${extra}</div>`};
+ const tipNow=view==="studio"?DESIGN_TIPS[Math.floor(Date.now()/86400000)%DESIGN_TIPS.length]:null;
+ return html`<div>
+  ${tour&&st&&html`<div class="nr-ui">${pos&&!pos.c&&html`<div class="nr-spot" style=${{left:pos.x-6,top:pos.y-6,width:pos.w+12,height:pos.h+12}}></div>`}
+   ${bubble(pos,st.t,st.s,html`<div class="nr-ctl"><span class="nr-dots">${steps.map((_,k)=>html`<i key=${k} class=${k<i?"d":k===i?"a":""}></i>`)}</span><span style=${{flex:1}}></span>
+    <button class="ib sm" aria-label="Önceki" disabled=${i===0} onClick=${()=>{setAuto(false);prev()}}><${Icon} n="chevLeft" s=${15}/></button>
+    <button class="ib sm" aria-label=${auto?"Otomatiği duraklat":"Otomatik oynat"} onClick=${()=>setAuto(!auto)}><${Icon} n=${auto?"stop":"play"} s=${14}/></button>
+    <button class="ib sm" aria-label=${voice?"Sesi kapat":"Sesi aç"} onClick=${()=>{const n=!voice;setVoice(n);LS.set("nrVoice",n);if(!n)try{speechSynthesis.cancel()}catch(e){}}}><${Icon} n=${voice?"volume":"volumeX"} s=${15}/></button>
+    <button class="btn s" onClick=${()=>{setAuto(false);next()}}>${i+1>=steps.length?"Bitir":"Sonraki"}</button>
+    <button class="ib sm" aria-label="Turu kapat" onClick=${()=>close("exit")}><${Icon} n="x" s=${15}/></button></div><small class="nr-n">${TOURS[tour].name} · ${i+1}/${steps.length}</small>`)}</div>`}
+  ${tip&&!tour&&html`<div class="nr-ui" key=${tip.k}>${bubble(tip,tip.t,tip.s,html`<small class="nr-n">Anlatıcı modu açık · menüden kapatabilirsin</small>`)}</div>`}
+  <div class="nr-ui nr-fabw">${hint&&!tour&&html`<button class="nr-hint" onClick=${()=>startTour("genel")}><b>Gitmapp'te yeni misin?</b><span>2 dakikalık anlatımlı turu başlat</span><i role="button" aria-label="Kapat" onClick=${e=>{e.stopPropagation();setHint(false);LS.set("nrSeen",true)}}>✕</i></button>`}
+   ${menu&&html`<div class="nr-menu" role="menu"><b>Rehber</b>${Object.entries(TOURS).map(([k,v])=>html`<button key=${k} role="menuitem" onClick=${()=>startTour(k)}><${Icon} n="play" s=${13}/><span>${v.name}<small>${v.desc} · ${v.dur}</small></span></button>`)}
+    ${PAGE_HELP[view]&&html`<button role="menuitem" onClick=${()=>{setMenu(false);const el=nrFind("main h1,main h2,main");setTip({...(el?(()=>{const r=el.getBoundingClientRect();return {x:r.left,y:r.top,w:Math.min(r.width,400),h:Math.min(r.height,60)}})():{c:true}),t:TITLES_ALL[view]||"Bu sayfa",s:PAGE_HELP[view],k:Date.now()});nrSpeak(PAGE_HELP[view],voice)}}><${Icon} n="info" s=${13}/><span>Bu sayfayı anlat</span></button>`}
+    <label class="nr-sw"><input type="checkbox" checked=${explain} onChange=${e=>setExplain(e.target.checked)}/><span>Anlatıcı modu<small>Bastığın her düğmenin ne işe yaradığını söyler</small></span></label>
+    <label class="nr-sw"><input type="checkbox" checked=${voice} onChange=${e=>{setVoice(e.target.checked);LS.set("nrVoice",e.target.checked)}}/><span>Sesli anlatım<small>Tarayıcının Türkçe sesiyle okur</small></span></label>
+    ${tipNow&&html`<p class="nr-tipd"><b>Tasarım aklı:</b> ${tipNow}</p>`}
+    <button role="menuitem" onClick=${()=>{setMenu(false);go("akademi")}}><${Icon} n="bookOpen" s=${13}/><span>Akademi'yi aç</span></button>
+    <button role="menuitem" onClick=${report}><${Icon} n="alert" s=${13}/><span>Sorun bildir<small>Geliştiriciye iletilir</small></span></button></div>`}
+   <button class=${"nr-fab"+(explain?" on":"")} aria-expanded=${menu} aria-label="Rehber" title="Rehber: turlar, anlatıcı modu, Akademi" onClick=${()=>{setMenu(!menu);setHint(false);LS.set("nrSeen",true)}}><${Icon} n="compass" s=${20}/>${explain&&html`<em>Anlatıcı</em>`}</button></div>
+ </div>`;
+}
+
+/* ---------- Akademi: geliştirici ve kullanıcı bilgi deposu ---------- */
+const AK_GROUPS=[["basla","Başlarken","rocket"],["ai","Yapay zekâ","sparkles"],["baglanti","Bağlantılar","plug"],["github","GitHub","github"],["yayin","Alan adı ve hosting","globe"],["tasarim","Tasarım akılları","palette"],["komut","Komutlar ve kısayollar","terminal"]];
+const AK=[
+ {id:"ilk-proje",g:"basla",t:"İlk uygulamanı 5 adımda yap",sum:"Fikir → beceri → şablon → Stüdyo → yayın.",steps:["Açılış ekranında ne istediğini kimin kullanacağıyla birlikte yaz.","Beceriler'den sektörünü seçip beceriyi yükle.","Benzer bir şablon varsa Stüdyo'da kullan; yoksa üretimi başlat.","Önizlemede dene; değişiklikleri sohbetten tek tek iste.","Yayınla ile canlı adres al."],tour:"ilk"},
+ {id:"sablon-beceri",g:"basla",t:"Şablon mu, beceri mi?",sum:"Şablon görünüşü ve başlangıç ekranlarını verir; beceri yapay zekâya o sektörün iş kurallarını öğretir. En iyi sonuç ikisi birlikte.",steps:["Şablon kartındaki 'Önerilen beceri'yi yükle.","Şablonu Stüdyo'da aç.","Sohbette istediğin modülü iste; beceri kurallara uygun üretir."],tour:"eslestir"},
+ {id:"istem",g:"ai",t:"İyi istem (prompt) nasıl yazılır",sum:"Yapay zekâ ne kadar net bilgi alırsa o kadar isabetli üretir.",steps:["Kim kullanacak? (ör. kuaför ve müşterileri)","En önemli 3 işlev neler?","Hangi veriler tutulacak? (müşteri, randevu, ücret)","Görünüş: sade, kurumsal, renkli; açık/koyu.","Değişiklikleri tek tek iste; her seferinde önizlemede kontrol et."],cmds:["Kuaför salonum için randevu uygulaması yap. Müşteri online randevu alsın, ben günlük takvimi göreyim, personel primini hesaplasın. Sade ve mobil uyumlu olsun.","Randevu listesine tarih filtresi ve arama ekle.","Renkleri marka rengim #e11d48 ile uyumlu yap; koyu tema ekle."]},
+ {id:"model",g:"ai",t:"Model ve mod seçimi",sum:"Hızlı mod küçük değişikliklerde ucuz ve çabuktur; güçlü modeller büyük ve karmaşık uygulamalarda daha özenlidir.",steps:["Taslak ve küçük düzeltmeler: Hızlı.","Yeni modül, karmaşık kural: Dengeli ya da Güçlü.","Kod hatası kalırsa 'Hataları otomatik düzelt' açık kalsın."]},
+ {id:"beceri",g:"ai",t:"Beceriler nasıl çalışır",sum:"Yüklediğin beceri her üretimde yapay zekâya uzmanlık olarak eklenir; sonuçlar otomatik ölçülür, 👍/👎 oyunla beceri iyileşir.",steps:["Beceriler sayfasında sektörünü aç.","Yükle ya da Bununla uygulama yap.","Üretimden sonra çıkan 'işe yaradı mı?' sorusunu oyla."]},
+ {id:"connector",g:"baglanti",t:"Bağlantı (connector) nedir?",sum:"Gitmapp'in senin adına başka bir hizmette iş yapabilmesi için verdiğin izindir. Şifren Gitmapp'e gelmez; izni istediğin an geri alırsın.",steps:["Bağlantılar sayfasında hizmeti seç ve Bağla'ya bas.","Açılan hizmet sayfasında izin ver.","Geri dönünce durum 'Bağlı' olur; artık o işlemler Stüdyo'dan yapılabilir."],view:"baglantilar"},
+ {id:"conn-list",g:"baglanti",t:"Hangi bağlantı ne işe yarar",sum:"GitHub: kod ve sürüm geçmişi · Google: giriş ve takvim · Hostinger: alan adı ve barındırma · Higgsfield: yapay zekâ görsel ve video · Canva: tasarım düzenleme.",steps:["Sadece ihtiyacın olanı bağla.","Anahtar isteyen hizmetlerde anahtarı yalnızca ilgili kutuya yaz; sohbete yapıştırma."],view:"baglantilar"},
+ {id:"repo",g:"github",t:"Depo (repo), commit, dal",sum:"Depo projenin kod klasörüdür. Commit bir andaki sürümün notlu kaydıdır. Dal (branch) aynı projenin ayrı bir deneme kopyasıdır.",steps:["Stüdyo'da Dallar menüsünden yeni dal aç.","Değişiklik yap, kısa bir notla commit et.","Beğenince ana dala aktar; beğenmezsen dalı bırak, ana sürüm bozulmaz."],cmds:["git clone https://github.com/kullanici/depo.git","git checkout -b yeni-ozellik","git add -A && git commit -m \"Randevu filtresi eklendi\"","git push -u origin yeni-ozellik"]},
+ {id:"pr",g:"github",t:"Pull request (PR) nedir",sum:"Bir dalda yaptığın değişikliği ana dala almadan önce incelemeye açtığın istektir. Ekip yorum yapar, testler çalışır, sonra birleştirilir.",steps:["Dalı GitHub'a gönder.","GitHub'da 'Compare & pull request'.","Açıklama yaz, incelemeyi bekle, birleştir."]},
+ {id:"pages",g:"github",t:"GitHub Pages ile ücretsiz yayın",sum:"Tek dosyalık (index.html) uygulamalar GitHub Pages'te ücretsiz yayınlanır.",steps:["Depoda Settings › Pages.","Kaynak: main dalı / kök klasör.","Birkaç dakika sonra kullanici.github.io/depo adresinde yayında."]},
+ {id:"domain",g:"yayin",t:"Alan adı bağlama (DNS)",sum:"Alan adını satın aldığın yerde DNS kayıtlarıyla sitenin sunucusunu gösterirsin.",steps:["Barındırma sağlayıcısından IP adresini ya da hedef adresi al.","DNS'te kök alan (@) için A kaydı: IP adresi.","www için CNAME: ana alan adı ya da sağlayıcının verdiği adres.","Yayılması birkaç dakika ile 24 saat sürebilir; sonra SSL (https) açılır."],cmds:["@    A      185.0.0.10","www  CNAME  ornek.com.","nslookup ornek.com","dig +short www.ornek.com"]},
+ {id:"hosting",g:"yayin",t:"Barındırma (hosting) seçimi",sum:"Statik site (HTML/CSS/JS) için Pages, Netlify ya da Hostinger web hosting yeter. Sunucu kodu (Node.js, veritabanı) gerekiyorsa Node destekli hosting ya da VPS gerekir.",steps:["Gitmapp uygulamaları çoğunlukla statiktir: Yayınla yeterli.","Kendi alan adı + e-posta istiyorsan Hostinger.","Veritabanı ve arka uç için Node.js hosting ya da VPS."]},
+ {id:"ssl",g:"yayin",t:"SSL ve https",sum:"Tarayıcıda kilit simgesi demek. Kullanıcı verisini şifreler; Google sıralamasını da etkiler.",steps:["Hosting panelinde ücretsiz SSL'i (Let's Encrypt) aç.","http'den https'e yönlendirmeyi aç.","Sayfadaki tüm görsel ve dosya adresleri https ile başlamalı."]},
+ {id:"tasarim-ilke",g:"tasarim",t:"10 tasarım aklı",sum:"Her ekranda uygulanacak kısa kurallar.",steps:DESIGN_TIPS},
+ {id:"yerlesim",g:"tasarim",t:"Yerleşim ve şablon düzeni",sum:"Panel uygulamaları: solda menü, üstte başlık, ortada tablo/kartlar. Siteler: üst menü, kapak (hero), özellikler, yorumlar, iletişim, alt bilgi.",steps:["Önemli bilgi sol üstten başlar, göz Z/F şeklinde tarar.","Kartlar aynı yükseklik ve hizada olsun.","Mobilde tek sütun, büyük düğmeler; menü altta ya da çekmece."]},
+ {id:"erisim",g:"tasarim",t:"Erişilebilirlik",sum:"Herkesin kullanabilmesi: klavye, ekran okuyucu, renk körlüğü.",steps:["Tüm form alanlarına etiket.","Görsellere alt metin.","Klavyeyle her düğmeye ulaşılabilmeli; odak halkası görünür olmalı."],cmds:["Tüm düğme ve formları WCAG AA erişilebilirlik kurallarına uygun hale getir."]},
+ {id:"kisayol",g:"komut",t:"Kısayollar",sum:"Daha hızlı çalış.",steps:["⌘K / Ctrl+K: Ara ve hızlı git.","⌘J / Ctrl+J: Asistan.","Esc: Açık paneli kapat.","Enter: Gönder; Shift+Enter: yeni satır."]},
+ {id:"istem-kalip",g:"komut",t:"Hazır istem kalıpları",sum:"Kopyala, Stüdyo'ya yapıştır, köşeli yerleri değiştir.",steps:["Her biri tek bir değişiklik ister; sırayla uygula."],cmds:["[Modül] ekranına arama, filtre ve CSV dışa aktarma ekle.","Formlara doğrulama ekle: zorunlu alanlar, telefon 05xx, e-posta biçimi.","Tüm metinleri kurumsal ve sade Türkçeyle yeniden yaz.","Ana sayfaya özet kartları ve haftalık çubuk grafik ekle.","Verileri tarayıcıda kalıcı sakla ve yedek indir/yükle düğmesi ekle.","Uygulamayı telefona yüklenebilir (PWA) yap."]},
+];
+function Akademi({go,toast}){
+ const [q,setQ]=useState(""),[g,setG]=useState(""),[open,setOpen]=useState(()=>{const m=location.hash.match(/[?&]konu=([\w-]+)/);return m?m[1]:""});
+ const qq=q.trim().toLocaleLowerCase("tr");
+ const list=AK.filter(x=>(!g||x.g===g)&&(!qq||(x.t+" "+x.sum+" "+(x.steps||[]).join(" ")+" "+(x.cmds||[]).join(" ")).toLocaleLowerCase("tr").includes(qq)));
+ return html`<section class="ak">
+  <h1>Akademi</h1><p class="sub">Yapay zekâ, bağlantılar, GitHub, alan adı, hosting ve tasarım hakkında kısa dersler, kopyalanabilir komutlar ve anlatımlı turlar. Hiç bilmiyorsan bir turla başla; imleç seni ekran ekran gezdirir.</p>
+  <div class="ak-tours">${Object.entries(TOURS).map(([k,v])=>html`<button key=${k} class="box ak-tour" onClick=${()=>startTour(k)}><span class="ak-play"><${Icon} n="play" s=${16}/></span><span><b>${v.name}</b><small>${v.desc}</small></span><em>${v.dur}</em></button>`)}</div>
+  <div class="ak-bar"><label class="skm-q"><${Icon} n="search" s=${16}/><input aria-label="Akademi'de ara" placeholder="Ara: alan adı, commit, istem, SSL…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
+   <div class="depo-filter"><button class=${"chip"+(!g?" on":"")} onClick=${()=>setG("")}>Tümü</button>${AK_GROUPS.map(([k,l])=>html`<button key=${k} class=${"chip"+(g===k?" on":"")} onClick=${()=>setG(k)}>${l}</button>`)}</div></div>
+  <div class="ak-grid">${list.map(x=>{const grp=AK_GROUPS.find(y=>y[0]===x.g);const o=open===x.id||!!qq;return html`<article class="box ak-card" key=${x.id} data-topic=${x.id}>
+   <div class="ak-h"><${Tile} n=${grp[2]} s=${34}/><div><small>${grp[1]}</small><h3>${x.t}</h3></div></div><p>${x.sum}</p>
+   ${o&&html`<div>${x.steps&&html`<ol class="ak-steps">${x.steps.map(s=>html`<li key=${s}>${s}</li>`)}</ol>`}${x.cmds&&html`<div class="ak-cmds">${x.cmds.map(c=>html`<button key=${c} class="ak-cmd" title="Kopyala" onClick=${()=>copyText(c,toast,"Kopyalandı")}><code>${c}</code><${Icon} n="copy" s=${13}/></button>`)}</div>`}</div>`}
+   <div class="skl-act">${!qq&&html`<button class="btn g s" aria-expanded=${o} onClick=${()=>setOpen(o?"":x.id)}>${o?"Kapat":"Oku"}</button>`}${x.tour&&html`<button class="btn s" onClick=${()=>startTour(x.tour)}><${Icon} n="play" s=${13}/> Bana göster</button>`}${x.view&&html`<button class="btn g s" onClick=${()=>go(x.view)}>Git</button>`}</div></article>`})}</div>
+  ${!list.length&&html`<div class="box">Sonuç yok. Asistan'a (⌘J) sorabilirsin.</div>`}
+ </section>`;
+}
+
+/* ---------- Yönetim › Kullanım ve UX ---------- */
+function AdminUx(){
+ const [days,setDays]=useState(7);const r=useRemoteData("/api/admin/ux?days="+days);const d=r.data;
+ const bar=(n,max)=>html`<span class="ux-bar"><i style=${{width:Math.max(2,Math.round(n/Math.max(1,max)*100))+"%"}}></i></span>`;
+ const T=new Proxy(TITLES_ALL,{get:(o,k)=>k==="ana"?"Açılış":o[k]});const lbl=x=>String(x).startsWith("menü:")?"Menü › "+(T[x.slice(5)]||x.slice(5)):x;const sec=ms=>ms==null?"–":ms<60000?Math.round(ms/1000)+" sn":(ms/60000).toFixed(1).replace(".",",")+" dk";
+ return html`<section class="ux"><h1>Kullanım ve UX</h1><p class="sub">Sayfa geçişleri, kalma süreleri, tur ve anlatıcı kullanımı, kullanıcı tarayıcısındaki hatalar ve geri bildirimler. Öneriler bu verilerden otomatik çıkarılır.</p>
+  <div class="depo-filter">${[1,7,30].map(n=>html`<button key=${n} class=${"chip"+(days===n?" on":"")} onClick=${()=>setDays(n)}>Son ${n} gün</button>`)}<button class="btn g s" onClick=${r.refresh}><${Icon} n="refresh" s=${13}/> Yenile</button></div>
+  ${!d?html`<${LoadState} request=${r}/>`:html`<div class="ux-wrap">
+   <div class="adm-stats">${[["Oturum",d.totals.sessions],["Sayfa görüntüleme",d.totals.views],["Tur başlatma",d.totals.tours],["Hata",d.totals.errors],["Geri bildirim",d.totals.feedback]].map(([l,n])=>html`<div class="box" key=${l}><small>${l}</small><b>${n}</b></div>`)}</div>
+   <div class="box"><b>Öneriler</b>${d.insights.length?html`<ul class="ux-ins">${d.insights.map((x,k)=>html`<li key=${k} class=${x.level}><span>${x.level==="yuksek"?"Öncelikli":x.level==="orta"?"Önemli":"Bilgi"}</span>${x.text}</li>`)}</ul>`:html`<p class="sub">Henüz öneri çıkaracak kadar veri yok.</p>`}</div>
+   <div class="depo-two"><div class="box"><b>Sayfalar</b><table class="ux-t"><thead><tr><th>Sayfa</th><th>Ziyaret</th><th>Ort. kalma</th><th>5 sn altı çıkış</th></tr></thead><tbody>${d.pages.map(p=>html`<tr key=${p.view}><td>${T[p.view]||p.view}</td><td>${bar(p.visits,d.pages[0]?.visits)} ${p.visits}</td><td>${sec(p.avgMs)}</td><td>${p.quickPct==null?"–":"%"+p.quickPct}</td></tr>`)}</tbody></table></div>
+    <div class="box"><b>En sık geçişler</b><table class="ux-t"><tbody>${d.flows.map(f=>html`<tr key=${f.from+f.to}><td>${T[f.from]||f.from} → ${T[f.to]||f.to}</td><td>${bar(f.n,d.flows[0]?.n)} ${f.n}</td></tr>`)}</tbody></table></div></div>
+   <div class="depo-two"><div class="box"><b>Turlar</b><table class="ux-t"><thead><tr><th>Tur</th><th>Başlatma</th><th>Bitirme</th><th>En çok bırakılan adım</th></tr></thead><tbody>${d.tours.map(t=>html`<tr key=${t.id}><td>${TOUR_NAMES[t.id]||t.id}</td><td>${t.start}</td><td>${t.done} (${t.start?Math.round(t.done/t.start*100):0}%)</td><td>${t.dropStep==null?"–":(t.dropStep+1)+". adım"}</td></tr>`)}</tbody></table></div>
+    <div class="box"><b>En çok açıklama istenen öğeler</b><p class="sub">Anlatıcı modunda en çok basılanlar: etiketi belirsiz olabilir.</p><table class="ux-t"><tbody>${d.help.map(h=>html`<tr key=${h.label}><td>${lbl(h.label)}</td><td>${bar(h.n,d.help[0]?.n)} ${h.n}</td></tr>`)}</tbody></table></div></div>
+   <div class="depo-two"><div class="box"><b>Tarayıcı hataları</b><table class="ux-t"><tbody>${d.errors.map(e=>html`<tr key=${e.msg}><td><code>${e.msg}</code><small> · ${T[e.view]||e.view||"?"} · son ${e.last}</small></td><td>${e.n}</td></tr>`)}</tbody></table>${!d.errors.length&&html`<p class="sub">Hata yok.</p>`}</div>
+    <div class="box"><b>Geri bildirimler</b>${d.feedback.map(f=>html`<p key=${f.created+f.text} class="ux-fb"><small>${f.created} · ${T[f.view]||f.view||""}</small>${f.text}</p>`)}${!d.feedback.length&&html`<p class="sub">Geri bildirim yok.</p>`}</div></div>
+  </div>`}</section>`;
+}
+
 /* ================= BECERİ KÜTÜPHANESİ: sektöre göre test edilmiş uygulama planları ================= */
 const SKL_SEC=[["MODÜLLER","Neler var"],["EKRANLAR","Ekranlar"],["KURALLAR","İş kuralları"],["NOT","Not"],["VERİ","Veri modeli"],["ENTEGRASYON İPUCU","Entegrasyon"]];
 const skillParts=b=>{const o={};let k=null;for(const line of String(b||"").split("\n")){const m=line.match(/^([A-ZÇĞİÖŞÜ ]{2,30}):\s*(.*)$/);if(m&&SKL_SEC.some(s=>s[0]===m[1])){k=m[1];o[k]=m[2]}else if(k)o[k]+=" "+line.trim()}return o};
-function SkillLibrary({go,toast,apiOn}){
- const [data,setData]=useState(null),[err,setErr]=useState(""),[on,setOn]=useState(skillsOn),[q,setQ]=useState(""),[open,setOpen]=useState(""),[sec,setSec]=useState(()=>{const m=location.hash.match(/[?&]sektor=([\w-]+)/);return m?m[1]:""});
+function SkillLibrary({go,toast,apiOn,onTpl}){
+ const [how,setHow]=useState(""),[data,setData]=useState(null),[err,setErr]=useState(""),[on,setOn]=useState(skillsOn),[q,setQ]=useState(""),[open,setOpen]=useState(""),[sec,setSec]=useState(()=>{const m=location.hash.match(/[?&]sektor=([\w-]+)/);return m?m[1]:""});
  useEffect(()=>{if(!apiOn)return;setErr("");api("GET","/api/skills").then(setData).catch(e=>setErr(e.message))},[apiOn]);
  useEffect(()=>{const h=()=>setOn(skillsOn());addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
  const pick=id=>{setSec(id);setOpen("");history.replaceState(null,"","#beceriler"+(id?"?sektor="+id:""));window.scrollTo(0,0)};
@@ -8645,8 +8914,10 @@ function SkillLibrary({go,toast,apiOn}){
    ${qq&&sct&&html`<button type="button" class="skl-sec" onClick=${()=>{setQ("");pick(sct.id)}}>${sct.name}</button>`}
    <div class="skl-mods">${mods.slice(0,8).map(m=>html`<span key=${m}>${m.replace(/\.$/,"")}</span>`)}</div>
    <div class="skl-m"><span>v${s.version}</span>${s.score!=null&&html`<span title="Son otomatik test puanı">test ${s.score}/100</span>`}<span>${s.uses} kullanım</span>${s.success!=null&&html`<span class=${s.success>=70?"ok":"lo"}>başarı %${s.success}</span>`}</div>
+   ${tplsForSkill(s.id).length>0&&html`<div class="skl-tpl"><small>Uygun şablon:</small>${tplsForSkill(s.id).map(t=>html`<button key=${t.id} class="chip" title="Beceriyi yükleyip şablonu Stüdyo'da açar" onClick=${()=>{loadSkill(s.id);onTpl(t)}}>${t.emoji||"✨"} ${t.name}</button>`)}</div>`}
+   ${how===s.id&&html`<${SkillHowTo} s=${s} sector=${s.sector} onTpl=${onTpl} go=${go} toast=${toast}/>`}
    ${open===s.id&&html`<dl class="skl-body">${SKL_SEC.filter(([k])=>p[k]&&k!=="MODÜLLER").map(([k,l])=>html`<div key=${k}><dt>${l}</dt><dd>${p[k]}</dd></div>`)}</dl>`}
-   <div class="skl-act"><button class="btn s" onClick=${()=>start(s)}><${Icon} n="sparkles" s=${14}/> Bununla uygulama yap</button><button class=${"btn g s"+(loaded?" on":"")} onClick=${()=>tog(s)}>${loaded?"Kaldır":"Yükle"}</button><button class="btn g s" aria-expanded=${open===s.id} onClick=${()=>setOpen(open===s.id?"":s.id)}>${open===s.id?"Gizle":"Ayrıntı"}</button></div>
+   <div class="skl-act"><button class="btn s" onClick=${()=>start(s)}><${Icon} n="sparkles" s=${14}/> Bununla uygulama yap</button><button class=${"btn g s"+(loaded?" on":"")} onClick=${()=>tog(s)}>${loaded?"Kaldır":"Yükle"}</button><button class="btn g s" aria-expanded=${how===s.id} onClick=${()=>setHow(how===s.id?"":s.id)}>${how===s.id?"Yol haritasını gizle":"Nasıl kullanılır"}</button><button class="btn g s" aria-expanded=${open===s.id} onClick=${()=>setOpen(open===s.id?"":s.id)}>${open===s.id?"Gizle":"Ayrıntı"}</button></div>
   </article>`};
  return html`<section class="skl">
   <div class="skl-hero"><h1>Beceri Kütüphanesi</h1><p class="sub">${sectors.length} sektör, ${plans.length} uygulama planı. Her beceri o işin yazılımının baştan sona nasıl yapılacağını bilir: modüller, ekranlar, veri modeli ve Türkiye'ye özgü iş kuralları. Sektörünü seç, tek tıkla uygulamanı başlat. Beceriler her kullanımda otomatik test edilip iyileştirilir.</p>
@@ -9020,7 +9291,7 @@ function CreditAdmin({selected="",done,close,toast}){
 /* ================= UYGULAMA ================= */
 // ---------- Gitmapp Asistan: yan sohbet, sesli konuşma, oto pilot ----------
 
-const CP_VIEWS={beceriler:"Beceri Kütüphanesi",depo:"Depo",ana:"Ana sayfa",studio:"Geliştir",magaza:"Keşfet",uygulamalarim:"Projeler",sablonlar:"Şablonlar",temalar:"Temalar","ui-kitler":"UI Kitler",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",modeller:"Dil modelleri",hesabim:"Hesabım",guncel:"Güncellemeler",paketler:"Paketler",olustur:"Bize yaptır","ai-destek":"Yapay zekâ rehberi"};
+const CP_VIEWS={akademi:"Akademi",beceriler:"Beceri Kütüphanesi",depo:"Depo",ana:"Ana sayfa",studio:"Geliştir",magaza:"Keşfet",uygulamalarim:"Projeler",sablonlar:"Şablonlar",temalar:"Temalar","ui-kitler":"UI Kitler",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",modeller:"Dil modelleri",hesabim:"Hesabım",guncel:"Güncellemeler",paketler:"Paketler",olustur:"Bize yaptır","ai-destek":"Yapay zekâ rehberi"};
 const CP_CONFIRM={yap:1,kontrol:1,kaydet:1,yayinla:1,sablon:1,yeni:1,github:1,baglan:1,hesap:1};
 const CP_START=[["sparkles","Fikrimi birlikte netleştirelim","Bir uygulama fikrim var, birlikte netleştirelim. Bana sorular sor."],["layers","Bana uygun bir şablon öner","İşime uygun hazır bir şablon öner ve aç."],["sliders","Ayarları benim için yap","Geliştirme ayarlarını benim için en uygun şekilde yap."],["rocket","Yayınlamama yardım et","Uygulamamı yayına almama adım adım yardım et."]];
 const CP_YES=/^(evet|onayla|onaylıyorum|onay|tamam|olur|başla|başlat|yap|devam|tabii|kesinlikle)\b/i,CP_NO=/^(hayır|vazgeç|iptal|atla|dur|istemiyorum|gerek yok)\b/i;
@@ -9649,7 +9920,7 @@ function App(){
  }
  const installButton=()=>!installed&&html`<button class="btn g" onClick=${installApp}><${Icon} n="download" s=${15}/> Uygulamayı yükle</button>`;
 
- const CUST=["ana","beceriler","magaza","studio","kreator","sablonlar","temalar","ui-kitler","depo","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","yapay-zeka","eposta","github-ayar","maliyetler","odemeler","kullanicilar","yonetim-projeler","siparisler","radar","plan","musteri-avi","kesfet","uretim-ajani","beceri-avcisi","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const CUST=["ana","beceriler","akademi","magaza","studio","kreator","sablonlar","temalar","ui-kitler","depo","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","ux","yapay-zeka","eposta","github-ayar","maliyetler","odemeler","kullanicilar","yonetim-projeler","siparisler","radar","plan","musteri-avi","kesfet","uretim-ajani","beceri-avcisi","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1).split("?")[0];if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(true);const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
  useEffect(()=>{if(view!=="studio")return;
@@ -9806,13 +10077,19 @@ function App(){
  };
  const NAVC=[["ana","Yeni"],["studio","Geliştir"],["kreator","Kreatör Stüdyosu","YENİ"],["uygulamalarim","Projeler"],"$recent",
   "Katalog",["sablonlar","Şablonlar"],["temalar","Temalar"],["ui-kitler","UI Kitler"],["magaza","Keşfet"],["depo","Depo","YENİ"],["$ara","Ara",0,"⌘K"],
-  "Araçlar ve beceriler",["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],["beceriler","Beceriler","YENİ"],"$more",
+  "Araçlar ve beceriler",["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],["beceriler","Beceriler"],["akademi","Akademi","YENİ"],"$more",
   "",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const MORE_NAV=[["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],["oyunlar","Oyunlar"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]];
- const NAVA=[["yonetim","Yönetim merkezi"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["odemeler","Kredi ve ödemeler",billingPending],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],["musteri-avi","Müşteri Avı"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["beceri-avcisi","Beceri Avcısı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
+ const NAVA=[["yonetim","Yönetim merkezi"],["ux","Kullanım ve UX"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["odemeler","Kredi ve ödemeler",billingPending],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],["musteri-avi","Müşteri Avı"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["beceri-avcisi","Beceri Avcısı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
  const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){const storeOrigin=view==="magaza"?location.hash:history.state?.storeOrigin;setAppSlug(k.slice(4));setViewS("detay");history.pushState({storeOrigin,storeSteps:storeOrigin?(view==="magaza"?1:(history.state?.storeSteps||0)+1):0},"","#"+k);window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":view===k;
- const TITLES={beceriler:"Beceri Kütüphanesi",depo:"Depo",temalar:"Temalar","ui-kitler":"UI Kitler",odemeler:"Kredi ve ödemeler","github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir","musteri-avi":"Müşteri Avı",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı","beceri-avcisi":"Beceri Avcısı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
+ const TITLES={ux:"Kullanım ve UX",akademi:"Akademi",beceriler:"Beceri Kütüphanesi",depo:"Depo",temalar:"Temalar","ui-kitler":"UI Kitler",odemeler:"Kredi ve ödemeler","github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir","musteri-avi":"Müşteri Avı",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı","beceri-avcisi":"Beceri Avcısı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
+ TITLES_ALL=TITLES;window.__gmToast=toast;
+ // v5.70 — kullanım ölçümü: sayfa geçişi ve kalma süresi (Ayarlar › analitik kapalıysa gönderilmez)
+ const uxRef=useRef({v:null,t:Date.now()});
+ useEffect(()=>{const u=uxRef.current;if(u.v===view)return;const ms=Date.now()-u.t;track("view",{category:view,query:u.v,meta:u.v?{ms}:null});uxRef.current={v:view,t:Date.now()}},[view]);
+ useEffect(()=>{const seen=new Set();const rep=(msg,src,line)=>{msg=String(msg||"").slice(0,180);if(!msg||seen.has(msg)||seen.size>=6||/ResizeObserver|Script error|Failed to fetch|NetworkError|AbortError|aborted/i.test(msg))return;seen.add(msg);track("ui_error",{query:msg,category:uxRef.current.v,meta:{src:String(src||"").split("/").pop().slice(0,60),line:line||0}})};
+  const e1=e=>rep(e.message,e.filename,e.lineno);const e2=e=>rep("Promise: "+(e.reason&&e.reason.message||e.reason),"",0);addEventListener("error",e1);addEventListener("unhandledrejection",e2);return()=>{removeEventListener("error",e1);removeEventListener("unhandledrejection",e2)}},[]);
  const navList=(mobile=false,items=NAV)=>{let sec=null;return items.map(it=>{if(typeof it==="string"&&it&&it[0]!=="$"){sec=it;return it}if(it==="")sec=null;return !mobile&&sec&&secOff[sec]?null:it}).map((it,i)=>it===null?null:it==="$recent"?(myApps.length>0&&(()=>{const pins=gs.pins||[];const pinned=pins.map(id=>myApps.find(a=>a.id===id)).filter(Boolean);const rest=myApps.filter(a=>!pins.includes(a.id)).slice(0,5);
    const row=(a,on)=>html`<div key=${a.id} class="nav rec"><button type="button" class="rec-open" onClick=${async()=>{try{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}catch(e){toast(e.message)}}}><span class="rec-l">${(a.title||"?")[0].toUpperCase()}</span><span>${a.title}</span></button>${!mobile&&html`<span class="rec-st" title=${a.url?"Yayında":a.github_repo?"GitHub deposuna bağlı":"Hesabında kayıtlı"}><${Icon} n=${a.url?"globe":a.github_repo?"github":"cloud"} s=${15}/></span>`}<button type="button" class=${"rec-pin"+(on?" on":"")} title=${on?"Sabitlemeyi kaldır":"Sabitle"} aria-label=${a.title+(on?" sabitlemesini kaldır":" projesini sabitle")} aria-pressed=${on} onClick=${e=>{e.stopPropagation();togglePin(a.id)}}><${Icon} n="pin" s=${13}/></button></div>`;
    const hd=(k,l)=>mobile?html`<div class="nav-sec">${l}</div>`:html`<button type="button" class="nav-sec cc-sec" aria-expanded=${!secOff[k]} onClick=${()=>togSec(k)}>${l}<${Icon} n="chevDown" s=${13}/></button>`;
@@ -9836,6 +10113,7 @@ function App(){
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
  const cpCtx=()=>({seviye:levelHint([...(LS.get("cpLast",[])||[]),...((window.__gmStudio||{}).sonIstekler||[])].slice(-12)),hesaplar:auth.user?{github:auth.user.github?"@"+auth.user.github:false,google:!!auth.user.google,hostinger:!!auth.user.hostinger}:null,baglantilar:{acik:Object.entries(connState()).filter(([,v])=>v&&v.on).map(([k])=>k),katalog:CONN.filter(c=>!c.soon).map(c=>c.id+(c.f.length?"("+c.f.map(x=>x[0]).join(",")+")":"")+": "+c.n)},sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
+  <div class=${"ambient"+(view==="studio"?" calm":"")} aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <aside id="workspace-navigation" class="side cc-side glass noprint"><div class="side-top">${view==="studio"&&html`<button type="button" class="cc-tg" aria-controls="workspace-navigation" aria-label="Sol menüyü kapat" title="Sol menüyü kapat (⌘/Ctrl+B)" onClick=${()=>setCompact(true)}><${Icon} n="panelR" s=${18}/></button>`}<div class="logo"><${BrandMark} s=${28} label="Gitmapp"/><${Wordmark} s=${19}/></div>
     <div class="cc-seg" role="group" aria-label="Çalışma görünümü"><button type="button" class=${cp?"on":""} aria-pressed=${cp} title="Asistan: sohbet ve sesli konuşma (⌘J)" aria-label="Asistan" onClick=${()=>setCp(!cp)}><${Icon} n="msgSpark" s=${16}/>${stBusy&&view!=="studio"&&html`<i class="cc-badge"></i>`}</button><button type="button" class=${view==="studio"?"on":""} aria-pressed=${view==="studio"} title="Geliştir: kod stüdyosu" aria-label="Geliştir" onClick=${()=>navGo("studio")}><${Icon} n="codeXml" s=${16}/></button></div></div>
    <nav class="navs" aria-label="Ana menü">${navList()}</nav>
@@ -9868,7 +10146,7 @@ function App(){
     !apiOn||auth.phase==="checking"?html`<p role="status">Yönetici oturumu kontrol ediliyor…</p>`:
     health.adminLogin===false?html`<h1>Yönetici girişi</h1><p>Yönetici girişi bu sunucuda henüz yapılandırılmamış. Sunucu yöneticisi yönetici e-postasını ve oturum açma yöntemini ayarlamalı.</p>`:
     html`<${AuthBox} auth=${auth} health=${health} toast=${toast} adminOnly=${true} returnTo=${view} title="Yönetici girişi" reason=${auth.user?"Bu hesabın yönetici yetkisi yok. Yönetici hesabınızla giriş yapabilirsiniz.":"Yönetim merkezine erişmek için yönetici hesabınızla giriş yapın."}/>`}
-    <button class="btn g" onClick=${()=>switchMode("musteri")}>Kullanıcı alanına dön</button></section>`:html`<div key=${adminPage?auth.user?.id:"public"}>
+    <button class="btn g" onClick=${()=>switchMode("musteri")}>Kullanıcı alanına dön</button></section>`:html`<div class="view-in" key=${(adminPage?auth.user?.id:"public")+"|"+view}>
    ${view==="yapay-zeka"&&html`<${AdminAI} toast=${toast}/>`}${view==="eposta"&&html`<${AdminMail} toast=${toast} auth=${auth}/>`}${view==="github-ayar"&&html`<${AdminGitHub} toast=${toast}/>`}
    ${view==="maliyetler"&&html`<${AdminCosts} toast=${toast}/>`}
    ${view==="odemeler"&&html`<${AdminBilling} toast=${toast}/>`}
@@ -9882,7 +10160,9 @@ function App(){
    ${view==="kreator"&&html`<${KreatorPage} auth=${auth} toast=${toast} openAuth=${openAuth}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
    ${view==="otomasyon"&&html`<${Automations} toast=${toast}/>`}
-   ${view==="beceriler"&&html`<${SkillLibrary} go=${navGo} toast=${toast} apiOn=${apiOn}/>`}
+   ${view==="akademi"&&html`<${Akademi} go=${navGo} toast=${toast}/>`}
+   ${view==="ux"&&html`<${AdminUx}/>`}
+   ${view==="beceriler"&&html`<${SkillLibrary} go=${navGo} toast=${toast} apiOn=${apiOn} onTpl=${useTemplate}/>`}
    ${view==="depo"&&html`<${DepoPage} auth=${auth} openAuth=${openAuth} toast=${toast} apiOn=${apiOn}/>`}
    ${view==="sablonlar"&&html`<${TemplatesPage} go=${navGo} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
    ${["temalar","ui-kitler"].includes(view)&&html`<${DesignCatalog} key=${view} page=${view} go=${navGo} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
@@ -9908,6 +10188,7 @@ function App(){
    ${view==="ayar"&&html`<${SettingsEditor} toast=${toast} config=${config}/>`}
    </div>`}
   </main>
+  <${Narrator} go=${navGo} view=${view}/>
   ${cur&&html`<${Detail} key=${cur.full_name} repo=${cur} initialTab=${radarTab} close=${()=>{setCur(null);setRadarTab("genel")}} sec=${mode==="admin"?radarScan(cur,secs[cur.full_name]):secs[cur.full_name]} setSec=${setSec} saved=${!!saved[cur.full_name]} toggleSave=${toggleSave} builds=${builds} addBuild=${addBuild} toast=${toast} present=${r=>{setDeck(r)}} onWant=${mode==="musteri"?(r=>{setCur(null);goWizard(r)}):null}/>`}
   ${deck&&html`<${Deck} repos=${deck} secs=${secs} close=${()=>setDeck(null)}/>`}
   ${ghTok&&html`<${Modal} close=${()=>setGhTok(false)} w=${480}><h2 class="auth-h"><${Icon} n="github" s=${20}/> GitHub'ı bağla</h2><p class="auth-s">${auth.user?"Dallar, commitler ve GitHub'a yayın için hesabını erişim anahtarıyla bağla. Bir kez yapman yeterli.":"Önce giriş yapmalısın."}</p>${auth.user?html`<${GhTokenForm} auth=${auth} onDone=${login=>{setGhTok(false);auth.refresh();toast("GitHub bağlandı · @"+login)}}/>`:html`<button class="btn" onClick=${()=>{setGhTok(false);openAuth("GitHub bağlamak için giriş yap.")}}>Giriş yap</button>`}${auth.user?.admin&&html`<p class="sub" style=${{marginTop:12}}>Yönetici: tek tıkla bağlanma için <a href="#github-ayar" onClick=${()=>setGhTok(false)}>Yönetim › GitHub bağlantısı</a>.</p>`}<//>`}
