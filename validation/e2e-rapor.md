@@ -1,8 +1,8 @@
 # Uçtan uca test raporu
 
-2026-11-27 09:57 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
+2026-11-27 10:09 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
 
-**70 / 70 kontrol geçti.**
+**73 / 73 kontrol geçti.**
 
 | Alan | Kontrol | Sonuç | Not |
 |---|---|---|---|
@@ -67,10 +67,13 @@
 | Ödeme | Yönetici IBAN ve Stripe anahtarlarını panelden kaydetti | ✅ | TR33 0006 1005 1978 6457 8413 26 · Stripe test |
 | Ödeme | [Kredi ve ödemeler sayfası](screens/e2e/odeme-yonetici.png) | ✅ |  |
 | Ödeme | [Kredi yükle penceresi paketleri gösteriyor](screens/e2e/odeme-paketler.png) | ✅ |  |
-| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMYT52A1086C |
+| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMYTKNB9EF6F |
 | Ödeme | Yönetici havaleyi onayladı, 330 kredi yüklendi | ✅ | 69 → 399 |
 | Ödeme | [Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi](screens/e2e/odeme-kart-sonuc.png) | ✅ | 399 → 499 |
 | Ödeme | [Hesabım › Ödemelerim geçmişi](screens/e2e/odeme-gecmis.png) | ✅ | 2 ödeme |
+| Dil | [en-US / America/New_York → en](screens/e2e/dil-en.png) | ✅ | Describe an app: class schedule and book |
+| Dil | [ar-SA / Asia/Riyadh → ar](screens/e2e/dil-ar.png) | ✅ | صف تطبيقًا: جدول الحصص والحجوزات لاستودي |
+| Dil | [fr-CH / Europe/Zurich → de](screens/e2e/dil-de.png) | ✅ | Beschreibe eine App: Kursplan und Buchun |
 | Mobil | [#ana](screens/e2e/mobil-ana.png) | ✅ |  |
 | Mobil | [#studio](screens/e2e/mobil-studio.png) | ✅ |  |
 | Mobil | [#uygulamalarim](screens/e2e/mobil-uygulamalarim.png) | ✅ |  |

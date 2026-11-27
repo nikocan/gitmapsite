@@ -2582,6 +2582,12 @@ html:has(.gt-dialog[open]),body:has(.gt-dialog[open]){overflow:hidden;max-width:
 .crp-fl{animation:none!important;position:static!important;font-size:12px;font-weight:600;margin-left:6px}
 @media(max-width:1280px){.ws-grid.sp-on{grid-template-columns:minmax(300px,380px) minmax(0,1fr)!important}.sp2.float{left:auto!important;right:16px!important}}
 @media(prefers-reduced-motion:reduce){.sp2.st-run::before,.sp2.st-run .sp2-dot,.cr-tick,.cr-tick::after,.sp2-body{animation:none}}
+/* v5.68 — dil seçimi ve RTL */
+.lang-pick{display:flex;gap:8px;flex-wrap:wrap}.lang-pick select{min-width:150px}
+.lang-box{margin-top:14px}.lang-row{display:flex;flex-wrap:wrap;gap:8px}
+.lang-b{padding:8px 14px;border-radius:99px;border:1px solid #2e2e30;background:#1f1f21;color:#d6d5cf;font:inherit;font-size:13.5px;cursor:pointer}.lang-b.on{border-color:#8fb4ff;background:rgba(79,140,255,.1);color:#fff}
+html[dir=rtl] body{font-family:"Noto Sans Arabic",-apple-system,"Segoe UI",Tahoma,sans-serif}
+html[dir=rtl] .gm-icon{transform:none}html[dir=rtl] .studio-side-toggle svg{transform:none}
 </style>
 </head>
 <body>
@@ -2598,8 +2604,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.67.0";
+const VERSION="5.68.0";
 const CHANGELOG=[
+ {v:"5.68.0",date:"2026-11-27",items:[
+  "🌍 Gitmapp artık 5 dilde: Türkçe, English, Español, Deutsch, العربية. Menüler, Stüdyo, giriş alanı, model/mod menüleri, yan panel, kredi ve ödeme ekranları, Hesabım ve vitrin sayfalarındaki temel metinler seçilen dilde görünüyor; Arapçada ekran sağdan sola akıyor",
+  "🧭 Otomatik dil: ilk açılışta (uygulama yüklendiğinde de) cihazın dili kullanılıyor; cihaz dili desteklenmiyorsa ülkeye (saat dilimi) göre seçiliyor — Arap ülkeleri Arapça, İspanya ve Latin Amerika İspanyolca, Almanya/Avusturya/İsviçre Almanca, Türkiye Türkçe, diğerleri İngilizce",
+  "👤 Dil profilde: Hesabım › Dil ve para birimi ve Ayarlar'dan değiştirilebiliyor; seçim hesaba kaydediliyor ve başka cihazda giriş yapınca aynı dil açılıyor. Para birimi (₺ / $ / dile göre) de buradan seçiliyor",
+  "🤖 Yapay zekâ da seçilen dilde konuşuyor: Asistan, plan, rapor ve açıklamalar bu dilde yazılıyor; yeni üretilen uygulamaların metinleri de (aksini istemedikçe) bu dilde oluyor. Sesle yazma da seçilen dili dinliyor"
+ ]},
  {v:"5.67.0",date:"2026-11-27",items:[
   "🛑 Kendiliğinden başlayan istekler durduruldu: otomatik tasarım ajanı, proje açılırken ya da sen yazarken “ekranın ortası boş / yatay taşma” gibi yanlış alarm verebilen uyarılar yüzünden kendi kendine düzeltme başlatıyor, kredi harcıyor ve bazen çalışan sayfayı bozuyordu. Artık yalnızca bu oturumda yeni biten bir üretimden sonra gerçek bir JavaScript hatası çıkarsa ve yazı alanı boşken bir kez çalışıyor; tasarım uyarıları gösteriliyor, düzeltmeyi sen başlatıyorsun",
   "🩹 Giriş alanındaki istek bilgisi geri geldi: dar sohbet sütununda “Okuyor → Mevcut uygulama güncellenecek · ~N kredi” çipi ve kredi notu gizleniyordu; artık sığacak şekilde görünüyor ve dokununca isteğin nasıl yorumlanacağını gösteriyor"
@@ -4386,13 +4398,403 @@ function Settings2({toast,initial}){
 const API=((window.GMS_CONFIG||{}).api||"").replace(/\/$/,"");
 let API_ON=false;
 const TOK={get:()=>LS.get("tok","")||"",set:t=>LS.set("tok",t||"")};
+/* ================= v5.68 — ÇOK DİLLİ ARAYÜZ (tr · en · es · de · ar) =================
+   Arayüz Türkçe yazılır; seçilen dilde ekrandaki metinler sözlükten anında çevrilir.
+   Dil: profil/cihaz tercihi → tarayıcı dili → saat dilimine göre ülke → İngilizce. Arapçada sağdan sola. */
+const GM_LANGS=[["tr","Türkçe"],["en","English"],["es","Español"],["de","Deutsch"],["ar","العربية"]];
+function detectLang(){const saved=LS.get("lang","");if(GM_LANGS.some(x=>x[0]===saved))return saved;
+ const L=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""]).map(x=>String(x).toLowerCase().slice(0,2));
+ const hit=L.find(x=>GM_LANGS.some(g=>g[0]===x));if(hit)return hit;
+ let tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(e){}
+ if(/Istanbul/.test(tz))return "tr";
+ if(/Riyadh|Dubai|Cairo|Baghdad|Kuwait|Qatar|Bahrain|Amman|Beirut|Damascus|Muscat|Algiers|Casablanca|Tunis|Tripoli|Khartoum|Aden|Gaza|Hebron/.test(tz))return "ar";
+ if(/Madrid|Canary|Ceuta|Mexico|Bogota|Lima|Buenos_Aires|Argentina|Santiago|Caracas|Montevideo|Guatemala|Havana|La_Paz|Asuncion|Panama|Costa_Rica|El_Salvador|Tegucigalpa|Managua|Santo_Domingo|Guayaquil|Puerto_Rico/.test(tz))return "es";
+ if(/Berlin|Vienna|Zurich|Busingen|Vaduz/.test(tz))return "de";
+ return "en"}
+const GM_LANG=detectLang();
+function setLang(l,{reload=true,sync=true}={}){if(!GM_LANGS.some(x=>x[0]===l))return;LS.set("lang",l);if(sync&&TOK.get())api("PATCH","/api/me/profile",{prefs:{lang:l}}).catch(()=>{});if(reload)location.reload()}
+const I18N_RAW=`Geliştir	Build	Crear	Entwickeln	التطوير
+Yeni	New	Nuevo	Neu	جديد
+YENİ	NEW	NUEVO	NEU	جديد
+Projeler	Projects	Proyectos	Projekte	المشاريع
+Keşfet	Explore	Explorar	Entdecken	استكشاف
+Şablonlar	Templates	Plantillas	Vorlagen	القوالب
+Ara	Search	Buscar	Suchen	بحث
+Asistan	Assistant	Asistente	Assistent	المساعد
+Bağlantılar	Connections	Conexiones	Verbindungen	الاتصالات
+Beceriler	Skills	Habilidades	Fähigkeiten	المهارات
+Daha fazla	More	Más	Mehr	المزيد
+Güncellemeler	Updates	Novedades	Neuigkeiten	التحديثات
+Kreatör Stüdyosu	Creator Studio	Estudio de creador	Creator-Studio	استوديو المبدعين
+Temalar	Themes	Temas	Designs	السمات
+UI Kitler	UI kits	Kits de UI	UI-Kits	حزم الواجهة
+Depo	Repository	Repositorio	Repository	المستودع
+Katalog	Catalog	Catálogo	Katalog	الكتالوج
+Araçlar ve beceriler	Tools and skills	Herramientas y habilidades	Werkzeuge und Fähigkeiten	الأدوات والمهارات
+Araçlar	Tools	Herramientas	Werkzeuge	الأدوات
+Misafir	Guest	Invitado	Gast	زائر
+Yönetim paneli	Admin panel	Panel de administración	Admin-Bereich	لوحة الإدارة
+Ana menü	Main menu	Menú principal	Hauptmenü	القائمة الرئيسية
+Hesap, ayarlar ve seçenekler	Account, settings and options	Cuenta, ajustes y opciones	Konto, Einstellungen und Optionen	الحساب والإعدادات والخيارات
+Sol menüyü kapat	Close sidebar	Cerrar menú lateral	Seitenleiste schließen	إغلاق القائمة الجانبية
+Sol menüyü aç	Open sidebar	Abrir menú lateral	Seitenleiste öffnen	فتح القائمة الجانبية
+Son kullanılanlar	Recent	Recientes	Zuletzt verwendet	المستخدمة مؤخرًا
+Diğer	More	Otros	Weitere	المزيد
+Hesabım	My account	Mi cuenta	Mein Konto	حسابي
+Ayarlar	Settings	Ajustes	Einstellungen	الإعدادات
+Çıkış yap	Sign out	Cerrar sesión	Abmelden	تسجيل الخروج
+Giriş yap	Sign in	Iniciar sesión	Anmelden	تسجيل الدخول
+Giriş yap / Kayıt ol	Sign in / Sign up	Iniciar sesión / Registrarse	Anmelden / Registrieren	تسجيل الدخول / إنشاء حساب
+Kayıt ol	Sign up	Registrarse	Registrieren	إنشاء حساب
+Dil Modelleri	Language models	Modelos de lenguaje	Sprachmodelle	نماذج اللغة
+Paketler	Plans	Planes	Pakete	الباقات
+Hazır Kodlar	Ready-made code	Código listo	Fertiger Code	أكواد جاهزة
+Bize Yaptır	Have us build it	Encárganoslo	Von uns bauen lassen	اطلب منا التنفيذ
+Taleplerim	My requests	Mis solicitudes	Meine Anfragen	طلباتي
+Yapay Zekâ Rehberi	AI guide	Guía de IA	KI-Leitfaden	دليل الذكاء الاصطناعي
+Eylem merkezi	Action center	Centro de acciones	Aktionszentrale	مركز الإجراءات
+Otomasyonlar	Automations	Automatizaciones	Automatisierungen	الأتمتة
+Uygulama	App	App	App	تطبيق
+Web sitesi	Website	Sitio web	Website	موقع ويب
+Oyun	Game	Juego	Spiel	لعبة
+Proje türü	Project type	Tipo de proyecto	Projekttyp	نوع المشروع
+Hızlı başlangıç	Quick start	Inicio rápido	Schnellstart	بداية سريعة
+Randevu	Appointments	Citas	Termine	المواعيد
+Dashboard	Dashboard	Panel	Dashboard	لوحة المعلومات
+Müşteri portalı	Customer portal	Portal de clientes	Kundenportal	بوابة العملاء
+Dahili araç	Internal tool	Herramienta interna	Internes Tool	أداة داخلية
+Stok & sipariş	Stock & orders	Stock y pedidos	Lager & Bestellungen	المخزون والطلبات
+Landing page	Landing page	Página de aterrizaje	Landingpage	صفحة هبوط
+Kurumsal site	Business site	Sitio corporativo	Firmenwebsite	موقع الشركة
+Portfolyo	Portfolio	Portafolio	Portfolio	معرض الأعمال
+Satış sayfası	Sales page	Página de ventas	Verkaufsseite	صفحة مبيعات
+Bilgi yarışması	Quiz	Concurso de preguntas	Quiz	مسابقة معلومات
+Bulmaca	Puzzle	Rompecabezas	Rätsel	ألغاز
+Platform	Platformer	Plataformas	Jump ’n’ Run	منصات
+Benim için yap	Do it for me	Hazlo por mí	Mach es für mich	نفّذها عني
+Çizimden uygulama	App from a sketch	App desde un boceto	App aus einer Skizze	تطبيق من رسمة
+Otomatik tasarım	Automatic design	Diseño automático	Automatisches Design	تصميم تلقائي
+Bir fikirle başla	Start from an idea	Empieza con una idea	Mit einer Idee starten	ابدأ بفكرة
+Seç, düzenle, gönder	Pick, edit, send	Elige, edita, envía	Wählen, bearbeiten, senden	اختر وعدّل وأرسل
+Kuaför randevu	Salon booking	Citas de peluquería	Friseurtermine	حجز صالون
+QR menü	QR menu	Menú QR	QR-Speisekarte	قائمة QR
+Bütçe takibi	Budget tracker	Control de presupuesto	Budgetplaner	تتبع الميزانية
+Görev panosu	Task board	Tablero de tareas	Aufgabenboard	لوحة المهام
+Düğün daveti	Wedding invite	Invitación de boda	Hochzeitseinladung	دعوة زفاف
+Stok takibi	Stock tracker	Control de stock	Lagerverwaltung	تتبع المخزون
+Antrenman günlüğü	Workout log	Diario de entrenamiento	Trainingstagebuch	سجل التمارين
+Yılan oyunu	Snake game	Juego de la serpiente	Snake-Spiel	لعبة الثعبان
+Blok kırma	Brick breaker	Rompebloques	Breakout	تحطيم الطوب
+Pizzacı sitesi	Pizzeria site	Web de pizzería	Pizzeria-Website	موقع مطعم بيتزا
+Klinik sitesi	Clinic site	Web de clínica	Klinik-Website	موقع عيادة
+Proje fikri	Project idea	Idea del proyecto	Projektidee	فكرة المشروع
+Bir fikir seçer ve üretimi başlatır	Picks an idea and starts building	Elige una idea y empieza a crear	Wählt eine Idee und startet den Bau	يختار فكرة ويبدأ البناء
+Bir uygulama anlat: pilates stüdyom için ders programı ve rezervasyon…	Describe an app: class schedule and bookings for my pilates studio…	Describe una app: horario de clases y reservas para mi estudio de pilates…	Beschreibe eine App: Kursplan und Buchungen für mein Pilates-Studio…	صف تطبيقًا: جدول الحصص والحجوزات لاستوديو البيلاتس الخاص بي…
+Bir site anlat: mimarlık ofisim için projeler, ekip ve iletişim formu…	Describe a website: projects, team and contact form for my architecture office…	Describe un sitio: proyectos, equipo y formulario de contacto para mi estudio de arquitectura…	Beschreibe eine Website: Projekte, Team und Kontaktformular für mein Architekturbüro…	صف موقعًا: المشاريع والفريق ونموذج التواصل لمكتبي المعماري…
+Bir oyun anlat: uzay gemisiyle meteorlardan kaçılan, güçlendirmeler toplanan…	Describe a game: dodge meteors with a spaceship and collect power-ups…	Describe un juego: esquiva meteoritos con una nave y recoge potenciadores…	Beschreibe ein Spiel: mit einem Raumschiff Meteoriten ausweichen und Power-ups sammeln…	صف لعبة: تفادَ النيازك بسفينة فضاء واجمع المعززات…
+Ne değiştirmek istersin?	What would you like to change?	¿Qué quieres cambiar?	Was möchtest du ändern?	ما الذي تريد تغييره؟
+Yazmaya devam et · Enter ile sıraya eklenir	Keep typing · Enter adds to the queue	Sigue escribiendo · Enter lo añade a la cola	Weiterschreiben · Enter fügt zur Warteschlange hinzu	واصل الكتابة · Enter يضيفها إلى قائمة الانتظار
+Değişiklik isteği	Change request	Solicitud de cambio	Änderungswunsch	طلب تغيير
+Ekle	Add	Añadir	Hinzufügen	إضافة
+Sesle yaz	Dictate	Dictar	Diktieren	إملاء صوتي
+Gönder	Send	Enviar	Senden	إرسال
+Gönder (Enter)	Send (Enter)	Enviar (Enter)	Senden (Enter)	إرسال (Enter)
+Durdur	Stop	Detener	Stoppen	إيقاف
+Dil modeli seç	Choose model	Elegir modelo	Modell wählen	اختيار النموذج
+Model seç	Choose model	Elegir modelo	Modell wählen	اختيار النموذج
+Dil modeli	Language model	Modelo de lenguaje	Sprachmodell	نموذج اللغة
+Çalışma modu	Work mode	Modo de trabajo	Arbeitsmodus	وضع العمل
+Model ve çalışma modu	Model and work mode	Modelo y modo de trabajo	Modell und Arbeitsmodus	النموذج ووضع العمل
+Otomatik	Automatic	Automático	Automatisch	تلقائي
+Hızlı	Fast	Rápido	Schnell	سريع
+Dengeli	Balanced	Equilibrado	Ausgewogen	متوازن
+Güçlü	Powerful	Potente	Leistungsstark	قوي
+Planlı	Planned	Planificado	Geplant	مخطط
+Ajan	Agent	Agente	Agent	وكيل
+Sabit model	Fixed model	Modelo fijo	Festes Modell	نموذج ثابت
+Tüm modeller…	All models…	Todos los modelos…	Alle Modelle…	كل النماذج…
+Gelişmiş ayarlar…	Advanced settings…	Ajustes avanzados…	Erweiterte Einstellungen…	إعدادات متقدمة…
+Komutu hemen uygular	Applies the request right away	Aplica la petición al instante	Setzt die Anfrage sofort um	ينفّذ الطلب فورًا
+Önce plan yazar, onaylayınca üretir	Writes a plan first, builds after you approve	Primero escribe un plan y crea al aprobarlo	Schreibt zuerst einen Plan, baut nach Freigabe	يكتب خطة أولًا ثم ينفّذ بعد موافقتك
+İşi adımlara böler, her adımı onayınla uygular	Splits the work into steps and applies each after your approval	Divide el trabajo en pasos y aplica cada uno con tu aprobación	Teilt die Arbeit in Schritte und setzt jeden nach Freigabe um	يقسّم العمل إلى خطوات وينفّذ كل خطوة بموافقتك
+Büyük yeni işte önce plan, düzenlemelerde doğrudan	Plans first for big new work, edits directly	Plan primero en trabajos grandes; ediciones directas	Bei großen neuen Aufgaben erst ein Plan, Änderungen direkt	خطة أولًا للأعمال الكبيرة، والتعديلات مباشرة
+Yeni projede güçlü, küçük düzenlemede hızlı model seçilir	Strong model for new projects, fast model for small edits	Modelo potente para proyectos nuevos, rápido para ediciones pequeñas	Starkes Modell für neue Projekte, schnelles für kleine Änderungen	نموذج قوي للمشاريع الجديدة وسريع للتعديلات الصغيرة
+Karşılaştır, değiştir ya da kendi anahtarını bağla	Compare, switch or connect your own key	Compara, cambia o conecta tu propia clave	Vergleichen, wechseln oder eigenen Schlüssel verbinden	قارن أو بدّل أو اربط مفتاحك الخاص
+Yaratıcılık, ayrıntı düzeyi, özel talimat	Creativity, level of detail, custom instructions	Creatividad, nivel de detalle, instrucciones propias	Kreativität, Detailgrad, eigene Anweisungen	الإبداع ومستوى التفاصيل والتعليمات الخاصة
+kodu yazan yapay zekâ	the AI that writes the code	la IA que escribe el código	die KI, die den Code schreibt	الذكاء الاصطناعي الذي يكتب الكود
+her işte aynı model	same model for every task	el mismo modelo para todo	dasselbe Modell für alles	النموذج نفسه لكل مهمة
+Bulut	Cloud	Nube	Cloud	السحابة
+Yeni proje	New project	Nuevo proyecto	Neues Projekt	مشروع جديد
+Tasarım teması	Design theme	Tema de diseño	Design-Thema	سمة التصميم
+Görsel ya da çizim ekle	Add an image or sketch	Añadir imagen o boceto	Bild oder Skizze hinzufügen	إضافة صورة أو رسمة
+Komutlar	Commands	Comandos	Befehle	الأوامر
+Asistanla konuş	Talk to the assistant	Hablar con el asistente	Mit dem Assistenten sprechen	تحدث مع المساعد
+GitHub'dan içe aktar	Import from GitHub	Importar desde GitHub	Von GitHub importieren	الاستيراد من GitHub
+Önizleme	Preview	Vista previa	Vorschau	معاينة
+Tasarım	Design	Diseño	Design	التصميم
+Kod	Code	Código	Code	الكود
+Değişiklikler	Changes	Cambios	Änderungen	التغييرات
+Yayınla	Publish	Publicar	Veröffentlichen	نشر
+Kaydet	Save	Guardar	Speichern	حفظ
+Dallar	Branches	Ramas	Branches	الفروع
+Yerel taslak	Local draft	Borrador local	Lokaler Entwurf	مسودة محلية
+Hesaba kaydedildi	Saved to account	Guardado en la cuenta	Im Konto gespeichert	محفوظ في الحساب
+Telefon	Phone	Teléfono	Telefon	الهاتف
+Tablet	Tablet	Tableta	Tablet	جهاز لوحي
+Masaüstü	Desktop	Escritorio	Desktop	سطح المكتب
+Tam ekran önizleme	Full-screen preview	Vista previa a pantalla completa	Vollbildvorschau	معاينة بملء الشاشة
+Yeni sekmede aç	Open in new tab	Abrir en una pestaña nueva	In neuem Tab öffnen	فتح في علامة تبويب جديدة
+Sürüm geçmişi	Version history	Historial de versiones	Versionsverlauf	سجل الإصدارات
+Önceki sürüm	Previous version	Versión anterior	Vorherige Version	الإصدار السابق
+Sürüm kontrolü	Version control	Control de versiones	Versionskontrolle	التحكم في الإصدارات
+Önizlemeye git	Go to preview	Ir a la vista previa	Zur Vorschau	الانتقال إلى المعاينة
+Sen	You	Tú	Du	أنت
+Uygulama adı	App name	Nombre de la app	App-Name	اسم التطبيق
+Yan panel	Side panel	Panel lateral	Seitenleiste	اللوحة الجانبية
+Genel	Overview	General	Übersicht	نظرة عامة
+Çıktılar	Outputs	Resultados	Ausgaben	المخرجات
+Pilot	Pilot	Piloto	Pilot	الطيار
+Kokpit	Cockpit	Cabina	Cockpit	قمرة القيادة
+Hazır	Ready	Listo	Bereit	جاهز
+Başlamaya hazır	Ready to start	Listo para empezar	Startklar	جاهز للبدء
+Çalışıyor	Working	Trabajando	Arbeitet	يعمل
+Dikkat gerekiyor	Needs attention	Requiere atención	Aufmerksamkeit nötig	يحتاج إلى انتباه
+Bekleyen iş	Pending work	Trabajo pendiente	Offene Aufgabe	عمل معلّق
+Her şey yolunda	All good	Todo en orden	Alles in Ordnung	كل شيء على ما يرام
+Fikrini yaz, birlikte yapalım	Write your idea, let's build it together	Escribe tu idea y la creamos juntos	Schreib deine Idee, wir bauen sie zusammen	اكتب فكرتك ولنبنها معًا
+Bu oturum	This session	Esta sesión	Diese Sitzung	هذه الجلسة
+Bakiye	Balance	Saldo	Guthaben	الرصيد
+Bağlam	Context	Contexto	Kontext	السياق
+kredi	credits	créditos	Credits	رصيد
+açık eklenti	active add-ons	complementos activos	aktive Add-ons	إضافات مفعلة
+sağlıklı	healthy	correcto	in Ordnung	سليم
+arıza var	has issues	con fallos	gestört	يوجد عطل
+giriş yap	sign in	inicia sesión	anmelden	سجّل الدخول
+Ortam	Environment	Entorno	Umgebung	البيئة
+Bağdaştırıcılar	Connectors	Conectores	Konnektoren	الموصلات
+Dış bağımlılıklar	External dependencies	Dependencias externas	Externe Abhängigkeiten	التبعيات الخارجية
+Medya	Media	Multimedia	Medien	الوسائط
+Bağla	Connect	Conectar	Verbinden	ربط
+Bağlantıları yönet	Manage connections	Gestionar conexiones	Verbindungen verwalten	إدارة الاتصالات
+Gitmapp bulutu	Gitmapp cloud	Nube de Gitmapp	Gitmapp-Cloud	سحابة Gitmapp
+Cihazda taslak	Draft on this device	Borrador en el dispositivo	Entwurf auf dem Gerät	مسودة على الجهاز
+Proje hesabında kayıtlı	Saved in your account	Guardado en tu cuenta	Im Konto gespeichert	محفوظ في حسابك
+Proje hesabına kaydedilmedi	Project not saved to your account	Proyecto no guardado en tu cuenta	Projekt nicht im Konto gespeichert	لم يُحفظ المشروع في حسابك
+Cihaz değişirse kaybolabilir	May be lost if you switch devices	Podría perderse si cambias de dispositivo	Kann beim Gerätewechsel verloren gehen	قد يضيع إذا غيّرت الجهاز
+Giriş yapılmadı	Not signed in	Sesión no iniciada	Nicht angemeldet	لم يتم تسجيل الدخول
+Kayıt, dal ve yayın için hesap gerekir	An account is needed to save, branch and publish	Se necesita una cuenta para guardar, crear ramas y publicar	Zum Speichern, Verzweigen und Veröffentlichen ist ein Konto nötig	الحساب مطلوب للحفظ والفروع والنشر
+Düzelt	Fix	Corregir	Beheben	إصلاح
+Hata	Error	Error	Fehler	خطأ
+Tamamlandı	Done	Completado	Erledigt	مكتمل
+Şu an çalışılan dal	Current branch	Rama actual	Aktueller Branch	الفرع الحالي
+varsayılan dal	default branch	rama predeterminada	Standard-Branch	الفرع الافتراضي
+Dal için önce projeyi kaydet	Save the project to create a branch	Guarda el proyecto para crear una rama	Projekt speichern, um einen Branch anzulegen	احفظ المشروع لإنشاء فرع
+Oto	Auto	Auto	Auto	تلقائي
+Hataları otomatik düzelt	Auto-fix errors	Corregir errores automáticamente	Fehler automatisch beheben	إصلاح الأخطاء تلقائيًا
+Kontrol et ve düzelt	Check and fix	Revisar y corregir	Prüfen und beheben	افحص وأصلح
+Mobil uyum	Mobile-friendly	Adaptado a móvil	Mobil-optimiert	ملاءمة للجوال
+Verileri sakla	Save data	Guardar datos	Daten speichern	حفظ البيانات
+Arama ve filtre	Search and filter	Búsqueda y filtros	Suche und Filter	البحث والتصفية
+Koyu tema	Dark theme	Tema oscuro	Dunkles Design	سمة داكنة
+Özet ve grafik	Summary and charts	Resumen y gráficos	Übersicht und Diagramme	ملخص ورسوم بيانية
+Yarım kalanı sürdür	Resume unfinished work	Continuar lo pendiente	Unvollendetes fortsetzen	استئناف العمل غير المكتمل
+Planı onayla ve başla	Approve plan and start	Aprobar el plan y empezar	Plan freigeben und starten	اعتمد الخطة وابدأ
+Yapılacakları başlat	Start the to-dos	Iniciar las tareas	Aufgaben starten	ابدأ المهام
+Reddedilen sürümü göster	Show the rejected version	Mostrar la versión rechazada	Abgelehnte Version anzeigen	عرض الإصدار المرفوض
+Tasarım ajanı	Design agent	Agente de diseño	Design-Agent	وكيل التصميم
+Yeniden dene	Try again	Reintentar	Erneut versuchen	أعد المحاولة
+Tekrar dene	Try again	Reintentar	Erneut versuchen	أعد المحاولة
+İşlem tamamlanamadı	Couldn't complete	No se pudo completar	Konnte nicht abgeschlossen werden	تعذّر الإكمال
+Önizleme hazır	Preview ready	Vista previa lista	Vorschau bereit	المعاينة جاهزة
+Farkı gör	View diff	Ver diferencias	Unterschiede ansehen	عرض الفرق
+Bu adımın çıktısı	Output of this step	Resultado de este paso	Ergebnis dieses Schritts	مخرجات هذه الخطوة
+Kod kontrolü	Code review	Revisión de código	Code-Prüfung	مراجعة الكود
+Önizlemede sorun bulundu	Problem found in preview	Problema en la vista previa	Problem in der Vorschau gefunden	تم العثور على مشكلة في المعاينة
+Kredi yükle	Add credits	Recargar créditos	Credits aufladen	شحن الرصيد
+Kredi geçmişi	Credit history	Historial de créditos	Credit-Verlauf	سجل الرصيد
+Ödemelerim	My payments	Mis pagos	Meine Zahlungen	مدفوعاتي
+Kredi hareketleri	Credit activity	Movimientos de créditos	Credit-Bewegungen	حركة الرصيد
+Kart ile öde	Pay by card	Pagar con tarjeta	Mit Karte zahlen	الدفع بالبطاقة
+Havale / EFT	Bank transfer	Transferencia bancaria	Banküberweisung	تحويل بنكي
+Anında yüklenir · Stripe güvencesi	Added instantly · secured by Stripe	Se acredita al instante · protegido por Stripe	Sofort gutgeschrieben · gesichert durch Stripe	يُضاف فورًا · بحماية Stripe
+Onaydan sonra yüklenir	Added after approval	Se acredita tras la aprobación	Nach Freigabe gutgeschrieben	يُضاف بعد الموافقة
+Şu an kapalı	Currently unavailable	No disponible ahora	Derzeit nicht verfügbar	غير متاح حاليًا
+Ödemeyi yaptım	I've paid	Ya he pagado	Ich habe bezahlt	لقد دفعت
+Talebi iptal et	Cancel request	Cancelar solicitud	Anfrage stornieren	إلغاء الطلب
+En çok tercih edilen	Most popular	Más popular	Am beliebtesten	الأكثر شيوعًا
+Başlangıç	Starter	Inicial	Starter	المبتدئ
+Popüler	Popular	Popular	Beliebt	الشائع
+Profesyonel	Professional	Profesional	Profi	الاحترافي
+Bekliyor	Pending	Pendiente	Ausstehend	قيد الانتظار
+Ödendi	Paid	Pagado	Bezahlt	مدفوع
+İptal	Cancelled	Cancelado	Storniert	ملغى
+İade edildi	Refunded	Reembolsado	Erstattet	مسترد
+Başarısız	Failed	Fallido	Fehlgeschlagen	فشل
+Ödeme alındı	Payment received	Pago recibido	Zahlung erhalten	تم استلام الدفع
+Ödeme doğrulanıyor…	Verifying payment…	Verificando el pago…	Zahlung wird geprüft…	جارٍ التحقق من الدفع…
+Devam et	Continue	Continuar	Weiter	متابعة
+Kapat	Close	Cerrar	Schließen	إغلاق
+Tamam	OK	Aceptar	OK	حسنًا
+İptal et	Cancel	Cancelar	Abbrechen	إلغاء
+Kullanım	Usage	Uso	Nutzung	الاستخدام
+Geçmiş	History	Historial	Verlauf	السجل
+Tarih	Date	Fecha	Datum	التاريخ
+Kredi	Credits	Créditos	Credits	الرصيد
+Tutar	Amount	Importe	Betrag	المبلغ
+Yöntem	Method	Método	Methode	الطريقة
+Durum	Status	Estado	Status	الحالة
+Açıklama	Description	Descripción	Beschreibung	الوصف
+Kart	Card	Tarjeta	Karte	بطاقة
+Havale	Transfer	Transferencia	Überweisung	تحويل
+Henüz ödeme yok.	No payments yet.	Aún no hay pagos.	Noch keine Zahlungen.	لا توجد مدفوعات بعد.
+Hoş geldin kredisi	Welcome credits	Créditos de bienvenida	Willkommens-Credits	رصيد الترحيب
+Gitmapp krediniz	Your Gitmapp credits	Tus créditos de Gitmapp	Deine Gitmapp-Credits	رصيدك في Gitmapp
+Kart ile anında ya da Havale/EFT ile. Krediler süresizdir.	Instantly by card or by bank transfer. Credits never expire.	Al instante con tarjeta o por transferencia. Los créditos no caducan.	Sofort per Karte oder per Überweisung. Credits verfallen nicht.	فورًا بالبطاقة أو بالتحويل البنكي. الرصيد لا تنتهي صلاحيته.
+Kaydedildi	Saved	Guardado	Gespeichert	تم الحفظ
+Kopyalandı	Copied	Copiado	Kopiert	تم النسخ
+Yakında	Coming soon	Próximamente	Demnächst	قريبًا
+Tümü	All	Todo	Alle	الكل
+Öne çıkanlar	Featured	Destacados	Empfohlen	المميزة
+Kategoriler	Categories	Categorías	Kategorien	الفئات
+Kategori	Category	Categoría	Kategorie	الفئة
+Tüm kategoriler	All categories	Todas las categorías	Alle Kategorien	كل الفئات
+Detaylar	Details	Detalles	Details	التفاصيل
+Canlı önizleme	Live preview	Vista previa en vivo	Live-Vorschau	معاينة مباشرة
+Ücretsiz önizleme	Free preview	Vista previa gratis	Kostenlose Vorschau	معاينة مجانية
+Stüdyo’da kullan	Use in Studio	Usar en el Estudio	Im Studio verwenden	استخدم في الاستوديو
+Bu tasarımla başla	Start with this design	Empezar con este diseño	Mit diesem Design starten	ابدأ بهذا التصميم
+Projelerini görmek için giriş yap	Sign in to see your projects	Inicia sesión para ver tus proyectos	Melde dich an, um deine Projekte zu sehen	سجّل الدخول لرؤية مشاريعك
+Projelerim	My projects	Mis proyectos	Meine Projekte	مشاريعي
+Yerel taslaklar	Local drafts	Borradores locales	Lokale Entwürfe	المسودات المحلية
+Tümüne göz at	Browse all	Ver todo	Alle ansehen	تصفح الكل
+Tümünü Gör	See all	Ver todo	Alle anzeigen	عرض الكل
+Şablon ara	Search templates	Buscar plantillas	Vorlagen suchen	البحث في القوالب
+Sunucuya yeniden bağlanılıyor	Reconnecting to the server	Reconectando con el servidor	Verbindung zum Server wird wiederhergestellt	جارٍ إعادة الاتصال بالخادم
+Şimdi dene	Try now	Probar ahora	Jetzt versuchen	جرّب الآن
+Dil	Language	Idioma	Sprache	اللغة
+Arayüz dili	Interface language	Idioma de la interfaz	Oberflächensprache	لغة الواجهة
+Para birimi	Currency	Moneda	Währung	العملة
+Dil ve para birimi	Language and currency	Idioma y moneda	Sprache und Währung	اللغة والعملة
+Yapay zekâ yanıtları ve yeni uygulamaların metinleri de bu dilde olur.	AI replies and the texts of new apps will also use this language.	Las respuestas de la IA y los textos de las nuevas apps también usarán este idioma.	KI-Antworten und die Texte neuer Apps verwenden ebenfalls diese Sprache.	ستكون ردود الذكاء الاصطناعي ونصوص التطبيقات الجديدة بهذه اللغة أيضًا.
+Dile göre (Türkçe: ₺, diğer diller: $)	By language (Turkish: ₺, others: $)	Según el idioma (turco: ₺, otros: $)	Nach Sprache (Türkisch: ₺, sonst: $)	حسب اللغة (التركية: ₺، غيرها: $)
+Türk lirası (₺)	Turkish lira (₺)	Lira turca (₺)	Türkische Lira (₺)	الليرة التركية (₺)
+ABD doları ($)	US dollar ($)	Dólar estadounidense ($)	US-Dollar ($)	الدولار الأمريكي ($)
+Kendi API anahtarlarım	My own API keys	Mis claves de API	Meine eigenen API-Schlüssel	مفاتيح API الخاصة بي
+Kullanım geçmişi	Usage history	Historial de uso	Nutzungsverlauf	سجل الاستخدام
+Anahtarı nereden alırım? ↗	Where do I get a key? ↗	¿Dónde consigo una clave? ↗	Wo bekomme ich einen Schlüssel? ↗	من أين أحصل على المفتاح؟ ↗
+Henüz kullanım yok.	No usage yet.	Aún no hay uso.	Noch keine Nutzung.	لا يوجد استخدام بعد.
+Hızlı Site	Quick Site	Sitio rápido	Schnelle Website	موقع سريع
+Bu paketle başla	Start with this plan	Empezar con este plan	Mit diesem Paket starten	ابدأ بهذه الباقة
+Paketler ve Fiyatlar	Plans and pricing	Planes y precios	Pakete und Preise	الباقات والأسعار
+Geliştirmeye başla	Start building	Empieza a crear	Jetzt entwickeln	ابدأ البناء
+Kendi uygulamanı oluştur	Create your own app	Crea tu propia app	Erstelle deine eigene App	أنشئ تطبيقك الخاص
+Fikirlerini uygulamaya dönüştür	Turn your ideas into apps	Convierte tus ideas en apps	Mach aus Ideen Apps	حوّل أفكارك إلى تطبيقات
+Haydi başlayalım	Let's get started	Empecemos	Los geht's	لنبدأ
+Başlamak için öneriler	Suggestions to get started	Sugerencias para empezar	Vorschläge für den Start	اقتراحات للبدء
+Gezdikçe seni tanıyacağız	We'll get to know you as you browse	Te conoceremos mientras navegas	Wir lernen dich beim Stöbern kennen	سنتعرف عليك أثناء التصفح
+Kendi oyununu yap	Make your own game	Crea tu propio juego	Erstelle dein eigenes Spiel	اصنع لعبتك الخاصة
+İstediğin dil modeliyle	With the AI model you want	Con el modelo de IA que quieras	Mit dem KI-Modell deiner Wahl	بنموذج الذكاء الاصطناعي الذي تريده
+Kendi alan adınla canlıya al	Go live with your own domain	Publica con tu propio dominio	Mit eigener Domain live gehen	انطلق بنطاقك الخاص
+Hazır şablonlar · canlı demo	Ready-made templates · live demo	Plantillas listas · demo en vivo	Fertige Vorlagen · Live-Demo	قوالب جاهزة · عرض مباشر
+Sektörüne özel tasarımlar	Designs for your industry	Diseños para tu sector	Designs für deine Branche	تصاميم خاصة بمجالك
+Bir oyun ya da site yap	Make a game or a website	Crea un juego o un sitio web	Erstelle ein Spiel oder eine Website	اصنع لعبة أو موقعًا
+Gitmapp Stüdyo	Gitmapp Studio	Gitmapp Studio	Gitmapp Studio	استوديو Gitmapp
+Tanıtım filmini izle	Watch the intro video	Ver el vídeo de presentación	Einführungsvideo ansehen	شاهد الفيديو التعريفي
+Verimlilik	Productivity	Productividad	Produktivität	الإنتاجية
+Senin tarzın	Your style	Tu estilo	Dein Stil	أسلوبك
+Son görüntülenenler	Recently viewed	Vistos recientemente	Zuletzt angesehen	شوهدت مؤخرًا
+Gitmapp şablonları	Gitmapp templates	Plantillas de Gitmapp	Gitmapp-Vorlagen	قوالب Gitmapp
+Uygulama şablonu	App template	Plantilla de app	App-Vorlage	قالب تطبيق
+Oyun şablonu	Game template	Plantilla de juego	Spielvorlage	قالب لعبة
+Web sitesi şablonu	Website template	Plantilla de sitio web	Website-Vorlage	قالب موقع
+Kendi anahtarınla	With your own key	Con tu propia clave	Mit eigenem Schlüssel	بمفتاحك الخاص
+En iyi olduğu işler:	Best at:	Ideal para:	Am besten für:	الأفضل في:
+Görsel üretimi	Image generation	Generación de imágenes	Bildgenerierung	توليد الصور
+Neden	Why	Por qué	Warum	لماذا
+İletişim	Contact	Contacto	Kontakt	التواصل
+Sat	Sell	Vender	Verkaufen	بيع
+Büyüt	Grow	Crecer	Wachsen	نمو
+Yapay Zekâ	AI	IA	KI	الذكاء الاصطناعي
+Çalış	Work	Trabajar	Arbeiten	العمل
+Sağlık	Health	Salud	Gesundheit	الصحة
+Eğitim	Education	Educación	Bildung	التعليم
+Emlak	Real estate	Inmobiliaria	Immobilien	العقارات
+Alışveriş	Shopping	Compras	Shopping	التسوق
+Yemek	Food	Comida	Essen	الطعام
+Finans	Finance	Finanzas	Finanzen	المالية
+Sosyal	Social	Social	Sozial	اجتماعي
+Görevler	Tasks	Tareas	Aufgaben	المهام
+Dersler	Lessons	Clases	Kurse	الدروس
+Klinikler	Clinics	Clínicas	Kliniken	العيادات
+Günün menüsü	Menu of the day	Menú del día	Tagesmenü	قائمة اليوم
+Sigorta	Insurance	Seguros	Versicherung	التأمين
+Teknik servis	Technical service	Servicio técnico	Technischer Service	الخدمة الفنية
+Antrenman	Workout	Entrenamiento	Training	التمرين
+Yap	Build	Crear	Bauen	ابنِ
+İyileştir	Improve	Mejorar	Verbessern	حسّن
+Türkçe anlat	Describe it in your words	Descríbelo con tus palabras	Beschreib es in deinen Worten	صِفه بكلماتك
+Tek dokunuşla yayınla	Publish in one tap	Publica con un toque	Mit einem Tipp veröffentlichen	انشر بلمسة واحدة
+Pano	Board	Tablero	Board	لوحة
+Portal	Portal	Portal	Portal	بوابة
+Sunum	Presentation	Presentación	Präsentation	عرض تقديمي
+İç araç	Internal tool	Herramienta interna	Internes Tool	أداة داخلية
+Açılış sayfası	Landing page	Página de aterrizaje	Landingpage	صفحة هبوط
+Satış	Sales	Ventas	Vertrieb	المبيعات
+Yeni proje fikri	New project idea	Nueva idea de proyecto	Neue Projektidee	فكرة مشروع جديدة
+Çizim ya da görsel ekle	Add a sketch or image	Añadir boceto o imagen	Skizze oder Bild hinzufügen	إضافة رسمة أو صورة
+Başlat	Start	Empezar	Starten	ابدأ
+Başlat (Enter)	Start (Enter)	Empezar (Enter)	Starten (Enter)	ابدأ (Enter)
+Çalışma alanı	Workspace	Espacio de trabajo	Arbeitsbereich	مساحة العمل
+Uygulamalarına yapay zekâ ve servis ekle	Add AI and services to your apps	Añade IA y servicios a tus apps	Füge deinen Apps KI und Dienste hinzu	أضف الذكاء الاصطناعي والخدمات إلى تطبيقاتك
+Sürüm kontrolü ayarları	Version control settings	Ajustes de control de versiones	Einstellungen der Versionskontrolle	إعدادات التحكم في الإصدارات
+Paneli kapat	Close panel	Cerrar panel	Bereich schließen	إغلاق اللوحة
+Tasarımı düzenle	Edit design	Editar diseño	Design bearbeiten	تعديل التصميم
+Uygulama ikonu ve rengi	App icon and color	Icono y color de la app	App-Symbol und Farbe	أيقونة التطبيق ولونها
+Stüdyo konuşması	Studio conversation	Conversación del Estudio	Studio-Unterhaltung	محادثة الاستوديو
+Sıradaki adım önerileri	Next step suggestions	Sugerencias del siguiente paso	Vorschläge für den nächsten Schritt	اقتراحات الخطوة التالية
+Kod incelemesi: hataları bulur ve düzeltir	Code review: finds and fixes errors	Revisión de código: encuentra y corrige errores	Code-Prüfung: findet und behebt Fehler	مراجعة الكود: تجد الأخطاء وتصلحها
+Önizleme ve kod	Preview and code	Vista previa y código	Vorschau und Code	المعاينة والكود
+Sürükleyerek genişliği ayarla	Drag to adjust the width	Arrastra para ajustar el ancho	Ziehen, um die Breite anzupassen	اسحب لضبط العرض
+Yüzen pencere yap (taşınabilir)	Make it a floating window (movable)	Convertir en ventana flotante (movible)	Als schwebendes Fenster (verschiebbar)	اجعلها نافذة عائمة (قابلة للنقل)
+Kenara sabitle	Dock to the side	Fijar al lateral	Am Rand andocken	تثبيت على الجانب
+Yeni keşif	New discovery	Nuevo hallazgo	Neue Entdeckung	اكتشاف جديد
+GitmappGT teknik destek	GitmappGT tech support	Soporte técnico GitmappGT	GitmappGT Technik-Support	دعم GitmappGT الفني
+Gitmapp ile	With Gitmapp	Con Gitmapp	Mit Gitmapp	مع Gitmapp
+Fikrini yaz,	Write your idea,	Escribe tu idea,	Schreib deine Idee,	اكتب فكرتك،
+yapsın.	builds it.	la crea.	baut sie.	تبنيها.
+Çalışma görünümü	Workspace view	Vista de trabajo	Arbeitsansicht	عرض العمل
+Bekleyen	Pending	Pendiente	Ausstehend	قيد الانتظار
+Gelir	Revenue	Ingresos	Umsatz	الإيرادات
+Hesapsız 3 deneme · ücretsiz hesapla hoş geldin kredisi	3 free tries without an account · welcome credits with a free account	3 pruebas sin cuenta · créditos de bienvenida con una cuenta gratis	3 Versuche ohne Konto · Willkommens-Credits mit kostenlosem Konto	3 تجارب بدون حساب · رصيد ترحيبي مع حساب مجاني
+· bağlanıyor…	· connecting…	· conectando…	· verbinde…	· جارٍ الاتصال…
+(ağ isteği engellendi ya da sunucu kapalı)	(network request blocked or server down)	(solicitud bloqueada o servidor caído)	(Netzwerkanfrage blockiert oder Server nicht erreichbar)	(تم حظر طلب الشبكة أو الخادم متوقف)
+(cihaz çevrimdışı)	(device offline)	(dispositivo sin conexión)	(Gerät offline)	(الجهاز غير متصل)
+; yazmaya devam edebilirsin, bağlanınca gönderdiğin istek kendiliğinden başlar.	; you can keep typing, your request will start automatically once connected.	; puedes seguir escribiendo, tu petición empezará sola al conectarse.	; du kannst weiterschreiben, deine Anfrage startet automatisch nach dem Verbinden.	؛ يمكنك متابعة الكتابة، وسيبدأ طلبك تلقائيًا عند الاتصال.
+Kredin azalıyor	Your credits are running low	Te quedan pocos créditos	Deine Credits gehen zur Neige	رصيدك ينفد
+Bugün en çok ziyaret edilenler	Most visited today	Lo más visitado hoy	Heute am meisten besucht	الأكثر زيارة اليوم
+Profil	Profile	Perfil	Profil	الملف الشخصي`;
+const I18N_PAT=[[/^(\d[\d.,]*) kredi$/,["$1 credits","$1 créditos","$1 Credits","$1 رصيد"]],[/^(\d[\d.,]*) kredi \/ işlem$/,["$1 credits / request","$1 créditos / petición","$1 Credits / Anfrage","$1 رصيد / طلب"]],
+ [/^Bakiyen: (.*)$/,["Balance: $1","Saldo: $1","Guthaben: $1","الرصيد: $1"]],[/^(\d+) proje$/,["$1 projects","$1 proyectos","$1 Projekte","$1 مشاريع"]],[/^Tümü \((\d+)\)$/,["All ($1)","Todo ($1)","Alle ($1)","الكل ($1)"]],
+ [/^(.+) öde$/,["Pay $1","Pagar $1","$1 bezahlen","ادفع $1"]],[/^kredi başı (.+)$/,["$1 per credit","$1 por crédito","$1 pro Credit","$1 لكل رصيد"]],[/^\+(\d+) bonus dahil$/,["incl. +$1 bonus","incl. +$1 de bonificación","inkl. +$1 Bonus","يشمل +$1 مكافأة"]]];
+const I18N=(()=>{const col={en:0,es:1,de:2,ar:3}[GM_LANG];if(col==null)return null;const m=new Map();for(const line of I18N_RAW.split("\n")){const c=line.split("\t");if(c.length===5&&c[col+1])m.set(c[0],c[col+1])}return {m,col}})();
+function tr(t){if(!I18N||!t)return t;const k=t.trim();if(!k)return t;let v=I18N.m.get(k);if(v==null){for(const [re,out] of I18N_PAT){if(re.test(k)){v=k.replace(re,out[I18N.col]);break}}}if(v==null)return t;return t.replace(k,v)}
+function i18nStart(){if(GM_LANG==="tr"||!I18N)return;document.documentElement.lang=GM_LANG;if(GM_LANG==="ar")document.documentElement.dir="rtl";
+ const skip=el=>!el||el.closest("iframe,textarea,input,code,pre,script,style,[contenteditable=true],.studio-message-text,.studio-user-message,.cm-editor,[data-no-i18n]");
+ const ATTR=["placeholder","title","aria-label"];
+ const doText=n=>{const p=n.parentElement;if(skip(p))return;const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v};
+ const doEl=el=>{if(el.closest&&el.closest("iframe,[data-no-i18n]"))return;for(const a of ATTR){const v=el.getAttribute&&el.getAttribute(a);if(v){const t=tr(v);if(t!==v)el.setAttribute(a,t)}}};
+ const walk=root=>{if(root.nodeType===3){doText(root);return}if(root.nodeType!==1)return;doEl(root);root.querySelectorAll&&root.querySelectorAll("[placeholder],[title],[aria-label]").forEach(doEl);
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())doText(n)};
+ walk(document.body);
+ new MutationObserver(rs=>{for(const r of rs){if(r.type==="characterData")doText(r.target);else if(r.type==="attributes")doEl(r.target);else r.addedNodes.forEach(walk)}}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR})}
+
 const SID=(()=>{let s=LS.get("sid","");if(!s){s=Math.random().toString(36).slice(2,12)+Date.now().toString(36);LS.set("sid",s)}return s})();
 // Sağlık kontrolü: oturum anahtarı göndermez (tarayıcı ön isteği/OPTIONS gerekmez), önbelleğe takılmaz; başarısızlığın nedenini saklar
 async function ping(signal){const t0=Date.now();try{const r=await fetch(API+"/api/health",{signal,cache:"no-store"});if(!r.ok){window.__gmNetErr="sunucu "+r.status+" döndü"+(r.status===502||r.status===503?" (büyük olasılıkla güncelleniyor)":"");throw new Error(window.__gmNetErr)}const j=await r.json();window.__gmNetErr="";window.__gmPingMs=Date.now()-t0;return j}
  catch(e){if(!window.__gmNetErr||e.name==="AbortError"||e.name==="TypeError")window.__gmNetErr=e.name==="AbortError"?"yanıt 10 sn içinde gelmedi":!navigator.onLine?"cihaz çevrimdışı":"ağ isteği engellendi ya da sunucu kapalı";throw e}}
 async function api(method,path,body,signal){
  if(!API)throw new Error("Sunucu yapılandırılmadı");
- const t=TOK.get();const r=await fetch(API+path,{method,signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:body?JSON.stringify(body):undefined});
+ const t=TOK.get();if(GM_LANG!=="tr"&&body&&typeof body==="object"&&!Array.isArray(body)&&path.startsWith("/api/ai/")&&!body.lang)body={...body,lang:GM_LANG};const r=await fetch(API+path,{method,signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:body?JSON.stringify(body):undefined});
  let j={};try{j=await r.json()}catch(e){}
  if(!r.ok){
   if(path.startsWith("/api/admin/") && (r.status===401||r.status===403) && t && t===TOK.get())
@@ -4530,6 +4932,7 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
     <${StRow} t="Son işlemler" col=${true}>${use.usage.length?html`<div class="st-log">${use.usage.slice(0,8).map((x,i)=>html`<div key=${i}><span>${KL_USE[x.kind]||x.kind}</span><span>${shortModel(x.model||"")}</span><span>${new Date(x.created.replace(" ","T")+"Z").toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</span><b>−${x.credits}</b></div>`)}</div>`:html`<p class="st-mut">Henüz işlem yok.</p>`}<//>
     <div class="st-save"><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>{close();dispatchEvent(new Event("gm:cr"))}}><${Icon} n="chart" s=${14}/> Canlı kredi paneli</button></div>`}`}
   case "yetenekler":return html`
+   <${StRow} t="Dil ve para birimi" d="Yapay zekâ yanıtları ve yeni uygulamaların metinleri de bu dilde olur."><span class="lang-pick"><select class="in" aria-label="Arayüz dili" value=${GM_LANG} onChange=${e=>setLang(e.target.value)}>${GM_LANGS.map(([k,n])=>html`<option key=${k} value=${k}>${n}</option>`)}</select><select class="in" aria-label="Para birimi" value=${LS.get("moneyCur","auto")} onChange=${e=>{LS.set("moneyCur",e.target.value);if(TOK.get())api("PATCH","/api/me/profile",{prefs:{currency:e.target.value}}).catch(()=>{});toast("Kaydedildi")}}><option value="auto">Dile göre (Türkçe: ₺, diğer diller: $)</option><option value="try">Türk lirası (₺)</option><option value="usd">ABD doları ($)</option></select></span><//>
    <${StRow} t="Asistan rehberi" d="“Benim için yap” bir şey başlatamazsa Gitmapp Asistan açılır; konuşarak ya da yazarak fikrini netleştirir ve hazır komut yazar."><${StSw} on=${gs.guide} set=${v=>gsSet({guide:v})} label="Asistan rehberi"/><//>
    <${StRow} t="Prompt motoru" d="Yazarken “Okuyor”, durunca gönderince ne olacağını ve kaç kredi harcanacağını gösterir. “tamam” gibi kısa mesajlar kod yazmayı başlatmaz."><${StSw} on=${gs.engine} set=${v=>gsSet({engine:v})} label="Prompt motoru"/><//>
    <${StRow} t="“Benim için yap” imleci" d="Hayalet imleç ekranda gezip adımları senin gözünün önünde tıklar. Kapalıysa aynı adımlar anında yapılır."><${StSw} on=${gs.ghost} set=${v=>gsSet({ghost:v})} label="Hayalet imleç"/><//>
@@ -4565,7 +4968,7 @@ function useAuth(apiOn){
   const id=++generation.current,token=TOK.get();
   if(!apiOn||!token){setUser(null);setPhase(token?"checking":"ready");return}
   setPhase("checking");
-  api("GET","/api/auth/me").then(j=>{if(id!==generation.current||token!==TOK.get())return;setUser(j.user);if(!j.user)TOK.set("");setPhase("ready")})
+  api("GET","/api/auth/me").then(j=>{if(id!==generation.current||token!==TOK.get())return;setUser(j.user);{const pl=j.user&&j.user.prefs&&j.user.prefs.lang;if(pl&&pl!==GM_LANG&&GM_LANGS.some(x=>x[0]===pl)){let done="";try{done=sessionStorage.getItem("gmLangSync")||""}catch(e){}if(done!==pl){try{sessionStorage.setItem("gmLangSync",pl)}catch(e){}LS.set("lang",pl);location.reload();return}}}if(!j.user)TOK.set("");setPhase("ready")})
    .catch(()=>{if(id===generation.current){setUser(null);setPhase("error")}});
  },[apiOn]);
  useEffect(()=>{
@@ -4636,7 +5039,7 @@ function Typewriter({text,speed=12,onDone}){
 // Akışlı API çağrısı (sunucu olayları)
 const netErr=e=>{if(e&&e.name==="AbortError")return e;if(e instanceof TypeError||/load failed|failed to fetch|networkerror|network connection was lost/i.test(String(e&&e.message))){const x=new Error("Bağlantı koptu: internet ya da sunucuyla bağlantı kesildi. Sayfayı açık tutup tekrar dene; kredi düşmedi.");x.status=0;x.net=true;return x}return e};
 async function apiStream(path,body,onDelta,signal,onPhase){try{return await apiStream0(path,body,onDelta,signal,onPhase)}catch(e){throw netErr(e)}}
-async function apiStream0(path,body,onDelta,signal,onPhase){
+async function apiStream0(path,body,onDelta,signal,onPhase){if(GM_LANG!=="tr"&&body&&typeof body==="object"&&!body.lang)body={...body,lang:GM_LANG};
  const t=TOK.get();const r=await fetch(API+path,body===null?{method:"GET",signal,headers:t?{Authorization:"Bearer "+t}:{}}:{method:"POST",signal,headers:{"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{})},body:JSON.stringify({...body,stream:true})});
  if(!r.ok){let j={};try{j=await r.json()}catch(e){}const e=new Error(j.error||("Sunucu hatası ("+r.status+")"));e.status=r.status;throw e}
  const rd=r.body.getReader();const dec=new TextDecoder();let buf="",final=null;
@@ -5584,7 +5987,7 @@ const QA_STYLE=`<style data-gm-sb>html{scrollbar-width:thin;scrollbar-color:rgba
 const GM_MONEY={tl:LS.get("crUnitTl",1.21),usd:LS.get("usdTry",null)};
 function moneyInit(){api("GET","/api/billing").then(j=>{const p=(j.packs||[]).find(x=>x.popular)||(j.packs||[])[0];if(p){GM_MONEY.tl=p.price/100/(p.credits+(p.bonus||0));LS.set("crUnitTl",GM_MONEY.tl)}}).catch(()=>{});
  const r=LS.get("usdTryAt",0);if(Date.now()-r<864e5&&GM_MONEY.usd)return;fetch("https://api.frankfurter.app/latest?from=USD&to=TRY").then(x=>x.json()).then(j=>{const v=j&&j.rates&&j.rates.TRY;if(v){GM_MONEY.usd=v;LS.set("usdTry",v);LS.set("usdTryAt",Date.now())}}).catch(()=>{})}
-function creditMoney(n,cur){const tl=(+n||0)*GM_MONEY.tl;cur=cur||LS.get("moneyCur","auto");if(cur==="auto")cur=(LS.get("lang","")||navigator.language||"tr").startsWith("tr")?"try":"usd";
+function creditMoney(n,cur){const tl=(+n||0)*GM_MONEY.tl;cur=cur||LS.get("moneyCur","auto");if(cur==="auto")cur=GM_LANG==="tr"?"try":"usd";
  if(cur==="usd"&&GM_MONEY.usd)return "$"+(tl/GM_MONEY.usd).toFixed(tl/GM_MONEY.usd<10?2:0);return tl.toLocaleString("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:tl<10?2:0})}
 const DEP_KIND=[[/fonts\.(googleapis|gstatic)\.com/,"Google Fonts","Yazı tipi","type"],[/canva\.com/,"Canva","Tasarım","palette"],[/higgsfield/,"Higgsfield","Görsel / video","video"],[/(unsplash|pexels|pixabay|picsum)\./,"Görsel kütüphanesi","Görsel","image"],
  [/(cdn\.jsdelivr\.net|unpkg\.com|cdnjs\.cloudflare\.com|cdn\.tailwindcss\.com|code\.jquery\.com)/,"CDN kütüphane","Kod","codeXml"],[/(wa\.me|whatsapp\.com)/,"WhatsApp","İletişim","chat"],[/(maps\.google|google\.com\/maps|openstreetmap|maps\.app\.goo)/,"Harita","Konum","map"],
@@ -6570,7 +6973,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    }
  }window.addEventListener("message",receive);return ()=>window.removeEventListener("message",receive)},[st.html,veMode,busy]);
  function mic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesle yazmayı desteklemiyor (Chrome ya da Safari dene).");return}
-  if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;
+  if(listening&&recRef.current){recRef.current.stop();return}const r=new SR();r.lang=({tr:"tr-TR",en:"en-US",es:"es-ES",de:"de-DE",ar:"ar-SA"}[GM_LANG]||"tr-TR");r.interimResults=true;r.continuous=false;recRef.current=r;
   // Safari ve bazı Chrome sürümleri aynı cümleyi her güncellemede baştan (büyüyerek) gönderir; eklemek yerine
   // dinleme başladığındaki metnin üstüne güncel dökümü yazıyoruz, böylece cümle tekrar etmez
   const base=input.trim()?input.replace(/\s+$/,"")+" ":"";
@@ -8324,7 +8727,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
  },[modeOpen]);
  const setM=m=>{setMode(m);LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode:m});setModeOpen(false)};
  const submit=e=>{e&&e.preventDefault();const p=v.trim();if(!p)return;LS.set("studioPrefs",{...(LS.get("studioPrefs",{})||{}),mode,kind});startTemplate({prompt:p,kind})};
- const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang="tr-TR";r.interimResults=true;const base=v.trim()?v.replace(/\s+$/,"")+" ":"";r.onresult=e=>setV(base+speechText(e.results));r.onend=()=>setListening(false);setListening(true);r.start()};
+ const mic=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang=({tr:"tr-TR",en:"en-US",es:"es-ES",de:"de-DE",ar:"ar-SA"}[GM_LANG]||"tr-TR");r.interimResults=true;const base=v.trim()?v.replace(/\s+$/,"")+" ":"";r.onresult=e=>setV(base+speechText(e.results));r.onend=()=>setListening(false);setListening(true);r.start()};
  const first=auth.user&&auth.user.name?auth.user.name.split(" ")[0]:"";
  return html`<div class="home">
   <section class="home-hero"><div class="siri"><i></i><i></i><i></i><i></i><i></i></div>
@@ -8743,6 +9146,8 @@ function Account({auth,health,toast,models,go}){
     <tr><td><${Icon} n="palette" s=${16}/> Canva</td><td><span style=${{color:"var(--mut)"}}>Yakında — tasarımları Canva'da düzenleme (Canva onayı gerekiyor)</span></td></tr>
     <tr><td><${Icon} n="dot" s=${16}/> ChatGPT aboneliği</td><td><span style=${{color:"var(--mut)"}}>Başvuru aşamasında</span></td></tr></tbody></table></div></div>
   <${BillingHistory} toast=${toast}/>
+  <div class="box lang-box"><b><${Icon} n="globe" s=${16}/> Dil ve para birimi</b><p class="sub" style=${{margin:"4px 0 10px"}}>Yapay zekâ yanıtları ve yeni uygulamaların metinleri de bu dilde olur.</p>
+   <div class="lang-row">${GM_LANGS.map(([k,n])=>html`<button type="button" key=${k} class=${"lang-b"+(GM_LANG===k?" on":"")} aria-pressed=${GM_LANG===k} onClick=${()=>GM_LANG!==k&&setLang(k)}>${n}</button>`)}</div></div>
   <h2><${Icon} n="key" s=${16}/> Kendi API anahtarlarım</h2><p class="sub" style=${{marginTop:-4}}>Bağladığınız anahtarla yapılan üretimlerde Gitmapp kredisi düşmez; ücret doğrudan sağlayıcıya ödenir. Anahtarlar sunucuda şifreli tutulur ve bir daha gösterilmez.</p>
   <div class="grid" style=${{gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))"}}>${d.byok.map(b=>html`<div class="box" style=${{margin:0,display:"flex",flexDirection:"column",gap:8}}><div style=${{display:"flex",alignItems:"center",gap:8}}><b style=${{flex:1}}>${b.label}</b>${b.connected?html`<span class="tag" style=${{background:"#14532d",borderColor:"#14532d"}}>Bağlı ••••${b.last4}</span>`:""}</div>
    ${b.connected?html`<button class="btn g s" disabled=${busy===b.provider} onClick=${()=>delKey(b.provider)}>Anahtarı kaldır</button>`:html`<div style=${{display:"flex",gap:6}}><input class="in" type="password" autocomplete="off" style=${{flex:1}} placeholder=${b.hint||"API anahtarı"} value=${keys[b.provider]||""} onInput=${e=>setKeys(k=>({...k,[b.provider]:e.target.value}))}/><button class="btn s" disabled=${busy===b.provider||!(keys[b.provider]||"").trim()} onClick=${()=>saveKey(b.provider)}>${busy===b.provider?"…":"Bağla"}</button></div>
@@ -8860,7 +9265,7 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]
  // --- ses: dinleme ---
  function startListen(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; Chrome, Edge ya da Safari dene.");setVoice(false);R.current.voice=false;return}
   stopSpeak();try{recRef.current&&recRef.current.abort()}catch(e){}
-  const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;r.maxAlternatives=1;recRef.current=r;let fin="";
+  const r=new SR();r.lang=({tr:"tr-TR",en:"en-US",es:"es-ES",de:"de-DE",ar:"ar-SA"}[GM_LANG]||"tr-TR");r.interimResults=true;r.continuous=false;r.maxAlternatives=1;recRef.current=r;let fin="";
   r.onresult=e=>{fin=speechText(e.results,true);setInterim(speechText(e.results))};
   r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){toast("Mikrofon izni verilmedi. Adres çubuğundaki kilit simgesinden izin verebilirsin.");setVoice(false);R.current.voice=false}};
   r.onend=()=>{setListen(false);const txt=fin.trim();setInterim("");if(recRef.current!==r)return;recRef.current=null;
@@ -9316,7 +9721,7 @@ function SquirrelGuide({run,toast}){
  function say(t){if(!t||!GS.voice)return Promise.resolve();setTalking(true);return VOX.say(t).finally(()=>setTalking(false))}
  function stopL(){const r=recRef.current;recRef.current=null;try{r&&r.abort()}catch(e){}setListen(false);setInterim("")}
  function startL(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Tarayıcın sesli konuşmayı desteklemiyor; aşağıya yazabilirsin.");return}
-  VOX.stop();stopL();const r=new SR();r.lang="tr-TR";r.interimResults=true;r.continuous=false;recRef.current=r;let fin="";
+  VOX.stop();stopL();const r=new SR();r.lang=({tr:"tr-TR",en:"en-US",es:"es-ES",de:"de-DE",ar:"ar-SA"}[GM_LANG]||"tr-TR");r.interimResults=true;r.continuous=false;recRef.current=r;let fin="";
   r.onresult=e=>{fin=speechText(e.results,true);setInterim(speechText(e.results))};
   r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")toast("Mikrofon izni verilmedi; adres çubuğundaki kilitten izin verebilirsin.")};
   r.onend=()=>{if(recRef.current!==r)return;recRef.current=null;setListen(false);setInterim("");if(fin.trim())ask(fin.trim(),true)};setListen(true);try{r.start()}catch(e){setListen(false)}}
@@ -9671,6 +10076,7 @@ function App(){
  </div>`;
 }
 ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+requestAnimationFrame(()=>i18nStart());
 </script>
 </body>
 </html>
