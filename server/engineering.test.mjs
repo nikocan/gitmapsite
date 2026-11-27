@@ -1,4 +1,5 @@
 import test from "node:test";
+import {toAnthropic} from "./anthropic.mjs";
 import assert from "node:assert/strict";
 import {spawn} from "node:child_process";
 import {once} from "node:events";
@@ -34,7 +35,9 @@ test("Engineering rejects invalid input and incomplete proposals and preserves p
  for(const [platform,code] of [["SAP","SELECT * FROM scarr."],["Oracle","BEGIN NULL; END;"]]){
   const r=await send({platform,code,goal:"İncele."});assert.equal(r.status,200);
   const result=await r.json();assert.equal(result.code,answer.code);assert.deepEqual(result.tests,answer.tests);
-  const {messages}=seen.at(-1);assert.ok(messages[0].content.includes(platform));assert.equal(JSON.parse(messages[1].content).code,code);
+  const request=seen.at(-1);
+  assert.deepEqual(toAnthropic(request).output_config.format.schema.required,["review","code","tests"]);
+  const {messages}=request;assert.ok(messages[0].content.includes(platform));assert.equal(JSON.parse(messages[1].content).code,code);
  }
  answer={review:"Yarım öneri",code:"",tests:[]};
  assert.equal((await send({platform:"Oracle",log:"ORA-01403"})).status,502);
