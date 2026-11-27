@@ -97,7 +97,7 @@ async function startApi(env) {
 }
 
 const CUST = ["ana", "magaza", "studio", "kreator", "sablonlar", "baglantilar", "eylem", "otomasyon", "uygulamalarim", "modeller", "hesabim", "dunya", "olustur", "paketler", "ai-destek", "siparislerim", "guncel"];
-const ADMIN = ["odemeler", "yonetim", "yapay-zeka", "eposta", "github-ayar", "maliyetler", "kullanicilar", "yonetim-projeler", "siparisler", "radar", "plan", "kesfet", "uretim-ajani", "kategori", "liste", "kuyruk", "ayar"];
+const ADMIN = ["odemeler", "yonetim", "yapay-zeka", "eposta", "github-ayar", "maliyetler", "kullanicilar", "yonetim-projeler", "siparisler", "radar", "plan", "musteri-avi", "kesfet", "uretim-ajani", "beceri-avcisi", "kategori", "liste", "kuyruk", "ayar"];
 
 async function main() {
   const dir = mkdtempSync(join(tmpdir(), "gitmapp-e2e-"));
