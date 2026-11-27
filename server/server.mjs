@@ -280,11 +280,20 @@ const shortWhy = (t) => { let j = null; try { j = JSON.parse(t); } catch { } ret
 const PROVIDER_BREAK = new Map(); // yedek sağlayıcı → bu zamana kadar atla (bakiye/anahtar hatası)
 const FALLBACK_NAMES = { hostinger: "Hostinger AI Router", openrouter: "OpenRouter", anthropic: "Anthropic", openai: "OpenAI", gemini: "Google Gemini", deepseek: "DeepSeek" };
 const primaryName = () => /openrouter\.ai/.test(CFG.aiBase) ? "OpenRouter" : /router\.hostinger\.com/.test(CFG.aiBase) ? "Hostinger AI Router" : /anthropic\.com/.test(CFG.aiBase) ? "Anthropic" : /openai\.com/.test(CFG.aiBase) ? "OpenAI" : CFG.aiBase.replace(/^https?:\/\//, "").split("/")[0];
+// Sağlayıcıların 400 verdiği biçim hatalarını önler: boş içerikli mesajlar ve sonda boşlukla biten asistan mesajı
+function cleanMessages(list) {
+  const out = list.filter((m) => m && (Array.isArray(m.content) ? m.content.some((p) => p && (p.type !== "text" || String(p.text || "").trim())) : String(m.content ?? "").trim()))
+    .map((m) => Array.isArray(m.content) ? { ...m, content: m.content.filter((p) => p && (p.type !== "text" || String(p.text || "").trim())) } : m);
+  return out.map((m, i) => m.role === "assistant" && typeof m.content === "string" ? { ...m, content: m.content.replace(/\s+$/, "") || "…" } : m);
+}
+// Sağlayıcının JSON hata gövdesinden okunur neden çıkar
+function providerReason(t) { let j = null; try { j = JSON.parse(t); } catch { } const m = j && (j.error?.message || j.message || (typeof j.error === "string" ? j.error : "")) || String(t || ""); return String(m).replace(/\s+/g, " ").trim().slice(0, 220); }
 const FAILOVER_STATUS = (st) => st === 402 || st === 403 || st === 404 || st === 408 || st === 429 || st >= 500;
 async function postChat(rt, payload, signal) {
   const headers = { Authorization: "Bearer " + rt.key, "Content-Type": "application/json" };
   if (rt.provider === "openrouter") Object.assign(headers, { "HTTP-Referer": CFG.site, "X-Title": "Gitmapp" });
   const body = { model: rt.model, ...payload, ...(rt.temperature != null ? { temperature: rt.temperature } : {}) };
+  if (Array.isArray(body.messages)) body.messages = cleanMessages(body.messages);
   let r;
   try { r = await fetch(rt.base + "/chat/completions", { method: "POST", signal, headers, body: JSON.stringify(rt.provider === "gitmapp" ? withPromptCache("gitmapp", rt.base, body) : body) }); }
   catch (e) { if (rt.provider !== "gitmapp" || signal?.aborted) throw e; r = new Response(JSON.stringify({ error: "ağ hatası: " + e.message }), { status: 503 }); }
@@ -304,7 +313,8 @@ async function postChat(rt, payload, signal) {
       if (r2.ok) { console.warn(new Date().toISOString(), "model yedeğe geçti:", body.model, "→", alt, "(", r.status, ")"); rt.model = alt; return r2; }
     }
   }
-  if (rt.provider === "gitmapp" && !r.ok && FAILOVER_STATUS(r.status) && !rt.noFailover && !signal?.aborted) {
+  let bad400 = false; if (r.status === 400) { const t = await r.clone().text(); bad400 = !/image|vision|multimodal/i.test(t); if (bad400) console.warn(new Date().toISOString(), "400:", rt.model, providerReason(t)); }
+  if (rt.provider === "gitmapp" && !r.ok && (FAILOVER_STATUS(r.status) || bad400) && !rt.noFailover && !signal?.aborted) {
     rt.tried = [{ p: primaryName(), status: r.status, why: shortWhy(await r.clone().text()) }];
     for (const p of fallbackChain()) {
       if ((PROVIDER_BREAK.get(p) || 0) > Date.now()) { rt.tried.push({ p: FALLBACK_NAMES[p] || p, status: 0, why: "son 10 dakikada bakiye/anahtar hatası verdiği için atlandı" }); continue; }
@@ -323,7 +333,9 @@ async function postChat(rt, payload, signal) {
   return r;
 }
 function aiErr(rt, status, t) {
-  const tail = t ? ": " + String(t).replace(/\s+/g, " ").slice(0, 180) : "";
+  const why = providerReason(t); const tail = why ? ": " + why : "";
+  if (status === 400 && /context|too long|prompt is too long|maximum.*tokens|token limit|input length/i.test(why)) return "Proje bu model için fazla büyük (bağlam sınırı aşıldı). Değişikliği daha küçük bir bölüm için iste ya da daha geniş bağlamlı bir model seç. Kredin düşmedi.";
+  if (status === 400) return "Yapay zekâ isteği reddetti (400" + (rt.model ? ", " + rt.model : "") + ")" + tail + ". Kredin düşmedi; tekrar denediğinde başka bir sağlayıcı denenir.";
   if (rt.provider === "gitmapp") {
     if (status === 401) return "Gitmapp yapay zekâ anahtarı geçersiz (401, " + primaryName() + "). Yönetici, Yönetim › Yapay zekâ sayfasından ana anahtarı güncellemeli" + tail;
     if (status === 403) return primaryName() + " isteği reddetti (403). Olası nedenler: bakiye bitti, “" + rt.model + "” modeli hesapta açık değil ya da anahtarın yetkisi yok. Sağlayıcı panelinden bakiye ve modelleri kontrol edin" + tail;
