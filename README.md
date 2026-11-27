@@ -50,6 +50,12 @@ Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Rou
 
 `/api/health` yanıtındaki `aiFallbacks` alanı etkin yedekleri listeler. Yedek testleri: `node --test server/failover.test.mjs`.
 
+## Stüdyo tasarım becerileri
+
+Stüdyo’da **Geliştir → Tasarım** bölümünde bir öğe seçin. Önerilen beceriye dokunun, isteğinizi yazın veya seçili öğenin istek alanına `@Mobil menüyü düzenle` girin. Önizlemeyi inceleyip **Seçime uygula** ile kabul edin. Giriş yapmış kullanıcılar önerilen tarifi düzenleyip **Beceri olarak kaydet** ile diğer projelerinde kullanabilir. **Ekle → Beceriler → Tasarım sahnesi** hazır ve kişisel tarifleri listeler.
+
+Platformun otomatik modunda `SKILL_MODEL` sağlayıcı kataloğunda varsa önceliklidir. Sonraki tercihler katalogdaki `qwen2.5-coder:3b`, hızlı sınıftaki ilk model ve platform varsayılanıdır. Katalog `AI_MODELS` ile sınırlandırılmışsa istenen modelin tam kimliğini bu listeye ekleyin. Elle seçilen model ve kişisel sağlayıcı ayarları tasarım sahnesinde de geçerlidir.
+
 ## GitHub Radar ve üretim ajanı
 
 **Yönetim → GitHub Radar** proje türü, iş kolu, Stüdyo yolu ve güvenlik ön taramasına göre filtrelenir. Keşif skoru GitHub verilerinden hesaplanır. Ayrıntıdaki güvenlik ön taraması mevcut bağımlılık ve bakım sinyallerini gösterir. Depo incelemesi içe aktarılabilir HTML, derleme ihtiyacı ve yapay zekâ prototipi seçeneklerini belirler. **Tasarımda aç** ile Stüdyo’da bölüm ve öğe seçilebilir.

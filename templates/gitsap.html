@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="gitmapp-scenario" content="gitsap-production"><meta name="generator" content="Gitmapp hazır şablonu"><title>GitSap · Üretim mutabakatı</title><style>
+*{box-sizing:border-box}body{margin:0;background:var(--bg,#f4f6f5);color:var(--tx,#152f2a);font:16px/1.5 system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:clamp(16px,4vw,44px)}header{padding:22px 26px;background:var(--cover,#163d35);color:white;border-radius:16px}h1{font-size:clamp(24px,4vw,34px);margin:4px 0}header p{margin:0;color:#d7e9e3}h2{font-size:19px;margin:0 0 10px}section{background:var(--sf,white);padding:20px;border:1px solid #d5dfdc;border-radius:14px;margin-top:14px}dl,form{display:flex;gap:16px;flex-wrap:wrap;align-items:end}dl{margin:0}dl div,label{flex:1;min-width:130px}dt{font-size:14px;color:#445e56}dd{font-size:21px;font-weight:650;margin:3px 0}label{display:grid;gap:4px;font-size:14px}select,input,button{font:inherit;padding:9px 10px;border:1px solid #9cafaa;border-radius:7px;max-width:100%}button{background:var(--pr,#1b5d50);color:white;cursor:pointer}ul{padding-left:20px}li{margin:8px 0}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}td,th{padding:9px;border-bottom:1px solid #ddd}#message{color:#234f44;font-weight:600}small{color:#48615a}@media(max-width:520px){form{display:grid}button{width:100%}section{padding:15px}}
+</style></head><body><main>
+<header><span>GitSap · Üretim</span><h1>Satın almadan mamule</h1><p>SA-001 · 100 kg dökme krem · 200 TL/kg</p></header>
+<section><h2>Stok ve açık sipariş</h2><dl><div><dt>Açık sipariş</dt><dd id="open"></dd></div><div><dt>Hammadde</dt><dd id="raw"></dd></div><div><dt>50 g mamul</dt><dd id="goods"></dd></div><div><dt>Faturasız kabul</dt><dd id="unbilled"></dd></div></dl></section>
+<section><h2>Belge işle</h2><form id="entry">
+<label>İşlem<select id="action"><option value="receive">Mal kabul</option><option value="produce">Kavanoza dolum</option><option value="invoice">Tedarikçi faturası</option></select></label>
+<label>Kaynak belge<select id="source"></select></label><label>Belge numarası<input id="ref" maxlength="32" required placeholder="Örn. MK-001"></label>
+<label>Miktar (kg)<input id="qty" type="number" min="1" max="100" step="1" value="60" required></label><button>Belgeyi işle</button></form>
+<p id="message" role="status"></p><small>Oturumluk örnek. Dolum firesizdir. Maliyet yalnız hammaddeyi içerir. Tutarlar vergisizdir.</small></section>
+<section><h2>Belge zinciri</h2><ul id="trail"></ul></section>
+<section><h2>Muhasebe fişleri</h2><div class="scroll"><table><thead><tr><th>Belge</th><th>Borç hesabı</th><th>Alacak hesabı</th><th>Tutar</th></tr></thead><tbody id="ledger"></tbody></table></div><p id="balance"></p><output id="reconciliation"></output></section>
+</main><script>
+const rows=[];
+const price=200;
+const money=n=>n.toLocaleString("tr-TR")+" TL";
+const accounts={receive:["Hammadde","Faturasız mal kabul"],produce:["Mamul","Hammadde"],invoice:["Faturasız mal kabul","Satıcılar"]};
+const labels={receive:"Mal kabul",produce:"Dolum",invoice:"Tedarikçi faturası"};
+const el=id=>document.getElementById(id);
+function sum(type,source){return rows.filter(r=>r.type===type&&(!source||r.source===source)).reduce((total,r)=>total+r.kg,0)}
+function available(type,source){
+ if(type==="receive")return 100-sum("receive");
+ const receipt=rows.find(r=>r.type==="receive"&&r.ref===source);
+ return receipt?receipt.kg-sum(type,source):0;
+}
+function sources(){
+ const type=el("action").value, previous=el("source").value;
+ const refs=type==="receive"?["SA-001"]:rows.filter(r=>r.type==="receive"&&available(type,r.ref)>0).map(r=>r.ref);
+ el("source").replaceChildren(...refs.map(ref=>new Option(ref,ref)));
+ if(refs.includes(previous))el("source").value=previous;
+}
+function show(){
+ const received=sum("receive"), produced=sum("produce"), invoiced=sum("invoice");
+ el("open").textContent=(100-received)+" kg";el("raw").textContent=(received-produced)+" kg";
+ el("goods").textContent=produced*20+" adet";el("unbilled").textContent=money((received-invoiced)*price);
+ el("trail").replaceChildren();el("ledger").replaceChildren();
+ const line=document.createElement("li");line.textContent="SA-001 · Satın alma siparişi · 100 kg";el("trail").append(line);
+ const balances={Hammadde:0,Mamul:0,"Faturasız mal kabul":0,Satıcılar:0};
+ let debit=0,credit=0;
+ for(const row of rows){
+  const item=document.createElement("li");
+  item.textContent=row.source+" → "+row.ref+" · "+labels[row.type]+" · "+row.kg+" kg"+(row.type==="produce"?" → "+row.kg*20+" adet":"");
+  el("trail").append(item);
+  const tr=el("ledger").insertRow();
+  for(const value of [row.ref,...accounts[row.type],money(row.kg*price)])tr.insertCell().textContent=value;
+  const [dr,cr]=accounts[row.type];
+  balances[dr]+=row.kg*price;balances[cr]-=row.kg*price;
+  debit+=row.kg*price;credit+=row.kg*price;
+ }
+ el("balance").textContent="Toplam borç "+money(debit)+" · Toplam alacak "+money(credit)+" · Stok değeri "+money(received*price)+" · Satıcı bakiyesi "+money(invoiced*price);
+ const differences=[
+  balances.Hammadde-(received-produced)*price,
+  balances.Mamul-produced*price,
+  -balances["Faturasız mal kabul"]-(received-invoiced)*price,
+  -balances.Satıcılar-invoiced*price
+ ];
+ el("reconciliation").textContent=differences.every(value=>value===0)?"Stok ve açık belgeler fişlerle uzlaşıyor.":"Mutabakat farkı var.";
+ sources();
+}
+el("action").addEventListener("change",sources);
+el("entry").addEventListener("submit",e=>{
+ e.preventDefault();
+ const type=el("action").value, source=el("source").value, ref=el("ref").value.trim().toLocaleUpperCase("tr"), kg=Number(el("qty").value);
+ let message="";
+ if(!ref||ref==="SA-001"||rows.some(r=>r.ref===ref))message="Yeni ve benzersiz bir belge numarası girin.";
+ else if(!source)message="Bu işlem için açık kaynak belge yok.";
+ else if(!Number.isInteger(kg)||kg<1||kg>available(type,source))message="Miktar kaynak belgenin açık miktarını aşıyor veya geçersiz.";
+ else {rows.push({type,source,ref,kg});show();message=ref+" işlendi.";el("ref").value=""}
+ el("message").textContent=message;
+});
+show();
+</script></body></html>

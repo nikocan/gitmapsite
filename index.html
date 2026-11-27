@@ -2264,6 +2264,7 @@ button.adp-mini{color:inherit;text-align:left}
 .oc-acts{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid #ffffff0b}.oc-acts button{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:9px;border:1px solid #ffffff17;background:transparent;color:#d6d5cf;font-size:12px;cursor:pointer}.oc-acts button:hover{background:#ffffff0d}.oc-acts .hot{margin-left:auto;border-color:#e4ff3d55;color:#efffa0}
 .dq-card.auto{border-color:#e4ff3d33;background:#e4ff3d08}.dq-card.auto .dq-h{align-items:center}.dq-stop{margin-left:auto;height:24px;padding:0 9px;border-radius:8px;border:1px solid #ffffff22;background:transparent;color:#d6d5cf;font-size:11.5px;cursor:pointer}
 details.dq-card.left{border-style:dashed;opacity:.9}details.dq-card.left summary{display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;font-size:13px}details.dq-card.left summary span{color:#9a9993}details.dq-card.left ul{margin:8px 0}
+html:has(.gt-dialog[open]),body:has(.gt-dialog[open]){overflow:hidden;max-width:100vw}.gt-dialog{position:fixed;inset:0;margin:auto;width:min(580px,94vw);max-height:85vh;overflow:auto;border:1px solid #575761;border-radius:16px;background:#19191e;color:#eee;padding:22px}.gt-dialog::backdrop{background:#0009}.gt-dialog .gt-head{position:sticky;top:0;z-index:1;background:#19191e;display:flex;align-items:center;justify-content:space-between}.gt-dialog :is(button,textarea,input){font:inherit}.gt-dialog button,.gt-dialog summary{cursor:pointer}.gt-dialog :is(button,details,section,textarea){border:1px solid #565661;border-radius:8px;padding:8px;margin:4px 0}.gt-dialog button{background:#32323a;color:#fff}.gt-dialog button:disabled{opacity:.5}.gt-dialog label,.gt-dialog textarea{display:block;width:100%}.gt-dialog textarea{min-height:70px}.gt-answer{white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -2272,6 +2273,9 @@ details.dq-card.left{border-style:dashed;opacity:.9}details.dq-card.left summary
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
 <script src="config.js"></script>
+<script src="skills/business.js"></script>
+<script src="skills/gt-context.js"></script>
+<script src="skills/gt-studio.js"></script>
 <script>
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
@@ -5006,13 +5010,29 @@ const designPresets={
 function validTarget(path){
  return Array.isArray(path)&&path.length>0&&path.length<=100&&path.every(p=>p&&typeof p.tag==="string"&&/^[a-z][a-z0-9-]*$/.test(p.tag)&&(typeof p.id==="string"&&p.id.length>0&&p.id.length<=255||Number.isSafeInteger(p.index)&&p.index>0));
 }
-function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAuth}) {
+function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAuth,account,autoModel}) {
  const [initial]=useState(()=>readDesign(project.html));
  const [rules,setRules]=useState(initial.rules), [history,setHistory]=useState([]);
  const [src]=useState(()=>withStoreShim(taskPreview(designDocument(resolve(initial.base),initial.rules,true))));
  const [target,setTarget]=useState(null),[delta,setDelta]=useState({}),[selecting,setSelecting]=useState(true);
  const [device,setDevice]=useState("auto"),[prompt,setPrompt]=useState(""),[asking,setAsking]=useState(false),[figma,setFigma]=useState(false);
- const [feedback,setFeedback]=useState(""),[skill,setSkill]=useState("Görsel hiyerarşi");
+ const [feedback,setFeedback]=useState(""),[skill,setSkill]=useState("");
+ const [catalog,setCatalog]=useState([]),[recipe,setRecipe]=useState(null),[saving,setSaving]=useState(false);
+ useEffect(()=>{
+   let active=true;
+   api("GET","/api/design-skills").then(j=>{if(active)setCatalog(j.skills)}).catch(e=>{if(active)setFeedback(e.message)});
+   return ()=>{active=false};
+ },[account]);
+ async function saveRecipe(){
+   if(saving||!recipe?.applied)return;
+   const ticket=request.current;
+   setSaving(true);
+   try{
+     const j=await api("POST","/api/design-skills",{name:recipe.name,instruction:recipe.instruction});
+     setCatalog(items=>[...items.filter(item=>item.name!==j.skill.name),j.skill]);
+     if(ticket===request.current){setRecipe(null);setSkill(j.skill.name);setFeedback("Beceri hesabınıza kaydedildi. Diğer projelerde de seçebilirsiniz.")}
+   }catch(e){if(ticket===request.current)setFeedback(e.message)}finally{setSaving(false)}
+ }
  const frame=useRef(null),dialog=useRef(null),viewport=useRef(null),request=useRef(0),exportRequested=useRef(false);
  const [bounds,setBounds]=useState({width:0,height:0}), [sections,setSections]=useState([]);
  useEffect(()=>{
@@ -5055,7 +5075,7 @@ function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAu
      if(!selecting||d?.gm!=="design-pick"||!validTarget(d.path)||typeof d.label!=="string"||d.tag!==d.path.at(-1).tag||typeof d.original!=="string"||!d.current||Object.values(d.current).some(v=>v!==null&&typeof v!=="string"&&typeof v!=="number")) return;
      if(pending&&JSON.stringify(d.path)===id)return;
      if(pending&&JSON.stringify(d.path)!==id&&!confirm("Bekleyen özellik değişikliklerinden vazgeçilsin mi?")){post({gm:"design-restore",path:target.path});return}
-     request.current++; setAsking(false);setTarget(d);setDelta({});setFeedback("");setPrompt("");
+     request.current++; setAsking(false);setRecipe(null);setSkill("");setTarget(d);setDelta({});setFeedback("");setPrompt("");
    }
    window.addEventListener("message",receive);return ()=>window.removeEventListener("message",receive);
  },[selecting,pending,id,target]);
@@ -5066,19 +5086,26 @@ function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAu
  }
  useEffect(()=>{post({gm:"design-rules",rules:pending?nextRules():rules})},[rules,delta]);
  function showRules(next){setRules(next);post({gm:"design-rules",rules:next});setDelta({})}
- function apply(){setHistory(h=>[...h.slice(-19),rules]);showRules(nextRules());setFeedback("Seçime uygulandı")}
+ function apply(){setHistory(h=>[...h.slice(-19),rules]);showRules(nextRules());setRecipe(r=>r&&({...r,applied:true}));setFeedback("Seçime uygulandı")}
  function finish(){
    const result=designDocument(initial.base,nextRules());
    if(result!==project.html) save(result);
    close();
  }
- async function suggest(){
-   if(!target||!prompt.trim()||asking)return;
+ async function suggest(chosen=skill){
+   const input=prompt.trim();
+   const mention=input.startsWith("@")&&catalog.find(entry=>input==="@"+entry.name||input.startsWith("@"+entry.name+" "));
+   if(mention)chosen=mention.name;
+   const item=catalog.find(entry=>entry.name===chosen);
+   const task=(mention?input.slice(mention.name.length+1).trim():input)||item?.instruction;
+   if(!target||!task||asking)return;
+   setRecipe(null);
    const ticket=++request.current;setAsking(true);setFeedback("");
    try{
-     const j=await api("POST","/api/ai/design",{...aiBody(),projectContext:{...aiBody().projectContext,cihaz:device,secili:{metin:target.label,etiket:target.tag},bilesen:target.tag},prompt,skill,tag:target.tag,label:target.label,leaf:target.leaf,current:{...values,text:target.leaf?values.text:undefined}});
+     const j=await api("POST","/api/ai/design",{...aiBody(),projectContext:{...aiBody().projectContext,cihaz:device,marka:designTokens(project.html),secili:{metin:target.label,etiket:target.tag},bilesen:target.tag},prompt:task,skill:chosen,autoModel,tag:target.tag,label:target.label,leaf:target.leaf,current:{...values,text:target.leaf?values.text:undefined}});
      spent(j);if(request.current!==ticket)return;
-     setDelta(d=>({...d,...j.values}));setFeedback("Öneri hazır. Özellikleri inceleyip uygulayın.");
+     setDelta(d=>({...d,...j.values}));setFeedback([j.skill,j.model,"Öneri hazır"].filter(Boolean).join(" · "));
+     if(j.recipe)setRecipe({name:(j.skill||"Tasarım")+" tarifim",instruction:j.recipe,applied:false});
    }catch(e){if(request.current===ticket){setFeedback(e.message);failAuth(e)}}finally{if(request.current===ticket)setAsking(false)}
  }
  function download(){
@@ -5097,8 +5124,11 @@ function DesignScene({project,resolve,taskPreview,save,close,aiBody,spent,failAu
   <aside class="ds-panel"><h3>Özellikler</h3>${!target?html`<p>${selecting?"Düzenlemek istediğiniz öğeye dokunun.":"Şablonda başka bir ekrana geçin, ardından Öğe seç’e dokunun."}</p>`:html`<div class="ds-target"><code>${target.tag}</code><b>${target.label}</b><button disabled=${target.tag==="body"} onClick=${()=>post({gm:"design-parent"})}>Üst öğe</button></div>
    <label>Çalışma stili<select value="" onChange=${e=>{if(e.target.value)setDelta(d=>({...d,...designPresets[e.target.value]}))}}><option value="">Stil seçin</option>${Object.keys(designPresets).map(n=>html`<option key=${n}>${n}</option>`)}</select></label>
    <div class="ds-fields">${Object.entries(designFields).filter(([k])=>(k!=="text"||target.leaf)&&(!["primary","accent"].includes(k)||target.tag==="body")).map(([k,[name,type,opts]])=>html`<label key=${k} class=${k==="text"?"wide":""}>${name}${Array.isArray(type)?html`<select value=${values[k]||""} onChange=${e=>setField(k,e.target.value)}><option value="" disabled=${k!=="icon"}>${k==="icon"?"Simge yok":"Seçin"}</option>${type.map((v,i)=>html`<option key=${v} value=${v}>${opts?.[i]||v}</option>`)}</select>`:html`<input type=${type} min=${k==="fontSize"?1:0} max=${type==="number"?opts:undefined} maxLength=${500} value=${values[k]??(type==="color"?"#ffffff":"")} onInput=${e=>{if(type!=="number"||e.target.value!==""&&e.target.validity.valid)setField(k,type==="number"?Number(e.target.value):e.target.value)}}/>`}</label>`)}</div>
-   <details open><summary>Yapay zekâ ile düzenle</summary><label>Beceri<select value=${skill} onChange=${e=>setSkill(e.target.value)}>${["Görsel hiyerarşi","Marka dili","Okunabilirlik","Menü ve buton tasarımı"].map(n=>html`<option key=${n}>${n}</option>`)}</select></label>
-   <textarea rows="2" aria-label="Seçim için istek" placeholder="Örn. Bu düğmeyi markamıza uygun, daha belirgin yap" value=${prompt} onInput=${e=>setPrompt(e.target.value)}></textarea><button disabled=${asking||!prompt.trim()} onClick=${suggest}>${asking?"Öneri hazırlanıyor…":"Seçim için öner"}</button></details>
+   <details open><summary>Yapay zekâ ile düzenle</summary><label>Beceri<select value=${skill} disabled=${asking} onChange=${e=>setSkill(e.target.value)}><option value="">İsteğime göre seç</option>${catalog.map(item=>html`<option key=${item.name} value=${item.name}>${item.personal?"Benim · ":""}${item.name}</option>`)}</select></label>
+   ${catalog.filter(item=>item.tags.includes(target.tag)).slice(0,3).map(item=>html`<button key=${item.name} disabled=${asking} onClick=${()=>{setSkill(item.name);suggest(item.name)}}>${item.name}</button>`)}
+   <textarea rows="2" aria-label="Seçim için istek" placeholder="İstek yazın veya @beceri adı kullanın" value=${prompt} onInput=${e=>setPrompt(e.target.value)}></textarea><button disabled=${asking||(!prompt.trim()&&!skill)} onClick=${()=>suggest()}>${asking?"Öneri hazırlanıyor…":"Seçim için öner"}</button>
+   ${account&&recipe?.applied&&html`<label>Beceri adı<input maxlength="80" value=${recipe.name} onInput=${e=>setRecipe({...recipe,name:e.target.value})}/></label><label>Tekrar kullanılacak talimat<textarea maxlength="600" value=${recipe.instruction} onInput=${e=>setRecipe({...recipe,instruction:e.target.value})}></textarea></label><button disabled=${saving||!recipe.name.trim()||!recipe.instruction.trim()} onClick=${saveRecipe}>Beceri olarak kaydet</button>`}
+   </details>
    <button class="btn s" disabled=${!pending||asking} onClick=${apply}>Seçime uygula</button>`}
    <p role="status">${feedback}</p>
    <details open=${figma} onToggle=${e=>setFigma(e.currentTarget.open)}><summary>Figma’ya aktar</summary><p>Tasarımı indirip MCP istemcinizde açın. Figma izinlerini kendi hesabınızla verin.</p>
@@ -5678,7 +5708,13 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const to=md.platform.find(m=>n(m.id)===n(prefs.model))||md.platform.find(m=>fam(m.id)===fam(prefs.model)&&kind(m.id)===kind(prefs.model))||md.platform.find(m=>fam(m.id)===fam(prefs.model));
   setPrefs(p=>({...p,model:to?to.id:"",autoModel:to?p.autoModel:true}));toast("“"+shortModel(prefs.model)+"” artık açık değil · "+(to?shortModel(to.id)+" seçildi":"model otomatik seçilecek"))},[md.platform.length,prefs.model]);
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
+ function projectSkillIds(){
+  const selected=skillsOn().filter(id=>businessSkills.some(skill=>skill.id===id));
+  if((st.html||"").includes('<meta name="gitmapp-scenario" content="oracle-diagnostics">'))return [...new Set([...selected,"oracle-ap","oracle-queue","oracle-hfm"])];
+  if(!(st.html||"").includes('<meta name="gitmapp-scenario" content="gitsap-production">'))return selected;
+  return [...new Set([...selected,"gitsap-tedarik","gitsap-uretim","gitsap-fatura","gitsap-finans"])];
+ }
+ const aiBody=()=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -6025,6 +6061,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     <b>${promptIntent(input,{html:!!st.html,plan:!!plan,todo:!!todo?.awaiting,last:lastAsk(),kind:prefs.kind,mode:prefs.mode,picked:!!picked}).l}</b>
     <span>${st.title||"Yeni proje"} · ${st.gitContext?.name||"Yerel taslak"} · ${MODE_TR[prefs.mode]}</span></div>`}
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
+    <button type="button" class="gatt" title="GitmappGT teknik destek" aria-label="GitmappGT teknik destek" onClick=${()=>setGtRequest(n=>n+1)}>GT${gtAlerts>0&&html`<sup role="status">${gtAlerts}</sup>`}</button>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
      ${plusOpen&&html`<${ComposerMenu}>
       <button type="button" role="menuitem" disabled=${atts.length>=3} onClick=${()=>{setPlusOpen(false);fileRef.current.click()}}><${Icon} n="paperclip" s=${18}/><span>Görsel ya da çizim ekle</span><kbd>⌘U</kbd></button>
@@ -6269,10 +6306,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  </article>`;
 
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
+ const [gtRequest,setGtRequest]=useState(0),[gtAlerts,setGtAlerts]=useState(0);
+ const gtPanel=html`<${GitmappGT} key=${scope} request=${gtRequest} onAlerts=${setGtAlerts} appId=${st.appId} aiBody=${aiBody} source=${st.html?resolve(st.html):""} errors=${qa&&qa.source===st.html?qa.errors:[]} busy=${busy} buildGT=${brief=>build(brief,null,"GT geliştirmesi")}/>`;
  const hasWork=st.html||busy||plan||st.msgs.length;
  if(!hasWork){const kind=prefs.kind||"app";const starters=START_CHIPS[kind]||START_CHIPS.app;const ideas=TEMPLATES.map((t,i)=>[t,i]).sort((a,b)=>((a[0][3]||"app")===kind?0:1)-((b[0][3]||"app")===kind?0:1)).slice(0,6);
   const fill=(p,ic)=>{if(ic)setSt(s=>({...s,emoji:ic}));setInput(p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}})};
-  return html`<div class="hero studio-start sx"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
+  return html`<div class="hero studio-start sx">${gtPanel}<div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
   <div class="sx-glow" aria-hidden="true"></div>
   <section class="sx-main" aria-label="Yeni proje">
    <div class="start-type">${typeSwitch()}</div>
@@ -6328,7 +6367,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
  const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
+ return html`<div class="ws">${gtPanel}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -6766,6 +6805,8 @@ function AiCheck({toast}){
 
 /* ================= v3.7 — HAZIR ŞABLONLAR (çalışan demolar) ================= */
 const TEMPLATE_LIB=[
+ {id:"oracle-teshis",name:"Oracle Teşhis Atölyesi",sector:"ERP & Finans",desc:"Fatura miktarı, iş kuyruğu ve konsolidasyon farkını örnek kanıtlarla inceleyin.",feat:["EBS iş kuyruğu","Fatura blokajı","Grup içi mutabakat"],pr:"#392b3f",ac:"#965b6c",type:"panel",kind:"app",emoji:"🔎",workflow:true,use:["Oracle mühendisleri ve uygulama destek ekipleri","Örnek girdileri değiştirerek hipotezin hangi durumda değiştiğini izleyin."]},
+ {id:"gitsap",name:"GitSap Üretim Mutabakatı",sector:"Üretim & ERP",desc:"Bir krem siparişinden kısmi teslimat, dolum ve fatura kaydedip stok ve muhasebe hareketlerini izleyin.",feat:["Belge zinciri","Mal kabule bağlı sarf","Muhasebe fişleri"],pr:"#163d35",ac:"#478e76",type:"panel",kind:"app",emoji:"🏭",workflow:true,use:["Üretim ve satın alma ekipleri için belge bazlı mutabakat","Örnek siparişi ve reçeteyi kendi üretim sürecinize uyarlayın."]},
 /* premium-workflows:start */
  {"id": "mimari", "name": "Mihenk Mimarlık", "sector": "Mimarlık & İç Mekân", "desc": "Mimari hizmetleri inceleyin, proje alanını girin ve başlangıç bütçesiyle birlikte bir görüşme isteyin.", "feat": ["Portföy ve hizmetler", "Anlık tutar hesabı", "Teklif talebi"], "pr": "#513f33", "ac": "#be946c", "type": "site", "kind": "site", "emoji": "🏡", "workflow": true, "premium": true, "use": ["Mimarlık ve iç mimarlık ofislerinde portföy sunumu ve ön teklif toplama", "Portföy projelerinizi ve metrekare ücretlerinizi girin. Formu görüşme takviminize bağlayabilirsiniz."]},
  {"id": "cicek", "name": "Mimoza Çiçek Evi", "sector": "Çiçekçilik & Hediyelik", "desc": "Mevsim aranjmanlarını seçin, teslim tarihini belirleyin ve örnek siparişinizi oluşturun.", "feat": ["Çiçek koleksiyonu", "Anlık tutar hesabı", "Teslim alma siparişi"], "pr": "#572d3e", "ac": "#cf8d9f", "type": "site", "kind": "site", "emoji": "🌿", "workflow": true, "premium": true, "use": ["Çiçekçi, hediye atölyesi ve etkinlik floristi için ürün kataloğu ve sipariş toplama", "Koleksiyonu, teslimat bölgelerini ve ürün fiyatlarını kendi mağazanıza göre uyarlayın."]},
@@ -7464,6 +7505,7 @@ const TIER_IC={hizli:"zap",dengeli:"scale",guclu:"rocket"};
 
 /* ================= v4.4 — BECERİLER, ŞABLON PANELİ, SADE YERLEŞİM ================= */
 const SKILLS=[
+ ...businessSkills,
  {id:"kurumsal-dil",n:"kurumsal-dil",d:"Tüm metinleri resmi, güven veren kurumsal Türkçeyle yazar; argo ve emoji kullanmaz.",src:"gitmapp",p:"Metinler resmi ve kurumsal Türkçe olsun, emoji ve argo kullanma, kısa ve net cümleler kur."},
  {id:"kvkk",n:"kvkk-uyumu",d:"Formlara KVKK aydınlatma onayı, gizlilik bağlantısı ve çerez bildirimi ekler.",src:"gitmapp",p:"Kişisel veri toplayan her forma KVKK aydınlatma metni onay kutusu, alt bilgiye Gizlilik Politikası bağlantısı ve sayfaya sade bir çerez bildirimi ekle."},
  {id:"erisilebilirlik",n:"erisilebilirlik",d:"Kontrast, klavye ile kullanım, alt metinler ve odak halkaları (WCAG AA).",src:"gitmapp",p:"WCAG AA erişilebilirlik: yeterli renk kontrastı, tüm etkileşimler klavyeyle yapılabilsin, görünür odak halkaları, görsellerde alt metin, form alanlarında label olsun."},
@@ -7482,19 +7524,31 @@ const SKILLS=[
  {id:"oyun-hissi",n:"oyun-hissi",d:"Oyunlara titreşim, ekran sarsıntısı, parçacık efektleri ve ses.",src:"topluluk",p:"Oyunda vuruş ve puanlarda küçük ekran sarsıntısı, parçacık efektleri, WebAudio ile kısa ses efektleri ve destekleniyorsa titreşim ekle."},
 ];
 const skillsOn=()=>LS.get("skills",[])||[];
-const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>on.includes(x.id)).map(x=>"["+x.n+"] "+x.p).join("\n")};
-function SkillsModal({close,toast}){
- const [on,setOn]=useState(skillsOn);const [tab,setTab]=useState("kesfet");const [src,setSrc]=useState("");const [q,setQ]=useState("");
+const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>!x.group&&on.includes(x.id)).map(x=>"["+x.n+"] "+x.p).join("\n")};
+function SkillsModal({close,toast,account}){
+ const [design,setDesign]=useState([]),[designError,setDesignError]=useState("");
+
+ const [tab,setTab]=useState("kesfet");
+ useEffect(()=>{
+   if(tab!=="tasarim")return;
+   let active=true;
+   setDesign([]);setDesignError("");
+   api("GET","/api/design-skills").then(j=>{if(active)setDesign(j.skills)}).catch(e=>{if(active)setDesignError(e.message)});
+   return ()=>{active=false};
+ },[tab,account]);
+ const [group,setGroup]=useState("");
+ const [on,setOn]=useState(skillsOn);const [src,setSrc]=useState("");const [q,setQ]=useState("");
  useEffect(()=>{const h=e=>{if(e.key==="Escape")close()};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
  const tog=id=>{const n=on.includes(id)?on.filter(x=>x!==id):[...on,id];setOn(n);LS.set("skills",n);toast(on.includes(id)?"Beceri kaldırıldı":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
  const base=tab==="yuklu"?SKILLS.filter(x=>on.includes(x.id)):SKILLS;
- const list=base.filter(x=>(!src||x.src===src)&&(!q||(x.n+x.d).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
+ const list=base.filter(x=>(!group||x.group===group)&&(!src||x.src===src)&&(!q||([x.n,x.d,x.group].join(" ")).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
  return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="skm" onClick=${e=>e.stopPropagation()}>
   <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><p>Yapay zekâya kalıcı uzmanlık kazandır. Yüklediğin beceriler her yeni üretimde otomatik uygulanır.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
-  <div class="skm-tabs"><button class=${tab==="yuklu"?"on":""} onClick=${()=>setTab("yuklu")}>Yüklü <em>${on.length}</em></button><button class=${tab==="kesfet"?"on":""} onClick=${()=>setTab("kesfet")}>Keşfet <em>${SKILLS.length}</em></button></div>
+  <div class="skm-tabs"><button class=${tab==="yuklu"?"on":""} onClick=${()=>setTab("yuklu")}>Yüklü <em>${on.length}</em></button><button class=${tab==="kesfet"?"on":""} onClick=${()=>setTab("kesfet")}>Keşfet <em>${SKILLS.length}</em></button><button class=${tab==="tasarim"?"on":""} onClick=${()=>setTab("tasarim")}>Tasarım sahnesi</button></div>
   <label class="skm-q"><${Icon} n="search" s=${16}/><input placeholder="Beceri ara…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
-  <div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
-  <div class="skm-g">${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.d}</p><span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span></div>`})}${!list.length&&html`<div class="empty" style=${{gridColumn:"1/-1",border:0}}>${tab==="yuklu"?"Henüz beceri yüklemedin. Keşfet sekmesinden ekleyebilirsin.":"Sonuç yok"}</div>`}</div>
+  ${tab==="tasarim"?html`<p>Tasarım sahnesinde bir öğe seçip @beceri adı yazabilirsiniz.</p>
+  <p role="status">${designError}</p><div class="skm-g">${design.filter(x=>(x.name+" "+x.instruction).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(x=>html`<div class="skc" key=${x.name}><b>@${x.name}</b><p>${x.instruction}</p><small>${x.personal?"Kişisel":"Gitmapp"}</small></div>`)}</div>`:html`<label>İş alanı <select aria-label="İş alanı" value=${group} onChange=${e=>setGroup(e.target.value)}><option value="">Tüm alanlar</option>${["Sektör","SaaS","ERP","Otomasyon","GitSap","Oracle","GitmappGT"].map(g=>html`<option key=${g}>${g}</option>`)}</select></label><div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
+  <div class="skm-g">${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.d}</p>${x.check&&html`<details><summary>Kabul senaryosu</summary><p>${x.check}</p></details>`}${x.source&&html`<a href=${x.source} target="_blank" rel="noopener noreferrer">${x.group} · Beceri kaynağı ↗</a>`}<span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span></div>`})}${!list.length&&html`<div class="empty" style=${{gridColumn:"1/-1",border:0}}>${tab==="yuklu"?"Henüz beceri yüklemedin. Keşfet sekmesinden ekleyebilirsin.":"Sonuç yok"}</div>`}</div>`}
  </div></div>`;
 }
 // Açılış ekranı: seçilen kategoriye göre şablon paneli
@@ -8484,7 +8538,7 @@ function App(){
   ${resetTok&&html`<${Modal} close=${()=>setResetTok(null)}><${ResetBox} token=${resetTok} auth=${auth} toast=${toast} close=${()=>setResetTok(null)}/><//>`}
   ${authModal!==null&&html`<${AuthScreen} auth=${auth} health=${health} toast=${toast} reason=${authModal} close=${()=>setAuthModal(null)}/>`}
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
-  ${skills&&html`<${SkillsModal} close=${()=>setSkills(false)} toast=${toast}/>`}
+  ${skills&&html`<${SkillsModal} account=${auth.user?.id} close=${()=>setSkills(false)} toast=${toast}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
   <${SquirrelGuide} run=${cpRun} toast=${toast}/>
   ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
