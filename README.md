@@ -52,6 +52,8 @@ Giriş yapmış kullanıcının hafızası hesabında da tutulur (`user_taste` t
 
 ## Stüdyo işlem akışı
 
+Sohbetin üstündeki iş başlığı son isteğin kısa adını ve kapsamını (`Proje › Sayfa › Bölüm`) gösterir. Kapsam `promptScope()` ile istemci tarafında hesaplanır: istek metni uygulama HTML'indeki sekme/ekran işaretleri (`data-screen`, `data-page`, `data-tab`, `role=tabpanel`), menü bağlantıları, bölüm başlıkları ve formlarla eşleştirilir; önizlemede seçilen öğe varsa onun sayfası ve adı kullanılır. Kapsam kullanıcı mesajına ve işlem günlüğüne (`log.scope`) yazılır. Başlıktan iş listesi ve aynı bölümde devam önerileri açılır.
+
 Her üretim adımı kısa bir anlatım cümlesi ve altında açılır bir işlem satırı olarak gösterilir. Çalışan satırda turuncu-sarı nokta göstergesi ve süre bulunur. İş bitince adımlar "Çalıştırıldı N adım" satırında toplanır. Önizlemenin sağ altındaki durum penceresi son adımın çıktısını (satır farkı, onarılan hatalar, süre, kredi), kod kontrolü bulgularını ve önizleme sorunlarını gösterir; sorun varsa **Düzelt** ile otomatik onarım başlatılır.
 
 ## Telefon uyumu (iPhone ve Android)
