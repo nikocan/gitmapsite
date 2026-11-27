@@ -121,3 +121,20 @@ test("doğal ses: OpenAI anahtarı varsa /api/ai/tts mp3 döner ve Türkçe tali
   assert.equal((await (await fetch("http://127.0.0.1:" + api2.port + "/api/health")).json()).tts, false);
   assert.equal((await fetch("http://127.0.0.1:" + api2.port + "/api/ai/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "x" }) })).status, 503);
 });
+
+test("birincil 400 verirse yedek sağlayıcı denenir; boş mesajlar gönderilmez; yedek yoksa okunur 400 mesajı döner", async (t) => {
+  const primary = await fake((url) => url.endsWith("/models") ? [404, {}] : [400, { error: { message: "messages: text content blocks must be non-empty" } }]);
+  const backup = await fake((url) => url.endsWith("/models") ? [200, { data: [{ id: "anthropic/claude-sonnet-4.5" }] }] : [200, { choices: [{ message: { content: "yedek tamam" }, finish_reason: "stop" }], usage: { total_tokens: 5 } }]);
+  t.after(() => { primary.close(); backup.close(); });
+  const api = await start(t, { AI_BASE: primary.base, AI_KEY: "k", AI_MODELS: "claude-sonnet-4.5", COPILOT_MODEL: "claude-sonnet-4.5", OPENROUTER_API_KEY: "k2", AI_FALLBACKS: "openrouter", TEST_PROVIDER_BASE: backup.base });
+  const r = await fetch("http://127.0.0.1:" + api.port + "/api/ai/copilot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: "" }, { role: "user", content: "merhaba" }] }) });
+  const j = await r.json();
+  assert.equal(r.status, 200, JSON.stringify(j)); assert.equal(j.reply, "yedek tamam");
+  const sent = primary.seen.find((x) => x.url.endsWith("/chat/completions")).body.messages;
+  assert.ok(sent.every((m) => (typeof m.content === "string" ? m.content.trim() : m.content.length)), "boş mesaj gönderilmemeli");
+  const api2 = await start(t, { AI_BASE: primary.base, AI_KEY: "k", AI_MODELS: "claude-sonnet-4.5", COPILOT_MODEL: "claude-sonnet-4.5", AI_FALLBACKS: "", OPENROUTER_API_KEY: "", ANTHROPIC_API_KEY: "", OPENAI_API_KEY: "", GEMINI_API_KEY: "", DEEPSEEK_API_KEY: "", HOSTINGER_AI_KEY: "" });
+  const r2 = await fetch("http://127.0.0.1:" + api2.port + "/api/ai/copilot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: "merhaba" }] }) });
+  const j2 = await r2.json();
+  assert.match(j2.error, /isteği reddetti \(400.*text content blocks must be non-empty/);
+  assert.doesNotMatch(j2.error, /\{"error"/);
+});

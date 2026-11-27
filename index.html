@@ -2544,6 +2544,30 @@ html:has(.gt-dialog[open]),body:has(.gt-dialog[open]){overflow:hidden;max-width:
  .gbox.hg .hbw{min-width:38px;min-height:38px;justify-content:center}
 }
 @media(max-width:430px){.gbox.hg .seg.mini svg{display:none!important}.gbox.hg .seg.mini button{padding:5px 10px;font-size:12.5px}.gbox.hg .hbi{width:36px;height:36px}}
+/* ================= v5.66 — Stüdyo kutuları açılış ekranıyla aynı dilde ================= */
+/* Başlangıç ekranı: düz koyu yüzey; odakta ve iş sürerken tek ince beyaz ışık döner */
+.studio-start .gbox .gin{background:#141414!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.ws-in .gbox,.studio-start .gbox{background:rgba(255,255,255,.1)!important}
+.ws-in .gbox:focus-within,.studio-start .gbox:focus-within,.ws-in .gbox.busy,.studio-start .gbox.busy,.ws-in .gbox.sent,.studio-start .gbox.sent{
+ background:conic-gradient(from var(--a),transparent 0deg,transparent 250deg,rgba(255,255,255,.08) 290deg,rgba(255,255,255,.92) 330deg,rgba(255,255,255,.08) 350deg,transparent 360deg),linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1))!important;animation:gspin 6s linear infinite!important}
+.ws-in .gbox:focus-within::before,.studio-start .gbox:focus-within::before,.ws-in .gbox.busy::before,.studio-start .gbox.busy::before{
+ background:conic-gradient(from var(--a),transparent 0deg,transparent 280deg,rgba(255,255,255,.9) 330deg,transparent 360deg)!important;filter:blur(9px)!important}
+.ws-in .gbox:focus-within::before,.studio-start .gbox:focus-within::before{opacity:.22!important}
+.ws-in .gbox.busy,.studio-start .gbox.busy{animation-duration:2.8s!important}
+.ws-in .gbox.busy::before,.studio-start .gbox.busy::before{opacity:.4!important}
+@media(prefers-reduced-motion:reduce){.ws-in .gbox,.studio-start .gbox{animation:none!important;background:rgba(255,255,255,.14)!important}}
+.studio-start .sx-glow{display:none!important}
+body{background:radial-gradient(1100px 560px at 50% -12%,rgba(255,255,255,.045),transparent 62%),#0a0a0a!important}
+/* dokunmatik: kalan küçük hedefler */
+@media(pointer:coarse){
+ .cmp-b,.ccf-b{height:38px!important}
+ .getbtn,.theme-catalog-card .getbtn,.kit-actions .getbtn{min-height:40px}
+ .seeall{display:inline-flex;align-items:center;min-height:40px;padding:0 4px}
+ p>a[href="#"]{display:inline-block;padding:11px 0;margin:-11px 0}
+ .ccf-b{min-width:38px;justify-content:center}
+ .sx-status button{display:inline-block;padding:11px 4px;margin:-11px 0}
+ .sx-act,.sx-link{min-height:38px}
+}
 </style>
 </head>
 <body>
@@ -2560,8 +2584,19 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.64.0";
+const VERSION="5.66.0";
 const CHANGELOG=[
+ {v:"5.66.0",date:"2026-11-27",items:[
+  "💡 Stüdyo, açılış ekranıyla aynı tasarım dilinde: başlangıç kutusu düz, koyu bir yüzey. Kutuya dokununca ya da yapay zekâ çalışırken çevresinde aynı ince beyaz ışık dönüyor (iş sürerken daha hızlı); önceki mavi-mor-pembe çerçeve kaldırıldı",
+  "🌑 Tüm sayfalarda arka plan sadeleşti: mavi ve pembe renk lekeleri yerine üstte yumuşak beyaz ışıklı koyu zemin; Stüdyo başlangıcındaki renkli parıltı kaldırıldı",
+  "👆 Telefonda kalan küçük dokunma alanları büyüdü: Stüdyo'daki Model seç, Hızlı, Bulut, proje ve dal düğmeleri, “Temayı canlı dene”, “Tümünü Gör”, giriş ekranındaki “Şifremi unuttum” ve “Ücretsiz oluşturun”, bağlantı uyarısındaki “Şimdi dene”",
+  "🧭 Pilot kartı artık sağdaki Oturum panelinin üstüne açılmıyor; panel açıkken solunda duruyor. Kartı sürüklediysen yeri korunuyor",
+  "🔀 v5.65.0 dalı birleştirildi: bozuk ya da yarım HTML çalışan sayfanın yerine geçmiyor, önizlemede betik sızıntısı önlendi, 400 hatasında yedek sağlayıcıya geçiliyor"]},
+ {v:"5.65.0",date:"2026-11-27",items:[
+  "🛡️ Çalışan sayfa artık bozulmuyor: yapay zekânın yeni sürümü uygulanmadan önce denetleniyor. Yanıt yarıda kesilmişse, kod yapısı bozuksa (kapanmamış betik/stil), sayfaya kod yazı olarak sızmışsa, ekran boşsa ya da sayfanın büyük kısmı istemeden silinmişse yeni sürüm uygulanmaz; çalışan sürüm korunur ve nedeni yazılır. İstersen “Reddedilen sürümü göster” ile yine de açabilirsin",
+  "🧹 Önizlemenin kendi seçim ve sürükle-bırak betikleri artık hiçbir koşulda sayfaya yazı olarak düşmüyor; yapay zekâya gönderilen koddan ve kayıtlı projeden de temizleniyor (ekranda “picker-mode…” gibi kod görünmesi sorunu)",
+  "🔁 “Yapay zekâ hatası (400)” düzeltmesi: sağlayıcıya boş ya da hatalı biçimli mesaj gitmiyor; 400 gelirse istek otomatik olarak yedek sağlayıcıyla tekrar deneniyor. Hata yine sürerse ham kod yerine gerçek neden okunur biçimde yazıyor; proje modelin bağlam sınırını aşıyorsa bunu açıkça söylüyor. Kredi düşmüyor"
+ ]},
  {v:"5.64.0",date:"2026-11-27",items:[
   "✨ Açılış ekranı sadeleşti: çok renkli arka plan yerine koyu, sakin bir zemin; üstte yumuşak beyaz ışık ve çok silik nokta dokusu. Başlık beyaz, adın ya da “gitmapp” limon tonunda",
   "💡 İstem kutusu düz ve tok bir yüzeye kavuştu; çevresinde tek, ince, beyaz bir ışık yavaşça dönüyor. Kutuya dokununca biraz hızlanıyor, yazmaya başlayınca daha belirgin dönüyor. İlk açılışta başlık ve kutu sırayla beliriyor, ışık bir kez parlayıp sakinleşiyor. “Hareketleri azalt” açıksa ışık sabit bir çizgiye dönüşüyor",
@@ -5522,6 +5557,29 @@ if(imgs)I.push({k:"gorsel",t:imgs+" görsel yüklenemedi"});
 parent.postMessage({gm:"qa",errors:E.slice(0,5),issues:I,w:W,screens:Array.from(document.querySelectorAll("h1,h2,h3,nav a,nav button")).filter(el=>el.getClientRects().length).slice(0,12).map(el=>el.textContent.trim().slice(0,70))},"*")}
 addEventListener("load",function(){run();setTimeout(run,1400);var timer;document.addEventListener("click",function(){clearTimeout(timer);timer=setTimeout(run,160)})})})()<\/script>`;
 const QA_STYLE=`<style data-gm-sb>html{scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.4) transparent}::-webkit-scrollbar{width:6px;height:6px;background:transparent}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(128,128,128,.4);border-radius:6px}::-webkit-scrollbar-corner{background:transparent}</style>`;
+
+/* ---------- v5.65 Çıktı koruması: bozuk/yarım HTML çalışan sayfanın yerine geçmez ---------- */
+const GM_INTERNAL=/picker-mode|data-gms-(?:hover|selected)|previewPicker|stageDrop|gm:"select"|data-gm-qa/;
+function stripInternal(h){h=String(h||"");if(!GM_INTERNAL.test(h))return h;
+ return h.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,m=>GM_INTERNAL.test(m)?"":m).replace(/<style\b[^>]*data-gm-qa[^>]*>[\s\S]*?<\/style>/gi,"").replace(/\sdata-gms-(?:hover|selected)(?:="[^"]*")?/g,"")}
+function htmlShape(h){const t=String(h||"").trim(),c=(re)=>(t.match(re)||[]).length;
+ return {closed:/<\/html>\s*$/i.test(t)||/<\/body>\s*(<\/html>)?\s*$/i.test(t),balanced:c(/<script\b/gi)===c(/<\/script>/gi)&&c(/<style\b/gi)===c(/<\/style>/gi)&&c(/<textarea\b/gi)===c(/<\/textarea>/gi)&&c(/<!--/g)<=c(/-->/g)}}
+function htmlGuard(next,prev,ask){const h=stripInternal(next);if(!h||h.trim().length<200)return {ok:false,why:"yanıt boş ya da çok kısa geldi"};
+ const sh=htmlShape(h);if(!sh.closed)return {ok:false,why:"yanıt yarıda kesilmiş (sayfa kapanış etiketleri yok)",html:h};
+ if(!sh.balanced)return {ok:false,why:"kod yapısı bozuk (kapanmamış betik ya da stil bloğu)",html:h};
+ let doc;try{doc=new DOMParser().parseFromString(h,"text/html")}catch(e){return {ok:true,html:h}}
+ const b=doc.body;if(b){const c=b.cloneNode(true);c.querySelectorAll("script,style,noscript,template").forEach(x=>x.remove());const txt=c.textContent||"";
+  const code=(txt.match(/=>|addEventListener\(|document\.querySelector|function\s*\(|\}\);|const\s+\w+\s*=/g)||[]).length;
+  if(code>=6&&code*25>txt.replace(/\s+/g,"").length*0.08)return {ok:false,why:"kod sayfaya yazı olarak sızmış",html:h};
+  if(!b.querySelector("*")&&txt.trim().length<20&&!/<script/i.test(h))return {ok:false,why:"ekran boş görünüyor",html:h}}
+ if(prev&&prev.length>8000&&h.length<prev.length*0.35&&!/sadeleştir|kısalt|baştan|sıfırdan|yeniden yaz|kaldır|sil|temizle/i.test(ask||""))return {ok:false,why:"sayfanın büyük kısmı silinmiş ("+Math.round(prev.length/1024)+" KB → "+Math.round(h.length/1024)+" KB)",html:h};
+ return {ok:true,html:h}}
+// Önizleme: bozuk belgeye eklenen yardımcı betikler yazı olarak görünmesin
+const _norm={k:"",v:""};
+const atBodyEnd=(h,extra)=>{const i=h.search(/<\/body>(?![\s\S]*<\/body>)/i);return i<0?h+extra:h.slice(0,i)+extra+h.slice(i)};
+function frameDoc(h,extra){if(!extra)return h;const sh=htmlShape(h);if(sh.closed&&sh.balanced)return atBodyEnd(h,extra);
+ if(_norm.k!==h){try{const d=new DOMParser().parseFromString(h,"text/html");_norm.k=h;_norm.v="<!doctype html>"+d.documentElement.outerHTML}catch(e){_norm.k=h;_norm.v=h}}
+ return atBodyEnd(_norm.v,extra)}
 function withQA(h){if(!h||h.includes("data-gm-qa"))return h;const m=/<head[^>]*>/i.exec(h);return m?h.slice(0,m.index+m[0].length)+QA_STYLE+QA_SCRIPT+h.slice(m.index+m[0].length):QA_STYLE+QA_SCRIPT+h}
 function designTokens(h){h=String(h||"");const out=[];const root=h.match(/:root\s*\{([^}]{0,3000})\}/);if(root){const v=root[1].match(/--[\w-]+\s*:\s*[^;]{1,60}/g)||[];out.push(...v.slice(0,18).map(x=>x.replace(/\s+/g," ").trim()))}
  const ff=h.match(/font-family\s*:\s*([^;}{]{3,90})/i);if(ff)out.push("font-family: "+ff[1].trim());
@@ -6183,7 +6241,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const scope=studioScope(account,st), epoch=useRef(0);
  const renderEpoch=epoch.current;
  useEffect(()=>{if(account!=="guest")LS.del("claimDraft")},[account]);
- const [versions,setVersions]=useState([]);const [input,setInput]=useState(()=>LS.get("studioInput:"+scope,"")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
+ const [versions,setVersions]=useState([]);const [rejected,setRejected]=useState(null);const [input,setInput]=useState(()=>LS.get("studioInput:"+scope,"")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
  const [sessOpen,setSessOpen]=useState(()=>LS.get("sessOpen",innerWidth>1280)!==false&&innerWidth>820);useEffect(()=>{LS.set("sessOpen",sessOpen)},[sessOpen]);const [spMore,setSpMore]=useState(false),[spCtx,setSpCtx]=useState(false),[hostForm,setHostForm]=useState(false),[hostTok,setHostTok]=useState(""),[spBusy,setSpBusy]=useState(""),[spDiff,setSpDiff]=useState(false);const [autoFix,setAutoFix]=useState(()=>LS.get("autoFix",true)!==false);useEffect(()=>{LS.set("autoFix",autoFix)},[autoFix]);const autoFixed=useRef(0);
@@ -6338,6 +6396,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const upd=f=>setSt(s=>({...s,msgs:s.msgs.map(x=>x.id===id?{...x,...f(x)}:x)}));
   try{const j=await apiStream("/api/ai/jobs/"+jid+"/stream",null,d=>{if(!valid())return;liveRef.current+=d;if(!liveStartRef.current)liveStartRef.current=Date.now();streamClock.current&&(streamClock.current.last=Date.now());setLive(liveRef.current)},controller.signal,ph=>{if(String(ph).startsWith("job:"))return;upd(x=>({log:{...x.log,events:(x.log.events||[]).includes(ph)?x.log.events:[...(x.log.events||[]),ph]}}))});
    if(!valid())return;
+   const g=j.html?htmlGuard(j.html,st.html,""):null;if(g&&!g.ok){setRejected({html:g.html||j.html,why:g.why,prev:st.html});j.html=null}else if(g)j.html=g.html;
    if(j.html){setSt(s=>{if(s.html)setVersions(v=>[...v.slice(-9),s.html]);return {...s,html:j.html,tokens:s.tokens||designTokens(j.html),title:s.title||j.title||"Yeni uygulama"}})}
    upd(x=>({content:j.summary||"Hazır",log:{...x.log,running:false,resumed:true,model:j.model||x.log.model,kb:j.html?(new Blob([j.html]).size/1024).toFixed(1):"",spent:j.spent,secs:Math.floor((Date.now()-start)/1000),events:[...(x.log.events||[]),x.log.kind==="review"?"preview":"preview"],res:{summary:String(j.summary||"").slice(0,600),patched:j.patched||0,title:j.title||""}}}));
    toast("Bulutta süren iş tamamlandı · önizleme güncellendi");
@@ -6392,8 +6451,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const recentAsks=cur=>st.msgs.filter(m=>m.role==="user"&&m.content&&m.content!==cur).slice(-4).map(m=>String(m.content).slice(0,300));
  async function build(text,planText,shown,withDesign,im,base){const prev=base!==undefined?base:st.html;im=im||{};
   if(im.assets&&Object.keys(im.assets).length)setSt(s=>({...s,assets:{...(s.assets||{}),...im.assets}}));if(im.custom)setSt(s=>({...s,custom:im.custom}));
-  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,history:prev?recentAsks(text):undefined,tokens:prev?(st.tokens||designTokens(prev))||undefined:undefined,html:prev||undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current,prefsRef.current.kind,sector):undefined,images:im.send},j=>{proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,tokens:withDesign||!s.tokens?designTokens(j.html):s.tokens,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
-  return j?j.html:null}
+  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,history:prev?recentAsks(text):undefined,tokens:prev?(st.tokens||designTokens(prev))||undefined:undefined,html:prev?stripInternal(prev):undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current,prefsRef.current.kind,sector):undefined,images:im.send},j=>{const g=htmlGuard(j.html,prev,text);if(!g.ok){j.rejected=true;setRejected({html:g.html||j.html,why:g.why,prev});return "⚠️ Yeni sürüm uygulanmadı: "+g.why+". Çalışan sürümün korundu. Aşağıdaki öneriden “Yarım kalanı sürdür” ile yeniden deneyebilir ya da “Reddedilen sürümü göster” ile yine de açabilirsin."}j.html=g.html;setRejected(null);proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,tokens:withDesign||!s.tokens?designTokens(j.html):s.tokens,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
+  return j&&!j.rejected?j.html:null}
  async function approvePlan(){
   const p=plan;if(!p||busy||!p.text.trim())return;
   setPlan(null);
@@ -6425,7 +6484,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  async function addFiles(files,role){const list=[...(files||[])].slice(0,3-atts.length);if(!list.length){toast("En fazla 3 görsel ekleyebilirsin");return}
   for(const f of list){const tmp="ld"+Math.random().toString(36).slice(2);setAtts(x=>[...x,{id:tmp,loading:true,name:f.name}].slice(0,3));try{const a=await prepImage(f);await wait(180);if(detachRef.current||renderEpoch!==epoch.current)return;if(role)a.role=role;setAtts(x=>x.map(y=>y.id===tmp?a:y));if(a.role==="style")setPrefs(p=>({...p,theme:"gorsel"}))}catch(e){setAtts(x=>x.filter(y=>y.id!==tmp));toast(e.message)}}}
  async function review(){if(!st.html||busy)return;const prev=st.html;
-  await runStream("review","Kontrol et ve düzelt","/api/ai/review",{html:prev,...aiBody()},j=>{setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html}));return j.summary})}
+  await runStream("review","Kontrol et ve düzelt","/api/ai/review",{html:prev,...aiBody()},j=>{const g=htmlGuard(j.html,prev,"");if(!g.ok){setRejected({html:g.html||j.html,why:g.why,prev});return "⚠️ Kontrol sonucu uygulanmadı: "+g.why+". Çalışan sürümün korundu."}setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:g.html}));return j.summary})}
  async function save(){
   if(st.gitContext){setGitOpen(true);return null}
   if(!auth.user){LS.set("claimDraft",st.draftId);openAuth("Uygulamanızı kaydetmek ve yayınlamak için ücretsiz hesap oluşturun. Çalışmanız kaybolmaz.");return null}
@@ -6709,7 +6768,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const [dragCard,setDragCard]=useState(null);
  const dropCard=(target,list)=>{if(!dragCard||dragCard===target)return;const names=list.map(c=>c.n).filter(n=>n!==dragCard);names.splice(names.indexOf(target),0,dragCard);setPilot(p=>({...p,order:names,auto:false}));setDragCard(null)};
  React.useLayoutEffect(()=>{const el=pilotRef.current;if(!el)return;el.querySelectorAll("[data-pc]").forEach(c=>{const k=c.dataset.pc,top=c.offsetTop,old=cardPos.current[k];if(old!=null&&old!==top){c.style.transition="none";c.style.transform=`translateY(${old-top}px)`;requestAnimationFrame(()=>{c.style.transition="";c.style.transform=""})}cardPos.current[k]=top})});
- const pilotUI=()=>{if(!st.html||!pilotUi.open)return null;const D=pilotData();const cur=D.cards.find(c=>c.cur)||{s:"basladi",heat:0};const pos=pilotDrag?{left:pilotDrag.x,top:pilotDrag.y}:pilotUi.pos?{[pilotUi.pos.side==="l"?"left":"right"]:16,top:Math.min(pilotUi.pos.y,innerHeight-80)}:{right:16,top:72};
+ const pilotUI=()=>{if(!st.html||!pilotUi.open)return null;const D=pilotData();const cur=D.cards.find(c=>c.cur)||{s:"basladi",heat:0};const pos=pilotDrag?{left:pilotDrag.x,top:pilotDrag.y}:pilotUi.pos?{[pilotUi.pos.side==="l"?"left":"right"]:16,top:Math.min(pilotUi.pos.y,innerHeight-80)}:{right:sessOpen&&innerWidth>820?(document.querySelector(".sp")?.offsetWidth||296)+28:16,top:72};
   const hot=h=>`hsl(${Math.round(210-210*h)} 95% ${55+h*5}%)`;const ago=t=>{if(!t)return"";const m=Math.round((Date.now()-t)/6e4);return m<1?"şimdi":m<60?m+" dk":Math.round(m/60)+" sa"};
   if(pilotUi.min)return html`<button type="button" class=${"plt-pill"+(pilotLand&&Date.now()-pilotLand<1500?" land":"")} style=${pos} onClick=${()=>setPUi({min:false})} title="Pilot'u aç"><i style=${{"--c":P_ST[cur.s][1]}}></i><${Icon} n="branch" s=${14}/><b>${curBr}</b><span class="plt-heat-mini" style=${{"--h":hot(cur.heat),width:Math.max(6,cur.heat*36)+"px"}}></span>${D.pri.length>0&&html`<em>${D.pri.length}</em>`}</button>`;
   return html`<aside ref=${pilotRef} key=${pilotLand} class=${"plt"+(pilotDrag?" drag":"")+(pilotLand&&Date.now()-pilotLand<1500?" land":"")} style=${pos} aria-label="Pilot: dallar ve iş durumu">
@@ -6828,6 +6887,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   ${editPlan?html`<textarea class="in" aria-label="Yapım planı" rows="6" maxlength="6000" value=${plan.text} onInput=${e=>setPlan(p=>({...p,text:e.target.value}))}></textarea>`:html`<div class="studio-message-text">${plan.text}</div>`}
   <div class="studio-plan-actions"><button class="btn s" disabled=${busy||!plan.text.trim()} onClick=${approvePlan}>Onayla ve yap</button><button class="btn g s" disabled=${busy} onClick=${()=>requestPlan(plan.prompt,plan.im,true)}>Yeniden planla</button><button class="btn g s" disabled=${busy} onClick=${()=>setPlan(null)}>Vazgeç</button></div>
  </section>`;
+ useEffect(()=>{if(st.html&&GM_INTERNAL.test(st.html)){const c=stripInternal(st.html);if(c!==st.html)setSt(s=>({...s,html:c}))}},[st.html]);
  const latestWork=st.msgs.findLast(m=>m.log);
  const [flowOpen,setFlowOpen]=useState({});
  const [requestInfo,setRequestInfo]=useState(false);
@@ -6954,7 +7014,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   switchProject({...st,gitContext:null,msgs:[]});
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
- const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
+ const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${frameDoc(ve?withQA(preview(st.html)):preview(st.html),ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
  return html`<div class="ws">${gtPanel}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
@@ -6984,9 +7044,9 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(autoFix&&probs.length&&autoTurn())return html`<details class="dq-card left"><summary><${Icon} n="info" s=${13}/><b>Tasarım ajanı</b><span>düzeltti · ${probs.length} küçük uyarı kaldı</span></summary><ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn g s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Bir kez daha dene</button></details>`;
   return html`<div class=${"dq-card"+(probs.length?" warn":"")} role="status"><div class="dq-h"><${Icon} n=${probs.length?"alert":"check"} s=${14}/><b>Tasarım ajanı</b><span>${probs.length?probs.length+" sorun buldu":"önizlemeyi denetledi · sorun yok"}</span>${st.tokens&&html`<em title=${st.tokens}>tasarım sistemi kayıtlı</em>`}</div>${probs.length>0&&html`<ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Ajan düzeltsin</button>`}</div>`})()}${planCard()}${todo&&html`<${TodoCard} todo=${todo} busy=${busy} onStart=${runTodos} onStop=${()=>{stopRef.current=true;toast("Bu adım bitince duracak")}} onCancel=${()=>setTodo(null)}/>`}</div>
     <div class="ws-in">${picked&&html`<div class="picked"><${Icon} n="pointer" s=${14} c="#e4ff3d"/><span>Seçili: <b>${"<"+picked.tag+">"}</b> ${picked.text?"“"+picked.text.slice(0,50)+"”":""}</span><span style=${{flex:1}}></span><button class="ib sm" onClick=${()=>setPicked(null)}><${Icon} n="x" s=${13}/></button></div>`}${queue.length>0&&html`<div class="nx-queue" aria-label="Sıradaki istekler">${queue.map((q,i)=>html`<div class="nx-q" key=${i}><span class="nx-qn">${i+1}</span><span class="nx-qt" title=${q}>${q}</span><button type="button" class="ib" aria-label="Sıradan çıkar" onClick=${()=>setQueue(x=>x.filter((_,j)=>j!==i))}><${Icon} n="x" s=${12}/></button></div>`)}<small>${busy?"Mevcut iş bitince sırayla çalışacak":"Birazdan başlıyor"}</small></div>`}${(()=>{const asked=new Set(st.msgs.filter(m=>m.role==="user").map(m=>m.content));const planTxt=plan?.text||st.msgs.findLast(m=>m.log?.kind==="plan")?.log?.res?.summary||"";const lw=latestWork,canRetry=lw&&!busy&&(lw.log?.cut||lw.err)&&(lastRetry.current?.id===lw.id&&lastRetry.current.run||lw.retry&&(lw.retry.text||lw.retry.kind==="review"));
-  const resume=[...(canRetry?[{ic:"refresh",l:"Yarım kalanı sürdür",p:"Son iş yarıda kaldı; kaldığı yerden yeniden çalıştırır",act:"retry",hot:1}]:[]),...(plan&&!busy?[{ic:"check",l:"Planı onayla ve başla",p:"onayla",act:"send",hot:1}]:[]),...(todo?.awaiting?[{ic:"play",l:"Yapılacakları başlat",p:"başla",act:"send",hot:1}]:[]),...(todo&&!todo.running&&!todo.awaiting&&todo.items?.some(t=>t.state!=="done")?[{ic:"list",l:"Kalan "+todo.items.filter(t=>t.state!=="done").length+" adımı sürdür",p:"Yapılacaklar listesinde kalan adımlara devam et: "+todo.items.filter(t=>t.state!=="done").map(t=>t.title).join(", "),hot:1}]:[])];
+  const resume=[...(rejected&&!busy?[{ic:"eye",l:"Reddedilen sürümü göster",p:"Uygulanmayan yeni sürüm: "+rejected.why,act:"forceApply",hot:1}]:[]),...(canRetry?[{ic:"refresh",l:"Yarım kalanı sürdür",p:"Son iş yarıda kaldı; kaldığı yerden yeniden çalıştırır",act:"retry",hot:1}]:[]),...(plan&&!busy?[{ic:"check",l:"Planı onayla ve başla",p:"onayla",act:"send",hot:1}]:[]),...(todo?.awaiting?[{ic:"play",l:"Yapılacakları başlat",p:"başla",act:"send",hot:1}]:[]),...(todo&&!todo.running&&!todo.awaiting&&todo.items?.some(t=>t.state!=="done")?[{ic:"list",l:"Kalan "+todo.items.filter(t=>t.state!=="done").length+" adımı sürdür",p:"Yapılacaklar listesinde kalan adımlara devam et: "+todo.items.filter(t=>t.state!=="done").map(t=>t.title).join(", "),hot:1}]:[])];
   const nx=[...resume,...nextPrompts({html:st.html,kind:prefs.kind,plan:planTxt,asked})];
-  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri" onWheel=${e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.currentTarget.scrollLeft+=e.deltaY}}}>${nx.map(x=>html`<button type="button" role="listitem" class=${"nx-chip"+(x.hot?" hot":"")} key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}if(x.act==="retry"){retryMsg(lw);return}if(x.act==="send"){genRef.current&&genRef.current(x.p);return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} fast=${prefs.mode==="hizli"&&!prefs.autoMode} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli",autoMode:false}));toast("Sonraki istekler Hızlı modda çalışacak · süren iş tamamlanıyor")}}/>`}${prompt(false)}${ccFoot()}
+  return nx.length>0&&!input.trim()&&!busy&&!todo?.running&&html`<div class="nx-sugg" role="list" aria-label="Sıradaki adım önerileri" onWheel=${e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.currentTarget.scrollLeft+=e.deltaY}}}>${nx.map(x=>html`<button type="button" role="listitem" class=${"nx-chip"+(x.hot?" hot":"")} key=${x.l} title=${x.p} onClick=${()=>{if(x.act==="review"){review();return}if(x.act==="retry"){retryMsg(lw);return}if(x.act==="forceApply"){if(confirm("Bu sürümde sorun bulundu: "+rejected.why+".\nYine de uygulansın mı? (Geri al ile önceki sürüme dönebilirsin.)")){setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:rejected.html}));setRejected(null)}return}if(x.act==="send"){genRef.current&&genRef.current(x.p);return}setInput(x.p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");t&&t.focus()})}}><${Icon} n=${x.ic||"sparkles"} s=${13}/><span>${x.l}</span>${x.src==="plan"&&html`<em>plan</em>`}</button>`)}</div>`})()}${escCard()}${busy&&html`<${BuildStatus} flowId=${latestWork&&flowId(latestWork)} isOpen=${!!(latestWork&&flowOpen[flowId(latestWork)])} onFlow=${()=>toggleFlow(latestWork,true)} log=${st.msgs.findLast(m=>m.log?.running)?.log} secs=${secs} live=${live} liveStart=${liveStartRef.current} hasHtml=${!!st.html} todo=${todo} queue=${queue.length} onStop=${stopGen} fast=${prefs.mode==="hizli"&&!prefs.autoMode} onFaster=${()=>{setPrefs(p=>({...p,mode:"hizli",autoMode:false}));toast("Sonraki istekler Hızlı modda çalışacak · süren iş tamamlanıyor")}}/>`}${prompt(false)}${ccFoot()}
      
      <div class="sugg" hidden=${busy||todo?.running}>${pendTheme&&st.html&&html`<button type="button" class="chip gm theme-chip" disabled=${busy} onClick=${applyTheme}><${Swatches} t=${themeById(pendTheme)} s=${9}/> “${themeById(pendTheme).name}” tasarımını uygula</button>`}${todo?.items.length>0&&html`<button class="chip" onClick=${()=>setInput(todo.items.find(t=>t.state!=="done")?.title||todo.items.at(-1).title)}>Görevi ayrıntılandır</button>`}</div></div>
    </div>

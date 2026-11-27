@@ -1,8 +1,8 @@
 # Uçtan uca test raporu
 
-2026-11-26 19:07 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
+2026-11-27 09:44 · sahte yapay zekâ sağlayıcısı, geçici veritabanı · test kullanıcısı `test@gitmapp.test`, yönetici `yonetici@gitmapp.test`
 
-**68 / 68 kontrol geçti.**
+**70 / 70 kontrol geçti.**
 
 | Alan | Kontrol | Sonuç | Not |
 |---|---|---|---|
@@ -56,8 +56,10 @@
 | Yönetici | [#siparisler](screens/e2e/y-netici-siparisler.png) | ✅ |  |
 | Yönetici | [#radar](screens/e2e/y-netici-radar.png) | ✅ |  |
 | Yönetici | [#plan](screens/e2e/y-netici-plan.png) | ✅ |  |
+| Yönetici | [#musteri-avi](screens/e2e/y-netici-musteri-avi.png) | ✅ |  |
 | Yönetici | [#kesfet](screens/e2e/y-netici-kesfet.png) | ✅ |  |
 | Yönetici | [#uretim-ajani](screens/e2e/y-netici-uretim-ajani.png) | ✅ |  |
+| Yönetici | [#beceri-avcisi](screens/e2e/y-netici-beceri-avcisi.png) | ✅ |  |
 | Yönetici | [#kategori](screens/e2e/y-netici-kategori.png) | ✅ |  |
 | Yönetici | [#liste](screens/e2e/y-netici-liste.png) | ✅ |  |
 | Yönetici | [#kuyruk](screens/e2e/y-netici-kuyruk.png) | ✅ |  |
@@ -65,7 +67,7 @@
 | Ödeme | Yönetici IBAN ve Stripe anahtarlarını panelden kaydetti | ✅ | TR33 0006 1005 1978 6457 8413 26 · Stripe test |
 | Ödeme | [Kredi ve ödemeler sayfası](screens/e2e/odeme-yonetici.png) | ✅ |  |
 | Ödeme | [Kredi yükle penceresi paketleri gösteriyor](screens/e2e/odeme-paketler.png) | ✅ |  |
-| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMXXCW9Q6255 |
+| Ödeme | [Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi](screens/e2e/odeme-havale.png) | ✅ | GMYSOIJMBCBB |
 | Ödeme | Yönetici havaleyi onayladı, 330 kredi yüklendi | ✅ | 66 → 396 |
 | Ödeme | [Kart: Stripe sayfasına gidip döndü, ödeme doğrulandı ve 100 kredi yüklendi](screens/e2e/odeme-kart-sonuc.png) | ✅ | 396 → 496 |
 | Ödeme | [Hesabım › Ödemelerim geçmişi](screens/e2e/odeme-gecmis.png) | ✅ | 2 ödeme |

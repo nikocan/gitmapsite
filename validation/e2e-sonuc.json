@@ -351,6 +351,13 @@
  },
  {
   "area": "Yönetici",
+  "name": "#musteri-avi",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-musteri-avi.png"
+ },
+ {
+  "area": "Yönetici",
   "name": "#kesfet",
   "ok": true,
   "note": "",
@@ -362,6 +369,13 @@
   "ok": true,
   "note": "",
   "shot": "y-netici-uretim-ajani.png"
+ },
+ {
+  "area": "Yönetici",
+  "name": "#beceri-avcisi",
+  "ok": true,
+  "note": "",
+  "shot": "y-netici-beceri-avcisi.png"
  },
  {
   "area": "Yönetici",
@@ -416,7 +430,7 @@
   "area": "Ödeme",
   "name": "Havale: IBAN ve açıklama kodu gösterildi, “Ödemeyi yaptım” bildirildi",
   "ok": true,
-  "note": "GMXXCW9Q6255",
+  "note": "GMYSOIJMBCBB",
   "shot": "odeme-havale.png"
  },
  {
