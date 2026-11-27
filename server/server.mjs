@@ -480,7 +480,7 @@ function designRule(d, kind = "app") {
 function runOpts(rt, body, user) {
   const t = body.settings || {};
   // Sunucudaki test edilmiş beceriler kimlikle gelir, metni sunucu ekler; kullanım sonucu başarı oranına yazılır
-  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id) : { text: "", run: null };
+  const sk = Array.isArray(t.skills) && t.skills.length ? SKILL_ENGINE.inject(t.skills.map(String), user?.id, isAdmin(user)) : { text: "", run: null };
   rt.skillRun = sk.run;
   if (t.temperature != null && t.temperature !== "" && isFinite(+t.temperature)) rt.temperature = Math.max(0, Math.min(1.5, +t.temperature));
   rt.maxTokens = { kisa: 6000, dengeli: 12000, ayrintili: 20000 }[t.detail] || 12000;
@@ -806,7 +806,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.61.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.62.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1787,7 +1787,7 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 const ownsSale = registerStoreSales({ db, route, need });
 const billing = registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, tiers: TIER_CREDITS, isAdmin });
 // Beceri motoru: sektör yazılımı planları, tasarım ve kalite becerileri; beceri avcısı, test ve kendi kendini iyileştirme
-const SKILL_ENGINE = registerSkills({ db, route, need, HttpErr, chat, scriptErrors, aiReady: () => !!CFG.aiKey,
+const SKILL_ENGINE = registerSkills({ db, route, need, HttpErr, chat, scriptErrors, isAdmin, aiReady: () => !!CFG.aiKey,
   generate: async (prompt, rule) => { const rt = { provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model: await defaultModel(), maxTokens: 12000 };
     const { text, finish, model } = await chatWith(rt, [{ role: "system", content: GEN_SYSTEM + "\n- " + KIND_RULES.app + scopeRule("app") + rule }, { role: "user", content: "Fikir: " + prompt }], 12000);
     return extractHtml(text, { model, finish }).html; },

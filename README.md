@@ -48,6 +48,7 @@ Gitmapp'in kendi müşterisini bulduğu satış hattı: **sektör araştırması
 
 Kullanıcı Beceriler panelinden **uygulama planı** (CRM, ön muhasebe/e-Fatura, ERP, stok, B2B bayi, POS, İK, randevu, proje, helpdesk, EBYS, beyaz masa, saha servis, filo, okul, satın alma, klinik, e-ticaret), **tasarım** ve **kalite** becerisi yükler. İstemci yalnızca beceri kimliklerini gönderir (`settings.skills`); metni sunucu ekler. Plan becerisi seçilince bağlı tasarım becerisi ve temiz mimari kendiliğinden eklenir. Katalog: `server/skills-catalog.mjs`.
 
+- **Mağaza:** uygulama planları varsayılan 15 kredi (`SKILL_PLAN_PRICE`), tasarım ve kalite becerileri ücretsiz; satın alınmamış ücretli beceri üretime eklenmez (`POST /api/skills/:id/buy`). Kullanıcılar `POST /api/skills/submit` ile beceri gönderir; otomatik kural kontrolü + test sonrası yayına girer, satıştan yazara %70 kredi yüklenir.
 - Her üretim `skill_runs` tablosuna yazılır: sonuç (temiz / otomatik onarıldı / sözdizimi hatası) ve kullanıcının 👍/👎 oyu (`POST /api/skills/feedback`) başarı oranını oluşturur.
 - **Beceri Avcısı** (Yönetim): GitHub'da lisanslı, güncel, 200+ yıldızlı açık kaynak muadilleri bulur; README'den öğrendiği işlevlerle aday sürüm yazar (kod kopyalanmaz). `GITHUB_TOKEN` tanımlanırsa arama sınırı yükselir.
 - **Test:** aday ve yayındaki sürüm aynı test istemiyle üretilir; beklenen kavramlar, sözdizimi, mobil uyum ve içerik miktarıyla 0–100 puanlanır; aday eşit ya da daha iyiyse yayına alınır.
