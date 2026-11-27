@@ -2750,6 +2750,18 @@ html.rm .ambient i{animation:none}
 .ux-ins{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px}.ux-ins li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.5;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03)}
 .ux-ins li span{font-size:11px;padding:2px 8px;border-radius:20px;background:#333;white-space:nowrap}.ux-ins li.yuksek span{background:#ff6b6b;color:#111}.ux-ins li.orta span{background:#ffb347;color:#111}
 .ux-fb{margin:8px 0 0;font-size:13px;border-left:2px solid var(--acc);padding-left:8px}.ux-fb small{display:block;color:var(--mut);font-size:11px}
+/* v5.72 Canlı yapay zekâ paneli */
+.ail{display:grid;gap:10px;min-width:0}.ail-top{display:flex;flex-wrap:wrap;gap:6px}
+.ail-pill{display:inline-flex;gap:6px;align-items:center;font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:#ddd}.ail-pill i{width:7px;height:7px;border-radius:50%;background:#888}.ail-pill.ok i{background:#39ff88;box-shadow:0 0 8px #39ff88}
+.ail-money{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}.ail-money>div{display:grid;gap:2px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.ail-money small,.ail-roles small,.ail-bm>small{font-size:11px;color:var(--mut)}.ail-money b{font-size:18px}.ail-money b.ok,.ail .ok{color:#51c592}.ail-money em{font-style:normal;font-size:11px;color:var(--mut)}
+.ail-roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.ail-roles>div{display:grid;gap:2px;padding:8px 10px;border-radius:12px;border:1px dashed rgba(255,255,255,.12)}.ail-roles b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ail-roles em{font-style:normal;font-size:11px;color:var(--mut)}
+.ail-run{display:grid;gap:6px}.ail-run>div{display:flex;gap:8px;align-items:center;font-size:13px;padding:6px 10px;border-radius:10px;background:rgba(61,232,255,.08);border:1px solid rgba(61,232,255,.3)}.ail-run small{margin-left:auto;color:var(--mut)}
+.ail-dot{width:8px;height:8px;border-radius:50%;background:#3de8ff;box-shadow:0 0 10px #3de8ff;animation:ail-p 1.2s ease-in-out infinite}@keyframes ail-p{50%{opacity:.3}}
+.ail-t{overflow:auto;max-width:100%}.ail-t table{width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap}.ail-t th{text-align:left;font-weight:500;color:var(--mut);font-size:11.5px;padding:4px 6px}.ail-t td{padding:5px 6px;border-top:1px solid var(--line)}.ail-t td.warn{color:#ffb347}
+.ail-bm{display:grid;gap:5px}.ail-bm>div{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr auto auto;gap:8px;align-items:center;font-size:12.5px}.ail-bm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ail-bm em{font-style:normal;color:#ffb347;font-size:11px}
+.ail-bm i{height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}.ail-bm u{display:block;height:100%;background:var(--acc);border-radius:4px}.ail-bm>div>small{color:var(--mut)}
+.ai-prof{border-color:rgba(228,255,61,.35)}.ai-prof.ok{border-color:rgba(81,197,146,.5)}.ai-prof-st{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:#ccc;margin:6px 0 10px}.ai-prof-st .bad{color:#ff8a8a}.ai-prof-act{display:flex;flex-wrap:wrap;gap:6px}
 </style>
 </head>
 <body>
@@ -2766,8 +2778,21 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.70.0";
+const VERSION="5.72.0";
 const CHANGELOG=[
+ {v:"5.72.0",date:"2026-11-28",items:[
+  "🧠 Ana yapay zekâ artık Claude (Anthropic) — doğrudan bağlantı. Uygulama üretimi Sonnet, Güçlü mod Opus, plan/yapılacaklar/Asistan/Rehber Haiku ile çalışıyor. Anthropic anahtarı tanımlıysa sunucu bir kez kendiliğinden bu yapılandırmaya geçer; önce anahtarı doğrular, önceki ayarları saklar",
+  "💾 İstem önbelleği Claude'da gerçekten çalışıyor: Anthropic'in kendi API'sine bağlanan yeni çevirici sayesinde sabit talimatlar ve düzenlenen sayfa önbellekten okunuyor; tekrar okunan girdi ~%90 daha ucuz. (OpenAI uyumlu katman önbelleği desteklemediği için bu çevirici yazıldı.) Canlı akış da aynen çalışıyor",
+  "🛟 Yedek sırası: OpenRouter → OpenAI → Gemini. Anthropic bakiyesi biterse ya da hata verirse istek aynı Claude modeliyle OpenRouter'a geçer; kullanıcı fark etmez. Eski OpenRouter anahtarı otomatik olarak yedeğe taşındı",
+  "🛰️ Kokpit'te yeni “Canlı · modeller ve harcama” bölümü: hangi iş hangi modelle çalışıyor (üretim, yardımcı, görsel), şu an süren üretim ve yazılan token, son istekler (iş, model, ana/yedek sağlayıcı, giriş · önbellekten · çıkış token, kredi). 4 saniyede bir yenilenir",
+  "💵 Yönetici için gerçek maliyet: Kokpit'te son 1 saat, bugün ve bu ay harcaması dolar ve TL olarak, önbellek tasarrufu ve model bazında döküm",
+  "⚙️ Yönetim › Yapay zekâ sağlayıcıları toparlandı: en üstte “Önerilen yapılandırma” kartı (durum, uygula, modelleri yenile, önceki ayarlara dön, fiyat ve kuru güncelle), “Canlı kullanım” paneli, Claude (Anthropic) ana sağlayıcı seçeneği, “Yardımcı modeller” bölümü",
+  "📈 Yönetim › API maliyetleri: model fiyatları her gün otomatik güncellenir (elle girilen tarife önceliklidir), giderler dolar olarak hesaplanıp güncel kurla TL gösterilir, dolar kuru otomatik (istersen elle), tabloda önbellekten okunan token ve yedek sağlayıcıya düşen istekler ayrı görünür"]},
+ {v:"5.71.0",date:"2026-11-28",items:[
+  "💸 Yapay zekâ maliyeti düşürüldü: plan çıkarma, yapılacaklar listesi, Asistan ve Rehber artık hızlı (ucuz) modelle çalışıyor; uygulamayı yazan asıl üretim senin seçtiğin modelde kalıyor. Bu yardımcı adımlar senden de daha az kredi düşüyor",
+  "🧠 İstem önbelleği genişledi: Claude modellerinde mevcut sayfanın içeriği de önbelleğe alınıyor; yarım kalan yanıtın devamı ve art arda yapılan isteklerde aynı sayfanın tekrar okunması çok daha ucuz",
+  "🛠️ “Hataları otomatik düzelt” artık yalnızca kritik sorunlarda (JavaScript hatası, boş ekran) kendiliğinden tur atıyor. Kontrast ve taşma gibi küçük uyarılar öneri olarak kalıyor; istersen “Ajan düzeltsin” ile düzeltiyorsun. Boşuna kredi harcanmıyor",
+  "⚙️ Yönetim › Yapay zekâ sağlayıcıları: yeni “Yardımcı model” ayarı. Boş bırakılırsa listedeki hızlı model kullanılır; off yazılırsa eski davranışa (kullanıcının seçtiği model) döner"]},
  {v:"5.70.0",date:"2026-11-28",items:[
   "🧭 Yeni: Rehber. Sağ alttaki pusula düğmesi turları başlatır. Anlatımlı turda imleç menüye basıp sayfaları kendisi gezer, her ekranda ilgili düğmeyi ışıkla işaretler ve ne işe yaradığını yazıyla ve istersen sesli (tarayıcının Türkçe sesi) anlatır. Otomatik oynar; ileri/geri, duraklat, sesi kapat ve Esc ile çık",
   "🎬 Dört tur: Gitmapp'i tanı (11 adım, tüm ekranlar) · İlk uygulamanı yap (fikir → beceri → şablon → Stüdyo → önizleme → yayın) · Yayına al (GitHub, alan adı, hosting) · Şablon ve beceri eşleştirme. İlk girişte “Gitmapp'te yeni misin?” daveti çıkar",
@@ -4302,14 +4327,14 @@ function AdminHome({go,request}){
 }
 // ---------- Yönetim › Yapay zekâ sağlayıcıları: SSH'sız anahtar yönetimi, anında geçerli ----------
 const AI_PROVS=[
- {id:"primary",env:"AI_KEY",n:"Ana sağlayıcı",d:"Tüm üretimler önce buradan geçer. Hostinger AI Router ya da OpenAI uyumlu başka bir adres.",keyUrl:"https://hpanel.hostinger.com"},
+ {id:"primary",env:"AI_KEY",n:"Ana sağlayıcı",d:"Tüm üretimler önce buradan geçer. Önerilen: Claude (Anthropic, doğrudan; istem önbelleği açık). Elle değiştirmek için adresi, anahtarı ve model listesini birlikte gir.",keyUrl:"https://platform.claude.com/settings/keys"},
  {id:"hostinger",env:"HOSTINGER_AI_KEY",n:"Hostinger AI Router",d:"OpenRouter ana sağlayıcı olduğunda yedek olarak Hostinger. Bakiyesi bitse de sorun olmaz, sıradaki yedeğe geçilir.",keyUrl:"https://hpanel.hostinger.com"},
  {id:"openrouter",env:"OPENROUTER_API_KEY",n:"OpenRouter",d:"Tek anahtarla Claude, GPT, Gemini, DeepSeek, Qwen. Yedek olarak önerilir.",keyUrl:"https://openrouter.ai/settings/keys"},
  {id:"anthropic",env:"ANTHROPIC_API_KEY",n:"Anthropic",d:"Claude modelleri doğrudan.",keyUrl:"https://platform.claude.com/settings/keys"},
  {id:"openai",env:"OPENAI_API_KEY",n:"OpenAI",d:"GPT modelleri doğrudan.",keyUrl:"https://platform.openai.com/api-keys"},
  {id:"gemini",env:"GEMINI_API_KEY",n:"Google Gemini",d:"Gemini modelleri; uygun fiyatlı Flash sınıfı.",keyUrl:"https://aistudio.google.com/apikey"},
  {id:"deepseek",env:"DEEPSEEK_API_KEY",n:"DeepSeek",d:"Düşük maliyetli kod modelleri.",keyUrl:"https://platform.deepseek.com/api_keys"}];
-const AI_BASES=[["https://router.hostinger.com/v1","Hostinger AI Router"],["https://openrouter.ai/api/v1","OpenRouter"],["https://api.openai.com/v1","OpenAI"]];
+const AI_BASES=[["https://api.anthropic.com/v1","Claude (Anthropic)"],["https://router.hostinger.com/v1","Hostinger AI Router"],["https://openrouter.ai/api/v1","OpenRouter"],["https://api.openai.com/v1","OpenAI"]];
 // Yönetici › E-posta gönderimi: SMTP (Hostinger e-postası) ya da Resend, deneme ve gönderim kaydı
 const MAIL_ST={gonderildi:["Gönderildi","#34d399"],bekliyor:["Kuyrukta","#facc15"],hata:["Hata","#f87171"]};
 function AdminMail({toast,auth}){
@@ -4343,6 +4368,44 @@ function AdminMail({toast,auth}){
   <div class="box ai-card"><div class="ai-h"><div><h2>Gönderim kaydı</h2><p>Son 60 e-posta. İçerikler (bağlantılar dahil) şifreli tutulur ve gönderilince silinir; hatalılar 4 kez denenir.</p></div>${(S.hata||S.bekliyor)?html`<button type="button" class="btn g s" disabled=${!!busy||!st.configured} onClick=${retry}>Yeniden dene</button>`:""}</div>
    ${st.log.length?html`<div class="mail-log">${st.log.map(r=>html`<div key=${r.id} class="mail-row"><i style=${{background:(MAIL_ST[r.status]||[0,"#888"])[1]}}></i><span><b>${r.kindTr}</b><small>${r.to_addr} · ${r.created}${r.via?" · "+r.via:""}</small>${r.error&&html`<small class="mail-e">${r.error}</small>`}</span><em>${(MAIL_ST[r.status]||[r.status])[0]}${r.tries>1?" · "+r.tries+". deneme":""}</em></div>`)}</div>`:html`<p class="sub">Henüz e-posta yok.</p>`}</div>
  </section>`}
+/* ---------- v5.72 Canlı yapay zekâ: şu an hangi iş hangi modelle, son istekler, harcama ---------- */
+const AI_KIND={build:"Üretim",update:"Düzenleme",plan:"Plan / yapılacaklar",review:"Kontrol",copilot:"Asistan",rehber:"Rehber",prototype:"Prototip",github:"GitHub dönüştürme","radar-design":"Radar tasarımı",chat:"Diğer"};
+const SERVED={ana:"ana",openrouter:"yedek · OpenRouter",anthropic:"yedek · Anthropic",openai:"yedek · OpenAI",gemini:"yedek · Gemini",deepseek:"yedek · DeepSeek",hostinger:"yedek · Hostinger"};
+const usdF=n=>n==null?"—":"$"+(+n).toLocaleString("tr-TR",{minimumFractionDigits:n&&Math.abs(n)<0.1?4:2,maximumFractionDigits:n&&Math.abs(n)<0.1?4:2});
+const tryF=(n,fx)=>n==null||!fx?"":"≈ "+(n*fx).toLocaleString("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:2});
+const kTok=n=>n==null?"–":n>=1000?(n/1000).toFixed(n>=10000?0:1).replace(".",",")+"K":String(n);
+function useAiLive(on=true,ms=4000){const [d,setD]=useState(null),[err,setErr]=useState("");
+ useEffect(()=>{if(!on||!API_ON)return;let a=true,t=0;const tick=()=>api("GET","/api/me/ai-live").then(j=>{if(a){setD(j);setErr("")}}).catch(e=>a&&setErr(e.message)).finally(()=>{if(a)t=setTimeout(tick,document.hidden?ms*4:ms)});tick();return()=>{a=false;clearTimeout(t)}},[on]);return {d,err}}
+function AiLivePanel({compact=false}){
+ const {d,err}=useAiLive(true);
+ if(err)return html`<p class="kok-mute">${err}</p>`;if(!d)return html`<p class="kok-mute">Canlı veriler yükleniyor…</p>`;
+ const R=d.routing,S=d.spend,fx=S?.fx;
+ const credFor=r=>{const c=(d.credits||[]).find(x=>x.kind===(r.kind==="update"?"build":r.kind)&&Math.abs(new Date(x.created.replace(" ","T")+"Z")-new Date(r.created.replace(" ","T")+"Z"))<120000);return c?c.credits:null};
+ return html`<div class="ail">
+  <div class="ail-top"><span class=${"ail-pill "+(R.direct?"ok":"")}><i></i>Ana: <b>${R.primary}</b>${R.direct?" · doğrudan":""}${R.cache?" · önbellek açık":""}</span><span class="ail-pill">Yedek: <b>${R.fallbacks.length?R.fallbacks.join(" → "):"yok"}</b></span></div>
+  ${S&&html`<div class="ail-money">${[["Son 1 saat",S.hour.c],["Bugün",S.today.c],["Bu ay",S.month.c]].map(([l,v])=>html`<div key=${l}><small>${l}</small><b>${usdF(v)}</b><em>${tryF(v,fx)}</em></div>`)}<div><small>Önbellek tasarrufu (ay)</small><b class="ok">${usdF(S.cacheSaved)}</b><em>${tryF(S.cacheSaved,fx)}</em></div></div>`}
+  <div class="ail-roles">${R.roles.map(r=>html`<div key=${r.id}><small>${r.label}</small><b title=${r.model||""}>${shortModel(r.model||"")||"—"}</b>${r.note&&!compact&&html`<em>${r.note}</em>`}</div>`)}</div>
+  ${d.running.length>0&&html`<div class="ail-run">${d.running.map(j=>html`<div key=${j.id}><span class="ail-dot"></span><b>${AI_KIND[j.kind]||j.kind}</b><span>${shortModel(j.model||"")}</span><small>${j.secs} sn · ${kTok(Math.round(j.len/3.5))} token yazıldı</small></div>`)}</div>`}
+  <div class="ail-t"><table><thead><tr><th>Zaman</th><th>İş</th><th>Model</th><th>Sağlayıcı</th><th title="Giriş / önbellekten / çıkış token">Token</th><th>${S?"Maliyet":"Kredi"}</th></tr></thead><tbody>
+   ${d.recent.length?d.recent.slice(0,compact?6:15).map(r=>{const c=credFor(r);return html`<tr key=${r.id}><td>${new Date(r.created.replace(" ","T")+"Z").toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</td><td>${AI_KIND[r.kind]||r.kind}</td><td title=${r.model}>${shortModel(r.model)}</td><td class=${r.served&&r.served!=="ana"?"warn":""}>${SERVED[r.served]||r.served||"ana"}</td><td>${kTok(r.input_t)}${r.cached_t?html` <span class="ok" title="önbellekten okunan">(${kTok(r.cached_t)} önb.)</span>`:""} → ${kTok(r.output_t)}</td><td>${S?usdF(r.cost):c!=null?c+" kr":"–"}</td></tr>`}):html`<tr><td colspan="6" class="kok-mute">Henüz istek yok. Stüdyo'da bir şey üret; burada anlık görünür.</td></tr>`}
+  </tbody></table></div>
+  ${S&&!compact&&S.byModel.length>0&&html`<div class="ail-bm"><small>Bu ay model bazında</small>${S.byModel.map(m=>html`<div key=${m.model+m.served}><span title=${m.model}>${shortModel(m.model)}${m.served&&m.served!=="ana"?html`<em> · ${SERVED[m.served]||m.served}</em>`:""}</span><i><u style=${{width:Math.max(3,m.cost/Math.max(...S.byModel.map(x=>x.cost||0),0.000001)*100)+"%"}}></u></i><b>${usdF(m.cost)}</b><small>${m.calls} istek</small></div>`)}</div>`}
+ </div>`;
+}
+function AiProfileCard({toast,onChange}){
+ const [p,setP]=useState(null),[busy,setBusy]=useState("");
+ const load=()=>api("GET","/api/admin/ai/profile").then(setP).catch(()=>{});useEffect(()=>{load()},[]);
+ const act=async(k,path,msg)=>{setBusy(k);try{const j=await api("POST",path,{});if(j.fields)onChange(j);await load();toast(msg)}catch(e){toast(e.message)}finally{setBusy("")}};
+ if(!p)return null;
+ return html`<div class=${"box ai-card ai-prof"+(p.applied?" ok":"")}><div class="ai-h"><div><h2>${p.applied?"✓ Önerilen yapılandırma etkin":"Önerilen yapılandırma"}</h2>
+  <p>Ana sağlayıcı <b>Claude (Anthropic, doğrudan)</b> ve istem önbelleği · Uygulama üretimi <b>Sonnet</b>, güçlü mod <b>Opus</b>, plan/yapılacaklar/Asistan/Rehber <b>Haiku</b> · Yedek sırası <b>OpenRouter → OpenAI → Gemini</b>. Fiyatlar ve dolar kuru otomatik güncellenir.</p></div></div>
+  <div class="ai-prof-st"><span>Şu an: <b>${p.primary}</b>${p.direct?" · doğrudan":""}${p.cache?" · önbellek açık":" · önbellek yok"}</span>${p.backupAt&&html`<span>Önceki ayarlar saklandı (${p.backupAt})</span>`}${p.error&&html`<span class="bad">Son otomatik geçiş denemesi: ${p.error}</span>`}${!p.hasAnthropic&&html`<span class="bad">Önce aşağıdaki Yedek sağlayıcılar › Anthropic'e anahtar ekle.</span>`}</div>
+  <div class="ai-prof-act">${!p.applied&&html`<button class="btn" disabled=${!!busy||!p.hasAnthropic} onClick=${()=>act("apply","/api/admin/ai/profile/apply","Önerilen yapılandırma uygulandı · ana sağlayıcı Claude")}>${busy==="apply"?"Uygulanıyor…":"Önerilen yapılandırmayı uygula"}</button>`}
+   ${p.applied&&html`<button class="btn g s" disabled=${!!busy} onClick=${()=>act("apply","/api/admin/ai/profile/apply","Yapılandırma yenilendi · en yeni Claude modelleri seçildi")}>${busy==="apply"?"Yenileniyor…":"Modelleri yenile"}</button>`}
+   ${p.backupAt&&html`<button class="btn g s" disabled=${!!busy} onClick=${()=>{if(confirm("Önceki yapay zekâ ayarlarına dönülsün mü?"))act("back","/api/admin/ai/profile/rollback","Önceki yapılandırmaya dönüldü")}}>Önceki ayarlara dön</button>`}
+   <button class="btn g s" disabled=${!!busy} onClick=${()=>act("rates","/api/admin/costs/refresh-rates","Model fiyatları ve dolar kuru güncellendi")}>${busy==="rates"?"Güncelleniyor…":"Fiyat ve kuru güncelle"}</button></div>
+ </div>`;
+}
 function AdminAI({toast}){
  const [st,setSt]=useState(null),[err,setErr]=useState(""),[vals,setVals]=useState({}),[busy,setBusy]=useState(""),[tests,setTests]=useState({});
  const load=()=>api("GET","/api/admin/ai").then(setSt).catch(e=>setErr(e.message));useEffect(()=>{load()},[]);
@@ -4352,6 +4415,7 @@ function AdminAI({toast}){
  async function removeHostinger(){if(!confirm("Hostinger AI Router tamamen bırakılsın mı? Ana sağlayıcı OpenRouter olur, Hostinger yedek listesinden de çıkar."))return;setBusy("rmh");try{const j=await api("POST","/api/admin/ai/remove-hostinger");keep(j);toast("Hostinger kaldırıldı · ana sağlayıcı OpenRouter")}catch(e){toast(e.message)}finally{setBusy("")}}
  // Adres düğmeleri tek başına adres kaydetmez: adres, anahtar ve model listesi birlikte değişir
  async function preset(u){if(u===st.base)return;
+  if(/anthropic\.com/.test(u)){setBusy("swap");try{const j=await api("POST","/api/admin/ai/profile/apply");keep(j);toast("Ana sağlayıcı Claude (Anthropic) · önerilen yapılandırma uygulandı")}catch(e){toast(e.message)}finally{setBusy("")}return}
   if(/openrouter\.ai/.test(u)){if(!f("OPENROUTER_API_KEY").set){toast("Önce Yedek sağlayıcılar › OpenRouter'a anahtarı kaydet");return}return /router\.hostinger\.com/.test(st.base)&&!st.note?swap():(async()=>{setBusy("swap");try{const j=await api("POST","/api/admin/ai/openrouter-primary");keep(j);toast("Ana sağlayıcı OpenRouter")}catch(e){toast(e.message)}finally{setBusy("")}})()}
   if(/router\.hostinger\.com/.test(u)){if(!confirm("Ana sağlayıcı sunucu dosyasındaki Hostinger ayarlarına dönsün mü? Panelde girilen ana adres, anahtar ve model listesi silinir."))return;for(const n of ["AI_BASE","AI_KEY","AI_MODELS","AI_MODEL"])if(f(n).source==="panel")await save(n,"");return}
   toast("Bu sağlayıcı için adresi ve anahtarı birlikte girip Kaydet'e bas");setVals(v=>({...v,AI_BASE:u}))}
@@ -4366,7 +4430,9 @@ function AdminAI({toast}){
  const fbs=st.fallbacks;
  return html`<section class="ai-adm">
   <header><h1>Yapay zekâ sağlayıcıları</h1><p>Anahtarları buradan yönet; kaydettiğin an geçerli olur, SSH ve yeniden başlatma gerekmez. Anahtarlar sunucuda şifreli saklanır ve bir daha gösterilmez. Panel değeri sunucu dosyasındaki (.env) değerin önüne geçer.</p>
-   <div class="ai-sum"><span><${Icon} n="cpu" s=${15}/> Ana: <b>${(AI_BASES.find(b=>b[0]===st.base)||[0,st.base.replace(/^https:\/\//,"")])[1]}</b></span><span><${Icon} n="refresh" s=${15}/> Yedek: <b>${fbs.length?fbs.map(p=>AI_PROVS.find(x=>x.id===p)?.n||p).join(" → "):"yok"}</b></span>${!fbs.length&&html`<em>Yedek yokken ana sağlayıcının bakiyesi bitince üretim durur. En az bir yedek ekle.</em>`}${!/openrouter\.ai/.test(st.base)&&f("OPENROUTER_API_KEY").set&&html`<button class="btn s ai-swap" disabled=${busy==="swap"} onClick=${swap}>${busy==="swap"?"Ayarlanıyor…":"OpenRouter'ı ana, Hostinger'ı yedek yap"}</button>`}${(/router\.hostinger\.com/.test(st.base)||fbs.includes("hostinger"))&&(f("OPENROUTER_API_KEY").set||/openrouter\.ai/.test(st.base))&&html`<button class="btn g s" disabled=${busy==="rmh"} onClick=${removeHostinger}>${busy==="rmh"?"Kaldırılıyor…":"Hostinger'ı kaldır"}</button>`}${st.note&&html`<em class="ai-note">${st.note} Kalıcı düzeltmek için “Hostinger'ı kaldır” ya da “OpenRouter” düğmesine bas.</em>`}</div></header>
+   <div class="ai-sum"><span><${Icon} n="cpu" s=${15}/> Ana: <b>${(AI_BASES.find(b=>b[0]===st.base)||[0,st.base.replace(/^https:\/\//,"")])[1]}</b></span><span><${Icon} n="refresh" s=${15}/> Yedek: <b>${fbs.length?fbs.map(p=>AI_PROVS.find(x=>x.id===p)?.n||p).join(" → "):"yok"}</b></span>${!fbs.length&&html`<em>Yedek yokken ana sağlayıcının bakiyesi bitince üretim durur. En az bir yedek ekle.</em>`}${/router\.hostinger\.com/.test(st.base)&&f("OPENROUTER_API_KEY").set&&html`<button class="btn s ai-swap" disabled=${busy==="swap"} onClick=${swap}>${busy==="swap"?"Ayarlanıyor…":"OpenRouter'ı ana, Hostinger'ı yedek yap"}</button>`}${(/router\.hostinger\.com/.test(st.base)||fbs.includes("hostinger"))&&(f("OPENROUTER_API_KEY").set||/openrouter\.ai/.test(st.base))&&html`<button class="btn g s" disabled=${busy==="rmh"} onClick=${removeHostinger}>${busy==="rmh"?"Kaldırılıyor…":"Hostinger'ı kaldır"}</button>`}${st.note&&html`<em class="ai-note">${st.note} Kalıcı düzeltmek için “Hostinger'ı kaldır” ya da “OpenRouter” düğmesine bas.</em>`}</div></header>
+  <${AiProfileCard} toast=${toast} onChange=${keep}/>
+  <div class="box ai-card"><div class="ai-h"><div><h2>Canlı kullanım</h2><p>Şu an hangi iş hangi modelle çalışıyor, son istekler ve gerçek maliyet (her 4 saniyede yenilenir).</p></div></div><${AiLivePanel}/></div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Ana sağlayıcı</h2><p>${AI_PROVS[0].d}</p></div><button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test("primary")}>Bağlantıyı test et</button></div>
    <div class="ai-presets">${AI_BASES.map(([u,l])=>html`<button type="button" key=${u} class=${"chip"+(st.base===u?" on":"")} disabled=${!!busy} onClick=${()=>preset(u)}>${l}</button>`)}</div>
    ${field("AI_BASE","Adres","https://…/v1")}${field("AI_KEY","API anahtarı","sk-…",{secret:true})}${field("AI_MODELS","Model listesi (virgülle)","claude-sonnet-5,gpt-5.2",{area:true})}${field("AI_MODEL","Varsayılan model","boş bırakılırsa listeden seçilir")}
@@ -4374,8 +4440,8 @@ function AdminAI({toast}){
   <div class="box ai-card"><div class="ai-h"><div><h2>Yedek sağlayıcılar</h2><p>Ana sağlayıcı bakiye bitti, model yok, yoğunluk ya da hata verirse istek sırayla bunlara gider; kullanıcı hata görmez.</p></div></div>
    ${AI_PROVS.slice(1).filter(pv=>!(pv.id==="hostinger"&&/router\.hostinger\.com/.test(st.base)&&!f(pv.env).set)).map(pv=>{const x=f(pv.env);return html`<div class="ai-prov" key=${pv.id}><div class="ai-ph"><b>${pv.n}</b>${x.set?html`<span class="pill-ok">anahtar var · ••••${x.last4}</span>`:html`<span class="pill-no">anahtar yok</span>`}<a href=${pv.keyUrl} target="_blank" rel="noopener">Anahtar al</a>${(st.byok||[]).find(b=>b.provider===pv.id)&&!x.set?html`<button class="btn s" disabled=${busy==="imp:"+pv.id} onClick=${()=>importKey(pv.id)}>Hesabımdaki anahtarı kullan (••••${(st.byok||[]).find(b=>b.provider===pv.id).last4})</button>`:""}<span style=${{flex:1}}></span>${x.set&&html`<button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test(pv.id)}>Test et</button>`}</div><small>${pv.d}</small>${field(pv.env,"API anahtarı","",{secret:true})}${result(pv.id)}</div>`})}
    ${field("AI_FALLBACKS","Deneme sırası","hostinger,openrouter,anthropic,openai,gemini,deepseek")}</div>
-  <div class="box ai-card"><div class="ai-h"><div><h2>Asistan</h2><p>Asistan ücretsiz; maliyeti düşük, hızlı bir model önerilir. Görsel ekli mesajlarda görsel okuyan model kullanılır.</p></div></div>
-   ${field("COPILOT_MODEL","Asistan modeli","boş: listeden dengeli bir model")}${field("VISION_MODEL","Görsel okuyan model","boş: otomatik")}</div>
+  <div class="box ai-card"><div class="ai-h"><div><h2>Yardımcı modeller</h2><p>Plan, yapılacaklar listesi, Asistan ve Rehber ucuz ve hızlı bir modelle çalışır; asıl uygulama üretimi kullanıcının seçtiği modelde kalır. Görsel ekli mesajlarda görsel okuyan model kullanılır.</p></div></div>
+   ${field("HELPER_MODEL","Yardımcı model (plan, yapılacaklar, asistan)","boş: listedeki hızlı model · off: kullanıcının modeli")}${field("COPILOT_MODEL","Asistan modeli","boş: yardımcı model")}${field("VISION_MODEL","Görsel okuyan model","boş: otomatik")}</div>
  </section>`;
 }
 function AdminCosts({toast}){
@@ -4385,10 +4451,13 @@ function AdminCosts({toast}){
  const data=request.data;
  const tl=n=>n==null?"—":n.toLocaleString("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:4});
  const number=n=>n==null?"—":n.toLocaleString("tr-TR",{maximumFractionDigits:2});
+ const [refreshing,setRefreshing]=useState(false);
+ async function refreshAll(){setRefreshing(true);try{const j=await api("POST","/api/admin/costs/refresh-rates",{});request.refresh();toast(j.updated+" model fiyatı güncellendi"+(j.fx?" · 1 $ = ₺"+j.fx.toLocaleString("tr-TR",{maximumFractionDigits:2}):""))}catch(e){toast(e.message)}finally{setRefreshing(false)}}
+ async function saveFx(e){e.preventDefault();const v=new FormData(e.currentTarget).get("usd_try");try{await api("PUT","/api/admin/costs/fx",{usd_try:v===""?null:Number(v)});request.refresh();toast(v===""?"Kur otomatik güncellenecek":"Kur kaydedildi")}catch(er){toast(er.message)}}
  async function save(e,section){
   e.preventDefault();if(saving)return;
   const values=Object.fromEntries(new FormData(e.currentTarget));
-  for(const k of Object.keys(values))if(k!=="model"&&k!=="name")values[k]=values[k]===""?null:Number(values[k]);
+  for(const k of Object.keys(values))if(k!=="model"&&k!=="name"&&k!=="currency")values[k]=values[k]===""?null:Number(values[k]);
   if(section==="integration")values.month=month;
   setSaving(true);
   try{await api("PUT","/api/admin/costs/"+section,values);request.refresh();toast("Kaydedildi")}
@@ -4397,33 +4466,35 @@ function AdminCosts({toast}){
  const field=(key,label,value,required=true,type="number")=>html`<label>${label}<input name=${key} type=${type} min="0" step="any" required=${required} defaultValue=${value??""}/></label>`;
  const submit=html`<button class="btn s" disabled=${saving}>Kaydet</button>`;
  if(!data)return html`<${LoadState} request=${request}/>`;
- const {settings,rows,integrations,rates}=data;
+ const {settings,rows,integrations,rates,fx}=data;
  const missing=rows.filter(r=>r.provider==="gitmapp").reduce((s,r)=>s+r.missing,0);
  const hours=settings.balance!=null&&settings.weekly>0?settings.balance*168/settings.weekly:null;
  const unit=settings.pack_size>0?settings.pack_price/settings.pack_size:null;
  const suggestions=[];
  if(hours!=null&&hours<24)suggestions.push("Bakiye son bildirime göre bir günden az kullanım karşılıyor. Sağlayıcı bakiyesini kontrol edin.");
  if(settings.budget>0 && data.total>=settings.budget*(settings.warning_percent??80)/100)suggestions.push(data.total>=settings.budget?"Aylık bütçeye ulaşıldı. En yüksek gideri inceleyin.":"Bütçe uyarı eşiğine ulaşıldı. Kalan bütçeyi kontrol edin.");
- if(missing)suggestions.push(missing+" platform çağrısında tarife veya kullanım ayrıntısı eksik. Bu çağrılar TL toplamına dahil edilemedi.");
+ if(missing)suggestions.push(missing+" platform çağrısında tarife veya kullanım ayrıntısı eksik; toplama dahil edilemedi. “Fiyat ve kuru güncelle” ile tarifeler otomatik doldurulur.");
  const day=Number(new Date().toLocaleDateString("sv-SE",{timeZone:"Europe/Istanbul"}).slice(-2));
  const daysInMonth=new Date(Number(month.slice(0,4)),Number(month.slice(5)),0).getDate();
- const monthEstimate=data.integrations.reduce((sum,r)=>sum+r.cost,0)+rows.reduce((sum,r)=>sum+(r.cost??0),0)*daysInMonth/day;
+ const monthEstimate=data.integrations.reduce((sum,r)=>sum+r.cost,0)+(fx?rows.reduce((sum,r)=>sum+(r.cost??0),0)*fx:0)*daysInMonth/day;
  if(month===currentMonth&&settings.budget>0&&monthEstimate>settings.budget)suggestions.push("Kayıtlı entegrasyon giderleri ve bu ayki günlük model kullanım ortalamasıyla ay sonu tahmini "+tl(monthEstimate)+".");
  const top=rows.find(r=>r.cost>0);
- if(top)suggestions.push("En yüksek model gideri "+top.model+" / "+top.kind+" işlemlerinde ("+tl(top.cost)+"). Bu işlem için daha düşük maliyetli bir modeli karşılaştırın.");
- return html`<section class="cost-panel"><div class="adm-row"><h1>API ve entegrasyon maliyetleri</h1><label>Dönem <input type="month" value=${month} onChange=${e=>e.target.value&&setMonth(e.target.value)}/></label></div>
- <div class="adm-stats">${[["Hesaplanabilen gider",tl(data.total)],["Aylık bütçe",tl(settings.budget)],["Kullanılan Gitmapp kredisi",number(data.credits)],["Son bildirilen Hostinger bakiyesi",number(settings.balance)]].map(([label,value])=>html`<div class="box" key=${label}><span>${label}</span><strong>${value}</strong></div>`)}</div>
+ if(top)suggestions.push("En yüksek model gideri "+shortModel(top.model)+" / "+(AI_KIND[top.kind]||top.kind)+" işlemlerinde ("+usdF(top.cost)+(fx?" "+tryF(top.cost,fx):"")+").");
+ return html`<section class="cost-panel"><div class="adm-row"><h1>API ve entegrasyon maliyetleri</h1><label>Dönem <input type="month" value=${month} onChange=${e=>e.target.value&&setMonth(e.target.value)}/></label><button class="btn g s" disabled=${refreshing} onClick=${refreshAll}><${Icon} n="refresh" s=${13}/> ${refreshing?"Güncelleniyor…":"Fiyat ve kuru güncelle"}</button></div>
+ <div class="adm-stats">${[["Yapay zekâ API gideri",usdF(data.apiUsd)+" "+tryF(data.apiUsd,fx)],["Toplam gider (TL)",tl(data.total)],["Aylık bütçe",tl(settings.budget)],["Dolar kuru",fx?"₺"+fx.toLocaleString("tr-TR",{maximumFractionDigits:2})+(data.fxManual?" · elle":" · otomatik"):"—"],["Kullanılan Gitmapp kredisi",number(data.credits)]].map(([label,value])=>html`<div class="box" key=${label}><span>${label}</span><strong>${value}</strong></div>`)}</div>
  ${suggestions.length>0&&html`<div class="box"><h3>Öneriler</h3><ul>${suggestions.map(v=>html`<li key=${v}>${v}</li>`)}</ul></div>`}
- <div class="box"><h3>Model ve işlem kullanımı</h3><p>TL tahminleri çağrı anındaki tarifeyle hesaplanır. Kullanıcı anahtarıyla yapılan çağrıların ücreti kullanıcıya aittir. Ayrıntılı takip bu sürümle başlar.</p>
- ${rows.length?html`<div class="adm-table"><table><thead><tr>${["Sağlayıcı","Model","İşlem","Çağrı","Bildirilen token","Hesaplanan gider"].map(x=>html`<th>${x}</th>`)}</tr></thead><tbody>${rows.map(r=>html`<tr><td>${r.provider==="gitmapp"?"Hostinger":r.provider+" · kullanıcı anahtarı"}</td><td>${r.model}</td><td>${r.kind}</td><td>${r.calls}</td><td>${number(r.tokens)}</td><td>${tl(r.cost)}</td></tr>`)}</tbody></table></div>`:html`<p>Bu ay için model çağrısı kaydedilmedi.</p>`}</div>
+ <div class="box"><h3>Model ve işlem kullanımı</h3><p>Gider, çağrı anındaki tarifeyle dolar olarak hesaplanır (sağlayıcılar dolarla faturalar); TL karşılığı güncel kurla gösterilir. Önbellekten okunan token çok daha ucuzdur. Kullanıcı anahtarıyla yapılan çağrıların ücreti kullanıcıya aittir.</p>
+ ${rows.length?html`<div class="adm-table"><table><thead><tr>${["Sağlayıcı","Model","İşlem","Çağrı","Token","Önbellekten","Gider"].map(x=>html`<th>${x}</th>`)}</tr></thead><tbody>${rows.map(r=>html`<tr><td>${r.provider==="gitmapp"?(r.served&&r.served!=="ana"?(SERVED[r.served]||r.served):"Platform (ana)"):r.provider+" · kullanıcı anahtarı"}</td><td title=${r.model}>${shortModel(r.model)}</td><td>${AI_KIND[r.kind]||r.kind}</td><td>${r.calls}</td><td>${number(r.tokens)}</td><td>${number(r.cached)}</td><td>${usdF(r.cost)}<br/><small>${tryF(r.cost,fx)}</small></td></tr>`)}</tbody></table></div>`:html`<p>Bu ay için model çağrısı kaydedilmedi.</p>`}</div>
  <div class="box"><h3>Entegrasyon giderleri</h3><p>Dönemin toplam miktarını ve TL birim ücretini girin. Aynı ay ve adla kaydetmek mevcut tutarı günceller. Model tablosuna dahil olan giderleri tekrar girmeyin.</p>
  ${integrations.map(r=>html`<p>${r.name} · ${number(r.quantity)} × ${tl(r.unit)} = <b>${tl(r.cost)}</b></p>`)}
  <form onSubmit=${e=>save(e,"integration")}>${field("name","Entegrasyon adı","",true,"text")}${field("quantity","Miktar")}${field("unit","Birim ücret (TL)")}${submit}</form></div>
- <div class="box"><h3>Model tarifeleri</h3><p>Hostinger modelleri için bir milyon token başına TL tutarını girin. Güncellenen tarife sonraki çağrılarda geçerlidir.</p>
- ${rates.map(r=>html`<p>${r.model} · Giriş ${tl(r.input)} · Çıkış ${tl(r.output)} · Önbellek ${tl(r.cached)}</p>`)}
- <form onSubmit=${e=>save(e,"rate")}>${field("model","Model kimliği","",true,"text")}${field("input","Giriş (TL)")}${field("output","Çıkış (TL)")}${field("cached","Önbellek (TL)")}${submit}</form></div>
+ <div class="box"><h3>Model tarifeleri</h3><p>Bir milyon token başına fiyat. Kullanılan modellerin fiyatları her gün otomatik güncellenir (sağlayıcı liste fiyatı). Elle girdiğin tarife otomatik olanın önüne geçer.</p>
+ ${rates.map(r=>{const f=v=>r.currency==="USD"?usdF(v):tl(v);return html`<p key=${r.model}>${shortModel(r.model)} · Giriş ${f(r.input)} · Çıkış ${f(r.output)} · Önbellek ${f(r.cached)} <small class=${"ai-src "+(r.source==="otomatik"?"sunucu":"panel")}>${r.source==="otomatik"?"otomatik":"elle"}</small></p>`})}
+ <form onSubmit=${e=>save(e,"rate")}>${field("model","Model kimliği","",true,"text")}${field("input","Giriş")}${field("output","Çıkış")}${field("cached","Önbellek")}<label>Para birimi<select name="currency" defaultValue="USD"><option value="USD">USD ($)</option><option value="TRY">TL (₺)</option></select></label>${submit}</form></div>
+ <div class="box"><h3>Dolar kuru</h3><p>API giderleri dolar olarak tutulur; TL karşılığı ve bütçe karşılaştırması bu kurla yapılır. Boş bırakırsan kur günde iki kez otomatik güncellenir.</p>
+ <form onSubmit=${saveFx}><label>1 $ = ₺<input name="usd_try" type="number" min="1" step="any" defaultValue=${data.fxManual?fx:""} placeholder=${fx?String(fx):"otomatik"}/></label>${submit}</form></div>
  <div class="box"><h3>Bütçe ve sağlayıcı bakiyesi</h3><p>Son manuel bildirim: ${settings.updated?settings.updated+" UTC":"Henüz girilmedi"}. Bakiye ve paket bilgileri tüm dönemler için son bildirimi gösterir.</p>
- <form onSubmit=${e=>save(e,"settings")}>${[["budget","Aylık bütçe (TL)"],["warning_percent","Bütçe uyarı eşiği (%)"],["balance","Kalan sağlayıcı kredisi"],["weekly","Son 7 gün kullanılan kredi"],["pack_price","Ödenen paket tutarı (TL)"],["pack_size","Paketteki kredi"]].map(([k,l])=>field(k,l,settings[k]??(k==="warning_percent"?80:""),false))}${submit}</form>
+ <form onSubmit=${e=>save(e,"settings")}>${[["budget","Aylık bütçe (TL)"],["warning_percent","Bütçe uyarı eşiği (%)"],["balance","Kalan sağlayıcı bakiyesi"],["weekly","Son 7 gün kullanılan kredi"],["pack_price","Ödenen paket tutarı (TL)"],["pack_size","Paketteki kredi"]].map(([k,l])=>field(k,l,settings[k]??(k==="warning_percent"?80:""),false))}${submit}</form>
  <p>Bildirim anındaki tahmini bakiye süresi: ${hours==null?"—":number(hours)+" saat"} · Kredi birim maliyeti: ${tl(unit)} · Son 7 gün kredi maliyeti: ${tl(unit!=null&&settings.weekly!=null?unit*settings.weekly:null)}</p></div></section>`;
 }
 function AdminPager({page,total,go}){
@@ -6491,6 +6562,7 @@ function Kokpit({close,user,html:h,model,radar,health,reHealth,applyFix,buildFix
    <${Gauge} v=${all.filter(i=>i.lv>=2).length} max=${Math.max(5,all.length)} label="Açık arıza" sub=${freeN+" ücretsiz düzeltilebilir"} tone=${all.some(i=>i.lv>=3)?"#ff3b6b":"#ffc53d"} />
   </div>
   <div class="kok-grid">
+   <section class="kok-card kok-wide"><h4><span class="kok-pulse"></span>Canlı · modeller ve harcama <small>anlık, 4 sn'de bir</small></h4><${AiLivePanel} compact=${true}/></section>
    <section class="kok-card"><h4><${Icon} n="plug" s=${14}/>Bağlayıcılar<button type="button" class="kok-mini" onClick=${()=>reHealth(true)}><${Icon} n="refresh" s=${12}/>Tara</button></h4>
     <div class="kok-lamps">${lamps.map(l=>html`<button type="button" key=${l.id} class=${"kok-lamp "+l.st+(sel===l.id?" sel":"")} onClick=${()=>setSel(sel===l.id?null:l.id)} title=${l.msg}><i style=${{"--c":KOK_ST[l.st][0]}}></i><span>${l.n}</span></button>`)}
      ${!lamps.length&&html`<p class="kok-mute">${user?"Taranıyor…":"Giriş yapınca hesap bağlantıların görünür."}</p>`}</div>
@@ -7006,7 +7078,9 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const autoTurn=()=>/^(Otomatik düzeltme|Tasarım ajanı)/.test(lastUserAsk());
  const qaProbs=()=>qa&&qa.source===st.html?[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)]:[];
  const fixPrompt=probs=>"TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun (rozet ve etiketlerde de); başka hiçbir şeyi değiştirme.";
- useEffect(()=>{const probs=qaProbs();const key=st.html.length+":"+st.msgs.length;if(!autoFix||busy||todo?.running||!st.html||!probs.length||autoTurn()||autoFixed.current===key)return;
+ // v5.71 maliyet: otomatik tur yalnızca kritik sorunda (JavaScript hatası ya da boş ekran) başlar; kontrast/taşma gibi uyarılar öneri olarak kalır
+ const qaCritical=()=>!!(qa&&qa.source===st.html&&(qa.errors.length||qa.issues.some(i=>i.k==="bos")));
+ useEffect(()=>{const probs=qaProbs();const key=st.html.length+":"+st.msgs.length;if(!autoFix||busy||todo?.running||!st.html||!probs.length||!qaCritical()||autoTurn()||autoFixed.current===key)return;
   const t=setTimeout(()=>{if(autoFixed.current===key)return;autoFixed.current=key;build(fixPrompt(probs),null,"Otomatik düzeltme: tasarım ajanı "+probs.length+" sorunu düzeltiyor")},1400);return()=>clearTimeout(t)},[qa,autoFix,busy,scope,st.html,todo?.running]);
  // ---------- Radar: projeyi sürekli tarar, bulguları önem sırasıyla gösterir ve tek tıkla doğru yere yönlendirir ----------
  /* ---------- v5.44 Pilot: sağ üstte yüzen mini GitHub (dallar, durum, ısı, öncelik) ---------- */
