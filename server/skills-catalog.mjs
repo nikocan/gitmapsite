@@ -3,6 +3,8 @@
 // Bunlar belirli bir markanın kopyası değildir: o yazılım türünün işlevlerini, veri modelini ve iş kurallarını tarif eder.
 // checks: test üretiminde çıktıda aranacak kavramlar (küçük harf; '|' ile alternatifler).
 
+import { SECTOR_SKILLS, SECTOR_HUNT } from "./skills-sectors.mjs";
+
 const dev = (id, ad, kim, govde, checks, tasarim) => ({ id: "plan-" + id, kind: "gelistirme", cat: id, name: ad, who: kim, body: govde.trim(), checks, design: tasarim, test: ad + " uygulaması yap; örnek verilerle dolu olsun." });
 
 export const CATALOG = [
@@ -157,7 +159,8 @@ KÜÇÜK FONKSİYONLAR: her fonksiyon tek iş; tekrar eden HTML parçaları bile
   { id: "kalite-test-senaryo", kind: "kalite", cat: "kalite", name: "Kendi kendini sınayan uygulama", who: "Kritik hesap yapan uygulamalar", checks: ["test|kontrol"], body: `Hesap yapan saf fonksiyonları (KDV, toplam, izin günü, stok) ayrı tut ve sayfa açılışında küçük bir self-test çalıştır: bilinen girdilerle beklenen çıktıyı karşılaştır, hata varsa konsola ve geliştirici bandına yaz. Formlarda sınır değerleri (0, negatif, çok büyük) reddet.` },
 ];
 
+CATALOG.push(...SECTOR_SKILLS);
 export const ALL_SKILLS = [...CATALOG, ...DESIGN, ...QUALITY];
 
 // Beceri avcısının GitHub'da açık kaynak muadilleri arayacağı terimler
-export const HUNT_TERMS = { crm: "crm", "on-muhasebe": "invoicing accounting", stok: "inventory management", "erp-uretim": "erp manufacturing", "b2b-bayi": "b2b ordering portal", "pos-adisyon": "restaurant pos", ik: "hrms leave management", randevu: "appointment booking", proje: "project management kanban", destek: "helpdesk ticketing", ebys: "document management workflow", "beyaz-masa": "civic issue reporting", "saha-servis": "field service management", filo: "fleet management", okul: "school management system", "satin-alma": "procurement purchase requisition", klinik: "clinic management", "e-ticaret": "ecommerce admin" };
+export const HUNT_TERMS = { crm: "crm", "on-muhasebe": "invoicing accounting", stok: "inventory management", "erp-uretim": "erp manufacturing", "b2b-bayi": "b2b ordering portal", "pos-adisyon": "restaurant pos", ik: "hrms leave management", randevu: "appointment booking", proje: "project management kanban", destek: "helpdesk ticketing", ebys: "document management workflow", "beyaz-masa": "civic issue reporting", "saha-servis": "field service management", filo: "fleet management", okul: "school management system", "satin-alma": "procurement purchase requisition", klinik: "clinic management", "e-ticaret": "ecommerce admin" , ...SECTOR_HUNT};

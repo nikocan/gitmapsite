@@ -53,6 +53,7 @@ test("beceri üretime eklenir, sonuç ve oy ölçülür, avcı aday bulur, test 
   const user = (await req("POST", "auth/register", { email: "u@example.test", password: "uzun-bir-sifre-1", name: "U" })).token;
 
   const list = await req("GET", "skills"); assert.equal(list.skills.length, ALL_SKILLS.length); assert.equal(list.skills[0].kind, "gelistirme");
+  assert.ok(list.sectors.length >= 17); assert.equal(list.skills.find((s) => s.id === "plan-eczane").sector, "saglik"); assert.match(list.skills.find((s) => s.id === "plan-eczane").test, /Eczane/);
   // Plan becerisi + bağlı tasarım + temiz mimari sistem istemine eklenir
   const gen = await req("POST", "ai/generate", { prompt: "Satış ekibim için CRM", kind: "app", settings: { skills: ["plan-crm", "yok-boyle"] } }, user);
   assert.equal(gen.status, 200); assert.ok(gen.skillRun);
@@ -77,4 +78,13 @@ test("beceri üretime eklenir, sonuç ve oy ölçülür, avcı aday bulur, test 
   const imp = await req("POST", "admin/skills/plan-crm/improve", null, admin); assert.ok(imp.version);
   assert.match(prompts.at(-1), /tablo bozuk/);
   assert.equal((await req("POST", "admin/skills/versions/" + imp.version + "/reject", null, admin)).status, 200);
+});
+
+test("sektör kütüphanesi: her plan bir sektörde, her sektörün becerisi var", async () => {
+  const { SECTORS, SECTOR_OF } = await import("./skills-sectors.mjs");
+  const cats = new Set(CATALOG.map((s) => s.cat));
+  assert.ok(SECTORS.length >= 17 && CATALOG.length >= 78);
+  for (const s of CATALOG) assert.ok(SECTOR_OF[s.cat], "sektörsüz plan: " + s.cat);
+  for (const g of SECTORS) { assert.ok(g.cats.length >= 2, g.id); for (const c of g.cats) assert.ok(cats.has(c), "olmayan plan: " + c); }
+  assert.equal(new Set(SECTORS.flatMap((g) => g.cats)).size, SECTORS.flatMap((g) => g.cats).length);
 });
