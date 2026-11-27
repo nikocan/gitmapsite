@@ -37,7 +37,7 @@ with sync_playwright() as p:
         expect(page.locator(".tray .att")).to_have_count(1)
         page.get_by_title("Kaldır", exact=True).click()
         expect(page.locator(".tray .att")).to_have_count(0)
-        for item, panel in (("Tasarım teması", ".dg"), ("Dil modeli", ".mp"), ("Beceriler", ".skm"), ("Asistanla konuş", ".cp")):
+        for item, panel in (("Tasarım teması", ".dg"), ("Dil modeli", ".mp"), ("Beceriler", ".sector-skills"), ("Asistanla konuş", ".cp")):
             page.get_by_title("Ekle", exact=True).click()
             page.get_by_role("menuitem", name=item).click()
             expect(page.locator(panel)).to_be_visible()

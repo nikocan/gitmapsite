@@ -12,6 +12,7 @@
 <link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./pwa/icon-180.png?v=agent">
 <link rel="icon" type="image/svg+xml" href="./brand/app-icon.svg?v=agent" />
 <link rel="stylesheet" href="./brand/motion.css?v=agent" />
+<link rel="stylesheet" href="./skills/styles.css?v=576" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@500;700&family=DM+Sans:wght@500;700&family=Space+Grotesk:wght@500;700&family=Playfair+Display:wght@600;700&family=Nunito:wght@600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
 <style>
@@ -2833,6 +2834,9 @@ html.rm .ambient i{animation:none}
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
 <script src="config.js"></script>
 <script src="skills/business.js"></script>
+<script src="skills/sectors.js?v=576"></script>
+<script src="skills/catalog.js?v=576"></script>
+<script src="skills/panel.js?v=576"></script>
 <script src="skills/gt-context.js"></script>
 <script src="skills/gt-studio.js"></script>
 <script src="catalog/gallery.js?v=575"></script>
@@ -2842,8 +2846,9 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.75.1";
+const VERSION="5.76.0";
 const CHANGELOG=[
+ {v:"5.76.0",date:"2026-11-27",items:["Beceriler: 24 sektör, 240 kurulum planı ve 4.800 sektörel görev. Bir iş ara, planı adım adım izle, Stüdyo’ya aktar veya Asistana danış."]},
  {v:"5.75.1",date:"2026-11-27",items:["Oracle ve SAP atölyesinde kod önerisi, teknik açıklama ve kabul adımları sağlayıcıya tanımlanan ortak yanıt biçimiyle alınıyor."]},
  {v:"5.75.0",date:"2026-11-27",items:[
   "Keşfet, şablon, eklenti, bağdaştırıcı ve beceri koleksiyonlarında yeni görseller ve hızlı bakış. Fareyle önizleme, dokunarak ayrıntılar.",
@@ -6876,7 +6881,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(!(st.html||"").includes('<meta name="gitmapp-scenario" content="gitsap-production">'))return selected;
   return [...new Set([...selected,"gitsap-tedarik","gitsap-uretim","gitsap-fatura","gitsap-finans"])];
  }
- const aiBody=()=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n"),skills:skillIds(),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,"dengeli")||{}).id||curModel:curModel)||undefined});
+ const aiBody=(request="")=>({businessSkillIds:projectSkillIds(),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:sectorSkillText([runRef.current.instructions,skillText()].filter(Boolean).join("\n"),[request,proje.amac].filter(Boolean).join(" ")),skills:skillIds(),skillFocus:SKILL_FOCUS||undefined},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -6988,7 +6993,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  useEffect(()=>{if(busy||todo?.running||!queue.length||plan)return;const t=setTimeout(()=>{const [n,...rest]=queue;setQueue(rest);gen(n)},600);return()=>clearTimeout(t)},[scope,busy,todo?.running,queue,plan]);
  function lastAsk(){if(st.html)return "";const u=st.msgs.filter(m=>m.role==="user"&&m.content&&!isGo(m.content)&&!GREET.test(m.content.trim())&&m.content.trim().length>=14).pop();return u?u.content.trim():""}
  function requestPlan(text,im,retrying=false){
-  return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(),design:designPayload(im.custom||effRef.current,prefsRef.current.kind,sector),images:im.send},signal),result=>{
+  return runActivity("plan",retrying?"":text,signal=>api("POST","/api/ai/plan",{prompt:text,...aiBody(text),design:designPayload(im.custom||effRef.current,prefsRef.current.kind,sector),images:im.send},signal),result=>{
    setEditPlan(false);setPlan({prompt:text,text:result.plan,im});
   },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>requestPlan(text,im,true),finalEvent:"plan"});
  }
@@ -7001,7 +7006,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const recentAsks=cur=>st.msgs.filter(m=>m.role==="user"&&m.content&&m.content!==cur).slice(-4).map(m=>String(m.content).slice(0,300));
  async function build(text,planText,shown,withDesign,im,base){const prev=base!==undefined?base:st.html;im=im||{};
   if(im.assets&&Object.keys(im.assets).length)setSt(s=>({...s,assets:{...(s.assets||{}),...im.assets}}));if(im.custom)setSt(s=>({...s,custom:im.custom}));
-  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,history:prev?recentAsks(text):undefined,tokens:prev?(st.tokens||designTokens(prev))||undefined:undefined,html:prev?stripInternal(prev):undefined,plan:planText||undefined,...aiBody(),design:(!prev||withDesign)?designPayload(im.custom||effRef.current,prefsRef.current.kind,sector):undefined,images:im.send},j=>{const g=htmlGuard(j.html,prev,text);if(!g.ok){j.rejected=true;setRejected({html:g.html||j.html,why:g.why,prev});return "⚠️ Yeni sürüm uygulanmadı: "+g.why+". Çalışan sürümün korundu. Aşağıdaki öneriden “Yarım kalanı sürdür” ile yeniden deneyebilir ya da “Reddedilen sürümü göster” ile yine de açabilirsin."}j.html=g.html;setRejected(null);proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,tokens:withDesign||!s.tokens?designTokens(j.html):s.tokens,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
+  const j=await runStream("build",base===undefined?shown:"","/api/ai/generate",{prompt:text,history:prev?recentAsks(text):undefined,tokens:prev?(st.tokens||designTokens(prev))||undefined:undefined,html:prev?stripInternal(prev):undefined,plan:planText||undefined,...aiBody(text),design:(!prev||withDesign)?designPayload(im.custom||effRef.current,prefsRef.current.kind,sector):undefined,images:im.send},j=>{const g=htmlGuard(j.html,prev,text);if(!g.ok){j.rejected=true;setRejected({html:g.html||j.html,why:g.why,prev});return "⚠️ Yeni sürüm uygulanmadı: "+g.why+". Çalışan sürümün korundu. Aşağıdaki öneriden “Yarım kalanı sürdür” ile yeniden deneyebilir ya da “Reddedilen sürümü göster” ile yine de açabilirsin."}j.html=g.html;setRejected(null);proposedTitle.current=String(j.title||"").slice(0,80);if(prev)setVersions(v=>[...v.slice(-9),prev]);setSt(s=>({...s,html:j.html,tokens:withDesign||!s.tokens?designTokens(j.html):s.tokens,title:s.title||j.title||"Yeni uygulama"}));return j.summary},im,planText||base!==undefined?undefined:()=>build(text,planText,shown,withDesign,im),base!==undefined?shown:undefined);
   return j&&!j.rejected?j.html:null}
  async function approvePlan(){
   const p=plan;if(!p||busy||!p.text.trim())return;
@@ -7010,7 +7015,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  }
  // Ajan modu: yapılacaklar listesi → onay → adım adım üretim
  function agent(text,im=takeImages(),retrying=false){
-  return runActivity("agent",retrying?"":text,signal=>api("POST","/api/ai/todos",{prompt:text,has_html:!!st.html,...aiBody(),images:im.send},signal),result=>{
+  return runActivity("agent",retrying?"":text,signal=>api("POST","/api/ai/todos",{prompt:text,has_html:!!st.html,...aiBody(text),images:im.send},signal),result=>{
    setTodo({prompt:text,im,per:result.per,awaiting:true,running:false,items:result.todos.map(t=>({...t,state:"wait"}))});
   },{imgs:im.thumbs,images:im.send?.length||0,retry:()=>agent(text,im,true),finalEvent:"agent"});
  }
@@ -7069,6 +7074,12 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  // bağlantı gelince (ya da Stüdyo bağlantı sonrası yeniden kurulunca) bekleyen isteği başlat
  useEffect(()=>{let tm;const h=()=>{if(!API_ON||!window.__gmPendingGen)return;clearTimeout(tm);tm=setTimeout(()=>{const t=window.__gmPendingGen;if(!t||!API_ON)return;window.__gmPendingGen=null;toast("Bağlantı geri geldi · isteğin başlatılıyor");seedActions.current.gen(t)},700)};h();addEventListener("gm:api-on",h);return()=>{clearTimeout(tm);removeEventListener("gm:api-on",h)}},[]);
  useEffect(()=>{if(!seed)return;const sd=seed;clearSeed&&clearSeed();
+  if(sd.skillRequest){
+   if(sd.skillKind&&!st.html&&!inputRef.current.trim())setPrefs(p=>({...p,kind:sd.skillKind}));
+   setInput(previous=>[previous,sd.skillRequest].filter(Boolean).join("\n\n"));
+   requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus());
+   return;
+  }
   if(sd.templateRequest){
    if(!st.html)return;
    setInput(previous=>[previous,sd.templateRequest].filter(Boolean).join("\n\n"));
@@ -8921,24 +8932,25 @@ const TIER_IC={hizli:"zap",dengeli:"scale",guclu:"rocket"};
 /* ================= v4.4 — BECERİLER, ŞABLON PANELİ, SADE YERLEŞİM ================= */
 const SKILLS=[
  ...businessSkills,
- {id:"kurumsal-dil",n:"kurumsal-dil",d:"Tüm metinleri resmi, güven veren kurumsal Türkçeyle yazar; argo ve emoji kullanmaz.",src:"gitmapp",p:"Metinler resmi ve kurumsal Türkçe olsun, emoji ve argo kullanma, kısa ve net cümleler kur."},
- {id:"kvkk",n:"kvkk-uyumu",d:"Formlara KVKK aydınlatma onayı, gizlilik bağlantısı ve çerez bildirimi ekler.",src:"gitmapp",p:"Kişisel veri toplayan her forma KVKK aydınlatma metni onay kutusu, alt bilgiye Gizlilik Politikası bağlantısı ve sayfaya sade bir çerez bildirimi ekle."},
- {id:"erisilebilirlik",n:"erisilebilirlik",d:"Kontrast, klavye ile kullanım, alt metinler ve odak halkaları (WCAG AA).",src:"gitmapp",p:"WCAG AA erişilebilirlik: yeterli renk kontrastı, tüm etkileşimler klavyeyle yapılabilsin, görünür odak halkaları, görsellerde alt metin, form alanlarında label olsun."},
- {id:"seo",n:"seo-temeli",d:"Başlık, açıklama, Open Graph, yapılandırılmış veri ve anlamlı başlık hiyerarşisi.",src:"gitmapp",p:"SEO: anlamlı <title> ve meta description, Open Graph etiketleri, tek H1 ve düzgün başlık hiyerarşisi, uygun yerde JSON-LD (LocalBusiness/Product) ekle."},
- {id:"mobil-once",n:"mobil-once",d:"Önce telefon tasarlar: alt gezinme çubuğu, büyük dokunma alanları, tek el kullanımı.",src:"gitmapp",p:"Önce mobil tasarla: alt gezinme çubuğu, en az 44px dokunma alanları, tek elle ulaşılabilir ana düğmeler, yatay taşma olmasın."},
- {id:"koyu-tema",n:"koyu-tema",d:"Sistem temasını izleyen açık/koyu tema ve geçiş düğmesi.",src:"gitmapp",p:"prefers-color-scheme'i izleyen açık/koyu tema ve kalıcı (localStorage) bir tema geçiş düğmesi ekle."},
- {id:"tr-para",n:"tr-bicimleri",d:"₺ para birimi, tarih ve telefon biçimleri, Türkiye il listesi.",src:"gitmapp",p:"Para birimini ₺ ve tr-TR biçiminde göster, tarihleri gün ay yıl biçiminde yaz, telefonları 05xx xxx xx xx biçiminde doğrula; il seçimlerinde 81 il listesini kullan."},
- {id:"cok-dil",n:"cok-dilli",d:"Türkçe/İngilizce dil seçici ve tüm metinlerin iki dilde hazırlanması.",src:"gitmapp",p:"Sağ üstte TR/EN dil seçici ekle; tüm arayüz metinlerini iki dilde bir sözlükten oku, seçim localStorage'da saklansın."},
- {id:"pano",n:"yonetici-panosu",d:"Uygulamaya istatistik kartları ve grafikli küçük bir yönetici özeti ekler.",src:"gitmapp",p:"Ana ekranda özet istatistik kartları (toplamlar, bugün, bu ay) ve SVG ile çizilmiş basit bir çizgi/çubuk grafik göster."},
- {id:"bos-durum",n:"bos-durumlar",d:"Boş listeler, yükleniyor ve hata durumları için özenli ekranlar.",src:"gitmapp",p:"Her liste ve ekran için boş durum (açıklama + eylem düğmesi), yükleniyor iskeleti ve hata mesajı tasarla."},
- {id:"animasyon",n:"ince-animasyonlar",d:"Sayfa geçişleri, kart üzerine gelme ve düğme dokunuşlarında ölçülü hareketler.",src:"topluluk",p:"Ölçülü mikro animasyonlar ekle: görünür olunca yumuşak beliren bölümler, kartlarda hafif yükselme, düğmelerde basınca küçülme; prefers-reduced-motion'a uy."},
- {id:"whatsapp-siparis",n:"whatsapp-siparis",d:"Sepet ve formlardan hazır mesajla WhatsApp'a yönlendirme.",src:"topluluk",p:"Sepet ya da talep formu doldurulunca içeriği düzgün biçimlenmiş bir mesajla wa.me bağlantısına aktaran 'WhatsApp ile gönder' düğmesi ekle."},
- {id:"pwa",n:"pwa-hazir",d:"Telefona yüklenebilir: manifest, simge ve çevrimdışı açılma.",src:"topluluk",p:"Uygulamayı PWA'ya uygun yap: meta theme-color, apple-mobile-web-app etiketleri, satır içi manifest ve basit çevrimdışı mesajı."},
- {id:"yazdir",n:"yazdir-pdf",d:"Fatura, teklif ve raporlar için temiz yazdırma (PDF) görünümü.",src:"topluluk",p:"Belge niteliğindeki ekranlar için @media print stilleri ve 'Yazdır / PDF' düğmesi ekle; gezinme ve düğmeler çıktıda gizlensin."},
- {id:"csv",n:"csv-ice-dis-aktar",d:"Listeleri CSV olarak indirme ve CSV'den içe aktarma.",src:"topluluk",p:"Listelere CSV olarak dışa aktar (UTF-8 BOM, noktalı virgül) ve CSV dosyasından içe aktar özelliği ekle."},
- {id:"oyun-hissi",n:"oyun-hissi",d:"Oyunlara titreşim, ekran sarsıntısı, parçacık efektleri ve ses.",src:"topluluk",p:"Oyunda vuruş ve puanlarda küçük ekran sarsıntısı, parçacık efektleri, WebAudio ile kısa ses efektleri ve destekleniyorsa titreşim ekle."},
+ {id:"kurumsal-dil",label:"Kurumsal Türkçe",n:"kurumsal-dil",d:"Tüm metinleri resmi, güven veren kurumsal Türkçeyle yazar; argo ve emoji kullanmaz.",src:"gitmapp",p:"Metinler resmi ve kurumsal Türkçe olsun, emoji ve argo kullanma, kısa ve net cümleler kur."},
+ {id:"kvkk",label:"KVKK form bileşenleri",n:"kvkk-uyumu",d:"Formlara KVKK aydınlatma onayı, gizlilik bağlantısı ve çerez bildirimi ekler.",src:"gitmapp",p:"Kişisel veri toplayan her forma KVKK aydınlatma metni onay kutusu, alt bilgiye Gizlilik Politikası bağlantısı ve sayfaya sade bir çerez bildirimi ekle."},
+ {id:"erisilebilirlik",label:"Erişilebilirlik",n:"erisilebilirlik",d:"Kontrast, klavye ile kullanım, alt metinler ve odak halkaları (WCAG AA).",src:"gitmapp",p:"WCAG AA erişilebilirlik: yeterli renk kontrastı, tüm etkileşimler klavyeyle yapılabilsin, görünür odak halkaları, görsellerde alt metin, form alanlarında label olsun."},
+ {id:"seo",label:"SEO temelleri",n:"seo-temeli",d:"Başlık, açıklama, Open Graph, yapılandırılmış veri ve anlamlı başlık hiyerarşisi.",src:"gitmapp",p:"SEO: anlamlı <title> ve meta description, Open Graph etiketleri, tek H1 ve düzgün başlık hiyerarşisi, uygun yerde JSON-LD (LocalBusiness/Product) ekle."},
+ {id:"mobil-once",label:"Önce mobil tasarım",n:"mobil-once",d:"Önce telefon tasarlar: alt gezinme çubuğu, büyük dokunma alanları, tek el kullanımı.",src:"gitmapp",p:"Önce mobil tasarla: alt gezinme çubuğu, en az 44px dokunma alanları, tek elle ulaşılabilir ana düğmeler, yatay taşma olmasın."},
+ {id:"koyu-tema",label:"Açık ve koyu tema",n:"koyu-tema",d:"Sistem temasını izleyen açık/koyu tema ve geçiş düğmesi.",src:"gitmapp",p:"prefers-color-scheme'i izleyen açık/koyu tema ve kalıcı (localStorage) bir tema geçiş düğmesi ekle."},
+ {id:"tr-para",label:"Türkiye’ye uygun biçimler",n:"tr-bicimleri",d:"₺ para birimi, tarih ve telefon biçimleri, Türkiye il listesi.",src:"gitmapp",p:"Para birimini ₺ ve tr-TR biçiminde göster, tarihleri gün ay yıl biçiminde yaz, telefonları 05xx xxx xx xx biçiminde doğrula; il seçimlerinde 81 il listesini kullan."},
+ {id:"cok-dil",label:"Türkçe ve İngilizce arayüz",n:"cok-dilli",d:"Türkçe/İngilizce dil seçici ve tüm metinlerin iki dilde hazırlanması.",src:"gitmapp",p:"Sağ üstte TR/EN dil seçici ekle; tüm arayüz metinlerini iki dilde bir sözlükten oku, seçim localStorage'da saklansın."},
+ {id:"pano",label:"Yönetici panosu",n:"yonetici-panosu",d:"Uygulamaya istatistik kartları ve grafikli küçük bir yönetici özeti ekler.",src:"gitmapp",p:"Ana ekranda özet istatistik kartları (toplamlar, bugün, bu ay) ve SVG ile çizilmiş basit bir çizgi/çubuk grafik göster."},
+ {id:"bos-durum",label:"Boş, yüklenme ve hata durumları",n:"bos-durumlar",d:"Boş listeler, yükleniyor ve hata durumları için özenli ekranlar.",src:"gitmapp",p:"Her liste ve ekran için boş durum (açıklama + eylem düğmesi), yükleniyor iskeleti ve hata mesajı tasarla."},
+ {id:"animasyon",label:"Ölçülü animasyonlar",n:"ince-animasyonlar",d:"Sayfa geçişleri, kart üzerine gelme ve düğme dokunuşlarında ölçülü hareketler.",src:"topluluk",p:"Ölçülü mikro animasyonlar ekle: görünür olunca yumuşak beliren bölümler, kartlarda hafif yükselme, düğmelerde basınca küçülme; prefers-reduced-motion'a uy."},
+ {id:"whatsapp-siparis",label:"WhatsApp sipariş bağlantısı",n:"whatsapp-siparis",d:"Sepet ve formlardan hazır mesajla WhatsApp'a yönlendirme.",src:"topluluk",p:"Sepet ya da talep formu doldurulunca içeriği düzgün biçimlenmiş bir mesajla wa.me bağlantısına aktaran 'WhatsApp ile gönder' düğmesi ekle."},
+ {id:"pwa",label:"Telefona yüklenebilir uygulama",n:"pwa-hazir",d:"Telefona yüklenebilir: manifest, simge ve çevrimdışı açılma.",src:"topluluk",p:"Uygulamayı PWA'ya uygun yap: meta theme-color, apple-mobile-web-app etiketleri, satır içi manifest ve basit çevrimdışı mesajı."},
+ {id:"yazdir",label:"Yazdırma ve PDF görünümü",n:"yazdir-pdf",d:"Fatura, teklif ve raporlar için temiz yazdırma (PDF) görünümü.",src:"topluluk",p:"Belge niteliğindeki ekranlar için @media print stilleri ve 'Yazdır / PDF' düğmesi ekle; gezinme ve düğmeler çıktıda gizlensin."},
+ {id:"csv",label:"CSV içe ve dışa aktarma",n:"csv-ice-dis-aktar",d:"Listeleri CSV olarak indirme ve CSV'den içe aktarma.",src:"topluluk",p:"Listelere CSV olarak dışa aktar (UTF-8 BOM, noktalı virgül) ve CSV dosyasından içe aktar özelliği ekle."},
+ {id:"oyun-hissi",label:"Oyun efektleri",n:"oyun-hissi",d:"Oyunlara titreşim, ekran sarsıntısı, parçacık efektleri ve ses.",src:"topluluk",p:"Oyunda vuruş ve puanlarda küçük ekran sarsıntısı, parçacık efektleri, WebAudio ile kısa ses efektleri ve destekleniyorsa titreşim ekle."},
 ];
 const skillsOn=()=>LS.get("skills",[])||[];
+const LEGACY_SKILLS=SKILLS.filter(skill=>!skill.group);
 const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>!x.group&&on.includes(x.id)).map(x=>"["+x.n+"] "+x.p).join("\n")};
 // v5.61 — sunucudaki test edilmiş beceriler (uygulama planları, tasarım, kalite) kimlikle gönderilir; metni sunucu ekler
 const skillIds=()=>{const on=skillsOn();return on.filter(id=>!SKILLS.some(x=>x.id===id)).slice(0,6)};
@@ -9152,7 +9164,7 @@ function AdminUx(){
 /* ================= BECERİ KÜTÜPHANESİ: sektöre göre test edilmiş uygulama planları ================= */
 const SKL_SEC=[["MODÜLLER","Neler var"],["EKRANLAR","Ekranlar"],["KURALLAR","İş kuralları"],["NOT","Not"],["VERİ","Veri modeli"],["ENTEGRASYON İPUCU","Entegrasyon"]];
 const skillParts=b=>{const o={};let k=null;for(const line of String(b||"").split("\n")){const m=line.match(/^([A-ZÇĞİÖŞÜ ]{2,30}):\s*(.*)$/);if(m&&SKL_SEC.some(s=>s[0]===m[1])){k=m[1];o[k]=m[2]}else if(k)o[k]+=" "+line.trim()}return o};
-function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry}){
+function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry,onSectorPlans}){
  const [how,setHow]=useState(""),[data,setData]=useState(null),[err,setErr]=useState(""),[on,setOn]=useState(skillsOn),[q,setQ]=useState(""),[open,setOpen]=useState(""),[sec,setSec]=useState(()=>{const m=location.hash.match(/[?&]sektor=([\w-]+)/);return m?m[1]:""});
  useEffect(()=>{if(!apiOn)return;setErr("");api("GET","/api/skills").then(setData).catch(e=>setErr(e.message))},[apiOn]);
  useEffect(()=>{const h=()=>setOn(skillsOn());addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
@@ -9160,7 +9172,8 @@ function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry}){
  const save=n=>{setOn(n);LS.set("skills",n);dispatchEvent(new Event("gm:skills"))};
  const tog=s=>{const has=on.includes(s.id);save(has?on.filter(x=>x!==s.id):[...on,s.id]);toast(has?"Beceri kaldırıldı":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
  const start=s=>{if(!on.includes(s.id))save([...on.filter(x=>!(data.skills.find(y=>y.id===x)?.kind==="gelistirme")),s.id]);toast(s.name+" becerisiyle başlıyor");go("studio",{prompt:s.test||s.name+" uygulaması yap; örnek verilerle dolu olsun."})};
- const heading=html`<${CollectionNav} page="beceriler" go=${go}/><${CollectionHero} title="Beceriler" copy="Sektörünü seç. Uygun iş kurallarını, ekranları ve veri modelini projene ekle." image="skills" caption="Sektörel beceri kütüphanesi"/>`;
+ const heading=html`<${CollectionNav} page="beceriler" go=${go}/><${CollectionHero} title="Beceriler" copy="Sektörünü seç. Uygun iş kurallarını, ekranları ve veri modelini projene ekle." image="skills" caption="Sektörel beceri kütüphanesi"/>
+ <div class="box skl-more sector-plan-link"><${Icon} n="layers" s=${20}/><div><b>Sektör kurulum planları</b><span>24 sektörde 240 uygulama akışı ve aşama aşama kurulum desteği.</span></div><button class="btn s" onClick=${onSectorPlans}>Kurulum planlarını keşfet</button></div>`;
  if(err||healthError||!data)return html`<section class="explore gallery-page">${heading}<p role="status">${err||(healthError?"Beceriler yüklenemedi.":"Beceriler yükleniyor…")}</p>${(err||healthError)&&html`<button type="button" class="btn g" onClick=${()=>{if(healthError)retry();else {setErr("");api("GET","/api/skills").then(setData).catch(e=>setErr(e.message))}}}>Tekrar dene</button>`}</section>`;
  const plans=data.skills.filter(s=>s.kind==="gelistirme");const sectors=data.sectors||[];
  const qq=q.trim().toLocaleLowerCase("tr");
@@ -9177,7 +9190,7 @@ function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry}){
   ${qq?html`<div><p class="sub">${list.length} beceri bulundu</p><div class="skl-grid">${list.map(card)}</div>${!list.length&&html`<div class="box skl-empty">Bu aramayla beceri yok. Aradığın sektörü <b>Yeni</b> ekranında anlatman yeterli; yapay zekâ genel becerilerle yine de üretir.</div>`}</div>`:
   cur?html`<div><div class="skl-top"><button class="btn g s" onClick=${()=>pick("")}><${Icon} n="arrowLeft" s=${15}/> Tüm sektörler</button><${Tile} n=${cur.icon} s=${40}/><div><h2>${cur.name}</h2><p class="sub">${cur.desc}</p></div></div><div class="skl-grid">${list.map(card)}</div></div>`:
   html`<div><div class="gallery-grid skl-secs">${sectors.map(s=>{const n=plans.filter(p=>p.sector===s.id).length;const t=catalogTemplate(sectorExample[s.id]||"crm");return html`<${GalleryTile} key=${s.id} cls="skl-tile" title=${s.name} meta=${n+" beceri"} description=${s.desc} art=${html`<${GalleryCover} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>pick(s.id)}/>`})}</div>
-   <div class="box skl-more"><${Icon} n="brain" s=${20}/><div><b>Tasarım, kalite ve iş süreci becerileri</b><span>Kurumsal panel, kamu portalı, temiz mimari, KVKK, erişilebilirlik ve daha fazlası. Sektör planı yüklediğinde uygun tasarım ve kalite becerisi kendiliğinden eklenir.</span></div><button class="btn g s" onClick=${()=>dispatchEvent(new Event("gm:beceri"))}>Tümünü yönet</button></div></div>`}
+   <div class="box skl-more"><${Icon} n="brain" s=${20}/><div><b>Tasarım, kalite ve iş süreci becerileri</b><span>Kurumsal panel, kamu portalı, temiz mimari, KVKK, erişilebilirlik ve daha fazlası. Sektör planı yüklediğinde uygun tasarım ve kalite becerisi kendiliğinden eklenir.</span></div><button class="btn g s" onClick=${()=>dispatchEvent(new CustomEvent("gm:beceri",{detail:"manage"}))}>Tümünü yönet</button></div></div>`}
  ${selected&&html`<${UiDialog} label=${selected.name} width="660px" close=${()=>setOpen("")}><div class="skill-detail"><div class="eng-head"><h2>${selected.name}</h2><button class="ib" aria-label="Kapat" onClick=${()=>setOpen("")}><${Icon} n="x"/></button></div><p>${selected.who}</p>
  <div class="skl-m"><span>v${selected.version}</span><span>${selected.uses} kullanım</span>${selected.score!=null&&html`<span>Test ${selected.score}/100</span>`}${selected.success!=null&&html`<span>Başarı %${selected.success}</span>`}</div>
  <div class="adapter-actions"><button class="btn" onClick=${()=>start(selected)}>Bununla uygulama yap</button><button class="btn g" onClick=${()=>tog(selected)}>${on.includes(selected.id)?"Beceriyi kaldır":"Beceriyi yükle"}</button></div>
@@ -9626,7 +9639,7 @@ function Copilot(props){
  const scope=props.ctx().studyo.scope||studioScope(props.auth.user?.id||"guest",null);
  return html`<${CopilotThread} key=${scope} scope=${scope} ...${props}/>`;
 }
-function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]=useState(0);useEffect(()=>{const h=()=>setSb(x=>x+1);addEventListener("gm:studio",h);return()=>removeEventListener("gm:studio",h)},[]);
+function CopilotThread({scope,close,run,ctx,auth,openAuth,toast,skillDraft,consumeSkillDraft}){const [,setSb]=useState(0);useEffect(()=>{const h=()=>setSb(x=>x+1);addEventListener("gm:studio",h);return()=>removeEventListener("gm:studio",h)},[]);
  const [msgs,setMsgs]=useState(()=>(LS.get("cp:"+scope,[])||[]).map(m=>m.st?{...m,st:m.st.map(x=>x==="run"||x==="ask"?"wait":x)}:m));
  const [t,setT]=useState("");const [busy,setBusy]=useState(false);const [live,setLive]=useState("");
  const [auto,setAuto]=useState(()=>LS.get("cpAuto",false)===true);const [speakOn,setSpeakOn]=useState(()=>LS.get("cpSpeak",true)!==false);
@@ -9640,6 +9653,14 @@ function CopilotThread({scope,close,run,ctx,auth,openAuth,toast}){const [,setSb]
  const active=()=>!controller.signal.aborted&&scope===(ctx().studyo.scope||studioScope(auth.user?.id||"guest",null));
  React.useLayoutEffect(()=>()=>{controller.abort();R.current.voice=false;waitRef.current?.r(false)},[]);
  const endRef=useRef(null);const recRef=useRef(null);const waitRef=useRef(null);const emptyRef=useRef(0);const taRef=useRef(null);
+ useEffect(()=>{
+  if(!skillDraft)return;
+  setT(previous=>[previous,skillDraft].filter(Boolean).join("\n\n"));
+  taRef.current?.focus();
+  consumeSkillDraft();
+ },[skillDraft]);
+
+
  useEffect(()=>{LS.set("cp:"+scope,msgs)},[msgs]);useEffect(()=>{LS.set("cpAuto",auto)},[auto]);useEffect(()=>{LS.set("cpSpeak",speakOn)},[speakOn]);
  useEffect(()=>{const list=endRef.current?.parentElement;if(list)list.scrollTop=list.scrollHeight},[msgs.length,live,busy,asking,interim]);
  useEffect(()=>{const v=window.speechSynthesis;if(v&&v.getVoices)v.getVoices();return()=>{stopAll()}},[]);
@@ -10259,7 +10280,7 @@ function App(){
  useEffect(()=>{const h=e=>{if(!auth.user){openAuth("Kredi yüklemek için giriş yap ya da ücretsiz hesap oluştur.");return}setCrOpen&&setCrOpen(false);setBuyOpen({focus:(e.detail||{}).focus||null})};addEventListener("gm:buy",h);return()=>removeEventListener("gm:buy",h)},[auth.user?.id]);
  useEffect(()=>{const m=location.hash.match(/odeme=([A-Z0-9]{6,20})/);if(!m||!auth.user)return;const cancel=/iptal=1/.test(location.hash);try{history.replaceState(null,"",location.pathname+"#hesabim")}catch(e){}setBuyOpen({focus:{id:m[1],cancel}})},[auth.user?.id]);
  useEffect(()=>{if(!auth.user?.admin)return;let t;const f=()=>api("GET","/api/admin/billing?status=pending").then(j=>setBillingPending(j.stats.notified||j.stats.pending.n||0)).catch(()=>{});f();t=setInterval(f,120000);return()=>clearInterval(t)},[auth.user?.id]);
- const [resetTok,setResetTok]=useState(null),[vbarOff,setVbarOff]=useState(()=>LS.get("vbarOff","")===new Date().toDateString()); const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState(()=>storeRoute(location.hash));const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
+ const [resetTok,setResetTok]=useState(null),[vbarOff,setVbarOff]=useState(()=>LS.get("vbarOff","")===new Date().toDateString()); const [authModal,setAuthModal]=useState(null);const [seed,setSeed]=useState(null);const [sq,setSq]=useState(()=>storeRoute(location.hash));const [more,setMore]=useState(false);const [moreOpen,setMoreOpen]=useState(()=>!!LS.get("moreOpen",false));const [cmdk,setCmdk]=useState(false);const [skills,setSkills]=useState(false);const [skillAssistantDraft,setSkillAssistantDraft]=useState("");const [wsMenu,setWsMenu]=useState(false);const [myApps,setMyApps]=useState([]);const [pubApp,setPubApp]=useState(null);const [incoming,setIncoming]=useState(null);const [cp,setCpS]=useState(()=>LS.get("cpOpen",false)===true);const [gh,setGh]=useState(null);const [crOpen,setCrOpen]=useState(false);const [crFlash,setCrFlash]=useState(null);const setCp=v=>{setCpS(v);LS.set("cpOpen",!!v)};
  useEffect(()=>{const h=()=>setMore(false);addEventListener("hashchange",h);return()=>removeEventListener("hashchange",h)},[]);
  useEffect(()=>{const h=()=>setRate({...RATE});window.addEventListener("rate",h);return()=>window.removeEventListener("rate",h)},[]);
  useEffect(()=>{
@@ -10292,7 +10313,7 @@ function App(){
  const goWizard=(repo,tier,cat)=>{setPick(repo||tier?{repo,cat:cat&&cat.id,tier:tier||(repo?tierOf(repo,cat):undefined)}:null);setView("olustur")};
  const openInStudio=(a,openDesign=false)=>{setIncoming({openDesign,purpose:a.meta?.purpose,source:a.meta?.source,radarOrigin:a.meta?.radarOrigin,kind:a.meta?.kind,theme:a.meta?.theme,html:a.html,title:a.title,emoji:a.emoji||"✨",color:a.color||"#5e5ce6",msgs:(a.prompt_log||[]).slice(-30),appId:a.id});setView("studio")};
  const isAdm=!!(auth.user&&auth.user.admin);
- useEffect(()=>{const g=e=>{const d=e.detail||{};let u=String(d.url||"").trim();if(!u){u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","")||"";u=u.trim()}if(u)setGh({url:u,auto:!!d.auto,review:!!d.review,n:Date.now()})};addEventListener("gm:gh",g);const co=()=>setCrOpen(true);addEventListener("gm:cr",co);const so=e=>{if(e.detail&&e.detail.html){setCur(null);setIncoming(e.detail);setView("studio")}};addEventListener("gm:studio",so);const sk=()=>setSkills(true);addEventListener("gm:beceri",sk);
+ useEffect(()=>{const g=e=>{const d=e.detail||{};let u=String(d.url||"").trim();if(!u){u=prompt("GitHub deposu ya da dosya yolu (ör. github.com/kullanici/depo):","")||"";u=u.trim()}if(u)setGh({url:u,auto:!!d.auto,review:!!d.review,n:Date.now()})};addEventListener("gm:gh",g);const co=()=>setCrOpen(true);addEventListener("gm:cr",co);const so=e=>{if(e.detail&&e.detail.html){setCur(null);setIncoming(e.detail);setView("studio")}};addEventListener("gm:studio",so);const sk=e=>setSkills(e.detail==="manage"?"manage":"sector");addEventListener("gm:beceri",sk);
   const c=e=>{const d=e.detail||{};auth.patch({credits:d.credits});if(d.spent>0){const x=LS.get("crSession",{n:0,s:0})||{n:0,s:0};LS.set("crSession",{n:x.n+1,s:x.s+d.spent});setCrFlash({s:d.spent,k:Date.now()});const el=[...document.querySelectorAll(".me-cr,.crchip,.pill-cr")].find(z=>z.getBoundingClientRect().width>0);const r=el?el.getBoundingClientRect():{left:innerWidth-90,top:70,width:40};const f=document.createElement("div");f.className="cr-fly";f.textContent="−"+d.spent+" kredi";f.style.left=(r.left+r.width/2-30)+"px";f.style.top=(r.top-6)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1500)}};addEventListener("gm:credits",c);
   return()=>{removeEventListener("gm:gh",g);removeEventListener("gm:cr",co);removeEventListener("gm:studio",so);removeEventListener("gm:beceri",sk);removeEventListener("gm:credits",c)}},[]);
  useEffect(()=>{try{sessionStorage.getItem("crS")||(sessionStorage.setItem("crS","1"),LS.set("crSession",{n:0,s:0}))}catch(e){}},[]);
@@ -10345,7 +10366,7 @@ function App(){
   "",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const MORE_NAV=[["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],["oyunlar","Oyunlar"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]];
  const NAVA=[["yonetim","Yönetim merkezi"],["ux","Kullanım ve UX"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["odemeler","Kredi ve ödemeler",billingPending],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],["musteri-avi","Müşteri Avı"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["beceri-avcisi","Beceri Avcısı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
- const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){const storeOrigin=view==="magaza"?location.hash:history.state?.storeOrigin;setAppSlug(k.slice(4));setViewS("detay");history.pushState({storeOrigin,storeSteps:storeOrigin?(view==="magaza"?1:(history.state?.storeSteps||0)+1):0},"","#"+k);window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
+ const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills("sector");return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){const storeOrigin=view==="magaza"?location.hash:history.state?.storeOrigin;setAppSlug(k.slice(4));setViewS("detay");history.pushState({storeOrigin,storeSteps:storeOrigin?(view==="magaza"?1:(history.state?.storeSteps||0)+1):0},"","#"+k);window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":view===k;
  const TITLES={bagdastiricilar:"Bağdaştırıcılar",muhendis:"Geliştirici atölyesi",ux:"Kullanım ve UX",akademi:"Akademi",beceriler:"Beceri Kütüphanesi",depo:"Depo",temalar:"Temalar","ui-kitler":"UI Kitler",odemeler:"Kredi ve ödemeler","github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Eklentiler",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir","musteri-avi":"Müşteri Avı",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı","beceri-avcisi":"Beceri Avcısı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
  TITLES_ALL=TITLES;window.__gmToast=toast;
@@ -10371,7 +10392,7 @@ function App(){
   if(a.t==="github"){if(!a.url)throw new Error("GitHub adresi yok");setGh({url:String(a.url),auto:!!a.devral,n:Date.now()});return wait(400)}
   if(a.t==="git"){if(!CP_VIEWS[a.view])throw new Error("Bu sayfa bulunamadı");return ghostDo('.side .nav[data-v="'+a.view+'"]',()=>navGo(a.view))}
   if(a.t==="sablon"){const tp=TEMPLATE_LIB.find(x=>x.id===a.id);if(!tp)throw new Error("Şablon bulunamadı");await useTemplate(tp,active);return wait(500)}
-  if(a.t==="panel"&&a.ad==="beceriler")return ghostDo('.side .nav[data-v="$beceri"]',()=>setSkills(true));
+  if(a.t==="panel"&&a.ad==="beceriler")return ghostDo('.side .nav[data-v="$beceri"]',()=>setSkills("sector"));
   if(a.t==="panel"&&a.ad==="ara")return ghostDo('.side .nav[data-v="$ara"]',()=>setCmdk(true));
   if(["tur","mod","tema","ayar","prompt","yap","kontrol","kaydet","yayinla","panel","yeni"].includes(a.t))return cpStudio(a,active);
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
@@ -10428,7 +10449,7 @@ function App(){
    ${view==="otomasyon"&&html`<${Automations} toast=${toast}/>`}
    ${view==="akademi"&&html`<${Akademi} go=${navGo} toast=${toast}/>`}
    ${view==="ux"&&html`<${AdminUx}/>`}
-   ${view==="beceriler"&&html`<${SkillLibrary} go=${navGo} toast=${toast} apiOn=${apiOn} retry=${()=>retry(x=>x+1)} healthError=${healthError} onTpl=${useTemplate}/>`}
+   ${view==="beceriler"&&html`<${SkillLibrary} go=${navGo} toast=${toast} apiOn=${apiOn} retry=${()=>retry(x=>x+1)} healthError=${healthError} onTpl=${useTemplate} onSectorPlans=${()=>setSkills("sector")}/>`}
    ${view==="depo"&&html`<${DepoPage} auth=${auth} openAuth=${openAuth} toast=${toast} apiOn=${apiOn}/>`}
    ${view==="sablonlar"&&html`<${TemplatesPage} go=${navGo} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
    ${["temalar","ui-kitler"].includes(view)&&html`<${DesignCatalog} key=${view} page=${view} go=${navGo} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
@@ -10461,10 +10482,13 @@ function App(){
   ${resetTok&&html`<${Modal} close=${()=>setResetTok(null)}><${ResetBox} token=${resetTok} auth=${auth} toast=${toast} close=${()=>setResetTok(null)}/><//>`}
   ${authModal!==null&&html`<${AuthScreen} auth=${auth} health=${health} toast=${toast} reason=${authModal} close=${()=>setAuthModal(null)}/>`}
   ${pubApp&&html`<${PublishPanel} app=${pubApp} auth=${auth} health=${health} toast=${toast} close=${()=>setPubApp(null)}/>`}
-  ${skills&&html`<${SkillsModal} account=${auth.user?.id} close=${()=>setSkills(false)} toast=${toast}/>`}
+  ${skills==="manage"&&html`<${SkillsModal} account=${auth.user?.id} close=${()=>setSkills(false)} toast=${toast}/>`}
+  ${skills==="sector"&&html`<${SectorSkillsDialog} close=${()=>setSkills(false)} toast=${toast} onManage=${()=>setSkills("manage")}
+    onStudio=${(skillRequest,skillKind)=>{setSeed({skillRequest,skillKind});setView("studio")}}
+    onAssistant=${text=>{setSkillAssistantDraft(text);setCp(true)}}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
   <${SquirrelGuide} run=${cpRun} toast=${toast}/>
-  ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
+  ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast} skillDraft=${skillAssistantDraft} consumeSkillDraft=${()=>setSkillAssistantDraft("")}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
   ${gh&&html`<${GhImport} key=${gh.n} url=${gh.url} auto=${gh.auto} review=${gh.review} close=${()=>setGh(null)} auth=${auth} openAuth=${openAuth} toast=${toast} models=${models} go=${navGo} onStudio=${o=>{setCur(null);setIncoming(o);setView("studio")}}/>`}
   ${newBuild&&html`<div class="upd-bar" role="status"><${Icon} n="download" s=${15}/><span>Yeni sürüm hazır: <b>v${newBuild}</b> (şu an v${VERSION})${updLeft!=null&&updLeft>0?html` · <b>${updLeft} sn</b> içinde kendiliğinden uygulanacak`:""}</span>${updLeft!=null&&updLeft>0&&html`<button class="btn g s" onClick=${()=>{LS.set("updSnooze",newBuild);setUpdLeft(null)}}>Ertele</button>`}<button class="btn s" onClick=${()=>{if(window.__gmStudio?.calisiyor){toast("Stüdyo'da işlem sürüyor · bitince yenile, yoksa iş yarıda kalır");return}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()))}catch(e){}location.reload()}}>Yenile</button><button class="ib" aria-label="Kapat" onClick=${()=>setNewBuild(null)}><${Icon} n="x" s=${14}/></button></div>`}
   ${stOpen&&html`<${SettingsPanel} tab0=${stOpen} auth=${auth} toast=${toast} go=${navGo} health=${health} close=${()=>setStOpen(null)}/>`}
