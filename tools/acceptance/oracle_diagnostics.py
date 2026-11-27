@@ -18,6 +18,8 @@ with sync_playwright() as playwright:
         submit = view.get_by_role("button", name="Kanıtı değerlendir")
         expect(finding).to_have_text("Teslim farkı 15 adet.")
         view.locator("#match").select_option("2")
+        submit.scroll_into_view_if_needed()
+        expect(submit).to_be_enabled()
         submit.click()
         expect(finding).to_contain_text("farkı görünmüyor")
         view.locator("#billed").fill("120")
