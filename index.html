@@ -2272,6 +2272,7 @@ details.dq-card.left{border-style:dashed;opacity:.9}details.dq-card.left summary
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
 <script src="config.js"></script>
+<script src="skills/business.js"></script>
 <script>
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
@@ -5704,7 +5705,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   const to=md.platform.find(m=>n(m.id)===n(prefs.model))||md.platform.find(m=>fam(m.id)===fam(prefs.model)&&kind(m.id)===kind(prefs.model))||md.platform.find(m=>fam(m.id)===fam(prefs.model));
   setPrefs(p=>({...p,model:to?to.id:"",autoModel:to?p.autoModel:true}));toast("“"+shortModel(prefs.model)+"” artık açık değil · "+(to?shortModel(to.id)+" seçildi":"model otomatik seçilecek"))},[md.platform.length,prefs.model]);
  useEffect(()=>{if(prefs.provider!=="gitmapp"&&md.byok.length&&!md.byok.find(b=>b.provider===prefs.provider&&b.connected))setPrefs(p=>({...p,provider:"gitmapp",model:""}))},[md.byok.length]);
- const aiBody=()=>({projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
+ const aiBody=()=>({businessSkillIds:skillsOn().filter(id=>businessSkills.some(skill=>skill.id===id)),projectContext:proje,settings:{level:levelHint([...st.msgs.filter(m=>m.role==="user"&&m.content).slice(-8).map(m=>String(m.content).slice(0,300)),...(LS.get("cpLast",[])||[]).slice(-4)]),...runRef.current,instructions:[runRef.current.instructions,skillText()].filter(Boolean).join("\n")},integrations:activeIntegrations(),connExplicit:prefs.connAuto===false||undefined,kind:prefsRef.current.kind,provider:prefs.provider,model:(prefs.autoModel&&prefs.provider==="gitmapp"?(pickModel(md.platform,!st.html||prefsRef.current.mode==="ajan"?"guclu":"dengeli")||{}).id||curModel:curModel)||undefined});
  const spent=j=>{if(j&&j.credits!=null&&auth.user)auth.patch({credits:j.credits})};
  const secs=busy?Math.floor((Date.now()-t0)/1000):0;
  const failAuth=e=>{if(e.status===429&&!auth.user)openAuth("Ücretsiz hesap oluşturun: hoş geldin kredisiyle güçlü modelleri de kullanabilirsiniz.");if(e.status===403&&!auth.user)openAuth("Bu modeli kullanmak için ücretsiz hesap oluşturun.");if(e.status===402)go&&go("hesabim")};
@@ -7490,6 +7491,7 @@ const TIER_IC={hizli:"zap",dengeli:"scale",guclu:"rocket"};
 
 /* ================= v4.4 — BECERİLER, ŞABLON PANELİ, SADE YERLEŞİM ================= */
 const SKILLS=[
+ ...businessSkills,
  {id:"kurumsal-dil",n:"kurumsal-dil",d:"Tüm metinleri resmi, güven veren kurumsal Türkçeyle yazar; argo ve emoji kullanmaz.",src:"gitmapp",p:"Metinler resmi ve kurumsal Türkçe olsun, emoji ve argo kullanma, kısa ve net cümleler kur."},
  {id:"kvkk",n:"kvkk-uyumu",d:"Formlara KVKK aydınlatma onayı, gizlilik bağlantısı ve çerez bildirimi ekler.",src:"gitmapp",p:"Kişisel veri toplayan her forma KVKK aydınlatma metni onay kutusu, alt bilgiye Gizlilik Politikası bağlantısı ve sayfaya sade bir çerez bildirimi ekle."},
  {id:"erisilebilirlik",n:"erisilebilirlik",d:"Kontrast, klavye ile kullanım, alt metinler ve odak halkaları (WCAG AA).",src:"gitmapp",p:"WCAG AA erişilebilirlik: yeterli renk kontrastı, tüm etkileşimler klavyeyle yapılabilsin, görünür odak halkaları, görsellerde alt metin, form alanlarında label olsun."},
@@ -7508,7 +7510,7 @@ const SKILLS=[
  {id:"oyun-hissi",n:"oyun-hissi",d:"Oyunlara titreşim, ekran sarsıntısı, parçacık efektleri ve ses.",src:"topluluk",p:"Oyunda vuruş ve puanlarda küçük ekran sarsıntısı, parçacık efektleri, WebAudio ile kısa ses efektleri ve destekleniyorsa titreşim ekle."},
 ];
 const skillsOn=()=>LS.get("skills",[])||[];
-const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>on.includes(x.id)).map(x=>"["+x.n+"] "+x.p).join("\n")};
+const skillText=()=>{const on=skillsOn();return SKILLS.filter(x=>!x.group&&on.includes(x.id)).map(x=>"["+x.n+"] "+x.p).join("\n")};
 function SkillsModal({close,toast,account}){
  const [design,setDesign]=useState([]),[designError,setDesignError]=useState("");
 
@@ -7520,18 +7522,19 @@ function SkillsModal({close,toast,account}){
    api("GET","/api/design-skills").then(j=>{if(active)setDesign(j.skills)}).catch(e=>{if(active)setDesignError(e.message)});
    return ()=>{active=false};
  },[tab,account]);
+ const [group,setGroup]=useState("");
  const [on,setOn]=useState(skillsOn);const [src,setSrc]=useState("");const [q,setQ]=useState("");
  useEffect(()=>{const h=e=>{if(e.key==="Escape")close()};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
  const tog=id=>{const n=on.includes(id)?on.filter(x=>x!==id):[...on,id];setOn(n);LS.set("skills",n);toast(on.includes(id)?"Beceri kaldırıldı":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
  const base=tab==="yuklu"?SKILLS.filter(x=>on.includes(x.id)):SKILLS;
- const list=base.filter(x=>(!src||x.src===src)&&(!q||(x.n+x.d).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
+ const list=base.filter(x=>(!group||x.group===group)&&(!src||x.src===src)&&(!q||([x.n,x.d,x.group].join(" ")).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
  return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="skm" onClick=${e=>e.stopPropagation()}>
   <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><p>Yapay zekâya kalıcı uzmanlık kazandır. Yüklediğin beceriler her yeni üretimde otomatik uygulanır.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
   <div class="skm-tabs"><button class=${tab==="yuklu"?"on":""} onClick=${()=>setTab("yuklu")}>Yüklü <em>${on.length}</em></button><button class=${tab==="kesfet"?"on":""} onClick=${()=>setTab("kesfet")}>Keşfet <em>${SKILLS.length}</em></button><button class=${tab==="tasarim"?"on":""} onClick=${()=>setTab("tasarim")}>Tasarım sahnesi</button></div>
   <label class="skm-q"><${Icon} n="search" s=${16}/><input placeholder="Beceri ara…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
   ${tab==="tasarim"?html`<p>Tasarım sahnesinde bir öğe seçip @beceri adı yazabilirsiniz.</p>
-  <p role="status">${designError}</p><div class="skm-g">${design.filter(x=>(x.name+" "+x.instruction).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(x=>html`<div class="skc" key=${x.name}><b>@${x.name}</b><p>${x.instruction}</p><small>${x.personal?"Kişisel":"Gitmapp"}</small></div>`)}</div>`:html`  <div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
-  <div class="skm-g">${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.d}</p><span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span></div>`})}${!list.length&&html`<div class="empty" style=${{gridColumn:"1/-1",border:0}}>${tab==="yuklu"?"Henüz beceri yüklemedin. Keşfet sekmesinden ekleyebilirsin.":"Sonuç yok"}</div>`}</div>`}
+  <p role="status">${designError}</p><div class="skm-g">${design.filter(x=>(x.name+" "+x.instruction).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(x=>html`<div class="skc" key=${x.name}><b>@${x.name}</b><p>${x.instruction}</p><small>${x.personal?"Kişisel":"Gitmapp"}</small></div>`)}</div>`:html`<label>İş alanı <select aria-label="İş alanı" value=${group} onChange=${e=>setGroup(e.target.value)}><option value="">Tüm alanlar</option>${["Sektör","SaaS","ERP","Otomasyon"].map(g=>html`<option key=${g}>${g}</option>`)}</select></label><div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
+  <div class="skm-g">${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.d}</p>${x.source&&html`<a href=${x.source} target="_blank" rel="noopener noreferrer">${x.group} · Beceri kaynağı ↗</a>`}<span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span></div>`})}${!list.length&&html`<div class="empty" style=${{gridColumn:"1/-1",border:0}}>${tab==="yuklu"?"Henüz beceri yüklemedin. Keşfet sekmesinden ekleyebilirsin.":"Sonuç yok"}</div>`}</div>`}
  </div></div>`;
 }
 // Açılış ekranı: seçilen kategoriye göre şablon paneli
