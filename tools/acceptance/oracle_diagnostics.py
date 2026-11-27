@@ -9,7 +9,10 @@ with sync_playwright() as playwright:
         page.route("**/api/ai/models", lambda r: r.fulfill(json={"platform": [], "byok": []}))
         page.goto(BASE_URL + "/#sablonlar", wait_until="domcontentloaded")
         card = page.locator(".tpc").filter(has_text="Oracle Teşhis Atölyesi").first
-        card.get_by_text("Stüdyo’da kullan", exact=True).click()
+        card.click()
+        page.get_by_role("button", name="Bu şablonla başla").click()
+        if width == 390:
+            page.get_by_role("button", name="Önizlemeye git").click()
         view = page.frame_locator('iframe[title="Önizleme"]').first
         finding = view.locator("#finding")
         submit = view.get_by_role("button", name="Kanıtı değerlendir")

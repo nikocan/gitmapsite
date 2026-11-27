@@ -10,7 +10,8 @@ with sync_playwright() as p:
 
     def clone():
         card = g.locator(".tp-grid .tpc").filter(has_text="Derslik")
-        card.get_by_text("Stüdyo’da kullan").click()
+        card.click()
+        g.get_by_role("button", name="Bu şablonla başla").click()
         return g.frame_locator('iframe[title="Önizleme"]').first
 
     st = clone()

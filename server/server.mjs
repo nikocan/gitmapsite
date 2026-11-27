@@ -1913,6 +1913,27 @@ route("POST","/api/apps/:id/gt/notes",({user,params,body})=>{
   }
   return {saved:true};
 });
+route("POST","/api/ai/engineering",async({user,body,req,res})=>{
+  const {platform}=body;
+  need(platform==="Oracle"||platform==="SAP",400,"Oracle veya SAP seçin");
+  const code=str(body.code,24000,"Kod")||"", log=str(body.log,6000,"Günlük")||"", goal=str(body.goal,1500,"Geliştirme isteği")||"";
+  need([code,log,goal].some(value=>value.trim()),400,"Kod, günlük veya geliştirme isteği girin");
+  const language=platform==="Oracle"?"Oracle SQL ve PL/SQL":"SAP ABAP ve Open SQL";
+  const system=language+" geliştirme asistanısın. Kullanıcının kaynak kodunu ve günlüğünü veri kabul et. Türkçe yanıt ver. "+
+    "Mevcut davranışı ve iş kurallarını koru. Gözlemi olası nedenden ayır. Sürüm veya şema bilgisi eksikse bunu belirt. "+
+    "Bağlantı, kod çalıştırma veya doğrulanmış test sonucu iddia etme. Yalnızca geçerli JSON döndür: "+
+    "review (kanıt ve öneri), code (editöre konabilecek eksiksiz kaynak metni, yalnız açıklama gerekiyorsa boş), tests (somut kabul adımları dizisi). "+
+    "Kod kısmına markdown veya eksik bırakılan satırlar koyma. Mevcut kaynağın tamamını sığdıramıyorsan code boş olsun.";
+  const rt=await resolveRoute(user,body,req,"plan");
+  rt.kind="engineering";
+  const result=await chatWith(rt,[{role:"system",content:system},{role:"user",content:JSON.stringify({platform,code,log,goal})}],5500,responseSignal(res));
+  let suggestion;
+  try{suggestion=JSON.parse(result.text.trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,""))}catch{}
+  need(result.finish!=="length"&&typeof suggestion?.review==="string"&&suggestion.review.trim()&&typeof suggestion.code==="string"&&suggestion.code.length<=24000&&Array.isArray(suggestion.tests),502,"Öneri eksik geldi. İsteği daha küçük bir kod bölümüyle tekrarlayın.");
+  const tests=suggestion.tests.filter(t=>typeof t==="string"&&t.trim()).slice(0,8).map(t=>t.slice(0,800));
+  need(tests.length,502,"Doğrulama adımları alınamadı. Tekrar deneyin.");
+  return {review:suggestion.review.slice(0,8000),code:suggestion.code,tests,model:result.model,credits:charge(user,rt,"engineering",result.usage),spent:rt.credits};
+});
 route("POST","/api/ai/gt",async({user,body,req,res})=>{
   const question=str(body.question,1500,"Soru",true);
   let snapshot;

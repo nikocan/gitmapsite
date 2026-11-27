@@ -17,7 +17,10 @@ with sync_playwright() as playwright:
         page.route("**/api/ai/models", lambda route: route.fulfill(json={"platform": [], "byok": []}))
         page.goto(BASE_URL + "/#sablonlar", wait_until="domcontentloaded")
         card = page.locator(".tpc").filter(has_text="GitSap Üretim Mutabakatı").first
-        card.get_by_text("Stüdyo’da kullan", exact=True).click()
+        card.click()
+        page.get_by_role("button", name="Bu şablonla başla").click()
+        if width == 390:
+            page.get_by_role("button", name="Önizlemeye git").click()
         frame = page.frame_locator('iframe[title="Önizleme"]').first
         expect(frame.locator("#open")).to_have_text("100 kg")
         post(frame, "receive", "MK-01", 60)

@@ -67,7 +67,7 @@ try {
   const rowsN = await p.locator(".tpl-cost tbody tr").count(); const tbl = await p.locator(".tpl-cost").innerText();
   ok(rowsN >= 40 && /\$/.test(tbl) && /₺/.test(tbl) && /%/.test(tbl) && /9 kredi/.test(tbl), "şablon maliyet tablosu: " + rowsN + " şablon, $, ₺, kredi ve marj");
   await p.locator(".tpl-cost").scrollIntoViewIfNeeded(); await p.screenshot({ path: join(SHOTS, "4-sablon-maliyet.png") });
-  await p.goto(webBase + "/#sablonlar"); await p.reload(); await p.locator(".tpc").first().waitFor({ timeout: 15000 }); ok(/özelleştirme ~9 kredi/.test(await p.locator(".tpc").first().innerText()), "şablon kartı: kredi bazlı tahmin");
+  await p.goto(webBase + "/#sablonlar"); await p.reload(); await p.locator(".tpc").first().waitFor({ timeout: 15000 }); await p.locator(".tpc").first().click(); ok(/~9 kredi/.test(await p.locator(".tpl-pricing").innerText()), "şablon ayrıntısı: kredi bazlı tahmin");
   const m = await browser.newContext({ ...devices["iPhone 13"] }); const mp = await m.newPage(); await prep(mp, admin); await mp.goto(webBase + "/#ayar"); await mp.reload(); await mp.locator(".tpl-cost table").waitFor({ timeout: 20000 }); await mp.waitForTimeout(600);
   const sw = await mp.evaluate(() => document.documentElement.scrollWidth - innerWidth); ok(sw <= 1, "telefonda yatay taşma yok (" + sw + "px)"); await mp.screenshot({ path: join(SHOTS, "5-telefon.png") });
   ok(!errs.length, "sayfa hatası yok" + (errs.length ? ": " + errs.join(" | ") : ""));

@@ -2824,6 +2824,7 @@ html.rm .ambient i{animation:none}
 .ccpop.mdl-pop{max-height:min(70vh,520px);overflow:auto}.sx .ccpop.mdl-pop,.studio-start .ccpop.mdl-pop{bottom:auto;top:calc(100% + 8px)}
 @media(max-width:820px){.sx .ccpop.mdl-pop,.studio-start .ccpop.mdl-pop{top:auto;bottom:84px}}
 </style>
+<link rel="stylesheet" href="catalog/gallery.css?v=575">
 </head>
 <body>
 <div id="root"></div>
@@ -2834,13 +2835,18 @@ html.rm .ambient i{animation:none}
 <script src="skills/business.js"></script>
 <script src="skills/gt-context.js"></script>
 <script src="skills/gt-studio.js"></script>
+<script src="catalog/gallery.js?v=575"></script>
+<script src="skills/engineering.js?v=575"></script>
 <script>
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.74.0";
+const VERSION="5.75.0";
 const CHANGELOG=[
+ {v:"5.75.0",date:"2026-11-27",items:[
+  "Keşfet, şablon, eklenti, bağdaştırıcı ve beceri koleksiyonlarında yeni görseller ve hızlı bakış. Fareyle önizleme, dokunarak ayrıntılar.",
+  "Oracle ve SAP atölyesinde kod düzenleme, yerel günlük incelemesi ve test adımlarıyla karşılaştırılabilir yapay zekâ önerileri."]},
  {v:"5.74.0",date:"2026-11-28",items:[
   "🧠 Model menüsü düzeltildi: “Otomatik” artık yeni projelerde de pahalı Opus yerine Sonnet kullanıyor (3 kredi); plan ve Asistan Haiku (1 kredi). Menüde üç model yan yana: Haiku · Hızlı (küçük düzeltme), Sonnet · Dengeli (önerilen), Opus · Güçlü (büyük, karmaşık iş), her birinin kredisi ve ne işe yaradığıyla",
   "💹 Yönetim › Ayarlar › Şablon maliyetleri: elle TL tarife ve token tahmini girme kalktı. Her şablonun Stüdyo'da özelleştirme maliyeti gerçek model fiyatından, şablon dosyasının boyutundan ve istem önbelleğinden otomatik hesaplanıyor; kullanıcıdan alınan krediyle karşılaştırılıp marj (kâr/zarar) gösteriliyor. Model seçilebilir, şablonlar marja, boyuta ya da ada göre sıralanır",
@@ -6779,7 +6785,14 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const [versions,setVersions]=useState([]);const [rejected,setRejected]=useState(null);const [input,setInput]=useState(()=>LS.get("studioInput:"+scope,"")||"");const [busy,setBusy]=useState(false);const [t0,setT0]=useState(0);const [,setTick]=useState(0);
  const [stage,setStage]=useState(()=>LS.get("stage","phone")||"phone");const [full,setFull]=useState(false);const [code,setCode]=useState(false);const [compare,setCompare]=useState(false);const [saving,setSaving]=useState(false);const [sure,setSure]=useState(false);const chatRef=useRef(null);const followChat=useRef(true);const stageRef=useRef(null);
  const [prefs,setPrefs]=useState(()=>Object.assign({kind:"app",provider:"gitmapp",model:"",mode:"hizli",theme:"auto",sector:"auto"},LS.get("studioPrefs",{})||{}));const [gallery,setGallery]=useState(false);const [atts,setAtts]=useState([]);const [veMode,setVeMode]=useState(null);const [picked,setPicked]=useState(null);const [hist,setHist]=useState(false);const [listening,setListening]=useState(false);const recRef=useRef(null);const frameRef=useRef(null);const [drag,setDrag]=useState(false);const [todo,setTodo]=useState(null);const stopRef=useRef(false);const abortRef=useRef(null);const fileRef=useRef(null);const roleRef=useRef(null);const [runSet,setRunSet]=useState(()=>LS.get("runSet",{temperature:null,detail:"dengeli",instructions:""})||{});const [runOpen,setRunOpen]=useState(false);const [pendTheme,setPendTheme]=useState(null);
- const [sessOpen,setSessOpen]=useState(()=>LS.get("sessOpen",innerWidth>1280)!==false&&innerWidth>820);useEffect(()=>{LS.set("sessOpen",sessOpen)},[sessOpen]);const [spMore,setSpMore]=useState(false),[spCtx,setSpCtx]=useState(false),[hostForm,setHostForm]=useState(false),[hostTok,setHostTok]=useState(""),[spBusy,setSpBusy]=useState(""),[spDiff,setSpDiff]=useState(false);const [autoFix,setAutoFix]=useState(()=>LS.get("autoFix",true)!==false);useEffect(()=>{LS.set("autoFix",autoFix)},[autoFix]);const autoFixed=useRef(0);
+ const [sessOpen,setSessOpen]=useState(()=>location.hash.startsWith("#studio?panel=oturum")||(LS.get("sessOpen",innerWidth>1280)!==false&&innerWidth>820));useEffect(()=>{LS.set("sessOpen",sessOpen)},[sessOpen]);const [spMore,setSpMore]=useState(false),[spCtx,setSpCtx]=useState(false),[hostForm,setHostForm]=useState(false),[hostTok,setHostTok]=useState(""),[spBusy,setSpBusy]=useState(""),[spDiff,setSpDiff]=useState(false);const [autoFix,setAutoFix]=useState(()=>LS.get("autoFix",true)!==false);useEffect(()=>{LS.set("autoFix",autoFix)},[autoFix]);const autoFixed=useRef(0);
+ useEffect(()=>{
+  if(!sessOpen||!location.hash.startsWith("#studio?panel=oturum"))return;
+  const id=new URLSearchParams(location.hash.split("?")[1]).get("baglanti");
+  if(!accountAdapters.some(entry=>entry[0]===id))return;
+  const row=document.querySelector('.sp [data-adapter="'+id+'"]');
+  if(row){row.scrollIntoView({block:"center"});row.querySelector("button")?.focus({preventScroll:true})}
+ },[sessOpen]);
  const [placeSel,setPlaceSel]=useState(null),[stagePend,setStagePend]=useState(null);const mediaIn=useRef(null);
  const tray=useMemo(()=>[...(st.media||[]).map(m=>({...m,id:"media:"+m.id})),...atts.map(a=>({id:"att:"+a.id,url:a.full||a.small,thumb:a.thumb,name:a.name,src:"Eklenen"})),...Object.entries(st.assets||{}).map(([k,v])=>({id:"asset:"+k,url:v,thumb:v,name:k.toLowerCase(),src:"Uygulamada"}))],[st.media,atts,st.assets]);
  const trayRef=useRef(tray);trayRef.current=tray;const placeRef=useRef(null);placeRef.current=placeSel;
@@ -7392,7 +7405,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const link=async(prov)=>{if(!u){openAuth("Hesap bağlamak için giriş yap.");return}if(oauthBlocked(prov))return;try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+(prov==="canva"?"/api/auth/canva/start?link=":"/api/auth/oauth/"+prov+"/start?link=")+encodeURIComponent(j.link)}catch(e){toast(e.message)}};
   const unlink=async prov=>{if(!confirm(({hostinger:"Hostinger",github:"GitHub",google:"Google",higgsfield:"Higgsfield",canva:"Canva"}[prov]||prov)+" bağlantısı kesilsin mi?"))return;setSpBusy(prov);try{const j=await api("DELETE","/api/connect/"+prov);j.user&&auth.patch(j.user);if(["hostinger","higgsfield","canva"].includes(prov))auth.patch({[prov]:prov==="canva"?false:null});toast("Bağlantı kesildi")}catch(e){toast(e.message)}finally{setSpBusy("")}};
   const saveHost=async e=>{e.preventDefault();setSpBusy("hostinger");try{const j=await api("PUT","/api/connect/hostinger",{token:hostTok.trim()});auth.patch({hostinger:j.last4});setHostTok("");setHostForm(false);toast("Hostinger bağlandı"+(j.plans!=null?" · "+j.plans+" hizmet bulundu":""))}catch(er){toast(er.message)}finally{setSpBusy("")}};
-  const acct=(key,logo,name,on,sub,prov,cfgOk)=>html`<div class="sp-row" key=${key}>${logo}<span class="sp-t"><b>${name}</b>${sub&&html`<small>${sub}</small>`}</span>${on?html`<span class="sp-ok" title="Bağlı"></span><button type="button" class="sp-ib" title="Bağlantıyı kes" aria-label=${name+" bağlantısını kes"} disabled=${spBusy===prov} onClick=${()=>unlink(prov)}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${cfgOk===false&&prov!=="github"} title=${cfgOk===false?(prov==="github"?"Erişim anahtarıyla bağlan":"Bu sunucuda yapılandırılmamış"):""} onClick=${()=>prov==="hostinger"?setHostForm(!hostForm):prov==="github"&&cfgOk===false?setGitOpen("github"):link(prov)}>Bağla</button>`}</div>`;
+  const acct=(key,logo,name,on,sub,prov,cfgOk)=>html`<div class="sp-row" data-adapter=${prov} key=${key}>${logo}<span class="sp-t"><b>${name}</b>${sub&&html`<small>${sub}</small>`}</span>${on?html`<span class="sp-ok" title="Bağlı"></span><button type="button" class="sp-ib" title="Bağlantıyı kes" aria-label=${name+" bağlantısını kes"} disabled=${spBusy===prov} onClick=${()=>unlink(prov)}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${cfgOk===false&&prov!=="github"} title=${cfgOk===false?(prov==="github"?"Erişim anahtarıyla bağlan":"Bu sunucuda yapılandırılmamış"):""} onClick=${()=>prov==="hostinger"?setHostForm(!hostForm):prov==="github"&&cfgOk===false?setGitOpen("github"):link(prov)}>Bağla</button>`}</div>`;
   const dl=(name,data,type="text/html")=>{const b=new Blob([data],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
   const assets=Object.entries(st.assets||{});
   return html`<aside class="sp" aria-label="Oturum paneli">
@@ -7409,8 +7422,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    ${acct("gh",html`<${Icon} n="github" s=${18}/>`,"GitHub",!!u?.github,u?.github?"@"+u.github+" · depo ve dallar":"Depo, dal ve commit","github",health.github)}
    ${acct("gg",html`<${BrandG} s=${18}/>`,"Google",!!u?.google,u?.google?"Hesap bağlı":"Google ile giriş","google",health.google)}
    ${acct("hs",html`<${BrandH} s=${18}/>`,"Hostinger",!!u?.hostinger,u?.hostinger?"API anahtarı ••••"+u.hostinger:"Alan adı ve barındırma","hostinger")}
-   <div class="sp-row"><${Icon} n="video" s=${18}/><span class="sp-t"><b>Higgsfield</b><small>${u?.higgsfield?"Anahtar ••••"+u.higgsfield+" · görsel ve video":"Yapay zekâ görsel ve video"}</small></span>${u?.higgsfield?html`<span class="sp-ok"></span><button type="button" class="sp-ib" aria-label="Higgsfield bağlantısını kes" onClick=${()=>unlink("higgsfield")}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" onClick=${()=>setMediaOpen(true)}>Bağla</button>`}</div>
-   <div class="sp-row"><${Icon} n="palette" s=${18}/><span class="sp-t"><b>Canva</b><small>${u?.canva?"Hesap bağlı · tasarım":health.canva?"Tasarım ve şablonlar":"Sunucuda yapılandırılmamış"}</small></span>${u?.canva?html`<span class="sp-ok"></span><button type="button" class="sp-ib" aria-label="Canva bağlantısını kes" onClick=${()=>unlink("canva")}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${!health.canva} onClick=${()=>link("canva")}>Bağla</button>`}</div>
+   <div class="sp-row" data-adapter="higgsfield"><${Icon} n="video" s=${18}/><span class="sp-t"><b>Higgsfield</b><small>${u?.higgsfield?"Anahtar ••••"+u.higgsfield+" · görsel ve video":"Yapay zekâ görsel ve video"}</small></span>${u?.higgsfield?html`<span class="sp-ok"></span><button type="button" class="sp-ib" aria-label="Higgsfield bağlantısını kes" onClick=${()=>unlink("higgsfield")}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" onClick=${()=>setMediaOpen(true)}>Bağla</button>`}</div>
+   <div class="sp-row" data-adapter="canva"><${Icon} n="palette" s=${18}/><span class="sp-t"><b>Canva</b><small>${u?.canva?"Hesap bağlı · tasarım":health.canva?"Tasarım ve şablonlar":"Sunucuda yapılandırılmamış"}</small></span>${u?.canva?html`<span class="sp-ok"></span><button type="button" class="sp-ib" aria-label="Canva bağlantısını kes" onClick=${()=>unlink("canva")}><${Icon} n="x" s=${14}/></button>`:html`<button type="button" class="sp-link" disabled=${!health.canva} onClick=${()=>link("canva")}>Bağla</button>`}</div>
    ${hostForm&&!u?.hostinger&&html`<form class="sp-form" onSubmit=${u?saveHost:e=>{e.preventDefault();openAuth("Hostinger bağlamak için giriş yap.")}}><label>Hostinger API anahtarı<input class="in" type="password" autocomplete="off" required minlength="20" placeholder="hPanel › Hesap › API › Yeni anahtar" value=${hostTok} onInput=${e=>setHostTok(e.target.value)}/></label><small>Anahtar sunucuda şifreli saklanır; tarayıcıda tutulmaz.</small><div><button class="btn s" disabled=${spBusy==="hostinger"||hostTok.trim().length<20}>${spBusy==="hostinger"?"Doğrulanıyor…":"Bağla"}</button><a class="btn g s" href="https://hpanel.hostinger.com/profile/api" target="_blank" rel="noopener">Anahtar al</a></div></form>`}
    ${(spMore?conns:conns.slice(0,3)).map(c=>html`<div class="sp-row" key=${c.id}><${ConnIcon} c=${c} s=${18}/><span class="sp-t"><b>${c.n}</b><small>Uygulamaya eklenebilir</small></span><span class="sp-ok" title="Açık"></span></div>`)}
    ${conns.length>3&&html`<button type="button" class="sp-more" onClick=${()=>setSpMore(!spMore)}>${spMore?"Daha az göster":"Daha fazla göster ("+(conns.length-3)+")"}</button>`}
@@ -7507,7 +7520,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
 
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
  const [gtRequest,setGtRequest]=useState(0),[gtAlerts,setGtAlerts]=useState(0);
- const gtPanel=html`<${GitmappGT} key=${scope} request=${gtRequest} onAlerts=${setGtAlerts} appId=${st.appId} aiBody=${aiBody} source=${st.html?resolve(st.html):""} errors=${qa&&qa.source===st.html?qa.errors:[]} busy=${busy} buildGT=${brief=>build(brief,null,"GT geliştirmesi")}/>`;
+ const gtPanel=html`<${GitmappGT} openEngineering=${()=>go("muhendis")} key=${scope} request=${gtRequest} onAlerts=${setGtAlerts} appId=${st.appId} aiBody=${aiBody} source=${st.html?resolve(st.html):""} errors=${qa&&qa.source===st.html?qa.errors:[]} busy=${busy} buildGT=${brief=>build(brief,null,"GT geliştirmesi")}/>`;
  const hasWork=st.html||busy||plan||st.msgs.length;
  if(!hasWork){const kind=prefs.kind||"app";const starters=START_CHIPS[kind]||START_CHIPS.app;const ideas=TEMPLATES.map((t,i)=>[t,i]).sort((a,b)=>((a[0][3]||"app")===kind?0:1)-((b[0][3]||"app")===kind?0:1)).slice(0,6);
   const fill=(p,ic)=>{if(ic)setSt(s=>({...s,emoji:ic}));setInput(p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}})};
@@ -7588,7 +7601,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    <span class="ccw rdr-w">${(()=>{const n=radarScan().items.filter(i=>i.lv>=2).length;return html`<button class=${"ib"+(ccMenu==="radar"||sessOpen?" on":"")} aria-haspopup="menu" aria-expanded=${ccMenu==="radar"} onClick=${()=>setCcMenu(m=>m==="radar"?null:"radar")} title="Radar: değişiklikler, çıktılar, kaynaklar ve bekleyen işler"><${Icon} n="list" s=${16}/>${n>0&&html`<i class="rdr-badge">${n}</i>`}</button>`})()}${ccMenu==="radar"&&radarPop()}${ccMenu==="sp-br"&&!sessOpen&&html`<${BranchMenu} appId=${st.appId} source=${vcSource} setSource=${setVcSource} active=${st.gitContext} content=${resolve(st.html)} auth=${auth} openAuth=${openAuth} toast=${toast} close=${()=>setCcMenu(null)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch} openPanel=${()=>{setCcMenu(null);setGitOpen(vcSource==="github"?"github":true)}}/>`}</span>
    <button class="ib" onClick=${()=>dispatchEvent(new Event("gm:cp"))} title="Asistan: yan sohbet, sesli konuşma (Ctrl+J)"><${Icon} n="panelR" s=${16}/></button>
    <button class="btn s" disabled=${saving||busy||!st.html||!!st.gitContext} title=${st.gitContext?"Yayınlamak için çalışmayı önce proje taslağına aktar":undefined} onClick=${publish}><${EcosystemIcon} name="publish" s=${15}/> Yayınla</button></div>
-  <div class=${"ws-grid studio-grid"+(sessOpen?" sp-on":"")}>
+  <div class=${"ws-grid studio-grid"+((st.html||"").includes("Gitmapp hazır şablonu")?" template-stage-first":"")+(sessOpen?" sp-on":"")}>
    <div class="ws-chat">
     <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
     <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
@@ -7713,7 +7726,7 @@ function PublishPanel({app,auth,health,toast,close,onChange}){
 /* ================= v3.3 — APP STORE TARZI KEŞFET, CAM KENAR ÇUBUĞU, HAYALET İMLEÇ ================= */
 
 // iOS / Material tarzı renkli ikon karoları
-const TILE={ux:["chart",""],akademi:["bookOpen","#22d3ee,#6366f1"],beceriler:["brain","#a855f7,#ec4899"],depo:["box","#f59e0b,#ef4444"],odemeler:["card",""],"beceri-avcisi":["brain",""],"musteri-avi":["target",""],"github-ayar":["github",""],kreator:["video",""],eposta:["mail",""],"yapay-zeka":["cpu",""],maliyetler:["chart",""],"uretim-ajani":["bot",""],yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],temalar:["palette",""],"ui-kitler":["grid",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
+const TILE={bagdastiricilar:["plug","#38bdf8,#4f46e5"],muhendis:["code","#34d399,#0284c7"],ux:["chart",""],akademi:["bookOpen","#22d3ee,#6366f1"],beceriler:["brain","#a855f7,#ec4899"],depo:["box","#f59e0b,#ef4444"],odemeler:["card",""],"beceri-avcisi":["brain",""],"musteri-avi":["target",""],"github-ayar":["github",""],kreator:["video",""],eposta:["mail",""],"yapay-zeka":["cpu",""],maliyetler:["chart",""],"uretim-ajani":["bot",""],yonetim:["grid",""],kullanicilar:["users",""],"yonetim-projeler":["folder",""],"$beceri":["brain",""],"$asistan":["headphones",""],ana:["pen",""],baglantilar:["plug",""],eylem:["bell",""],otomasyon:["automation",""],"$ara":["search",""],"$more":["more",""],temalar:["palette",""],"ui-kitler":["grid",""],sablonlar:["layers","#06b6d4,#8b5cf6"],magaza:["star","#3b82f6,#6366f1"],studio:["hammer","#f97316,#ec4899"],oyunlar:["rocket","#8b5cf6,#d946ef"],kategoriler:["grid","#06b6d4,#3b82f6"],uygulamalarim:["folder","#22c55e,#10b981"],modeller:["cpu","#a855f7,#6366f1"],hesabim:["user","#64748b,#94a3b8"],dunya:["puzzle","#f59e0b,#f97316"],olustur:["users","#0ea5e9,#22d3ee"],paketler:["card","#14b8a6,#22c55e"],"ai-destek":["bot","#ec4899,#f43f5e"],siparislerim:["receipt","#eab308,#f59e0b"],guncel:["download","#3b82f6,#06b6d4"],
  siparisler:["inbox","#3b82f6,#6366f1"],radar:["radar","#ef4444,#f97316"],plan:["chart","#22c55e,#14b8a6"],kesfet:["search","#0ea5e9,#6366f1"],kategori:["layers","#a855f7,#ec4899"],liste:["star","#eab308,#f97316"],kuyruk:["rocket","#f43f5e,#a855f7"],ayar:["cog","#64748b,#94a3b8"]};
 const TONES=["#5b8cff","#a78bfa","#f472b6","#fb923c","#22d3ee","#34d399","#facc15","#e4ff3d"];
 const NAV_TONE={kreator:"#ff3bd4","$beceri":"#c084fc","$asistan":"#22d3ee",ana:"#e4ff3d","$ara":"#5b8cff",studio:"#fb923c",magaza:"#5b8cff",uygulamalarim:"#34d399",sablonlar:"#a78bfa",baglantilar:"#22d3ee",eylem:"#f472b6",otomasyon:"#facc15","$more":"#94a3b8",oyunlar:"#a78bfa",kategoriler:"#22d3ee",modeller:"#a78bfa",dunya:"#fb923c",olustur:"#22d3ee",paketler:"#34d399","ai-destek":"#f472b6",siparislerim:"#facc15",guncel:"#5b8cff",hesabim:"#94a3b8",siparisler:"#5b8cff",radar:"#fb923c",plan:"#34d399",kesfet:"#22d3ee",kategori:"#a78bfa",liste:"#facc15",kuyruk:"#f472b6",ayar:"#94a3b8"};
@@ -7787,13 +7800,14 @@ function storeRoute(hash){
  return {cat:STORE_CATS2.some(([id])=>id===cat)?cat:"",q:(params.get("q")||"").trim().slice(0,60),sort:params.get("sort")==="yeni"?"yeni":"pop",full:params.get("tum") === "1"};
 }
 /* v5.62 — Keşfet: akıllı arama kutusu, "Senin tarzın" kartı ve kişisel öneriler */
-function StoreSearch({value,onChange,onSubmit,onClear,onIntent}){
+function StoreSearch({value,onChange,onSubmit,onClear,onIntent,onDemo}){
  const d=useTaste();const [open,setOpen]=useState(false),[act,setAct]=useState(-1);const box=useRef(null);
  const sug=useMemo(()=>tasteSuggest(value,d),[value,d]);
- const items=sug.items;
+ const visuals=useMemo(()=>value.trim().length<2?[]:tasteRank(TEMPLATE_LIB,{d,query:value,limit:3}).map(({t})=>({kind:"tpl",w:t.name,id:t.id})),[value,d]);
+ const items=[...visuals,...sug.items.filter(x=>!visuals.some(v=>v.w===x.w))].slice(0,7);
  useEffect(()=>setAct(-1),[value]);
  useEffect(()=>{if(!open)return;const h=e=>{if(box.current&&!box.current.contains(e.target))setOpen(false)};document.addEventListener("pointerdown",h);return()=>document.removeEventListener("pointerdown",h)},[open]);
- const choose=x=>{setOpen(false);onSubmit(x.w)};
+ const choose=x=>{setOpen(false);if(x.kind==="tpl"&&catalogTemplate(x.id))onDemo({...catalogTemplate(x.id),showDetails:true});else onSubmit(x.w)};
  const key=e=>{if(!open&&e.key==="ArrowDown"){setOpen(true);return}
   if(e.key==="ArrowDown"){e.preventDefault();setAct(i=>Math.min(items.length-1,i+1))}
   else if(e.key==="ArrowUp"){e.preventDefault();setAct(i=>Math.max(-1,i-1))}
@@ -7808,7 +7822,7 @@ function StoreSearch({value,onChange,onSubmit,onClear,onIntent}){
   ${show&&html`<div class="ks-pop" id="ks-list" role="listbox" aria-label="Arama önerileri">
    ${!value&&items.length>0&&html`<div class="ks-cap">Son aramaların</div>`}
    ${items.map((x,i)=>html`<button type="button" role="option" id=${"ks-o"+i} aria-selected=${i===act} key=${x.w} class=${"ks-opt"+(i===act?" on":"")} onMouseEnter=${()=>setAct(i)} onClick=${()=>choose(x)}>
-    <${Icon} n=${x.kind==="recent"?"clock":x.kind==="tpl"?"layers":x.kind==="cat"?"grid":"search"} s=${14}/><span>${x.w}</span><em>${{recent:"geçmiş",tpl:"şablon",sec:"sektör",cat:"kategori",word:"öneri"}[x.kind]}</em></button>`)}
+    ${x.kind==="tpl"&&x.id?html`<img class="ks-mini" alt="" src=${CATALOG_ART+x.id+".webp"}/>`:html`<${Icon} n=${x.kind==="recent"?"clock":x.kind==="cat"?"grid":"search"} s=${14}/>`}<span>${x.w}</span><em>${{recent:"geçmiş",tpl:"şablon",sec:"sektör",cat:"kategori",word:"öneri"}[x.kind]}</em></button>`)}
    ${sug.intent&&html`<div class="ks-intent"><span class="ks-pal" aria-hidden="true">${[sug.intent.theme.p.bg,sug.intent.theme.p.pr,sug.intent.theme.p.ac].map(c=>html`<i key=${c} style=${{background:c}}></i>`)}</span><div><b>${sug.intent.sec.l} için bir şey arıyor gibisin</b><span>Tahmin edilen tasarım: ${sug.intent.theme.name} · ${sug.intent.theme.tag}</span></div>
     <button type="button" class="ks-start" onClick=${()=>{setOpen(false);onIntent(sug.intent,value.trim())}}><${Icon} n="wand" s=${14}/> Bu fikirle başla</button></div>`}
   </div>`}
@@ -7844,14 +7858,9 @@ function ForYou({startTemplate,onDemo,onUse,go,onSearch}){
  const lastT=d.last&&TEMPLATE_LIB.find(t=>t.id===d.last.id);
  const ready=TASTE.on()&&p.n>=2;
  return html`<section class="foryou" aria-labelledby="foryou-h">
-  <div class="foryou-grid">
-   <${TasteCard} p=${p} startTemplate=${startTemplate} onSearch=${onSearch}/>
-   <div class="foryou-recs">
-    <div class="foryou-h"><h2 id="foryou-h">${ready?"Sana özel":"Başlamak için öneriler"}</h2><span>${ready?"Aramalarına, baktığın şablonlara ve renk tercihine göre":"Her denediğin şablonla öneriler sana göre şekillenir"}</span></div>
-    <div class="foryou-row">${recs.slice(0,6).map(({t,why})=>html`<button type="button" class="fy-item" key=${t.id} onClick=${()=>onDemo(t)}>
-     <span class="fy-thumb"><${TplThumb} t=${t}/></span><span class="fy-txt"><b>${t.name}</b><small>${t.sector}</small><em><${Icon} n="sparkles" s=${11}/> ${why}</em></span></button>`)}</div>
-   </div>
-  </div>
+  <div class="gallery-heading"><h2 id="foryou-h">${ready?"Sana özel":"Öne çıkan şablonlar"}</h2><button class="chip" onClick=${()=>go("sablonlar")}>Tüm şablonlar</button></div>
+  <div class="gallery-grid">${(ready?recs.slice(0,4):["pilates","kavurma","akisoperasyon","fotostudyo"].map(id=>({t:catalogTemplate(id)}))).map(({t,why})=>html`<${TemplateTile} key=${t.id} t=${t} onDemo=${onDemo} reason=${why}/>`)}</div>
+  <details class="gallery-more"><summary>Öneri tercihlerim</summary><${TasteCard} p=${p} startTemplate=${startTemplate} onSearch=${onSearch}/></details>
   ${lastT&&sim.length>0&&html`<${Shelf} title=${"“"+lastT.name+"” şablonuna benzerler"} scroll=${true}>${sim.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${onDemo} onUse=${onUse}/>`)}</${Shelf}>`}
  </section>`;
 }
@@ -7863,15 +7872,39 @@ function SearchAssist({q,onFilters,filters,onDemo}){
  return html`<div class="sassist">
   ${related.length>0&&html`<div class="sa-rel"><span>İlgili aramalar</span>${related.map(x=>html`<button key=${x.w} class="chip" onClick=${()=>onFilters({...filters,q:x.w})}>${x.w}</button>`)}</div>`}
   ${recs.length>0&&html`<div class="foryou-h" style=${{marginTop:14}}><h2>Aramana uygun şablonlar</h2><span>Hazır, çalışan örnekler · canlı deneyebilirsin</span></div>
-  <div class="foryou-row">${recs.map(({t,why})=>html`<button type="button" class="fy-item" key=${t.id} onClick=${()=>onDemo(t)}><span class="fy-thumb"><${TplThumb} t=${t}/></span><span class="fy-txt"><b>${t.name}</b><small>${t.sector}</small><em><${Icon} n="sparkles" s=${11}/> ${why}</em></span></button>`)}</div>`}
+  <div class="gallery-grid">${recs.map(({t,why})=>html`<${TemplateTile} key=${t.id} t=${t} reason=${why} onDemo=${onDemo}/>`)}</div>`}
  </div>`;
+}
+function DiscoveryExtras({go,startTemplate}){
+ const [all,setAll]=useState(false),[film,setFilm]=useState(false);
+ const floatIcons=[["🎮","#5e5ce6"],["💇","#ff375f"],["🍽️","#ff9f0a"]];
+ const tplRows=(k)=>TEMPLATES.filter(t=>(t[3]||"app")===k);
+ const tplRow=([ic,t,p,k],i)=>html`<${AppRow} key=${t} a=${{title:t,emoji:ic,color:"#"+["4f8cff","ff7a59","22c55e","a855f7","06b6d4","f59e0b","64748b","10b981","16a34a","f43f5e","eab308","0ea5e9"][i%12]}} sub=${k==="game"?"Oyun şablonu":k==="site"?"Web sitesi şablonu":"Uygulama şablonu"} btn="YAP" onBtn=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})} onOpen=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})}/>`;
+ return html`<div>  <${Shelf} title="Sektörüne özel tasarımlar" scroll=${true}>${DSECTORS.map(sc=>html`<div class="seccard" key=${sc.id} onClick=${()=>{TASTE.note({type:"sector",sector:sc.id,theme:tasteOrder(sc.th)[0],w:2});startTemplate({kind:sc.id==="oyun"?"game":"app",theme:tasteOrder(sc.th)[0],sector:sc.id})}}>
+   <div class="sc-h"><${Tile} n=${sc.ic} g=${sc.g} s=${34}/><div><b>${sc.l}</b><span>${sc.th.map(id=>themeById(id).name).join(" · ")}</span></div></div>
+   <div class="sc-mocks">${sc.th.map((id,i)=>html`<div class="sc-m" key=${id} style=${{["--i"]:i}}><${ThemeMock} t=${themeById(id)} kind=${sc.id==="oyun"?"game":"app"} w=${84}/></div>`)}</div>
+   <div class="sc-f"><span>Bu tasarımla başla</span><${Icon} n="chevRight" s=${16}/></div></div>`)}</${Shelf}>
+
+  <${Shelf} title="Fikirlerini uygulamaya dönüştür" more=${()=>setAll(!all)}>${(all?tplRows("app"):tplRows("app").slice(0,4)).map(x=>tplRow(x,TEMPLATES.indexOf(x)))}</${Shelf}>
+  <${Shelf} title="Bir oyun ya da site yap">${[...tplRows("game"),...tplRows("site")].map(x=>tplRow(x,TEMPLATES.indexOf(x)))}</${Shelf}>
+
+  <div class="hero-banner">
+   ${film&&html`<${BrandFilm} close=${()=>setFilm(false)}/>`}
+   <div class="hb-mark"><${BrandMark} s=${380}/></div>
+   <div class="hb-txt"><div class="eyebrow light">Gitmapp Stüdyo</div><h2>Kendi uygulamanı oluştur</h2><p>Uygulama, web sitesi ya da oyun. Seçtiğin yapay zekâ modeli yazar, sen tek tıkla kendi adınla yayınlarsın.</p>
+    <div style=${{display:"flex",gap:10,flexWrap:"wrap"}}><button class="hb-btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${17}/> Geliştirmeye başla</button><button class="hb-btn ghost" aria-haspopup="dialog" onClick=${()=>setFilm(true)}><${Icon} n="play" s=${16}/> Tanıtım filmini izle</button></div></div>
+   <div class="hb-art">${floatIcons.map(([e,c],i)=>html`<span class="hb-ic" key=${i} style=${{["--i"]:i}}><${AppIcon2} emoji=${e} color=${c} size=${104}/></span>`)}</div>
+  </div>
+
+  <section class="shelf"><${SketchScene} onStart=${role=>startTemplate({sketch:role})}/></section>
+
+</div>`;
 }
 function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl}){
  const {cat,q,sort,full}=filters;
  const [draft,setDraft]=useState(q);
- const [film,setFilm]=useState(false);
  const [tdemo,setTdemo]=useState(null);
- const [result,setResult]=useState(null);const [fresh,setFresh]=useState([]);const [all,setAll]=useState(false);const [request,reload]=useState(0);
+ const [result,setResult]=useState(null);const [fresh,setFresh]=useState([]);const [request,reload]=useState(0);
  const query=new URLSearchParams({cat,q,sort:sort==="yeni"?"yeni":""}).toString();
  const current=result?.query===query?result:null;
  const apps=current?.apps||null;
@@ -7894,17 +7927,16 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
  const popular=list.filter(a=>a.category!=="oyun").slice(0,6);
  const shown=new Set([...games,...popular].map(a=>a.slug));
  const recent=fresh.filter(a=>!shown.has(a.slug)).slice(0,6);
- const pick=list[0];
- const tplRows=(k)=>TEMPLATES.filter(t=>(t[3]||"app")===k);
- const tplRow=([ic,t,p,k],i)=>html`<${AppRow} key=${t} a=${{title:t,emoji:ic,color:"#"+["4f8cff","ff7a59","22c55e","a855f7","06b6d4","f59e0b","64748b","10b981","16a34a","f43f5e","eab308","0ea5e9"][i%12]}} sub=${k==="game"?"Oyun şablonu":k==="site"?"Web sitesi şablonu":"Uygulama şablonu"} btn="YAP" onBtn=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})} onOpen=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})}/>`;
  const filtered=cat||q||full;
- const filtersBar=html`<section class="store-nav" aria-labelledby="store-heading"><div class="sn-head"><h1 id="store-heading">Keşfet</h1><p>Aradıkça ve gezdikçe sana göre şekillenen uygulamalar, şablonlar ve tasarımlar</p></div>
-  <${StoreSearch} value=${draft} onChange=${setDraft} onSubmit=${v=>{setDraft(v);onFilters({...filters,q:v})}} onClear=${()=>{setDraft("");onFilters({...filters,q:"",sort:cat||full?sort:"pop"})}} onIntent=${(it,text)=>{TASTE.note({type:"intent",text,sector:it.sec.id,theme:it.theme.id,w:2});startTemplate({kind:it.sec.id==="oyun"?"game":"app",theme:it.theme.id,sector:it.sec.id,prompt:text.length>12?text:undefined})}}/>
+ const filtersBar=html`<${CollectionNav} page="magaza" go=${go}/>
+  <${CollectionHero} title="Keşfet" copy="İşine uygun uygulamaları, mobil tasarımları ve geliştirme araçlarını keşfet." image=${filtered?"discover":"forma"} caption=${filtered?"Katalog seçkisi":"Forma mağazasının mobil ve web tasarımı"} action=${!filtered&&(()=>setTdemo({...catalogTemplate("forma"),showDetails:true}))} cta="Forma Mağaza’yı incele"/>
+  <section class="store-nav gallery-search" aria-label="Katalogda ara">
+  <${StoreSearch} onDemo=${setTdemo} value=${draft} onChange=${setDraft} onSubmit=${v=>{setDraft(v);onFilters({...filters,q:v})}} onClear=${()=>{setDraft("");onFilters({...filters,q:"",sort:cat||full?sort:"pop"})}} onIntent=${(it,text)=>{TASTE.note({type:"intent",text,sector:it.sec.id,theme:it.theme.id,w:2});startTemplate({kind:it.sec.id==="oyun"?"game":"app",theme:it.theme.id,sector:it.sec.id,prompt:text.length>12?text:undefined})}}/>
   <div class="store-categories" role="group" aria-label="Kategoriler">
    ${[["","","Tüm kategoriler"],...STORE_CATS2].map(([k,,l])=>html`<button type="button" key=${k} class=${"chip"+(cat===k?" on":"")} aria-pressed=${cat===k} onClick=${()=>onFilters({...filters,cat:k,sort:k||q?sort:"pop",full:false})}>${l}</button>`)}
   </div></section>`;
 
- if(filtered)return html`<div class="explore">${filtersBar}
+ if(filtered)return html`<div class="explore gallery-page">${filtersBar}
   <div class="ex-filter">
    <h2 style=${{margin:0,flex:1,fontSize:21}}>${q?"“"+q+"” için sonuçlar":cat?catName(cat):"Tüm uygulamalar"}</h2>
    <div class="seg" role="group" aria-label="Sıralama">${[["pop","star","Popüler"],["yeni","zap","Yeni"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${sort===k} class=${sort===k?"on":""} onClick=${()=>onFilters({...filters,sort:k})}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div></div>
@@ -7916,39 +7948,15 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
   ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
   </div>`;
 
- const floatIcons=(list.length>=5?list.slice(0,5).map(a=>[a.emoji,a.color]):[["🎮","#5e5ce6"],["💇","#ff375f"],["🍽️","#ff9f0a"],["💰","#30d158"],["✅","#0a84ff"]]);
- return html`<div class="explore">${filtersBar}
+ return html`<div class="explore gallery-page">${filtersBar}
   <${ForYou} startTemplate=${startTemplate} onDemo=${setTdemo} onUse=${onTpl} go=${go} onSearch=${w=>{setDraft(w);onFilters({...filters,q:w})}}/>
   ${popular.length>0&&html`<${Shelf} title="Popüler uygulamalar" more=${()=>onFilters({...filters,sort:"pop",full:true})}>${popular.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
   ${games.length>0&&html`<${Shelf} title="Oyunlar" more=${()=>onFilters({...filters,cat:"oyun",full:false})}>${games.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
   ${recent.length>0&&html`<${Shelf} title="Yeni çıkanlar">${recent.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
-  <${Shelf} title="Öne çıkanlar" scroll=${true}>
-   ${pick&&html`<${EdCard} eyebrow="Sevdiğimiz uygulamalar" title=${pick.title} text=${(pick.description||"Gitmapp topluluğunun en çok açtığı uygulama.").slice(0,90)} icon="star" grad=${pick.color+",#a3e635"} emojis=${[pick.emoji]} onClick=${()=>open(pick)}/>`}
-   <${EdCard} eyebrow="Haydi başlayalım" title="Kendi oyununu yap" text="Bir cümleyle anlat; yapay zekâ oynanabilir bir oyun yazsın." icon="gamepad" grad="#8b5cf6,#ec4899" emojis=${["🚀","⭐","👾"]} onClick=${()=>startTemplate({kind:"game"})}/>
-   <${EdCard} eyebrow="Yeni" title="İstediğin dil modeliyle" text="Claude, GPT, Gemini, DeepSeek… Hızlı, dengeli ya da güçlü seviyeyi seç." icon="cpu" grad="#0ea5e9,#a3e635" emojis=${["🧠","⚡"]} onClick=${()=>go("modeller")}/>
-   <${EdCard} eyebrow="Yayınla" title="Kendi alan adınla canlıya al" text="app.gitmapp.com adresinde anında, istersen kendi alan adında." icon="rocket" grad="#f97316,#f43f5e" emojis=${["🌐","📱"]} onClick=${()=>go("uygulamalarim")}/>
-  </${Shelf}>
-
-  <${Shelf} title="Hazır şablonlar · canlı demo" scroll=${true} more=${()=>go("sablonlar")}>${TEMPLATE_LIB.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setTdemo} onUse=${onTpl}/>`)}</${Shelf}>
+  <div class="gallery-heading"><h2>Koleksiyonlar</h2></div><div class="gallery-grid">
+  ${[["sablonlar","Şablonlar","Web ve mobil ürünler","mimari"],["baglantilar","Eklentiler","Uygulamaya özellik ekle","plugins"],["bagdastiricilar","Bağdaştırıcılar","Hesap ve API bağla","connectors"],["beceriler","Beceriler","Sektörüne göre geliştirme planları","skills"],["muhendis","Oracle ve SAP","Kod ve günlük incelemesi","engineering"]].map(([id,title,meta,image])=>html`<${GalleryTile} key=${id} title=${title} meta=${meta} art=${html`<img class="gallery-cover" loading="lazy" alt="" src=${CATALOG_ART+image+".webp"}/>`} action=${()=>go(id)}/>`)}</div>
+  <details class="gallery-more"><summary>Proje fikirleri ve sektör tasarımları</summary><${DiscoveryExtras} go=${go} startTemplate=${startTemplate}/></details>
   ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
-  <${Shelf} title="Sektörüne özel tasarımlar" scroll=${true}>${DSECTORS.map(sc=>html`<div class="seccard" key=${sc.id} onClick=${()=>{TASTE.note({type:"sector",sector:sc.id,theme:tasteOrder(sc.th)[0],w:2});startTemplate({kind:sc.id==="oyun"?"game":"app",theme:tasteOrder(sc.th)[0],sector:sc.id})}}>
-   <div class="sc-h"><${Tile} n=${sc.ic} g=${sc.g} s=${34}/><div><b>${sc.l}</b><span>${sc.th.map(id=>themeById(id).name).join(" · ")}</span></div></div>
-   <div class="sc-mocks">${sc.th.map((id,i)=>html`<div class="sc-m" key=${id} style=${{["--i"]:i}}><${ThemeMock} t=${themeById(id)} kind=${sc.id==="oyun"?"game":"app"} w=${84}/></div>`)}</div>
-   <div class="sc-f"><span>Bu tasarımla başla</span><${Icon} n="chevRight" s=${16}/></div></div>`)}</${Shelf}>
-
-  <${Shelf} title="Fikirlerini uygulamaya dönüştür" more=${()=>setAll(!all)}>${(all?tplRows("app"):tplRows("app").slice(0,4)).map(x=>tplRow(x,TEMPLATES.indexOf(x)))}</${Shelf}>
-  <${Shelf} title="Bir oyun ya da site yap">${[...tplRows("game"),...tplRows("site")].map(x=>tplRow(x,TEMPLATES.indexOf(x)))}</${Shelf}>
-
-  <div class="hero-banner">
-   ${film&&html`<${BrandFilm} close=${()=>setFilm(false)}/>`}
-   <div class="hb-mark"><${BrandMark} s=${380}/></div>
-   <div class="hb-txt"><div class="eyebrow light">Gitmapp Stüdyo</div><h2>Kendi uygulamanı oluştur</h2><p>Uygulama, web sitesi ya da oyun. Seçtiğin yapay zekâ modeli yazar, sen tek tıkla kendi adınla yayınlarsın.</p>
-    <div style=${{display:"flex",gap:10,flexWrap:"wrap"}}><button class="hb-btn" onClick=${()=>go("studio")}><${Icon} n="hammer" s=${17}/> Geliştirmeye başla</button><button class="hb-btn ghost" aria-haspopup="dialog" onClick=${()=>setFilm(true)}><${Icon} n="play" s=${16}/> Tanıtım filmini izle</button></div></div>
-   <div class="hb-art">${floatIcons.map(([e,c],i)=>html`<span class="hb-ic" key=${i} style=${{["--i"]:i}}><${AppIcon2} emoji=${e} color=${c} size=${104}/></span>`)}</div>
-  </div>
-
-  <section class="shelf"><${SketchScene} onStart=${role=>startTemplate({sketch:role})}/></section>
-
  </div>`;
 }
 
@@ -8222,20 +8230,7 @@ function TplThumb({t,eager=false}){
   <img class="tpl-phone-shot" loading=${eager?"eager":"lazy"} decoding="async" alt=${t.name+" mobil görünümü"} src=${base+"-mobile.webp"}/>
  </div>`;
 }
-function TplCard({t,onDemo,onUse}){
- const quote=tplQuote(t);
- return html`<article class="tpc">
- <div class="tpc-img"><${TplThumb} t=${t}/><button type="button" class="tpc-ov" aria-label=${t.name+" · Canlı önizlemeyi aç"} onClick=${()=>onDemo(t)}><span class="tpc-b"><${Icon} n="play" s=${14}/> Canlı önizleme</span></button></div>
- <div class="tpc-m"><${ProductMark} t=${t}/><div><b>${t.name}</b><span>${t.sector} · ${TPL_TYPES[t.type]}${t.premium?" · Premium":""}</span></div></div>
- <div class="tpl-card-info"><p>${t.desc}</p><small>Önizleme ücretsiz · özelleştirme ~${quote.credits} kredi</small></div>
- <${TplSkillHint} t=${t}/>
- <div class="tpl-card-actions">
-  <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"phone"})}><${Icon} n="phone" s=${14}/> Telefon</button>
-  <button class="chip" onClick=${()=>onDemo({...t,previewDevice:"desktop"})}><${Icon} n="monitor" s=${14}/> Masaüstü</button>
-  <button class="chip" onClick=${()=>onDemo({...t,showDetails:true})}>Detaylar</button>
-  <button class="getbtn" onClick=${()=>onUse(t)}>Stüdyo’da kullan</button>
- </div></article>`;
-}
+function TplCard({t,onDemo}){return html`<${TemplateTile} t=${t} onDemo=${onDemo}/>`}
 function TplDemo({t,close,onUse,canAdapt=false}){
  const [dev,setDev]=useState(t.previewDevice||"desktop"),[details,setDetails]=useState(!!t.showDetails),dialog=useRef(null);
  const [source,setSource]=useState(""),[failure,setFailure]=useState(""),[appearance,setAppearance]=useState(t.appearance||"");
@@ -8258,7 +8253,7 @@ function TplDemo({t,close,onUse,canAdapt=false}){
    .catch(e=>{if(!controller.signal.aborted)setFailure(e.message)});
   return()=>controller.abort();
  },[details,t.id,source,failure]);
- return ReactDOM.createPortal(html`<dialog class="tpl-dialog" ref=${dialog} aria-label=${t.name+" · Şablon"} onCancel=${e=>{e.preventDefault();close()}}>
+ return ReactDOM.createPortal(html`<dialog class=${"tpl-dialog"+(details?" gallery-detail":"")} ref=${dialog} onClick=${e=>{if(e.target===dialog.current)close()}} aria-label=${t.name+" · Şablon"} onCancel=${e=>{e.preventDefault();close()}}>
   <header class="product-intro" style=${{"--brand":t.pr,"--accent":t.ac}}>
    <div class="product-heading"><${ProductMark} t=${t}/><div><small>${t.sector} · ${TPL_TYPES[t.type]}</small><h1>${t.name}</h1></div>
    <button class="ib" onClick=${close} aria-label="Önizlemeyi kapat"><${Icon} n="x"/></button></div>
@@ -8272,7 +8267,8 @@ function TplDemo({t,close,onUse,canAdapt=false}){
    </div>
   </header>
   ${details&&html`<div class="tpl-details">
-   <section><h2>Şablon hakkında</h2><p>${t.desc}</p><ul>${t.feat.map(f=>html`<li key=${f}>${f}</li>`)}</ul></section>
+   <section class="gallery-detail-preview"><${TplThumb} t=${{...t,appearance}}/><div class="adapter-actions">${[["phone","Telefon"],["desktop","Masaüstü"]].map(([key,label])=>html`<button type="button" class="chip" key=${key} onClick=${()=>{setDev(key);setDetails(false)}}>${label} önizlemesi</button>`)}</div></section>
+   <section><h2>Şablon hakkında</h2><p>${t.desc}</p><ul>${t.feat.map(f=>html`<li key=${f}>${f}</li>`)}</ul><${TplSkillHint} t=${t}/></section>
    <section><h2>Kullanım alanları</h2><p>${usage}</p><h3>Projenize uyarlayın</h3><p>${adapt}</p>${canAdapt&&html`<button class="getbtn" onClick=${()=>onUse({...t,appearance,adaptExisting:true})}>Açık projeye uyarlama isteği hazırla</button>`}</section>
    <section class="tpl-pricing"><h2>Yapay zekâ maliyeti</h2>
     ${quote?html`<p><strong>~${quote.credits} kredi</strong> tipik özelleştirme</p><p>Şablonu açmak ve önizlemek ücretsiz. Stüdyo'da her değişiklik isteği ${quote.per} kredi${quote.model?" ("+shortModel(quote.model)+")":""}; tipik özelleştirme ${TPL_EDITS} istek sürer.</p>`:html`<p>Bu şablon için özelleştirme tahmini henüz girilmedi.</p>`}
@@ -8290,25 +8286,26 @@ function TplDemo({t,close,onUse,canAdapt=false}){
 }
 function TemplatesPage({onUse,canAdapt,go}){
  const [type,setType]=useState(""),[sector,setSector]=useState(""),[demo,setDemo]=useState(null),[appearance,setAppearance]=useState("recommended");
- const [premiumOnly,setPremiumOnly]=useState(false),[search,setSearch]=useState("");
+ const [premiumOnly,setPremiumOnly]=useState(false),[search,setSearch]=useState(""),[filtersOpen,setFiltersOpen]=useState(false);
  const query=search.trim().toLocaleLowerCase("tr");
  const sectors=[...new Set(TEMPLATE_LIB.map(t=>t.sector))].sort((a,b)=>a.localeCompare(b,"tr"));
- const groups=(sector?[sector]:sectors).map(name=>({name,items:TEMPLATE_LIB.filter(t=>t.sector===name&&(!type||t.type===type)&&(!premiumOnly||t.premium)&&[t.name,t.sector,t.desc,...t.feat].join(" ").toLocaleLowerCase("tr").includes(query))})).filter(group=>group.items.length);
- const themed=t=>({...t,appearance:appearance==="recommended"?recommendedAppearance(t):appearance});
- const featured=themed(TEMPLATE_LIB.find(t=>t.id==="mimari"));
- return html`<div class="explore tpl-catalog">
+ const ordered=[...featuredTemplates.map(catalogTemplate).filter(Boolean),...TEMPLATE_LIB.filter(t=>!featuredTemplates.includes(t.id))];
+ const matches=ordered.filter(t=>(!sector||t.sector===sector)&&(!type||t.type===type)&&(!premiumOnly||t.premium)&&[t.name,t.sector,t.desc,...t.feat].join(" ").toLocaleLowerCase("tr").includes(query));
+ const themed=t=>({...t,editorial:appearance==="recommended",appearance:appearance==="recommended"?recommendedAppearance(t):appearance});
+ return html`<div class="explore tpl-catalog gallery-page">
+  <${CollectionNav} page="sablonlar" go=${go}/>
+  <${CollectionHero} title="Şablonlar" copy="Web ve mobil tasarımları incele. Seçtiğin şablonu canlı dene, ardından Stüdyo’da kendi projenle kullan." image="mimari" caption="Mimari portföyünün web ve telefon sunumu" action=${()=>setDemo({...themed(catalogTemplate("mimari")),showDetails:true})} cta="Portföy şablonunu incele"/>
   <${CatalogNav} page="sablonlar" go=${go}/>
-  <section class="tpl-catalog-hero"><div><h1>Şablonlar</h1><p>İşinize uygun şablonu ve temayı seçin. Çalışan demoyu mobilde veya masaüstünde deneyip Stüdyo’da özelleştirin.</p></div>
-   <${TplThumb} t=${featured} eager=${true}/></section>
-  <div class="tp-filter">
+  <div class="tp-filter gallery-filters">
    <input type="search" class="in" aria-label="Şablon ara" placeholder="Şablon ara" value=${search} onInput=${e=>setSearch(e.target.value)}/>
-   <div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Paneller"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+   <button type="button" class="chip filter-toggle" aria-expanded=${filtersOpen} aria-controls="template-filter-options" onClick=${()=>setFiltersOpen(!filtersOpen)}><${Icon} n="sliders" s=${15}/> Filtreler${[type,sector,premiumOnly,appearance!=="recommended"].filter(Boolean).length||""}</button>
+   <div id="template-filter-options" class=${"gallery-filter-options"+(filtersOpen?" show":"")}><div class="seg" role="group" aria-label="Şablon türü">${[["","grid","Tümü"],["panel","apps","Paneller"],["site","globe","Web siteleri"]].map(([k,ic,l])=>html`<button key=${k} aria-pressed=${type===k} class=${type===k?"on":""} onClick=${()=>setType(k)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
    <button class=${"chip"+(premiumOnly?" on":"")} aria-pressed=${premiumOnly} onClick=${()=>setPremiumOnly(!premiumOnly)}>Premium koleksiyon</button>
    <label class="tpl-theme-label">Tema <select aria-label="Katalog teması" class="in" value=${appearance} onChange=${e=>setAppearance(e.target.value)}><option value="recommended">Önerilen</option>${TPL_APPEARANCES.map(([id,label])=>html`<option key=${id} value=${id}>${label}</option>`)}</select></label>
    <label class="tpl-sector">Kategori <select class="in" aria-label="Kategori" value=${sector} onChange=${e=>setSector(e.target.value)}><option value="">Tüm kategoriler</option>${sectors.map(s=>html`<option key=${s} value=${s}>${s}</option>`)}</select></label>
-  </div>
-  ${groups.map(({name,items})=>html`<section class="tpl-group" key=${name}><h2>${name}</h2><div class="tp-grid">${items.map(t=>html`<${TplCard} key=${t.id} t=${themed(t)} onDemo=${setDemo} onUse=${onUse}/>`)}</div></section>`)}
-  ${!groups.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSector("");setPremiumOnly(false);setSearch("")}}>Filtreleri temizle</button></div>`}
+  </div></div>
+  <section class="tpl-group"><div class="gallery-heading"><h2>${sector||"Şablon koleksiyonu"}</h2><small role="status">${matches.length} şablon</small></div><div class="gallery-grid tp-grid">${matches.map(t=>html`<${TplCard} key=${t.id} t=${themed(t)} onDemo=${setDemo}/>`)}</div></section>
+  ${!matches.length&&html`<div class="tpl-empty" role="status"><h3>Bu filtrelere uygun şablon yok</h3><button class="btn g" onClick=${()=>{setType("");setSector("");setPremiumOnly(false);setSearch("")}}>Filtreleri temizle</button></div>`}
   ${demo&&html`<${TplDemo} t=${demo} canAdapt=${canAdapt} close=${()=>setDemo(null)} onUse=${t=>{setDemo(null);onUse(t)}}/>`}
  </div>`;
 }
@@ -8347,8 +8344,7 @@ function CatalogStarter({kind,text="",onDemo,go}){
  return html`<section class="catalog-starter">
   <div class="catalog-starter-head"><div><h2>${kind==="site"?"Web sitesi örnekleri":"Uygulama örnekleri"}</h2><p>${selected?selected[0]:"Çalışan bir örnek açarak başlayın."}</p></div>
   <label>Konu <select aria-label="Örnek konusu" class="in" value=${selected?.[0]||""} onChange=${e=>setTopic(e.target.value)}><option value="">Genel</option>${CATALOG_CONTEXT.map(([name])=>html`<option key=${name}>${name}</option>`)}</select></label></div>
-  <div class="catalog-starter-grid">${choices.map(t=>html`<button key=${t.id} class="catalog-example" onClick=${()=>onDemo({...t,appearance:recommendedAppearance(t),previewDevice:kind==="site"?"desktop":"phone",projectKind:kind})}>
-  <${TplThumb} t=${{...t,appearance:recommendedAppearance(t)}}/><span><b>${t.name}</b><small>${t.sector}</small></span></button>`)}</div>
+  <div class="catalog-starter-grid">${choices.map(t=>html`<${GalleryTile} cls="catalog-example" key=${t.id} title=${t.name} meta=${t.sector} description=${t.desc} art=${html`<${GalleryCover} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>onDemo({...t,showDetails:true,appearance:recommendedAppearance(t),previewDevice:kind==="site"?"desktop":"phone",projectKind:kind})}/>`)}</div>
   <${CatalogNav} go=${go}/>
  </section>`;
 }
@@ -8554,14 +8550,14 @@ function KreatorPage({auth,toast,openAuth}){
    <section class="cr-card"><h3><${Icon} n="code" s=${15}/>Gönderilen veri</h3><pre class="cr-pre">${JSON.stringify({event:"gitmapp.post",id:"…",title:"Yeni latte tarifi",platforms:["instagram","tiktok"],caption:"kanca",captions:{instagram:"…",tiktok:"…"},hashtags:["#kahve"],media:[{url:"https://…",type:"video"}],scheduled_at:"2026-12-01T16:30:00.000Z"},null,2)}</pre>
     <h3 style=${{marginTop:"14px"}}><${Icon} n="plug" s=${15}/>Bağlı araçlar</h3><div class="cr-tools">${[["Higgsfield","görsel ve video",u?.higgsfield],["Canva","tasarım",u?.canva],["Webhook","otomatik paylaşım",hook]].map(([n,d,on])=>html`<span key=${n} class=${on?"on":""}><i></i><b>${n}</b><small>${on?"bağlı":"bağlı değil"} · ${d}</small></span>`)}</div></section></div>`}
  </div>`}
-function ConnectorsPage({toast}){
+function ConnectorsPage({toast,go}){
  const [st,setSt]=useState(connState);const [tab,setTab]=useState("home");const [q,setQ]=useState("");const [sel,setSel]=useState(null);const [add,setAdd]=useState(false);const [custom,setCustom]=useState(null);
  useEffect(()=>{const h=()=>setSt(connState());addEventListener("gm:conns",h);return()=>removeEventListener("gm:conns",h)},[]);
- const save=n=>{setSt(n);LS.set("conns",n)};const on=c=>!!(st[c.id]&&st[c.id].on);const enabled=CONN.filter(on).length+Object.entries(st).filter(([k,v])=>/^(custom|mcp):/.test(k)&&v.on).length;
+ const save=n=>{setSt(n);LS.set("conns",n);dispatchEvent(new Event("gm:conns"))};const on=c=>!!(st[c.id]&&st[c.id].on);const enabled=CONN.filter(on).length+Object.entries(st).filter(([k,v])=>/^(custom|mcp):/.test(k)&&v.on).length;
  const list=CONN.filter(c=>(!q||(c.n+c.d).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr")))&&(tab==="home"||tab==="all"||(tab==="on"?on(c):c.cat.includes(tab))));
  const customs=Object.entries(st).filter(([k,v])=>/^(custom|mcp):/.test(k)&&(tab==="all"||tab==="on"&&v.on)&&(!q||((v.name||"")+" "+(v.url||"")).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))));
- const card=c=>html`<button class="ccard" key=${c.id} onClick=${()=>setSel(c)}><span style=${{position:"relative"}}><${ConnIcon} c=${c}/>${on(c)&&html`<i class="con-dot"></i>`}</span><div><b>${c.n}${c.gm?html` <em class="gm-tag">Gitmapp</em>`:""}${c.soon?html` <em class="soon-tag">Yakında</em>`:""}</b><span>${c.d}</span></div></button>`;
- return html`<div class="conn">
+ const card=c=>html`<${GalleryTile} key=${c.id} cls="ccard" title=${c.n} meta=${c.d} description=${c.how||c.d} tag=${on(c)?"Etkin":c.soon?"Yakında":""} art=${html`<${ConnectorArt} c=${c}/>`} action=${()=>setSel(c)}/>`;
+ return html`<div class="explore gallery-page"><${CollectionNav} page="baglantilar" go=${go}/><${CollectionHero} title="Eklentiler" copy="Ödeme, randevu, mesajlaşma ve veri servislerini uygulamana ekle." image="plugins" caption="Eklenti ürün koleksiyonu"/><div class="conn gallery-connectors">
   <aside class="conn-side">
    ${[["home","home","Ana sayfa"],["all","grid","Tüm bağlantılar"],["on","check","Etkin",enabled]].map(([k,ic,l,b])=>html`<button key=${k} class=${"cs"+(tab===k?" on":"")} onClick=${()=>setTab(k)}><${Icon} n=${ic} s=${17}/><span>${l}</span>${b!=null?html`<em>${b}</em>`:""}</button>`)}
    <div class="cs-sep"></div>
@@ -8572,13 +8568,12 @@ function ConnectorsPage({toast}){
   </aside>
   <div class="conn-main">
    <div class="conn-top"><${Icon} n="plug" s=${17}/><span class="crumb">Bağlantılar${tab!=="home"?html` <i>/</i> ${tab==="all"?"Tümü":tab==="on"?"Etkin":(CONN_CATS.find(x=>x[0]===tab)||[])[2]}`:""}</span><span style=${{flex:1}}></span><label class="conn-q"><${Icon} n="search" s=${15}/><input type="search" aria-label="Bağlantı ara" placeholder="Uygulamana bir şey bağla… (ör. WhatsApp, harita, ödeme)" value=${q} onInput=${e=>{setQ(e.target.value);if(tab==="home"&&e.target.value)setTab("all")}}/></label></div>
-   ${tab==="home"&&!q&&html`<div class="conn-hero"><div><h2>Uygulamana bir beyin ver</h2><p>Bulut kayıt, ödeme, WhatsApp, harita ve analitik… Etkinleştirdiğin servisleri yapay zekâ yeni uygulamalarına kendisi ekler. Anahtar ezberlemek yok.</p><button class="btn" onClick=${()=>setSel(CONN[0])}><${Icon} n="db" s=${15}/> Gitmapp Bulut Kayıt'ı keşfet</button></div><div class="conn-art"><${BrandMark} s=${120}/><span class="ca-ring"></span><span class="ca-ring r2"></span>${["chat","mapPin","cardPay","chart","db","send"].map((ic,i)=>html`<span key=${i} class="ca-orb" style=${{["--i"]:i}}><${Icon} n=${ic} s=${18} c="currentColor"/></span>`)}</div></div>`}
    ${tab==="home"&&!q?html`${CONN_CATS.map(([k,,l])=>html`<section key=${k} class="conn-sec"><h3><button type="button" onClick=${()=>setTab(k)}>${l} <${Icon} n="chevRight" s=${16}/></button></h3><div class="cgrid">${CONN.filter(c=>c.cat[0]===k).slice(0,6).map(card)}</div></section>`)}`
    :html`<div class="cgrid" style=${{marginTop:18}}>${list.map(card)}${tab==="on"||tab==="all"?customs.map(([k,v])=>html`<button class="ccard" key=${k} onClick=${()=>setCustom({edit:k,...v})}><span style=${{position:"relative"}}><span class="cicon" style=${{width:44,height:44,borderRadius:12}}><${Icon} n=${k.startsWith("mcp:")?"server":"plug"} s=${21}/></span>${v.on&&html`<i class="con-dot"></i>`}</span><div><b>${v.name} <em class="soon-tag" style=${{background:"#232323",color:"#c4c4bd"}}>${k.startsWith("mcp:")?"MCP":"Özel"}</em></b><span>${v.url}</span></div></button>`):""}${!list.length&&!customs.length?html`<div class="empty" style=${{gridColumn:"1/-1"}}>Sonuç yok</div>`:""}</div>`}
   </div>
   ${sel&&html`<${ConnSheet} c=${sel} v=${st[sel.id]||{}} close=${()=>setSel(null)} onSave=${v=>{save({...st,[sel.id]:v});toast(v.on?sel.n+" etkinleştirildi":sel.n+" kapatıldı");setSel(null)}}/>`}
-  ${custom&&html`<${CustomConn} kind=${custom.edit?custom.edit.split(":")[0]:custom} v=${custom.edit?custom:null} close=${()=>setCustom(null)} onSave=${(k,v)=>{const n={...st};if(v)n[k]=v;else delete n[k];save(n);toast(v?"Kaydedildi":"Silindi");setCustom(null)}}/>`}
- </div>`;
+  ${custom&&html`<${CustomConn} kind=${custom.edit?(custom.kind||custom.edit.split(":")[0]):custom} v=${custom.edit?custom:null} close=${()=>setCustom(null)} onSave=${(k,v)=>{const n={...st};if(v)n[k]=v;else delete n[k];save(n);toast(v?"Kaydedildi":"Silindi");setCustom(null)}}/>`}
+ </div></div>`;
 }
 function ConnSheet({c,v,close,onSave}){const [cfg,setCfg]=useState(v.cfg||{});const ready=c.f.every(([k])=>(cfg[k]||"").trim());
  const panel=useRef(null);
@@ -8594,12 +8589,12 @@ function ConnSheet({c,v,close,onSave}){const [cfg,setCfg]=useState(v.cfg||{});co
 function CustomConn({kind,v,close,onSave}){const [f,setF]=useState(v||{name:"",url:"",desc:"",on:true});const ok=f.name.trim()&&/^https:\/\//.test(f.url);
  const T={custom:["Özel bağlayıcı","Uygulamanın çağıracağı herkese açık bir API ekle. Yapay zekâ bu API'yi fetch ile kullanır."],mcp:["MCP sunucusu","Gitmapp ajanının kullanacağı bir MCP sunucusu kaydet. Ajan modunda MCP araç çağrısı yakında etkinleşecek; şimdiden kaydedebilirsin."],reg:["MCP kayıt defteri","Bir MCP sunucuları dizini (registry) adresi kaydet."]}[kind]||["Özel",""];
  const key=v&&v.edit?v.edit:(kind==="custom"?"custom:":"mcp:")+Date.now().toString(36);
- return html`<${Modal} close=${close} w=${520}><h2 style=${{marginTop:0}}>${T[0]}</h2><p class="sub">${T[1]}</p>
+ return html`<${UiDialog} close=${close} width="520px" label=${T[0]}><div class="adapter-dialog"><h2 style=${{marginTop:0}}>${T[0]}</h2><p class="sub">${T[1]}</p>
   <label class="fl2"><span>Ad</span><input class="in" value=${f.name} placeholder=${kind==="custom"?"Hava durumu API":"Şirket içi araçlar"} onInput=${e=>setF({...f,name:e.target.value})}/></label>
   <label class="fl2"><span>Adres (https)</span><input class="in" value=${f.url} placeholder="https://api.ornek.com/v1" onInput=${e=>setF({...f,url:e.target.value})}/></label>
   ${kind==="custom"&&html`<label class="fl2"><span>Ne işe yarar? (yapay zekâ için)</span><textarea class="in" rows="3" value=${f.desc} placeholder="GET /weather?city=... şehir için sıcaklık döndürür" onInput=${e=>setF({...f,desc:e.target.value})}></textarea></label>`}
   <div class="csh-how"><${Icon} n="lock" s=${15}/><span>Gizli API anahtarı yazmayın; uygulama kodu tarayıcıda çalıştığı için herkes görebilir.</span></div>
-  <div style=${{display:"flex",gap:8,marginTop:14}}><button class="btn" disabled=${!ok} onClick=${()=>onSave(key,{name:f.name.trim(),url:f.url.trim(),desc:f.desc||"",on:true})}>Kaydet</button>${v&&html`<button class="btn g" onClick=${()=>onSave(key,null)}>Sil</button>`}<button class="btn g" onClick=${close}>Vazgeç</button></div></${Modal}>`}
+  <div style=${{display:"flex",gap:8,marginTop:14}}><button class="btn" disabled=${!ok} onClick=${()=>onSave(key,{kind,name:f.name.trim(),url:f.url.trim(),desc:f.desc||"",on:true})}>Kaydet</button>${v&&html`<button class="btn g" onClick=${()=>onSave(key,null)}>Sil</button>`}<button class="btn g" onClick=${close}>Vazgeç</button></div></div></${UiDialog}>`}
 const activeIntegrations=()=>{const st=connState();return [...CONN.filter(c=>!c.soon&&st[c.id]&&st[c.id].on).map(c=>({id:c.id,cfg:st[c.id].cfg||{}})),...Object.entries(st).filter(([k,v])=>k.startsWith("custom:")&&v.on).map(([k,v])=>({id:"custom",cfg:{name:v.name,url:v.url,desc:v.desc}}))]};
 
 // Projeler (Lovable benzeri ızgara)
@@ -8662,7 +8657,7 @@ function Automations({toast}){const [w,setW]=useState(()=>LS.get("autoWish",[])|
 function CommandPalette({close,go,openInStudio,onTpl,auth}){
  const [q,setQ]=useState("");const [i,setI]=useState(0);const [apps,setApps]=useState([]);const [store,setStore]=useState([]);const ref=useRef(null);
  useEffect(()=>{ref.current&&ref.current.focus();if(API_ON){if(auth.user)api("GET","/api/apps").then(j=>setApps(j.apps)).catch(()=>{});api("GET","/api/store").then(j=>setStore(j.apps)).catch(()=>{})}},[]);
- const P=[["studio","hammer","Yeni proje","Geliştir"],["uygulamalarim","folder","Projeler",""],["sablonlar","layers","Şablonlar",""],["temalar","palette","Temalar",""],["ui-kitler","grid","UI Kitler",""],["depo","box","Depo","Site görsellerini indir ve ayrıştır"],["beceriler","brain","Beceri Kütüphanesi","Sektörüne göre hazır uygulama becerileri"],["akademi","bookOpen","Akademi","Dersler, komutlar ve anlatımlı turlar"],["baglantilar","plug","Bağlantılar",""],["magaza","star","Keşfet",""],["eylem","bell","Eylem merkezi",""],["modeller","cpu","Dil modelleri",""],["hesabim","user","Hesabım",""],["guncel","download","Güncellemeler",""]];
+ const P=[["muhendis","code","Oracle ve SAP","Geliştirici atölyesi"],["bagdastiricilar","plug","Bağdaştırıcılar","Hesaplar ve API"],["studio","hammer","Yeni proje","Geliştir"],["uygulamalarim","folder","Projeler",""],["sablonlar","layers","Şablonlar",""],["temalar","palette","Temalar",""],["ui-kitler","grid","UI Kitler",""],["depo","box","Depo","Site görsellerini indir ve ayrıştır"],["beceriler","brain","Beceri Kütüphanesi","Sektörüne göre hazır uygulama becerileri"],["akademi","bookOpen","Akademi","Dersler, komutlar ve anlatımlı turlar"],["baglantilar","plug","Bağlantılar",""],["magaza","star","Keşfet",""],["eylem","bell","Eylem merkezi",""],["modeller","cpu","Dil modelleri",""],["hesabim","user","Hesabım",""],["guncel","download","Güncellemeler",""]];
  const ql=q.toLocaleLowerCase("tr");const m=s=>!ql||String(s).toLocaleLowerCase("tr").includes(ql);
  const res=[...P.filter(p=>m(p[2])).map(p=>({g:"Sayfalar",ic:p[1],t:p[2],s:p[3],run:()=>go(p[0])})),...apps.filter(a=>m(a.title)).slice(0,6).map(a=>({g:"Projelerin",ic:"folder",t:a.title,s:a.status==="published"?"Yayında":"Taslak",run:async()=>{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}})),...TEMPLATE_LIB.filter(t=>m(t.name+" "+t.sector)).map(t=>({g:"Şablonlar",ic:"layers",t:t.name,s:t.sector,run:()=>onTpl(t)})),...store.filter(a=>ql&&m(a.title)).slice(0,6).map(a=>({g:"Mağaza",ic:"apps",t:a.title,s:a.author,run:()=>go("app/"+a.slug)})),...(ghFind(q)?[{g:"GitHub",ic:"github",t:"Önizle: "+ghShort(ghFind(q)),s:"Geliştir ve Tasarım'a al",run:()=>dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(q),auto:false}}))},{g:"GitHub",ic:"rocket",t:"Projeyi devral: "+ghShort(ghFind(q)),s:"Kontrol et ve canlıya al",run:()=>dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghFind(q),auto:true}}))}]:[]),...(ql?[{g:"Yapay zekâ",ic:"sparkles",t:"“"+q+"” için uygulama yap",s:"Geliştir'de başlat",run:()=>go("studio",{prompt:q})}]:[])];
  const pick=r=>{close();r&&r.run()};
@@ -9083,7 +9078,7 @@ function Narrator({go,view}){
     <button class="btn s" onClick=${()=>{setAuto(false);next()}}>${i+1>=steps.length?"Bitir":"Sonraki"}</button>
     <button class="ib sm" aria-label="Turu kapat" onClick=${()=>close("exit")}><${Icon} n="x" s=${15}/></button></div><small class="nr-n">${TOURS[tour].name} · ${i+1}/${steps.length}</small>`)}</div>`}
   ${tip&&!tour&&html`<div class="nr-ui" key=${tip.k}>${bubble(tip,tip.t,tip.s,html`<small class="nr-n">Anlatıcı modu açık · menüden kapatabilirsin</small>`)}</div>`}
-  <div class="nr-ui nr-fabw">${hint&&!tour&&html`<button class="nr-hint" onClick=${()=>startTour("genel")}><b>Gitmapp'te yeni misin?</b><span>2 dakikalık anlatımlı turu başlat</span><i role="button" aria-label="Kapat" onClick=${e=>{e.stopPropagation();setHint(false);LS.set("nrSeen",true)}}>✕</i></button>`}
+  <div class="nr-ui nr-fabw">${hint&&!tour&&view==="ana"&&html`<button class="nr-hint" onClick=${()=>startTour("genel")}><b>Gitmapp'te yeni misin?</b><span>2 dakikalık anlatımlı turu başlat</span><i role="button" aria-label="Kapat" onClick=${e=>{e.stopPropagation();setHint(false);LS.set("nrSeen",true)}}>✕</i></button>`}
    ${menu&&html`<div class="nr-menu" role="menu"><b>Rehber</b>${Object.entries(TOURS).map(([k,v])=>html`<button key=${k} role="menuitem" onClick=${()=>startTour(k)}><${Icon} n="play" s=${13}/><span>${v.name}<small>${v.desc} · ${v.dur}</small></span></button>`)}
     ${PAGE_HELP[view]&&html`<button role="menuitem" onClick=${()=>{setMenu(false);const el=nrFind("main h1,main h2,main");setTip({...(el?(()=>{const r=el.getBoundingClientRect();return {x:r.left,y:r.top,w:Math.min(r.width,400),h:Math.min(r.height,60)}})():{c:true}),t:TITLES_ALL[view]||"Bu sayfa",s:PAGE_HELP[view],k:Date.now()});nrSpeak(PAGE_HELP[view],voice)}}><${Icon} n="info" s=${13}/><span>Bu sayfayı anlat</span></button>`}
     <label class="nr-sw"><input type="checkbox" checked=${explain} onChange=${e=>setExplain(e.target.checked)}/><span>Anlatıcı modu<small>Bastığın her düğmenin ne işe yaradığını söyler</small></span></label>
@@ -9156,7 +9151,7 @@ function AdminUx(){
 /* ================= BECERİ KÜTÜPHANESİ: sektöre göre test edilmiş uygulama planları ================= */
 const SKL_SEC=[["MODÜLLER","Neler var"],["EKRANLAR","Ekranlar"],["KURALLAR","İş kuralları"],["NOT","Not"],["VERİ","Veri modeli"],["ENTEGRASYON İPUCU","Entegrasyon"]];
 const skillParts=b=>{const o={};let k=null;for(const line of String(b||"").split("\n")){const m=line.match(/^([A-ZÇĞİÖŞÜ ]{2,30}):\s*(.*)$/);if(m&&SKL_SEC.some(s=>s[0]===m[1])){k=m[1];o[k]=m[2]}else if(k)o[k]+=" "+line.trim()}return o};
-function SkillLibrary({go,toast,apiOn,onTpl}){
+function SkillLibrary({go,toast,apiOn,onTpl,healthError,retry}){
  const [how,setHow]=useState(""),[data,setData]=useState(null),[err,setErr]=useState(""),[on,setOn]=useState(skillsOn),[q,setQ]=useState(""),[open,setOpen]=useState(""),[sec,setSec]=useState(()=>{const m=location.hash.match(/[?&]sektor=([\w-]+)/);return m?m[1]:""});
  useEffect(()=>{if(!apiOn)return;setErr("");api("GET","/api/skills").then(setData).catch(e=>setErr(e.message))},[apiOn]);
  useEffect(()=>{const h=()=>setOn(skillsOn());addEventListener("gm:skills",h);return()=>removeEventListener("gm:skills",h)},[]);
@@ -9164,46 +9159,46 @@ function SkillLibrary({go,toast,apiOn,onTpl}){
  const save=n=>{setOn(n);LS.set("skills",n);dispatchEvent(new Event("gm:skills"))};
  const tog=s=>{const has=on.includes(s.id);save(has?on.filter(x=>x!==s.id):[...on,s.id]);toast(has?"Beceri kaldırıldı":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
  const start=s=>{if(!on.includes(s.id))save([...on.filter(x=>!(data.skills.find(y=>y.id===x)?.kind==="gelistirme")),s.id]);toast(s.name+" becerisiyle başlıyor");go("studio",{prompt:s.test||s.name+" uygulaması yap; örnek verilerle dolu olsun."})};
- if(err)return html`<section><h1>Beceri Kütüphanesi</h1><div class="box" role="alert">${err}</div></section>`;
- if(!data)return html`<section><h1>Beceri Kütüphanesi</h1><p role="status">Yükleniyor…</p></section>`;
+ const heading=html`<${CollectionNav} page="beceriler" go=${go}/><${CollectionHero} title="Beceriler" copy="Sektörünü seç. Uygun iş kurallarını, ekranları ve veri modelini projene ekle." image="skills" caption="Sektörel beceri kütüphanesi"/>`;
+ if(err||healthError||!data)return html`<section class="explore gallery-page">${heading}<p role="status">${err||(healthError?"Beceriler yüklenemedi.":"Beceriler yükleniyor…")}</p>${(err||healthError)&&html`<button type="button" class="btn g" onClick=${()=>{if(healthError)retry();else {setErr("");api("GET","/api/skills").then(setData).catch(e=>setErr(e.message))}}}>Tekrar dene</button>`}</section>`;
  const plans=data.skills.filter(s=>s.kind==="gelistirme");const sectors=data.sectors||[];
  const qq=q.trim().toLocaleLowerCase("tr");
  const match=s=>!qq||(s.name+" "+s.who+" "+(s.body||"")).toLocaleLowerCase("tr").includes(qq);
  const cur=sectors.find(s=>s.id===sec);
  const list=qq?plans.filter(match):cur?plans.filter(s=>s.sector===cur.id):[];
- const card=s=>{const p=skillParts(s.body);const loaded=on.includes(s.id);const mods=(p["MODÜLLER"]||"").split(/,\s*/).filter(Boolean);const sct=sectors.find(x=>x.id===s.sector);
-  return html`<article class=${"box skl-card"+(loaded?" on":"")} key=${s.id}>
-   <div class="skl-ct"><div><h3>${s.name}</h3><p>${s.who}</p></div>${loaded&&html`<span class="skl-badge"><${Icon} n="check" s=${12} w=${2.4}/> Yüklü</span>`}</div>
-   ${qq&&sct&&html`<button type="button" class="skl-sec" onClick=${()=>{setQ("");pick(sct.id)}}>${sct.name}</button>`}
-   <div class="skl-mods">${mods.slice(0,8).map(m=>html`<span key=${m}>${m.replace(/\.$/,"")}</span>`)}</div>
-   <div class="skl-m"><span>v${s.version}</span>${s.score!=null&&html`<span title="Son otomatik test puanı">test ${s.score}/100</span>`}<span>${s.uses} kullanım</span>${s.success!=null&&html`<span class=${s.success>=70?"ok":"lo"}>başarı %${s.success}</span>`}</div>
-   ${tplsForSkill(s.id).length>0&&html`<div class="skl-tpl"><small>Uygun şablon:</small>${tplsForSkill(s.id).map(t=>html`<button key=${t.id} class="chip" title="Beceriyi yükleyip şablonu Stüdyo'da açar" onClick=${()=>{loadSkill(s.id);onTpl(t)}}>${t.emoji||"✨"} ${t.name}</button>`)}</div>`}
-   ${how===s.id&&html`<${SkillHowTo} s=${s} sector=${s.sector} onTpl=${onTpl} go=${go} toast=${toast}/>`}
-   ${open===s.id&&html`<dl class="skl-body">${SKL_SEC.filter(([k])=>p[k]&&k!=="MODÜLLER").map(([k,l])=>html`<div key=${k}><dt>${l}</dt><dd>${p[k]}</dd></div>`)}</dl>`}
-   <div class="skl-act"><button class="btn s" onClick=${()=>start(s)}><${Icon} n="sparkles" s=${14}/> Bununla uygulama yap</button><button class=${"btn g s"+(loaded?" on":"")} onClick=${()=>tog(s)}>${loaded?"Kaldır":"Yükle"}</button><button class="btn g s" aria-expanded=${how===s.id} onClick=${()=>setHow(how===s.id?"":s.id)}>${how===s.id?"Yol haritasını gizle":"Nasıl kullanılır"}</button><button class="btn g s" aria-expanded=${open===s.id} onClick=${()=>setOpen(open===s.id?"":s.id)}>${open===s.id?"Gizle":"Ayrıntı"}</button></div>
-  </article>`};
- return html`<section class="skl">
-  <div class="skl-hero"><h1>Beceri Kütüphanesi</h1><p class="sub">${sectors.length} sektör, ${plans.length} uygulama planı. Her beceri o işin yazılımının baştan sona nasıl yapılacağını bilir: modüller, ekranlar, veri modeli ve Türkiye'ye özgü iş kuralları. Sektörünü seç, tek tıkla uygulamanı başlat. Beceriler her kullanımda otomatik test edilip iyileştirilir.</p>
+ const selected=plans.find(s=>s.id===open);
+ const sample=s=>tplsForSkill(s.id)[0]||catalogTemplate(sectorExample[s.sector]||"crm");
+ const card=s=>html`<${GalleryTile} key=${s.id} title=${s.name} cls="skl-card" meta=${s.who} tag=${on.includes(s.id)?"Yüklü":""}
+  art=${html`<${SkillCover} skill=${s}/>`} preview=${html`<${TplThumb} t=${sample(s)}/>`} description=${skillParts(s.body)["MODÜLLER"]||s.who} action=${()=>{setHow("");setOpen(s.id)}}/>`;
+ return html`<section class="explore gallery-page skl">${heading}
+  <div class="gallery-search skl-hero"><small>${sectors.length} sektör, ${plans.length} uygulama planı</small>
    <label class="skm-q skl-q"><${Icon} n="search" s=${16}/><input aria-label="Beceri ara" placeholder="Sektör ya da iş ara: eczane, aidat, hakediş, kuaför…" value=${q} onInput=${e=>setQ(e.target.value)}/></label></div>
   ${qq?html`<div><p class="sub">${list.length} beceri bulundu</p><div class="skl-grid">${list.map(card)}</div>${!list.length&&html`<div class="box skl-empty">Bu aramayla beceri yok. Aradığın sektörü <b>Yeni</b> ekranında anlatman yeterli; yapay zekâ genel becerilerle yine de üretir.</div>`}</div>`:
   cur?html`<div><div class="skl-top"><button class="btn g s" onClick=${()=>pick("")}><${Icon} n="arrowLeft" s=${15}/> Tüm sektörler</button><${Tile} n=${cur.icon} s=${40}/><div><h2>${cur.name}</h2><p class="sub">${cur.desc}</p></div></div><div class="skl-grid">${list.map(card)}</div></div>`:
-  html`<div><div class="skl-secs">${sectors.map(s=>{const n=plans.filter(p=>p.sector===s.id).length;const l=plans.filter(p=>p.sector===s.id&&on.includes(p.id)).length;return html`<button type="button" class="box skl-tile" key=${s.id} onClick=${()=>pick(s.id)}><${Tile} n=${s.icon} s=${44}/><div><b>${s.name}</b><span>${s.desc}</span><em>${n} beceri${l?" · "+l+" yüklü":""}</em></div><${Icon} n="chevRight" s=${16}/></button>`})}</div>
+  html`<div><div class="gallery-grid skl-secs">${sectors.map(s=>{const n=plans.filter(p=>p.sector===s.id).length;const t=catalogTemplate(sectorExample[s.id]||"crm");return html`<${GalleryTile} key=${s.id} cls="skl-tile" title=${s.name} meta=${n+" beceri"} description=${s.desc} art=${html`<${GalleryCover} t=${t}/>`} preview=${html`<${TplThumb} t=${t}/>`} action=${()=>pick(s.id)}/>`})}</div>
    <div class="box skl-more"><${Icon} n="brain" s=${20}/><div><b>Tasarım, kalite ve iş süreci becerileri</b><span>Kurumsal panel, kamu portalı, temiz mimari, KVKK, erişilebilirlik ve daha fazlası. Sektör planı yüklediğinde uygun tasarım ve kalite becerisi kendiliğinden eklenir.</span></div><button class="btn g s" onClick=${()=>dispatchEvent(new Event("gm:beceri"))}>Tümünü yönet</button></div></div>`}
+ ${selected&&html`<${UiDialog} label=${selected.name} width="660px" close=${()=>setOpen("")}><div class="skill-detail"><div class="eng-head"><h2>${selected.name}</h2><button class="ib" aria-label="Kapat" onClick=${()=>setOpen("")}><${Icon} n="x"/></button></div><p>${selected.who}</p>
+ <div class="skl-m"><span>v${selected.version}</span><span>${selected.uses} kullanım</span>${selected.score!=null&&html`<span>Test ${selected.score}/100</span>`}${selected.success!=null&&html`<span>Başarı %${selected.success}</span>`}</div>
+ <div class="adapter-actions"><button class="btn" onClick=${()=>start(selected)}>Bununla uygulama yap</button><button class="btn g" onClick=${()=>tog(selected)}>${on.includes(selected.id)?"Beceriyi kaldır":"Beceriyi yükle"}</button></div>
+ <dl class="skl-body">${Object.entries(skillParts(selected.body)).map(([k,v])=>html`<div key=${k}><dt>${SKL_SEC.find(pair=>pair[0]===k)?.[1]||k}</dt><dd>${v}</dd></div>`)}</dl>
+ ${tplsForSkill(selected.id).length>0&&html`<h3>Uygun şablonlar</h3><div class="adapter-actions">${tplsForSkill(selected.id).map(t=>html`<button class="chip" key=${t.id} onClick=${()=>{loadSkill(selected.id);onTpl(t)}}>${t.name}</button>`)}</div>`}
+ <button class="chip" aria-expanded=${!!how} onClick=${()=>setHow(how?"":selected.id)}>Nasıl kullanılır</button>${how&&html`<${SkillHowTo} s=${selected} sector=${selected.sector} onTpl=${onTpl} go=${go} toast=${toast}/>`}</div></${UiDialog}>`}
  </section>`;
 }
 function SkillsModal({close,toast,account}){
  const [on,setOn]=useState(skillsOn);const [tab,setTab]=useState("gelistirme");const [q,setQ]=useState("");const [srv,setSrv]=useState(null);const [open,setOpen]=useState("");const [last,setLast]=useState(()=>LS.get("lastSkillRun",null));
  const [group,setGroup]=useState("");const [design,setDesign]=useState([]),[designError,setDesignError]=useState("");
- useEffect(()=>{const h=e=>{if(e.key==="Escape")close()};addEventListener("keydown",h);if(API_ON)api("GET","/api/skills").then(j=>setSrv(j.skills||[])).catch(()=>setSrv([]));else setSrv([]);return()=>removeEventListener("keydown",h)},[]);
+ useEffect(()=>{const h=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal"))close()};addEventListener("keydown",h);if(API_ON)api("GET","/api/skills").then(j=>setSrv(j.skills||[])).catch(()=>setSrv([]));else setSrv([]);return()=>removeEventListener("keydown",h)},[]);
  useEffect(()=>{if(tab!=="sahne")return;let active=true;setDesign([]);setDesignError("");api("GET","/api/design-skills").then(j=>{if(active)setDesign(j.skills)}).catch(e=>{if(active)setDesignError(e.message)});return()=>{active=false}},[tab,account]);
  const all=[...(srv||[]).map(x=>({...x,srv:true,n:x.name,d:x.who})),...SKILLS.map(x=>({...x,kind:x.group?"is":"hizli"}))];
  const tog=id=>{const n=on.includes(id)?on.filter(x=>x!==id):[...on,id];setOn(n);LS.set("skills",n);dispatchEvent(new Event("gm:skills"));const x=all.find(s=>s.id===id);toast(on.includes(id)?"Beceri kaldırıldı":x&&x.kind==="gelistirme"?"Uygulama planı yüklendi · tasarım ve temiz mimari becerileri de birlikte uygulanır":"Beceri yüklendi · yeni üretimlerde kullanılacak")};
  const vote=good=>{api("POST","/api/skills/feedback",{run:last.id,good}).then(()=>{toast(good?"Teşekkürler · beceri puanı arttı":"Teşekkürler · beceri bu nota göre iyileştirilecek");LS.set("lastSkillRun",null);setLast(null)}).catch(e=>toast(e.message))};
  const qq=q.toLocaleLowerCase("tr");
  const list=all.filter(x=>(tab==="yuklu"?on.includes(x.id):x.kind===tab)&&(tab!=="is"||!group||x.group===group)&&(!q||(x.n+" "+x.d+" "+(x.group||"")+" "+(x.body||"")).toLocaleLowerCase("tr").includes(qq)));
+ const selected=all.find(x=>x.id===open);
  const count=k=>k==="yuklu"?on.length:all.filter(x=>x.kind===k).length;
  return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="skm" onClick=${e=>e.stopPropagation()}>
-  <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><p>Yapay zekâya test edilmiş uzmanlık yükle. CRM, ERP, e-Fatura, EBYS gibi yazılımların baştan sona nasıl yapılacağını bilen planlar, iş süreçleri, tasarım ve kalite kuralları. Her beceri gerçek kullanımlardaki başarısına göre iyileştirilir.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
+  <div class="skm-h"><div style=${{flex:1}}><h2>Beceriler</h2><p>İş akışını seç, kullanım ayrıntılarını incele ve beceriyi projelerine ekle.</p></div><button class="ib" onClick=${close}><${Icon} n="x" s=${16}/></button></div>
   ${last&&last.id&&html`<div class="skv"><${Icon} n="brain" s=${15}/><span>Son üretimde yüklü beceriler işe yaradı mı?</span><button class="skb" onClick=${()=>vote(true)}>👍 Evet</button><button class="skb" onClick=${()=>vote(false)}>👎 Hayır</button><button class="ib sm" aria-label="Kapat" onClick=${()=>{LS.set("lastSkillRun",null);setLast(null)}}><${Icon} n="x" s=${13}/></button></div>`}
   <div class="skm-tabs">${[["yuklu","Yüklü"],["gelistirme","Uygulama planları"],["is","İş süreçleri"],["tasarim","Tasarım"],["kalite","Kalite"],["hizli","Hızlı ayarlar"],["sahne","Tasarım sahnesi"]].map(([k,l])=>html`<button key=${k} class=${tab===k?"on":""} onClick=${()=>setTab(k)}>${l} ${k!=="sahne"&&html`<em>${count(k)}</em>`}</button>`)}</div>
   <label class="skm-q"><${Icon} n="search" s=${16}/><input placeholder="Beceri ara: crm, fatura, izin, belediye…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
@@ -9211,8 +9206,12 @@ function SkillsModal({close,toast,account}){
   <p role="status">${designError}</p><div class="skm-g">${design.filter(x=>(x.name+" "+x.instruction).toLocaleLowerCase("tr").includes(qq)).map(x=>html`<div class="skc" key=${x.name}><b>@${x.name}</b><p>${x.instruction}</p><small>${x.personal?"Kişisel":"Gitmapp"}</small></div>`)}</div>`:html`
   ${tab==="is"&&html`<label style=${{display:"block",marginTop:10}}>İş alanı <select aria-label="İş alanı" value=${group} onChange=${e=>setGroup(e.target.value)}><option value="">Tüm alanlar</option>${["Sektör","SaaS","ERP","Otomasyon","GitSap","Oracle","GitmappGT"].map(g=>html`<option key=${g}>${g}</option>`)}</select></label>`}
   ${srv===null&&!["hizli","is"].includes(tab)?html`<div class="empty">Beceriler yükleniyor…</div>`:!list.length?html`<div class="empty">${tab==="yuklu"?"Henüz beceri yüklemedin.":"Bu aramayla beceri bulunamadı."}</div>`:""}
-  <div class="skm-g" style=${{marginTop:12}}>${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.srv?"Kimler kullanır: "+x.d:x.d}</p>
-   ${x.srv?html`<div class="skc-m"><span>v${x.version}</span>${x.score!=null&&html`<span title="Son test puanı">test ${x.score}</span>`}<span>${x.uses} kullanım</span>${x.success!=null&&html`<span class=${x.success>=70?"ok":"lo"}>başarı %${x.success}</span>`}<button class="skc-x" onClick=${()=>setOpen(open===x.id?"":x.id)}>${open===x.id?"Gizle":"İçeriği gör"}</button></div>${open===x.id&&html`<pre class="skc-b">${x.body}</pre>`}`:html`${x.check&&html`<details><summary>Kabul senaryosu</summary><p>${x.check}</p></details>`}${x.source&&html`<a href=${x.source} target="_blank" rel="noopener noreferrer">${x.group} · Beceri kaynağı ↗</a>`}<span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span>`}</div>`})}</div>`}
+  <div class="skill-manager-grid">${list.map(x=>html`<${GalleryTile} key=${x.id} title=${x.n} meta=${x.d} description=${x.d} tag=${on.includes(x.id)?"Yüklü":""} art=${html`<${SkillCover} skill=${x}/>`} action=${()=>setOpen(x.id)}/>`)}</div>`}
+ ${selected&&html`<${UiDialog} label=${selected.n} width="580px" close=${()=>setOpen("")}><div class="skill-detail"><div class="eng-head"><h2>${selected.n}</h2><button type="button" class="ib" aria-label="Kapat" onClick=${()=>setOpen("")}><${Icon} n="x"/></button></div><p>${selected.d}</p>
+ ${selected.srv&&html`<div class="skl-m"><span>v${selected.version}</span><span>${selected.uses} kullanım</span>${selected.score!=null&&html`<span>Test ${selected.score}/100</span>`}${selected.success!=null&&html`<span>Başarı %${selected.success}</span>`}</div><pre class="skc-b">${selected.body}</pre>`}
+ ${selected.check&&html`<h3>Kabul senaryosu</h3><p>${selected.check}</p>`}
+ ${selected.source&&html`<p><a href=${selected.source} target="_blank" rel="noopener noreferrer">Beceri kaynağı</a></p>`}
+ <button type="button" class="btn" onClick=${()=>tog(selected.id)}>${on.includes(selected.id)?"Beceriyi kaldır":"Beceriyi yükle"}</button></div></${UiDialog}>`}
  </div></div>`;
 }
 // Açılış ekranı: seçilen kategoriye göre şablon paneli
@@ -10183,7 +10182,7 @@ function App(){
  }
  const installButton=()=>!installed&&html`<button class="btn g" onClick=${installApp}><${Icon} n="download" s=${15}/> Uygulamayı yükle</button>`;
 
- const CUST=["ana","beceriler","akademi","magaza","studio","kreator","sablonlar","temalar","ui-kitler","depo","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","ux","yapay-zeka","eposta","github-ayar","maliyetler","odemeler","kullanicilar","yonetim-projeler","siparisler","radar","plan","musteri-avi","kesfet","uretim-ajani","beceri-avcisi","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
+ const CUST=["ana","bagdastiricilar","muhendis","beceriler","akademi","magaza","studio","kreator","sablonlar","temalar","ui-kitler","depo","baglantilar","eylem","otomasyon","uygulamalarim","modeller","hesabim","dunya","olustur","paketler","ai-destek","siparislerim"],ADMIN=["yonetim","ux","yapay-zeka","eposta","github-ayar","maliyetler","odemeler","kullanicilar","yonetim-projeler","siparisler","radar","plan","musteri-avi","kesfet","uretim-ajani","beceri-avcisi","kategori","liste","kuyruk","ayar"],ALL=[...CUST,...ADMIN,"guncel"];
  const hv=()=>{const v=location.hash.slice(1).split("?")[0];if(v==="admin")return "yonetim";return v.startsWith("app/")?"detay":ALL.includes(v)?v:"ana"};const [appSlug,setAppSlug]=useState(()=>{const v=location.hash.slice(1);return v.startsWith("app/")?decodeURIComponent(v.slice(4)):""});
  const [compact,setCompact]=useState(true);const [view,setViewS]=useState(hv());const [mode,setMode]=useState(ADMIN.includes(hv())?"admin":"musteri");
  useEffect(()=>{if(view!=="studio")return;
@@ -10339,15 +10338,15 @@ function App(){
   else goStore({},true);
  };
  const NAVC=[["ana","Yeni"],["studio","Geliştir"],["kreator","Kreatör Stüdyosu"],["uygulamalarim","Projeler"],"$recent",
-  "Yapı taşları",["sablonlar","Şablonlar"],["temalar","Temalar"],["ui-kitler","UI Kitler"],["beceriler","Beceriler"],["depo","Depo","YENİ"],
-  "Keşfet ve öğren",["magaza","Keşfet"],["akademi","Akademi","YENİ"],
-  "Araçlar",["$ara","Ara",0,"⌘K"],["$asistan","Asistan",0,"⌘J"],["baglantilar","Bağlantılar"],"$more",
+  "Katalog",["magaza","Keşfet"],["sablonlar","Şablonlar"],["baglantilar","Eklentiler"],["bagdastiricilar","Bağdaştırıcılar"],["temalar","Temalar"],["ui-kitler","UI Kitler"],["beceriler","Beceriler"],["depo","Depo","YENİ"],
+  "Geliştirme ve öğrenme",["muhendis","Oracle ve SAP"],["akademi","Akademi","YENİ"],
+  "Araçlar",["$ara","Ara",0,"⌘K"],["$asistan","Asistan",0,"⌘J"],"$more",
   "",["guncel","Güncellemeler",isNew?"YENİ":0]];
  const MORE_NAV=[["eylem","Eylem merkezi"],["otomasyon","Otomasyonlar"],["oyunlar","Oyunlar"],["modeller","Dil Modelleri"],["dunya","Hazır Kodlar"],["olustur","Bize Yaptır"],["paketler","Paketler"],["ai-destek","Yapay Zekâ Rehberi"],["siparislerim","Taleplerim"]];
  const NAVA=[["yonetim","Yönetim merkezi"],["ux","Kullanım ve UX"],["yapay-zeka","Yapay zekâ sağlayıcıları"],["eposta","E-posta gönderimi"],["github-ayar","GitHub bağlantısı"],["maliyetler","API maliyetleri"],["odemeler","Kredi ve ödemeler",billingPending],["siparisler","Siparişler",overview.data?.stats.pending],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"],["radar","Talep Radarı"],["plan","İş Planı & Gelir"],["musteri-avi","Müşteri Avı"],"GitHub",["kesfet","GitHub Radar"],["uretim-ajani","Üretim ajanı"],["beceri-avcisi","Beceri Avcısı"],["kategori","İş Kolları"],["liste","Listem",Object.keys(saved).length],["kuyruk","Yapım Kuyruğu",builds.length],"",["guncel","Güncellemeler",isNew?"YENİ":0],["ayar","Ayarlar"]];
  const navGo=(k,extra)=>{if(k==="yonetim-projeler")setProjectStatus("");setMore(false);setWsMenu(false);if(k==="$ara"){setCmdk(true);return}if(k==="$beceri"){setSkills(true);return}if(k==="$asistan"){setCp(!cp);return}if(k==="studio"&&extra&&extra.prompt)return startTemplate({prompt:extra.prompt});if(k.startsWith("app/")){const storeOrigin=view==="magaza"?location.hash:history.state?.storeOrigin;setAppSlug(k.slice(4));setViewS("detay");history.pushState({storeOrigin,storeSteps:storeOrigin?(view==="magaza"?1:(history.state?.storeSteps||0)+1):0},"","#"+k);window.scrollTo(0,0);return}if(k==="oyunlar")return goStore({cat:"oyun"});if(k==="magaza")return goStore({});if(k==="dunya")setStoreCat(null);setView(k)};
  const navOn=k=>k==="oyunlar"?view==="magaza"&&sq.cat==="oyun":view===k;
- const TITLES={ux:"Kullanım ve UX",akademi:"Akademi",beceriler:"Beceri Kütüphanesi",depo:"Depo",temalar:"Temalar","ui-kitler":"UI Kitler",odemeler:"Kredi ve ödemeler","github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Bağlantılar",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir","musteri-avi":"Müşteri Avı",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı","beceri-avcisi":"Beceri Avcısı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
+ const TITLES={bagdastiricilar:"Bağdaştırıcılar",muhendis:"Geliştirici atölyesi",ux:"Kullanım ve UX",akademi:"Akademi",beceriler:"Beceri Kütüphanesi",depo:"Depo",temalar:"Temalar","ui-kitler":"UI Kitler",odemeler:"Kredi ve ödemeler","github-ayar":"GitHub bağlantısı",kreator:"Kreatör Stüdyosu",eposta:"E-posta gönderimi","yapay-zeka":"Yapay zekâ sağlayıcıları",maliyetler:"API ve entegrasyon maliyetleri",yonetim:"Yönetim merkezi",kullanicilar:"Kullanıcılar","yonetim-projeler":"Projeler",ana:"",baglantilar:"Eklentiler",eylem:"Eylem merkezi",otomasyon:"Otomasyonlar",uygulamalarim:"Projeler",sablonlar:"Şablonlar",detay:"Uygulama",magaza:"Keşfet",studio:"Geliştir",modeller:"Dil Modelleri",hesabim:"Hesabım",dunya:"Hazır Kodlar",olustur:"Bize Yaptır",paketler:"Paketler","ai-destek":"Yapay Zekâ Rehberi",siparislerim:"Taleplerim",guncel:"Güncellemeler",siparisler:"Siparişler",radar:"Talep Radarı",plan:"İş Planı & Gelir","musteri-avi":"Müşteri Avı",kesfet:"GitHub Radar","uretim-ajani":"Üretim ajanı","beceri-avcisi":"Beceri Avcısı",kategori:"İş Kolları",liste:"Listem",kuyruk:"Yapım Kuyruğu",ayar:"Ayarlar"};
  TITLES_ALL=TITLES;window.__gmToast=toast;
  // v5.70 — kullanım ölçümü: sayfa geçişi ve kalma süresi (Ayarlar › analitik kapalıysa gönderilmez)
  const uxRef=useRef({v:null,t:Date.now()});
@@ -10420,13 +10419,15 @@ function App(){
    ${["kullanicilar","yonetim-projeler"].includes(view)&&html`<${AdminDirectory} key=${view} kind=${view==="kullanicilar"?"users":"projects"} status=${projectStatus} onStatus=${setProjectStatus} toast=${toast}/>`}
    ${view==="studio"&&html`<${Studio} key=${auth.user?.id||"guest"} onTpl=${useTemplate} compact=${compact} setSidebarClosed=${setCompact} resumeVersions=${resumeVersions} clearResumeVersions=${()=>setResumeVersions(false)} seed=${seed} clearSeed=${()=>setSeed(null)} auth=${auth} openAuth=${openAuth} toast=${toast} openPublish=${setPubApp} incoming=${incoming} clearIncoming=${()=>setIncoming(null)} health=${health} healthError=${healthError} retry=${()=>retry(x=>x+1)} models=${models} go=${setView}/>`}
    ${view==="ana"&&html`<${HomePage} openDraft=${openDraft} newProject=${newProject} auth=${auth} openAuth=${openAuth} toast=${toast} openInStudio=${openInStudio} openPublish=${setPubApp} health=${health} go=${navGo} onTpl=${useTemplate} startTemplate=${startTemplate}/>`}
-   ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast}/>`}
+   ${view==="muhendis"&&html`<${EngineeringPage} key=${auth.user?.id||"guest"} go=${navGo} auth=${auth} onTpl=${useTemplate}/>`}
+   ${view==="bagdastiricilar"&&html`<${AdapterLibrary} go=${navGo} auth=${auth} openSession=${id=>{navGo("studio");history.replaceState(null,"","#studio?panel=oturum&baglanti="+encodeURIComponent(id))}}/>`}
+   ${view==="baglantilar"&&html`<${ConnectorsPage} toast=${toast} go=${navGo}/>`}
    ${view==="kreator"&&html`<${KreatorPage} auth=${auth} toast=${toast} openAuth=${openAuth}/>`}
    ${view==="eylem"&&html`<${ActionCenter} auth=${auth} go=${navGo} toast=${toast} orders=${orders}/>`}
    ${view==="otomasyon"&&html`<${Automations} toast=${toast}/>`}
    ${view==="akademi"&&html`<${Akademi} go=${navGo} toast=${toast}/>`}
    ${view==="ux"&&html`<${AdminUx}/>`}
-   ${view==="beceriler"&&html`<${SkillLibrary} go=${navGo} toast=${toast} apiOn=${apiOn} onTpl=${useTemplate}/>`}
+   ${view==="beceriler"&&html`<${SkillLibrary} go=${navGo} toast=${toast} apiOn=${apiOn} retry=${()=>retry(x=>x+1)} healthError=${healthError} onTpl=${useTemplate}/>`}
    ${view==="depo"&&html`<${DepoPage} auth=${auth} openAuth=${openAuth} toast=${toast} apiOn=${apiOn}/>`}
    ${view==="sablonlar"&&html`<${TemplatesPage} go=${navGo} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
    ${["temalar","ui-kitler"].includes(view)&&html`<${DesignCatalog} key=${view} page=${view} go=${navGo} onUse=${useTemplate} canAdapt=${!!activeTemplateProject(auth.user?.id)?.html}/>`}
