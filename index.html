@@ -2,7 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+<meta name="apple-mobile-web-app-capable" content="yes" /><meta name="mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black" /><meta name="apple-mobile-web-app-title" content="Gitmapp" /><meta name="format-detection" content="telephone=no" /><meta name="color-scheme" content="dark" />
 <title>gitmapp — Fikrini yaz, yapay zekâ uygulamanı dakikalar içinde yapsın</title>
 <meta name="description" content="Gitmapp ile uygulama, web sitesi ve oyunu Türkçe anlatarak dakikalar içinde yap; hazır şablonlar, çizimden tasarım, WhatsApp, ödeme ve harita bağlantılarıyla tek tıkla yayınla." />
 <meta name="theme-color" content="#0a0a0a" /><meta name="robots" content="index,follow" /><link rel="canonical" href="https://gitmapp.com/" />
@@ -1274,6 +1275,55 @@ dialog.ui-dialog{padding:0;border:0;background:transparent;color:var(--ink);widt
 .store-nav{position:relative;margin-bottom:22px;padding:26px 26px 18px;border:1px solid var(--sep);border-radius:22px;background:radial-gradient(120% 140% at 100% 0,rgba(228,255,61,.07),transparent 55%),var(--fill1)}
 .store-nav h1{font-size:30px;margin:0;letter-spacing:-.6px;font-weight:700}
 .sn-head p{margin:6px 0 0;color:var(--label2);font-size:14px}
+/* ================= v5.64 telefon uyumu ================= */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+button,a,[role=button],.chip,summary,label{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+@media(pointer:coarse){
+ /* iPhone'da 16 pikselden küçük yazılı alana dokununca sayfa yakınlaşır */
+ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),textarea,select{font-size:16px!important}
+ .seg button,.st-seg button,.tp-secs button,.dtabs button,.cat-tabs button{min-height:38px}
+ .gbox .gatt{width:38px!important;height:38px!important}
+ .ib{min-width:38px;min-height:38px}
+ .ib.sm{min-width:34px;min-height:34px}
+ .gbox .gsend{width:40px!important;height:40px!important}
+ .chip{min-height:36px}
+ :is(.btn,.chip,.getbtn,.bnav button,.fy-item,.arow,.tpc,.mh-go,.ks-go,.taste-go):active{transform:scale(.97);transition:transform .08s}
+ .sheet,.cp,.drawer,.mh-sheet,.ks-pop,.taste-pop,.ccpop{overscroll-behavior:contain}
+ ::-webkit-scrollbar{width:0;height:0}
+}
+@media(max-width:820px){
+ .bnav{background:rgba(12,12,12,.94)!important;padding-left:max(6px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right))}
+ .bnav button{min-height:48px}
+ /* klavye açıkken alt menü ve yüzen düğmeler çekilir, yazı alanı ekranda kalır */
+ html.kb-open .bnav,html.kb-open .cp-fab,html.kb-open .mh-card{transform:translateY(140%);opacity:0;pointer-events:none}
+ .bnav,.cp-fab{transition:transform .22s var(--ease),opacity .2s}
+ html.kb-open .main{padding-bottom:16px!important}
+ /* Stüdyo istem çubuğu: ipucu yazısı gizlenir, model ve mod düğmeleri sıkışmaz */
+ .gbox .gbar .gnote:not(:has(.pe-chip)){display:none}
+ .gbox .gbar .cmp{flex:0 0 auto;overflow:visible}
+ .gbox .gbar .cmp>*{flex:none;min-width:auto}
+ .gbox .gbar .cmp-l{max-width:78px}
+ .gbox .gbar{gap:2px}
+ .swin{bottom:calc(10px + env(safe-area-inset-bottom))}
+}
+@media(max-width:380px){.gbox .gbar .cmp-l{display:none}}
+/* yardımcı kart: ana ekrana ekle, bildirim izni */
+.mh-card{position:fixed;z-index:58;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;padding:12px 10px 12px 12px;border-radius:18px;background:#1a1a18;border:1px solid #34342f;box-shadow:0 18px 44px rgba(0,0,0,.55);color:#ecebe6;transition:transform .22s,opacity .2s}
+@media(min-width:821px){.mh-card{left:auto;right:20px;bottom:20px;width:380px}}
+@media(prefers-reduced-motion:no-preference){.mh-card{animation:swIn .35s var(--ease,ease-out)}}
+.mh-card img{border-radius:10px;flex:none}
+.mh-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#2a2a26;color:#f5b83d;flex:none}
+.mh-card>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mh-card b{font-size:14px}.mh-card span:not(.mh-ic){font-size:12.5px;color:#a9a7a1;line-height:1.4}
+.mh-go{height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--acc);color:#0a0a0a;font-weight:650;cursor:pointer;flex:none}
+.mh-bg{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.mh-sheet{width:min(520px,100%);padding:10px 20px calc(20px + env(safe-area-inset-bottom));border-radius:26px 26px 0 0;background:#161615;border-top:1px solid #34342f;color:#ecebe6}
+@media(prefers-reduced-motion:no-preference){.mh-sheet{animation:sup .3s cubic-bezier(.2,.8,.2,1)}}
+.mh-sheet h3{margin:4px 0 14px;font-size:19px}.mh-sheet ol{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:12px}
+.mh-sheet li{display:flex;align-items:center;gap:12px;font-size:15px;line-height:1.45}.mh-n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#2a2a26;font-weight:700;flex:none}
+.mh-share{display:inline-grid;place-items:center;width:24px;height:24px;margin-left:4px;border-radius:6px;background:#2a2a26;color:#5aa7ff}
+.mh-sheet p{color:#a9a7a1;font-size:13px;margin:0 0 16px}
+.st-caps{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;width:100%}.st-caps div{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:10px;background:var(--fill2,#222)}.st-caps span{color:var(--label2)}.st-caps b{font-weight:500;color:var(--label2)}.st-caps b.ok{color:#7ee2a8}
 /* v5.63 Claude Code tarzı akış */
 .studio-activity.cc{display:flex;flex-direction:column;gap:2px;margin:2px 0 6px}
 .cc-task{margin:0 0 6px;font-size:13px;font-weight:500;color:#8f8d88}
@@ -2437,6 +2487,63 @@ html:has(.gt-dialog[open]),body:has(.gt-dialog[open]){overflow:hidden;max-width:
 .depo-lb{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.85);display:grid;place-items:center;gap:12px;padding:20px;grid-template-rows:1fr auto}.depo-lb img{max-width:100%;max-height:75vh;object-fit:contain;background:repeating-conic-gradient(#2a2a2a 0 25%,#1d1d1d 0 50%) 0 0/16px 16px;border-radius:10px}
 .depo-lb>div{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.depo-lb>div span{color:var(--mut);font-size:13px}.depo-lb a{color:var(--acc)}
 @media(max-width:760px){.depo-two{grid-template-columns:1fr}.depo-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.depo-thumb{height:120px}}
+
+/* ================= v5.64 — Sade giriş ekranı: tek ince beyaz "AI Studio" ışığı ================= */
+.home-hero{background:radial-gradient(1100px 520px at 50% -8%,rgba(255,255,255,.075),transparent 62%),radial-gradient(760px 420px at 50% 78%,rgba(228,255,61,.045),transparent 66%),#0a0a0a!important;isolation:isolate}
+.home-hero>.siri{display:none!important}
+.home-hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1.2px);background-size:26px 26px;-webkit-mask-image:radial-gradient(70% 55% at 50% 38%,#000 0,transparent 75%);mask-image:radial-gradient(70% 55% at 50% 38%,#000 0,transparent 75%);opacity:.55}
+.home-pill{margin-top:22px;padding:6px 14px 6px 7px;font-size:13.5px;font-weight:500;color:#cfcfca;background:rgba(255,255,255,.035)!important;border:1px solid rgba(255,255,255,.08)!important;backdrop-filter:none!important}
+.home-pill:hover{color:#fff;border-color:rgba(255,255,255,.18)!important}
+.home-pill .hp-ic i{width:22px;height:22px;border-width:2px;border-color:#0a0a0a}
+.home-h{font-size:clamp(32px,4.4vw,54px)!important;font-weight:700!important;letter-spacing:-.035em!important;line-height:1.06!important;margin:92px 0 30px!important;color:#f5f5f2;text-wrap:balance}
+.home-h .hl{background:linear-gradient(100deg,#ffffff 0%,#f4ffb3 45%,#e4ff3d 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+/* istem kutusu: düz yüzey + çevresinde dönen tek ince beyaz ışık */
+.gbox.hg{width:min(760px,100%);border-radius:28px!important;padding:1px!important;animation:gspin 7s linear infinite!important;
+ background:conic-gradient(from var(--a),transparent 0deg,transparent 250deg,rgba(255,255,255,.08) 290deg,rgba(255,255,255,.95) 330deg,rgba(255,255,255,.08) 350deg,transparent 360deg),linear-gradient(rgba(255,255,255,.09),rgba(255,255,255,.09))!important}
+.gbox.hg::before{inset:-2px!important;border-radius:30px!important;filter:blur(10px)!important;opacity:.32!important;background:conic-gradient(from var(--a),transparent 0deg,transparent 280deg,rgba(255,255,255,.9) 330deg,transparent 360deg)!important;animation:none!important}
+.gbox.hg::after{content:"";position:absolute;inset:-28px;border-radius:56px;z-index:-1;pointer-events:none;background:radial-gradient(60% 70% at 50% 60%,rgba(255,255,255,.05),transparent 70%)}
+.gbox.hg:focus-within{animation-duration:5s!important}.gbox.hg:focus-within::before{opacity:.45!important}
+.gbox.hg.typing{animation-duration:3.2s!important}.gbox.hg.typing::before{opacity:.55!important}
+.gbox.hg .home-box{width:100%;border-radius:27px!important;background:#111111!important;border:0!important;backdrop-filter:none!important;box-shadow:0 40px 90px -40px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04)!important;padding:18px 16px 12px 22px}
+.gbox.hg .home-box textarea{font-size:17px;line-height:1.55;color:#f5f5f2}
+.gbox.hg .home-box textarea::placeholder{color:#7d7d78}
+.gbox.hg .seg.mini{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.07)}
+.gbox.hg .hbi{border-color:rgba(255,255,255,.09)}
+.gbox.hg .hbs{background:#f5f5f2;color:#0a0a0a;box-shadow:0 6px 18px -6px rgba(255,255,255,.35)}
+.gbox.hg .hbs:disabled{background:rgba(255,255,255,.08);color:#6b6b66;box-shadow:none;opacity:1}
+/* ilk girişte: başlık ve kutu yumuşakça belirir, ışık bir kez parlayıp sakinleşir */
+@media(prefers-reduced-motion:no-preference){
+ .home-hero .home-pill{animation:homeIn .6s cubic-bezier(.2,.8,.2,1) both}
+ .home-hero .home-h{animation:homeIn .7s .08s cubic-bezier(.2,.8,.2,1) both}
+ .home-hero .gbox.hg{animation:gspin 7s linear infinite,homeIn .8s .16s cubic-bezier(.2,.8,.2,1) both!important}
+ .home-hero .gbox.hg.typing{animation:gspin 3.2s linear infinite!important}
+ .home-hero .gbox.hg::before{animation:homeIgnite 2.4s .3s ease-out both!important}
+ .home-hero .home-chips,.home-hero .home-trust{animation:homeIn .7s .3s cubic-bezier(.2,.8,.2,1) both}
+}
+@keyframes homeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes homeIgnite{0%{opacity:0}35%{opacity:.85}100%{opacity:.32}}
+@media(prefers-reduced-motion:reduce){.gbox.hg{animation:none!important;background:linear-gradient(rgba(255,255,255,.14),rgba(255,255,255,.14))!important}.gbox.hg::before{display:none}}
+.home-chips{gap:8px!important;margin-top:20px!important}
+.hc{background:transparent!important;backdrop-filter:none!important;border:1px solid rgba(255,255,255,.08)!important;color:#bdbdb7!important;font-size:13.5px!important;padding:8px 14px!important;transition:color .2s,border-color .2s,background .2s!important}
+.hc:hover{color:#fff!important;border-color:rgba(255,255,255,.22)!important;background:rgba(255,255,255,.03)!important;transform:none!important}
+.hc.on{background:#f5f5f2!important;color:#0a0a0a!important;border-color:#f5f5f2!important}
+.home-sheet .pj-shell{box-shadow:0 -30px 60px -40px rgba(0,0,0,.8)!important;border-color:rgba(255,255,255,.06)!important;background:#0e0e0e!important}
+.home-trust{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:18px 0 0;padding:0;list-style:none;color:#7d7d78;font-size:12.5px}
+.home-trust li{display:inline-flex;align-items:center;gap:6px}.home-trust svg{color:#a3a39d}
+@media(max-width:820px){
+ .home-hero{padding:22px 16px 96px!important}
+ .home-h{margin:44px 0 22px!important;font-size:clamp(30px,8.4vw,40px)!important}
+ .gbox.hg{border-radius:24px!important}.gbox.hg .home-box{border-radius:23px!important;padding:14px 12px 10px 16px}
+ .home-hero::before{background-size:22px 22px}
+ .home-trust{font-size:12px;gap:4px 14px}
+ .home-pill{font-size:12.5px;white-space:nowrap;gap:8px;padding:5px 12px 5px 6px;margin-top:10px}
+ .home-pill .hp-ic i{width:20px;height:20px}
+ .gbox.hg .hbw{font-size:0;gap:0;padding:8px}.gbox.hg .hbw em{font-size:11px;margin-left:4px}
+ .gbox.hg .hb-row{row-gap:6px}
+ .gbox.hg .seg.mini button{padding:5px 9px;font-size:13px}
+ .gbox.hg .hbw{min-width:38px;min-height:38px;justify-content:center}
+}
+@media(max-width:430px){.gbox.hg .seg.mini svg{display:none!important}.gbox.hg .seg.mini button{padding:5px 10px;font-size:12.5px}.gbox.hg .hbi{width:36px;height:36px}}
 </style>
 </head>
 <body>
@@ -2453,8 +2560,20 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.63.0";
+const VERSION="5.64.0";
 const CHANGELOG=[
+ {v:"5.64.0",date:"2026-11-27",items:[
+  "✨ Açılış ekranı sadeleşti: çok renkli arka plan yerine koyu, sakin bir zemin; üstte yumuşak beyaz ışık ve çok silik nokta dokusu. Başlık beyaz, adın ya da “gitmapp” limon tonunda",
+  "💡 İstem kutusu düz ve tok bir yüzeye kavuştu; çevresinde tek, ince, beyaz bir ışık yavaşça dönüyor. Kutuya dokununca biraz hızlanıyor, yazmaya başlayınca daha belirgin dönüyor. İlk açılışta başlık ve kutu sırayla beliriyor, ışık bir kez parlayıp sakinleşiyor. “Hareketleri azalt” açıksa ışık sabit bir çizgiye dönüşüyor",
+  "🧭 Kutunun altında güven satırı: Türkçe anlat · Canlı önizleme · Tek dokunuşla yayınla. Hızlı başlangıç düğmeleri daha ince ve sakin; Gönder düğmesi beyaz",
+  "📱 Telefonda: yazı alanlarına dokununca iPhone artık sayfayı yakınlaştırmıyor; düğmeler ve sekmeler parmakla rahat basılacak boyutta (en az 38 piksel), basınca hafifçe içe çöküyor; çift dokunma gecikmesi kalktı",
+  "⌨️ Klavye açılınca alt menü, Asistan düğmesi ve yardımcı kartlar çekiliyor; yazdığın alan ekranda kalıyor (Android'de sayfa klavyeye göre yeniden boyutlanıyor)",
+  "🛠️ Stüdyo istem çubuğu telefonda sıkışmıyor: “Model seç” ve “Hızlı” düğmeleri artık üst üste binmiyor, uzun ipucu yazısı gizleniyor. Açılış ekranında kutu iki satıra indi",
+  "🏠 Ana ekrana ekle: Android'de tek dokunuşla yükleme, iPhone'da Paylaş › Ana Ekrana Ekle adımlarını gösteren sayfa. Ana ekrandan açınca tam ekran; uygulama simgesine basılı tutunca Yeni proje, Projelerim ve Keşfet kısayolları. Kart ikinci ziyarette bir kez çıkar, kapatırsan 14 gün susar",
+  "🔔 İş bitince bildirim: ekranı kapatıp başka uygulamaya geçsen de uygulaman hazır olunca (ya da işlem yarıda kalınca) telefonuna bildirim gelir, simgede rozet görünür; bildirime dokununca Gitmapp açılır. İzin ilk başarılı üretimden sonra sorulur. iPhone'da ana ekrana eklenmiş uygulamada çalışır (iOS 16.4+)",
+  "📳 Android'de gönderirken, iş bitince ve hata olunca kısa titreşim; üretim sürerken ekran kilitlenmiyor",
+  "⚙️ Ayarlar › Telefon: ana ekrana ekleme, bildirim, titreşim ve ekranı açık tutma seçenekleri; bu cihazda hangi özelliklerin çalıştığını gösteren liste",
+  "🍎 iPhone çentiği ve Android hareket çubuğu için güvenli alan boşlukları, yatay kullanımda kenar boşlukları; alt menü daha opak ve okunaklı"]},
  {v:"5.63.0",date:"2026-11-27",items:[
   "💬 Stüdyo'da işlem akışı yenilendi: her adımda önce ne yaptığını anlatan kısa bir cümle (“Model isteği aldı. Önce yapıyı kuruyorum, ardından stilleri ve etkileşimleri yazacağım.”), altında gri, açılır bir işlem satırı (“Gönderdi istek · model”, “Yazdı kod · HTML yapısı, stiller”, “Çalıştırdı kontrol · 1 hata onarıldı”). Satıra dokununca isteği, canlı kodu ya da hatayı görürsün",
   "🟠 Çalışan adımda turuncu-sarı nokta göstergesi ve canlı süre (“Yazıyor kod · HTML yapısı 16sn”, dakikada “4d 17sn”). Adımlar akarak tek tek beliriyor; model uzun süre sessiz kalırsa “hâlâ düşünüyor” notu çıkıyor",
@@ -4226,7 +4345,7 @@ async function api(method,path,body,signal){
 }
 function crEvent(j){if(j&&typeof j==="object"&&j.credits!=null&&isFinite(+j.credits))dispatchEvent(new CustomEvent("gm:credits",{detail:{credits:+j.credits,spent:+(j.spent||0)}}))}
 // ---------- v5.11 — Ayarlar: cihazda anında uygulanır, giriş yapılmışsa hesaba da kaydedilir ----------
-const GS_DEF={level:"auto",reduceMotion:false,sendKey:"enter",voice:true,guide:true,engine:true,listed:true,analytics:true,ghost:true,pins:[]};
+const GS_DEF={notify:false,haptics:true,wake:true,level:"auto",reduceMotion:false,sendKey:"enter",voice:true,guide:true,engine:true,listed:true,analytics:true,ghost:true,pins:[]};
 let GS={...GS_DEF,...(LS.get("gmSettings",null)||{})};
 function applyGS(){try{document.documentElement.classList.toggle("rm",!!GS.reduceMotion)}catch(e){}}
 applyGS();
@@ -4235,7 +4354,7 @@ function gsFromUser(u){if(!u||!u.prefs||!Object.keys(u.prefs).length)return;GS={
 function useGS(){const [,f]=useState(0);useEffect(()=>{const h=()=>f(x=>x+1);addEventListener("gm:settings",h);return()=>removeEventListener("gm:settings",h)},[]);return GS}
 const openSettings=(tab)=>dispatchEvent(new CustomEvent("gm:settings-open",{detail:{tab:tab||"genel"}}));
 const PROFILE_ROLES=["Restoran ve kafe","Sağlık ve klinik","Eğitim","E-ticaret ve mağaza","Emlak","Hizmet işletmesi","Pazarlama ve ajans","Yazılım ve teknoloji","Finans","Öğrenci","Diğer"];
-const ST_TABS=[["genel","Genel","sliders"],["profil","Profil","user"],["gizlilik","Gizlilik","lock"],["fatura","Faturalandırma","card"],["kullanim","Kullanım","chart"],["yetenekler","Yetenekler","sparkles"],["baglantilar","Bağlantılar","plug"]];
+const ST_TABS=[["genel","Genel","sliders"],["profil","Profil","user"],["gizlilik","Gizlilik","lock"],["telefon","Telefon","phone"],["fatura","Faturalandırma","card"],["kullanim","Kullanım","chart"],["yetenekler","Yetenekler","sparkles"],["baglantilar","Bağlantılar","plug"]];
 const ST_INTRO={genel:"Uygulamanın bu cihazda nasıl davrandığı. Değişiklikler hemen uygulanır.",profil:"Gitmapp'in seni tanıması için. Buradaki bilgiler Stüdyo ve Asistan'ın her yanıtına eklenir; böylece her seferinde kendini anlatmana gerek kalmaz.",gizlilik:"Yaptıklarının kimlere görüneceği ve hangi verilerin tutulacağı.",fatura:"Kredi bakiyen ve kredi yükleme. Kredi yalnızca bir üretim başarıyla bittiğinde düşer; durdurulan ya da yarıda kalan işler ücretsizdir.",kullanim:"Son 30 günde neye ne kadar kredi harcadığın.",yetenekler:"Gitmapp'in yardımcı özelliklerini aç ya da kapat. Kapattığın özellik arka planda da çalışmaz.",baglantilar:"Gitmapp'in bağlandığı hesaplar ve kendi yapay zekâ anahtarların."};
 const KL_USE={build:"Üretim",plan:"Plan",review:"Kontrol",todos:"Ajan listesi",design:"Tasarım",convert:"GitHub dönüştürme",proto:"Prototip"};
 function StRow({t,d,children,col}){return html`<div class=${"st-row"+(col?" col":"")}><div class="st-l"><b>${t}</b>${d&&html`<small>${d}</small>`}</div><div class="st-c">${children}</div></div>`}
@@ -4244,6 +4363,74 @@ function shrinkImage(file,size=160){return new Promise((ok,bad)=>{if(!/^image\/(
  const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=c.height=size;const x=c.getContext("2d");const s=Math.min(im.width,im.height);x.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,size,size);let u=c.toDataURL("image/webp",.85);if(!u.startsWith("data:image/webp"))u=c.toDataURL("image/jpeg",.85);ok(u)};im.onerror=()=>bad(new Error("Görsel okunamadı"));im.src=fr.result};fr.onerror=()=>bad(new Error("Dosya okunamadı"));fr.readAsDataURL(file)})}
 function UserAvatar({u,s=34}){const ini=((u.name||u.email||"?").split(/[\s@]/).filter(Boolean).slice(0,2).map(x=>x[0]).join("")||"?").toUpperCase();
  return u.avatar?html`<img class="avatar img" src=${u.avatar} alt="" width=${s} height=${s} style=${{width:s,height:s}}/>`:html`<span class="avatar" style=${{width:s,height:s,fontSize:Math.round(s*.38)}}>${ini}</span>`}
+/* ================= v5.64 — TELEFON UYUMU (iPhone · Android) =================
+   Kurulum (ana ekrana ekle), bildirim, titreşim, uygulama rozeti, ekranı açık tutma ve
+   klavye algılama. Desteklemeyen cihazda her işlev sessizce devre dışı kalır. */
+const GMD={
+ ios:/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1,
+ android:/Android/i.test(navigator.userAgent),
+ standalone:()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true,
+ touch:()=>matchMedia("(pointer: coarse)").matches,
+ installEvt:null,installed:false,lock:null,
+ canPrompt:()=>!!GMD.installEvt,
+ // iPhone'da bildirim yalnızca ana ekrana eklenmiş uygulamada (iOS 16.4+) çalışır
+ notifySupported:()=>"Notification" in window&&"serviceWorker" in navigator&&(!GMD.ios||GMD.standalone()),
+ notifyState:()=>!("Notification" in window)?"unsupported":Notification.permission,
+ async askNotify(){if(!GMD.notifySupported())return "unsupported";try{const r=await Notification.requestPermission();gsSet({notify:r==="granted"});dispatchEvent(new Event("gm:device"));return r}catch(e){return "denied"}},
+ async notify(title,body,tag){if(!GS.notify||GMD.notifyState()!=="granted")return false;try{const o={body,tag:tag||"gitmapp",icon:"pwa/icon-192.png?v=agent",badge:"pwa/icon-maskable-192.png",data:{url:location.href},renotify:true,silent:false};const reg=await navigator.serviceWorker?.getRegistration();if(reg)await reg.showNotification(title,o);else new Notification(title,o);return true}catch(e){return false}},
+ buzz(p){if(GS.haptics===false)return;try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}},
+ badge(n){try{if(n)navigator.setAppBadge?.(n);else navigator.clearAppBadge?.()}catch(e){}},
+ async keepAwake(on){GMD.wantAwake=on;try{if(on&&GS.wake!==false&&"wakeLock" in navigator&&!GMD.lock&&!document.hidden){GMD.lock=await navigator.wakeLock.request("screen");GMD.lock.addEventListener("release",()=>{GMD.lock=null})}else if(!on&&GMD.lock){const l=GMD.lock;GMD.lock=null;await l.release()}}catch(e){}},
+ async install(){const e=GMD.installEvt;if(e){GMD.installEvt=null;try{await e.prompt();const c=await e.userChoice;dispatchEvent(new Event("gm:device"));return c?.outcome==="accepted"?"accepted":"dismissed"}catch(x){}}return GMD.ios?"ios":"manual"},
+ caps(){return [
+  ["Ana ekrana ekleme",GMD.standalone()?"Yüklü":GMD.canPrompt()||GMD.ios||GMD.android?"Hazır":"Tarayıcı menüsünden"],
+  ["Bildirimler",GMD.notifySupported()?({granted:"Açık",denied:"Engellendi",default:"İzin bekliyor"})[GMD.notifyState()]||"Yok":GMD.ios?"Önce ana ekrana ekle":"Desteklenmiyor"],
+  ["Titreşim","vibrate" in navigator?"Var":GMD.ios?"iPhone desteklemiyor":"Yok"],
+  ["Ekranı açık tutma","wakeLock" in navigator?"Var":"Yok"],
+  ["Paylaşma menüsü",navigator.share?"Var":"Kopyalama ile"],
+  ["Uygulama rozeti","setAppBadge" in navigator?"Var":"Yok"],
+  ["Sesle yazma","webkitSpeechRecognition" in window||"SpeechRecognition" in window?"Var":"Yok"]]}
+};
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();GMD.installEvt=e;dispatchEvent(new Event("gm:device"))});
+addEventListener("appinstalled",()=>{GMD.installEvt=null;GMD.installed=true;dispatchEvent(new Event("gm:device"))});
+(()=>{const root=document.documentElement;
+ root.classList.toggle("ios",GMD.ios);root.classList.toggle("android",GMD.android);root.classList.toggle("standalone",GMD.standalone());
+ // Klavye açıkken alt menü ve yüzen düğmeler gizlenir; görünen yükseklik --vvh ile verilir
+ const vv=window.visualViewport;const typing=()=>{const a=document.activeElement;return !!a&&(/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!/^(checkbox|radio|range|button|submit)$/.test(a.type||"")||a.isContentEditable)};
+ const sync=()=>{const h=vv?vv.height:innerHeight;root.style.setProperty("--vvh",h+"px");root.classList.toggle("kb-open",GMD.touch()&&typing()&&(!vv||screen.height-h>150||innerHeight-h>120))};
+ vv&&vv.addEventListener("resize",sync);addEventListener("focusin",()=>setTimeout(sync,250));addEventListener("focusout",()=>setTimeout(sync,250));sync();
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden){GMD.badge(0);if(GMD.wantAwake)GMD.keepAwake(true)}});
+})();
+// Telefonda tek seferlik yardımcı: ana ekrana ekleme ve bildirim izni (kullanıcı istemeden açılmaz, 14 gün susar)
+function MobileHelper({view,toast}){
+ const [,tick]=useState(0);const [sheet,setSheet]=useState(false);const [ask,setAsk]=useState(false);
+ useEffect(()=>{const h=()=>tick(x=>x+1);const a=()=>setAsk(true),i=()=>setSheet(true);addEventListener("gm:device",h);addEventListener("gm:ask-notify",a);addEventListener("gm:ios-install",i);return()=>{removeEventListener("gm:device",h);removeEventListener("gm:ask-notify",a);removeEventListener("gm:ios-install",i)}},[]);
+ useEffect(()=>{const n=(LS.get("visits",0)||0)+1;LS.set("visits",n)},[]);
+ const snooze=k=>LS.set(k,Date.now()+14*864e5);
+ const quiet=k=>(LS.get(k,0)||0)>Date.now();
+ const install=async()=>{const r=await GMD.install();if(r==="ios")setSheet(true);else if(r==="manual")toast("Tarayıcı menüsünden “Uygulamayı yükle” ya da “Ana ekrana ekle”yi seç");else if(r==="accepted"){toast("Gitmapp ana ekranına eklendi");GMD.buzz(20)}snooze("installSnooze")};
+ const showInstall=GMD.touch()&&!GMD.standalone()&&!GMD.installed&&(GMD.canPrompt()||GMD.ios)&&!quiet("installSnooze")&&(LS.get("visits",0)||0)>=2&&!["studio"].includes(view);
+ const showAsk=ask&&GMD.notifyState()==="default"&&GMD.notifySupported()&&!quiet("notifySnooze");
+ return html`${showInstall&&!showAsk&&html`<div class="mh-card" role="dialog" aria-label="Gitmapp'i ana ekrana ekle"><img src="pwa/icon-192.png?v=agent" alt="" width="40" height="40"/><div><b>Gitmapp'i ana ekrana ekle</b><span>Tam ekran açılır, işin bitince bildirim alırsın.</span></div><button class="mh-go" onClick=${install}>Ekle</button><button class="ib sm" aria-label="Şimdi değil" onClick=${()=>{snooze("installSnooze");tick(x=>x+1)}}><${Icon} n="x" s=${14}/></button></div>`}
+ ${showAsk&&html`<div class="mh-card" role="dialog" aria-label="Bildirim izni"><span class="mh-ic"><${Icon} n="bell" s=${18}/></span><div><b>İşin bitince haber verelim mi?</b><span>Uygulaman hazır olduğunda telefonuna bildirim gelir; ekranı kapatıp başka işe geçebilirsin.</span></div><button class="mh-go" onClick=${async()=>{const r=await GMD.askNotify();setAsk(false);snooze("notifySnooze");toast(r==="granted"?"Bildirimler açık":"Bildirim izni verilmedi · Ayarlar › Telefon'dan açabilirsin")}}>Aç</button><button class="ib sm" aria-label="Şimdi değil" onClick=${()=>{snooze("notifySnooze");setAsk(false)}}><${Icon} n="x" s=${14}/></button></div>`}
+ ${sheet&&html`<div class="mh-bg" onClick=${()=>setSheet(false)}><div class="mh-sheet" role="dialog" aria-label="iPhone'da ana ekrana ekleme" onClick=${e=>e.stopPropagation()}><div class="sheet-grab"></div>
+  <h3>iPhone'da ana ekrana ekle</h3><ol>
+   <li><span class="mh-n">1</span><span>Safari'nin alt çubuğundaki <b>Paylaş</b> düğmesine dokun <span class="mh-share" aria-hidden="true">⬆︎</span></span></li>
+   <li><span class="mh-n">2</span><span>Listeyi kaydırıp <b>Ana Ekrana Ekle</b>'yi seç</span></li>
+   <li><span class="mh-n">3</span><span>Sağ üstteki <b>Ekle</b>'ye dokun</span></li></ol>
+  <p>Ana ekrandan açtığında Gitmapp tam ekran çalışır ve iOS 16.4 ve sonrasında bildirim gönderebilir.</p>
+  <button class="btn" style=${{width:"100%"}} onClick=${()=>setSheet(false)}>Anladım</button></div></div>`}`;
+}
+function PhoneSettings({toast}){
+ const gs=useGS();const [,tick]=useState(0);useEffect(()=>{const h=()=>tick(x=>x+1);addEventListener("gm:device",h);return()=>removeEventListener("gm:device",h)},[]);
+ const st=GMD.notifyState();
+ return html`
+  <${StRow} t="Uygulama olarak kullan" d=${GMD.standalone()?"Gitmapp ana ekranından tam ekran çalışıyor.":GMD.ios?"Safari'de Paylaş › Ana Ekrana Ekle. Tam ekran açılır ve bildirim alabilirsin.":"Ana ekrana ekleyince tarayıcı çubukları olmadan tam ekran açılır."}>${GMD.standalone()?html`<span class="st-val">Yüklü</span>`:html`<button class="btn g s" onClick=${async()=>{const r=await GMD.install();if(r==="ios")dispatchEvent(new Event("gm:ios-install"));if(r==="ios"||r==="manual")toast(GMD.ios?"Safari’de Paylaş → Ana Ekrana Ekle’yi seç":"Tarayıcı menüsünden “Uygulamayı yükle”yi seç")}}>Ana ekrana ekle</button>`}<//>
+  <${StRow} t="İş bitince bildirim" d=${!GMD.notifySupported()?(GMD.ios?"iPhone'da bildirim için önce Gitmapp'i ana ekrana ekle (iOS 16.4+).":"Bu tarayıcı bildirim desteklemiyor."):st==="denied"?"Bildirim izni engellenmiş. Telefon ayarlarından ya da tarayıcının site ayarlarından açabilirsin.":"Uygulaman hazır olduğunda ya da işlem yarıda kaldığında telefonuna bildirim gelir."}>${GMD.notifySupported()&&st!=="denied"&&html`<${StSw} on=${gs.notify&&st==="granted"} set=${async v=>{if(!v){gsSet({notify:false});return}const r=st==="granted"?"granted":await GMD.askNotify();gsSet({notify:r==="granted"});if(r==="granted")GMD.notify("Bildirimler açık","İşin bitince buradan haber vereceğiz.","test")}} label="İş bitince bildirim"/>`}<//>
+  <${StRow} t="Titreşim" d=${"vibrate" in navigator?"Gönderdiğinde, iş bittiğinde ve hata olduğunda kısa titreşim.":"Bu cihaz web titreşimini desteklemiyor (iPhone)."}>${"vibrate" in navigator&&html`<${StSw} on=${gs.haptics!==false} set=${v=>{gsSet({haptics:v});if(v)GMD.buzz(20)}} label="Titreşim"/>`}<//>
+  <${StRow} t="Üretim sürerken ekranı açık tut" d=${"wakeLock" in navigator?"Kod yazılırken telefon kilitlenmez; iş bitince normale döner.":"Bu tarayıcı desteklemiyor."}>${"wakeLock" in navigator&&html`<${StSw} on=${gs.wake!==false} set=${v=>gsSet({wake:v})} label="Ekranı açık tut"/>`}<//>
+  <${StRow} t="Bu cihazda" d=${(GMD.ios?"iPhone / iPad":GMD.android?"Android":"Masaüstü")+" · "+(GMD.standalone()?"ana ekran uygulaması":"tarayıcı")} col=${true}><div class="st-caps">${GMD.caps().map(([k,v])=>html`<div key=${k}><span>${k}</span><b class=${/^(Var|Açık|Yüklü|Hazır)$/.test(v)?"ok":""}>${v}</b></div>`)}</div><//>`;
+}
 function SettingsPanel({tab0,auth,toast,go,close,health}){
  const gs=useGS();const [tab,setTab]=useState(tab0||"genel");const u=auth.user;
  const [f,setF]=useState(()=>u?{name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""}:null);const [saving,setSaving]=useState(false);const [use,setUse]=useState(null);const fileRef=useRef(null);const [profileStatus,setProfileStatus]=useState(null);
@@ -4271,6 +4458,7 @@ function SettingsPanel({tab0,auth,toast,go,close,health}){
    <${StRow} t="Yapay zekâ için talimatlar" d="Her üretimde, kod kontrolünde ve Asistan'da dikkate alınır. Kalıcı isteklerini yaz: marka rengin, dil tonu, olmazsa olmazların. Güvenlik kurallarını değiştiremez." col=${true}><textarea class="st-in st-ta" rows="5" maxlength="1500" placeholder="Örnek: Markamın rengi lacivert ve turuncu. Metinler samimi ve kısa olsun. Her uygulamada WhatsApp ile iletişim düğmesi bulunsun. Fiyatlar TL ile gösterilsin." value=${f.instructions} onInput=${e=>setF({...f,instructions:e.target.value})}></textarea><div class="st-cnt">${f.instructions.length}/1500</div><//>
    <${StRow} t="E-posta" d=${"Üyelik: "+(u.created?new Date(u.created.replace(" ","T")+"Z").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"}):"—")}><span class="st-val">${u.email}</span><//>
    <div class="st-save">${dirty?html`<span>Kaydedilmemiş değişiklikler var</span><button class="btn g s" onClick=${()=>setF({name:u.name||"",nickname:u.nickname||"",role:u.role||"",instructions:u.instructions||""})}>Vazgeç</button><button class="btn s" disabled=${saving||!f.name.trim()} onClick=${()=>saveProfile()}>Kaydet</button>`:html`<span class="ok"><${Icon} n="check" s=${13}/> Profil güncel</span><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>{auth.logout();toast("Çıkış yapıldı");close()}}><${Icon} n="logout" s=${14}/> Çıkış yap</button>`}</div>`;
+  case "telefon":return html`<${PhoneSettings} toast=${toast}/>`;
   case "gizlilik":return html`
    <${StRow} t="Yayınladıklarım Keşfet'te listelensin" d="Açıksa “Yayınla” dediğin uygulama vitrinde görünür. Kapalıysa yalnızca bağlantısı olanlar açabilir. Her yayında ayrıca değiştirebilirsin."><${StSw} on=${gs.listed} set=${v=>gsSet({listed:v})} label="Keşfet'te listele"/><//>
    <${StRow} t="Anonim kullanım istatistiği" d="Hangi sayfaların ve özelliklerin kullanıldığını kimliğin olmadan sayar; Gitmapp'i geliştirmemize yardım eder. İçerik ve kodun gönderilmez."><${StSw} on=${gs.analytics} set=${v=>gsSet({analytics:v})} label="Anonim istatistik"/><//>
@@ -6169,7 +6357,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!e.defaultPrevented&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal,.pm-pop,.ui-dialog,[role=dialog],[role=menu],.compose-menu:popover-open"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{if(jobRef.current)return;e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
- async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;{const tx=String(text||input||"").trim();if(tx.length>8&&!tx.startsWith("/")&&!st.html)TASTE.note({type:"prompt",text:tx.slice(0,300),kind:prefsRef.current?.kind,w:1.5})}if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+ async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;GMD.buzz(8);{const tx=String(text||input||"").trim();if(tx.length>8&&!tx.startsWith("/")&&!st.html)TASTE.note({type:"prompt",text:tx.slice(0,300),kind:prefsRef.current?.kind,w:1.5})}if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
@@ -6662,6 +6850,13 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   </div>`};
  // v5.63 — Önizlemede durum penceresi: son adımın çıktısı, kod kontrolü bulguları ve önizleme hataları
  const [winOff,setWinOff]=useState("");const [winMin,setWinMin]=useState(false);
+ // v5.64 — telefonda: üretim sürerken ekran açık kalır; bitince titreşim, arka plandaysa bildirim ve rozet
+ const busySeen=useRef(false);
+ useEffect(()=>{if(busy){busySeen.current=true;GMD.keepAwake(true);return}GMD.keepAwake(false);if(!busySeen.current)return;busySeen.current=false;
+  const m=st.msgs.findLast(x=>x.log);if(!m||m.log.running)return;const bad=m.log.error||m.log.cut||m.log.stopped;if(m.log.stopped)return;
+  GMD.buzz(bad?[50,40,50]:[16,60,16]);
+  if(document.hidden){GMD.notify(bad?"İşlem tamamlanamadı":(STUDIO_ACTIVITY[m.log.kind]?.done||"İşin bitti"),(st.title||"Projen")+" · "+(bad?"Yeniden denemek için dokun":"Önizlemeyi görmek için dokun"),"studio");GMD.badge(1)}
+  else if(!bad&&GMD.touch())dispatchEvent(new Event("gm:ask-notify"))},[busy]);
  const statusWin=()=>{
   if(busy||code)return null;
   const m=st.msgs.findLast(x=>x.role==="assistant"&&x.log&&!x.log.running);if(!m)return null;
@@ -8030,6 +8225,7 @@ function HomePage(props){const {auth,startTemplate,go}=props;
      <button type="button" class="hbe" disabled=${v.trim().length<6} title="İstemi yapay zekâ için ayrıntılandır (kredi harcamaz)" onClick=${()=>setV(enhancePrompt(v,kind))}><${Icon} n="wand" s=${16}/><span>İyileştir</span></button>
      <button class="hbs" disabled=${!v.trim()} aria-label="Başlat" title=${GS.sendKey==="mod"?"Başlat (Ctrl/⌘+Enter)":"Başlat (Enter)"}><${Icon} n="arrowUp" s=${18} w=${2.2}/></button>
     </div></div></form></div>
+   ${!v.trim()&&html`<ul class="home-trust" aria-label="Gitmapp ile"><li><${Icon} n="chat" s=${13}/>Türkçe anlat</li><li><${Icon} n="eye" s=${13}/>Canlı önizleme</li><li><${Icon} n="rocket" s=${13}/>Tek dokunuşla yayınla</li></ul>`}
    ${v.trim().length>4&&html`<div class="qadd" key="qa">${QUICK_ADD[kind].map(([ic,l,t],i)=>html`<button key=${l} style=${{animationDelay:i*40+"ms"}} onClick=${()=>setV(addTo(v,t))}><${Icon} n=${ic} s=${14}/>+ ${l}</button>`)}</div>`}
    ${!starter&&html`<div class=${"home-chips"+(v.trim().length>4?" dim":"")}>${HOME_CHIPS.map(([ic,l,k,p])=>html`<button key=${l} class=${"hc"+(chip===l?" on":"")} onClick=${()=>{if(chip===l){setChip(null);return}setChip(l);setKind(k);setStarter(false);const t=document.querySelector("textarea.hta");t&&t.focus()}}><${Icon} n=${ic} s=${15}/>${l}</button>`)}</div>`}
    ${starter&&html`<${CatalogStarter} key=${kind} kind=${kind} text=${v} onDemo=${t=>setDesignDemo({...t,projectPrompt:v.trim()})} go=${go}/>`}
@@ -9288,6 +9484,7 @@ function App(){
       ${mode==="admin"&&html`<button disabled><${Icon} n="github" s=${16}/> GitHub limiti<kbd>${rate.rem}/${rate.lim}</kbd></button>`}
       ${auth.user&&html`<hr/><button onClick=${()=>{setSMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${16}/> Çıkış yap</button>`}
      </div>`}</div></div></aside>
+  <${MobileHelper} view=${view} toast=${toast}/>
   <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} aria-current=${navOn(k)?"page":undefined} onClick=${()=>navGo(k)}><span class="bn-ic"><${NavIcon} k=${k} s=${21}/></span><span>${l}</span></button>`)}<button class=${"bnav-more"+(more?" on":"")} aria-expanded=${more} aria-controls="mobile-navigation" onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><nav class="sheet glass" id="mobile-navigation" aria-label="Mobil menü" onClick=${e=>e.stopPropagation()}><div class="sheet-close"><span>Menü</span><button class="ib sm" aria-label="Menüyü kapat" onClick=${()=>{setMore(false);document.querySelector(".bnav-more")?.focus()}}><${Icon} n="x" s=${15}/></button></div><button class="sheet-st" onClick=${()=>{setMore(false);openSettings("genel")}}><${UserAvatar} u=${auth.user||{name:"Misafir"}} s=${30}/><span><b>${auth.user?(auth.user.nickname||auth.user.name||auth.user.email):"Misafir"}</b><small>Ayarlar, profil ve kullanım</small></span><${Icon} n="chevRight" s=${16}/></button>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}${auth.user?.admin&&html`<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div>`}<div class="sheet-grid">${installButton()}${navList(true)}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></nav></div>`}
   ${bg&&view!=="studio"&&html`<button type="button" class=${"bg-pill "+bg.status} onClick=${()=>navGo("studio")} title="Stüdyo'ya dön">${bg.status==="running"?html`<${ClSpark} s=${15}/><span><b>Bulutta üretiliyor</b><small>${bg.label} · ${clTime(bg.secs||0)}</small></span>`:bg.status==="done"?html`<${Icon} n="check" s=${15}/><span><b>Hazır</b><small>Stüdyo'da aç</small></span>`:html`<${Icon} n="alert" s=${15}/><span><b>Tamamlanamadı</b><small>Ayrıntı Stüdyo'da</small></span>`}</button>`}

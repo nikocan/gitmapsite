@@ -27,6 +27,16 @@ Giriş yapmış kullanıcının hafızası hesabında da tutulur (`user_taste` t
 
 Her üretim adımı kısa bir anlatım cümlesi ve altında açılır bir işlem satırı olarak gösterilir. Çalışan satırda turuncu-sarı nokta göstergesi ve süre bulunur. İş bitince adımlar "Çalıştırıldı N adım" satırında toplanır. Önizlemenin sağ altındaki durum penceresi son adımın çıktısını (satır farkı, onarılan hatalar, süre, kredi), kod kontrolü bulgularını ve önizleme sorunlarını gösterir; sorun varsa **Düzelt** ile otomatik onarım başlatılır.
 
+## Telefon uyumu (iPhone ve Android)
+
+Gitmapp ana ekrana eklenebilen bir web uygulamasıdır (`manifest.webmanifest`: maskelenebilir simgeler, kısayollar, tam ekran). `sw.js` sayfayı her açılışta yeniler ve bildirime dokunulunca açık pencereye geçer.
+
+- **Kurulum:** Android ve masaüstü Chrome'da `beforeinstallprompt` ile tek dokunuşla; iPhone'da Paylaş › Ana Ekrana Ekle adımlarını gösteren sayfa. Kart ikinci ziyarette çıkar, kapatılırsa 14 gün gösterilmez.
+- **Bildirim ve rozet:** Stüdyo'da iş bittiğinde sayfa arka plandaysa bildirim ve uygulama rozeti. İzin ilk başarılı üretimden sonra istenir. iPhone'da yalnızca ana ekrana eklenmiş uygulamada çalışır (iOS 16.4+).
+- **Titreşim ve ekran kilidi:** Android'de kısa titreşim; üretim sürerken Screen Wake Lock.
+- **Dokunmatik düzen:** dokunmatik ekranda giriş alanları 16 px (iOS yakınlaştırması olmaz), en az 38 px dokunma alanı, klavye açıkken alt menü gizlenir (`html.kb-open`), güvenli alan boşlukları (`viewport-fit=cover`).
+- **Ayarlar › Telefon:** bu seçenekler ve cihazda çalışan özelliklerin listesi.
+
 ## Yönetici girişi
 
 Yönetim merkezini çalışma alanı menüsündeki **Yönetici** düğmesinden veya `/#yonetim` adresinden açın. Doğrudan bir yönetim sayfasına giden kullanıcı, girişten sonra aynı sayfaya döner.

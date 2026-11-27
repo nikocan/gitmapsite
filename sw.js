@@ -14,3 +14,19 @@ self.addEventListener("fetch", event => {
     {status:503,headers:{"Content-Type":"text/html; charset=utf-8","Cache-Control":"no-store"}}
   )));
 });
+
+// v5.64: Bildirime dokunulunca açık Gitmapp penceresine geçilir; yoksa yeni pencere açılır.
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+  const target = new URL((event.notification.data && event.notification.data.url) || self.registration.scope, self.registration.scope);
+  if (target.origin !== self.location.origin) return;
+  event.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
+    for (const client of list) {
+      if (new URL(client.url).origin === target.origin && "focus" in client) {
+        if ("navigate" in client && client.url !== target.href) client.navigate(target.href).catch(() => {});
+        return client.focus();
+      }
+    }
+    return self.clients.openWindow(target.href);
+  }));
+});
