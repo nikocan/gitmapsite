@@ -12,6 +12,7 @@ import { registerRadar } from "./radar.mjs";
 import { registerStoreSales } from "./store-sales.mjs";
 import { registerPayments } from "./payments.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
+import { registerDepo } from "./depo.mjs";
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import fs from "node:fs";
@@ -804,7 +805,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.59.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.60.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1871,6 +1872,7 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 // Mağaza
 const ownsSale = registerStoreSales({ db, route, need });
 const billing = registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, tiers: TIER_CREDITS, isAdmin });
+registerDepo({ db, route, need, dir: E.DEPO_DIR || path.join(path.dirname(path.resolve(CFG.db)), "depo"), allowLocal: E.DEPO_ALLOW_LOCAL === "1", publicBase: CFG.api });
 route("GET", "/api/store", ({ url }) => {
   const cat = url.searchParams.get("cat"); const s = (url.searchParams.get("q") || "").trim().slice(0, 60); const sort = url.searchParams.get("sort") === "yeni" ? "a.published_at DESC" : "a.downloads DESC, a.opens DESC";
   let sql = "SELECT a.*, u.name AS author FROM apps a JOIN users u ON u.id=a.owner_id WHERE a.status='published' AND a.listed=1"; const args = [];

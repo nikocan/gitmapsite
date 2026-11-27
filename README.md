@@ -65,3 +65,9 @@ Radar’dan gelen taslaklarda **Yayın Merkezi** lisans ve güvenlik doğrulamas
 **Yönetim → Üretim ajanı** varsayılan olarak GitHub, MDN ve Smashing Magazine’i 24 saatte bir tarar. Aralık ve zamanlama panelden değiştirilebilir. Yapay zekâ üretimi panelden açılır. Günde en fazla bir özgün taslak üretir, aylık kredi sınırını kullanır ve sonucu yönetici projelerine kaydeder.
 
 Mağazada ücretli ürünler için alıcı talep açar. Ödeme dış sağlayıcıda tamamlandığında yönetici **Üretim ajanı → Mağaza satışları** ekranında işlem referansını kaydeder. Teyit, alıcının düzenlenebilir kopyasına erişim verir.
+
+## Depo (site görsellerini indir ve ayrıştır)
+
+**Katalog › Depo** bir site adresini 1–25 sayfa tarar; görselleri (img, srcset, data-src, CSS arka planları, og:image, favicon, satır içi SVG) indirir, dosya imzasından doğrular, tekrarları ayıklar ve Logo, İkon, Banner, Ürün, Galeri, Kişi, Arka plan, Paylaşım görseli olarak ayrıştırır. Menü kategorilerini, renk/yazı tipi temasını (Tema CSS), betiksiz ekran kopyasını ve bölüm bileşenlerini çıkarır. Depodan Stüdyo'ya şablon açılır, her şey ZIP olarak indirilir.
+
+Dosyalar `DEPO_DIR` (varsayılan: veritabanının yanında `depo/`) altında tutulur ve `/api/depo/f/...` adresinden herkese açık sunulur. Yalnız herkese açık adresler taranır; `DEPO_ALLOW_LOCAL=1` yalnızca testler içindir. robots.txt kurallarına uyulur. Testler: `node --test server/depo.test.mjs` ve tarayıcıda `node tools/acceptance/depo.mjs`.
