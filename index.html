@@ -2680,6 +2680,116 @@ body{background:radial-gradient(1100px 560px at 50% -12%,rgba(255,255,255,.045),
 .cr-frame em,.cr-monitor em,.cr-rec,.cr-tag,.cr-st{font-size:11px!important}
 @media(max-width:980px){.cr-main{grid-template-columns:minmax(0,1fr)!important;gap:16px!important}.cr-split{display:none}.cr-main>.cr-compose,.cr-main>.cr-side{margin:0}.cr-bar .cr-seg{display:none}}
 @media(max-width:640px){.cr-card{padding:16px!important}.cr-bar{top:0;padding:6px 8px}.cr-tb{height:38px}.cr-keyw{display:none}.cr-mini-st{display:none}.cr-guides button{height:34px}}
+/* ===== v5.69 SİHİRLİ İMLEÇ — limon sarısı cam halka ===== */
+.orb-root{--lem:#e4ff3d;--lem-r:228,255,61;--spring:cubic-bezier(.2,1.35,.35,1)}
+.orb{position:fixed;left:0;top:0;z-index:190;width:56px;height:56px;padding:0;border:0;border-radius:50%;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;color:#12130d;background:radial-gradient(circle at 34% 28%,#fbffd0 0,#efff7a 26%,var(--lem) 55%,#c3dc1f 100%);box-shadow:0 10px 28px -10px rgba(var(--lem-r),.75),0 2px 6px rgba(0,0,0,.5),inset 0 -3px 8px rgba(80,90,0,.35),inset 0 2px 3px rgba(255,255,255,.7);transition:opacity .35s,filter .35s,box-shadow .3s;will-change:transform}
+.orb[data-move="spring"]{transition:transform .62s var(--spring),opacity .35s,filter .35s,box-shadow .3s}
+.orb[data-move="fly"]{transition:transform .5s cubic-bezier(.3,.9,.25,1),opacity .35s}
+.orb[data-drag="1"]{cursor:grabbing;box-shadow:0 22px 44px -12px rgba(var(--lem-r),.8),0 6px 16px rgba(0,0,0,.55),inset 0 -3px 8px rgba(80,90,0,.35)}
+.orb:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.orb-core{position:absolute;inset:0;display:grid;place-items:center;z-index:2;transition:transform .3s var(--spring)}
+.orb-glow{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,rgba(var(--lem-r),.42),transparent 68%);z-index:0;animation:orb-breathe 3.4s ease-in-out infinite;pointer-events:none}
+.orb-shine{position:absolute;inset:3px;border-radius:50%;z-index:1;background:conic-gradient(from 0deg,transparent 0 70%,rgba(255,255,255,.75) 80%,transparent 90%);-webkit-mask:radial-gradient(circle,transparent 58%,#000 60%);mask:radial-gradient(circle,transparent 58%,#000 60%);animation:orb-spin 5.5s linear infinite;opacity:.55;pointer-events:none}
+.orb.rest{opacity:.62;filter:saturate(.75)}.orb.rest .orb-glow{animation-duration:5s;opacity:.6}.orb.rest:hover{opacity:1;filter:none}
+.orb.press .orb-core{transform:scale(.78)}.orb.press{filter:brightness(1.12)}
+.orb.busy .orb-shine{background:conic-gradient(from 0deg,transparent 0 55%,#12130d 75%,transparent 80%);opacity:.8;animation-duration:1.1s}
+.orb.mode{box-shadow:0 0 0 3px #fff,0 10px 28px -10px rgba(var(--lem-r),.75)}
+.orb.ph-done .orb-core{animation:orb-pop .5s var(--spring)}.orb.ph-done .orb-glow{animation:orb-burst .8s ease-out}
+.is-open .orb{box-shadow:0 0 0 6px rgba(var(--lem-r),.18),0 14px 34px -10px rgba(var(--lem-r),.85)}.is-open .orb .orb-core{animation:orb-pop .4s var(--spring)}
+.orb-dot{position:absolute;right:3px;top:3px;width:11px;height:11px;border-radius:50%;border:2px solid #0d0d0c;z-index:3}
+.orb-veil{position:fixed;inset:0;z-index:185;background:rgba(6,6,6,.32);-webkit-backdrop-filter:blur(7px) saturate(1.15);backdrop-filter:blur(7px) saturate(1.15);animation:orb-fade .28s ease both}
+.orb-ring{position:fixed;inset:0;z-index:188;pointer-events:none;--p:0}
+.orb-it{position:fixed;left:0;top:0;width:0;height:0;transform:translate(var(--x),var(--y));animation:orb-in .46s var(--spring) both;animation-delay:var(--d,0ms)}
+.orb-bt{position:absolute;left:-27px;top:-27px;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;cursor:pointer;pointer-events:auto;color:#f4ffd0;background:linear-gradient(160deg,rgba(var(--lem-r),.34),rgba(var(--lem-r),.12));border:1px solid rgba(var(--lem-r),.55);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -8px 16px rgba(var(--lem-r),.12),0 10px 24px -10px rgba(0,0,0,.7);transition:transform .22s var(--spring),opacity .18s,background .18s,color .18s,box-shadow .2s;touch-action:none}
+.orb-bt:hover,.orb-bt:focus-visible{background:linear-gradient(160deg,rgba(var(--lem-r),.62),rgba(var(--lem-r),.3));color:#fff;outline:none;box-shadow:0 0 0 2px rgba(var(--lem-r),.7),0 12px 26px -10px rgba(var(--lem-r),.6)}
+.orb-bt:active{transform:scale(.9)}
+.orb-kd{position:absolute;right:6px;bottom:6px;width:6px;height:6px;border-radius:50%;background:var(--lem);box-shadow:0 0 6px var(--lem)}
+.orb-badge{position:absolute;right:-3px;top:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--lem);color:#0a0a0a;font:700 10.5px/17px system-ui;font-style:normal}
+.orb-lb{position:absolute;left:50%;top:31px;transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:600;color:#f6f6ee;text-shadow:0 1px 6px #000,0 0 2px #000;pointer-events:none;transition:opacity .18s}
+.orb-it.parent .orb-bt{width:46px;height:46px;left:-23px;top:-23px;background:rgba(20,20,18,.7);color:var(--lem)}
+.orb-ring.swipe .orb-lb{opacity:0!important}
+.orb-ring.hs .orb-it.sel .orb-bt{transform:scale(calc(1 + .4 * var(--p)));background:var(--lem);color:#0a0a0a;border-color:#fff;box-shadow:0 0 0 calc(10px * var(--p)) rgba(var(--lem-r),.18),0 16px 34px -10px rgba(var(--lem-r),.9)}
+.orb-ring.hs .orb-it:not(.sel) .orb-bt{transform:scale(calc(1 - .5 * var(--p)));opacity:calc(1 - .9 * var(--p))}
+.orb-ring.hs .orb-it:not(.sel) .orb-lb{opacity:calc(1 - var(--p))}
+.orb-crumb{position:fixed;left:0;top:0;translate:-50% 0;padding:4px 12px;border-radius:99px;background:rgba(14,14,13,.72);border:1px solid rgba(var(--lem-r),.35);color:var(--lem);font-size:12px;font-weight:700;letter-spacing:.02em;white-space:nowrap;animation:orb-fade .3s ease both}
+.orb-trail{position:fixed;left:0;top:0;z-index:189;height:3px;margin-top:-1.5px;width:0;opacity:0;transform-origin:0 50%;pointer-events:none;border-radius:3px;background:linear-gradient(90deg,rgba(var(--lem-r),.0),rgba(var(--lem-r),.85));box-shadow:0 0 12px rgba(var(--lem-r),.6)}
+.orb-hint{position:fixed;left:0;top:0;z-index:191;pointer-events:none;padding:5px 12px;border-radius:99px;background:#0d0d0c;color:var(--lem);font-size:12.5px;font-weight:700;white-space:nowrap;border:1px solid rgba(var(--lem-r),.45);opacity:0;transition:opacity .15s;translate:-100% -100%}
+.orb-hint[data-side="l"]{translate:0 -100%}.orb-hint[data-on="1"]{opacity:1}
+.orb-mode{position:fixed;left:0;top:0;z-index:189;translate:-100% -50%;padding:5px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.25);background:rgba(14,14,13,.85);color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.orb-mode[data-side="l"]{translate:0 -50%}.orb-mode b{color:var(--lem);margin-left:4px}
+.orb-ask{position:fixed;z-index:192;width:min(360px,calc(100vw - 32px));display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:22px;background:rgba(18,18,16,.82);border:1px solid rgba(var(--lem-r),.3);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);box-shadow:0 30px 60px -20px #000,inset 0 1px 0 rgba(255,255,255,.08);animation:orb-ask-in .34s var(--spring) both;transform-origin:100% 100%}
+.orb-ask[data-side="l"]{transform-origin:0 100%}.orb-ask.mob{width:auto}
+.orb-ask-h{display:flex;align-items:center;gap:8px}.orb-ask-h b{font-size:14px}.orb-ask-h small{flex:1;color:var(--label3,#767671);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.orb-ask-o{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--lem);color:#0a0a0a}
+.orb-ask-l{display:flex;flex-direction:column;gap:10px;max-height:min(46vh,360px);overflow:auto}
+.orb-ask-m p{margin:0;font-size:13.5px;line-height:1.5}.orb-ask-m .q{align-self:flex-end;margin-left:auto;width:fit-content;max-width:88%;padding:6px 11px;border-radius:14px 14px 4px 14px;background:rgba(var(--lem-r),.14);color:#f4ffd0}
+.orb-ask-m .a{margin-top:6px;color:#e6e6df;white-space:pre-wrap}
+.orb-ask-m{display:flex;flex-direction:column}
+.shim-w{display:flex;gap:5px;padding:6px 0}.shim-w i{width:7px;height:7px;border-radius:50%;background:var(--lem);animation:orb-dots 1s ease-in-out infinite}.shim-w i:nth-child(2){animation-delay:.15s}.shim-w i:nth-child(3){animation-delay:.3s}
+.orb-ask-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.orb-act{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(var(--lem-r),.45);background:rgba(var(--lem-r),.1);color:#f4ffd0;border-radius:99px;padding:6px 11px;font-size:12.5px;cursor:pointer}.orb-act:hover{background:rgba(var(--lem-r),.22)}.orb-act.ok{border-color:#22c55e;color:#86efac;background:rgba(34,197,94,.1)}.orb-act.run{opacity:.7}
+.orb-ask-s{display:flex;flex-direction:column;gap:6px}.orb-ask-s button{text-align:left;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#dcdcd4;border-radius:12px;padding:8px 11px;font-size:13px;cursor:pointer}.orb-ask-s button:hover{border-color:rgba(var(--lem-r),.45);color:#fff}
+.orb-ask-e{margin:0;color:#fca5a5;font-size:12.5px}
+.orb-ask-f{display:flex;gap:8px;align-items:center}.orb-ask-f .in{flex:1;border-radius:99px;padding:9px 14px}
+.orb-send{width:36px;height:36px;flex:none;border-radius:50%;border:0;display:grid;place-items:center;background:var(--lem);color:#0a0a0a;cursor:pointer}.orb-send:disabled{opacity:.35;cursor:default}
+.orb-ask-more{align-self:flex-end;display:inline-flex;align-items:center;gap:2px;border:0;background:none;color:var(--lem);font-size:12.5px;cursor:pointer}
+@keyframes orb-breathe{0%,100%{transform:scale(.92);opacity:.75}50%{transform:scale(1.08);opacity:1}}
+@keyframes orb-spin{to{transform:rotate(360deg)}}
+@keyframes orb-fade{from{opacity:0}}
+@keyframes orb-in{from{transform:translate(var(--fx),var(--fy)) scale(.2);opacity:0}}
+@keyframes orb-pop{0%{transform:scale(.4)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes orb-burst{0%{transform:scale(.9);opacity:1}100%{transform:scale(2.1);opacity:0}}
+@keyframes orb-ask-in{from{opacity:0;transform:scale(.6) translateY(16px)}}
+@keyframes orb-dots{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.orb-glow,.orb-shine{animation:none}.orb-it,.orb-ask,.orb-veil{animation-duration:.01ms}.orb[data-move]{transition-duration:.01ms}.orb-bt{transition:none}}
+@media print{.orb-root{display:none}}
+/* ===== v5.69 DAL GÖSTERGESİ VE DAL HARİTASI ===== */
+.brp{gap:5px;padding:0 7px}.brp-n{display:inline-flex;gap:4px;font:600 11.5px "JetBrains Mono",ui-monospace,monospace}.brp-n .up,.bm-dialog .up{color:#4ade80}.brp-n .dn,.bm-dialog .dn{color:#f87171}
+.brp-dot{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(0,0,0,.4)}.brp-dot.run{animation:brp-pulse 1.2s ease-in-out infinite}.brp.bad{color:#fca5a5}
+@keyframes brp-pulse{50%{box-shadow:0 0 0 5px rgba(245,184,61,.25)}}
+.bm-dialog{width:min(860px,calc(100% - 20px))}.bm-dialog h2{display:flex;align-items:center;gap:8px}.bm-dialog a{color:var(--acc)}
+.bm-hb{display:flex;gap:6px}.bm-body{display:flex;flex-direction:column;gap:18px;padding:16px 20px 22px}
+.bm-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.bm-sum>div{padding:10px 12px;border-radius:14px;background:#111;border:1px solid #222}.bm-sum b{display:block;font-size:20px;font-weight:700}.bm-sum span{font-size:11.5px;color:var(--mut)}
+.bm-sec{display:flex;flex-direction:column;gap:10px}.bm-sec h3{font-size:14.5px}
+.bm-pipe{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative}
+.bm-pipe li{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:14px;background:#111;border:1px solid #222;position:relative;min-width:0}
+.bm-pipe li:not(:last-child)::after{content:"";position:absolute;right:-9px;top:22px;width:10px;height:2px;background:var(--c)}
+.bm-pipe li.s-ok{border-color:rgba(34,197,94,.35)}.bm-pipe li.s-bad{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.06)}.bm-pipe li.s-run{border-color:rgba(245,184,61,.5)}
+.bm-pi{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c)}.s-run .bm-pi{animation:brp-pulse 1.2s ease-in-out infinite}
+.bm-pipe div{display:flex;flex-direction:column;gap:2px;min-width:0}.bm-pipe b{font-size:13px}.bm-pipe small{font-size:11.5px;color:#c9c9c1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bm-pipe em{font-style:normal;font-size:11px;color:var(--mut)}.bm-pipe a{font-size:11.5px}
+.bm-note{margin:0;font-size:12.5px;color:#f3d38a;padding:8px 10px;border-radius:10px;background:rgba(245,184,61,.07)}.bm-note.ok{color:#86efac;background:rgba(34,197,94,.07)}
+.bm-runs summary{cursor:pointer;font-size:12.5px;color:var(--mut)}.bm-run{display:flex;align-items:center;gap:8px;padding:6px 4px;font-size:12.5px;color:var(--txt)!important;text-decoration:none;border-top:1px solid #1d1d1d}.bm-run i{width:8px;height:8px;border-radius:50%;flex:none}.bm-run b{font-weight:500}.bm-run code{font-size:11px;color:var(--mut)}.bm-run small{margin-left:auto;color:var(--mut);white-space:nowrap}
+.bm-f button{padding:5px 9px;font-size:12px}
+.bm-graph{width:100%;height:auto;background:#0e0e0e;border:1px solid #1f1f1f;border-radius:14px}
+.bm-main{stroke:#e4ff3d;stroke-width:2.5}.bm-dot{fill:#0e0e0e;stroke:var(--c,#e4ff3d);stroke-width:2}.bm-dot.main{stroke:#e4ff3d}.bm-dot.head{fill:var(--c,#e4ff3d)}.bm-dot.main.head{fill:#e4ff3d}
+.bm-br{fill:none;stroke:var(--c);stroke-width:2.2}.bm-br.dash{stroke-dasharray:4 4;opacity:.6}.bm-hit{fill:transparent;cursor:pointer}
+.bm-tx{fill:#bdbdb5;font:500 11.5px "JetBrains Mono",ui-monospace,monospace;cursor:pointer}.bm-tx.on,.bm-lane.on .bm-tx{fill:#fff;font-weight:700}.bm-lane.on .bm-hit{fill:rgba(255,255,255,.04)}.bm-lane:hover .bm-hit{fill:rgba(255,255,255,.025)}
+.bm-more,.bm-pr{fill:var(--mut);font:600 11px system-ui}.bm-pr{fill:#a5b4fc}
+.bm-list{display:flex;flex-direction:column;gap:6px}
+.bm-row{display:grid;grid-template-columns:12px minmax(0,1fr) 150px 150px;gap:12px;align-items:center;text-align:left;width:100%;padding:10px 12px;border-radius:14px;border:1px solid #1f1f1f;background:#101010;color:var(--txt);cursor:pointer;transition:border-color .2s,background .2s}
+.bm-row:hover{border-color:#333}.bm-row.on{border-color:rgba(228,255,61,.55);background:rgba(228,255,61,.04)}
+.bm-st{width:10px;height:10px;border-radius:50%;background:var(--c)}.bm-st.live{box-shadow:0 0 0 0 var(--c);animation:bm-live 2s ease-out infinite}
+@keyframes bm-live{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}100%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+.bm-main-c{display:flex;flex-direction:column;gap:3px;min-width:0}.bm-main-c small{font-size:12px;color:#c3c3bb}.bm-main-c .bm-last{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bm-nm{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.bm-nm code{font-size:13px;color:#fff}
+.bm-tag{font-style:normal;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:99px;background:#222;color:#bbb}.bm-tag.cur{background:rgba(228,255,61,.16);color:#e4ff3d}.bm-tag.pr{background:rgba(99,102,241,.18);color:#c7d2fe}.bm-tag.pr.merged{background:rgba(168,85,247,.18);color:#e9d5ff}.bm-tag.pr.draft,.bm-tag.pr.closed{background:#222;color:#999}
+.bm-ab,.bm-load{display:flex;flex-direction:column;gap:4px}.bm-div{display:flex;height:6px;border-radius:4px;background:#1c1c1c;position:relative;overflow:hidden}.bm-div::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#555}
+.bm-div i{position:absolute;top:0;bottom:0}.bm-div i.dn{right:50%;background:#f87171}.bm-div i.up{left:50%;background:#4ade80}
+.bm-abn{display:flex;justify-content:space-between;font:600 11.5px "JetBrains Mono",ui-monospace,monospace}
+.bm-lbar{height:6px;border-radius:4px;background:#1c1c1c;overflow:hidden}.bm-lbar i{display:block;height:100%;border-radius:4px}.bm-load small{font-size:11.5px;color:var(--mut)}
+.bm-empty{color:var(--mut);font-size:13px;padding:8px}
+.bm-det{padding:14px;border-radius:18px;border:1px solid #262626;background:#121212}.bm-acts{display:flex;gap:6px;flex-wrap:wrap}.bm-acts a.btn{text-decoration:none;color:inherit}
+.bm-ready{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:14px;background:#0e0e0e;border:1px solid #1f1f1f}.bm-rh{display:flex;align-items:center;gap:10px}.bm-rh b{font-size:13.5px}.bm-rbar{flex:1;height:6px;border-radius:4px;background:#1f1f1f;overflow:hidden}.bm-rbar i{display:block;height:100%;background:#e4ff3d;border-radius:4px;transition:width .5s}
+.bm-ck{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#fca5a5}.bm-ck.ok{color:#86efac}.bm-ck b{color:var(--txt);font-weight:500}.bm-ck small{color:var(--mut)}
+.bm-tabs{align-self:flex-start}
+.bm-commits,.bm-files{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.bm-commits li{display:flex;gap:10px;align-items:flex-start;padding:8px 2px;border-top:1px solid #1d1d1d}.bm-commits li:first-child{border-top:0}.bm-commits code{font-size:11.5px;color:#e4ff3d;padding-top:2px}.bm-commits span{display:flex;flex-direction:column;gap:2px;min-width:0}.bm-commits b{font-weight:500;font-size:13px}.bm-commits small{font-size:11.5px;color:var(--mut)}
+.bm-files li{display:grid;grid-template-columns:20px minmax(0,1fr) auto 90px;gap:10px;align-items:center;padding:7px 2px;border-top:1px solid #1d1d1d;font-size:12.5px}.bm-files li:first-child{border-top:0}.bm-files code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bm-fs{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font:700 10px system-ui;background:#2a2a2a;color:#ddd}.bm-fs.added{background:rgba(34,197,94,.2);color:#86efac}.bm-fs.removed{background:rgba(239,68,68,.2);color:#fca5a5}.bm-fs.modified{background:rgba(245,184,61,.18);color:#f3d38a}
+.bm-fbar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:#1c1c1c}.bm-fbar i.up{background:#4ade80}.bm-fbar i.dn{background:#f87171}
+.bm-skel{display:flex;flex-direction:column;gap:10px}.bm-skel i{height:54px;border-radius:14px;background:linear-gradient(90deg,#141414,#1d1d1d,#141414);background-size:200% 100%;animation:shimx 1.4s linear infinite}
+@media(max-width:720px){.bm-sum{grid-template-columns:repeat(3,1fr)}.bm-sum>div:nth-child(n+4){display:none}.bm-pipe{grid-template-columns:repeat(2,1fr)}.bm-pipe li::after{display:none}.bm-row{grid-template-columns:12px minmax(0,1fr);row-gap:8px}.bm-row .bm-ab,.bm-row .bm-load{grid-column:2}.bm-body{padding:14px}.bm-files li{grid-template-columns:20px minmax(0,1fr) auto}.bm-fbar{display:none}}
+.orb-em{font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 </style>
 </head>
 <body>
@@ -2696,8 +2806,20 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.68.0";
+const VERSION="5.69.0";
 const CHANGELOG=[
+ {v:"5.69.0",date:"2026-11-27",items:[
+  "✨ Yeni: Sihirli imleç. Ekranın kenarındaki limon sarısı küre artık her sayfada seninle; hazır bekliyor (hafifçe nefes alıyor, bir süre dokunulmayınca kendini soluklaştırıyor). İstediğin yere sürükle, bırakınca iPhone’daki gibi en yakın kenara yaylanarak yapışır; hızlı savurursan savurduğun yöne gider. Yeri hatırlanır",
+  "🍋 Dokununca arka plan bulanıklaşır ve küreden sağa, sola, yukarı doğru cam görünümlü limon düğmeler açılır. Düğmeler bulunduğun ekrana göre değişir ve en çok kullandıkların öne gelir. Kategorilere dokununca kendi içindeki kısayollar açılır: Keşfet › Eğitim, Oyun, Finans…; Geliştir › son projelerin; Katalog › Şablonlar, Temalar, UI Kitler; Araçlar › Bağlantılar, Beceriler, Kreatör",
+  "👆 Parmak hareketi: küreye basılı tut, parmağını kaldırmadan bir yöne kaydır. O yöndeki düğme büyüyüp parlar, ona yaklaştıkça diğerleri aynı anda küçülüp kaybolur; küreden parmağına ince bir ışık izi uzanır. Bırakınca o işlem yapılır. Bir kategoride biraz bekletirsen alt kısayolları açılır; geri gelip ortada beklersen bir üst seviyeye döner. Telefonda her seçimde hafif titreşim",
+  "🎯 İşi bilen imleç: kısayol bir menü öğesine gidiyorsa küre oraya uçar, “basar”, tik işaretiyle işi bitirir ve kendi köşesine geri döner. Stüdyo’da süren üretim bittiğinde de küre tik atarak haber verir",
+  "💬 Kısa soru modu: küreye çift dokun (ya da halkadaki Sor). Bulunduğun ekranı bilen küçük bir cam balon açılır; sorunu yaz, yanıt hemen yanında gelir. Yanıtta önerilen adımlar (ör. Şablonları aç) tek dokunuşla uygulanır; uzun sohbet için “Asistanda devam et”",
+  "🛠️ Stüdyo’da küre bağlama göre değişir: Düzenle (Seç / Metin / Gezin), Kaydet, Yayınla, Dallar, Kontrol. Seçim modundayken kürenin çevresinde beyaz halka ve yanında “Seçim modu ×” etiketi çıkar; Esc ya da × ile çıkılır. Önizlemenin köşesindeki eski sarı seçici artık bu kürenin içinde",
+  "⌨️ Klavye: ⌘/Ctrl + . halkayı açar, ok tuşlarıyla düğmeler arasında gezilir, Enter seçer, Esc bir seviye geri döner. Hareket azaltma tercih edilmişse animasyonlar sadeleşir",
+  "🌿 Yeni: Dal haritası (Stüdyo araç çubuğundaki dal göstergesi ya da kürede Dallar). Projenin tüm dalları gerçek veriyle: hangileri aktif (son 3 gün), beklemede ya da durgun; her dalın ana dala göre kaç commit önde/geride olduğu, ayrışma durumu ve çakışma riski, değişiklik yükü (+/− satır, dosya sayısı), son commit, yazarı ve zamanı. Grafikte ana dal ve her dalın ayrıldığı nokta çizilir",
+  "🚀 Canlıya çıkış hattı: Commit › Kontrol (GitHub Actions) › Dağıtım › Canlı adımlarının her biri durumuyla (başarılı, sürüyor, hata) ve süresiyle. Canlıdaki sürüm ana dalın kaç commit gerisinde, son iş akışları ve bağlantıları da burada",
+  "✅ Bir dalı seçince birleştirmeye hazırlık listesi (ana dalla güncel mi, PR açık mı, kontroller geçti mi, inceleme yükü), commitler ve dosya dosya farklar görünür; “Bu dala geç”, “GitHub’da karşılaştır” ve PR bağlantıları tek dokunuşta",
+  "📍 Stüdyo araç çubuğunda yeni dal göstergesi: çalıştığın dalın ↑önde ↓geride commit sayısı ve canlıya çıkış durumunu gösteren renkli nokta (yeşil canlı, sarı sürüyor, kırmızı sorun). Dakikada bir ve pencereye dönünce kendiliğinden yenilenir; sorun olursa küre de kırmızı noktayla uyarır"]},
  {v:"5.68.0",date:"2026-11-27",items:[
   "🖼️ Bağlantı panelleri: Higgsfield ya da Canva ile ürettiğin görsel ve videolar artık Stüdyo sohbetinde kendi kartında görünüyor: “Higgsfield entegrasyonu kullanıldı”, altında büyük galeri. Kartı gizleyip açabilir, Küçük / Orta / Büyük boyut seçebilir, ⤢ ile tam ekrana alabilirsin. Görseli tek dokunuşla önizlemedeki bir öğeye yerleştirebilir ya da indirebilirsin; panel o projede kalıcı",
   "🔍 Yeni tam ekran görüntüleyici: telefonda iki parmakla yakınlaştır, çift dokunuşla 2,5 kat büyüt, sürükleyerek gez, yana kaydırarak sonraki görsele geç, aşağı çekerek kapat. Bilgisayarda tekerlekle yakınlaştır, ← → ile geç, + − 0 ile yakınlık, F tam ekran, Esc kapat. Üstte indir ve paylaş düğmeleri, altta küçük resim şeridi. Sohbete eklediğin görseller ve medya stüdyosundaki sonuçlar da bu görüntüleyicide açılıyor",
@@ -6786,7 +6908,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(a.t==="kontrol"){if(!st.html)throw new Error("Önce bir uygulama yapılmalı");return g(".sugg .chip.on",()=>review())}
   if(a.t==="kaydet")return g('.ib[title="Kaydet"]',()=>save());
   if(a.t==="yayinla")return g(".ws-top .btn.s",()=>publish());
-  if(a.t==="panel"){if(a.ad==="model")return g('[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.cmp-mode',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));if(a.ad==="oturum"){setSessOpen(true);return}return}
+  if(a.t==="panel"){if(a.ad==="model")return g('[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.cmp-mode',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));if(a.ad==="oturum"){setSessOpen(true);return}if(a.ad==="dallar"){setMapOpen(true);return}return}
   if(a.t==="yeni"){setTodo(null);setAtts([]);switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setVersions([]);setPlan(null);setInput("");return}};
  useEffect(()=>{const h=e=>{const {a,done,active}=e.detail||{};if(!a)return;Promise.resolve().then(()=>actRef.current&&actRef.current(a,active)).then(()=>done&&done(),er=>{toast(er.message||"Adım yapılamadı");done&&done()})};addEventListener("gm:act",h);return()=>{removeEventListener("gm:act",h);window.__gmStudio={acik:false}}},[]);
  const [flash,setFlash]=useState(0);const fire=()=>{ghRemember(input);setFlash(Date.now());setTimeout(()=>setFlash(0),900)};
@@ -6909,6 +7031,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    ${m==="proj"&&html`<${ProjectMenu} auth=${auth} openAuth=${openAuth} cur=${st.appId} title=${st.title} close=${cl} go=${go} toast=${toast} onNew=${()=>{switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setCcMenu(null)}}/>`}</span>
   <span class="ccw k-br">${trig("br",html`<${Icon} n="branch" s=${15}/>`,branch,onBranch?"Çalışma dalı: "+branch+" ("+(st.gitContext.source==="github"?"GitHub":"Gitmapp")+")":"Dal seç, değiştir ya da yeni dal aç",onBranch?html`<i class="ccf-dot" aria-hidden="true"></i>`:"")}
    ${m==="br"&&html`<${BranchMenu} appId=${st.appId} source=${vcSource} setSource=${setVcSource} active=${st.gitContext} content=${resolve(st.html)} auth=${auth} openAuth=${openAuth} toast=${toast} close=${cl} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch} openPanel=${()=>{cl();setGitOpen(vcSource==="github"?"github":true)}}/>`}</span>
+  ${st.appId&&auth.user&&html`<span class="ccw k-brp"><${BranchPulse} info=${brInfo} current=${brCurrent} onOpen=${()=>{cl();setMapOpen(true)}}/></span>`}
   ${st.html&&(()=>{const D=pilotData(),c=D.cards.find(x=>x.cur)||{s:"basladi",heat:0},on=pilotUi.open&&!pilotUi.min;return html`<span class="ccw k-plt"><button type="button" class=${"ccf-b plt-ft"+(on?" on":"")} aria-pressed=${on} title=${"Pilot · "+curBr+" · "+P_ST[c.s][0]+(D.pri.length?" · "+D.pri.length+" öncelik":"")} onClick=${()=>setPUi(p=>p.open&&!p.min?{open:false}:{open:true,min:false})}><${Icon} n="pilot" s=${14}/><i class="plt-ft-dot" style=${{"--c":P_ST[c.s][1]}}></i><span class="plt-ft-heat" style=${{"--w":Math.max(8,c.heat*100)+"%"}}></span>${D.pri.length>0&&html`<em>${D.pri.length}</em>`}</button></span>`})()}
   <span class="ccf-sp" aria-hidden="true"></span>
   ${(st.html||busy)&&html`<span class="ccring" role="img" aria-label=${busy?"İşlem sürüyor":"Dosya boyutu "+kb.toFixed(1)+" KB"} title=${busy?"İşlem sürüyor":"index.html · "+kb.toFixed(1)+" KB"}><svg viewBox="0 0 18 18" width="18" height="18" class=${busy?"ccr-spin":""}><circle cx="9" cy="9" r="7" fill="none" stroke="#3a3a37" stroke-width="2.2"/><circle cx="9" cy="9" r="7" fill="none" stroke="#4f8cff" stroke-width="2.2" stroke-linecap="round" stroke-dasharray=${busy?(C*.28)+" "+C:(C*Math.max(.04,pct))+" "+C} transform="rotate(-90 9 9)"/></svg></span>`}
@@ -6930,6 +7053,29 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const setPilot=f=>setPilotS(p=>{const n=typeof f==="function"?f(p):f;LS.set(pilotKey,n);return n});
  const setPUi=f=>setPilotUi(p=>{const n={...p,...(typeof f==="function"?f(p):f)};LS.set("pilotUi",n);return n});
  const curBr=st.gitContext?.name||"main";
+ const [mapOpen,setMapOpen]=useState(false);
+ const brInfo=useBranchInsights(st.appId,vcSource,auth,60000);
+ const brCurrent=st.gitContext&&st.gitContext.source===vcSource?st.gitContext.name:null;
+ async function switchBranch(n){
+  try{const repo=brInfo.data?.repo||"";const d=await api("GET","/api/apps/"+st.appId+"/git/branch?source="+vcSource+"&name="+encodeURIComponent(n)+"&repo="+encodeURIComponent(repo));
+   const c={source:vcSource,name:n,head:d.head,repo:brInfo.data?.repo||null},cur=resolve(st.html);
+   if(d.html==null||d.html===cur)workOnBranch(c);
+   else{if(cur&&!confirm("Çalışma alanındaki uygulama “"+n+"” dalının sürümüyle değiştirilsin mi?\nKaydedilmemiş değişiklikler ve geri alma geçmişi temizlenir."))return;workOnBranch(c,d.html)}
+   toast("“"+n+"” dalına geçildi");setMapOpen(false)}catch(e){toast(e.message||"Dala geçilemedi")}
+ }
+ useOrbContext(()=>{
+  const items=[],P=brInfo.data&&!brInfo.data.setup&&brInfo.data.branches?brPipe(brInfo.data):null;
+  const exitPick=()=>{setVeMode(null);setPicked(null)};
+  if(st.html&&!busy&&!code)items.push({id:"s:duzenle",label:"Düzenle",icon:"pointer",hint:"Önizlemede bir öğe seç ya da metni yerinde düzenle",kids:()=>[
+   {id:"s:sec",label:"Seç",icon:"pointer",hint:"Öğeye dokun, yapay zekâ ile değiştir",run:()=>{setVeMode("select");setPicked(null)}},
+   {id:"s:metin",label:"Metin",icon:"type",hint:"Yazıya dokun ve yerinde düzenle",run:()=>{setVeMode("text");setPicked(null)}},
+   {id:"s:gezin",label:"Gezin",icon:"cursor",hint:"Önizlemeyi normal kullan",run:exitPick}]});
+  if(st.html)items.push({id:"s:kaydet",label:"Kaydet",icon:"save",sel:'.ib[title="Kaydet"]',run:()=>save()});
+  if(st.html)items.push({id:"s:yayinla",label:"Yayınla",icon:"rocket",sel:".ws-top .btn.s",run:()=>publish()});
+  items.push({id:"dallar",label:"Dallar",icon:"branch",hint:"Dal haritası: aktif dallar, ana dalla farklar ve canlıya çıkış",badge:P&&P.worst==="bad"?"!":undefined,sel:".brp",run:()=>setMapOpen(true)});
+  if(st.html&&!busy)items.push({id:"s:kontrol",label:"Kontrol",icon:"shield",hint:"Uygulamayı hata ve tasarım açısından kontrol et",run:()=>review()});
+  return {items,state:veMode?{icon:veMode==="text"?"type":"pointer",label:veMode==="text"?"Metin düzenleme":"Seçim modu",exit:exitPick}:P&&P.worst==="bad"?{badge:"#ef4444"}:null};
+ });
  const pEvent=(name,kind)=>setPilot(p=>{const b=p.b[name]||{st:"basladi",t0:Date.now(),ev:[]};const ev=[...(b.ev||[]).filter(t=>Date.now()-t<864e5),Date.now()].slice(-60);return {...p,b:{...p.b,[name]:{...b,ev,last:Date.now(),lastKind:kind}}}});
  const pStatus=(name,s,man)=>setPilot(p=>{const b=p.b[name]||{t0:Date.now(),ev:[]};if(b.man&&!man&&b.st===s)return p;if(b.man&&!man)return p;if(b.st===s&&!!b.man===!!man)return p;return {...p,b:{...p.b,[name]:{...b,st:s,man:!!man,at:Date.now()}}}});
  const loadCat=()=>{if(!st.appId||!auth.user||!API_ON){setPilotCat(null);return}api("GET","/api/apps/"+st.appId+"/git?source="+vcSource).then(d=>setPilotCat(d)).catch(()=>setPilotCat(null))};
@@ -7204,6 +7350,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  }
  function workOnBranch(gitContext,value){
   if(renderEpoch!==epoch.current||detachRef.current)return;
+  setTimeout(()=>dispatchEvent(new Event("gm:git")),400);
   if(studioScope(account,{...st,gitContext})===scope){setSt(s=>({...s,...(value===undefined?{}:studioSource(value)),gitContext}));return}
   if(value===undefined){switchProject({...st,gitContext,msgs:[]});return}
   setVersions([]);setPicked(null);setVeMode(null);setTodo(null);setPlan(null);
@@ -7215,7 +7362,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
  const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${frameDoc(ve?withQA(preview(st.html)):preview(st.html),ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gtPanel}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
+ return html`<div class="ws">${gtPanel}${mapOpen&&html`<${BranchMap} info=${brInfo} current=${brCurrent} close=${()=>setMapOpen(false)} onSwitch=${st.appId?switchBranch:null} openPanel=${()=>{setMapOpen(false);setGitOpen(vcSource==="github"?"github":true)}}/>`}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -7266,7 +7413,6 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
     ${stagePend&&!code&&html`<div class="stg-bar" role="dialog" aria-label="Görsel yerleştirme"><img src=${stagePend.item.thumb||stagePend.item.url} alt=""/><span><b>Görsel yerleştirildi</b><small>→ ${stagePend.target.alt||"<"+stagePend.target.tag+">"} · sahnede böyle görünecek</small></span><button type="button" class="btn s" onClick=${confirmStage}>Onayla</button><button type="button" class="btn g s" onClick=${undoStage}>Geri al</button></div>`}
     ${placeSel&&!code&&html`<div class="stg-hint"><${Icon} n="pointer" s=${14}/><span>Görseli koymak istediğin öğeye önizlemede dokun</span><button type="button" class="ib sm" aria-label="Vazgeç" onClick=${()=>setPlaceSel(null)}><${Icon} n="x" s=${12}/></button></div>`}
     ${statusWin()}
-    ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
    </div></section>${sessOpen&&sessPanel()}${pilotUI()}${kokOpen&&html`<${Kokpit} close=${()=>setKokOpen(false)} user=${auth.user} html=${st.html} model=${curModel} health=${cHealth} reHealth=${reHealth} applyFix=${applyFix} buildFix=${(p,l)=>build(p,null,"Bağlantı düzeltme: "+l)} go=${go} toast=${toast}/>`}</div>
   ${zoom&&html`<${ViewerBridge} url=${zoom} done=${()=>setZoom(null)}/>`}
   ${mediaOpen&&html`<${MediaStudio} onResult=${r=>setPanels(ps=>[...ps,{id:"p"+Date.now().toString(36),after:st.msgs.length,...r}].slice(-12))} close=${()=>setMediaOpen(false)} auth=${auth} health=${health} toast=${toast} openAuth=${openAuth} context=${[st.title,picked?.text].filter(Boolean).join(" · ")} onAdd=${m=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{...m,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);toast("Önizlemede görselin gideceği öğeye dokun")}}/>`}
@@ -9572,6 +9718,319 @@ function SquirrelGuide({run,toast}){
  </div></div>`;
 }
 
+/* ================= v5.69 SİHİRLİ İMLEÇ ================= */
+// Ekranlar bağlam kısayollarını buraya kaydeder; imleç açılırken en güncel listeyi okur.
+const ORB={ctx:null};
+function useOrbContext(build){
+ const ref=useRef(build);ref.current=build;
+ useEffect(()=>{const tok={get:()=>ref.current()};ORB.ctx=tok;dispatchEvent(new Event("gm:orb"));return()=>{if(ORB.ctx===tok){ORB.ctx=null;dispatchEvent(new Event("gm:orb"))}}},[]);
+ useEffect(()=>{dispatchEvent(new Event("gm:orb"))});
+}
+const ORB_S=56,ORB_M=14,ORB_HOLD=260;
+const orbVibe=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+const orbCalm=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+const orbWait=ms=>new Promise(r=>setTimeout(r,ms));
+function orbBounds(){const mob=innerWidth<821;return {top:mob?64:72,bottom:innerHeight-(mob?150:28)-ORB_S}}
+function orbHome(p){const b=orbBounds();return {x:p.side==="l"?ORB_M:innerWidth-ORB_M-ORB_S,y:Math.max(b.top,Math.min(b.bottom,(p.y??.58)*innerHeight))}}
+// Halka yerleşimi: öğeler orbdan ekranın ortasına doğru bir yay üzerinde; sığmayanlar dış halkaya geçer.
+function orbLayout(n,ox,oy,dir,spread,radii,gap=66){
+ const pts=[];let left=n,k=0;
+ while(left>0){
+  const r=radii[Math.min(k,radii.length-1)]+(k>=radii.length?(k-radii.length+1)*66:0);
+  const cap=Math.max(1,Math.floor(spread*r/gap)+1),m=Math.min(left,cap);
+  const sp=m>1?Math.min(spread,(m-1)*gap/r):0;
+  for(let j=0;j<m;j++){const a=dir-sp/2+(m>1?sp*j/(m-1):0);pts.push({x:ox+r*Math.cos(a),y:oy+r*Math.sin(a)})}
+  left-=m;k++;
+ }
+ const H=30;
+ return pts.map(p=>{const x=Math.max(H+6,Math.min(innerWidth-H-6,p.x)),y=Math.max(H+8,Math.min(innerHeight-H-14,p.y));return {x,y,a:Math.atan2(y-oy,x-ox),d:Math.hypot(x-ox,y-oy)}});
+}
+function orbSpread(oy){const near=Math.min(oy,innerHeight-oy);return near<190?1.7:near<300?2.4:3.05}
+const angDiff=(a,b)=>{let d=Math.abs(a-b)%(2*Math.PI);return d>Math.PI?2*Math.PI-d:d};
+
+function MagicOrb({items,ctxLabel,run,ctx,toast,openCopilot,hidden}){
+ const [pos,setPos]=useState(()=>{const p=LS.get("orbPos",null);return p&&(p.side==="l"||p.side==="r")?p:{side:"r",y:.58}});
+ const [phase,setPhase]=useState("idle");// idle | open | swipe | fly | done
+ const [levels,setLevels]=useState([]);const [sel,setSel]=useState(-1);const [ask,setAsk]=useState(false);
+ const [rest,setRest]=useState(false);const [busy,setBusy]=useState(false);const [ctxState,setCtxState]=useState(null);const [,reflow]=useState(0);
+ const orbEl=useRef(null),ringEl=useRef(null),trailEl=useRef(null),hintEl=useRef(null);
+ const g=useRef(null),hold=useRef(null),dwell=useRef(null),restT=useRef(null),lastTap=useRef(0),selRef=useRef(-1),levelsRef=useRef([]),phaseRef=useRef("idle"),busyRef=useRef(false);
+ levelsRef.current=levels;phaseRef.current=phase;selRef.current=sel;
+ const home=orbHome(pos);
+ const place=(x,y,how)=>{const el=orbEl.current;if(!el)return;el.dataset.move=how||"";el.style.transform="translate3d("+x+"px,"+y+"px,0)"};
+ useEffect(()=>{if(phase==="idle"||phase==="open"||phase==="swipe")place(home.x,home.y,phase==="idle"?"spring":"")},[pos.side,pos.y,phase]);
+ useEffect(()=>{const r=()=>{reflow(x=>x+1);const h=orbHome(pos);if(phaseRef.current==="idle")place(h.x,h.y,"")};addEventListener("resize",r);return()=>removeEventListener("resize",r)},[pos]);
+ const wake=()=>{setRest(false);clearTimeout(restT.current);restT.current=setTimeout(()=>{if(phaseRef.current==="idle"&&!g.current)setRest(true)},4200)};
+ useEffect(()=>{wake();return()=>clearTimeout(restT.current)},[]);
+ // Bağlam durumu (ör. Stüdyo'da seçim modu) ve arka plandaki iş: bitince imleç kendiliğinden haber verir.
+ useEffect(()=>{
+  const sync=()=>{const s=ORB.ctx?.get()?.state||null;setCtxState(o=>JSON.stringify(o&&{...o,exit:0})===JSON.stringify(s&&{...s,exit:0})?o:s);
+   const b=!!(window.__gmStudio||{}).calisiyor;if(b!==busyRef.current){const was=busyRef.current;busyRef.current=b;setBusy(b);if(was&&!b&&phaseRef.current==="idle"){setPhase("done");orbVibe([8,40,8]);setTimeout(()=>setPhase(p=>p==="done"?"idle":p),1100)}}};
+  sync();addEventListener("gm:orb",sync);addEventListener("gm:studio",sync);const t=setInterval(sync,1500);
+  return()=>{removeEventListener("gm:orb",sync);removeEventListener("gm:studio",sync);clearInterval(t)};
+ },[]);
+ const usage=()=>LS.get("orbUse",{})||{};
+ const ordered=list=>{const u=usage();return list.map((it,i)=>({it,i})).sort((a,b)=>(b.it.pin?1e6:0)-(a.it.pin?1e6:0)||(u[b.it.id]||0)-(u[a.it.id]||0)||a.i-b.i).map(x=>x.it).slice(0,9)};
+ const rootLevel=()=>{const c=home.x+ORB_S/2,m=home.y+ORB_S/2;const dir=Math.atan2(innerHeight/2-m,innerWidth/2-c);const list=ordered(items());return {items:list,pts:orbLayout(list.length,c,m,dir,orbSpread(m),[100,182],80),ox:c,oy:m,label:ctxLabel||""}};
+ const kidLevel=(it,pt,from)=>{const list=ordered(it.kids());const dir=Math.atan2(pt.y-from.oy,pt.x-from.ox)*.55+Math.atan2(innerHeight/2-pt.y,innerWidth/2-pt.x)*.45;return {items:list,pts:orbLayout(list.length,pt.x,pt.y,dir,Math.min(2.8,orbSpread(pt.y)+.35),[96,176],80),ox:pt.x,oy:pt.y,label:it.label,parent:{it,pt}}};
+ function setP(p){ringEl.current?.style.setProperty("--p",p.toFixed(3))}
+ function trail(x,y,on){const t=trailEl.current;if(!t)return;const L=levelsRef.current[levelsRef.current.length-1];if(!on||!L){t.style.opacity=0;return}const dx=x-L.ox,dy=y-L.oy;t.style.opacity=Math.min(1,Math.hypot(dx,dy)/60);t.style.transform="translate("+L.ox+"px,"+L.oy+"px) rotate("+Math.atan2(dy,dx)+"rad)";t.style.width=Math.hypot(dx,dy)+"px"}
+ function hint(text){const h=hintEl.current;if(!h)return;h.textContent=text||"";h.dataset.on=text?"1":""}
+ function open(mode){if(ask)setAsk(false);const L=rootLevel();if(!L.items.length)return;setLevels([L]);setSel(-1);setPhase(mode);setP(0);setRest(false);orbVibe(mode==="swipe"?12:6)}
+ function close(){clearTimeout(dwell.current);setLevels([]);setSel(-1);setPhase(p=>p==="open"||p==="swipe"?"idle":p);trail(0,0,false);hint("");wake()}
+ function pop(){const ls=levelsRef.current;if(ls.length>1){setLevels(ls.slice(0,-1));setSel(-1);setP(0);orbVibe(5)}else close()}
+ function bump(id){const u=usage();u[id]=(u[id]||0)+1;LS.set("orbUse",u)}
+ async function flyTo(el){
+  const r=el.getBoundingClientRect();if(!r.width||r.bottom<0||r.top>innerHeight||r.right<0||r.left>innerWidth)return false;
+  setPhase("fly");place(r.left+r.width/2-ORB_S/2,r.top+r.height/2-ORB_S/2,orbCalm()?"":"fly");await orbWait(orbCalm()?60:520);
+  orbEl.current?.classList.add("press");await orbWait(170);orbEl.current?.classList.remove("press");return true;
+ }
+ async function fire(it,idx){
+  const L=levelsRef.current[levelsRef.current.length-1];
+  if(it.kids){const pt=L.pts[idx];setLevels(ls=>[...ls,kidLevel(it,pt,L)]);setSel(-1);setP(0);orbVibe(9);return}
+  bump(it.id);setLevels([]);setSel(-1);trail(0,0,false);hint("");
+  if(it.ask){setPhase("idle");setAsk(true);return}
+  const target=it.sel&&document.querySelector(it.sel);
+  if(target)await flyTo(target);else setPhase("fly");
+  try{await it.run?.()}catch(e){toast(e.message||"Bu kısayol çalıştırılamadı")}
+  setPhase("done");orbVibe(8);await orbWait(orbCalm()?250:720);setPhase("idle");wake();
+ }
+ // Parmak hareketi: basılı tut → halka açılır; parmağı kaldırmadan bir yöne kaydır → o düğme büyür, diğerleri birlikte söner; bırak → çalışır.
+ function track(x,y){
+  const ls=levelsRef.current,L=ls[ls.length-1];if(!L)return;
+  const dx=x-L.ox,dy=y-L.oy,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx);trail(x,y,true);
+  let best=-1,bd=9;L.pts.forEach((p,i)=>{const s=angDiff(a,p.a)+Math.abs(d-p.d)/900;if(s<bd){bd=s;best=i}});
+  const ok=d>26&&best>=0&&angDiff(a,L.pts[best].a)<.62;const idx=ok?best:-1;
+  const p=ok?Math.max(0,Math.min(1,(d-26)/Math.max(30,L.pts[best].d-34))):0;setP(p);
+  if(idx!==selRef.current){selRef.current=idx;setSel(idx);clearTimeout(dwell.current);if(idx>=0)orbVibe(4)}
+  const it=idx>=0?L.items[idx]:null;
+  hint(it?(it.kids?(p>.8?"Bekle: "+it.label+" açılıyor":it.label+" ›"):p>.45?"Bırak: "+it.label:it.label):ls.length>1&&d<22?"Geri dön":"");
+  if(it&&it.kids&&p>.8&&!dwell.current){dwell.current=setTimeout(()=>{dwell.current=null;if(selRef.current===idx)fire(it,idx)},360)}
+  else if(!(it&&it.kids&&p>.8)){clearTimeout(dwell.current);dwell.current=null}
+  if(ls.length>1&&d>44)L.away=true;
+  if(ls.length>1&&L.away&&d<18&&!dwell.current){dwell.current=setTimeout(()=>{dwell.current=null;pop()},420)}
+ }
+ function down(e){
+  if(e.button>0)return;e.currentTarget.setPointerCapture?.(e.pointerId);wake();
+  const r=orbEl.current.getBoundingClientRect();
+  g.current={x0:e.clientX,y0:e.clientY,ox:r.left,oy:r.top,mode:null,hist:[{x:e.clientX,y:e.clientY,t:performance.now()}],wasOpen:phaseRef.current==="open"};
+  clearTimeout(hold.current);
+  hold.current=setTimeout(()=>{const s=g.current;if(s&&!s.mode){s.mode="swipe";if(phaseRef.current!=="open")open("swipe");else setPhase("swipe")}},ORB_HOLD);
+ }
+ function move(e){
+  const s=g.current;if(!s)return;const x=e.clientX,y=e.clientY;s.hist.push({x,y,t:performance.now()});if(s.hist.length>8)s.hist.shift();
+  if(!s.mode&&Math.hypot(x-s.x0,y-s.y0)>8){clearTimeout(hold.current);if(phaseRef.current==="open"){s.mode="swipe";setPhase("swipe")}else{s.mode="drag";setAsk(false)}}
+  if(s.mode==="drag"){const nx=Math.max(4,Math.min(innerWidth-ORB_S-4,s.ox+x-s.x0)),ny=Math.max(4,Math.min(innerHeight-ORB_S-4,s.oy+y-s.y0));place(nx,ny,"");orbEl.current.dataset.drag="1"}
+  if(s.mode==="swipe")track(x,y);
+ }
+ function up(e){
+  clearTimeout(hold.current);const s=g.current;g.current=null;if(!s)return;
+  if(s.mode==="drag"){
+   orbEl.current.dataset.drag="";const h=s.hist,b=h[h.length-1],a=h.find(q=>b.t-q.t<=110)||h[0],dt=Math.max(16,b.t-a.t);
+   const vx=(b.x-a.x)/dt,vy=(b.y-a.y)/dt;// hızlı atışta imleç savrulduğu yöne gider (iOS gibi ivme izdüşümü)
+   const cx=b.x+vx*280,cy=b.y+vy*200;const side=cx<innerWidth/2?"l":"r";
+   const bd=orbBounds(),y=Math.max(bd.top,Math.min(bd.bottom,cy-ORB_S/2));
+   const np={side,y:y/innerHeight};setPos(np);LS.set("orbPos",np);place(orbHome(np).x,orbHome(np).y,"spring");orbVibe(6);wake();return;
+  }
+  if(s.mode==="swipe"){
+   const L=levelsRef.current[levelsRef.current.length-1],i=selRef.current,p=parseFloat(ringEl.current?.style.getPropertyValue("--p")||"0");
+   trail(0,0,false);hint("");clearTimeout(dwell.current);dwell.current=null;
+   if(L&&i>=0&&p>.42){fire(L.items[i],i);return}
+   setSel(-1);setP(0);setPhase("open");return;
+  }
+  // dokunuş: aç / kapat; hızlı çift dokunuş: kısa soru
+  const now=Date.now();
+  if(now-lastTap.current<320){lastTap.current=0;close();setAsk(true);return}
+  lastTap.current=now;
+  if(s.wasOpen||phaseRef.current==="open")close();else if(ask)setAsk(false);else open("open");
+ }
+ useEffect(()=>{
+  const k=e=>{
+   const t=e.target;const typing=t.closest?.("input,textarea,[contenteditable=true]");
+   if((e.ctrlKey||e.metaKey)&&e.key==="."&&!e.altKey){e.preventDefault();if(levelsRef.current.length)close();else{open("open");setTimeout(()=>ringEl.current?.querySelector(".orb-bt")?.focus(),40)}return}
+   if(e.key==="Escape"){if(levelsRef.current.length){e.preventDefault();pop();orbEl.current?.focus()}else if(!typing&&!document.querySelector("dialog:modal")){const s=ORB.ctx?.get()?.state;s?.exit&&s.exit()}}
+   if(levelsRef.current.length&&["ArrowRight","ArrowLeft","ArrowUp","ArrowDown"].includes(e.key)&&ringEl.current?.contains(document.activeElement)){
+    e.preventDefault();const bs=[...ringEl.current.querySelectorAll(".orb-it:not(.parent) .orb-bt")];const i=bs.indexOf(document.activeElement);const n=bs.length;bs[(i+(e.key==="ArrowRight"||e.key==="ArrowDown"?1:-1)+n)%n]?.focus()}
+  };
+  addEventListener("keydown",k);return()=>removeEventListener("keydown",k);
+ },[]);
+ if(hidden)return null;
+ const L=levels[levels.length-1];const isOpen=!!L;const swipe=phase==="swipe";
+ const icon=phase==="done"?"check":isOpen?"x":ask?"msgSpark":ctxState?.icon||"sparkles";
+ return html`<div class=${"orb-root noprint"+(isOpen?" is-open":"")}>
+  ${isOpen&&html`<div class="orb-veil" onPointerDown=${close} aria-hidden="true"></div>`}
+  ${isOpen&&html`<div ref=${ringEl} class=${"orb-ring"+(swipe?" swipe":"")+(sel>=0?" hs":"")} role="menu" aria-label=${"Sihirli imleç"+(L.label?" · "+L.label:"")} style=${{"--p":0}}>
+   ${L.parent&&html`<div class="orb-crumb" style=${{transform:"translate("+Math.max(80,Math.min(innerWidth-80,L.ox))+"px,"+Math.max(10,Math.min(...L.pts.map(q=>q.y),L.oy)-70)+"px)"}}>${levels.slice(1).map(l=>l.label).join(" › ")}</div>`}
+   ${L.parent&&html`<div class="orb-it parent" style=${{"--x":L.ox+"px","--y":L.oy+"px","--fx":L.ox+"px","--fy":L.oy+"px"}}><button type="button" class="orb-bt" aria-label=${"Geri: "+L.parent.it.label} onClick=${pop}><${Icon} n="chevLeft" s=${20}/></button></div>`}
+   ${L.items.map((it,i)=>{const p=L.pts[i];return html`<div key=${levels.length+":"+it.id} class=${"orb-it"+(i===sel?" sel":"")+(it.kids?" has-kids":"")} style=${{"--x":p.x+"px","--y":p.y+"px","--fx":L.ox+"px","--fy":L.oy+"px","--d":(i*28)+"ms"}}>
+     <button type="button" role="menuitem" class="orb-bt" aria-haspopup=${it.kids?"menu":undefined} title=${it.hint||it.label} onClick=${()=>fire(it,i)}>${it.emoji?html`<span class="orb-em" aria-hidden="true">${it.emoji}</span>`:html`<${Icon} n=${it.icon} s=${21}/>`}${it.kids&&html`<i class="orb-kd" aria-hidden="true"></i>`}${it.badge&&html`<em class="orb-badge">${it.badge}</em>`}</button>
+     <span class="orb-lb">${it.label}</span></div>`})}
+  </div>`}
+  <div ref=${trailEl} class="orb-trail" aria-hidden="true"></div>
+  <div ref=${hintEl} class="orb-hint" aria-live="polite" style=${{transform:"translate("+(pos.side==="l"?home.x:home.x+ORB_S)+"px,"+(home.y-30)+"px)"}} data-side=${pos.side}></div>
+  <button ref=${orbEl} type="button" class=${"orb"+(rest&&!isOpen&&!ask?" rest":"")+(busy?" busy":"")+(ctxState?.icon?" mode":"")+" ph-"+phase}
+   aria-label=${"Sihirli imleç"+(ctxState?.label?" · "+ctxState.label:"")+": dokun, menüyü aç; basılı tutup kaydır; çift dokun, kısa soru"} aria-expanded=${isOpen} aria-haspopup="menu"
+   title="Sihirli imleç · Dokun: kısayollar · Basılı tut ve kaydır: hızlı seçim · Çift dokun: kısa soru · Sürükle: taşı · ⌘/Ctrl+."
+   onPointerDown=${down} onPointerMove=${move} onPointerUp=${up} onPointerCancel=${()=>{clearTimeout(hold.current);g.current=null;if(orbEl.current)orbEl.current.dataset.drag="";place(home.x,home.y,"spring")}}
+   onPointerEnter=${wake} onKeyDown=${e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();isOpen?close():(open("open"),setTimeout(()=>ringEl.current?.querySelector(".orb-bt")?.focus(),40))}else if(e.key==="?"||e.key==="/"){e.preventDefault();setAsk(true)}}}
+   onContextMenu=${e=>e.preventDefault()} style=${{transform:"translate3d("+home.x+"px,"+home.y+"px,0)"}}>
+   <span class="orb-glow" aria-hidden="true"></span><span class="orb-shine" aria-hidden="true"></span>
+   <span class="orb-core" aria-hidden="true"><${Icon} n=${icon} s=${22} w=${2}/></span>
+   ${ctxState?.badge&&html`<em class="orb-dot" aria-hidden="true" style=${{background:ctxState.badge}}></em>`}
+  </button>
+  ${ctxState?.label&&!isOpen&&!ask&&html`<button type="button" class="orb-mode" style=${{transform:"translate("+(pos.side==="l"?home.x+ORB_S+8:home.x-8)+"px,"+(home.y+ORB_S/2)+"px)"}} data-side=${pos.side} onClick=${()=>ctxState.exit&&ORB.ctx?.get()?.state?.exit?.()}>${ctxState.label}${ctxState.exit?html` <b>×</b>`:""}</button>`}
+  ${ask&&html`<${OrbAsk} pos=${pos} home=${home} close=${()=>{setAsk(false);wake()}} run=${run} ctx=${ctx} ctxLabel=${ctxLabel} toast=${toast} openCopilot=${openCopilot} onDone=${()=>{setPhase("done");setTimeout(()=>setPhase("idle"),800)}}/>`}
+ </div>`;
+}
+
+// Bulunduğun yerde kısa soru: yanıt imlecin yanında, önerilen adımlar tek dokunuşla uygulanır.
+function OrbAsk({pos,home,close,run,ctx,ctxLabel,toast,openCopilot,onDone}){
+ const [q,setQ]=useState(""),[busy,setBusy]=useState(false),[thread,setThread]=useState([]),[err,setErr]=useState(""),[ran,setRan]=useState({});
+ const inRef=useRef(null),box=useRef(null);
+ useEffect(()=>{setTimeout(()=>inRef.current?.focus(),30);const k=e=>{if(e.key==="Escape"&&!document.querySelector("dialog:modal")){e.stopPropagation();close()}};const o=e=>{if(box.current&&!box.current.contains(e.target)&&!e.target.closest?.(".orb"))close()};addEventListener("keydown",k,true);setTimeout(()=>addEventListener("pointerdown",o),0);return()=>{removeEventListener("keydown",k,true);removeEventListener("pointerdown",o)}},[]);
+ const last=thread[thread.length-1];
+ async function send(text){
+  const t=(text??q).trim();if(!t||busy)return;
+  if(!API_ON){setErr("Sunucuya şu an ulaşılamıyor; bağlantı gelince yeniden dene.");return}
+  setBusy(true);setErr("");setQ("");const msgs=[...thread.flatMap(x=>[{role:"user",content:x.q},{role:"assistant",content:x.raw}]),{role:"user",content:t}].slice(-8);
+  setThread(th=>[...th,{q:t,raw:"",body:"",acts:[],wait:true}]);
+  try{const c=ctx();const j=await api("POST","/api/ai/copilot",{messages:msgs,context:{gorev:"KISA SORU (sihirli imleç): Kullanıcı şu an '"+(ctxLabel||c.sayfaAdi||"")+"' ekranında, imlecin içinden hızlı bir soru soruyor. 1-3 kısa cümleyle net yanıt ver; uygulamada bir şey yapmak gerekiyorsa en sonda eylem bloğu ekle.",...c}});
+   const p=cpParse(j.reply);setThread(th=>[...th.slice(0,-1),{q:t,raw:String(j.reply||""),body:p.body||"Yanıt boş döndü.",acts:p.acts,wait:false}]);
+  }catch(e){setThread(th=>th.slice(0,-1));setErr(e.message||"Yanıt alınamadı");setQ(t)}
+  setBusy(false);setTimeout(()=>inRef.current?.focus(),20);
+ }
+ async function doAct(a,k){if(ran[k])return;setRan(r=>({...r,[k]:"run"}));try{await run(a);setRan(r=>({...r,[k]:"ok"}));onDone()}catch(e){setRan(r=>({...r,[k]:""}));toast(e.message||"Adım yapılamadı")}}
+ const mob=innerWidth<600;
+ const style=mob?{left:"12px",right:"12px",bottom:"calc(96px + env(safe-area-inset-bottom))"}:{[pos.side==="l"?"left":"right"]:(ORB_M+ORB_S+12)+"px",...(home.y>innerHeight/2?{bottom:Math.max(16,innerHeight-home.y-ORB_S)+"px"}:{top:Math.max(16,home.y)+"px"})};
+ const starters=["Bu ekranda ne yapabilirim?","Sıradaki adımım ne olmalı?","Bir sorunu nasıl düzeltirim?"];
+ return html`<div ref=${box} class=${"orb-ask"+(mob?" mob":"")} data-side=${pos.side} style=${style} role="dialog" aria-label="Kısa soru">
+  <div class="orb-ask-h"><span class="orb-ask-o"><${Icon} n="msgSpark" s=${14}/></span><b>Kısa soru</b><small>${ctxLabel||"Gitmapp"}</small><button type="button" class="ib sm" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${13}/></button></div>
+  ${thread.length>0&&html`<div class="orb-ask-l">${thread.slice(-3).map((x,i)=>html`<div key=${i} class="orb-ask-m"><p class="q">${x.q}</p>${x.wait?html`<p class="a shim-w"><i></i><i></i><i></i></p>`:html`<p class="a">${x.body}</p>
+    ${x.acts.length>0&&html`<div class="orb-ask-acts">${x.acts.map((a,k)=>{const [ic,lb]=cpLabel(a);const key=(thread.length-3+i)+":"+k;return html`<button key=${k} type="button" class=${"orb-act "+(ran[key]||"")} disabled=${!!ran[key]} onClick=${()=>doAct(a,key)}><${Icon} n=${ran[key]==="ok"?"check":ic} s=${13}/>${lb}</button>`})}</div>`}`}</div>`)}</div>`}
+  ${!thread.length&&html`<div class="orb-ask-s">${starters.map(s=>html`<button key=${s} type="button" onClick=${()=>send(s)}>${s}</button>`)}</div>`}
+  ${err&&html`<p class="orb-ask-e" role="alert">${err}</p>`}
+  <form class="orb-ask-f" onSubmit=${e=>{e.preventDefault();send()}}><input ref=${inRef} class="in" value=${q} maxlength="600" placeholder="Bir şey sor…" aria-label="Sorun" onInput=${e=>setQ(e.target.value)} disabled=${busy}/><button class="orb-send" aria-label="Gönder" disabled=${busy||!q.trim()}><${Icon} n=${busy?"refresh":"arrowUp"} s=${16} w=${2.2}/></button></form>
+  ${last&&!last.wait&&html`<button type="button" class="orb-ask-more" onClick=${()=>{close();openCopilot()}}>Asistanda devam et <${Icon} n="chevRight" s=${13}/></button>`}
+ </div>`;
+}
+
+/* ================= v5.69 DAL HARİTASI ================= */
+const BR_ST={aktif:["Aktif","#22c55e"],beklemede:["Beklemede","#f5b83d"],durgun:["Durgun","#77776f"],birlesti:["Ana dalda","#6ea8ff"],bilinmiyor:["Bilinmiyor","#77776f"]};
+const brTime=iso=>{if(!iso)return NaN;return Date.parse(/^\d{4}-\d\d-\d\d \d/.test(iso)?iso.replace(" ","T")+"Z":iso)};
+const brAgo=iso=>{const t=brTime(iso);if(!isFinite(t))return"";const m=Math.round((Date.now()-t)/6e4);if(m<1)return"şimdi";if(m<60)return m+" dk önce";const h=Math.round(m/60);if(h<24)return h+" sa önce";const d=Math.round(h/24);return d<30?d+" gün önce":Math.round(d/30)+" ay önce"};
+const brDur=ms=>!isFinite(ms)||ms<0?"":ms<6e4?Math.round(ms/1000)+" sn":Math.floor(ms/6e4)+" dk "+Math.round(ms%6e4/1000)+" sn";
+const brRel=(b,main)=>({esit:main+" ile aynı noktada",onde:main+"’den "+b.ahead+" commit önde · birleştirmeye hazır",geride:main+"’in "+b.behind+" commit gerisinde · güncellemen önerilir",ayristi:b.ahead+" önde, "+b.behind+" geride · ayrışmış, birleştirirken çakışma olabilir",bilinmiyor:"Ana dalla karşılaştırılamadı"}[b.relation]||"");
+const brLoad=b=>{const n=(b.additions||0)+(b.deletions||0);return n===0?["Yük yok",0]:n<60?["Hafif yük",.22]:n<400?["Orta yük",.55]:["Ağır yük",.92]};
+function brPipe(d){
+ const p=d?.pipeline||{},main=d?.defaultBranch||"main",runs=p.runs||[];
+ const run=runs.find(r=>r.branch===main)||runs[0],dep=(p.deployments||[])[0];
+ const ci=d?.source!=="github"?{k:"save",t:"Kayıt",ic:"save",s:p.saved?"ok":"idle",d:p.saved?"Hesabına kaydedildi":"Henüz kaydedilmedi",time:p.saved}
+  :{k:"ci",t:"Kontrol",ic:"shield",s:!p.actions?"skip":!run?"idle":run.status!=="completed"?"run":run.conclusion==="success"?"ok":["cancelled","skipped","neutral"].includes(run.conclusion)?"skip":"bad",
+   d:!p.actions?"GitHub Actions kurulu değil":!run?"Henüz iş akışı çalışmadı":run.name+" · "+(run.status!=="completed"?"çalışıyor":{success:"başarılı",failure:"başarısız",cancelled:"iptal",timed_out:"zaman aşımı"}[run.conclusion]||run.conclusion),
+   time:run?.started,url:run?.url,dur:run?(run.status==="completed"?brTime(run.updated):Date.now())-brTime(run.started):NaN};
+ const dst={success:"ok",failure:"bad",error:"bad",in_progress:"run",queued:"run",pending:"run",inactive:"skip"};
+ const deploy=dep?{k:"deploy",t:"Dağıtım",ic:"rocket",s:dst[dep.state]||"idle",d:dep.environment+" · "+({success:"tamamlandı",failure:"başarısız",error:"hata",in_progress:"sürüyor",queued:"sırada",pending:"bekliyor",inactive:"eski"}[dep.state]||dep.state),time:dep.updated||dep.created,sha:dep.sha}
+  :{k:"deploy",t:"Yayın",ic:"rocket",s:p.published||p.status==="published"?"ok":"idle",d:p.published||p.status==="published"?"Yayınlandı":"Henüz yayınlanmadı",time:p.published};
+ const steps=[{k:"commit",t:"Commit",ic:"branch",s:p.commit?"ok":"idle",d:p.commit?String(p.commit.sha||"").slice(0,7)+" · "+(p.commit.message||""):"Henüz commit yok",time:p.commit?.date},ci,deploy,
+  {k:"live",t:"Canlı",ic:"globe",s:p.live?"ok":"idle",d:p.live?String(p.live).replace(/^https?:\/\//,"").replace(/\/$/,""):"Canlı adres yok",url:p.live}];
+ const mainB=(d?.branches||[]).find(b=>b.isDefault);let lag=null;
+ if(dep?.sha&&mainB?.commits?.length){const i=mainB.commits.findIndex(c=>c.sha===dep.sha);lag=i<0?mainB.commits.length+"+":i}
+ const worst=steps.some(s=>s.s==="bad")?"bad":steps.some(s=>s.s==="run")?"run":steps[steps.length-1].s==="ok"?"ok":"idle";
+ return {steps,lag,worst,runs};
+}
+const PIPE_C={ok:"#22c55e",run:"#f5b83d",bad:"#ef4444",idle:"#5a5a55",skip:"#5a5a55"};
+function useBranchInsights(appId,source,auth,interval=60000){
+ const [data,setData]=useState(null),[err,setErr]=useState(""),[loading,setLoading]=useState(false);const seq=useRef(0);
+ const load=useCallback(async fresh=>{if(!appId||!auth.user||!API_ON)return;const n=++seq.current;setLoading(true);
+  try{const d=await api("GET","/api/apps/"+appId+"/git/insights?source="+source+(fresh?"&fresh=1":""));if(n===seq.current){setData(d);setErr("")}}catch(e){if(n===seq.current)setErr(e.message||"Dal bilgisi alınamadı")}finally{if(n===seq.current)setLoading(false)}},[appId,source,auth.user?.id]);
+ useEffect(()=>{setData(null);setErr("");load();const t=interval?setInterval(()=>{if(!document.hidden)load()},interval):0;const f=()=>load();addEventListener("focus",f);addEventListener("gm:api-on",f);addEventListener("gm:git",f);
+  return()=>{clearInterval(t);removeEventListener("focus",f);removeEventListener("gm:api-on",f);removeEventListener("gm:git",f)}},[load]);
+ return {data,err,loading,reload:()=>load(true)};
+}
+// Stüdyo araç çubuğundaki dal göstergesi: çalışılan dalın ana dala göre konumu ve canlıya çıkış hattının durumu.
+function BranchPulse({info,current,onOpen}){
+ const d=info.data;if(!d||d.setup)return html`<button type="button" class="ccf-b brp" title=${d?.setup==="account"?"Dal haritası · GitHub hesabını bağla":d?.setup?"Dal haritası · depo bağla":info.err||"Dal haritası yükleniyor"} onClick=${onOpen}><${Icon} n="branch" s=${14}/><i class="brp-dot" style=${{"--c":"#5a5a55"}}></i></button>`;
+ const b=d.branches.find(x=>x.name===current)||d.branches.find(x=>x.isDefault);const P=brPipe(d);const act=d.branches.filter(x=>x.state==="aktif").length;
+ const title="Dal haritası · "+b.name+" · "+(b.isDefault?"ana dal":brRel(b,d.defaultBranch))+" · "+act+" aktif dal · Canlıya çıkış: "+P.steps.map(s=>s.t+" "+({ok:"✓",run:"…",bad:"✕",idle:"–",skip:"–"}[s.s])).join(" › ");
+ return html`<button type="button" class=${"ccf-b brp"+(P.worst==="bad"?" bad":"")} title=${title} aria-label=${title} onClick=${onOpen}>
+  <${Icon} n="branch" s=${14}/>${!b.isDefault&&b.ahead!=null?html`<span class="brp-n"><b class="up">↑${b.ahead}</b><b class="dn">↓${b.behind}</b></span>`:html`<span class="brp-n"><b>${d.branches.length}</b></span>`}
+  <i class=${"brp-dot"+(P.worst==="run"?" run":"")} style=${{"--c":PIPE_C[P.worst]}}></i></button>`;
+}
+function BranchGraph({d,sel,onSel,current}){
+ const others=d.branches.filter(b=>!b.isDefault),W=640,step=24,laneH=34,top=24,headX=W-24-step*6,H=top+laneH*(others.length+1)-6;
+ const cmax=Math.min(12,Math.max(1,...others.map(b=>b.behind||0)));
+ const mainDots=[...Array(Math.min(cmax+1,13)).keys()].map(k=>headX-k*step).filter(x=>x>130);
+ return html`<svg class="bm-graph" viewBox=${"0 0 "+W+" "+H} role="img" aria-label=${"Dal grafiği: "+d.defaultBranch+" ve "+others.length+" dal"}>
+  <line x1="130" y1=${top} x2=${W-14} y2=${top} class="bm-main"/>
+  <text x="8" y=${top+4} class=${"bm-tx"+(sel===d.defaultBranch?" on":"")} onClick=${()=>onSel(d.defaultBranch)}>${d.defaultBranch.slice(0,16)}</text>
+  ${mainDots.map((x,k)=>html`<circle key=${"m"+k} cx=${x} cy=${top} r=${k===0?6:4} class=${"bm-dot main"+(k===0?" head":"")}/>`)}
+  ${others.map((b,i)=>{const y=top+laneH*(i+1),c=BR_ST[b.state]?.[1]||"#77776f",behind=Math.min(12,b.behind||0),fx=Math.max(136,headX-behind*step),n=Math.min(6,b.ahead||0),end=fx+Math.max(1,n)*step;
+   return html`<g key=${b.name} class=${"bm-lane"+(sel===b.name?" on":"")} onClick=${()=>onSel(b.name)} style=${{"--c":c}}>
+    <rect x="0" y=${y-laneH/2} width=${W} height=${laneH} class="bm-hit"/>
+    <text x="8" y=${y+4} class="bm-tx">${(b.name===current?"● ":"")+(b.name.length>16?b.name.slice(0,15)+"…":b.name)}</text>
+    <path d=${"M"+fx+","+top+" C"+(fx+12)+","+top+" "+(fx+2)+","+y+" "+(fx+16)+","+y+" L"+end+","+y} class=${"bm-br"+(n?"":" dash")}/>
+    ${[...Array(n).keys()].map(j=>html`<circle key=${j} cx=${fx+(j+1)*step} cy=${y} r=${j===n-1?5.5:4} class=${"bm-dot"+(j===n-1?" head":"")}/>`)}
+    ${(b.ahead||0)>6&&html`<text x=${end+10} y=${y+4} class="bm-more">+${b.ahead-6}</text>`}
+    ${b.pr&&html`<text x=${W-14} y=${y+4} text-anchor="end" class="bm-pr">#${b.pr.number}</text>`}
+   </g>`})}
+ </svg>`;
+}
+function BranchMap({info,current,close,onSwitch,openPanel}){
+ const dialog=useRef(null),{data:d,err,loading}=info;const [sel,setSel]=useState(current||null),[tab,setTab]=useState("commits"),[filter,setFilter]=useState("hepsi");
+ useEffect(()=>{const el=dialog.current,prev=document.activeElement;el.showModal();return()=>{el.close();if(prev?.isConnected)prev.focus()}},[]);
+ const ready=d&&!d.setup&&d.branches;
+ const name=ready?(d.branches.some(b=>b.name===sel)?sel:current&&d.branches.some(b=>b.name===current)?current:d.defaultBranch):null;
+ const b=ready?d.branches.find(x=>x.name===name):null;const P=ready?brPipe(d):null;
+ const list=ready?d.branches.filter(x=>filter==="hepsi"||x.state===filter||(filter==="pr"&&x.pr)):[];
+ const maxAB=ready?Math.max(1,...d.branches.map(x=>Math.max(x.ahead||0,x.behind||0))):1;
+ const checks=b&&!b.isDefault?[[b.behind===0,"Ana dalla güncel",b.behind?b.behind+" commit geride: önce "+d.defaultBranch+"’i bu dala al":""],[b.ahead>0,"Birleştirilecek değişiklik var",b.ahead?"":"Bu dalda yeni commit yok"],...(d.source==="github"?[[!!b.pr,"Çekme isteği (PR)",b.pr?"#"+b.pr.number+" "+(b.pr.draft?"taslak":b.pr.state==="open"?"açık":b.pr.state==="merged"?"birleşti":"kapalı"):"Açık PR yok"]]:[]),[P.steps[1].s!=="bad",P.steps[1].t,P.steps[1].d],[brLoad(b)[1]<.9,"İnceleme yükü",brLoad(b)[0]+" · "+((b.additions||0)+(b.deletions||0))+" satır"]]:null;
+ const pass=checks?checks.filter(c=>c[0]).length:0;
+ return ReactDOM.createPortal(html`<dialog ref=${dialog} class="vc-dialog bm-dialog" aria-labelledby="bm-h" onCancel=${e=>{e.preventDefault();close()}}>
+  <header><div><h2 id="bm-h"><${Icon} n="branch" s=${18}/> Dal haritası</h2><small>${ready?(d.source==="github"?html`<a href=${d.url} target="_blank" rel="noopener">${d.repo}</a>`:"Gitmapp bulutu")+" · varsayılan dal "+d.defaultBranch:"Dallar, farklar ve canlıya çıkış"}${d?.checked?html` · <time>${brAgo(d.checked)} denetlendi${d.cached?" (önbellek)":""}</time>`:""}</small></div>
+   <div class="bm-hb"><button type="button" class="ib" title="Yenile" aria-label="Yenile" disabled=${loading} onClick=${info.reload}><${Icon} n="refresh" s=${16} style=${loading?{animation:"spin 1s linear infinite"}:null}/></button><button type="button" class="ib" title="Kapat" aria-label="Kapat" onClick=${close}><${Icon} n="x"/></button></div></header>
+  <div class="vc-body bm-body">
+  ${err&&html`<p class="vc-error" role="alert">${err}</p>`}
+  ${!d&&!err&&html`<div class="bm-skel"><i></i><i></i><i></i></div>`}
+  ${d?.setup&&html`<div class="vc-gh"><p><b>${d.setup==="account"?"GitHub hesabını bağla.":"Bu projeye bir GitHub deposu bağla."}</b> Dal haritası, deponun dallarını, ana dala göre farklarını, PR’ları, GitHub Actions kontrollerini ve dağıtımları gerçek zamanlı gösterir.</p><button type="button" class="btn" onClick=${()=>{close();openPanel()}}>Sürüm panelini aç</button></div>`}
+  ${ready&&html`
+   <div class="bm-sum">
+    <div><b>${d.branches.length}</b><span>dal</span></div>
+    <div><b style=${{color:"#22c55e"}}>${d.branches.filter(x=>x.state==="aktif").length}</b><span>aktif</span></div>
+    <div><b>${d.branches.reduce((n,x)=>n+(x.ahead||0),0)}</b><span>birleşmemiş commit</span></div>
+    <div><b>${d.branches.filter(x=>x.pr&&x.pr.state==="open").length}</b><span>açık PR</span></div>
+    <div><b style=${{color:PIPE_C[P.worst]}}>${{ok:"Canlı",run:"Sürüyor",bad:"Sorun",idle:"Hazırlık"}[P.worst]}</b><span>yayın durumu</span></div>
+   </div>
+   <section class="bm-sec"><h3>Canlıya çıkış</h3>
+    <ol class="bm-pipe">${P.steps.map((s,i)=>html`<li key=${s.k} class=${"s-"+s.s} style=${{"--c":PIPE_C[s.s]}}><span class="bm-pi"><${Icon} n=${s.s==="ok"?"check":s.s==="bad"?"x":s.ic} s=${15} w=${2.2}/></span><div><b>${s.t}</b><small title=${s.d}>${s.d}</small><em>${[brAgo(s.time),brDur(s.dur)].filter(Boolean).join(" · ")}</em>${s.url&&html`<a href=${s.url} target="_blank" rel="noopener">Aç ↗</a>`}</div></li>`)}</ol>
+    ${P.lag!=null&&html`<p class=${"bm-note"+(P.lag===0?" ok":"")}>${P.lag===0?"Canlıdaki sürüm "+d.defaultBranch+" dalının son commit’i.":"Canlıdaki sürüm "+d.defaultBranch+" dalının "+P.lag+" commit gerisinde; yeni commitler henüz yayınlanmadı."}</p>`}
+    ${P.runs.length>0&&html`<details class="bm-runs"><summary>Son iş akışları (${P.runs.length})</summary>${P.runs.slice(0,8).map(r=>{const s=r.status!=="completed"?"run":r.conclusion==="success"?"ok":r.conclusion==="failure"||r.conclusion==="timed_out"?"bad":"skip";return html`<a key=${r.id} href=${r.url} target="_blank" rel="noopener" class="bm-run"><i style=${{background:PIPE_C[s]}}></i><b>${r.name}</b><code>${r.branch}</code><small>${r.event} · ${brAgo(r.started)}${r.status==="completed"?" · "+brDur(brTime(r.updated)-brTime(r.started)):""}</small></a>`})}</details>`}
+   </section>
+   <section class="bm-sec"><div class="vc-tools"><h3>Dallar ve ana dalla ilişkisi</h3><div class="seg bm-f" role="group" aria-label="Dal filtresi">${[["hepsi","Hepsi"],["aktif","Aktif"],["beklemede","Beklemede"],["durgun","Durgun"],...(d.source==="github"?[["pr","PR"]]:[])].map(([k,l])=>html`<button key=${k} type="button" class=${filter===k?"on":""} aria-pressed=${filter===k} onClick=${()=>setFilter(k)}>${l}</button>`)}</div></div>
+    <${BranchGraph} d=${d} sel=${name} onSel=${setSel} current=${current}/>
+    <div class="bm-list">${list.map(x=>{const st=BR_ST[x.state]||BR_ST.bilinmiyor,[ll,lv]=brLoad(x);return html`<button key=${x.name} type="button" class=${"bm-row"+(x.name===name?" on":"")} aria-pressed=${x.name===name} onClick=${()=>setSel(x.name)}>
+     <span class=${"bm-st"+(x.state==="aktif"?" live":"")} style=${{"--c":st[1]}} title=${st[0]}></span>
+     <span class="bm-main-c"><span class="bm-nm"><code>${x.name}</code>${x.isDefault&&html`<em class="bm-tag">varsayılan</em>`}${x.name===current&&html`<em class="bm-tag cur">çalışıyorsun</em>`}${x.pr&&html`<em class=${"bm-tag pr "+(x.pr.draft?"draft":x.pr.state)}>PR #${x.pr.number}</em>`}</span>
+      <small>${x.isDefault?"Ana dal · son commit "+(x.last?brAgo(x.last.date):"—"):brRel(x,d.defaultBranch)}</small>
+      ${x.last&&html`<small class="bm-last">${x.last.message}${x.last.author?" · "+x.last.author:""} · ${brAgo(x.last.date)}</small>`}</span>
+     ${!x.isDefault&&x.ahead!=null&&html`<span class="bm-ab" title=${x.behind+" geride · "+x.ahead+" önde"}><span class="bm-div"><i class="dn" style=${{width:(x.behind/maxAB*50)+"%"}}></i><i class="up" style=${{width:(x.ahead/maxAB*50)+"%"}}></i></span><span class="bm-abn"><b class="dn">↓${x.behind}</b><b class="up">↑${x.ahead}</b></span></span>`}
+     ${!x.isDefault&&html`<span class="bm-load" title=${ll+": +"+(x.additions||0)+" −"+(x.deletions||0)+" satır, "+(x.files||[]).length+" dosya"}><span class="bm-lbar"><i style=${{width:Math.max(4,lv*100)+"%",background:lv>.8?"#ef4444":lv>.4?"#f5b83d":"#22c55e"}}></i></span><small><b class="up">+${x.additions||0}</b> <b class="dn">−${x.deletions||0}</b> · ${(x.files||[]).length} dosya</small></span>`}
+    </button>`})}${!list.length&&html`<p class="bm-empty">Bu filtrede dal yok.</p>`}</div>
+    ${d.more&&html`<p class="bm-note">İlk 12 dal karşılaştırıldı; tümü için GitHub’daki dal listesine bak.</p>`}
+   </section>
+   ${b&&html`<section class="bm-sec bm-det"><div class="vc-tools"><h3><code>${b.name}</code></h3><div class="bm-acts">
+     ${b.name!==current&&onSwitch&&html`<button type="button" class="btn s" onClick=${()=>onSwitch(b.name)}>Bu dala geç</button>`}
+     ${b.compareUrl&&html`<a class="btn g s" href=${b.compareUrl} target="_blank" rel="noopener">GitHub’da karşılaştır ↗</a>`}
+     ${b.pr&&html`<a class="btn g s" href=${b.pr.url} target="_blank" rel="noopener">PR #${b.pr.number} ↗</a>`}
+     <button type="button" class="btn g s" onClick=${()=>{close();openPanel()}}>Sürüm paneli</button></div></div>
+    ${checks&&html`<div class="bm-ready"><div class="bm-rh"><b>${pass===checks.length?"Birleştirmeye hazır":pass+"/"+checks.length+" hazırlık"}</b><span class="bm-rbar"><i style=${{width:(pass/checks.length*100)+"%"}}></i></span></div>${checks.map(([ok,t,s])=>html`<div key=${t} class=${"bm-ck"+(ok?" ok":"")}><${Icon} n=${ok?"checkCircle":"circleX"} s=${15}/><b>${t}</b>${s&&html`<small>${s}</small>`}</div>`)}</div>`}
+    <div class="seg bm-tabs" role="tablist">${[["commits","Commitler"+(b.commits?.length?" ("+b.commits.length+")":"")],["files","Dosyalar"+(b.files?.length?" ("+b.files.length+")":"")]].map(([k,l])=>html`<button key=${k} type="button" role="tab" aria-selected=${tab===k} class=${tab===k?"on":""} onClick=${()=>setTab(k)}>${l}</button>`)}</div>
+    ${tab==="commits"?html`<ol class="bm-commits">${(b.commits||[]).map(c=>html`<li key=${c.sha}><code>${String(c.sha).slice(0,7)}</code><span><b>${c.message}</b><small>${c.author?c.author+" · ":""}${brAgo(c.date)}</small></span></li>`)}${!(b.commits||[]).length&&html`<li class="bm-empty">${b.isDefault?"Commit yok.":"Bu dalda ana dala göre yeni commit yok."}</li>`}</ol>`
+     :html`<ul class="bm-files">${(b.files||[]).map(f=>{const t=Math.max(1,f.additions+f.deletions);return html`<li key=${f.name}><span class=${"bm-fs "+f.status}>${{added:"E",removed:"S",modified:"D",renamed:"Y"}[f.status]||"D"}</span><code title=${f.name}>${f.name}</code><small><b class="up">+${f.additions}</b> <b class="dn">−${f.deletions}</b></small><span class="bm-fbar"><i class="up" style=${{width:(f.additions/t*100)+"%"}}></i><i class="dn" style=${{width:(f.deletions/t*100)+"%"}}></i></span></li>`})}${!(b.files||[]).length&&html`<li class="bm-empty">${b.isDefault?"Ana dal kendisiyle karşılaştırılmaz.":"Ana dala göre dosya farkı yok."}</li>`}</ul>`}
+   </section>`}
+  `}
+  </div></dialog>`,document.body);
+}
+
 function App(){
  const installPrompt=useRef(null);
  const [installed,setInstalled]=useState(()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true);
@@ -9775,6 +10234,24 @@ function App(){
   if(["tur","mod","tema","ayar","prompt","yap","kontrol","kaydet","yayinla","panel","yeni"].includes(a.t))return cpStudio(a,active);
   throw new Error("Bu adımı tanımıyorum: "+a.t)};
  const cpCtx=()=>({seviye:levelHint([...(LS.get("cpLast",[])||[]),...((window.__gmStudio||{}).sonIstekler||[])].slice(-12)),hesaplar:auth.user?{github:auth.user.github?"@"+auth.user.github:false,google:!!auth.user.google,hostinger:!!auth.user.hostinger}:null,baglantilar:{acik:Object.entries(connState()).filter(([,v])=>v&&v.on).map(([k])=>k),katalog:CONN.filter(c=>!c.soon).map(c=>c.id+(c.f.length?"("+c.f.map(x=>x[0]).join(",")+")":"")+": "+c.n)},sayfa:viewRef.current,sayfaAdi:TITLES[viewRef.current]||"Ana sayfa",girisYapti:!!auth.user,kredi:auth.user?(auth.user.credits??0):null,projeSayisi:myApps.length,studyo:viewRef.current==="studio"?(window.__gmStudio||{}):{acik:false},katalog:{sayfalar:CP_VIEWS,temalar:THEMES.map(t=>t.id+": "+t.name+" ("+t.tag+")"),sablonlar:TEMPLATE_LIB.map(t=>t.id+": "+t.name+" — "+t.sector),turler:"app|site|game",modlar:"hizli|planli|ajan"}});
+ // Sihirli imleç: bulunduğun ekrana ve kullanım sıklığına göre kısayollar
+ const orbItems=()=>{
+  const nav=(k,l,ic,hint)=>({id:"v:"+k,label:l,icon:ic,hint,sel:'.side .nav[data-v="'+k+'"]',run:()=>navGo(k)});
+  const ask={id:"ask",label:"Sor",icon:"msgSpark",ask:true,pin:true,hint:"Bulunduğun yerde kısa soru sor (çift dokunuş)"};
+  const ara={id:"ara",label:"Ara",icon:"search",hint:"Komut paleti (⌘K)",run:()=>setCmdk(true)};
+  const ctxItems=ORB.ctx?.get()?.items||[];
+  if(mode==="admin"&&isAdm)return [ask,...ctxItems,
+   {id:"g:yon",label:"Yönetim",icon:"shield",kids:()=>[nav("yonetim","Merkez","home"),nav("siparisler","Siparişler","inbox"),nav("kullanicilar","Kullanıcılar","users"),nav("yonetim-projeler","Projeler","folder"),nav("odemeler","Ödemeler","wallet"),nav("maliyetler","Maliyetler","coins")]},
+   {id:"g:gh",label:"GitHub",icon:"github",kids:()=>[nav("kesfet","GitHub Radar","radar"),nav("uretim-ajani","Üretim ajanı","bot"),nav("kuyruk","Yapım kuyruğu","layers"),nav("liste","Listem","bookmark"),nav("github-ayar","Bağlantı","plug")]},
+   ara,nav("guncel","Güncellemeler","bell")];
+  const recent=myApps.slice(0,4).map(a=>({id:"p:"+a.id,label:String(a.title||"Proje").slice(0,16),icon:a.url?"globe":"folder",hint:"Stüdyo’da aç",run:async()=>{const j=await api("GET","/api/apps/"+a.id);openInStudio(j.app)}}));
+  const dev={id:"g:gel",label:"Geliştir",icon:"codeXml",kids:()=>[{id:"yeni",label:"Yeni proje",icon:"plus",sel:'.side .nav[data-v="ana"]',run:()=>navGo("ana")},nav("studio","Stüdyo","codeXml"),nav("uygulamalarim","Projeler","folder"),...recent]};
+  const kes={id:"g:kesfet",label:"Keşfet",icon:"compass",kids:()=>[{id:"k:tum",label:"Tümü",icon:"compass",run:()=>goStore({})},...STORE_CATS2.slice(0,8).map(([k,e,l])=>({id:"k:"+k,label:l.split(" ")[0],emoji:e,icon:"tag",run:()=>goStore({cat:k})}))]};
+  const kat={id:"g:kat",label:"Katalog",icon:"layers",kids:()=>[nav("sablonlar","Şablonlar","layout"),nav("temalar","Temalar","palette"),nav("ui-kitler","UI Kitler","shapes"),nav("depo","Depo","package"),nav("dunya","Hazır Kodlar","code")]};
+  const arc={id:"g:arc",label:"Araçlar",icon:"wrench",kids:()=>[nav("baglantilar","Bağlantılar","plug"),{id:"beceri",label:"Beceriler",icon:"wand",run:()=>setSkills(true)},nav("kreator","Kreatör","video"),nav("otomasyon","Otomasyon","automation"),nav("eylem","Eylem merkezi","target"),{id:"asistan",label:"Asistan",icon:"bot",run:()=>setCp(true)}]};
+  if(ctxItems.length)return [ask,...ctxItems,{id:"g:git",label:"Git",icon:"compass",hint:"Uygulamanın diğer bölümleri",kids:()=>[dev,kes,kat,arc,ara]}];
+  return [ask,dev,kes,kat,arc,{id:"dallar",label:"Dallar",icon:"branch",hint:"Dal haritası: aktif dallar, farklar ve canlıya çıkış",run:()=>cpStudio({t:"panel",ad:"dallar"})},ara];
+ };
  return html`<div class=${"app"+(view==="studio"?" studio-shell"+(compact?" nav-compact":""):"")+(cp?" cp-on":"")}>
   <aside id="workspace-navigation" class="side cc-side glass noprint"><div class="side-top">${view==="studio"&&html`<button type="button" class="cc-tg" aria-controls="workspace-navigation" aria-label="Sol menüyü kapat" title="Sol menüyü kapat (⌘/Ctrl+B)" onClick=${()=>setCompact(true)}><${Icon} n="panelR" s=${18}/></button>`}<div class="logo"><${BrandMark} s=${28} label="Gitmapp"/><${Wordmark} s=${19}/></div>
     <div class="cc-seg" role="group" aria-label="Çalışma görünümü"><button type="button" class=${cp?"on":""} aria-pressed=${cp} title="Asistan: sohbet ve sesli konuşma (⌘J)" aria-label="Asistan" onClick=${()=>setCp(!cp)}><${Icon} n="msgSpark" s=${16}/>${stBusy&&view!=="studio"&&html`<i class="cc-badge"></i>`}</button><button type="button" class=${view==="studio"?"on":""} aria-pressed=${view==="studio"} title="Geliştir: kod stüdyosu" aria-label="Geliştir" onClick=${()=>navGo("studio")}><${Icon} n="codeXml" s=${16}/></button></div></div>
@@ -9856,6 +10333,7 @@ function App(){
   ${skills&&html`<${SkillsModal} account=${auth.user?.id} close=${()=>setSkills(false)} toast=${toast}/>`}
   ${cmdk&&html`<${CommandPalette} close=${()=>setCmdk(false)} go=${navGo} openInStudio=${openInStudio} onTpl=${useTemplate} auth=${auth}/>`}
   <${SquirrelGuide} run=${cpRun} toast=${toast}/>
+  <${MagicOrb} items=${orbItems} ctxLabel=${TITLES[view]||"Ana sayfa"} run=${cpRun} ctx=${cpCtx} toast=${toast} openCopilot=${()=>setCp(true)}/>
   ${cp?html`<${Copilot} close=${()=>setCp(false)} run=${cpRun} ctx=${cpCtx} auth=${auth} openAuth=${openAuth} toast=${toast}/>`:mode==="musteri"&&html`<button class="cp-fab noprint" onClick=${()=>setCp(true)} title="Asistan: yan sohbet ve sesli konuşma (Ctrl+J)"><span class="cp-orb"><i></i></span><span class="cp-fl">Asistan</span><kbd>⌘J</kbd></button>`}
   ${gh&&html`<${GhImport} key=${gh.n} url=${gh.url} auto=${gh.auto} review=${gh.review} close=${()=>setGh(null)} auth=${auth} openAuth=${openAuth} toast=${toast} models=${models} go=${navGo} onStudio=${o=>{setCur(null);setIncoming(o);setView("studio")}}/>`}
   ${newBuild&&html`<div class="upd-bar" role="status"><${Icon} n="download" s=${15}/><span>Yeni sürüm hazır: <b>v${newBuild}</b> (şu an v${VERSION})${updLeft!=null&&updLeft>0?html` · <b>${updLeft} sn</b> içinde kendiliğinden uygulanacak`:""}</span>${updLeft!=null&&updLeft>0&&html`<button class="btn g s" onClick=${()=>{LS.set("updSnooze",newBuild);setUpdLeft(null)}}>Ertele</button>`}<button class="btn s" onClick=${()=>{if(window.__gmStudio?.calisiyor){toast("Stüdyo'da işlem sürüyor · bitince yenile, yoksa iş yarıda kalır");return}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()))}catch(e){}location.reload()}}>Yenile</button><button class="ib" aria-label="Kapat" onClick=${()=>setNewBuild(null)}><${Icon} n="x" s=${14}/></button></div>`}

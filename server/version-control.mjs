@@ -186,6 +186,113 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     return { head, html, history: history.map(c => ({ sha:c.sha, message:c.commit.message, created:c.commit.author?.date })) };
   });
 
+  // Dal haritası: her dalın ana dala göre konumu, yükü, PR'ı ve canlıya çıkış hattı.
+  const insightCache = new Map();
+  const ago = iso => iso ? Date.now() - Date.parse(iso) : Infinity;
+  const DAY = 86400000;
+  const refPath = name => name.split("/").map(encode).join("/");
+  function activity(lastDate, ahead, isDefault) {
+    if (!isDefault && ahead === 0) return "birlesti";
+    const age = ago(lastDate);
+    return age < 3 * DAY ? "aktif" : age < 14 * DAY ? "beklemede" : "durgun";
+  }
+  function relation(ahead, behind) {
+    if (!ahead && !behind) return "esit";
+    if (ahead && !behind) return "onde";
+    if (!ahead && behind) return "geride";
+    return "ayristi";
+  }
+  function lineDiff(base, head) {
+    const count = text => { const m = new Map(); for (const l of String(text || "").split("\n")) { const k = l.trim(); if (k) m.set(k, (m.get(k) || 0) + 1); } return m; };
+    const a = count(base), b = count(head);
+    let additions = 0, deletions = 0;
+    for (const [k, n] of b) additions += Math.max(0, n - (a.get(k) || 0));
+    for (const [k, n] of a) deletions += Math.max(0, n - (b.get(k) || 0));
+    return { additions, deletions };
+  }
+  function localInsights(app) {
+    localInit(app);
+    const rows = sql("SELECT name, head FROM project_branches WHERE app_id=? ORDER BY name").all(app.id);
+    const commit = sql("SELECT sha,parent,message,created FROM project_commits WHERE app_id=? AND sha=?");
+    const htmlOf = sha => sql("SELECT html FROM project_commits WHERE app_id=? AND sha=?").get(app.id, sha)?.html || "";
+    const chain = head => { const out = []; let sha = head; while (sha && out.length < 400) { const c = commit.get(app.id, sha); if (!c) break; out.push(c); sha = c.parent; } return out; };
+    const mainHead = localHead(app.id, "main");
+    const mainChain = chain(mainHead), mainSet = new Set(mainChain.map(c => c.sha));
+    const branches = rows.map(({ name, head }) => {
+      const own = chain(head), isDefault = name === "main";
+      const forkAt = own.findIndex(c => mainSet.has(c.sha));
+      const ahead = isDefault ? 0 : forkAt < 0 ? own.length : forkAt;
+      const base = isDefault || forkAt < 0 ? null : own[forkAt].sha;
+      const behind = isDefault ? 0 : base ? mainChain.findIndex(c => c.sha === base) : mainChain.length;
+      const last = own[0];
+      const diff = isDefault ? { additions:0, deletions:0 } : lineDiff(htmlOf(mainHead), htmlOf(head));
+      const changed = diff.additions + diff.deletions;
+      return { name, head, isDefault, ahead, behind, relation:relation(ahead, behind), state:activity(last?.created, ahead, isDefault),
+        mergeBase: base, additions:diff.additions, deletions:diff.deletions,
+        files: changed ? [{ name:"index.html", status:"modified", additions:diff.additions, deletions:diff.deletions }] : [],
+        last: last ? { sha:last.sha, message:last.message, date:last.created, author:null } : null,
+        commits: own.slice(0, isDefault ? 8 : Math.min(ahead, 8)).map(c => ({ sha:c.sha, message:c.message, date:c.created, author:null })), pr:null };
+    });
+    const live = app.pages_url || (app.status === "published" && app.slug ? "https://" + app.slug + ".app.gitmapp.com" : null);
+    return { source:"gitmapp", repo:null, defaultBranch:"main", branches,
+      pipeline:{ commit: branches.find(b => b.isDefault)?.last || null,
+        saved: app.updated || null, published: app.published_at || null, status: app.status || "draft", live, runs:[], deployments:[] } };
+  }
+  async function githubInsights(app, ctx) {
+    if (!ctx.user.github_token) return { setup:"account" };
+    const remote = binding(app, ctx);
+    if (!remote) return { setup:"repository" };
+    const base = "/repos/" + remote.repo, token = ctx.user.github_token;
+    const soft = async path => { try { const r = await ghApi(token, "GET", path); return r.ok ? r.data : null; } catch { return null; } };
+    const [info, list] = await Promise.all([github(ctx.user, "GET", base), github(ctx.user, "GET", base + "/branches?per_page=30")]);
+    const main = info.default_branch;
+    const [mainLog, pulls, runs, deps] = await Promise.all([
+      soft(base + "/commits?per_page=8&sha=" + encode(main)),
+      soft(base + "/pulls?state=all&per_page=30&sort=updated&direction=desc"),
+      soft(base + "/actions/runs?per_page=10"),
+      soft(base + "/deployments?per_page=5")]);
+    const prOf = name => {
+      const all = (pulls || []).filter(p => p.head?.ref === name && p.head?.repo?.full_name === remote.repo);
+      const p = all.find(x => x.state === "open") || all[0];
+      return p ? { number:p.number, title:p.title, state:p.merged_at ? "merged" : p.state, draft:!!p.draft, url:p.html_url, author:p.user?.login || null } : null;
+    };
+    const short = c => c && ({ sha:c.sha, message:String(c.commit?.message || "").split("\n")[0].slice(0, 200), date:c.commit?.author?.date || c.commit?.committer?.date || null, author:c.author?.login || c.commit?.author?.name || null });
+    const others = list.filter(b => b.name !== main).slice(0, 12);
+    const compared = await Promise.all(others.map(b => soft(base + "/compare/" + refPath(main) + "..." + refPath(b.name))));
+    const head = mainLog?.[0];
+    const branches = [{ name:main, head:list.find(b => b.name === main)?.commit?.sha || head?.sha || null, isDefault:true, ahead:0, behind:0, relation:"esit",
+      state:activity(head?.commit?.author?.date, 0, true), mergeBase:null, additions:0, deletions:0, files:[],
+      last:short(head), commits:(mainLog || []).map(short), pr:null }];
+    others.forEach((b, i) => {
+      const c = compared[i];
+      if (!c) { branches.push({ name:b.name, head:b.commit?.sha || null, isDefault:false, ahead:null, behind:null, relation:"bilinmiyor", state:"bilinmiyor", files:[], commits:[], last:null, pr:prOf(b.name), additions:0, deletions:0 }); return; }
+      const files = (c.files || []).slice(0, 30).map(f => ({ name:f.filename, status:f.status, additions:f.additions, deletions:f.deletions }));
+      const commits = (c.commits || []).slice(-8).reverse().map(short);
+      const last = c.ahead_by ? short(c.commits[c.commits.length - 1]) : short(c.merge_base_commit);
+      branches.push({ name:b.name, head:b.commit?.sha || null, isDefault:false, ahead:c.ahead_by, behind:c.behind_by, relation:relation(c.ahead_by, c.behind_by),
+        state:activity(last?.date, c.ahead_by, false), mergeBase:c.merge_base_commit?.sha || null,
+        additions:(c.files || []).reduce((n, f) => n + (f.additions || 0), 0), deletions:(c.files || []).reduce((n, f) => n + (f.deletions || 0), 0),
+        files, commits, last, pr:prOf(b.name), compareUrl:c.html_url || null });
+    });
+    const deployments = await Promise.all((deps || []).slice(0, 3).map(async d => {
+      const st = (await soft(base + "/deployments/" + d.id + "/statuses?per_page=1"))?.[0];
+      return { id:d.id, environment:d.environment, ref:d.ref, sha:d.sha, created:d.created_at, state:st?.state || "pending", url:st?.environment_url || null, updated:st?.created_at || d.updated_at };
+    }));
+    return { source:"github", repo:remote.repo, url:info.html_url, defaultBranch:main, more:list.length === 30 || list.length - 1 > others.length, branches,
+      pipeline:{ commit:short(head), live:deployments.find(d => d.state === "success" && d.url)?.url || app.pages_url || null, published:app.published_at || null, status:app.status || "draft",
+        runs:(runs?.workflow_runs || []).map(r => ({ id:r.id, name:r.name || r.display_title, branch:r.head_branch, sha:r.head_sha, event:r.event, status:r.status, conclusion:r.conclusion,
+          started:r.run_started_at || r.created_at, updated:r.updated_at, url:r.html_url })), deployments, actions:!!runs } };
+  }
+  route("GET", root + "/insights", async ctx => {
+    const app = project(ctx), src = source(ctx);
+    const key = app.id + ":" + src + ":" + ctx.user.id, hit = insightCache.get(key);
+    if (src === "github" && hit && Date.now() - hit.at < 45000 && ctx.url.searchParams.get("fresh") !== "1") return { ...hit.data, cached:true };
+    const data = src === "gitmapp" ? localInsights(app) : await githubInsights(app, ctx);
+    data.checked = new Date().toISOString();
+    if (src === "github" && !data.setup) { insightCache.set(key, { at:Date.now(), data }); if (insightCache.size > 500) insightCache.delete(insightCache.keys().next().value); }
+    return data;
+  });
+
   route("POST", root + "/branches", async ctx => {
     const app = project(ctx), { body } = ctx;
     const baseName = checkBranch(body.base, need), name = checkBranch(body.name, need);

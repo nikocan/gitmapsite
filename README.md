@@ -55,6 +55,14 @@ Gitmapp sekmesi geçmişi proje sahibinin hesabında, SQLite üzerinde tutar. Gi
 
 Bir dalı Gitmapp projesinde kullanmak için **Çalışmayı proje taslağına aktar** seçeneğini kullanıp projeyi kaydedin. Yayın işlemini Stüdyo’nun **Yayınla** düğmesinden başlatabilirsiniz. Sürüm kontrolü testleri Node.js üzerinde `node --test server/version-control.test.mjs` komutuyla çalışır.
 
+### Dal haritası
+
+Stüdyo araç çubuğundaki dal göstergesi (↑ önde, ↓ geride ve renkli yayın noktası) ya da Sihirli imleçteki **Dallar**, `GET /api/apps/:id/git/insights?source=gitmapp|github` uç noktasını kullanır. Yanıt her dal için ana dala göre `ahead`/`behind`, ilişki (`esit`, `onde`, `geride`, `ayristi`), etkinlik (`aktif` < 3 gün, `beklemede` < 14 gün, `durgun`, `birlesti`), satır ve dosya farkları, son commitler ve PR bilgisini içerir. `pipeline` alanı son commit, GitHub Actions çalışmaları, dağıtımlar ve canlı adresi verir. GitHub kaynağında en fazla 12 dal karşılaştırılır; Actions veya dağıtım okunamazsa harita yine açılır. Yanıt 45 saniye önbellekte tutulur, `fresh=1` önbelleği atlar.
+
+## Sihirli imleç
+
+Her sayfada duran limon sarısı küre (`MagicOrb`). Dokunmak kısayol halkasını açar; basılı tutup kaydırmak, parmak kaldırılmadan seçim yapar; çift dokunuş kısa soru balonunu (`/api/ai/copilot`) açar; sürüklemek konumu değiştirir ve küre en yakın kenara yapışır (`gms_orbPos`). Kısayollar sayfaya göre değişir; bir ekran `useOrbContext(() => ({ items, state }))` ile kendi kısayollarını ve durumunu ekleyebilir. Kullanım sayıları `gms_orbUse` içinde tutulur ve sık kullanılanlar öne alınır. Klavye: ⌘/Ctrl + . aç/kapat, oklar, Enter, Esc.
+
 ## Kredi ve ödemeler
 
 Kullanıcılar **Kredi yükle** penceresinden paket seçer, kartla (Stripe Checkout) ya da Havale/EFT ile öder. Yönetim → **Kredi ve ödemeler** sayfası gelirleri, bekleyen ödemeleri, havale onayını, iptali ve iadeyi; paket fiyatlarını, hoş geldin kredisini, davet bonusunu ve işlem başı krediyi yönetir.
