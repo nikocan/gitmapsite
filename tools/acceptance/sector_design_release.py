@@ -7,7 +7,7 @@ with sync_playwright() as p:
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.goto(BASE_URL + "/#studio",wait_until="domcontentloaded")
-        page.get_by_role('button',name='Tüm tasarımlar').first.click()
+        page.locator('button[title="Tasarım teması"]:visible').first.click()
         gallery=page.get_by_role('dialog',name='Tasarım galerisi')
         gallery.get_by_role('button',name='Tasarım temaları',exact=True).click()
         if width==390:
