@@ -15,6 +15,7 @@ import { registerOutreach } from "./outreach.mjs";
 import { registerSkills } from "./skills.mjs";
 import { fromRadar, registerRadarRelease } from "./radar-release.mjs";
 import { registerDepo } from "./depo.mjs";
+import { registerUx, UX_EVENTS } from "./ux.mjs";
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import fs from "node:fs";
@@ -822,7 +823,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.68.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.70.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -1929,6 +1930,7 @@ route("POST", "/api/apps/:id/github", async ({ user, params }) => {
 const ownsSale = registerStoreSales({ db, route, need });
 const billing = registerPayments({ db, route, need, HttpErr, encKey, decKey, cfg: CFG, tiers: TIER_CREDITS, isAdmin });
 registerDepo({ db, route, need, dir: E.DEPO_DIR || path.join(path.dirname(path.resolve(CFG.db)), "depo"), allowLocal: E.DEPO_ALLOW_LOCAL === "1", publicBase: CFG.api });
+registerUx({ db, route });
 // Beceri motoru: sektör yazılımı planları, tasarım ve kalite becerileri; beceri avcısı, test ve kendi kendini iyileştirme
 const SKILL_ENGINE = registerSkills({ db, route, need, HttpErr, chat, scriptErrors, aiReady: () => !!CFG.aiKey,
   generate: async (prompt, rule) => { const rt = { provider: "gitmapp", base: CFG.aiBase, key: CFG.aiKey, model: await defaultModel(), maxTokens: 12000 };
@@ -2098,7 +2100,7 @@ route("PATCH", "/api/admin/projects/:id", ({params,body}) => {
 });
 
 // Talep radarı
-const EV = ["search", "category_view", "app_view", "app_want", "wizard_submit", "radar_search", "studio_prompt", "store_view", "store_open", "template_use", "template_demo"];
+const EV = ["search", "category_view", "app_view", "app_want", "wizard_submit", "radar_search", "studio_prompt", "store_view", "store_open", "template_use", "template_demo", ...UX_EVENTS];
 route("POST", "/api/events", ({ body, user }) => {
   need(EV.includes(body.type), 400, "Olay türü geçersiz");
   q("INSERT INTO events(session_id,user_id,type,query,category,repo,meta) VALUES(?,?,?,?,?,?,?)").run(str(body.session_id, 64, "Oturum"), user ? user.id : null, body.type, str(body.query, 200, "Sorgu"), str(body.category, 60, "Kategori"), str(body.repo, 200, "Depo"), body.meta ? JSON.stringify(body.meta).slice(0, 4000) : null);

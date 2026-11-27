@@ -3,6 +3,7 @@
 // Kullanıcı üretimlerinde kullanılan beceriler kaydedilir; sonuç (temiz / onarıldı / hata) ve kullanıcının 👍/👎 oyu
 // başarı oranını oluşturur; başarısı düşen beceri hata notlarından yeniden yazılır, testte eskisini geçerse yayına alınır.
 import { ALL_SKILLS, HUNT_TERMS } from "./skills-catalog.mjs";
+import { SECTORS, SECTOR_OF } from "./skills-sectors.mjs";
 
 const MAX_BODY = 1800, MAX_INJECT = 5200;
 const clip = (v, n) => String(v ?? "").replace(/[\u0000-\u0008\u000b-\u001f]/g, "").slice(0, n);
@@ -34,7 +35,7 @@ export function registerSkills({ db, route, need, HttpErr, chat, generate, scrip
     q("INSERT INTO skill_versions(skill_id,version,body,origin,status) VALUES(?,?,?,?,?)").run(s.id, 1, s.body, "katalog", "yayinda");
   const get = (id) => { const s = q("SELECT * FROM skills WHERE id=?").get(id); need(s, 404, "Beceri bulunamadı"); return s; };
   const rate = (s) => { const n = s.wins + s.fails; return n ? Math.round((s.wins / n) * 100) : null; };
-  const pub = (s, body = true) => ({ id: s.id, kind: s.kind, cat: s.cat, name: s.name, who: s.who, version: s.version, score: s.score, uses: s.uses, success: rate(s), likes: s.likes, dislikes: s.dislikes, design: s.design, updated: s.updated, ...(body ? { body: s.body } : {}) });
+  const pub = (s, body = true) => ({ id: s.id, kind: s.kind, cat: s.cat, sector: SECTOR_OF[s.cat] || null, test: s.test_prompt || null, name: s.name, who: s.who, version: s.version, score: s.score, uses: s.uses, success: rate(s), likes: s.likes, dislikes: s.dislikes, design: s.design, updated: s.updated, ...(body ? { body: s.body } : {}) });
 
   // ---------- Üretime enjekte etme ve kullanım kaydı ----------
   // Plan becerisi seçilince bağlı tasarım becerisi ve temel kalite becerisi kendiliğinden eklenir.
@@ -68,7 +69,7 @@ export function registerSkills({ db, route, need, HttpErr, chat, generate, scrip
     if (v < 0 && r.outcome !== "hata") { bump(ids, "wins", -1); bump(ids, "fails"); } // kullanıcı beğenmediyse başarı sayılmaz
     q("UPDATE skill_runs SET feedback=?, note=COALESCE(?,note) WHERE id=?").run(v, clip(body.note, 300) || null, r.id); return { ok: true };
   });
-  route("GET", "/api/skills", () => ({ skills: q("SELECT * FROM skills WHERE status='yayinda' ORDER BY CASE kind WHEN 'gelistirme' THEN 0 WHEN 'tasarim' THEN 1 ELSE 2 END, name").all().map((s) => pub(s)) }));
+  route("GET", "/api/skills", () => ({ sectors: SECTORS.map(({ id, name, icon, desc }) => ({ id, name, icon, desc })), skills: q("SELECT * FROM skills WHERE status='yayinda' ORDER BY CASE kind WHEN 'gelistirme' THEN 0 WHEN 'tasarim' THEN 1 ELSE 2 END, name").all().map((s) => pub(s)) }));
 
   // ---------- Test: aynı test istemiyle üret, ölç ----------
   async function testBody(s, body) {
