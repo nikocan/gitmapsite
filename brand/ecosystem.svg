@@ -35,4 +35,36 @@
   <symbol id="publish" viewBox="0 0 24 24">
     <path d="M4 10.5 21 3l-5.3 17.9-4.3-6.3L4 10.5Zm7.4 4.1L21 3M3 17l3-2m0 6 3-3"/>
   </symbol>
+  <!-- v5.77 — Yeni sohbet, sık kullanılanlar ve ortam simgeleri (iki tonlu: dolgu %18, çizgi currentColor) -->
+  <symbol id="newchat" viewBox="0 0 24 24">
+    <path d="M12.6 3.6H7a4 4 0 0 0-4 4v6.2a4 4 0 0 0 4 4h.8v3.1l4.1-3.1H15a4 4 0 0 0 4-4v-2.6" fill="currentColor" fill-opacity=".18"/>
+    <path d="M18.3 2.6v6.2M15.2 5.7h6.2"/><path d="M7.4 10.2h5.2M7.4 13.3h3.2"/>
+  </symbol>
+  <symbol id="favorites" viewBox="0 0 24 24">
+    <path d="m12 3.2 2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.1l-5.1 2.7 1-5.6-4.1-4 5.7-.8L12 3.2Z" fill="currentColor" fill-opacity=".18"/>
+    <path d="M9.6 9.9 12 7.4M19.6 17.6l1.6 1.6M20.4 15.2h1.4M4.2 18.4l-1.2 1.2"/>
+  </symbol>
+  <symbol id="plan" viewBox="0 0 24 24">
+    <rect x="4.2" y="4.2" width="15.6" height="17" rx="2.6" fill="currentColor" fill-opacity=".18"/>
+    <path d="M9 2.8h6a1 1 0 0 1 1 1v1.4a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3.8a1 1 0 0 1 1-1Z"/>
+    <path d="m7.6 11.2 1.3 1.3 2.4-2.6M7.6 16.4l1.3 1.3 2.4-2.6M13.6 11.3h3M13.6 16.5h3"/>
+  </symbol>
+  <symbol id="environment" viewBox="0 0 24 24">
+    <path d="M7 12.6a4.1 4.1 0 0 1-.6-8.2A5.3 5.3 0 0 1 16.6 5a3.8 3.8 0 0 1 .8 7.6H7Z" fill="currentColor" fill-opacity=".18"/>
+    <path d="M12 12.6v3.2M7.4 15.8h9.2a1.4 1.4 0 0 1 1.4 1.4v2.4a1.4 1.4 0 0 1-1.4 1.4H7.4A1.4 1.4 0 0 1 6 19.6v-2.4a1.4 1.4 0 0 1 1.4-1.4Z"/>
+    <path d="M9 18.4h.01M11.6 18.4H15"/>
+  </symbol>
+  <symbol id="chats" viewBox="0 0 24 24">
+    <path d="M14.4 3.4H5.6a2.6 2.6 0 0 0-2.6 2.6v4.8A2.6 2.6 0 0 0 5.6 13.4h.6v2.6l3.4-2.6h4.8A2.6 2.6 0 0 0 17 10.8V6a2.6 2.6 0 0 0-2.6-2.6Z" fill="currentColor" fill-opacity=".18"/>
+    <path d="M19.6 8.2a2.4 2.4 0 0 1 1.4 2.2v4.4a2.4 2.4 0 0 1-2.4 2.4H18v2.4l-3.2-2.4h-3.6a2.4 2.4 0 0 1-2-1"/>
+    <path d="M6.4 7.2h7.2M6.4 9.8h4.2"/>
+  </symbol>
+  <symbol id="repo" viewBox="0 0 24 24">
+    <path d="M5 4.6A2.6 2.6 0 0 1 7.6 2h11.4v15.4H7.6A2.6 2.6 0 0 0 5 20V4.6Z" fill="currentColor" fill-opacity=".18"/>
+    <path d="M5 20a2 2 0 0 0 2 2h1.8M19 17.4V22h-6.4M9 22v-3l1.6 1 1.6-1v3M9.2 6.4h5.6M9.2 9.8h3.4"/>
+  </symbol>
+  <symbol id="branch" viewBox="0 0 24 24">
+    <circle cx="6.4" cy="5.2" r="2.4" fill="currentColor" fill-opacity=".18"/><circle cx="6.4" cy="18.8" r="2.4" fill="currentColor" fill-opacity=".18"/><circle cx="17.6" cy="7.6" r="2.4" fill="currentColor" fill-opacity=".18"/>
+    <path d="M6.4 7.6v8.8M17.6 10c0 4.4-6.2 3.2-10 7"/>
+  </symbol>
 </svg>

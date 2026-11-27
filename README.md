@@ -7,6 +7,18 @@ GitHub'daki açık kaynak projelerden, lisansı ve güvenliği kontrol edilmiş 
 - Yönetici görünümü: Siparişler, İş Planı & Gelir, GitHub Radar, İş Kolları, Listem, Yapım Kuyruğu, Ayarlar
 - Sürüm notları: uygulama içinde **Güncellemeler** sekmesi
 
+## Yeni sohbet, ortam seçici ve sık kullanılanlar (v5.77)
+
+Claude Code (claude.ai/code) ve ChatGPT Codex düzenini izler: her sohbet bir **ortamda** (depo + dal) çalışır.
+
+- **Yeni sohbet** düğmesi sol menünün en üstündedir (⌘/Ctrl+Shift+O). Üç başlangıç: *Bu projede yeni sohbet* (dosyalar, sürümler ve dal korunur; sohbet tertemiz başlar), *Boş sayfa* (yeni proje) ve *Bir depodan*.
+- **Ortam seçici:** Bulut sekmesi kayıtlı Gitmapp projelerini, GitHub sekmesi `GET /api/me/github/repos` ile bağlı hesabın yazabildiği depoları listeler; dal adı girilebilir. Son ortam `localStorage` `nsLast` anahtarında tutulur.
+- **Mod:** Hızlı, Plan (`planli`, önce plan) veya Ajan. İlk mesaj yazılırsa sohbet açılır açılmaz gönderilir.
+- **Sohbetler** proje kapsamına göre `studioChats:<kapsam>` anahtarında saklanır (en fazla 20 sohbet, her biri son 40 mesaj). Sol menüde proje adının altında ve Stüdyo üst çubuğunda listelenir. Taslak buluta kaydedilip kimlik değişince sohbetler yeni kapsama taşınır.
+- **Projeye ekle:** üst çubuktaki depo simgesi, açık sayfayı seçilen projeye yeni ekran olarak ekletir (yapay zekâ menü bağlantısı ve tasarım uyumu yapar).
+- **Sık kullanılanlar:** sol menüde iki tonlu simgelerle üçlü ızgara; kalem simgesiyle düzenlenir (`favNav`). Simgeler `brand/ecosystem.svg` içinde: `newchat`, `chats`, `plan`, `environment`, `repo`, `branch`, `favorites`.
+- Testler: `node --test server/version-control.test.mjs` ve tarayıcıda `node tools/acceptance/v577.mjs`.
+
 ## Keşif hafızası ve kişisel öneriler
 
 **Keşfet** sayfası kullanıcının aramalarını, açtığı uygulamaları, canlı denediği şablonları, baktığı temaları ve Stüdyo’ya yazdığı ilk fikirleri tarayıcıda (`localStorage`, `gms_taste`) tutar. Sunucuya veri gönderilmez. Her yeni sinyal eski sinyalleri biraz zayıflatır; böylece profil son ilgilere göre değişir.

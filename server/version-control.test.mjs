@@ -17,11 +17,13 @@ function fixture(t, ghApi = () => assert.fail("unexpected GitHub request")) {
   registerVersions({ db, ghApi, need, slugify: () => "katalog",
     route: (method, path, fn) => routes.set(method + " " + path, fn),
     ownApp: (_, id) => db.prepare("SELECT * FROM apps WHERE id=?").get(id) });
+  const direct = (method, path, query = "", actor = user) =>
+    routes.get(method + " " + path)({ params:{}, url:new URL("https://example.test" + path + query), body:{}, user:actor });
   function run(method, path, body = {}, actor = user) {
     const url = new URL("https://example.test/api/apps/:id/git" + path);
     return routes.get(method + " " + url.pathname)({ params:{id:"a"}, url, body, user:actor });
   }
-  return { db, run };
+  return { db, run, direct };
 }
 
 test("local branch snapshots share history, preserve the project and reject stale writes", async t => {
@@ -135,4 +137,25 @@ test("explicitly linking an existing repository checks ownership and push access
   assert.equal(db.prepare("SELECT github_repo FROM apps").get().github_repo,pages);
   await run("POST","/unlink",{repo:"owner/website"});
   assert.equal(db.prepare("SELECT count(*) n FROM project_git_remotes").get().n,0);
+});
+
+test("repository picker lists writable, active repositories and filters by search", async t => {
+  const ok=data=>({ok:true,status:200,data});
+  const { direct }=fixture(t, async (token, method, path)=>{
+    assert.equal(method+" "+path,"GET /user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator");
+    return ok([
+      {full_name:"owner/salon",name:"salon",private:false,default_branch:"trunk",description:"Kuaför randevu",permissions:{push:true},html_url:"https://github.com/owner/salon"},
+      {full_name:"owner/eski",name:"eski",archived:true,permissions:{push:true}},
+      {full_name:"baska/okuma",name:"okuma",permissions:{push:false}},
+      {full_name:"owner/kafe",name:"kafe",private:true,permissions:{push:true}}]);
+  });
+  const all=await direct("GET","/api/me/github/repos");
+  assert.deepEqual(all.repos.map(r=>r.full_name),["owner/salon","owner/kafe"]);
+  assert.equal(all.repos[0].default_branch,"trunk");
+  assert.equal(all.repos[1].default_branch,"main");
+  const found=await direct("GET","/api/me/github/repos","?q=randevu");
+  assert.deepEqual(found.repos.map(r=>r.name),["salon"]);
+  const none=await direct("GET","/api/me/github/repos","",{id:"owner"});
+  assert.deepEqual(none,{setup:"account",repos:[]});
+  await assert.rejects(direct("GET","/api/me/github/repos","",null),{status:401});
 });
