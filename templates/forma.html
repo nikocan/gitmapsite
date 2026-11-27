@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Forma Mağaza</title>
+<!-- Gitmapp hazır şablonu · Özgün e-ticaret UI kiti -->
+<style>
+:root{--pr:#682838;--ac:#a48668;--bg:#f5f0e9;--sf:#fffdf9;--sf2:#eee6dc;--tx:#271e1b;--tx2:#63554a;--ln:#d9cec0;--r:15px;color:var(--tx);background:var(--bg);font-family:system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit;color:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--pr);outline-offset:3px}a{color:inherit}img{display:block;width:100%;object-fit:cover}
+header,main,footer{max-width:1240px;margin-inline:auto;padding-inline:clamp(15px,5vw,64px)}header{display:flex;min-height:72px;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ln)}header h1{margin:0;font:500 30px Georgia,serif;letter-spacing:-.06em}header nav{display:flex;gap:5px;flex-wrap:wrap}
+button{border:1px solid var(--ln);background:var(--sf);padding:9px 12px;border-radius:9px;min-height:42px}button[aria-current=true],.primary{background:var(--pr);border-color:var(--pr);color:white}.quiet{background:transparent}.tag{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+h2,h3,p{margin:0}h2{font:500 clamp(30px,5vw,58px)/1 Georgia,serif;letter-spacing:-.05em}h3{font-size:16px}.lede,.low{color:var(--tx2);line-height:1.55}
+main{padding-block:20px}.hero{min-height:340px;background:var(--sf2);display:grid;grid-template-columns:1fr 1fr;border-radius:var(--r);overflow:hidden;margin-bottom:24px}.hero>div{align-self:center;padding:clamp(22px,5vw,60px);display:grid;gap:12px}.hero img{height:100%;max-height:400px}.hero h2{max-width:13ch}.hero button{justify-self:start}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:18px 0 13px}.controls label,.checkout label{font-size:13px;display:grid;gap:4px}.controls label:first-child{flex:1;min-width:140px}.controls input,.controls select,.checkout select,.checkout input{min-height:43px;background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:9px;width:100%}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.product{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);overflow:hidden}.product img{aspect-ratio:1;object-position:center}.product .body{padding:13px;display:grid;gap:7px}.product .row{justify-content:space-between;gap:6px}
+.row{display:flex;align-items:center;flex-wrap:wrap}.price{font-weight:800}.split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(15px,4vw,44px);margin-top:18px}.split>img{border-radius:var(--r);aspect-ratio:1}.stack{display:grid;gap:12px;align-content:start;min-width:0}.box{padding:clamp(15px,3vw,28px);border:1px solid var(--ln);border-radius:var(--r);background:var(--sf)}.empty{margin:16px 0}.cart-line{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--ln)}.cart-line img{aspect-ratio:1;border-radius:6px}.units button{min-height:38px;padding-inline:9px}.sum{justify-content:space-between}.checkout{display:grid;gap:11px}footer{padding-block:18px;color:var(--tx2);font-size:13px}[role=status]{margin:10px 0;min-height:20px;font-size:13px}
+@media(prefers-reduced-motion:no-preference){button,.product img{transition:filter .18s,background-color .18s}.product:focus-within img,.product:hover img{filter:saturate(1.18)}}
+@media(max-width:680px){header{padding-block:9px;align-items:start}header h1{font-size:25px;padding-top:6px}header nav{justify-content:end}header button{font-size:12px;padding:7px 8px;min-height:38px}.hero{grid-template-columns:1fr;min-height:0}.hero img{order:-1;height:163px;object-position:center 45%}.hero>div{padding:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.product .body{padding:9px}.product button{font-size:12px;padding:6px}.split{grid-template-columns:1fr}.split>img{max-height:340px}}
+</style></head>
+<body><header><h1>Forma</h1><nav aria-label="Mağaza"><button data-view="catalog">Mağaza</button><button data-view="favorites">Favoriler</button><button data-view="cart">Sepet <span id="count">0</span></button></nav></header>
+<main id="stage" aria-label="Mağaza ekranı"></main><footer>Forma · Örnek mağaza. Siparişler ve favoriler bu tarayıcıda tutulur.<p id="status" role="status"></p></footer>
+<script>
+const key="gitmapp-forma";
+const products=[
+ {id:"vera",name:"Vera Deri Çanta",cat:"Aksesuar",price:2490,img:"./art/forma-bag.webp",desc:"Mat yüzeyli bordo deri, ayarlanabilir askı ve günlük eşyalar için bölmeli iç cep."},
+ {id:"sued",name:"Sera Süet Sneaker",cat:"Giyim",price:2890,img:"./art/forma-sneaker.webp",desc:"Yumuşak süet ve ince kauçuk taban. Gün boyu kullanım için hafif form."},
+ {id:"kupa",name:"Ada Seramik Kupa",cat:"Ev",price:490,img:"./art/forma-mug.webp",desc:"Adaçayı tonunda sır ve elde şekillendirilmiş rahat tutuş. 280 ml."},
+ {id:"plaid",name:"Lima Örgü Battaniye",cat:"Ev",price:1590,img:"./art/forma-throw.webp",desc:"Yulaf tonunda kalın örgü. 130 × 170 cm ölçüsüyle koltuk ve yatak için."},
+ {id:"lamba",name:"Mira Masa Lambası",cat:"Ev",price:3290,img:"./art/forma-lamp.webp",desc:"Fırçalanmış bronz gövde ve amber tonunda yumuşak ışık."},
+ {id:"weekend",name:"Ada Hafta Sonu Çantası",cat:"Aksesuar",price:2190,img:"./art/forma-duffel.webp",desc:"Tok dokulu kanvas, bordo taşıma kolları ve fermuarlı iç bölme."}
+];
+const money=new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:0});
+let state={cart:{},favorites:[],order:0};
+try{
+ const saved=JSON.parse(localStorage.getItem(key)||"null");
+ if(saved&&typeof saved==="object")state={
+  cart:Object.fromEntries(products.map(({id})=>[id,Math.min(9,Math.max(0,Math.floor(Number(saved.cart?.[id]))||0))])),
+  favorites:products.map(p=>p.id).filter(id=>Array.isArray(saved.favorites)&&saved.favorites.includes(id)),
+  order:Number.isSafeInteger(saved.order)&&saved.order>=0?saved.order:0
+ };
+}catch{}
+let view="catalog",current=products[0],category="",sort="",query="";
+const stage=document.querySelector("#stage"),message=document.querySelector("#status");
+const persist=()=>{try{localStorage.setItem(key,JSON.stringify(state))}catch{}};
+const card=p=>`<article class="product"><img src="${p.img}" alt="${p.name}"><div class="body"><p class="low">${p.cat}</p><h3>${p.name}</h3><span class="price">${money.format(p.price)}</span><div class="row"><button data-product="${p.id}">İncele</button><button data-fav="${p.id}" aria-label="${p.name} favori" aria-pressed="${state.favorites.includes(p.id)}">${state.favorites.includes(p.id)?"♥":"♡"}</button></div></div></article>`;
+const visible=()=>products.filter(p=>(!category||p.cat===category)&&p.name.toLocaleLowerCase("tr").includes(query.toLocaleLowerCase("tr"))).sort((a,b)=>sort==="low"?a.price-b.price:sort==="high"?b.price-a.price:0);
+function renderProducts(){
+ const filtered=visible();
+ document.querySelector("#product-grid").innerHTML=filtered.length?filtered.map(card).join(""):'<p class="low">Aramanıza uygun ürün bulunamadı.</p>';
+ document.querySelector("#result").textContent=filtered.length+" ürün";
+}
+function cartLines(){
+ return products.filter(p=>state.cart[p.id]>0).map(p=>`<div class="cart-line"><img src="${p.img}" alt=""><div><h3>${p.name}</h3><small>${money.format(p.price*state.cart[p.id])}</small></div><div class="row units"><button data-minus="${p.id}" aria-label="${p.name} azalt">−</button><span>${state.cart[p.id]}</span><button data-add="${p.id}" aria-label="${p.name} artır" ${state.cart[p.id]>=9?"disabled":""}>+</button></div></div>`).join("");
+}
+const total=()=>products.reduce((sum,p)=>sum+p.price*(state.cart[p.id]||0),0);
+function render(){
+ document.querySelector("#count").textContent=Object.values(state.cart).reduce((sum,n)=>sum+n,0);
+ document.querySelectorAll("header [data-view]").forEach(button=>button.setAttribute("aria-current",String(button.dataset.view===view)));
+ switch(view){
+ case "catalog":
+  stage.innerHTML=`<section class="hero"><div><span class="tag">Forma Koleksiyon</span><h2>Her güne iyi gelen parçalar.</h2><p class="lede">Özenli malzemeler, zamana uyum sağlayan gündelik tasarımlar.</p><button class="primary" data-jump>Koleksiyonu keşfet</button></div><img src="${products[0].img}" alt="Koleksiyondan bordo deri çanta"></section><section id="collection"><h2>Koleksiyon</h2><div class="controls"><label>Ürün ara<input type="search" id="search" placeholder="Çanta, kupa…"></label><label>Kategori<select id="category"><option value="">Tümü</option><option>Aksesuar</option><option>Giyim</option><option>Ev</option></select></label><label>Sırala<select id="sort"><option value="">Önerilen</option><option value="low">Düşük fiyat</option><option value="high">Yüksek fiyat</option></select></label></div><p class="low" id="result" aria-live="polite"></p><div id="product-grid" class="grid"></div></section>`;
+  stage.querySelector("#search").value=query;stage.querySelector("#category").value=category;stage.querySelector("#sort").value=sort;renderProducts();break;
+ case "product":
+  stage.innerHTML=`<button class="quiet" data-view="catalog">← Koleksiyona dön</button><div class="split"><img src="${current.img}" alt="${current.name}"><div class="stack"><span class="tag">${current.cat}</span><h2>${current.name}</h2><p class="lede">${current.desc}</p><p class="price">${money.format(current.price)}</p><button class="primary" data-add="${current.id}" ${state.cart[current.id]>=9?"disabled":""}>Sepete ekle</button><button data-fav="${current.id}" aria-pressed="${state.favorites.includes(current.id)}">${state.favorites.includes(current.id)?"Favoriden çıkar":"Favorilere ekle"}</button></div></div>`;break;
+ case "favorites":
+  stage.innerHTML=`<h2>Favoriler</h2>${state.favorites.length?`<div class="grid empty">${products.filter(p=>state.favorites.includes(p.id)).map(card).join("")}</div>`:'<p class="lede empty">Beğendiğiniz ürünler burada görünür.</p><button data-view="catalog">Koleksiyona dön</button>'}`;break;
+ case "cart":
+  stage.innerHTML=`<h2>Sepet</h2>${total()? `<div class="split"><section class="box">${cartLines()}</section><section class="box stack"><h3>Sipariş özeti</h3><div class="row sum">Ara toplam <b>${money.format(total())}</b></div><button class="primary" data-view="checkout">Teslimata geç</button></section></div>`:'<p class="lede empty">Sepetiniz boş.</p><button data-view="catalog">Koleksiyona dön</button>'}`;break;
+ case "checkout":
+  stage.innerHTML=`<h2>Teslimat</h2><div class="split"><form class="box checkout"><label>Teslimat seçeneği<select name="shipping"><option value="0">Mağazadan teslim · Ücretsiz</option><option value="79">Standart kargo · ₺79</option><option value="149">Hızlı kargo · ₺149</option></select></label><button class="primary">Deneme siparişini tamamla</button></form><section class="box stack"><h3>Sipariş toplamı</h3><strong id="checkout-sum">${money.format(total())}</strong><p class="low">Örnek sipariş oluşturulur. Ödeme bilgisi gerekmiyor.</p></section></div>`;break;
+ case "done":
+  stage.innerHTML=`<section class="box stack"><h2>Deneme siparişi alındı.</h2><p class="low">Sipariş numarası <b>#F-${String(state.order).padStart(4,"0")}</b></p><button class="primary" data-view="catalog">Mağazaya dön</button></section>`;break;
+ }
+}
+function change(next){view=next;render();window.scrollTo({top:0});const heading=stage.querySelector("h2");if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}}
+document.addEventListener("click",event=>{
+ const button=event.target.closest("button");
+ if(!button)return;
+ const {view:next,product,fav,add,minus,jump}=button.dataset;
+ if(next){change(next);return}
+ if(jump!==undefined){stage.querySelector("#collection").scrollIntoView();return}
+ if(product){current=products.find(p=>p.id===product);change("product");return}
+ if(fav){state.favorites=state.favorites.includes(fav)?state.favorites.filter(id=>id!==fav):[...state.favorites,fav];persist();const label=button.getAttribute("aria-label");if(view==="catalog")renderProducts();else render();const matching=[...stage.querySelectorAll("[data-fav]")].find(item=>item.dataset.fav===fav&&item.getAttribute("aria-label")===label);matching?.focus();return}
+ if(add||minus){
+  const id=add||minus;
+  state.cart[id]=Math.max(0,Math.min(9,(state.cart[id]||0)+(add?1:-1)));persist();render();
+  const matching=[...stage.querySelectorAll(add?"[data-add]":"[data-minus]")].find(item=>(item.dataset.add||item.dataset.minus)===id);
+  matching?.focus();message.textContent=add?"Sepet güncellendi.":"Sepetten adet azaltıldı.";
+ }
+});
+stage.addEventListener("input",event=>{
+ const {id,name,value}=event.target;
+ if(name==="shipping"){stage.querySelector("#checkout-sum").textContent=money.format(total()+Number(value));return}
+ if(id==="search")query=value;else if(id==="category")category=value;else if(id==="sort")sort=value;else return;
+ renderProducts();
+});
+stage.addEventListener("submit",event=>{
+ if(view!=="checkout")return;
+ event.preventDefault();if(!total())return;
+ state.order++;state.cart={};persist();change("done");
+});
+render();
+</script></body></html>
