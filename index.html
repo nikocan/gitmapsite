@@ -2599,6 +2599,87 @@ body{background:radial-gradient(1100px 560px at 50% -12%,rgba(255,255,255,.045),
 @media(max-width:820px){.pj-head{margin:4px 0 14px}.pj-head h1{font-size:25px}.pj-head p{font-size:13px}.pj-newb{height:40px;padding:0 14px}}
 @media(max-width:820px){.pj-head h1{display:none}.pj-head{justify-content:flex-end}.pj-head p{display:block;margin:0;flex:1}.pj-q{flex:0 0 132px}}
 @media(max-width:480px){.pj-head{align-items:center}}
+/* ================= v5.68 — görüntüleyici, bağlantı paneli, ferah Kreatör ================= */
+.app-mark{display:inline-grid;place-items:center;flex:none;border-radius:5px}
+/* tam ekran görüntüleyici */
+.mv{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;background:rgba(6,6,6,.97);color:#ecebe6;animation:mvIn .2s ease-out}
+@keyframes mvIn{from{opacity:0}to{opacity:1}}
+.mv-top{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));transition:opacity .25s,transform .25s}
+.mv-top b{font-size:14px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mv-n{color:#8f8d88;font-size:13px;font-variant-numeric:tabular-nums}
+.mv-zoom{display:flex;align-items:center;border:1px solid rgba(255,255,255,.12);border-radius:999px;overflow:hidden}
+.mv-zoom button{min-width:38px;height:36px;border:0;background:none;color:#ecebe6;font:inherit;font-size:17px;cursor:pointer}.mv-zoom button:hover{background:rgba(255,255,255,.08)}
+.mv-zoom .mv-pct{font-size:12.5px;min-width:54px;font-variant-numeric:tabular-nums;color:#c9c7c1}
+.mv-b{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.06);color:#ecebe6;cursor:pointer}.mv-b:hover{background:rgba(255,255,255,.14)}
+.mv-stage{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.mv-stage img{max-width:96%;max-height:100%;object-fit:contain;transform-origin:center;transition:transform .08s linear;will-change:transform;-webkit-user-drag:none}
+.mv-stage video{max-width:96%;max-height:100%;border-radius:10px}
+.mv-nav{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:50%;background:rgba(20,20,20,.7);color:#fff;cursor:pointer;backdrop-filter:blur(8px)}.mv-nav.l{left:14px}.mv-nav.r{right:14px}
+.mv-foot{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 14px calc(12px + env(safe-area-inset-bottom));transition:opacity .25s,transform .25s}
+.mv-thumbs{display:flex;gap:6px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.mv-thumbs button{flex:none;width:52px;height:52px;border-radius:10px;overflow:hidden;border:2px solid transparent;background:#1a1a18;color:#c9c7c1;display:grid;place-items:center;cursor:pointer;opacity:.6}
+.mv-thumbs button.on{border-color:#f5f5f2;opacity:1}.mv-thumbs img{width:100%;height:100%;object-fit:cover}
+.mv-hint{color:#6f6d68;font-size:12px;text-align:center}
+.mv.bare .mv-top,.mv.bare .mv-foot{opacity:0;pointer-events:none}.mv.bare .mv-nav{opacity:0}
+@media(max-width:640px){.mv-zoom{display:none}.mv-nav{display:none}}
+/* bağlantı paneli */
+.apnl{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px;min-width:0}
+.apnl-used,.apnl-h{display:flex;align-items:center;gap:10px;color:#8f8d88;font-size:15px}
+.apnl-t{border:0;background:none;color:#8f8d88;font:inherit;font-size:15px;cursor:pointer;padding:2px 0}.apnl-t:hover{color:#c9c7c1}
+.apnl-i{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:8px;background:none;color:#8f8d88;cursor:pointer}.apnl-i:hover{background:rgba(255,255,255,.06);color:#ecebe6}
+.apnl-body{border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#111}
+@media(prefers-reduced-motion:no-preference){.apnl-body{animation:homeIn .35s cubic-bezier(.2,.8,.2,1)}}
+.apnl-g{display:grid;gap:2px;background:#0a0a0a}
+.apnl-g.n1{grid-template-columns:1fr}.apnl-g.n2{grid-template-columns:1fr 1fr}.apnl-g.n3{grid-template-columns:1.4fr 1fr;grid-template-rows:1fr 1fr}.apnl-g.n3 .apnl-m:first-child{grid-row:1/3}.apnl-g.n4{grid-template-columns:1fr 1fr}
+.apnl-m{position:relative;display:block;border:0;padding:0;background:#f4f4f2;cursor:zoom-in;overflow:hidden;min-height:0}
+.apnl-m img,.apnl-m video{display:block;width:100%;height:100%;object-fit:contain;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.apnl-m:hover img{transform:scale(1.02)}
+.apnl.s-s .apnl-g{height:220px}.apnl.s-m .apnl-g{height:min(420px,62vw)}.apnl.s-l .apnl-g{height:min(680px,86vh)}
+.apnl-play{position:absolute;left:10px;bottom:10px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff}
+.apnl-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid rgba(255,255,255,.06)}
+.apnl-bar small{color:#8f8d88;font-size:12.5px;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.apnl-size{display:flex;border:1px solid rgba(255,255,255,.1);border-radius:999px;overflow:hidden}.apnl-size button{height:30px;padding:0 11px;border:0;background:none;color:#a9a7a1;font:inherit;font-size:12px;cursor:pointer}.apnl-size button.on{background:rgba(255,255,255,.1);color:#fff}
+.apnl-a{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:none;color:#ecebe6;font:inherit;font-size:12.5px;cursor:pointer}.apnl-a:hover{background:rgba(255,255,255,.06)}
+@media(pointer:coarse){.apnl-size button,.apnl-a{height:38px}.apnl-i{width:38px;height:38px}}
+.ms-zoom{position:relative;display:block;width:100%;border:0;padding:0;background:none;cursor:zoom-in}.ms-zoom img{display:block;width:100%}.ms-zoom span{position:absolute;right:10px;top:10px;display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.6);color:#fff}
+/* Kreatör: ferah stüdyo */
+.cr{gap:18px!important}.cr.focus{max-width:1560px!important}
+.cr-card{padding:20px!important;border-radius:20px!important;background:#0f0f0f!important;border-color:rgba(255,255,255,.07)!important}
+.cr-hero{background:radial-gradient(900px 300px at 80% -20%,rgba(255,255,255,.06),transparent 60%),#0d0d0d!important;border-color:rgba(255,255,255,.07)!important}
+.cr-tabs{background:#0f0f0f!important;border-color:rgba(255,255,255,.07)!important}
+.cr-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;margin-top:-6px;border-radius:14px;background:rgba(12,12,12,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.06)}
+.cr-seg{display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.04)}.cr-seg button{height:30px;padding:0 13px;border:0;border-radius:999px;background:none;color:#a9a7a1;font:inherit;font-size:12.5px;cursor:pointer}.cr-seg button.on{background:#f5f5f2;color:#0a0a0a;font-weight:600}
+.cr-tb{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:none;color:#c9c7c1;font:inherit;font-size:12.5px;cursor:pointer}.cr-tb:hover{color:#fff;border-color:rgba(255,255,255,.2)}.cr-tb.on{background:rgba(255,255,255,.08);color:#fff}
+.cr-mini-st{color:#8f8d88;font-size:12.5px}.cr-mini-st b{color:#ecebe6;font-variant-numeric:tabular-nums}
+.cr-keyw{position:relative}
+.cr-keys{position:absolute;right:0;top:calc(100% + 8px);z-index:40;width:300px;padding:10px;border-radius:16px;background:#171716;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:4px}
+.cr-keys div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 6px;font-size:12.5px;color:#c9c7c1}
+.cr-keys kbd{font:500 11.5px/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:5px 7px;border-radius:6px;background:rgba(255,255,255,.08);color:#ecebe6;white-space:nowrap}
+.cr-main{gap:0!important;align-items:start}
+.cr-main>.cr-compose{margin-right:6px}.cr-main>.cr-side{margin-left:6px}
+.cr-split{align-self:stretch;display:grid;place-items:center;cursor:col-resize;touch-action:none;border-radius:6px}
+.cr-split i{width:4px;height:48px;border-radius:4px;background:rgba(255,255,255,.1);transition:background .2s,height .2s}
+.cr-split:hover i,.cr-split:focus-visible i{background:rgba(255,255,255,.45);height:72px}
+.cr-side{gap:16px!important}
+.cr-stage h3{flex-wrap:wrap}
+.cr-guides{margin-left:auto;display:flex;gap:4px}.cr-guides button{height:28px;padding:0 10px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:none;color:#a9a7a1;font:inherit;font-size:11.5px;cursor:pointer;display:inline-flex;align-items:center}.cr-guides button.on{background:#f5f5f2;color:#0a0a0a;border-color:#f5f5f2}
+.cr-monitor.has{cursor:zoom-in}
+.cr-stage .cr-monitor{height:min(560px,62vw)!important}
+.cr.focus .cr-stage .cr-monitor{height:min(680px,70vh)!important}
+.cr-safe{position:absolute;inset:0;z-index:3;pointer-events:none}
+.cr-safe i{position:absolute;left:0;right:0;background:repeating-linear-gradient(45deg,rgba(255,80,80,.18) 0 6px,rgba(255,80,80,.08) 6px 12px);border:1px dashed rgba(255,120,120,.6)}
+.cr-safe .t{top:0;height:12%}.cr-safe .b{bottom:0;height:20%}.cr-safe .r{top:30%;bottom:20%;left:auto;width:16%}
+.cr-safe em{position:absolute;left:8px;bottom:calc(20% + 6px);font-style:normal;font-size:11px;color:#ffb4b4;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:6px}
+.cr-grid3{position:absolute;inset:0;z-index:3;pointer-events:none;background-image:linear-gradient(90deg,transparent calc(33.33% - .5px),rgba(255,255,255,.35) calc(33.33% - .5px) calc(33.33% + .5px),transparent calc(33.33% + .5px) calc(66.66% - .5px),rgba(255,255,255,.35) calc(66.66% - .5px) calc(66.66% + .5px),transparent calc(66.66% + .5px)),linear-gradient(180deg,transparent calc(33.33% - .5px),rgba(255,255,255,.35) calc(33.33% - .5px) calc(33.33% + .5px),transparent calc(33.33% + .5px) calc(66.66% - .5px),rgba(255,255,255,.35) calc(66.66% - .5px) calc(66.66% + .5px),transparent calc(66.66% + .5px))}
+.cr-go{background:#f5f5f2!important;color:#0a0a0a!important}
+.cr-go:disabled{background:rgba(255,255,255,.08)!important;color:#6f6d68!important;box-shadow:none!important}
+.cr-spot{display:none!important}
+.cr-hero h1{background:none!important;-webkit-text-fill-color:#f5f5f2!important;color:#f5f5f2!important;letter-spacing:-.03em}
+.cr-eye i{background:#e4ff3d!important;box-shadow:none!important}
+.cr-compose textarea{min-height:150px;font-size:15px;line-height:1.6}
+.cr.focus .cr-compose textarea{min-height:220px}
+.cr-frame em,.cr-monitor em,.cr-rec,.cr-tag,.cr-st{font-size:11px!important}
+@media(max-width:980px){.cr-main{grid-template-columns:minmax(0,1fr)!important;gap:16px!important}.cr-split{display:none}.cr-main>.cr-compose,.cr-main>.cr-side{margin:0}.cr-bar .cr-seg{display:none}}
+@media(max-width:640px){.cr-card{padding:16px!important}.cr-bar{top:0;padding:6px 8px}.cr-tb{height:38px}.cr-keyw{display:none}.cr-mini-st{display:none}.cr-guides button{height:34px}}
 </style>
 </head>
 <body>
@@ -2615,8 +2696,15 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.67.0";
+const VERSION="5.68.0";
 const CHANGELOG=[
+ {v:"5.68.0",date:"2026-11-27",items:[
+  "🖼️ Bağlantı panelleri: Higgsfield ya da Canva ile ürettiğin görsel ve videolar artık Stüdyo sohbetinde kendi kartında görünüyor: “Higgsfield entegrasyonu kullanıldı”, altında büyük galeri. Kartı gizleyip açabilir, Küçük / Orta / Büyük boyut seçebilir, ⤢ ile tam ekrana alabilirsin. Görseli tek dokunuşla önizlemedeki bir öğeye yerleştirebilir ya da indirebilirsin; panel o projede kalıcı",
+  "🔍 Yeni tam ekran görüntüleyici: telefonda iki parmakla yakınlaştır, çift dokunuşla 2,5 kat büyüt, sürükleyerek gez, yana kaydırarak sonraki görsele geç, aşağı çekerek kapat. Bilgisayarda tekerlekle yakınlaştır, ← → ile geç, + − 0 ile yakınlık, F tam ekran, Esc kapat. Üstte indir ve paylaş düğmeleri, altta küçük resim şeridi. Sohbete eklediğin görseller ve medya stüdyosundaki sonuçlar da bu görüntüleyicide açılıyor",
+  "🎬 Kreatör Stüdyosu ferahladı: kartlar daha geniş ve havadar, yazı alanı büyüdü, başlıktaki pembe-mavi ışıklar sakin koyu zemine döndü, “İçeriği üret” düğmesi beyaz",
+  "🧩 Kreatör'de özelleştirilebilir çalışma alanı: üstte sabit araç çubuğu. Düzen: Dengeli / Geniş yazı / Geniş sahne; yazı ile sahne arasındaki ayracı sürükleyerek (ya da ← → ile) kendi oranını kur, çift tıklayınca sıfırlanır. Yayın planı kartını gizle/göster. Odak modu başlığı kaldırıp alanı 1560 piksele genişletiyor, sayaçları araç çubuğuna taşıyor. Tercihlerin bu cihazda hatırlanıyor",
+  "📐 Sahne katmanları: “Güvenli alan” Reels / TikTok / Shorts arayüzünün kapladığı üst, alt ve sağ alanları işaretliyor (yazı ve logo oraya gelmesin); “Izgara” üçte bir kuralı çizgilerini gösteriyor. Sahneye dokununca medya tam ekranda açılıyor; ürettiğin tüm görsel ve videolar sahnenin altında galeri panelinde, paylaş ve indir düğmeleriyle",
+  "⌨️ Kreatör kısayolları (Kısayollar düğmesi ya da ?): ⌘/Ctrl+Enter içerik üret, Alt+G görsel, Alt+V video, Alt+C Canva, Alt+O tam ekran, Alt+F odak modu, Alt+P yayın planı, Alt+1…5 sekmeler"]},
  {v:"5.67.0",date:"2026-11-27",items:[
   "🧭 Yeni: İlk adımlar rehberi. Açılış ekranında üç adım: Fikrini yaz → Önizlemede dene → Yayınla. Her adım sen gerçekten yaptığında kendiliğinden işaretleniyor, çubuk ilerliyor; sıradaki adımın düğmesi seni oraya götürüyor (“Örnekle dene” kutuya hazır bir fikir yazar). Üçü bitince ya da ✕ ile kapatınca kayboluyor",
   "🚀 İlk önizlemen hazır olduğunda sağ alttaki çıktı penceresi sıradaki adımı söylüyor: “Beğendiysen sağ üstteki Yayınla ile canlıya al”",
@@ -5955,7 +6043,80 @@ function StudioChanges({before,after}){
 // Asistan için uygulamanın kısa özeti: başlık ve ekran/bölüm başlıkları (asistan hangi projede olduğunu bilsin)
 function outlineOf(h){if(!h)return null;const t=(/<title[^>]*>([^<]{1,80})/i.exec(h)||[])[1]||"";const hs=[...h.matchAll(/<h[1-3][^>]*>([\s\S]{1,120}?)<\/h[1-3]>/gi)].map(m=>m[1].replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim()).filter(Boolean);return {baslik:t.trim(),bolumler:[...new Set(hs)].slice(0,10),boyutKB:+(h.length/1024).toFixed(1),oyun:/<canvas|requestAnimationFrame/i.test(h)}}
 // ---------- Medya Stüdyosu: Higgsfield ile üret, Canva'da tasarla → önizle → sahneye ekle ----------
-function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
+/* ================= v5.68 — MEDYA GÖRÜNTÜLEYİCİ ve BAĞLANTI PANELİ =================
+   openViewer(items,i) her yerden tam ekran görüntüleyiciyi açar: parmakla iki parmak yakınlaştırma,
+   tekerlek/+/- ile yakınlaştırma, sürükleyerek kaydırma, çift dokunuşla 2,5x, kaydırarak önceki/sonraki,
+   indirme, paylaşma ve bağlantı kopyalama. AppPanel, Higgsfield/Canva gibi bağlantıların çıktısını
+   sohbet ya da sayfa içinde büyütülebilir bir kartta gösterir. */
+const openViewer=(items,i=0,meta={})=>dispatchEvent(new CustomEvent("gm:viewer",{detail:{items:(items||[]).filter(x=>x&&x.url),i,meta}}));
+const APP_BRAND={higgsfield:["Higgsfield","#d4ff3a","sparkles"],canva:["Canva","#7d2ae8","palette"],gitmapp:["Gitmapp","#e4ff3d","image"],depo:["Depo","#f59e0b","box"]};
+const appKey=s=>String(s||"").toLowerCase().replace(/[^a-z]/g,"");
+function AppMark({app,s=18}){const b=APP_BRAND[appKey(app)]||[app,"#9a9a93","plug"];return html`<span class="app-mark" style=${{width:s,height:s,background:b[1]}} aria-hidden="true"><${Icon} n=${b[2]} s=${Math.round(s*.62)} c="#0a0a0a" w=${2.2}/></span>`}
+async function mediaDownload(m){try{const b=await (await fetch(m.url)).blob();const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(m.name||"gitmapp")+"."+(m.type==="video"?"mp4":(b.type.split("/")[1]||"png").replace("jpeg","jpg"));a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}catch(e){window.open(m.url,"_blank","noopener")}}
+async function mediaShare(m,toast){try{if(navigator.share){if(navigator.canShare){try{const b=await (await fetch(m.url)).blob();const f=new File([b],"gitmapp."+(m.type==="video"?"mp4":"png"),{type:b.type});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(e){}}if(/^https?:/.test(m.url)){await navigator.share({url:m.url});return}}await navigator.clipboard.writeText(m.url);toast&&toast("Bağlantı kopyalandı")}catch(e){if(e?.name!=="AbortError")toast&&toast("Paylaşılamadı")}}
+function MediaViewerHost({toast}){
+ const [v,setV]=useState(null);
+ useEffect(()=>{const h=e=>setV(e.detail.items.length?e.detail:null);addEventListener("gm:viewer",h);return()=>removeEventListener("gm:viewer",h)},[]);
+ return v&&html`<${MediaViewer} key=${v.items.map(x=>x.url).join("|")} items=${v.items} start=${v.i} meta=${v.meta} toast=${toast} close=${()=>setV(null)}/>`;
+}
+function MediaViewer({items,start=0,meta={},toast,close}){
+ const [i,setI]=useState(Math.min(start,items.length-1));const [z,setZ]=useState({s:1,x:0,y:0});const [ui,setUi]=useState(true);
+ const box=useRef(null),pts=useRef(new Map()),g=useRef(null),lastTap=useRef(0);
+ const m=items[i],vid=m.type==="video";
+ const reset=()=>setZ({s:1,x:0,y:0});
+ const go=d=>{if(items.length<2)return;setI(k=>(k+d+items.length)%items.length);reset()};
+ const zoomAt=(ns,cx,cy)=>setZ(o=>{ns=Math.max(1,Math.min(6,ns));if(ns===1)return {s:1,x:0,y:0};const r=box.current.getBoundingClientRect();const px=cx-r.left-r.width/2,py=cy-r.top-r.height/2;const k=ns/o.s;return {s:ns,x:px-(px-o.x)*k,y:py-(py-o.y)*k}});
+ const zoomBy=f=>{const r=box.current.getBoundingClientRect();zoomAt(z.s*f,r.left+r.width/2,r.top+r.height/2)};
+ useEffect(()=>{const k=e=>{if(e.key==="Escape")close();else if(e.key==="ArrowRight")go(1);else if(e.key==="ArrowLeft")go(-1);else if(e.key==="+"||e.key==="=")zoomBy(1.4);else if(e.key==="-")zoomBy(1/1.4);else if(e.key==="0")reset();else if(e.key.toLowerCase()==="f"){const el=box.current?.closest(".mv");document.fullscreenElement?document.exitFullscreen?.():el?.requestFullscreen?.().catch(()=>{})}};addEventListener("keydown",k);document.body.style.overflow="hidden";return()=>{removeEventListener("keydown",k);document.body.style.overflow=""}},[z,i]);
+ const down=e=>{if(vid)return;box.current.setPointerCapture?.(e.pointerId);pts.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.current.size===2){const [a,b]=[...pts.current.values()];g.current={pinch:Math.hypot(a.x-b.x,a.y-b.y),s:z.s,cx:(a.x+b.x)/2,cy:(a.y+b.y)/2}}
+  else g.current={x:e.clientX,y:e.clientY,ox:z.x,oy:z.y,t:Date.now()}};
+ const move=e=>{if(!pts.current.has(e.pointerId)||!g.current)return;pts.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.current.size===2&&g.current.pinch){const [a,b]=[...pts.current.values()];zoomAt(g.current.s*Math.hypot(a.x-b.x,a.y-b.y)/g.current.pinch,g.current.cx,g.current.cy);return}
+  if(z.s>1)setZ(o=>({...o,x:g.current.ox+e.clientX-g.current.x,y:g.current.oy+e.clientY-g.current.y}))};
+ const up=e=>{const st=g.current;pts.current.delete(e.pointerId);if(!st||pts.current.size)return;g.current=null;if(st.pinch)return;
+  const dx=e.clientX-st.x,dy=e.clientY-st.y;
+  if(z.s===1&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4){go(dx<0?1:-1);return}
+  if(z.s===1&&dy>110&&Math.abs(dy)>Math.abs(dx)*1.4){close();return}
+  if(Math.abs(dx)<6&&Math.abs(dy)<6){const now=Date.now();if(now-lastTap.current<300){z.s>1?reset():zoomAt(2.5,e.clientX,e.clientY);lastTap.current=0}else{lastTap.current=now;setTimeout(()=>{if(lastTap.current===now)setUi(u=>!u)},310)}}};
+ const wheel=e=>{if(vid)return;e.preventDefault();zoomAt(z.s*Math.exp(-e.deltaY*.0018),e.clientX,e.clientY)};
+ useEffect(()=>{const el=box.current;if(!el)return;el.addEventListener("wheel",wheel,{passive:false});return()=>el.removeEventListener("wheel",wheel)});
+ return html`<div class=${"mv"+(ui?"":" bare")} role="dialog" aria-modal="true" aria-label=${(meta.title||"Medya")+" görüntüleyici"}>
+  <header class="mv-top">${meta.app&&html`<${AppMark} app=${meta.app} s=${22}/>`}<b>${meta.title||m.name||"Görüntüleyici"}</b>${items.length>1&&html`<span class="mv-n">${i+1} / ${items.length}</span>`}<span style=${{flex:1}}></span>
+   ${!vid&&html`<div class="mv-zoom"><button type="button" aria-label="Uzaklaştır (−)" onClick=${()=>zoomBy(1/1.4)}>−</button><button type="button" class="mv-pct" aria-label="Sığdır (0)" onClick=${reset}>${Math.round(z.s*100)}%</button><button type="button" aria-label="Yakınlaştır (+)" onClick=${()=>zoomBy(1.4)}>+</button></div>`}
+   <button type="button" class="mv-b" aria-label="İndir" title="İndir" onClick=${()=>mediaDownload(m)}><${Icon} n="download" s=${17}/></button>
+   <button type="button" class="mv-b" aria-label="Paylaş" title="Paylaş" onClick=${()=>mediaShare(m,toast)}><${Icon} n="share" s=${17}/></button>
+   <button type="button" class="mv-b" aria-label="Kapat (Esc)" title="Kapat (Esc)" onClick=${close}><${Icon} n="x" s=${19}/></button></header>
+  <div class="mv-stage" ref=${box} onPointerDown=${down} onPointerMove=${move} onPointerUp=${up} onPointerCancel=${up} style=${{cursor:vid?"auto":z.s>1?"grab":"zoom-in"}}>
+   ${vid?html`<video src=${m.url} controls autoplay playsinline loop></video>`:html`<img src=${m.url} alt=${m.name||"Görsel"} draggable="false" style=${{transform:`translate(${z.x}px,${z.y}px) scale(${z.s})`}}/>`}
+   ${items.length>1&&html`<button type="button" class="mv-nav l" aria-label="Önceki (←)" onClick=${e=>{e.stopPropagation();go(-1)}} onPointerDown=${e=>e.stopPropagation()}><${Icon} n="chevLeft" s=${22}/></button><button type="button" class="mv-nav r" aria-label="Sonraki (→)" onClick=${e=>{e.stopPropagation();go(1)}} onPointerDown=${e=>e.stopPropagation()}><${Icon} n="chevRight" s=${22}/></button>`}
+  </div>
+  <footer class="mv-foot">${items.length>1&&html`<div class="mv-thumbs">${items.map((x,k)=>html`<button type="button" key=${k} class=${k===i?"on":""} aria-label=${(k+1)+". medya"} onClick=${()=>{setI(k);reset()}}>${x.type==="video"?html`<${Icon} n="video" s=${16}/>`:html`<img src=${x.thumb||x.url} alt=""/>`}</button>`)}</div>`}
+   <small class="mv-hint">${GMD.touch()?"İki parmakla yakınlaştır · çift dokun · kaydırarak geç · aşağı çekerek kapat":"Tekerlek ile yakınlaştır · çift tıkla · ← → geç · + − 0 · F tam ekran · Esc kapat"}</small></footer>
+ </div>`;
+}
+function ViewerBridge({url,done}){useEffect(()=>{if(url){openViewer([{url,type:/\.(mp4|webm|mov)(\?|$)/i.test(url)?"video":"image"}],0,{title:"Görsel"});done()}},[url]);return null}
+// Sohbette ya da sayfada bağlantı çıktısı: "Higgsfield entegrasyonu kullanıldı" + büyütülebilir galeri
+function AppPanel({app,title,items,note,actions,used=true,id}){
+ const key="appPanel:"+(id||"genel");const [st,setSt]=useState(()=>LS.get(key,{open:true,size:"m"})||{open:true,size:"m"});
+ const save=p=>{const n={...st,...p};setSt(n);LS.set(key,n)};
+ const name=(APP_BRAND[appKey(app)]||[app])[0];const kinds=items.filter(x=>x.type==="video").length;
+ const label=items.length+" "+(kinds===items.length?"video":kinds?"medya":"görsel");
+ return html`<section class=${"apnl s-"+st.size} aria-label=${name+" çıktısı"}>
+  ${used&&html`<div class="apnl-used"><${AppMark} app=${app}/><span>${name} entegrasyonu kullanıldı</span></div>`}
+  <div class="apnl-h"><${AppMark} app=${app}/><button type="button" class="apnl-t" aria-expanded=${st.open} onClick=${()=>save({open:!st.open})}>${st.open?name+" uygulamasını gizle":name+" · "+label}</button>
+   <button type="button" class="apnl-i" aria-label="Tam ekranda aç" title="Tam ekran" onClick=${()=>openViewer(items,0,{app,title:title||name})}><${Icon} n="expand" s=${15}/></button>
+   <button type="button" class="apnl-i" aria-label=${st.open?"Gizle":"Göster"} onClick=${()=>save({open:!st.open})}><${Icon} n=${st.open?"chevDown":"chevRight"} s=${15}/></button></div>
+  ${st.open&&html`<div class="apnl-body">
+   <div class=${"apnl-g n"+Math.min(items.length,4)}>${items.map((m,k)=>html`<button type="button" key=${k} class="apnl-m" aria-label=${(k+1)+". medyayı büyüt"} onClick=${()=>openViewer(items,k,{app,title:title||name})}>${m.type==="video"?html`<video src=${m.url} muted playsinline loop preload="metadata" onMouseEnter=${e=>e.currentTarget.play().catch(()=>{})} onMouseLeave=${e=>e.currentTarget.pause()}></video><span class="apnl-play"><${Icon} n="play" s=${16}/></span>`:html`<img src=${m.thumb||m.url} alt=${m.name||""} loading="lazy"/>`}</button>`)}</div>
+   <div class="apnl-bar">${note&&html`<small>${note}</small>`}<span style=${{flex:1}}></span>
+    <div class="apnl-size" role="group" aria-label="Gösterim boyutu">${[["s","Küçük"],["m","Orta"],["l","Büyük"]].map(([k,l])=>html`<button type="button" key=${k} aria-pressed=${st.size===k} class=${st.size===k?"on":""} onClick=${()=>save({size:k})}>${l}</button>`)}</div>
+    ${(actions||[]).map(([ic,l,fn])=>html`<button type="button" key=${l} class="apnl-a" onClick=${fn}><${Icon} n=${ic} s=${14}/>${l}</button>`)}
+    <button type="button" class="apnl-a" onClick=${()=>mediaDownload(items[0])}><${Icon} n="download" s=${14}/>İndir</button></div>
+  </div>`}
+ </section>`;
+}
+function MediaStudio({close,auth,health,toast,openAuth,context,onAdd,onResult}){
  const [tab,setTab]=useState(LS.get("mediaTab","higgsfield")||"higgsfield");useEffect(()=>{LS.set("mediaTab",tab)},[tab]);
  const u=auth.user;const [key,setKey]=useState("");const [busy,setBusy]=useState("");const [err,setErr]=useState("");
  const [prompt,setPrompt]=useState(context||"");const [type,setType]=useState("image");const [aspect,setAspect]=useState("16:9");
@@ -5968,7 +6129,7 @@ function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
  async function generate(){setErr("");setResult(null);setBusy("gen");try{const j=await api("POST","/api/media/higgsfield",{prompt,type,aspect});setJob({id:j.id,status:j.status});
    const r=await poll(()=>api("GET","/api/media/higgsfield/"+j.id),r=>{if(alive.current)setJob({id:j.id,status:r.status});return ["completed","failed","nsfw","canceled"].includes(r.status)});
    if(r.status!=="completed"||!r.url)throw new Error(r.status==="nsfw"?"İçerik güvenlik filtresine takıldı; istemi değiştir":r.status==="canceled"?"İptal edildi":"Üretim başarısız: "+(r.error||r.status));
-   setResult({url:r.url,kind:r.kind,from:"Higgsfield"})}catch(er){setErr(er.message)}finally{setBusy("");setJob(null)}}
+   setResult({url:r.url,kind:r.kind,from:"Higgsfield"});onResult&&onResult({app:"higgsfield",prompt,items:[{url:r.url,type:r.kind==="video"?"video":"image",name:"Higgsfield "+(r.kind==="video"?"videosu":"görseli")}]})}catch(er){setErr(er.message)}finally{setBusy("");setJob(null)}}
  async function cancel(){if(job)await api("POST","/api/media/higgsfield/"+job.id+"/cancel").catch(()=>{});alive.current&&setJob(null)}
  async function linkCanva(){if(!u){openAuth("Canva'yı bağlamak için giriş yap.");return}if(oauthBlocked("canva"))return;try{const j=await api("POST","/api/auth/link");LS.set("afterLink","studio");location.href=API+"/api/auth/canva/start?link="+encodeURIComponent(j.link)}catch(e){setErr(e.message)}}
  async function openCanva(){setErr("");setResult(null);setBusy("design");try{const [w,h]=size.split("x").map(Number);const j=await api("POST","/api/media/canva/design",{width:w,height:h,title:(context||"Gitmapp tasarımı").slice(0,80)});setDesign(j);setCstate("edit");
@@ -5976,7 +6137,7 @@ function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
  async function exportCanva(){if(!design)return;setErr("");setCstate("export");try{const j=await api("POST","/api/media/canva/export",{design_id:design.id});
    const r=await poll(()=>api("GET","/api/media/canva/export/"+j.id),r=>r.status!=="in_progress",2000,90);
    if(r.status!=="success"||!r.url)throw new Error(r.error==="license_required"?"Tasarımda Canva Pro öğesi var; dışa aktarmak için lisans gerekiyor":"Dışa aktarma başarısız");
-   setResult({url:r.url,kind:"image",from:"Canva"});setCstate("done")}catch(e){setErr(e.message);setCstate("edit")}}
+   setResult({url:r.url,kind:"image",from:"Canva"});setCstate("done");onResult&&onResult({app:"canva",prompt:"Canva tasarımı",items:[{url:r.url,type:"image",name:"Canva tasarımı"}]})}catch(e){setErr(e.message);setCstate("edit")}}
  useEffect(()=>{const h=e=>{if(e.data?.gm==="canva-return"&&design){toast("Canva'dan dönüldü · tasarım dışa aktarılıyor");exportCanva()}};addEventListener("message",h);
   const t=setInterval(()=>{if(cstate==="edit"&&pop.current&&pop.current.closed){pop.current=null;exportCanva()}},1200);return()=>{removeEventListener("message",h);clearInterval(t)}},[design,cstate]);
  async function addToStage(){if(!result)return;if(result.kind==="video"){window.open(result.url,"_blank","noopener");toast("Videolar şimdilik indirilip yüklenerek ekleniyor");return}
@@ -5995,7 +6156,7 @@ function MediaStudio({close,auth,health,toast,openAuth,context,onAdd}){
   <div class="ms-body">${tab==="higgsfield"?hf:cv}
    ${job&&html`<div class="ms-prog"><div class="ms-bar"><i></i></div><span><span class="shim">${job.status==="in_progress"?"Üretiliyor":"Sırada bekliyor"}…</span> ${clTime(secs)}</span></div>`}
    ${err&&html`<p class="ms-err" role="alert">${err}</p>`}
-   ${result&&html`<div class="ms-res"><div class="ms-stage">${result.kind==="video"?html`<video src=${result.url} controls autoplay muted loop playsinline></video>`:html`<img src=${result.url} alt="Üretilen görsel"/>`}</div>
+   ${result&&html`<div class="ms-res"><div class="ms-stage">${result.kind==="video"?html`<video src=${result.url} controls autoplay muted loop playsinline></video>`:html`<button type="button" class="ms-zoom" aria-label="Tam ekranda büyüt" onClick=${()=>openViewer([{url:result.url,type:"image",name:result.from}],0,{app:result.from,title:result.from+" görseli"})}><img src=${result.url} alt="Üretilen görsel"/><span><${Icon} n="expand" s=${14}/></span></button>`}</div>
     <div class="ms-row"><small class="ms-note">${result.from} · ${result.kind==="video"?"video":"görsel"} hazır</small><span style=${{flex:1}}></span><button class="btn g s" onClick=${()=>tab==="higgsfield"?generate():openCanva()}>Yeniden</button><button class="btn" disabled=${busy==="add"} onClick=${addToStage}><${Icon} n="pointer" s=${15}/> ${busy==="add"?"Hazırlanıyor…":"Sahneye ekle"}</button></div></div>`}
   </div></div><//>`;
 }
@@ -6303,6 +6464,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   toast("Bu görsel kodla üretiliyor · yapay zekâ kalıcı olarak yerleştiriyor");
   build("Kullanıcı önizlemede bir görseli sürükleyip şu öğeye bıraktı: <"+target.tag+">"+(target.alt?" (metin/alt: “"+target.alt+"”)":"")+(target.src?" mevcut görsel adresi: "+String(target.src).slice(0,200):"")+". Bu öğenin görseli artık "+ph+" olsun: <img> ise src değerini aynen "+ph+" yaz; arka plan görseliyse background-image: url("+ph+") kullan; listeden/veriden üretiliyorsa ilgili kaydın görselini "+ph+" yap. Başka hiçbir şeyi değiştirme.",null,"Görseli yerleştir: "+(target.alt||target.tag))}
  function undoStage(){toFrame({gm:"stage-undo"});setStagePend(null)}
+ const [panels,setPanels]=useState(()=>LS.get("studioPanels:"+scope,[])||[]);const panelScope=useRef(scope);useEffect(()=>{if(panelScope.current!==scope){panelScope.current=scope;setPanels(LS.get("studioPanels:"+scope,[])||[])}},[scope]);useEffect(()=>{LS.set("studioPanels:"+panelScope.current,panels.slice(-12))},[panels]);
  const [zoom,setZoom]=useState(null);useEffect(()=>{if(!zoom)return;const k=e=>{if(e.key==="Escape")setZoom(null)};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[zoom]);
  const [esc,setEsc]=useState(null);const [mediaOpen,setMediaOpen]=useState(false);const escOk=useRef(false);const genRef=useRef(null);
  const [kokOpen,setKokOpen]=useState(false),[cHealth,setCHealth]=useState(null);
@@ -7076,7 +7238,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   <div class=${"ws-grid studio-grid"+(sessOpen?" sp-on":"")}>
    <div class="ws-chat">
     <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
-    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map(msgEl)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
+    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
   const fix=()=>build(fixPrompt(probs),null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   if(autoFix&&probs.length&&!autoTurn())return html`<div class="dq-card auto" role="status"><div class="dq-h"><span class="ccspin"></span><b>Tasarım ajanı</b><span>${probs.length} sorunu kendiliğinden düzeltiyor…</span><button type="button" class="dq-stop" onClick=${()=>{setAutoFix(false);toast("Otomatik düzeltme kapatıldı; sorunları elle düzeltebilirsin")}}>Durdur</button></div></div>`;
   if(autoFix&&probs.length&&autoTurn())return html`<details class="dq-card left"><summary><${Icon} n="info" s=${13}/><b>Tasarım ajanı</b><span>düzeltti · ${probs.length} küçük uyarı kaldı</span></summary><ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn g s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Bir kez daha dene</button></details>`;
@@ -7106,8 +7268,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
     ${statusWin()}
     ${st.html&&!busy&&!code&&html`<${PickerDock} mode=${veMode} onMode=${k=>{setVeMode(k);setPicked(null)}}/>`}
    </div></section>${sessOpen&&sessPanel()}${pilotUI()}${kokOpen&&html`<${Kokpit} close=${()=>setKokOpen(false)} user=${auth.user} html=${st.html} model=${curModel} health=${cHealth} reHealth=${reHealth} applyFix=${applyFix} buildFix=${(p,l)=>build(p,null,"Bağlantı düzeltme: "+l)} go=${go} toast=${toast}/>`}</div>
-  ${zoom&&html`<div class="zoom-bg" role="dialog" aria-label="Görsel" onClick=${()=>setZoom(null)}><img src=${zoom} alt="Eklenen görsel"/></div>`}
-  ${mediaOpen&&html`<${MediaStudio} close=${()=>setMediaOpen(false)} auth=${auth} health=${health} toast=${toast} openAuth=${openAuth} context=${[st.title,picked?.text].filter(Boolean).join(" · ")} onAdd=${m=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{...m,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);toast("Önizlemede görselin gideceği öğeye dokun")}}/>`}
+  ${zoom&&html`<${ViewerBridge} url=${zoom} done=${()=>setZoom(null)}/>`}
+  ${mediaOpen&&html`<${MediaStudio} onResult=${r=>setPanels(ps=>[...ps,{id:"p"+Date.now().toString(36),after:st.msgs.length,...r}].slice(-12))} close=${()=>setMediaOpen(false)} auth=${auth} health=${health} toast=${toast} openAuth=${openAuth} context=${[st.title,picked?.text].filter(Boolean).join(" · ")} onAdd=${m=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{...m,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);toast("Önizlemede görselin gideceği öğeye dokun")}}/>`}
   ${full&&st.html&&html`<div class="fullprev" onClick=${()=>setFull(false)}><div class="fp-bar glass" onClick=${e=>e.stopPropagation()}><b style=${{marginRight:8}}>${st.title||"Önizleme"}</b>${seg([["phone","phone","Telefon"],["tablet","tablet","Tablet"],["desktop","monitor","Masaüstü"]],stage,setStage)}<span style=${{flex:1}}></span><button class="ib" onClick=${openTab} title="Yeni sekmede aç"><${Icon} n="external" s=${15}/></button><button class="ib" onClick=${()=>setFull(false)} title="Kapat (Esc)"><${Icon} n="x" s=${16}/></button></div><div class="fp-stage" onClick=${e=>e.stopPropagation()}>${frameEl(stage)}</div></div>`}
   </div>`;
 }
@@ -7922,6 +8084,11 @@ function KreatorPage({auth,toast,openAuth}){
  const [cm,setCm]=useState(""),[cmCtx,setCmCtx]=useState(""),[rep,setRep]=useState(null);
  const [hookUrl,setHookUrl]=useState(""),[secret,setSecret]=useState(null),[week,setWeek]=useState(0);
  const alive=useRef(true);useEffect(()=>()=>{alive.current=false},[]);
+ // v5.68 — çalışma alanı: odak modu, düzen, ayraç, sahne katmanları, kısayollar
+ const [lay,setLay]=useState(()=>({focus:false,mode:"denge",split:.58,plan:true,guide:"",...(LS.get("crLayout",{})||{})}));const setL=p=>setLay(o=>{const n={...o,...p};LS.set("crLayout",n);return n});
+ const [keys,setKeys]=useState(false);const workRef=useRef(null);
+ const dragSplit=e=>{const box=workRef.current;if(!box)return;e.preventDefault();const r=box.getBoundingClientRect();const mv=ev=>{const x=ev.clientX-r.left;setL({split:Math.max(.34,Math.min(.74,x/r.width)),mode:"ozel"})};const upf=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",upf)};addEventListener("pointermove",mv);addEventListener("pointerup",upf)};
+ const cols=lay.mode==="sahne"?"minmax(0,.9fr) 12px minmax(0,1.1fr)":lay.mode==="yazi"?"minmax(0,1.6fr) 12px minmax(300px,.8fr)":lay.mode==="ozel"?`minmax(0,${lay.split}fr) 12px minmax(300px,${(1-lay.split).toFixed(3)}fr)`:"minmax(0,1.35fr) 12px minmax(320px,1fr)";
  useEffect(()=>{if(!job)return;const t0=Date.now();const i=setInterval(()=>setSecs(Math.round((Date.now()-t0)/1000)),500);return()=>clearInterval(i)},[job]);
  const load=()=>u&&api("GET","/api/creator/posts").then(j=>{setPosts(j.posts);setHook(j.hook)}).catch(e=>setErr(e.message));
  useEffect(()=>{load()},[u?.id]);
@@ -7934,9 +8101,9 @@ function KreatorPage({auth,toast,openAuth}){
   try{const j=await api("POST","/api/media/higgsfield",{prompt:out?.gorsel_istem||topic,type,aspect:scene.ar});setJob({id:j.id,status:j.status,type});
    const r=await poll(()=>api("GET","/api/media/higgsfield/"+j.id),r=>{alive.current&&setJob(x=>x&&{...x,status:r.status});return ["completed","failed","nsfw","canceled"].includes(r.status)});
    if(r.status!=="completed"||!r.url)throw new Error(r.status==="nsfw"?"İçerik güvenlik filtresine takıldı; istemi değiştir":"Üretim başarısız: "+(r.error||r.status));
-   setMedia(m=>[...m,{url:r.url,type:r.kind==="video"?"video":"image"}]);toast((r.kind==="video"?"Video":"Görsel")+" sahneye eklendi")}catch(e){setErr(e.message)}setBusy("");setJob(null)};
+   setMedia(m=>[...m,{url:r.url,type:r.kind==="video"?"video":"image",src:"higgsfield"}]);toast((r.kind==="video"?"Video":"Görsel")+" sahneye eklendi")}catch(e){setErr(e.message)}setBusy("");setJob(null)};
  const canva=async()=>{if(!need())return;if(!u.canva){setErr("Canva'yı Bağlantılar sayfasından bağla.");return}setErr("");try{const [w,h]=scene.cv.split("x").map(Number);const j=await api("POST","/api/media/canva/design",{width:w,height:h,title:(out?.baslik||topic||scene.n).slice(0,80)});setDesign(j);window.open(j.edit_url,"canva","width=1280,height=860")}catch(e){setErr(e.message)}};
- const canvaIn=async()=>{if(!design)return;setBusy("canva");setErr("");try{const j=await api("POST","/api/media/canva/export",{design_id:design.id});const r=await poll(()=>api("GET","/api/media/canva/export/"+j.id),r=>r.status!=="in_progress",2000,90);if(r.status!=="success"||!r.url)throw new Error("Canva dışa aktarma başarısız");setMedia(m=>[...m,{url:r.url,type:"image"}]);setDesign(null);toast("Canva tasarımı eklendi")}catch(e){setErr(e.message)}setBusy("")};
+ const canvaIn=async()=>{if(!design)return;setBusy("canva");setErr("");try{const j=await api("POST","/api/media/canva/export",{design_id:design.id});const r=await poll(()=>api("GET","/api/media/canva/export/"+j.id),r=>r.status!=="in_progress",2000,90);if(r.status!=="success"||!r.url)throw new Error("Canva dışa aktarma başarısız");setMedia(m=>[...m,{url:r.url,type:"image",src:"canva"}]);setDesign(null);toast("Canva tasarımı eklendi")}catch(e){setErr(e.message)}setBusy("")};
  const capOf=p=>{const c=out?.metinler?.[p]||"";const tags=(out?.etiketler||[]).join(" ");return c+(tags&&!c.includes("#")&&p!=="x"?"\n\n"+tags:"")};
  const setCap=(p,v)=>setOut(o=>({...o,metinler:{...o.metinler,[p]:v}}));
  const copy=t=>{navigator.clipboard?.writeText(t).then(()=>toast("Kopyalandı"),()=>toast("Kopyalanamadı"))};
@@ -7951,20 +8118,38 @@ function KreatorPage({auth,toast,openAuth}){
  const saveHook=async e=>{e.preventDefault();if(!need())return;setBusy("hook");setErr("");try{const j=await api("PUT","/api/creator/hook",{url:hookUrl.trim()});setSecret(j.secret);setHook(j.host);setHookUrl("");toast(j.test.ok?"Webhook bağlandı · test isteği ulaştı":"Webhook kaydedildi ama test isteği yanıt vermedi ("+j.test.status+")")}catch(er){setErr(er.message)}setBusy("")};
  const st={plan:(posts||[]).filter(p=>p.status==="planlandi").length,sent:(posts||[]).filter(p=>p.status==="gonderildi").length,err:(posts||[]).filter(p=>p.status==="hata").length};
  const d0=new Date();d0.setHours(0,0,0,0);d0.setDate(d0.getDate()-((d0.getDay()+6)%7)+week*7);const days=Array.from({length:7},(_,i)=>new Date(d0.getTime()+i*864e5));
+ const canMedia=!busy&&!!(out?.gorsel_istem||topic.trim());
+ const KEYS=[["⌘/Ctrl + Enter","İçeriği üret"],["Alt + G","Görsel üret"],["Alt + V","Video üret"],["Alt + C","Canva'da tasarla"],["Alt + O","Medyayı tam ekranda aç"],["Alt + F","Odak modu"],["Alt + P","Yayın planını göster/gizle"],["Alt + 1…5","Sekmeler"],["?","Bu listeyi aç/kapat"]];
  const TABS=[["sahne","Sahneler","grid"],["icerik","İçerik","sparkles"],["takvim","Takvim","calendar"],["etkilesim","Etkileşim","chat"],["otomasyon","Otomasyon","automation"]];
+ useEffect(()=>{const h=e=>{const t=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable;
+  if((e.metaKey||e.ctrlKey)&&e.key==="Enter"&&tab==="icerik"&&topic.trim().length>=3&&pl.length&&!busy){e.preventDefault();compose();return}
+  if(typing||e.metaKey||e.ctrlKey)return;
+  if(e.key==="?"){setKeys(x=>!x);return}
+  if(!e.altKey)return;const k=e.code;
+  if(k==="KeyF"){e.preventDefault();setL({focus:!lay.focus})}else if(k==="KeyG"&&canMedia){e.preventDefault();genMedia("image")}else if(k==="KeyV"&&canMedia){e.preventDefault();genMedia("video")}else if(k==="KeyC"){e.preventDefault();canva()}else if(k==="KeyO"&&media.length){e.preventDefault();openViewer(media,media.length-1,{app:media[media.length-1].src||"gitmapp",title:scene.n})}else if(k==="KeyP"){e.preventDefault();setL({plan:!lay.plan})}else if(/^Digit[1-5]$/.test(k)){e.preventDefault();setTab(TABS[+k.slice(5)-1][0])}};
+  addEventListener("keydown",h);return()=>removeEventListener("keydown",h)});
  const PlChip=({p,on,click})=>{const x=CR_PL.find(y=>y[0]===p);return html`<button type="button" class=${"cr-pl"+(on?" on":"")} style=${{"--c":x[2]}} onClick=${click} aria-pressed=${!!on}><${Icon} n=${x[3]} s=${14}/>${x[1]}</button>`};
- return html`<div class="cr">
-  <header class="cr-hero"><div class="cr-spot"></div><div class="cr-hero-t"><span class="cr-eye"><i></i>Yapay zekâ destekli içerik stüdyosu</span><h1>Kreatör Stüdyosu</h1><p>Sahneni seç, fikrini yaz. Metin, etiket, senaryo, görsel ve video saniyeler içinde hazır olur; planla, otomatik paylaş, yorumları yanıtla.</p></div>
-   <div class="cr-stats"><span><b>${st.plan}</b>planlı</span><span><b>${st.sent}</b>gönderildi</span><span class=${st.err?"bad":""}><b>${st.err}</b>hata</span><span><b>${u?.credits??"—"}</b>kredi</span></div></header>
+ return html`<div class=${"cr"+(lay.focus?" focus":"")}>
+  ${!lay.focus&&html`<header class="cr-hero"><div class="cr-spot"></div><div class="cr-hero-t"><span class="cr-eye"><i></i>Yapay zekâ destekli içerik stüdyosu</span><h1>Kreatör Stüdyosu</h1><p>Sahneni seç, fikrini yaz. Metin, etiket, senaryo, görsel ve video saniyeler içinde hazır olur; planla, otomatik paylaş, yorumları yanıtla.</p></div>
+   <div class="cr-stats"><span><b>${st.plan}</b>planlı</span><span><b>${st.sent}</b>gönderildi</span><span class=${st.err?"bad":""}><b>${st.err}</b>hata</span><span><b>${u?.credits??"—"}</b>kredi</span></div></header>`}
   <nav class="cr-tabs" role="tablist">${TABS.map(([k,l,ic])=>html`<button type="button" role="tab" key=${k} aria-selected=${tab===k} class=${tab===k?"on":""} onClick=${()=>setTab(k)}><${Icon} n=${ic} s=${15}/>${l}</button>`)}
    <button type="button" class=${"cr-brand-b"+(brand.ad?" on":"")} onClick=${()=>setBrandOpen(!brandOpen)}><${Icon} n="userRound" s=${15}/>${brand.ad||"Marka profili"}</button></nav>
+  <div class="cr-bar" role="toolbar" aria-label="Kreatör araçları">
+   ${tab==="icerik"&&html`<div class="cr-seg" role="group" aria-label="Düzen">${[["denge","Dengeli"],["yazi","Geniş yazı"],["sahne","Geniş sahne"]].map(([k,l])=>html`<button type="button" key=${k} aria-pressed=${lay.mode===k} class=${lay.mode===k?"on":""} onClick=${()=>setL({mode:k})}>${l}</button>`)}${lay.mode==="ozel"&&html`<button type="button" class="on" aria-pressed="true">Özel</button>`}</div>
+   <button type="button" class=${"cr-tb"+(lay.plan?" on":"")} aria-pressed=${lay.plan} onClick=${()=>setL({plan:!lay.plan})} title="Alt + P"><${Icon} n="calendar" s=${14}/>Yayın planı</button>`}
+   <span style=${{flex:1}}></span>
+   ${lay.focus&&html`<span class="cr-mini-st"><b>${st.plan}</b> planlı · <b>${st.sent}</b> gönderildi · <b>${u?.credits??"—"}</b> kredi</span>`}
+   <button type="button" class=${"cr-tb"+(lay.focus?" on":"")} aria-pressed=${lay.focus} onClick=${()=>setL({focus:!lay.focus})} title="Alt + F"><${Icon} n=${lay.focus?"layout":"expand"} s=${14}/>${lay.focus?"Normal görünüm":"Odak modu"}</button>
+   <span class="cr-keyw"><button type="button" class=${"cr-tb"+(keys?" on":"")} aria-expanded=${keys} onClick=${()=>setKeys(!keys)} title="?"><${Icon} n="command" s=${14}/>Kısayollar</button>
+    ${keys&&html`<div class="cr-keys" role="dialog" aria-label="Klavye kısayolları">${KEYS.map(([k,d])=>html`<div key=${k}><kbd>${k}</kbd><span>${d}</span></div>`)}</div>`}</span>
+  </div>
   ${brandOpen&&html`<section class="cr-card cr-brand"><h3>Marka profili <small>Her üretimde yapay zekâya gider · bu cihazda saklanır</small></h3><div class="cr-form2">
    ${[["ad","Hesap / marka adı","@kahvedunyam"],["nis","Niş / konu","Üçüncü dalga kahve, ev barista"],["kitle","Hedef kitle","25-35 yaş, şehirli, kahve meraklısı"],["ton","Ses tonu","Samimi, esprili, bilgili"],["dil","Dil","Türkçe"],["emoji","Emoji kullanımı","Az ve yerinde"],["yasak","Kullanılmayacak kelimeler","ucuz, bedava"]].map(([k,l,ph])=>html`<label key=${k}>${l}<input class="in" value=${brand[k]||""} maxlength="200" placeholder=${ph} onInput=${e=>setBrand(b=>({...b,[k]:e.target.value}))}/></label>`)}</div></section>`}
   ${err&&html`<p class="cr-err" role="alert"><${Icon} n="alert" s=${15}/>${err}<button type="button" class="ib" aria-label="Kapat" onClick=${()=>setErr("")}><${Icon} n="x" s=${14}/></button></p>`}
   ${tab==="sahne"&&html`<section class="cr-scenes">${CR_SCENES.map(s=>html`<button type="button" key=${s.id} class=${"cr-scene"+(scene.id===s.id?" on":"")} style=${{"--t":s.tone}} onClick=${()=>pick(s)}>
     <div class="cr-frame" style=${{aspectRatio:s.ar.replace(":","/")}}><i class="cr-glow"></i><${Icon} n=${s.ic} s=${26}/><em>${s.ar}</em>${s.type==="video"&&html`<span class="cr-rec">● REC</span>`}</div>
     <b>${s.n}</b><small>${s.d}</small><span class="cr-pls">${s.pl.map(p=>html`<i key=${p} style=${{background:CR_PL.find(x=>x[0]===p)[2]}} title=${p}></i>`)}</span></button>`)}</section>`}
-  ${tab==="icerik"&&html`<div class="cr-work">
+  ${tab==="icerik"&&html`<div class="cr-work cr-main" ref=${workRef} style=${{gridTemplateColumns:cols}}>
    <section class="cr-card cr-compose"><h3><span class="cr-dotc" style=${{background:scene.tone}}></span>${scene.n}<small>${scene.ar} · ${scene.fmt}</small><button type="button" class="cr-link" onClick=${()=>setTab("sahne")}>Sahneyi değiştir</button></h3>
     <textarea class="in" rows="4" maxlength="1500" value=${topic} onInput=${e=>setTopic(e.target.value)} placeholder=${"Ne paylaşmak istiyorsun? Ör: Evde 3 malzemeyle köpüklü latte nasıl yapılır, yeni çıkan kahve çekirdeğimizi tanıtmak istiyorum"} aria-label="Konu"></textarea>
     <div class="cr-row">${CR_PL.map(([p])=>html`<${PlChip} key=${p} p=${p} on=${pl.includes(p)} click=${()=>togPl(p)}/>`)}</div>
@@ -7980,20 +8165,22 @@ function KreatorPage({auth,toast,openAuth}){
      ${out.fikirler?.length>0&&html`<div class="cr-ideas"><small>Sıradaki içerik fikirleri</small>${out.fikirler.map(f=>html`<button type="button" key=${f} onClick=${()=>{setTopic(f);setOut(null);setMedia([]);setEditId(null)}}>${f}</button>`)}</div>`}
     </div>`}
    </section>
+   <div class="cr-split" role="separator" aria-orientation="vertical" aria-label="Alanları yeniden boyutlandır (sürükle ya da ← →)" tabindex="0" onPointerDown=${dragSplit} onDblClick=${()=>setL({mode:"denge"})} onKeyDown=${e=>{if(e.key==="ArrowLeft")setL({mode:"ozel",split:Math.max(.34,(lay.mode==="ozel"?lay.split:.58)-.03)});if(e.key==="ArrowRight")setL({mode:"ozel",split:Math.min(.74,(lay.mode==="ozel"?lay.split:.58)+.03)})}}><i></i></div>
    <aside class="cr-side">
-    <section class="cr-card cr-stage"><h3><${Icon} n="camera" s=${15}/>Sahne <small>${media.length} medya</small></h3>
-     <div class="cr-monitor" style=${{aspectRatio:scene.ar.replace(":","/")}}>${media.length?(media[media.length-1].type==="video"?html`<video src=${media[media.length-1].url} controls playsinline muted loop></video>`:html`<img src=${media[media.length-1].url} alt="Üretilen görsel"/>`):job?html`<div class="cr-gen"><span class="cr-spin"></span><b>${job.type==="video"?"Video":"Görsel"} üretiliyor</b><small>${secs} sn · ${job.status||"sırada"}</small></div>`:html`<div class="cr-empty"><${Icon} n=${scene.ic} s=${34}/><small>${out?.gorsel_istem?"Görsel istemi hazır, üretmeye başla":"Önce içeriği üret; sahne istemi otomatik yazılır"}</small></div>`}<span class="cr-ar">${scene.ar}</span></div>
+    <section class="cr-card cr-stage"><h3><${Icon} n="camera" s=${15}/>Sahne <small>${media.length} medya · ${scene.ar}</small><span class="cr-guides" role="group" aria-label="Sahne katmanları">${[["guvenli","Güvenli alan"],["izgara","Izgara"]].map(([k,l])=>html`<button type="button" key=${k} aria-pressed=${lay.guide===k} class=${lay.guide===k?"on":""} onClick=${()=>setL({guide:lay.guide===k?"":k})}>${l}</button>`)}${media.length>0&&html`<button type="button" aria-label="Tam ekran (Alt + O)" title="Tam ekran (Alt + O)" onClick=${()=>openViewer(media,media.length-1,{app:media[media.length-1].src||"gitmapp",title:scene.n})}><${Icon} n="expand" s=${13}/></button>`}</span></h3>
+     <div class=${"cr-monitor"+(media.length?" has":"")} style=${{aspectRatio:scene.ar.replace(":","/")}} onClick=${e=>{if(media.length&&!e.target.closest("video"))openViewer(media,media.length-1,{app:media[media.length-1].src||"gitmapp",title:scene.n})}}>${lay.guide==="guvenli"&&html`<div class="cr-safe" aria-hidden="true"><i class="t"></i><i class="b"></i>${scene.ar==="9:16"&&html`<i class="r"></i>`}<em>Platform arayüzü bu alanları kaplar</em></div>`}${lay.guide==="izgara"&&html`<div class="cr-grid3" aria-hidden="true"></div>`}${media.length?(media[media.length-1].type==="video"?html`<video src=${media[media.length-1].url} controls playsinline muted loop></video>`:html`<img src=${media[media.length-1].url} alt="Üretilen görsel"/>`):job?html`<div class="cr-gen"><span class="cr-spin"></span><b>${job.type==="video"?"Video":"Görsel"} üretiliyor</b><small>${secs} sn · ${job.status||"sırada"}</small></div>`:html`<div class="cr-empty"><${Icon} n=${scene.ic} s=${34}/><small>${out?.gorsel_istem?"Görsel istemi hazır, üretmeye başla":"Önce içeriği üret; sahne istemi otomatik yazılır"}</small></div>`}<span class="cr-ar">${scene.ar}</span></div>
      ${media.length>1&&html`<div class="cr-thumbs">${media.map((m,i)=>html`<button type="button" key=${i} onClick=${()=>setMedia(x=>[...x.filter((_,k)=>k!==i),x[i]])}>${m.type==="video"?html`<${Icon} n="video" s=${16}/>`:html`<img src=${m.url} alt=""/>`}</button>`)}</div>`}
      ${out?.gorsel_istem&&html`<details class="cr-prompt"><summary>Görsel istemi</summary><textarea class="in" rows="3" value=${out.gorsel_istem} onInput=${e=>setOut(o=>({...o,gorsel_istem:e.target.value}))}></textarea></details>`}
      <div class="cr-actions"><button type="button" class="btn s" disabled=${!!busy||!(out?.gorsel_istem||topic.trim())} onClick=${()=>genMedia("image")}><${Icon} n="image" s=${14}/>Görsel</button><button type="button" class="btn s" disabled=${!!busy||!(out?.gorsel_istem||topic.trim())} onClick=${()=>genMedia("video")}><${Icon} n="video" s=${14}/>Video</button>
       ${design?html`<button type="button" class="btn g s" disabled=${busy==="canva"} onClick=${canvaIn}>${busy==="canva"?"Alınıyor…":"Canva'dan al"}</button>`:html`<button type="button" class="btn g s" onClick=${canva}><${Icon} n="palette" s=${14}/>Canva</button>`}</div>
      ${media.length>0&&html`<button type="button" class="cr-link" onClick=${()=>setMedia(m=>m.slice(0,-1))}>Son medyayı kaldır</button>`}
     </section>
-    <section class="cr-card"><h3><${Icon} n="calendar" s=${15}/>Yayın planı</h3>
+    ${media.length>0&&html`<${AppPanel} id="kreator" used=${false} app=${media[media.length-1].src||"gitmapp"} title=${scene.n} items=${[...media].reverse()} note=${media.length+" medya · "+scene.ar} actions=${[["share","Paylaş",()=>mediaShare(media[media.length-1],toast)]]}/>`}
+    ${lay.plan&&html`<section class="cr-card"><h3><${Icon} n="calendar" s=${15}/>Yayın planı</h3>
      <label class="cr-when">Paylaşım zamanı<input type="datetime-local" class="in" value=${when} onInput=${e=>setWhen(e.target.value)}/></label>
      <div class="cr-actions"><button type="button" class="btn g s" disabled=${!out||!!busy} onClick=${()=>savePost(false)}>Taslak</button><button type="button" class="btn s" disabled=${!out||!when||!!busy} onClick=${()=>savePost(true)}><${Icon} n="clock" s=${14}/>${editId?"Planı güncelle":"Planla"}</button></div>
      <p class="cr-note">${hook?html`Zamanı gelince <b>${hook}</b> otomasyonuna iletilir ve oradan paylaşılır.`:html`Otomatik paylaşım için <button type="button" class="cr-link" onClick=${()=>setTab("otomasyon")}>Otomasyon'u bağla</button>; bağlamazsan takvimde hatırlatıcı olarak durur.`}</p>
-    </section>
+    </section>`}
    </aside></div>`}
   ${tab==="takvim"&&html`<section class="cr-card"><h3><${Icon} n="calendar" s=${15}/>İçerik takvimi<span class="cr-wk"><button type="button" class="ib" aria-label="Önceki hafta" onClick=${()=>setWeek(w=>w-1)}><${Icon} n="chevLeft" s=${16}/></button><button type="button" class="cr-link" onClick=${()=>setWeek(0)}>Bu hafta</button><button type="button" class="ib" aria-label="Sonraki hafta" onClick=${()=>setWeek(w=>w+1)}><${Icon} n="chevRight" s=${16}/></button></span></h3>
     <div class="cr-week">${days.map(d=>{const ps=(posts||[]).filter(p=>p.scheduled_at&&new Date(p.scheduled_at).toDateString()===d.toDateString());const today=d.toDateString()===new Date().toDateString();return html`<div key=${d.toISOString()} class=${"cr-day"+(today?" today":"")}><small>${d.toLocaleDateString("tr-TR",{weekday:"short"})}</small><b>${d.getDate()}</b>${ps.map(p=>html`<button type="button" key=${p.id} class="cr-chip" style=${{"--c":CR_ST[p.status]?.[1]}} onClick=${()=>openPost(p)} title=${p.title}><i></i>${new Date(p.scheduled_at).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})} ${p.title}</button>`)}</div>`})}</div>
@@ -9611,7 +9798,7 @@ function App(){
       ${mode==="admin"&&html`<button disabled><${Icon} n="github" s=${16}/> GitHub limiti<kbd>${rate.rem}/${rate.lim}</kbd></button>`}
       ${auth.user&&html`<hr/><button onClick=${()=>{setSMenu(false);auth.logout();toast("Çıkış yapıldı")}}><${Icon} n="logout" s=${16}/> Çıkış yap</button>`}
      </div>`}</div></div></aside>
-  <${MobileHelper} view=${view} toast=${toast}/>
+  <${MobileHelper} view=${view} toast=${toast}/><${MediaViewerHost} toast=${toast}/>
   <div class="bnav glass noprint">${(mode==="admin"&&isAdm?[["yonetim","Yönetim"],["siparisler","Siparişler"],["kullanicilar","Kullanıcılar"],["yonetim-projeler","Projeler"]]:[["ana","Yeni"],["studio","Geliştir"],["uygulamalarim","Projeler"],["magaza","Keşfet"]]).map(([k,l])=>html`<button key=${k} class=${navOn(k)?"on":""} aria-current=${navOn(k)?"page":undefined} onClick=${()=>navGo(k)}><span class="bn-ic"><${NavIcon} k=${k} s=${21}/></span><span>${l}</span></button>`)}<button class=${"bnav-more"+(more?" on":"")} aria-expanded=${more} aria-controls="mobile-navigation" onClick=${()=>setMore(!more)}><span class="bn-ic"><${Icon} n="menu" s=${21}/></span><span>Diğer</span></button></div>
   ${more&&html`<div class="sheet-bg noprint" onClick=${()=>setMore(false)}><nav class="sheet glass" id="mobile-navigation" aria-label="Mobil menü" onClick=${e=>e.stopPropagation()}><div class="sheet-close"><span>Menü</span><button class="ib sm" aria-label="Menüyü kapat" onClick=${()=>{setMore(false);document.querySelector(".bnav-more")?.focus()}}><${Icon} n="x" s=${15}/></button></div><button class="sheet-st" onClick=${()=>{setMore(false);openSettings("genel")}}><${UserAvatar} u=${auth.user||{name:"Misafir"}} s=${30}/><span><b>${auth.user?(auth.user.nickname||auth.user.name||auth.user.email):"Misafir"}</b><small>Ayarlar, profil ve kullanım</small></span><${Icon} n="chevRight" s=${16}/></button>${mode==="musteri"&&html`<form class="sbox" onSubmit=${e=>{e.preventDefault();const v=e.target.q.value.trim();if(v){setMore(false);goStore({q:v})}}}><${Icon} n="search" s=${16} c="#888883"/><input name="q" placeholder="Uygulama ara" autocomplete="off"/></form>`}${auth.user?.admin&&html`<div class="modesw">${[["musteri","Kullanıcı"],["admin","Yönetici"]].map(([k,l])=>html`<button class=${mode===k?"on":""} onClick=${()=>{setMore(false);switchMode(k)}}>${l}</button>`)}</div>`}<div class="sheet-grid">${installButton()}${navList(true)}${apiOn&&!auth.user?html`<button class="btn" style=${{width:"100%",marginTop:8}} onClick=${()=>{setMore(false);openAuth("")}}>Giriş yap / Kayıt ol</button>`:apiOn?html`<button class="nav" onClick=${()=>navGo("hesabim")}><${Tile} k="hesabim"/><span>Hesabım · ${auth.user.credits??0} kredi</span></button><button class="nav" onClick=${()=>{setMore(false);auth.logout();setView("ana");toast("Çıkış yapıldı")}}><${Icon} n="logout"/><span>Çıkış yap</span></button>`:""}</div></nav></div>`}
   ${bg&&view!=="studio"&&html`<button type="button" class=${"bg-pill "+bg.status} onClick=${()=>navGo("studio")} title="Stüdyo'ya dön">${bg.status==="running"?html`<${ClSpark} s=${15}/><span><b>Bulutta üretiliyor</b><small>${bg.label} · ${clTime(bg.secs||0)}</small></span>`:bg.status==="done"?html`<${Icon} n="check" s=${15}/><span><b>Hazır</b><small>Stüdyo'da aç</small></span>`:html`<${Icon} n="alert" s=${15}/><span><b>Tamamlanamadı</b><small>Ayrıntı Stüdyo'da</small></span>`}</button>`}
