@@ -74,7 +74,12 @@ const oracleSkills = [
  ["capacity","Oracle altyapı · Hizmet sınırı","Uygulama, veritabanı ve yönetilen altyapı sorumlularını ayır. İşlem süresi ve veri tazeliği için aynı pencereye ait önce/sonra ölçümü iste.","Uygulama gecikmesi tek başına altyapı arızasını kanıtlamaz. Destek kaydına etkilenen işlem ve karşılaştırma aralığını ekle.","kocsistem"]
 ].map(([id,n,d,check,source])=>({id:"oracle-"+id,group:"Oracle",src:"gitmapp",n,d,check,source:oracleSources[source],
  p:d+" Örnek doğrulama: "+check+" Bulguyu, eksik kanıtı, sonraki kontrolü ve düzelmenin ölçütünü yaz. Canlı sisteme erişildiğini varsayma."}));
-businessSkills.push(...oracleSkills);
+businessSkills.push(...oracleSkills,{
+ id:"gitmapp-gt",group:"GitmappGT",n:"GT · Sigorta uygulaması teknik desteği",
+ d:"Poliçe, zeyil, hasar ve ödeme akışlarını şema ve sinyallerle incele.",
+ p:"Oracle veya SAP ürününü ve sürümünü doğrula. Bildirilen sistemin tablolarını, ilişkilerini ve olaylarını kullan. Poliçe, hasar, ödeme, mükerrer olay ve eksik bağlantı senaryolarında gözlem, hipotez, geliştirilecek değişiklik ve kabul testini ayrı göster. Gerçekleşmeyen testi başarılı gösterme.",
+ check:"Ödeme bekleme sinyali tek başına hasarın neden beklediğini kanıtlamaz. İlgili olay kimliğini ve geçiş kaydını iste.",src:"gitmapp"
+});
 
 function businessSkillInstructions(ids) {
   if (!Array.isArray(ids)) return "";

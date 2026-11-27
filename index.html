@@ -2264,6 +2264,7 @@ button.adp-mini{color:inherit;text-align:left}
 .oc-acts{display:flex;gap:6px;padding:8px 12px 10px;border-top:1px solid #ffffff0b}.oc-acts button{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:9px;border:1px solid #ffffff17;background:transparent;color:#d6d5cf;font-size:12px;cursor:pointer}.oc-acts button:hover{background:#ffffff0d}.oc-acts .hot{margin-left:auto;border-color:#e4ff3d55;color:#efffa0}
 .dq-card.auto{border-color:#e4ff3d33;background:#e4ff3d08}.dq-card.auto .dq-h{align-items:center}.dq-stop{margin-left:auto;height:24px;padding:0 9px;border-radius:8px;border:1px solid #ffffff22;background:transparent;color:#d6d5cf;font-size:11.5px;cursor:pointer}
 details.dq-card.left{border-style:dashed;opacity:.9}details.dq-card.left summary{display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;font-size:13px}details.dq-card.left summary span{color:#9a9993}details.dq-card.left ul{margin:8px 0}
+html:has(.gt-dialog[open]),body:has(.gt-dialog[open]){overflow:hidden;max-width:100vw}.gt-dialog{position:fixed;inset:0;margin:auto;width:min(580px,94vw);max-height:85vh;overflow:auto;border:1px solid #575761;border-radius:16px;background:#19191e;color:#eee;padding:22px}.gt-dialog::backdrop{background:#0009}.gt-dialog .gt-head{position:sticky;top:0;z-index:1;background:#19191e;display:flex;align-items:center;justify-content:space-between}.gt-dialog :is(button,textarea,input){font:inherit}.gt-dialog button,.gt-dialog summary{cursor:pointer}.gt-dialog :is(button,details,section,textarea){border:1px solid #565661;border-radius:8px;padding:8px;margin:4px 0}.gt-dialog button{background:#32323a;color:#fff}.gt-dialog button:disabled{opacity:.5}.gt-dialog label,.gt-dialog textarea{display:block;width:100%}.gt-dialog textarea{min-height:70px}.gt-answer{white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -2273,6 +2274,8 @@ details.dq-card.left{border-style:dashed;opacity:.9}details.dq-card.left summary
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
 <script src="config.js"></script>
 <script src="skills/business.js"></script>
+<script src="skills/gt-context.js"></script>
+<script src="skills/gt-studio.js"></script>
 <script>
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
@@ -6058,6 +6061,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
     <b>${promptIntent(input,{html:!!st.html,plan:!!plan,todo:!!todo?.awaiting,last:lastAsk(),kind:prefs.kind,mode:prefs.mode,picked:!!picked}).l}</b>
     <span>${st.title||"Yeni proje"} · ${st.gitContext?.name||"Yerel taslak"} · ${MODE_TR[prefs.mode]}</span></div>`}
    <div class="gbar"><input type="file" accept="image/*" multiple hidden ref=${fileRef} onCancel=${()=>{roleRef.current=null}} onChange=${e=>{addFiles(e.target.files,roleRef.current);roleRef.current=null;e.target.value=""}}/>
+    <button type="button" class="gatt" title="GitmappGT teknik destek" aria-label="GitmappGT teknik destek" onClick=${()=>setGtRequest(n=>n+1)}>GT${gtAlerts>0&&html`<sup role="status">${gtAlerts}</sup>`}</button>
     <span class="plusw"><button type="button" class=${"gatt"+(plusOpen?" on":"")} disabled=${busy} title="Ekle" aria-haspopup="menu" aria-expanded=${plusOpen} onClick=${()=>setPlusOpen(!plusOpen)}><${Icon} n="plus" s=${18}/></button>
      ${plusOpen&&html`<${ComposerMenu}>
       <button type="button" role="menuitem" disabled=${atts.length>=3} onClick=${()=>{setPlusOpen(false);fileRef.current.click()}}><${Icon} n="paperclip" s=${18}/><span>Görsel ya da çizim ekle</span><kbd>⌘U</kbd></button>
@@ -6302,10 +6306,12 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
  </article>`;
 
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
+ const [gtRequest,setGtRequest]=useState(0),[gtAlerts,setGtAlerts]=useState(0);
+ const gtPanel=html`<${GitmappGT} key=${scope} request=${gtRequest} onAlerts=${setGtAlerts} appId=${st.appId} aiBody=${aiBody} source=${st.html?resolve(st.html):""} errors=${qa&&qa.source===st.html?qa.errors:[]} busy=${busy} buildGT=${brief=>build(brief,null,"GT geliştirmesi")}/>`;
  const hasWork=st.html||busy||plan||st.msgs.length;
  if(!hasWork){const kind=prefs.kind||"app";const starters=START_CHIPS[kind]||START_CHIPS.app;const ideas=TEMPLATES.map((t,i)=>[t,i]).sort((a,b)=>((a[0][3]||"app")===kind?0:1)-((b[0][3]||"app")===kind?0:1)).slice(0,6);
   const fill=(p,ic)=>{if(ic)setSt(s=>({...s,emoji:ic}));setInput(p);requestAnimationFrame(()=>{const t=document.querySelector("textarea.gta");if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}})};
-  return html`<div class="hero studio-start sx"><div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
+  return html`<div class="hero studio-start sx">${gtPanel}<div class="studio-start-nav">${sidebarButton}</div>${pickerEl()}${galEl()}${runEl()}
   <div class="sx-glow" aria-hidden="true"></div>
   <section class="sx-main" aria-label="Yeni proje">
    <div class="start-type">${typeSwitch()}</div>
@@ -6361,7 +6367,7 @@ function Studio({compact,setSidebarClosed,auth,openAuth,toast,openPublish,incomi
   toast("Dalın çalışma dosyası proje taslağına alındı.");
  }
  const frameEl=(sg,ve)=>html`<iframe key=${scope} ref=${ve?frameRef:null} title="Önizleme" sandbox="allow-scripts allow-forms allow-modals allow-popups" onLoad=${ve?e=>e.currentTarget.contentWindow.postMessage({gm:"picker-mode",mode:veMode},"*"):undefined} srcdoc=${(ve?withQA(preview(st.html)):preview(st.html))+(ve?VE_SCRIPT+DROP_SCRIPT:"")} class=${"frame-"+(sg==="phone"?"m":sg==="tablet"?"t":"d")}></iframe>`;
- return html`<div class="ws">${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
+ return html`<div class="ws">${gtPanel}${gitOpen&&html`<${VersionPanel} key=${st.appId||"draft"} draftMessage=${commitDraft||String(st.msgs.findLast(m=>m.role==="assistant"&&m.log?.res?.summary)?.log?.res?.summary||"").split("\n")[0].replace(/^[#*\s]+/,"").slice(0,72)} appId=${st.appId} content=${resolve(st.html)} active=${st.gitContext} initialSource=${gitOpen==="github"?"github":undefined} auth=${auth} health=${health} openAuth=${openAuth} close=${()=>setGitOpen(false)} saveProject=${save} onWork=${workOnBranch} onDetach=${detachBranch}/>`}${designOpen&&st.html&&html`<${DesignScene} key=${scope+account} account=${auth.user?.id} autoModel=${!!prefs.autoModel} project=${st} resolve=${resolve} taskPreview=${taskPreview} close=${()=>setDesignOpen(false)} aiBody=${aiBody} spent=${spent} failAuth=${failAuth} save=${value=>{setVersions(v=>[...v.slice(-9),st.html]);setSt(s=>({...s,html:value}));toast("Tasarım taslağa kaydedildi")}}/>`}${pickerEl()}${galEl()}${runEl()}
   <div class="ws-top">
    ${sidebarButton}
    <${IconPick} emoji=${st.emoji} color=${st.color} set=${x=>setSt(s=>({...s,...x}))}/>
@@ -7541,7 +7547,7 @@ function SkillsModal({close,toast,account}){
   <div class="skm-tabs"><button class=${tab==="yuklu"?"on":""} onClick=${()=>setTab("yuklu")}>Yüklü <em>${on.length}</em></button><button class=${tab==="kesfet"?"on":""} onClick=${()=>setTab("kesfet")}>Keşfet <em>${SKILLS.length}</em></button><button class=${tab==="tasarim"?"on":""} onClick=${()=>setTab("tasarim")}>Tasarım sahnesi</button></div>
   <label class="skm-q"><${Icon} n="search" s=${16}/><input placeholder="Beceri ara…" value=${q} onInput=${e=>setQ(e.target.value)}/></label>
   ${tab==="tasarim"?html`<p>Tasarım sahnesinde bir öğe seçip @beceri adı yazabilirsiniz.</p>
-  <p role="status">${designError}</p><div class="skm-g">${design.filter(x=>(x.name+" "+x.instruction).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(x=>html`<div class="skc" key=${x.name}><b>@${x.name}</b><p>${x.instruction}</p><small>${x.personal?"Kişisel":"Gitmapp"}</small></div>`)}</div>`:html`<label>İş alanı <select aria-label="İş alanı" value=${group} onChange=${e=>setGroup(e.target.value)}><option value="">Tüm alanlar</option>${["Sektör","SaaS","ERP","Otomasyon","GitSap","Oracle"].map(g=>html`<option key=${g}>${g}</option>`)}</select></label><div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
+  <p role="status">${designError}</p><div class="skm-g">${design.filter(x=>(x.name+" "+x.instruction).toLocaleLowerCase("tr").includes(q.toLocaleLowerCase("tr"))).map(x=>html`<div class="skc" key=${x.name}><b>@${x.name}</b><p>${x.instruction}</p><small>${x.personal?"Kişisel":"Gitmapp"}</small></div>`)}</div>`:html`<label>İş alanı <select aria-label="İş alanı" value=${group} onChange=${e=>setGroup(e.target.value)}><option value="">Tüm alanlar</option>${["Sektör","SaaS","ERP","Otomasyon","GitSap","Oracle","GitmappGT"].map(g=>html`<option key=${g}>${g}</option>`)}</select></label><div class="skm-f">${[["","Tümü",base.length],["gitmapp","Gitmapp",base.filter(x=>x.src==="gitmapp").length],["topluluk","Topluluk",base.filter(x=>x.src==="topluluk").length]].map(([k,l,n])=>html`<button key=${k} class=${src===k?"on":""} onClick=${()=>setSrc(k)}>${l} <em>${n}</em></button>`)}</div>
   <div class="skm-g">${list.map(x=>{const i=on.includes(x.id);return html`<div class=${"skc"+(i?" on":"")} key=${x.id}><div class="skc-t"><b>${x.n}</b><button class=${"skb"+(i?" on":"")} onClick=${()=>tog(x.id)}>${i?html`<${Icon} n="check" s=${14} w=${2.4}/> Yüklü`:html`<${Icon} n="plus" s=${14}/> Yükle`}</button></div><p>${x.d}</p>${x.check&&html`<details><summary>Kabul senaryosu</summary><p>${x.check}</p></details>`}${x.source&&html`<a href=${x.source} target="_blank" rel="noopener noreferrer">${x.group} · Beceri kaynağı ↗</a>`}<span class="mono">${x.src==="gitmapp"?"gitmapp":"topluluk"}</span></div>`})}${!list.length&&html`<div class="empty" style=${{gridColumn:"1/-1",border:0}}>${tab==="yuklu"?"Henüz beceri yüklemedin. Keşfet sekmesinden ekleyebilirsin.":"Sonuç yok"}</div>`}</div>`}
  </div></div>`;
 }
