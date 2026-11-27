@@ -1271,12 +1271,64 @@ dialog.ui-dialog{padding:0;border:0;background:transparent;color:var(--ink);widt
 .st-profile-status[role="alert"]{color:#fca5a5}
 .rp-h h2{font-size:16px;margin:0;flex:1}
 .rp-range input{min-width:0}
-.store-nav{margin-bottom:16px;padding:12px 14px;border:1px solid var(--sep);border-radius:16px;background:var(--fill1)}
-.store-nav h1{font-size:23px;margin:0}
-.hb-txt h2{font-size:clamp(26px,4vw,44px);line-height:1.1;margin:8px 0 10px;color:#fff}
-.store-nav form{display:flex;gap:8px;margin:12px 0}
-.store-nav input{flex:1;min-width:0;width:100%}
+.store-nav{position:relative;margin-bottom:22px;padding:26px 26px 18px;border:1px solid var(--sep);border-radius:22px;background:radial-gradient(120% 140% at 100% 0,rgba(228,255,61,.07),transparent 55%),var(--fill1)}
+.store-nav h1{font-size:30px;margin:0;letter-spacing:-.6px;font-weight:700}
+.sn-head p{margin:6px 0 0;color:var(--label2);font-size:14px}
+/* v5.62 akıllı arama */
 .store-categories{display:flex;flex-wrap:wrap;gap:6px}
+.ks-form{position:relative;margin:18px 0 14px}
+.ks-field{display:flex;align-items:center;gap:10px;height:52px;padding:0 6px 0 16px;border-radius:999px;background:var(--bg);border:1px solid var(--sep);transition:border-color .2s,box-shadow .2s;color:var(--label2)}
+.ks-field:focus-within{border-color:rgba(228,255,61,.55);box-shadow:0 0 0 4px rgba(228,255,61,.08)}
+.ks-field input{flex:1;min-width:0;height:100%;border:0;background:none;outline:none;color:var(--txt);font-size:15px}
+.ks-field input::-webkit-search-cancel-button{display:none}
+.ks-x{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:var(--fill2);color:var(--label2);cursor:pointer}
+.ks-go{height:40px;padding:0 20px;border:0;border-radius:999px;background:var(--acc);color:#0a0a0a;font-weight:650;cursor:pointer}
+.ks-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% + 8px);padding:8px;border-radius:18px;background:#161616;border:1px solid var(--sep);box-shadow:0 24px 60px rgba(0,0,0,.55);animation:ksIn .16s var(--ease)}
+@keyframes ksIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ks-cap{padding:6px 10px 4px;font-size:11.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--label3)}
+.ks-opt{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:11px;background:none;color:var(--txt);text-align:left;cursor:pointer}
+.ks-opt span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ks-opt svg{color:var(--label3)}.ks-opt em{font-style:normal;font-size:11.5px;color:var(--label3)}
+.ks-opt.on,.ks-opt:hover{background:var(--fill2)}
+.ks-intent{display:flex;align-items:center;gap:12px;margin-top:6px;padding:12px;border-radius:14px;background:linear-gradient(90deg,rgba(228,255,61,.08),rgba(255,255,255,.02));border:1px solid rgba(228,255,61,.18)}
+.ks-intent>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ks-intent b{font-size:13.5px}.ks-intent span{font-size:12.5px;color:var(--label2)}
+.ks-start{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border:0;border-radius:999px;background:var(--txt);color:#0a0a0a;font-weight:600;cursor:pointer;white-space:nowrap}
+/* v5.62 Sana özel */
+.foryou{margin:0 0 30px}
+.foryou-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:stretch}
+.taste-card{position:relative;display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:20px;border:1px solid var(--sep);background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015))}
+.taste-card.off{flex-direction:row;align-items:center;flex-wrap:wrap}
+.taste-ic{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--fill2);color:var(--acc)}
+.taste-top{display:flex;align-items:center;gap:10px}
+.taste-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650;letter-spacing:.3px;color:var(--acc);text-transform:uppercase}
+.taste-meter{flex:1;height:4px;border-radius:4px;background:var(--fill2);overflow:hidden}.taste-meter i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--acc2),var(--acc));transition:width .5s var(--ease)}
+.taste-menu{position:relative}
+.taste-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;width:210px;padding:6px;border-radius:14px;background:#1a1a1a;border:1px solid var(--sep);box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.taste-pop button{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:0;border-radius:9px;background:none;color:var(--txt);cursor:pointer;text-align:left}.taste-pop button:hover{background:var(--fill2)}
+.taste-pop small{display:block;padding:6px 10px 2px;color:var(--label3);font-size:11.5px}
+.taste-body{display:flex;gap:14px;align-items:center}
+.taste-mock{flex-shrink:0;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.taste-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.taste-b b{font-size:16px;letter-spacing:-.2px}.taste-b p{margin:0;color:var(--label2);font-size:13px;line-height:1.5}
+.taste-sw{display:flex;gap:5px}.taste-sw i{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.14)}
+.taste-tags{display:flex;flex-wrap:wrap;gap:5px}.taste-tags span{padding:3px 9px;border-radius:999px;background:var(--fill2);color:var(--label2);font-size:11.5px}
+.ks-pal{display:flex;flex-shrink:0}.ks-pal i{width:26px;height:26px;border-radius:50%;border:2px solid #161616;margin-left:-8px}.ks-pal i:first-child{margin-left:0}
+.taste-why{margin:0;color:var(--label3);font-size:12.5px;line-height:1.5}
+.taste-q small{display:block;margin-bottom:6px;color:var(--label3);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}.taste-q div{display:flex;flex-wrap:wrap;gap:5px}.taste-q .chip{min-height:28px;font-size:12px}
+.taste-go{display:flex;align-items:center;justify-content:center;gap:8px;height:42px;margin-top:auto;border:0;border-radius:12px;background:var(--acc);color:#0a0a0a;font-weight:650;cursor:pointer;transition:transform .2s var(--ease)}
+.taste-go:hover{transform:translateY(-1px)}
+.foryou-recs{min-width:0;display:flex;flex-direction:column}
+.foryou-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}.foryou-h h2{margin:0;font-size:21px;letter-spacing:-.4px}.foryou-h span{color:var(--label3);font-size:13px}
+.foryou-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fy-item{display:flex;flex-direction:column;gap:0;padding:0;border:1px solid var(--sep);border-radius:16px;background:var(--fill1);color:var(--txt);text-align:left;cursor:pointer;overflow:hidden;transition:transform .25s var(--ease),border-color .25s}
+.fy-item:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.18)}
+.fy-thumb{display:block;overflow:hidden}.fy-thumb>.tpl-device-art{border-radius:0}
+.fy-txt{display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px}.fy-txt b{font-size:14px}.fy-txt small{color:var(--label3);font-size:12px}
+.fy-txt em{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-style:normal;font-size:11.5px;color:var(--acc)}
+.sassist{margin-top:26px;padding-top:20px;border-top:1px solid var(--sep)}
+.sa-rel{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.sa-rel>span{color:var(--label3);font-size:13px;margin-right:4px}
+@media(max-width:980px){.foryou-grid{grid-template-columns:1fr}.foryou-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.store-nav{padding:18px 16px 14px;border-radius:18px}.store-nav h1{font-size:25px}.ks-field{height:48px;padding-left:13px}.ks-go{padding:0 14px}.store-categories{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}.store-categories::-webkit-scrollbar{display:none}.store-categories button{flex-shrink:0}.foryou-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.fy-txt{padding:8px 10px 10px}.ks-intent{flex-wrap:wrap}.ks-start{width:100%;justify-content:center}}
+.hb-txt h2{font-size:clamp(26px,4vw,44px);line-height:1.1;margin:8px 0 10px;color:#fff}
 .store-categories button,.tp-secs button{font:inherit;min-height:34px}
 .store-categories button{cursor:pointer;color:var(--label2)}
 .store-categories .on,.tp-secs .on{border-color:#d1d1c9;color:var(--ink);background:var(--fill2)}
@@ -2357,8 +2409,18 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.61.0";
+const VERSION="5.62.0";
 const CHANGELOG=[
+ {v:"5.62.0",date:"2026-11-27",items:[
+  "🧠 Yeni: Keşif hafızası. Keşfet'te ne aradığını, hangi uygulamayı açtığını, hangi şablonu canlı denediğini, hangi temaya baktığını ve Stüdyo'ya yazdığın fikirleri hatırlıyor; buradan ilgilendiğin sektörleri, sevdiğin renk tonlarını, koyu/açık zemin ve tasarım dili tercihini tahmin ediyor",
+  "✨ Keşfet'te yeni “Senin tarzın” kartı: tahmin edilen tasarım dili, renk paletin, ilgi alanların ve son aramaların tek yerde. “Bu tarzla yeni proje” ile Stüdyo doğrudan senin stilinle açılıyor; kartın üzerindeki çizgi seni ne kadar tanıdığımızı gösteriyor",
+  "🎯 “Sana özel” öneriler: şablonlar aramalarına, baktığın şablonlara ve renk tercihine göre sıralanıyor; her önerinin altında nedeni yazıyor (ör. “Güzellik & Bakım ilgine göre”, “Sevdiğin renk tonlarında”). Son denediğin şablona benzeyenler ayrı bir rafta",
+  "🔎 Akıllı arama kutusu: yazarken geçmiş aramaların, şablon adları ve sektör sözcükleri öneriliyor (ok tuşları ve Enter ile seçilir). Ne yapmak istediğini tahmin edip “Güzellik & Bakım için bir şey arıyor gibisin” der, uygun tasarımı gösterir ve “Bu fikirle başla” ile projeyi açar",
+  "🧩 Arama sonuçlarının altında “İlgili aramalar” ve “Aramana uygun şablonlar”; uygulama bulunamasa bile çalışan şablonlar canlı denenebiliyor",
+  "🎨 Stüdyo'da “Otomatik tasarım” artık profiline göre seçiliyor: aynı sektörde bile senin sevdiğin renk ve stile en yakın tema önce geliyor",
+  "🔒 Hafıza yalnızca bu tarayıcıda tutulur, sunucuya gönderilmez. Kartın ⋯ menüsünden sıfırlayabilir veya tamamen kapatabilirsin",
+  "💎 Keşfet yenilendi: sade başlık, yuvarlak arama alanı, telefonda yana kayan kategori çubuğu ve daha ferah kartlar",
+  "🔀 Dallardan alınanlar: Depo (site görsellerini tarayıp indirme, v5.60.1), Müşteri Avı ve Beceri motoru (v5.60–5.61), Temalar ve UI Kitler kataloğu tek sürümde birleştirildi"]},
  {v:"5.61.0",date:"2026-11-27",items:[
   "🧠 Beceriler yenilendi: yapay zekâya artık sektör yazılımlarının baştan sona nasıl yapılacağını bilen 18 uygulama planı yükleyebilirsin: CRM, ön muhasebe ve e-Fatura, ERP üretim, stok-depo, B2B bayi portalı, POS/adisyon, İK (izin, puantaj), randevu, proje-görev, destek talebi, EBYS (kamu belge yönetimi), belediye beyaz masa, saha servis, filo, okul, satın alma, klinik, e-ticaret. Her plan modülleri, veri modelini, ekranları ve Türkiye'ye özgü iş kurallarını (KDV, VKN/TCKN, 4857 izin, Resmî Yazışma Yönetmeliği, KVKK) tarif eder",
   "🎨 6 tasarım becerisi (kurumsal panel, kamu portalı, B2B katalog, dokunmatik POS, mobil saha, mobil müşteri) ve 5 kalite becerisi (temiz mimari, Türkiye veri doğrulama, rol-yetki, denetim izi, kendini sınayan hesaplar). Bir uygulama planı yükleyince uygun tasarım ve temiz mimari becerisi kendiliğinden birlikte uygulanır",
@@ -4549,7 +4611,115 @@ function detectSector(text,kind){if(kind==="game")return "oyun";const t=String(t
  for(const s of DSECTORS){const m=t.match(new RegExp(s.k.source,"g"));const n=m?m.length:0;if(n>score){score=n;best=s.id}}
  return best||(kind&&KIND_SECTOR[kind])||null}
 const sectorById=id=>DSECTORS.find(s=>s.id===id);
-const suggestThemes=sec=>(sectorById(sec)?.th||DEFAULT_TH).map(themeById);
+const suggestThemes=sec=>tasteOrder(sectorById(sec)?.th||DEFAULT_TH).map(themeById);
+/* ================= v5.62 — KEŞİF HAFIZASI (zevk profili) =================
+   Keşfet'te aranan sözcükleri, açılan uygulamaları, denenen şablon ve temaları,
+   Stüdyo'ya yazılan fikirleri bu cihazda hatırlar. Buradan sektör ilgisi, renk
+   eğilimi, koyu/açık tercihi ve tasarım dili tahmin edilir; Keşfet önerileri ve
+   Stüdyo'nun "Otomatik tasarım" seçimi bu profile göre sıralanır. Veri yalnızca
+   tarayıcıda (localStorage) tutulur, sunucuya gönderilmez. */
+const hexHsl=hex=>{const m=/^#?([0-9a-f]{6})$/i.exec(String(hex||"").trim());if(!m)return null;const n=parseInt(m[1],16),r=(n>>16&255)/255,g=(n>>8&255)/255,b=(n&255)/255;
+ const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;let h=0,s=0;
+ if(d){s=d/(1-Math.abs(2*l-1));h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360}
+ return [h,s,l]};
+const hueGap=(a,b)=>{const d=Math.abs(a-b)%360;return d>180?360-d:d};
+const TASTE_STOP=new Set("için ile gibi bir bir şey olan olsun istiyorum yapmak yap bana benim için çok daha veya ama de da ve ki mi uygulama uygulaması site sitesi app oyun".split(" "));
+const tasteWords=t=>String(t||"").toLocaleLowerCase("tr").replace(/[^a-zçğıöşü0-9\s-]/g," ").split(/\s+/).filter(w=>w.length>=3&&!TASTE_STOP.has(w)).slice(0,24);
+const STORE_SECTOR={is:"is",verimlilik:"verimlilik",egitim:"egitim",saglik:"saglik",eticaret:"eticaret",yemek:"yemek",oyun:"oyun",finans:"finans",sosyal:"sosyal",araclar:"araclar",diger:"diger"};
+const tasteBlank=()=>({v:1,n:0,sec:{},th:{},kind:{},terms:{},items:{},col:[],q:[],last:null,t:0});
+const tasteEmit=()=>{try{dispatchEvent(new Event("gm-taste"))}catch(e){}};
+const TASTE={
+ on:()=>LS.get("tasteOn",true)!==false,
+ get:()=>({...tasteBlank(),...(LS.get("taste",null)||{})}),
+ setOn(v){LS.set("tasteOn",!!v);if(!v)LS.set("taste",tasteBlank());tasteEmit()},
+ clear(){LS.set("taste",tasteBlank());tasteEmit()},
+ // sig: {type,text,sector,theme,colors,kind,id,title,w}
+ note(sig){
+  if(!TASTE.on()||!sig)return;
+  const d=TASTE.get(),w=sig.w||1;
+  for(const k of ["sec","th","kind","terms","items"]){for(const x in d[k]){d[k][x]*=.97;if(d[k][x]<.05)delete d[k][x]}}
+  const add=(k,x,v)=>{if(x)d[k][x]=(d[k][x]||0)+v};
+  const text=[sig.text,sig.title].filter(Boolean).join(" ");
+  if(text){for(const t of tasteWords(text))add("terms",t,w*.5);const s=detectSector(text);if(s&&!sig.sector)add("sec",s,w*.7)}
+  add("sec",sig.sector,w);add("kind",sig.kind,w*.6);add("items",sig.id,w);
+  if(sig.theme){add("th",sig.theme,w);const t=lookupDesign(sig.theme);if(t?.p)d.col.push({c:t.p.pr,w},{c:t.p.bg,w:w*.5,bg:1})}
+  for(const c of sig.colors||[])if(hexHsl(c))d.col.push({c,w});
+  d.col=d.col.slice(-48);
+  if(sig.type==="search"&&sig.text){const q=String(sig.text).trim().slice(0,60);d.q=[q,...d.q.filter(x=>x.toLocaleLowerCase("tr")!==q.toLocaleLowerCase("tr"))].slice(0,8)}
+  if(sig.id&&/^(demo|use)$/.test(sig.type))d.last={id:sig.id,title:sig.title||"",at:Date.now()};
+  d.n++;d.t=Date.now();LS.set("taste",d);tasteEmit();
+ }
+};
+function useTaste(){const [d,setD]=useState(TASTE.get);useEffect(()=>{const h=()=>setD(TASTE.get());addEventListener("gm-taste",h);addEventListener("storage",h);return()=>{removeEventListener("gm-taste",h);removeEventListener("storage",h)}},[]);return d}
+const topOf=(o,n=3)=>Object.entries(o||{}).sort((a,b)=>b[1]-a[1]).slice(0,n);
+// Profil: renk eğilimi, koyu/açık tercihi, sektörler, önerilen tasarım dili
+function tasteProfile(d=TASTE.get()){
+ const conf=Math.min(1,d.n/8);
+ let x=0,y=0,sw=0,sat=0,lum=0,lw=0;const buckets={};
+ for(const {c,w,bg} of d.col){const h=hexHsl(c);if(!h)continue;
+  if(bg){lum+=h[2]*w;lw+=w;continue}
+  const k=h[1]<.15?"n":Math.round(h[0]/30)%12;
+  if(h[1]>=.15){x+=Math.cos(h[0]*Math.PI/180)*w*h[1];y+=Math.sin(h[0]*Math.PI/180)*w*h[1];sw+=w}
+  sat+=h[1]*w;buckets[k]=buckets[k]||{w:0,c};buckets[k].w+=w;if(w>=buckets[k].w-w)buckets[k].c=c}
+ const totalW=d.col.filter(c=>!c.bg).reduce((a,c)=>a+c.w,0)||1;
+ const hue=sw?(Math.atan2(y,x)*180/Math.PI+360)%360:null,vivid=sat/totalW;
+ const dark=lw?lum/lw<.4:null;
+ const palette=Object.values(buckets).sort((a,b)=>b.w-a.w).slice(0,4).map(b=>b.c);
+ const secs=topOf(d.sec).map(([id,w])=>({...sectorById(id),w})).filter(s=>s.id);
+ const kind=topOf(d.kind,1)[0]?.[0]||null;
+ const scoreTheme=t=>{let s=(d.th[t.id]||0)*1.4;
+  secs.forEach((sc,i)=>{if(sc.th?.includes(t.id))s+=(3-i)*.6*Math.min(1,sc.w/2)});
+  const h=hexHsl(t.p?.pr);if(h&&hue!=null&&h[1]>=.15)s+=(1-hueGap(h[0],hue)/180)*1.6*conf;
+  const bg=hexHsl(t.p?.bg);if(bg&&dark!=null)s+=((bg[2]<.4)===dark?.8:-.4);
+  if(kind==="game"&&t.id==="neon")s+=.5;return s};
+ const themes=THEMES.map(t=>({t,s:scoreTheme(t)})).sort((a,b)=>b.s-a.s);
+ const tags=[];
+ if(dark!=null)tags.push(dark?"Koyu zemin":"Açık zemin");
+ if(d.col.length>=2)tags.push(vivid>.55?"Canlı renkler":vivid>.3?"Dengeli tonlar":"Sade, nötr tonlar");
+ return {conf,hue,dark,vivid,palette,secs,kind,themes,best:themes[0]?.s>0?themes[0].t:null,tags,terms:topOf(d.terms,6).map(([t])=>t),q:d.q,last:d.last,n:d.n};
+}
+// Stüdyo otomatik tasarımı: sektör temalarını zevk profiline göre sırala
+function tasteOrder(ids){if(!TASTE.on())return ids;const p=tasteProfile();if(p.conf<.35)return ids;
+ const rank=new Map(p.themes.map((x,i)=>[x.t.id,x.s]));const out=[...ids].sort((a,b)=>(rank.get(b)||0)-(rank.get(a)||0));
+ if(p.best&&!out.includes(p.best.id)&&(rank.get(p.best.id)||0)>(rank.get(out[0])||0)+1.2)out.splice(0,0,p.best.id);
+ return out.slice(0,Math.max(3,ids.length))}
+// Bir şablonun öneri için özellikleri
+const tplFeatures=t=>{const text=[t.name,t.sector,t.desc,...(t.feat||[])].join(" ");return {text,words:new Set(tasteWords(text)),sec:detectSector(text,t.kind==="game"?"game":null),hue:hexHsl(t.pr)}};
+const tplFeatCache=new Map();const tplFeat=t=>{if(!tplFeatCache.has(t.id))tplFeatCache.set(t.id,tplFeatures(t));return tplFeatCache.get(t.id)};
+// Şablonları profile (ve isteğe bağlı aramaya) göre puanla; her öneriye kısa bir gerekçe ekle
+function tasteRank(list,{d=TASTE.get(),query="",exclude=[],limit=8}={}){
+ const p=tasteProfile(d),qw=tasteWords(query),qs=query?detectSector(query):null,qre=query?query.toLocaleLowerCase("tr"):"";
+ const secW=Object.fromEntries(p.secs.map(s=>[s.id,s.w]));const maxSec=Math.max(1,...Object.values(secW));
+ return list.filter(t=>!exclude.includes(t.id)).map(t=>{const f=tplFeat(t);let s=0,why=[];
+  if(query){const hits=qw.filter(w=>[...f.words].some(x=>x.startsWith(w.slice(0,5))));s+=hits.length*2.2;if(f.text.toLocaleLowerCase("tr").includes(qre))s+=3;if(qs&&f.sec===qs){s+=2.5;why.push("“"+query+"” aramana yakın")}else if(hits.length)why.push("“"+hits[0]+"” ile ilgili")}
+  if(f.sec&&secW[f.sec]){s+=secW[f.sec]/maxSec*2.4;if(!why.length)why.push(sectorById(f.sec)?.l+" ilgine göre")}
+  const tw=[...f.words].reduce((a,w)=>a+(d.terms[w]||0),0);if(tw){s+=Math.min(2,tw*.6);if(!why.length)why.push("Aramalarına benziyor")}
+  if(p.hue!=null&&f.hue&&f.hue[1]>.15){const sim=1-hueGap(f.hue[0],p.hue)/180;s+=sim*1.2*p.conf;if(sim>.85&&!why.length)why.push("Sevdiğin renk tonlarında")}
+  const seen=d.items[t.id]||0;if(seen>2.5)s-=.6;else if(seen&&!why.length)why.push("Daha önce göz attın");
+  if(t.premium)s+=.15;
+  return {t,s,why:why[0]||"Yeni keşif"}}).filter(x=>!query||x.s>1).sort((a,b)=>b.s-a.s).slice(0,limit)}
+// Bir şablona benzeyenler: aynı sektör, yakın renk, ortak özellik
+function similarTemplates(id,limit=6){const base=TEMPLATE_LIB.find(t=>t.id===id);if(!base)return [];const f=tplFeat(base);
+ return TEMPLATE_LIB.filter(t=>t.id!==id).map(t=>{const g=tplFeat(t);let s=0;if(g.sec&&g.sec===f.sec)s+=3;if(t.type===base.type)s+=.8;
+  s+=[...g.words].filter(w=>f.words.has(w)).length*.7;if(f.hue&&g.hue)s+=(1-hueGap(f.hue[0],g.hue[0])/180)*1.2;return {t,s}}).sort((a,b)=>b.s-a.s).slice(0,limit).map(x=>x.t)}
+// Yazdıkça öneri: geçmiş aramalar, şablon adları, sektör sözcükleri; niyet tahmini
+let tasteVocab=null;
+function tasteVocabulary(){if(tasteVocab)return tasteVocab;const v=new Map();const put=(w,kind,extra)=>{const k=w.toLocaleLowerCase("tr");if(k.length>=3&&!v.has(k))v.set(k,{w,kind,...extra})};
+ TEMPLATE_LIB.forEach(t=>put(t.name,"tpl",{id:t.id}));
+ DSECTORS.forEach(s=>{put(s.l,"sec",{sec:s.id});s.k.source.split("|").filter(x=>/^[a-zçğıöşü ]{4,}$/.test(x)).forEach(x=>put(x,"word",{sec:s.id}))});
+ STORE_CATS2.forEach(([k,,l])=>put(l,"cat",{cat:k}));
+ return tasteVocab=v}
+function tasteSuggest(text,d=TASTE.get()){
+ const q=String(text||"").trim().toLocaleLowerCase("tr");
+ if(!q)return {items:d.q.slice(0,6).map(w=>({w,kind:"recent"})),intent:null};
+ const out=[],seen=new Set(),push=x=>{const k=x.w.toLocaleLowerCase("tr");if(!seen.has(k)&&k!==q){seen.add(k);out.push(x)}};
+ d.q.filter(w=>w.toLocaleLowerCase("tr").includes(q)).forEach(w=>push({w,kind:"recent"}));
+ const last=q.split(/\s+/).pop();
+ const cand=[...tasteVocabulary().values()].map(x=>{const k=x.w.toLocaleLowerCase("tr");const sc=k.startsWith(q)?3:k.split(/\s+/).some(p=>p.startsWith(last))?2:k.includes(q)?1:0;return {...x,sc:sc+(x.sec&&d.sec[x.sec]?Math.min(1,d.sec[x.sec]/3):0)}}).filter(x=>x.sc>=1).sort((a,b)=>b.sc-a.sc);
+ cand.forEach(push);
+ const sec=detectSector(q);const s=sec&&sectorById(sec);
+ const theme=s?themeById(tasteOrder(s.th)[0]):null;
+ return {items:out.slice(0,7),intent:s?{sec:s,theme}:null}}
 // Oyunlarda yalnızca renk, yazı tipi ve his gider: sektör ekran düzeni ve panel şablonu (kart ızgarası, menü, sekme çubuğu) oyuna taşınmaz
 // Tema adı her zaman temel tema adıdır (“Neon Arcade”): sektör panosu ekran adı (“Parkurlar”) uygulama başlığına sızmasın.
 // Pano ekran düzeni yalnızca aynı sektördeki projelere gider; oyunlara hiç gitmez.
@@ -5771,7 +5941,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  useEffect(()=>{LS.set("studioPrefs",prefs)},[prefs]);useEffect(()=>{LS.set("stage",stage)},[stage]);useEffect(()=>{LS.set("runSet",runSet)},[runSet]);useEffect(()=>{LS.set("studioInput:"+scope,input)},[input]);const runRef=useRef(runSet);runRef.current=runSet;const prefsRef=useRef(prefs);prefsRef.current=prefs;
  const firstUser=st.msgs.find(m=>m.role==="user");const autoSec=detectSector([st.purpose,st.title,firstUser?.content,input].filter(Boolean).join(" "),prefs.kind);
  const sector=prefs.sector!=="auto"?prefs.sector:autoSec;const styleAtt=atts.find(a=>a.role==="style");const customTheme=styleAtt?themeFromPalette(styleAtt.pal):(st.custom||null);const effTheme=prefs.theme==="gorsel"&&customTheme?customTheme:prefs.theme==="auto"||prefs.theme==="gorsel"?suggestThemes(sector)[0]:themeById(prefs.theme);const effRef=useRef(effTheme);effRef.current=effTheme;
- const pickTheme=(id,sec)=>{setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector,kind:String(id).startsWith("pk-")?"site":p.kind}));if(st.html)setPendTheme(id);if(String(id).startsWith("pk-"))toast("Panel şablonu seçildi · tür: Web (masaüstü panel)")};
+ const pickTheme=(id,sec)=>{TASTE.note({type:"theme",theme:id,sector:sec,w:2});setGallery(false);setPrefs(p=>({...p,theme:id,sector:sec||p.sector,kind:String(id).startsWith("pk-")?"site":p.kind}));if(st.html)setPendTheme(id);if(String(id).startsWith("pk-"))toast("Panel şablonu seçildi · tür: Web (masaüstü panel)")};
  const startPanel=d=>{pickTheme(d.id,null);const app=PK_APPS.find(a=>a.id===d.app);setInput(app.id==="giris"?"“"+d.name+"” şablonuyla giriş, kayıt ve şifre sıfırlama ekranları olan bir hesap sayfası yap.":"“"+d.name+"” şablonuyla "+app.l+" yönetim paneli yap. Menüde "+app.nav.join(", ")+" olsun; her sayfayı gerçekçi Türkçe örnek verilerle doldur, açık/koyu tema geçişi ekle.");setTimeout(()=>{const t=document.querySelector(".gta");t&&t.focus()},120)};
  useEffect(()=>{setLocalOk(LS.set(store,st)&&LS.set("studioMsgs:"+scope,st.msgs));setSaveFailed(false)},[st]);
  const resolve=h=>String(h||"").replace(/\{\{IMG_(\d+)\}\}/g,(m,n)=>(st.assets||{})["IMG_"+n]||m);
@@ -5904,7 +6074,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  useEffect(()=>{if(!busy)return;const k=e=>{if(e.key==="Escape"&&!e.defaultPrevented&&!document.querySelector("dialog[open],.sqg-bg,.modal,.cp-modal,.pm-pop,.ui-dialog,[role=dialog],[role=menu],.compose-menu:popover-open"))stopGen()};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[busy]);
  useEffect(()=>{if(!busy)return;const h=e=>{if(jobRef.current)return;e.preventDefault();e.returnValue="";return ""};addEventListener("beforeunload",h);return()=>removeEventListener("beforeunload",h)},[busy]);
  function retryMsg(m){if(busy||todo?.running)return;if(lastRetry.current?.id===m.id&&lastRetry.current.run)return lastRetry.current.run();const r=m.retry||{};if(r.kind==="review")return review();if(r.text)return build(r.text,null,r.shown||r.text,false,null);toast("Bu isteği yeniden yazman gerekiyor")}
- async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
+ async function gen(text){if(detachRef.current||renderEpoch!==epoch.current)return;{const tx=String(text||input||"").trim();if(tx.length>8&&!tx.startsWith("/")&&!st.html)TASTE.note({type:"prompt",text:tx.slice(0,300),kind:prefsRef.current?.kind,w:1.5})}if(busy||todo?.running){const q=String(text||input).trim();if(q){setQueue(x=>[...x,q].slice(-5));setInput("");toast("Sıraya eklendi · mevcut iş bitince otomatik başlayacak")}return}if(picked&&!(text||input).trim().startsWith("/")){const p=picked;setPicked(null);setVeMode(null);const req=(text||input).trim();if(!req){toast("Seçili öğe için ne yapılacağını yaz");setPicked(p);return}setInput("");return build("Kullanıcı önizlemede bir öğe seçti.\nCSS seçici: "+p.sel+"\nÖğenin HTML'i: "+p.html+"\n\nSADECE bu öğeyi (ve gerekirse hemen çevresini) değiştir, geri kalanını aynen koru. İstek: "+req,null,"◎ "+(p.text?"“"+p.text.slice(0,40)+"”":"<"+p.tag+">")+" → "+req)}
   {const raw=String(text||input).trim();const ghu=!raw.startsWith("/")&&ghFind(raw);if(ghu&&(raw.replace(ghu,"").trim().length<80||ghWantsTakeover(raw))){setInput("");dispatchEvent(new CustomEvent("gm:gh",{detail:{url:ghu,auto:ghWantsTakeover(raw)}}));return}}
   text=(text||input).trim();if(!text&&atts.length)text=atts.some(a=>a.role==="layout")?"Bu çizimdeki yerleşimi çalışan bir uygulamaya çevir.":"Bu görsellere uygun bir uygulama tasarla.";if(!text)return;
   if(text.startsWith("/")){setInput("");return slash(text)}
@@ -6685,6 +6855,86 @@ function storeRoute(hash){
  const cat=params.get("cat")||"";
  return {cat:STORE_CATS2.some(([id])=>id===cat)?cat:"",q:(params.get("q")||"").trim().slice(0,60),sort:params.get("sort")==="yeni"?"yeni":"pop",full:params.get("tum") === "1"};
 }
+/* v5.62 — Keşfet: akıllı arama kutusu, "Senin tarzın" kartı ve kişisel öneriler */
+function StoreSearch({value,onChange,onSubmit,onClear,onIntent}){
+ const d=useTaste();const [open,setOpen]=useState(false),[act,setAct]=useState(-1);const box=useRef(null);
+ const sug=useMemo(()=>tasteSuggest(value,d),[value,d]);
+ const items=sug.items;
+ useEffect(()=>setAct(-1),[value]);
+ useEffect(()=>{if(!open)return;const h=e=>{if(box.current&&!box.current.contains(e.target))setOpen(false)};document.addEventListener("pointerdown",h);return()=>document.removeEventListener("pointerdown",h)},[open]);
+ const choose=x=>{setOpen(false);onSubmit(x.w)};
+ const key=e=>{if(!open&&e.key==="ArrowDown"){setOpen(true);return}
+  if(e.key==="ArrowDown"){e.preventDefault();setAct(i=>Math.min(items.length-1,i+1))}
+  else if(e.key==="ArrowUp"){e.preventDefault();setAct(i=>Math.max(-1,i-1))}
+  else if(e.key==="Escape")setOpen(false)
+  else if(e.key==="Enter"&&act>=0&&items[act]){e.preventDefault();choose(items[act])}};
+ const show=open&&(items.length>0||sug.intent);
+ return html`<form role="search" class="ks-form" ref=${box} onSubmit=${e=>{e.preventDefault();setOpen(false);onSubmit(value.trim())}}>
+  <div class="ks-field"><${Icon} n="search" s=${17}/>
+   <input type="search" role="combobox" aria-expanded=${!!show} aria-controls="ks-list" aria-autocomplete="list" aria-activedescendant=${act>=0?"ks-o"+act:undefined} aria-label="Uygulama, şablon veya fikir ara" placeholder="Ne yapmak istiyorsun? Randevu, menü, stok, oyun…" maxlength="60" value=${value} onFocus=${()=>setOpen(true)} onInput=${e=>{onChange(e.target.value);setOpen(true)}} onKeyDown=${key}/>
+   ${value&&html`<button type="button" class="ks-x" aria-label="Aramayı temizle" onClick=${()=>{onClear();setOpen(false)}}><${Icon} n="x" s=${15}/></button>`}
+   <button class="ks-go" type="submit">Ara</button></div>
+  ${show&&html`<div class="ks-pop" id="ks-list" role="listbox" aria-label="Arama önerileri">
+   ${!value&&items.length>0&&html`<div class="ks-cap">Son aramaların</div>`}
+   ${items.map((x,i)=>html`<button type="button" role="option" id=${"ks-o"+i} aria-selected=${i===act} key=${x.w} class=${"ks-opt"+(i===act?" on":"")} onMouseEnter=${()=>setAct(i)} onClick=${()=>choose(x)}>
+    <${Icon} n=${x.kind==="recent"?"clock":x.kind==="tpl"?"layers":x.kind==="cat"?"grid":"search"} s=${14}/><span>${x.w}</span><em>${{recent:"geçmiş",tpl:"şablon",sec:"sektör",cat:"kategori",word:"öneri"}[x.kind]}</em></button>`)}
+   ${sug.intent&&html`<div class="ks-intent"><span class="ks-pal" aria-hidden="true">${[sug.intent.theme.p.bg,sug.intent.theme.p.pr,sug.intent.theme.p.ac].map(c=>html`<i key=${c} style=${{background:c}}></i>`)}</span><div><b>${sug.intent.sec.l} için bir şey arıyor gibisin</b><span>Tahmin edilen tasarım: ${sug.intent.theme.name} · ${sug.intent.theme.tag}</span></div>
+    <button type="button" class="ks-start" onClick=${()=>{setOpen(false);onIntent(sug.intent,value.trim())}}><${Icon} n="wand" s=${14}/> Bu fikirle başla</button></div>`}
+  </div>`}
+ </form>`;
+}
+const tasteKind=k=>k==="game"?"Oyun":k==="site"?"Web sitesi":k?"Uygulama":"";
+function TasteCard({p,startTemplate,compact,onSearch}){
+ const [menu,setMenu]=useState(false);const on=TASTE.on();
+ if(!on)return html`<div class="taste-card off"><div class="taste-ic"><${Icon} n="brain" s=${18}/></div><div class="taste-b"><b>Keşif hafızası kapalı</b><p>Açarsan aramalarından ve beğendiğin şablonlardan tarzını öğrenip öneri sunarız. Veriler yalnızca bu cihazda kalır.</p></div><button class="btn g" onClick=${()=>TASTE.setOn(true)}>Hafızayı aç</button></div>`;
+ const pct=Math.round(p.conf*100);
+ return html`<section class=${"taste-card"+(compact?" compact":"")} aria-label="Senin tarzın">
+  <div class="taste-top"><span class="taste-eyebrow"><${Icon} n="sparkles" s=${13}/> Senin tarzın</span>
+   <div class="taste-meter" title=${"Profil güveni %"+pct} aria-label=${"Seni yüzde "+pct+" tanıyoruz"}><i style=${{width:Math.max(6,pct)+"%"}}></i></div>
+   <div class="taste-menu"><button class="ib sm" aria-label="Hafıza ayarları" aria-expanded=${menu} onClick=${()=>setMenu(!menu)}><${Icon} n="more" s=${15}/></button>
+    ${menu&&html`<div class="taste-pop" role="menu"><button role="menuitem" onClick=${()=>{TASTE.clear();setMenu(false)}}><${Icon} n="refresh" s=${14}/> Hafızayı sıfırla</button><button role="menuitem" onClick=${()=>{TASTE.setOn(false);setMenu(false)}}><${Icon} n="x" s=${14}/> Hafızayı kapat</button><small>Yalnızca bu tarayıcıda saklanır.</small></div>`}</div></div>
+  ${p.n<2?html`<div class="taste-b"><b>Gezdikçe seni tanıyacağız</b><p>Ara, bir şablonu canlı dene ya da bir temaya bak. Renk, stil ve sektör tercihlerini hatırlayıp sana özel öneriler göstereceğiz.</p></div>`:html`
+  <div class="taste-body">
+   ${p.best&&html`<div class="taste-mock"><${ThemeMock} t=${p.best} kind=${p.kind==="game"?"game":"app"} w=${compact?72:92}/></div>`}
+   <div class="taste-b">
+    <b>${p.best?p.best.name:"Tarzın şekilleniyor"}</b>
+    ${p.palette.length>0&&html`<div class="taste-sw" aria-label=${"Sevdiğin renkler: "+p.palette.join(", ")}>${p.palette.map(c=>html`<i key=${c} style=${{background:c}}></i>`)}</div>`}
+    <div class="taste-tags">${[...p.secs.slice(0,2).map(s=>s.l),...p.tags.slice(0,2),tasteKind(p.kind)].filter(Boolean).map(t=>html`<span key=${t}>${t}</span>`)}</div>
+   </div></div>
+  ${p.best&&html`<p class="taste-why">${p.best.tag}. ${p.secs[0]?p.secs[0].l+" ilgin ve":"Baktığın"} renk tercihlerinden tahmin edildi; yeni projede “Otomatik tasarım” bu stille başlar.</p>`}
+  ${onSearch&&p.q.length>0&&html`<div class="taste-q"><small>Son aramaların</small><div>${p.q.slice(0,4).map(w=>html`<button key=${w} class="chip" onClick=${()=>onSearch(w)}>${w}</button>`)}</div></div>`}
+  <button class="taste-go" onClick=${()=>startTemplate({kind:p.kind||"app",theme:p.best?.id,sector:p.secs[0]?.id})}><${Icon} n="wand" s=${15}/> Bu tarzla yeni proje</button>`}
+ </section>`;
+}
+function ForYou({startTemplate,onDemo,onUse,go,onSearch}){
+ const d=useTaste();const p=useMemo(()=>tasteProfile(d),[d]);
+ const recs=useMemo(()=>tasteRank(TEMPLATE_LIB,{d,limit:8}),[d]);
+ const sim=useMemo(()=>d.last?similarTemplates(d.last.id,6):[],[d.last&&d.last.id]);
+ const lastT=d.last&&TEMPLATE_LIB.find(t=>t.id===d.last.id);
+ const ready=TASTE.on()&&p.n>=2;
+ return html`<section class="foryou" aria-labelledby="foryou-h">
+  <div class="foryou-grid">
+   <${TasteCard} p=${p} startTemplate=${startTemplate} onSearch=${onSearch}/>
+   <div class="foryou-recs">
+    <div class="foryou-h"><h2 id="foryou-h">${ready?"Sana özel":"Başlamak için öneriler"}</h2><span>${ready?"Aramalarına, baktığın şablonlara ve renk tercihine göre":"Her denediğin şablonla öneriler sana göre şekillenir"}</span></div>
+    <div class="foryou-row">${recs.slice(0,6).map(({t,why})=>html`<button type="button" class="fy-item" key=${t.id} onClick=${()=>onDemo(t)}>
+     <span class="fy-thumb"><${TplThumb} t=${t}/></span><span class="fy-txt"><b>${t.name}</b><small>${t.sector}</small><em><${Icon} n="sparkles" s=${11}/> ${why}</em></span></button>`)}</div>
+   </div>
+  </div>
+  ${lastT&&sim.length>0&&html`<${Shelf} title=${"“"+lastT.name+"” şablonuna benzerler"} scroll=${true}>${sim.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${onDemo} onUse=${onUse}/>`)}</${Shelf}>`}
+ </section>`;
+}
+function SearchAssist({q,onFilters,filters,onDemo}){
+ const d=useTaste();
+ const recs=useMemo(()=>tasteRank(TEMPLATE_LIB,{d,query:q,limit:6}),[q,d]);
+ const related=useMemo(()=>{const s=tasteSuggest(q,d);return s.items.filter(x=>x.kind!=="recent").slice(0,6)},[q,d]);
+ if(!recs.length&&!related.length)return null;
+ return html`<div class="sassist">
+  ${related.length>0&&html`<div class="sa-rel"><span>İlgili aramalar</span>${related.map(x=>html`<button key=${x.w} class="chip" onClick=${()=>onFilters({...filters,q:x.w})}>${x.w}</button>`)}</div>`}
+  ${recs.length>0&&html`<div class="foryou-h" style=${{marginTop:14}}><h2>Aramana uygun şablonlar</h2><span>Hazır, çalışan örnekler · canlı deneyebilirsin</span></div>
+  <div class="foryou-row">${recs.map(({t,why})=>html`<button type="button" class="fy-item" key=${t.id} onClick=${()=>onDemo(t)}><span class="fy-thumb"><${TplThumb} t=${t}/></span><span class="fy-txt"><b>${t.name}</b><small>${t.sector}</small><em><${Icon} n="sparkles" s=${11}/> ${why}</em></span></button>`)}</div>`}
+ </div>`;
+}
 function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl}){
  const {cat,q,sort,full}=filters;
  const [draft,setDraft]=useState(q);
@@ -6701,12 +6951,12 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
   api("GET","/api/store?"+query,undefined,controller.signal).then(j=>{
    if(!controller.signal.aborted)setResult({query,apps:j.apps});
   }).catch(e=>{if(!controller.signal.aborted)setResult({query,error:e.message})});
-  if(q.length>2)track("search",{query:q,category:"magaza"});
+  if(q.length>2){track("search",{query:q,category:"magaza"});TASTE.note({type:"search",text:q})}
   return ()=>controller.abort();
  },[query,apiOn,request]);
  useEffect(()=>{if(apiOn)api("GET","/api/store?sort=yeni").then(j=>setFresh(j.apps)).catch(()=>{})},[apiOn]);
- useEffect(()=>track("store_view",{category:cat||null}),[cat]);
- const open=a=>go("app/"+a.slug);
+ useEffect(()=>{track("store_view",{category:cat||null});if(cat)TASTE.note({type:"cat",sector:STORE_SECTOR[cat],kind:cat==="oyun"?"game":null,w:.8})},[cat]);
+ const open=a=>{TASTE.note({type:"open",id:"app:"+a.slug,text:[a.title,a.description].filter(Boolean).join(" "),colors:[a.color],sector:STORE_SECTOR[a.category],kind:a.category==="oyun"?"game":"app",w:1.2});go("app/"+a.slug)};
  const get=a=>{window.open(a.url,"_blank","noopener");api("POST","/api/store/"+a.slug+"/download").catch(()=>{})};
  const list=apps||[];
  const games=list.filter(a=>a.category==="oyun").slice(0,6);
@@ -6717,12 +6967,8 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
  const tplRows=(k)=>TEMPLATES.filter(t=>(t[3]||"app")===k);
  const tplRow=([ic,t,p,k],i)=>html`<${AppRow} key=${t} a=${{title:t,emoji:ic,color:"#"+["4f8cff","ff7a59","22c55e","a855f7","06b6d4","f59e0b","64748b","10b981","16a34a","f43f5e","eab308","0ea5e9"][i%12]}} sub=${k==="game"?"Oyun şablonu":k==="site"?"Web sitesi şablonu":"Uygulama şablonu"} btn="YAP" onBtn=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})} onOpen=${()=>startTemplate({prompt:p,kind:k||"app",emoji:ic})}/>`;
  const filtered=cat||q||full;
- const filtersBar=html`<section class="store-nav" aria-labelledby="store-heading"><h1 id="store-heading">Keşfet</h1>
-  <form role="search" onSubmit=${e=>{e.preventDefault();onFilters({...filters,q:draft.trim()})}}>
-   <input type="search" class="in" aria-label="Uygulama ara" placeholder="Uygulama veya oyun ara" maxlength="60" value=${draft} onInput=${e=>setDraft(e.target.value)}/>
-   <button class="btn" type="submit"><${Icon} n="search" s=${15}/> Ara</button>
-   ${q&&html`<button type="button" class="btn g" aria-label="Aramayı temizle" onClick=${()=>onFilters({...filters,q:"",sort:cat||full?sort:"pop"})}><${Icon} n="x" s=${16}/></button>`}
-  </form>
+ const filtersBar=html`<section class="store-nav" aria-labelledby="store-heading"><div class="sn-head"><h1 id="store-heading">Keşfet</h1><p>Aradıkça ve gezdikçe sana göre şekillenen uygulamalar, şablonlar ve tasarımlar</p></div>
+  <${StoreSearch} value=${draft} onChange=${setDraft} onSubmit=${v=>{setDraft(v);onFilters({...filters,q:v})}} onClear=${()=>{setDraft("");onFilters({...filters,q:"",sort:cat||full?sort:"pop"})}} onIntent=${(it,text)=>{TASTE.note({type:"intent",text,sector:it.sec.id,theme:it.theme.id,w:2});startTemplate({kind:it.sec.id==="oyun"?"game":"app",theme:it.theme.id,sector:it.sec.id,prompt:text.length>12?text:undefined})}}/>
   <div class="store-categories" role="group" aria-label="Kategoriler">
    ${[["","","Tüm kategoriler"],...STORE_CATS2].map(([k,,l])=>html`<button type="button" key=${k} class=${"chip"+(cat===k?" on":"")} aria-pressed=${cat===k} onClick=${()=>onFilters({...filters,cat:k,sort:k||q?sort:"pop",full:false})}>${l}</button>`)}
   </div></section>`;
@@ -6735,10 +6981,13 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
   :apps===null?html`<div class="shelf-g">${[1,2,3,4].map(i=>html`<div class="arow sk" key=${i}><div class="appic sk-b" style=${{width:68,height:68}}></div><div class="arow-b"><div class="sk-b" style=${{height:14,width:"60%"}}></div></div></div>`)}</div>`
   :!list.length?html`<div class="ex-empty" role="status"><${Icon} n="search" s=${32}/><h3>${q?"Aramana uygun uygulama bulunamadı":"Bu kategoride henüz uygulama yok"}</h3><button class="btn g" onClick=${()=>onFilters({cat:"",q:"",sort:"pop",full:false})}>Keşfet’e dön</button></div>`
   :html`<div class="shelf-g">${list.map(a=>html`<${AppRow} key=${a.id||a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</div>`}
+  ${q&&html`<${SearchAssist} q=${q} filters=${filters} onFilters=${onFilters} onDemo=${setTdemo}/>`}
+  ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
   </div>`;
 
  const floatIcons=(list.length>=5?list.slice(0,5).map(a=>[a.emoji,a.color]):[["🎮","#5e5ce6"],["💇","#ff375f"],["🍽️","#ff9f0a"],["💰","#30d158"],["✅","#0a84ff"]]);
  return html`<div class="explore">${filtersBar}
+  <${ForYou} startTemplate=${startTemplate} onDemo=${setTdemo} onUse=${onTpl} go=${go} onSearch=${w=>{setDraft(w);onFilters({...filters,q:w})}}/>
   ${popular.length>0&&html`<${Shelf} title="Popüler uygulamalar" more=${()=>onFilters({...filters,sort:"pop",full:true})}>${popular.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
   ${games.length>0&&html`<${Shelf} title="Oyunlar" more=${()=>onFilters({...filters,cat:"oyun",full:false})}>${games.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
   ${recent.length>0&&html`<${Shelf} title="Yeni çıkanlar">${recent.map(a=>html`<${AppRow} key=${a.slug} a=${a} onOpen=${()=>open(a)} btn=${a.price?a.price+" ₺":"AL"} onBtn=${()=>a.price?open(a):get(a)}/>`)}</${Shelf}>`}
@@ -6751,7 +7000,7 @@ function Store({go,filters,onFilters,startTemplate,apiOn,healthError,retry,onTpl
 
   <${Shelf} title="Hazır şablonlar · canlı demo" scroll=${true} more=${()=>go("sablonlar")}>${TEMPLATE_LIB.map(t=>html`<${TplCard} key=${t.id} t=${t} onDemo=${setTdemo} onUse=${onTpl}/>`)}</${Shelf}>
   ${tdemo&&html`<${TplDemo} t=${tdemo} close=${()=>setTdemo(null)} onUse=${t=>{setTdemo(null);onTpl(t)}}/>`}
-  <${Shelf} title="Sektörüne özel tasarımlar" scroll=${true}>${DSECTORS.map(sc=>html`<div class="seccard" key=${sc.id} onClick=${()=>startTemplate({kind:sc.id==="oyun"?"game":"app",theme:sc.th[0],sector:sc.id})}>
+  <${Shelf} title="Sektörüne özel tasarımlar" scroll=${true}>${DSECTORS.map(sc=>html`<div class="seccard" key=${sc.id} onClick=${()=>{TASTE.note({type:"sector",sector:sc.id,theme:tasteOrder(sc.th)[0],w:2});startTemplate({kind:sc.id==="oyun"?"game":"app",theme:tasteOrder(sc.th)[0],sector:sc.id})}}>
    <div class="sc-h"><${Tile} n=${sc.ic} g=${sc.g} s=${34}/><div><b>${sc.l}</b><span>${sc.th.map(id=>themeById(id).name).join(" · ")}</span></div></div>
    <div class="sc-mocks">${sc.th.map((id,i)=>html`<div class="sc-m" key=${id} style=${{["--i"]:i}}><${ThemeMock} t=${themeById(id)} kind=${sc.id==="oyun"?"game":"app"} w=${84}/></div>`)}</div>
    <div class="sc-f"><span>Bu tasarımla başla</span><${Icon} n="chevRight" s=${16}/></div></div>`)}</${Shelf}>
@@ -7063,6 +7312,8 @@ function TplDemo({t,close,onUse,canAdapt=false}){
  const [dev,setDev]=useState(t.previewDevice||"desktop"),[details,setDetails]=useState(!!t.showDetails),dialog=useRef(null);
  const [source,setSource]=useState(""),[failure,setFailure]=useState(""),[appearance,setAppearance]=useState(t.appearance||"");
  const frame=useRef(null);
+ useEffect(()=>{TASTE.note({type:"demo",id:t.id,title:t.name,text:[t.sector,t.desc].join(" "),colors:[t.pr,t.ac,...(CATALOG_THEMES[t.appearance]?.colors||[]).slice(1)],kind:t.kind==="site"?"site":t.kind==="game"?"game":"app",w:1.5})},[t.id]);
+ useEffect(()=>{if(appearance&&appearance!==t.appearance&&CATALOG_THEMES[appearance])TASTE.note({type:"theme",colors:CATALOG_THEMES[appearance].colors,w:1.2})},[appearance]);
  const applyAppearance=()=>frame.current?.contentWindow?.postMessage({gm:"template-theme",theme:appearance},"*");
  useEffect(applyAppearance,[appearance]);
  const quote=tplQuote(t),[usage,adapt]=t.use||TEMPLATE_USE_CASES[t.id];
@@ -8836,7 +9087,7 @@ function App(){
     setView("studio");
     return;
    }
-   const h=templateAppearance(await loadTemplate(t.id),t.appearance);if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});
+   const h=templateAppearance(await loadTemplate(t.id),t.appearance);if(!active())return;if(!h.includes("Gitmapp hazır şablonu")||!(t.workflow||/<script>window\.(APP|SITE)=/.test(h)))throw new Error("Sunucu şablon yerine farklı bir sayfa döndürdü.");track("template_use",{repo:"tpl:"+t.id});TASTE.note({type:"use",id:t.id,title:t.name,text:t.sector,colors:[t.pr,t.ac],kind:t.kind==="site"?"site":"app",w:3});
    const draftId=crypto.randomUUID();
    const projectHtml=t.workflow?h.replace('const key="gitmapp-'+t.id+'";','const key="gitmapp-'+draftId+'";'):h;
    setIncoming({draftId,openDesign:t.openDesign===true,templatePrompt:t.projectPrompt,html:projectHtml,title:t.name,emoji:t.emoji,color:t.pr,kind:t.projectKind||t.kind,purpose:t.desc,appId:null,msgs:[]});setView("studio")}catch(e){toast(e.message)}};

@@ -7,6 +7,20 @@ GitHub'daki açık kaynak projelerden, lisansı ve güvenliği kontrol edilmiş 
 - Yönetici görünümü: Siparişler, İş Planı & Gelir, GitHub Radar, İş Kolları, Listem, Yapım Kuyruğu, Ayarlar
 - Sürüm notları: uygulama içinde **Güncellemeler** sekmesi
 
+## Keşif hafızası ve kişisel öneriler
+
+**Keşfet** sayfası kullanıcının aramalarını, açtığı uygulamaları, canlı denediği şablonları, baktığı temaları ve Stüdyo’ya yazdığı ilk fikirleri tarayıcıda (`localStorage`, `gms_taste`) tutar. Sunucuya veri gönderilmez. Her yeni sinyal eski sinyalleri biraz zayıflatır; böylece profil son ilgilere göre değişir.
+
+Profilden sektör ilgisi, renk eğilimi (ağırlıklı ton ortalaması), koyu/açık zemin tercihi ve en uygun tasarım dili hesaplanır. Bu profil şu yerlerde kullanılır:
+
+- **Senin tarzın** kartı: tahmin edilen tema, renk paleti, ilgi alanları, son aramalar ve **Bu tarzla yeni proje** düğmesi.
+- **Sana özel** rafı: şablonlar profile göre sıralanır, her önerinin gerekçesi yazılır; son denenen şablona benzeyenler ayrı rafta gösterilir.
+- Akıllı arama kutusu: yazarken geçmiş aramalar, şablon adları ve sektör sözcükleri önerilir; yazılan fikirden sektör ve tasarım tahmin edilip **Bu fikirle başla** sunulur.
+- Arama sonuçları: **İlgili aramalar** ve **Aramana uygun şablonlar**.
+- Stüdyo’da **Otomatik tasarım**: sektörün önerdiği temalar profile göre yeniden sıralanır.
+
+Kullanıcı kartın ⋯ menüsünden hafızayı sıfırlayabilir veya kapatabilir.
+
 ## Yönetici girişi
 
 Yönetim merkezini çalışma alanı menüsündeki **Yönetici** düğmesinden veya `/#yonetim` adresinden açın. Doğrudan bir yönetim sayfasına giden kullanıcı, girişten sonra aynı sayfaya döner.
