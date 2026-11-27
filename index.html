@@ -3047,6 +3047,37 @@ html.rm .ambient i{animation:none}
 .su-sw i{width:30px!important;height:17px!important}
 .su-t .su-tx{padding-right:0!important;min-width:0}
 .su-t .su-tx b,.su-t .su-tx em{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ================= v5.82 — iş kapsamı başlığı (Proje › Sayfa › Bölüm) ================= */
+.fh{position:sticky;top:-16px;z-index:6;margin:-16px -18px 2px;padding:10px 14px 10px;background:linear-gradient(180deg,#141413 82%,rgba(20,20,19,0));}
+.fh-main{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:#1a1a18;color:#ecebe6;font:inherit;text-align:left;cursor:pointer;transition:border-color .2s,background .2s}
+.fh-main:hover,.fh-main[aria-expanded=true]{border-color:rgba(255,255,255,.18);background:#1e1e1c}
+.fh-st{display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:8px;background:rgba(126,226,168,.12);color:#7ee2a8}
+.fh.s-run .fh-st{background:rgba(245,184,61,.12)}.fh.s-err .fh-st{background:rgba(227,179,65,.14);color:#e3b341}
+.fh-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.fh-tx>b{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fh-n{font-style:normal;font-size:11.5px;color:#8f8d88;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.06);flex:none}
+.fh-main>svg{color:#8f8d88;flex:none}
+.scr{display:flex;align-items:center;gap:5px;min-width:0;color:#8f8d88;font-size:12px;overflow:hidden;white-space:nowrap}
+.scr>i{font-style:normal;color:#5c5b56}
+.scr-i{display:inline-flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis}.scr-i svg{flex:none;opacity:.8}
+.scr-i.on{color:#d8d6cf}
+.scr-i{flex:0 1 auto}.scr>.scr-i:first-child:not(:last-child){flex-shrink:4}.scr-i.on{flex-shrink:0;max-width:62%}
+.fh .scr>.scr-i:first-child{max-width:34%}
+@media(max-width:560px){.fh .scr>.scr-i:first-child,.fh .scr>.scr-i:first-child+i{display:none}}
+.fh-pop{position:absolute;left:14px;right:14px;top:calc(100% - 4px);max-height:min(460px,62vh);overflow:auto;padding:8px;border-radius:16px;background:#1a1a18;border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 60px rgba(0,0,0,.6)}
+@media(prefers-reduced-motion:no-preference){.fh-pop{animation:ksIn .16s ease-out}}
+.fh-cap{padding:8px 8px 6px;font-size:11.5px;letter-spacing:.3px;text-transform:uppercase;color:#7d7d78}
+.fh-next{display:flex;flex-wrap:wrap;gap:6px;padding:0 6px 6px}
+.fh-next button{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:none;color:#d8d6cf;font:inherit;font-size:12.5px;cursor:pointer}.fh-next button:hover{background:rgba(255,255,255,.06);color:#fff}
+.fh-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.fh-list button{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:0;border-radius:10px;background:none;color:#ecebe6;font:inherit;text-align:left;cursor:pointer}.fh-list button:hover{background:rgba(255,255,255,.06)}
+.fh-num{display:grid;place-items:center;width:22px;height:22px;flex:none;border-radius:50%;background:rgba(255,255,255,.07);font-size:11.5px;color:#a9a7a1}
+.fh-li{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.fh-li b{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fh-ls{flex:none;font-size:11.5px;color:#7ee2a8}.s-run .fh-ls{color:#f5b83d}.s-err .fh-ls{color:#e3b341}.s-stop .fh-ls{color:#8f8d88}
+.mu-scope{display:flex;justify-content:flex-end;max-width:100%}.mu-scope .scr{font-size:11.5px}
+.studio-user-message{scroll-margin-top:72px}
+@media(pointer:coarse){.fh-next button{height:38px}.fh-list button{min-height:44px}}
 </style>
 <link rel="stylesheet" href="catalog/gallery.css?v=5772">
 <link rel="stylesheet" href="catalog/sector-design.css?v=5761">
@@ -3074,8 +3105,14 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.81.0";
+const VERSION="5.82.0";
 const CHANGELOG=[
+ {v:"5.82.0",date:"2026-11-28",items:[
+  "🧭 Yeni: iş başlığı. Stüdyo sohbetinin en üstünde, Claude Code'daki gibi sabit duran bir başlık: son isteğin kısa adı ve altında “Proje › Sayfa › Bölüm” yolu (ör. Akış Operasyon › İş listesi › Durum kartları). Solda durum: sürüyorsa turuncu-sarı noktalar, bittiyse ✓, hata varsa ⚠. Sohbeti aşağı kaydırsan da başlık görünür kalır",
+  "🔎 Gitmapp isteğinin nereye dokunduğunu kendisi buluyor: uygulamandaki sekmeleri, ekranları, menü bağlantılarını, bölüm başlıklarını ve formları tarayıp isteğinle eşleştiriyor. “Son işler listesine tarih ekle” → Özet › Son işler; “Yeni iş formuna öncelik ekle” → Yeni iş › Form; “Koyu temaya çevir” → Tüm sayfalar › Genel görünüm; önizlemede öğe seçtiysen → o öğenin sayfası › “Başlık: Operasyon özeti”",
+  "🏷️ Her mesajının üstünde küçük kapsam etiketi: hangi sayfanın hangi bölümü için yazdığın sohbet boyunca okunuyor",
+  "📋 Başlığa dokununca iş listesi açılıyor: bu sohbetteki tüm istekler numarasıyla, kapsamıyla ve durumuyla (bitti / sürüyor / hata / durdu); birine dokununca sohbet o mesaja kayıyor",
+  "➡️ Aynı bölümde devam et: listenin üstünde “Bu bölümü iyileştir, Mobilde düzelt, Metni sadeleştir, Renkleri uyumla” düğmeleri; seçince istek kutusu “‘Durum kartları’ bölümünde: …” diye hazır doluyor, sadece gönderiyorsun"]},
  {v:"5.81.0",date:"2026-11-28",items:[
   "🧰 Stüdyo üst çubuğu düzeldi: dar ekranda (iPad, sol menü açıkken) düğmeler artık birbirinin üstüne binmiyor ve dışarı taşmıyor. Proje adı en az 110 piksel ve gerekirse “…” ile kısalıyor (“Akış O” gibi kesilmiyor). Proje ayarları düğmesi cihaz düğmelerinin altına girmiyor",
   "⋯ Yeni “Daha fazla” menüsü: yer azaldıkça Tam ekran, Yeni sekmede aç, Önceki sürüme dön, Sürüm geçmişi, Yeni sohbet ve Projeye ekle bu menüye geçiyor; hiçbir araç kaybolmuyor. Daha da daralınca Asistan düğmesi (sağ alttaki Asistan zaten açık), sohbet listesi (sol menüde Oturumlar) gizleniyor ve Yayınla yalnızca simgeyle gösteriliyor",
@@ -7380,7 +7417,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   followChat.current=true;
   const log={kind,running:true,start,last:start,events:[],images,model:curModel,task,job:job||undefined,req:{skills:skillIds().map(id=>({id,name:SKILL_NAMES[id]||id})),focus:SKILL_FOCUS?{name:SKILL_NAMES[SKILL_FOCUS.skill]||"",module:SKILL_FOCUS.module}:null,text:String(req?.text??userText??"").slice(0,1500),size:req?.size||0,design:req?.design||"",tur:prefs.kind,mod:prefs.mode,profil:auth.user?[auth.user.role&&"iş alanı: "+auth.user.role,auth.user.instructions&&"talimat: “"+String(auth.user.instructions).slice(0,90)+(String(auth.user.instructions).length>90?"…":"")+"”"].filter(Boolean).join(" · "):""}};
   streamClock.current={id,last:start};
-  const request=userText?[{role:"user",content:userText,imgs}]:[];
+  const scope=promptScope(userText||req?.text||task||"",st.html||"",st.title,prefs.kind);log.scope=scope;
+  const request=userText?[{role:"user",content:userText,imgs,scope}]:[];
   setSt(s=>({...s,msgs:[...s.msgs,...request,{role:"assistant",id,log,retry:legacyRetry}]}));
   setBusy(true);setT0(start);liveRef.current="";liveStartRef.current=0;setLive("");
   const finish=(patch,content,err)=>setSt(s=>({...s,msgs:s.msgs.map(m=>m.id===id?{...m,log:{...log,...patch,running:false,secs:Math.floor((Date.now()-start)/1000)},content,err}:m)}));
@@ -7961,7 +7999,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  </section>`;
  useEffect(()=>{if(st.html&&GM_INTERNAL.test(st.html)){const c=stripInternal(st.html);if(c!==st.html)setSt(s=>({...s,html:c}))}},[st.html]);
  const latestWork=st.msgs.findLast(m=>m.log);
- const [flowOpen,setFlowOpen]=useState({});
+ const [flowOpen,setFlowOpen]=useState({});const [fhOpen,setFhOpen]=useState(false);
  const [requestInfo,setRequestInfo]=useState(false);
  const flowId=m=>"activity-"+(m.id??m.log.start);
  function toggleFlow(m,reveal=false){
@@ -8014,8 +8052,26 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
     </div></div>`}
   </aside>`;
  };
- const msgEl=(m,i)=>m.role==="user"?html`<article class="studio-user-message" aria-label="Sen" key=${"user-"+i}>
-  <span class="studio-user-label">Sen</span>
+ const crumb=(sc,full)=>sc&&html`<span class="scr">${full&&st.title&&html`<span class="scr-i"><${Icon} n="folder" s=${12}/>${st.title}</span><i>›</i>`}<span class="scr-i"><${Icon} n="file" s=${12}/>${sc.page}</span>${sc.section&&html`<i>›</i><span class="scr-i on"><${Icon} n="layers" s=${12}/>${sc.section}</span>`}</span>`;
+ const turnState=i=>{const a=st.msgs.slice(i+1).find(x=>x.role==="user"||x.log);if(!a||a.role==="user")return "ok";return a.log.running?"run":a.log.error||a.log.cut?"err":a.log.stopped?"stop":"ok"};
+ const flowHead=()=>{const turns=st.msgs.map((m,i)=>({m,i})).filter(x=>x.m.role==="user"&&x.m.content);if(!turns.length)return null;
+  const last=turns[turns.length-1],sc=last.m.scope||{page:"Ana sayfa",section:null,title:scShort(last.m.content)},state=turnState(last.i),target=sc.section||sc.page;
+  const go=i=>{setFhOpen(false);const el=document.getElementById("turn-"+i);el&&el.scrollIntoView({block:"start",behavior:"smooth"})};
+  const follow=t=>{setFhOpen(false);setInput("“"+target+"” "+(sc.section?"bölümünde":"sayfasında")+": "+t);requestAnimationFrame(()=>{const ta=document.querySelector("textarea.gta");ta&&ta.focus()})};
+  return html`<div class=${"fh s-"+state}>
+   <button type="button" class="fh-main" aria-expanded=${fhOpen} aria-haspopup="menu" onClick=${()=>setFhOpen(!fhOpen)} title="Bu sohbetteki işler">
+    <span class="fh-st" aria-hidden="true">${state==="run"?html`<${CcDots}/>`:state==="err"?html`<${Icon} n="alert" s=${14}/>`:html`<${Icon} n="check" s=${14} w=${2.4}/>`}</span>
+    <span class="fh-tx"><b>${sc.title}</b>${crumb(sc,true)}</span>
+    ${turns.length>1&&html`<em class="fh-n">${turns.length} iş</em>`}<${Icon} n=${fhOpen?"chevUp":"chevDown"} s=${15}/></button>
+   ${fhOpen&&html`<div class="fh-pop" role="menu">
+    <div class="fh-cap">“${target}” üzerinde devam et</div>
+    <div class="fh-next">${[["wand","Bu bölümü iyileştir","tasarımını ve düzenini iyileştir, içerik aynı kalsın"],["phone","Mobilde düzelt","telefonda taşma olmasın, dokunma alanları büyük olsun"],["type","Metni sadeleştir","metinleri kısa, net ve anlaşılır yaz"],["palette","Renkleri uyumla","renkleri uygulamanın geri kalanıyla uyumlu yap"]].map(([ic,l,t])=>html`<button type="button" key=${l} onClick=${()=>follow(t)}><${Icon} n=${ic} s=${14}/>${l}</button>`)}</div>
+    <div class="fh-cap">Bu sohbetteki işler · ${turns.length}</div>
+    <ol class="fh-list">${[...turns].reverse().map(({m,i},k)=>{const s2=m.scope||{page:"Ana sayfa",title:scShort(m.content)},ts=turnState(i);return html`<li key=${i}><button type="button" role="menuitem" class=${"s-"+ts} onClick=${()=>go(i)}><span class="fh-num">${turns.length-k}</span><span class="fh-li"><b>${s2.title}</b>${crumb(s2,false)}</span><span class="fh-ls">${ts==="run"?"sürüyor":ts==="err"?"hata":ts==="stop"?"durdu":"bitti"}</span></button></li>`})}</ol>
+   </div>`}
+  </div>`};
+ const msgEl=(m,i)=>m.role==="user"?html`<article class="studio-user-message" id=${"turn-"+i} aria-label="Sen" key=${"user-"+i}>
+  ${m.scope?html`<span class="mu-scope">${crumb(m.scope,false)}</span>`:html`<span class="studio-user-label">Sen</span>`}
   ${m.imgs&&html`<div class="mu-imgs">${m.imgs.map((u,j)=>html`<button type="button" key=${j} class="mu-img" title="Büyüt" onClick=${()=>setZoom(u)}><img src=${u} alt=${"Eklenen görsel "+(j+1)}/></button>`)}</div>`}
   <div class="studio-message-text">${m.content}</div>
  </article>`:html`<article class="studio-response" key=${m.id||i}>
@@ -8034,7 +8090,53 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(prev.scope===scope||prev.draftId!==st.draftId||prev.git!==git)return;
   sessDel(account,prev.scope);
   const old=LS.get("studioChats:"+prev.scope,[])||[];if(old.length&&!(LS.get(chatKey,[])||[]).length&&LS.set(chatKey,old)){LS.del("studioChats:"+prev.scope);setChatVer(v=>v+1)}},[scope]);
- const chatTitle=msgs=>{const u=(msgs||[]).find(m=>m.role==="user"&&m.content);return u?String(u.content).replace(/\s+/g," ").trim().slice(0,64):"Yeni sohbet"};
+ /* ================= v5.82 — İŞİN KAPSAMI: hangi sayfada, hangi bölümde =================
+   Her istekte, isteğin metni uygulamanın HTML'indeki sayfa/sekme/bölüm adlarıyla eşleştirilir.
+   Sonuç sohbetin üstündeki başlıkta ve her mesajın üstünde "Proje › Sayfa › Bölüm" olarak görünür. */
+const SC_STOP=new Set("bir bu şu ve ile için gibi daha çok en de da ki mi mı ekle ekleyelim yap yapalım olsun olsunn istiyorum lütfen biraz şunu bunu tüm her sayfa sayfası sayfada bölüm bölümü bölümde kısım kısmı kısmını alan alanı alanında içine içinde üstüne altına yeni".split(" "));
+const scWords=t=>String(t||"").toLocaleLowerCase("tr").replace(/[^a-zçğıöşü0-9\s]/g," ").split(/\s+/).filter(w=>w.length>=3&&!SC_STOP.has(w));
+const scStem=w=>w.slice(0,Math.max(4,Math.min(6,w.length-2)));
+// Bölgeye özgü sözcükler: isteğin hedefini HTML'de başlık olmasa da yakalar
+const SC_ZONES=[
+ [/menü|menu|gezinme|navbar|üst menü/,"nav","Menü"],[/üst bilgi|header|üst kısım|üst alan|logo/,"header","Üst bilgi"],[/alt bilgi|footer|alt kısım|telif|iletişim bilgi/,"footer","Alt bilgi"],
+ [/form|kayıt formu|başvuru|giriş ekranı|şifre/,"form","Form"],[/tablo|liste|kayıtlar/,"table, ul, ol","Liste"],[/grafik|chart|özet kart|istatistik/,"canvas, svg, [class*=chart], [class*=stat]","Özet ve grafikler"],
+ [/hero|karşılama|giriş bölümü|açılış/,"[class*=hero], header + section, main > section:first-child","Karşılama"]];
+const SC_GLOBAL=[[/renk|tema|koyu|açık tema|yazı tipi|font|tasarım dili|stil|görünüm/,"Genel görünüm"],[/mobil|telefon|responsive|tablet|dar ekran/,"Mobil uyum"],[/hız|performans|seo|erişilebilir|hata|bug|düzelt|çalışmıyor/,"Tüm uygulama"]];
+function scShort(t,n=52){t=String(t||"").replace(/\s+/g," ").trim().replace(/^["“]|["”]$/g,"");const s=t.split(/(?<=[.!?])\s/)[0]||t;let o=s.length>n?s.slice(0,n).replace(/\s+\S*$/,"")+"…":s;return o.charAt(0).toLocaleUpperCase("tr")+o.slice(1)}
+const SC_TAG={button:"Düğme",a:"Bağlantı",img:"Görsel",h1:"Başlık",h2:"Başlık",h3:"Alt başlık",p:"Metin",input:"Giriş alanı",form:"Form",nav:"Menü",header:"Üst bilgi",footer:"Alt bilgi",table:"Tablo",ul:"Liste",li:"Liste öğesi",section:"Bölüm",div:"Kutu",span:"Metin"};
+function promptScope(text,html,appTitle,kind){
+ const raw=String(text||"");
+ const pickM=/CSS seçici:\s*([^\n]+)[\s\S]*?Öğenin HTML'i:\s*([\s\S]*?)\n\n/.exec(raw);
+ const req=(/İstek:\s*([\s\S]+)$/.exec(raw)?.[1]||raw).trim();
+ const title=scShort(req)||"Yeni istek";
+ if(!html)return {page:"Yeni "+(kind==="game"?"oyun":kind==="site"?"site":"uygulama"),section:null,title,how:"yeni"};
+ let doc;try{doc=new DOMParser().parseFromString(html,"text/html")}catch(e){return {page:appTitle||"Ana sayfa",section:null,title}}
+ const qs=scWords(req),stems=qs.map(scStem);
+ const score=label=>{const lw=scWords(label);if(!lw.length)return 0;let s=0;for(const w of lw){const st=scStem(w);if(stems.includes(st))s+=2;else if(stems.some(x=>st.startsWith(x)||x.startsWith(st)))s+=1}return s/Math.sqrt(lw.length)};
+ const clean=s=>String(s||"").replace(/\s+/g," ").trim().slice(0,40);
+ // Sayfalar: sekme/ekran işaretli öğeler ya da menü bağlantıları
+ const pageEls=[...doc.querySelectorAll("[data-screen],[data-page],[data-view],[data-tab],[role=tabpanel],.screen,.page,.view")];
+ const pageName=el=>clean(el.getAttribute("data-title")||el.getAttribute("aria-label")||el.querySelector("h1,h2")?.textContent||el.getAttribute("data-screen")||el.getAttribute("data-page")||el.getAttribute("data-view")||el.id);
+ const navNames=[...doc.querySelectorAll("nav a, nav button, [role=tab], .tabs button, .tab")].map(e=>clean(e.textContent)).filter(x=>x&&x.length<28);
+ const pages=[...new Set([...pageEls.map(pageName),...navNames].filter(Boolean))];
+ const home="Ana sayfa";
+ let page=null,pageScore=0;for(const p of pages){const s=score(p);if(s>pageScore){pageScore=s;page=p}}
+ // Seçilen öğe: bölüm adı öğenin kendisinden
+ if(pickM){const frag=new DOMParser().parseFromString(pickM[2],"text/html").body.firstElementChild;const tag=frag?.localName||"";const head=clean(frag?.querySelector?.("h1,h2,h3")?.textContent||frag?.getAttribute?.("aria-label")||frag?.textContent);
+  let pg=page;try{const real=doc.querySelector(pickM[1].trim());const host=real&&real.closest("[data-screen],[data-page],[data-view],[data-tab],[role=tabpanel],.screen,.page,.view");if(host)pg=pageName(host)}catch(e){}
+  return {page:pg||home,section:(SC_TAG[tag]||"Öğe")+(head?": "+head.slice(0,28):""),title,how:"secim"}}
+ // Bölümler: başlıklar ve işaretli bölgeler
+ const secEls=[...doc.querySelectorAll("section,article,aside,header,footer,nav,form,[aria-label],h1,h2,h3")].slice(0,120);
+ const secName=el=>{const t=el.localName;if(/^h[1-3]$/.test(t))return clean(el.textContent);return clean(el.getAttribute("aria-label")||el.querySelector("h1,h2,h3")?.textContent||{header:"Üst bilgi",footer:"Alt bilgi",nav:"Menü",form:"Form"}[t]||el.id)};
+ let section=null,secScore=0,secHost=null;for(const el of secEls){const n=secName(el);if(!n)continue;const s=score(n);if(s>secScore){secScore=s;section=n;const host=el.closest("[data-screen],[data-page],[data-view],[data-tab],[role=tabpanel],.screen,.page,.view");secHost=host&&host!==el?pageName(host):null}}
+ if(secScore>=1&&secHost&&secHost!==section)page=secHost;else if(secScore>=1&&secHost===section){page=section;section=null}
+ const low=req.toLocaleLowerCase("tr");
+ if(secScore<1){const z=SC_ZONES.find(([re,sel])=>re.test(low)&&doc.querySelector(sel));if(z){section=z[2];secScore=1}}
+ let how=secScore>=1?"eslesme":"genel";
+ if(secScore<1){const g=SC_GLOBAL.find(([re])=>re.test(low));section=g?g[1]:null;if(g&&pages.length>1&&!pageScore)page="Tüm sayfalar"}
+ return {page:page||(pages.length>1&&!section?"Tüm sayfalar":home),section,title,how};
+}
+const chatTitle=msgs=>{const u=(msgs||[]).find(m=>m.role==="user"&&m.content);return u?String(u.content).replace(/\s+/g," ").trim().slice(0,64):"Yeni sohbet"};
  function archivedChats(list){
   if(!st.msgs.length)return list;
   const id=st.chatId||crypto.randomUUID();
@@ -8213,7 +8315,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   <div class=${"ws-grid studio-grid"+((st.html||"").includes("Gitmapp hazır şablonu")?" template-stage-first":"")+(sessOpen?" sp-on":"")}>
    <div class="ws-chat">
     <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
-    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${!st.msgs.length&&!busy&&st.html&&html`<div class="chat-fresh" role="status"><span class="chat-fresh-ic"><${EcosystemIcon} name="newchat" s=${22}/></span><b>Yeni sohbet · ${st.title||"bu proje"}</b><p>Dosyalar, sürümler${st.gitContext?.name?" ve “"+st.gitContext.name+"” dalı":""} aynı kaldı; sohbet tertemiz başladı. Ne yapalım?</p><div class="chat-fresh-acts"><button type="button" class="chip" onClick=${()=>{setPrefs(p=>({...p,mode:"planli",autoMode:false}));setInput("Bu proje için sıradaki adımların planını çıkar: eksikleri, iyileştirmeleri ve öncelik sırasını yaz.");requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus())}}><${EcosystemIcon} name="plan" s=${15}/> Plan çıkar</button>${chatList.length>0&&html`<button type="button" class="chip" onClick=${()=>openChat(chatList[0].id)}><${Icon} n="undo" s=${14}/> Önceki sohbete dön</button>`}</div></div>`}${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
+    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${flowHead()}${!st.msgs.length&&!busy&&st.html&&html`<div class="chat-fresh" role="status"><span class="chat-fresh-ic"><${EcosystemIcon} name="newchat" s=${22}/></span><b>Yeni sohbet · ${st.title||"bu proje"}</b><p>Dosyalar, sürümler${st.gitContext?.name?" ve “"+st.gitContext.name+"” dalı":""} aynı kaldı; sohbet tertemiz başladı. Ne yapalım?</p><div class="chat-fresh-acts"><button type="button" class="chip" onClick=${()=>{setPrefs(p=>({...p,mode:"planli",autoMode:false}));setInput("Bu proje için sıradaki adımların planını çıkar: eksikleri, iyileştirmeleri ve öncelik sırasını yaz.");requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus())}}><${EcosystemIcon} name="plan" s=${15}/> Plan çıkar</button>${chatList.length>0&&html`<button type="button" class="chip" onClick=${()=>openChat(chatList[0].id)}><${Icon} n="undo" s=${14}/> Önceki sohbete dön</button>`}</div></div>`}${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
   const fix=()=>build(fixPrompt(probs),null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   if(autoFix&&probs.length&&qaCritical()&&!autoTurn())return html`<div class="dq-card auto" role="status"><div class="dq-h"><span class="ccspin"></span><b>Tasarım ajanı</b><span>${probs.length} sorunu kendiliğinden düzeltiyor…</span><button type="button" class="dq-stop" onClick=${()=>{setAutoFix(false);toast("Otomatik düzeltme kapatıldı; sorunları elle düzeltebilirsin")}}>Durdur</button></div></div>`;
   if(autoFix&&probs.length&&autoTurn())return html`<details class="dq-card left"><summary><${Icon} n="info" s=${13}/><b>Tasarım ajanı</b><span>düzeltti · ${probs.length} küçük uyarı kaldı</span></summary><ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn g s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Bir kez daha dene</button></details>`;
