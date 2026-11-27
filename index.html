@@ -3154,6 +3154,10 @@ html.rm .ambient i{animation:none}
 .hist .sess-t small{display:flex;align-items:center;gap:4px}.hist .sess-t small svg{flex:none;opacity:.75}
 .h-sep{padding:6px 10px 3px;font-size:11px;letter-spacing:.3px;text-transform:uppercase;color:#7d7b76}
 .h-sep:empty{height:1px;padding:0;margin:4px 6px;background:#3a3a37}
+/* v5.86 — yeni çalışmada başlangıç sürümü */
+.ns-from{display:grid;gap:6px;margin:4px 0 10px}.ns-from>b{font-size:12px;color:var(--mut,#a1a1aa);font-weight:600}
+.ns-from-o{display:flex;text-align:left;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:inherit;font:inherit;cursor:pointer}
+.ns-from-o b{display:block;font-size:13.5px}.ns-from-o small{display:block;font-size:12px;opacity:.7;margin-top:2px}.ns-from-o.on{border-color:#e4ff3d;background:rgba(228,255,61,.07)}
 </style>
 <link rel="stylesheet" href="catalog/gallery.css?v=5772">
 <link rel="stylesheet" href="catalog/sector-design.css?v=5761">
@@ -3181,8 +3185,18 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.85.0";
+const VERSION="5.86.0";
 const CHANGELOG=[
+ {v:"5.86.0",date:"2026-11-28",items:[
+  "☁️ Sekmeyi kapatsan da çalışman kaydediliyor: bir projede istek verdiğinde iş sunucuda o çalışmanın dalına ve başlangıç sürümüne bağlanıyor; bitince sonucu sunucu kendisi dala kaydediyor. Çalışmayı yeniden açman artık yalnızca sonucu görmek için gerekiyor",
+  "🔁 Aynı iş iki sekmeden açılsa ya da yeniden işlense de tek kayıt oluşuyor; eski oturum açıldığında ikinci commit atılmıyor. GitHub yanıt vermezse yeniden denemeden önce ilk isteğin uygulanıp uygulanmadığına bakılıyor; sunucu yeniden başlarsa bekleyen kayıt kaldığı yerden sürüyor",
+  "🧭 Dal sen çalışırken başka yerden ilerlediyse hiçbir değişiklik ezilmiyor: üretilen sonuç ayrı bir “…-inceleme” dalında korunuyor ve çalışma “İnceleme gerekiyor” durumuna geçiyor",
+  "🏷️ Akışta gerçek kayıt durumları: Kaydediliyor → Kaydedildi (sunucuda doğrulandı) / İnceleme gerekiyor / Kaydedilemedi (Kaydı yeniden dene düğmesiyle). Geçmiş satırlarında da “bitti · kaydedildi”, “inceleme gerekiyor” yazıyor",
+  "🧩 Birleştirme artık değişiklik silmiyor: dallar ortak atadan üç yönlü harmanlanıyor. Önceden ikinci birleştirilen dal ilkini sessizce silebiliyordu (ör. ödeme ekranı birleşince kapora kaybolurdu). İki çalışma aynı satırları farklı değiştirmişse “Çakışma” olarak bildiriliyor",
+  "🛡️ İnceledikten sonra ana sürüm ilerlediyse eski incelemeyle birleştirme yapılmıyor; “yeniden önizle ve kontrol et” uyarısı çıkıyor",
+  "🌱 “Yeni çalışma” penceresi açık bir çalışmanın içindeyken “Nereden başlasın?” diye soruyor: Ana sürümden (önerilen) ya da açık çalışmanın üzerinden. Önceden yeni çalışma sessizce açık çalışmanın değişiklikleri üzerine kuruluyordu",
+  "🧹 Boş yeni çalışma ekranı sadeleşti: başlangıç sürümünü ve değişikliklerin hangi dala gideceğini yazıyor; Beceriler paneli kapalı başlıyor; ilgisiz sektör önerileri (ör. simge kütüphanesine “Saha servis”) artık çıkmıyor",
+  "⌨️ Bir iş sürerken pencereyi Esc ile kapatmak artık işi durdurmuyor"]},
  {v:"5.85.0",date:"2026-11-28",items:[
   "📍 Sol menü Faz 2 — her çalışmanın bir yeri var: Stüdyo'nun üst çubuğunda yeni “yer” düğmesi çalışmanın nerede durduğunu gösteriyor: Taslak (yalnızca bu cihazda), Proje (hesabında kayıtlı) ya da Depo (çalışma alanı · dal)",
   "📦 Yer düğmesine dokununca “Bu çalışma nerede dursun?” menüsü: Yeni proje olarak kaydet / Projeye kaydet, Var olan bir projeye ekle (sayfa o projeye yeni ekran olarak eklenir), Çalışma alanına (depoya) kaydet",
@@ -5399,7 +5413,7 @@ function ResetBox({token,auth,toast,close}){const [pw,setPw]=useState(""),[pw2,s
  return html`<div><h2 class="auth-h">Yeni şifre belirle</h2><p class="auth-s">En az 8 karakter. Diğer cihazlardaki oturumlar kapatılacak.</p>
   <form onSubmit=${go} style=${{display:"flex",flexDirection:"column",gap:9}}><input class="in" type="password" autocomplete="new-password" aria-label="Yeni şifre" required minLength="8" placeholder="Yeni şifre" value=${pw} onInput=${e=>setPw(e.target.value)}/><input class="in" type="password" autocomplete="new-password" aria-label="Yeni şifre (tekrar)" required minLength="8" placeholder="Yeni şifre (tekrar)" value=${pw2} onInput=${e=>setPw2(e.target.value)}/>
   ${error&&html`<p role="alert">${error}</p>`}<button class="btn" disabled=${busy}>${busy?"Kaydediliyor…":"Şifreyi değiştir"}</button></form></div>`}
-const Modal=({close,children,w=440})=>{useEffect(()=>{const k=e=>{if(e.key==="Escape"){e.stopPropagation();close()}};addEventListener("keydown",k);return()=>removeEventListener("keydown",k)},[close]);return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" role="dialog" aria-modal="true" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" aria-label="Kapat" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`};
+const Modal=({close,children,w=440})=>{useEffect(()=>{const k=e=>{if(e.key==="Escape"){e.preventDefault();close()}};addEventListener("keydown",k,true);return()=>removeEventListener("keydown",k,true)},[close]);return html`<div class="drawer" style=${{justifyContent:"center",alignItems:"center",padding:16}} onClick=${close}><div class="box" role="dialog" aria-modal="true" style=${{width:"100%",maxWidth:w,maxHeight:"92vh",overflow:"auto",padding:22,margin:0,position:"relative"}} onClick=${e=>e.stopPropagation()}><button class="btn g s" aria-label="Kapat" style=${{position:"absolute",right:12,top:12}} onClick=${close}>✕</button>${children}</div></div>`};
 
 const START_CHIPS={
  app:[["calendar","Randevu","Müşterilerin hizmet ve saat seçip randevu alabildiği, benim de günlük randevuları yönetebildiğim bir uygulama"],["chart","Dashboard","Satış, sipariş ve müşteri verilerini KPI kartları, grafikler ve filtrelenebilir tabloyla gösteren bir yönetim paneli"],["userRound","Müşteri portalı","Müşterilerin giriş yapıp siparişlerini, faturalarını ve destek taleplerini takip ettiği bir müşteri portalı"],["wrench","Dahili araç","Ekibimin iş taleplerini oluşturup atadığı, durumunu güncellediği ve raporladığı bir dahili iş takip aracı"],["package","Stok & sipariş","Ürün listesi, stok adedi, kritik stok uyarısı ve günlük satış kaydı olan bir stok uygulaması"]],
@@ -5527,7 +5541,7 @@ function ccSteps(log,live){
   steps.push({k:"proc",say:log.kind==="review"?"Bulguları önem sırasına koyuyorum.":"Kod geldi; hataları denetleyip önizlemeyi hazırlıyorum.",icon:"shield",label:run?"Kontrol ediliyor":"Kontrol edildi",detail:fx.length?fx.join(", "):run?"sözdizimi · güvenlik · önizleme":"sorun yok",run,t0:at.processing});
   if(!run&&!failed&&log.kind!=="plan"&&log.kind!=="agent")steps.push({k:"prev",icon:"eye",label:"Önizleme güncellendi",detail:log.kb?log.kb+" KB":"",t0:0});
  }
- if(log.commit&&!log.commit.skip)steps.push({k:"commit",say:log.commit.pending?"Değişikliği oturum dalına kaydediyorum.":null,icon:"branch",label:log.commit.pending?"Commit kaydediliyor":log.commit.err?"Commit kaydedilemedi":"Commit kaydedildi",detail:log.commit.err?log.commit.err:[(log.commit.sha||"").slice(0,7),"→ "+log.commit.branch,log.commit.source==="github"?"GitHub":"Gitmapp"].filter(Boolean).join(" "),run:!!log.commit.pending,err:!!log.commit.err,t0:0,body:log.commit.msg?html`<${ClIO} label="Commit mesajı" mono=${false}>${log.commit.msg}<//>`:null});
+ if(log.commit&&!log.commit.skip)steps.push({k:"commit",say:log.commit.pending?"Değişikliği oturum dalına kaydediyorum.":null,icon:"branch",label:log.commit.pending?"Kaydediliyor":log.commit.review?"İnceleme gerekiyor":log.commit.err?"Kaydedilemedi":"Kaydedildi"+(log.commit.server?" · sunucuda doğrulandı":""),detail:log.commit.err?log.commit.err:[(log.commit.sha||"").slice(0,7),"→ "+log.commit.branch,log.commit.source==="github"?"GitHub":"Gitmapp"].filter(Boolean).join(" "),run:!!log.commit.pending,err:!!log.commit.err&&!log.commit.review,t0:0,body:html`${log.commit.msg?html`<${ClIO} label="Commit mesajı" mono=${false}>${log.commit.msg}<//>`:null}${log.commit.retry&&!log.commit.pending?html`<button type="button" class="btn s" onClick=${()=>dispatchEvent(new CustomEvent("gm:commitretry",{detail:log.commit.job}))}><${Icon} n="refresh" s=${13}/> Kaydı yeniden dene</button>`:null}`});
  if(log.asked)steps.push({k:"ask",say:"Kod yazmadan önce bir şeyi netleştirmem gerekiyor; sorumu aşağıya yazdım. Kredi harcanmadı.",label:null});
  if(failed)steps.push({k:"err",say:log.stopped?"İşlemi durdurdun; kredi harcanmadı.":log.cut?"Sayfa yenilendiği ya da kapandığı için işlem yarıda kaldı. Yeniden dene ile kaldığı yerden sürdürebilirsin.":"İşlem tamamlanamadı.",icon:"alert",label:log.res?.error?"Hata ayrıntısı":null,err:true,body:log.res?.error?html`<${ClIO} label="Yanıt"><code>${log.res.error}</code><//>`:null});
  return steps;
@@ -7331,7 +7345,7 @@ function modCovered(m,txt,code){const w=modWords(m);if(!w.length)return false;re
 const modPrompt=(s,m)=>`Beceri modülü ekle — ${s.name} › ${m}. Bu uygulamaya “${m}” modülünü eksiksiz ekle: becerideki ilgili veri alanlarını, ekranları ve iş kurallarını uygula, menüye/gezinmeye ekle, örnek verilerle doldur ve diğer modüllerle bağla. Mevcut özellikleri ve tasarımı bozma.`;
 // Projeye uyan sektör becerisini tahmin et (ad, kullanıcı ve modül kelimeleri)
 function suggestSkill(plans,text){const t=String(text||"").toLocaleLowerCase("tr");if(t.length<6)return null;let best=null,score=0;
- for(const s of plans){const words=[...modWords(s.name),...modWords(s.who||"")];let n=0;for(const w of new Set(words))if(w.length>=4&&t.includes(w))n+=2;for(const m of skillMods(s))if(modWords(m).some(w=>w.length>=4&&t.includes(w)))n+=1;if(n>score){score=n;best=s}}
+ for(const s of plans){const words=[...modWords(s.name),...modWords(s.who||"")];let n=0;const nameHit=modWords(s.name).some(w=>w.length>=4&&t.includes(w));if(!nameHit)continue;for(const w of new Set(words))if(w.length>=4&&t.includes(w))n+=2;for(const m of skillMods(s))if(modWords(m).some(w=>w.length>=4&&t.includes(w)))n+=1;if(n>score){score=n;best=s}}
  return score>=3?best:null}
 // v5.83 — seçilen beceri modülleri ve küçük beceriler tek, açıklamalı bir isteğe dönüşür
 function composeSkills(sel){const mods=sel.filter(x=>x.t==="mod"),mis=sel.filter(x=>x.t==="mi"),by={};
@@ -7341,8 +7355,8 @@ function composeSkills(sel){const mods=sel.filter(x=>x.t==="mod"),mis=sel.filter
  parts.push("Mevcut özellikleri ve tasarımı bozma.");return parts.join("\n\n")}
 function StudioSkillDock({html:h,busy,projectText,onModule,onComplete,onMicro,onStart,onCompose,toast,start=false}){
  const [sel,setSel]=useState([]);const selKey=x=>x.t==="mod"?"m:"+x.s.id+":"+x.m:"i:"+x.x.id;const isSel=x=>sel.some(y=>selKey(y)===selKey(x));const togSel=x=>setSel(a=>a.some(y=>selKey(y)===selKey(x))?a.filter(y=>selKey(y)!==selKey(x)):[...a,x]);
- const idx=useSkillIdx();const dockKey=start?"skDock":"skDockWs";const [open,setOpen]=useState(()=>start?LS.get(dockKey,true)!==false:LS.get(dockKey,false)===true);const [q,setQ]=useState("");const [pick,setPick]=useState(false);const [,tick]=useState(0);const [lv,setLv]=useState(null);const prev=useRef({});const [usedMicro,setUsedMicro]=useState([]);
- useEffect(()=>{LS.set(dockKey,open)},[open]);
+ const idx=useSkillIdx();const dockKey=start?"skDock":"skDockWs";const [open,setOpen]=useState(()=>start?LS.get(dockKey,true)!==false:false);const [q,setQ]=useState("");const [pick,setPick]=useState(false);const [,tick]=useState(0);const [lv,setLv]=useState(null);const prev=useRef({});const [usedMicro,setUsedMicro]=useState([]);
+ useEffect(()=>{if(start)LS.set(dockKey,open)},[open]);
  useEffect(()=>{const f=()=>tick(x=>x+1);addEventListener("gm:skills",f);const d=e=>{if(e.detail==="open"){setOpen(true);setPick(true)}};addEventListener("gm:skilldock",d);return()=>{removeEventListener("gm:skills",f);removeEventListener("gm:skilldock",d)}},[]);
  const all=Object.values(idx);const plans=all.filter(s=>s.kind==="gelistirme");const on=skillsOn();
  const loaded=plans.filter(s=>on.includes(s.id));
@@ -7636,7 +7650,8 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const mode=kind==="review"?"review":body.html?"update":"build";
   const jobId=auth.user?Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,"0")).join(""):null;if(jobId&&!busy)jobRef.current=jobId;
   const legacyRetry=task?undefined:{kind,text:kind==="review"||body.plan?"":String(body.prompt||""),shown:userText||""};
-  return runActivity(mode,userText,(signal,onDelta,onPhase)=>apiStream(path,auth.user?{...body,job:true,jobId}:body,onDelta,signal,onPhase),onDone,{
+  const gcx=st.gitContext,commitSpec=auth.user&&st.appId&&gcx?.head&&gcx.name?{appId:st.appId,source:gcx.source,repo:gcx.repo||null,branch:gcx.name,head:gcx.head,message:String(kind==="review"?"Kontrol et ve düzelt":body.prompt||userText||"Stüdyo değişikliği").replace(/\s+/g," ").trim().slice(0,72)}:null;
+  return runActivity(mode,userText,(signal,onDelta,onPhase)=>apiStream(path,auth.user?{...body,job:true,jobId,...(commitSpec?{commit:commitSpec}:{})}:body,onDelta,signal,onPhase),onDone,{
    imgs:im.thumbs,images:im.send?.length||0,retry,legacyRetry,task,job:jobId,req:{text:String(body.prompt||userText||""),size:body.html?(new Blob([body.html]).size/1024).toFixed(1):0,design:body.design?.name||""},
    finalEvent:result=>result.html===body.html?"unchanged":"preview"
   });
@@ -7839,11 +7854,11 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   if(a.t==="panel"){if(a.ad==="model")return g('[title="Dil modeli seç"]',()=>setPicker(true));if(a.ad==="tasarim")return g('[title="Tasarım teması"]',()=>setGallery(true));if(a.ad==="ayarlar")return g('.cmp-mode',()=>new Promise(r=>setTimeout(()=>{setRunOpen(true);r()},30)));if(a.ad==="oturum"){setSessOpen(true);return}return}
   if(a.t==="oturumDal"){if(!auth.user)throw new Error("Dalda çalışmak için giriş yap");let appId=st.appId;if(!appId){const app=await save({silent:true});appId=app?.id;if(!appId)throw new Error("Proje kaydedilemedi")}
    const g=st.gitContext,source=g?.source||"gitmapp",repo=g?.repo||null,P="/api/apps/"+appId+"/git",Q="?source="+source,R="&repo="+encodeURIComponent(repo||"");
-   let base=g?.name||"main";const cur=await api("GET",P+"/branch"+Q+"&name="+encodeURIComponent(base)+R);let head=cur.head;
-   if(st.html&&resolve(st.html)!==cur.html){try{head=(await api("POST",P+"/commits"+Q,{name:base,head,message:"Oturum başlangıcı: çalışma alanı",html:resolve(st.html),repo})).head}catch(e){if(!/değişiklik yok/i.test(e.message||""))throw e}}
+   let base=a.base||g?.name||"main";const own=base===(g?.name||"main");const cur=await api("GET",P+"/branch"+Q+"&name="+encodeURIComponent(base)+R);let head=cur.head;
+   if(own&&st.html&&resolve(st.html)!==cur.html){try{head=(await api("POST",P+"/commits"+Q,{name:base,head,message:"Oturum başlangıcı: çalışma alanı",html:resolve(st.html),repo})).head}catch(e){if(!/değişiklik yok/i.test(e.message||""))throw e}}
    const r=await api("POST",P+"/branches"+Q,{name:a.ad,base,head,repo});
    if(["hizli","planli","ajan"].includes(a.mod)){setPrefs(p=>({...p,mode:a.mod,autoMode:false}));prefsRef.current={...prefsRef.current,mode:a.mod}}
-   switchProject({...st,appId,gitContext:{source,repo,name:a.ad,head:r.head,base},msgs:[],chatId:crypto.randomUUID()});toast("“"+a.ad+"” dalında yeni oturum · "+base+" üzerinden");return}
+   switchProject({...st,...(own?{}:{html:cur.html||st.html}),appId,gitContext:{source,repo,name:a.ad,head:r.head,base:own?(g?.base&&g.base!==g.name?g.base:base):base},msgs:[],chatId:crypto.randomUUID()});toast("“"+a.ad+"” dalında yeni oturum · "+base+" üzerinden");return}
   if(a.t==="sohbetYeni"){if(!a.fresh&&!a.keep&&(busy||todo?.running))throw new Error("Süren iş bitince bu projede yeni sohbet açılabilir; başka bir oturuma geçebilirsin");if(a.keep){}else if(a.fresh){setTodo(null);setAtts([]);switchProject(blank);setPrefs(p=>({...p,theme:"auto",sector:"auto"}));setVersions([]);setPlan(null);setInput("")}else newChat();if(["hizli","planli","ajan"].includes(a.mod)){setPrefs(p=>({...p,mode:a.mod,autoMode:false}));prefsRef.current={...prefsRef.current,mode:a.mod}}return}
   if(a.t==="sohbetAc"){openChat(a.id);return}
   if(a.t==="sohbetSil"){deleteChat(a.id);return}
@@ -8281,7 +8296,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  function deleteChat(id){LS.set(chatKey,(LS.get(chatKey,[])||[]).filter(x=>x.id!==id));setChatVer(v=>v+1)}
  const chatList=useMemo(()=>(LS.get(chatKey,[])||[]).map(({id,title,at,n,plan})=>({id,title,at,n,plan})),[chatKey,chatVer]);
  const userTurns=st.msgs.filter(m=>m.role==="user").length;
- useEffect(()=>{window.__gmChats={scope,project:{title:st.title||"",emoji:st.emoji,color:st.color,saved:!!st.appId,html:!!st.html,branch:st.gitContext?.name||null,source:st.gitContext?.source||null},active:{id:st.chatId||null,title:chatTitle(st.msgs),n:userTurns,busy},list:chatList};dispatchEvent(new Event("gm:chats"))},[scope,st.title,st.emoji,st.appId,!!st.html,st.chatId,userTurns,busy,chatList,st.gitContext?.name]);
+ useEffect(()=>{window.__gmChats={scope,project:{title:st.title||"",emoji:st.emoji,color:st.color,saved:!!st.appId,html:!!st.html,branch:st.gitContext?.name||null,base:st.gitContext?.base||null,source:st.gitContext?.source||null},active:{id:st.chatId||null,title:chatTitle(st.msgs),n:userTurns,busy},list:chatList};dispatchEvent(new Event("gm:chats"))},[scope,st.title,st.emoji,st.appId,!!st.html,st.chatId,userTurns,busy,chatList,st.gitContext?.name]);
  useEffect(()=>()=>{window.__gmChats=null;dispatchEvent(new Event("gm:chats"))},[]);
  const pageMergePrompt=(page,name)=>"PROJEYE YENİ SAYFA EKLE — Aşağıdaki HTML ayrı bir sohbette hazırlanan “"+name+"” sayfasıdır. Bunu mevcut uygulamaya yeni bir ekran/sayfa olarak ekle: menüye ve gezinmeye bağlantı koy, mevcut tasarım diliyle (renk, yazı, bileşen) uyumlu hâle getir, içeriğini ve işlevlerini koru. Var olan ekranları ve verileri bozma.\n\n```html\n"+String(page).slice(0,60000)+"\n```";
  // v5.78 — otomatik kayıt: taslak ve yayınlanmamış projeler sessizce hesaba kaydedilir (yayındaki proje Yayınla ile güncellenir)
@@ -8316,13 +8331,28 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   const m=st.msgs.findLast(x=>x.log&&!x.log.running);if(!m||m.log.commit||m.log.error||m.log.stopped||m.log.cut||m.log.asked||m.log.kind==="plan"||m.log.kind==="agent")return;
   if(!(m.log.out||m.log.resumed)||(m.log.out&&m.log.out.add+m.log.out.del===0))return;
   const id=m.id,msg=commitMsgFor(m),ticket=epoch.current;setLogCommit(id,{pending:true,branch:g.name,source:g.source});
-  api("POST","/api/apps/"+st.appId+"/git/commits?source="+g.source,{name:g.name,head:g.head,message:msg,html:resolve(st.html),repo:g.repo}).then(r=>{if(ticket!==epoch.current)return;
+  const clientCommit=()=>api("POST","/api/apps/"+st.appId+"/git/commits?source="+g.source,{name:g.name,head:g.head,message:msg,html:resolve(st.html),repo:g.repo}).then(r=>{if(ticket!==epoch.current)return;
    setSt(s=>({...s,gitContext:s.gitContext&&s.gitContext.name===g.name?{...s.gitContext,head:r.head}:s.gitContext,msgs:s.msgs.map(x=>x.id===id?{...x,log:{...x.log,commit:{sha:r.head,branch:g.name,source:g.source,msg}}}:x)}));setBrVer(v=>v+1)})
    .catch(e=>{if(ticket!==epoch.current)return;setLogCommit(id,/değişiklik yok/i.test(e.message||"")?{skip:true}:{err:String(e.message||"Commit kaydedilemedi").slice(0,140),branch:g.name})});
+  // v5.86 — iş sunucuda bu dala bağlıysa kaydı sunucu yapar (sekme kapalı olsa da); burada yalnızca sonucu izleriz → ikinci commit oluşmaz
+  if(!m.log.job)return clientCommit();
+  jobCommitWatch(m.log.job,g,id,msg,ticket,clientCommit);
  },[st.msgs,busy,!!todo?.running,st.gitContext?.head]);
+ function jobCommitWatch(jid,g,id,msg,ticket,fallback,n=0){
+  api("GET","/api/apps/"+st.appId+"/git/jobs/"+jid+"?source="+g.source).then(r=>{if(ticket!==epoch.current)return;
+   if(r.status==="running"||r.status==="saving"){if(n<40)setTimeout(()=>jobCommitWatch(jid,g,id,msg,ticket,fallback,n+1),1500);return}
+   const base={branch:g.name,source:g.source,msg,server:true,job:jid};
+   if(r.status==="saved"||r.status==="nochange"){setSt(s=>({...s,gitContext:s.gitContext&&s.gitContext.name===g.name?{...s.gitContext,head:r.sha||s.gitContext.head}:s.gitContext,msgs:s.msgs.map(x=>x.id===id?{...x,log:{...x.log,commit:r.status==="nochange"?{skip:true}:{...base,sha:r.sha}}}:x)}));setBrVer(v=>v+1);sessPatch(account,scope,{save:"saved"});return}
+   if(r.status==="review"){setLogCommit(id,{...base,review:true,sha:r.sha,reviewBranch:r.review_branch,err:(r.error||"Dal ilerledi")+" Sonucun “"+r.review_branch+"” dalında korundu."});sessPatch(account,scope,{save:"review",reviewBranch:r.review_branch});return}
+   if(r.status==="failed"){setLogCommit(id,{...base,err:r.error||"Kaydedilemedi",retry:jid});sessPatch(account,scope,{save:"failed"});return}
+   setLogCommit(id,r.status==="rejected"?{...base,err:r.error}:{skip:true});
+  }).catch(e=>{if(ticket!==epoch.current)return;if(e.status===404)return fallback();setLogCommit(id,{branch:g.name,source:g.source,err:String(e.message||"Kayıt durumu okunamadı").slice(0,140)})});
+ }
+ async function jobCommitRetry(c,id){try{setLogCommit(id,{...c,pending:true,err:null});await api("POST","/api/apps/"+st.appId+"/git/jobs/"+c.job+"/retry?source="+c.source);jobCommitWatch(c.job,{name:c.branch,source:c.source},id,c.msg,epoch.current,()=>{})}catch(e){setLogCommit(id,{...c,pending:false,err:String(e.message||"Yeniden denenemedi")})}}
+ useEffect(()=>{const f=e=>{const m=st.msgs.find(x=>x.log?.commit?.job===e.detail);if(m?.log?.commit?.retry)jobCommitRetry(m.log.commit,m.id)};addEventListener("gm:commitretry",f);return()=>removeEventListener("gm:commitretry",f)},[st.msgs]);
  const brNote=text=>setSt(s=>({...s,msgs:[...s.msgs,{role:"assistant",content:text,anim:true}]}));
  async function brMerge(){if(!gc||brBusy)return;setBrBusy("merge");try{const P="/api/apps/"+st.appId+"/git";
-   if(gc.source==="gitmapp"){const r=await api("POST",P+"/merge?source=gitmapp",{from:gc.name,into:brBase,head:gc.head});setSt(s=>({...s,gitContext:{...s.gitContext,head:r.head}}));brNote("✓ “"+gc.name+"” dalı "+brBase+" dalına birleştirildi · commit "+r.head.slice(0,7)+(brBase==="main"?". Proje taslağı güncellendi; Yayınla ile canlıya alabilirsin.":""));sessPatch(account,scope,{merged:true})}
+   if(gc.source==="gitmapp"){const r=await api("POST",P+"/merge?source=gitmapp",{from:gc.name,into:brBase,head:gc.head,intoHead:brInfo?.intoHead||undefined});setSt(s=>({...s,gitContext:{...s.gitContext,head:r.head}}));brNote("✓ “"+gc.name+"” dalı "+brBase+" dalına birleştirildi · commit "+r.head.slice(0,7)+(brBase==="main"?". Proje taslağı güncellendi; Yayınla ile canlıya alabilirsin.":""));sessPatch(account,scope,{merged:true})}
    else if(brInfo?.pr){const r=await api("POST",P+"/pulls/"+brInfo.pr.number+"/merge?source=github",{repo:gc.repo});brNote(r.merged?"✓ PR #"+brInfo.pr.number+" "+brBase+" dalına birleştirildi · "+String(r.sha||"").slice(0,7):"PR birleştirilemedi.");sessPatch(account,scope,{merged:!!r.merged})}
    setBrVer(v=>v+1)}catch(e){toast(e.message||"Birleştirilemedi")}finally{setBrBusy("")}}
  async function brOpenPr(){if(!gc||brBusy)return;setBrBusy("pr");try{const asks=st.msgs.filter(m=>m.role==="user"&&m.content).map(m=>"- "+String(m.content).replace(/\s+/g," ").slice(0,140)).slice(-15).join("\n");
@@ -8441,7 +8471,7 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
   <div class=${"ws-grid studio-grid"+((st.html||"").includes("Gitmapp hazır şablonu")?" template-stage-first":"")+(sessOpen?" sp-on":"")}>
    <div class="ws-chat">
     <div class="ws-ctrl"><button type="button" class="studio-preview-jump btn g s" onClick=${()=>{stageRef.current?.scrollIntoView({block:"start"});stageRef.current?.focus({preventScroll:true})}}><${Icon} n="eye" s=${15}/> Önizlemeye git</button></div>
-    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${flowHead()}${!st.msgs.length&&!busy&&st.html&&html`<div class="chat-fresh" role="status"><span class="chat-fresh-ic"><${EcosystemIcon} name="newchat" s=${22}/></span><b>Yeni sohbet · ${st.title||"bu proje"}</b><p>Dosyalar, sürümler${st.gitContext?.name?" ve “"+st.gitContext.name+"” dalı":""} aynı kaldı; sohbet tertemiz başladı. Ne yapalım?</p><div class="chat-fresh-acts"><button type="button" class="chip" onClick=${()=>{setPrefs(p=>({...p,mode:"planli",autoMode:false}));setInput("Bu proje için sıradaki adımların planını çıkar: eksikleri, iyileştirmeleri ve öncelik sırasını yaz.");requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus())}}><${EcosystemIcon} name="plan" s=${15}/> Plan çıkar</button>${chatList.length>0&&html`<button type="button" class="chip" onClick=${()=>openChat(chatList[0].id)}><${Icon} n="undo" s=${14}/> Önceki sohbete dön</button>`}</div></div>`}${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
+    <div class="ws-msgs" ref=${chatRef} onScroll=${chatScrolled} role="region" aria-label="Stüdyo konuşması">${flowHead()}${!st.msgs.length&&!busy&&st.html&&html`<div class="chat-fresh" role="status"><span class="chat-fresh-ic"><${EcosystemIcon} name="newchat" s=${22}/></span><b>Yeni çalışma · ${st.title||"bu proje"}</b><p>${st.gitContext?.name?html`Başlangıç: <strong>${st.gitContext.base&&st.gitContext.base!==st.gitContext.name?"“"+st.gitContext.base+"” sürümü":"“"+st.gitContext.name+"” sürümü"}</strong>${st.gitContext.head?" ("+st.gitContext.head.slice(0,7)+")":""}. Değişikliklerin ayrı “${st.gitContext.name}” dalına kaydedilir; ana sürüm sen birleştirene kadar değişmez.`:"Dosyalar ve sürümler aynı kaldı; sohbet tertemiz başladı."} Ne yapmak istediğini yaz.</p><div class="chat-fresh-acts"><button type="button" class="chip" onClick=${()=>{setPrefs(p=>({...p,mode:"planli",autoMode:false}));setInput("Bu proje için sıradaki adımların planını çıkar: eksikleri, iyileştirmeleri ve öncelik sırasını yaz.");requestAnimationFrame(()=>document.querySelector("textarea.gta")?.focus())}}><${EcosystemIcon} name="plan" s=${15}/> Plan çıkar</button>${chatList.length>0&&html`<button type="button" class="chip" onClick=${()=>openChat(chatList[0].id)}><${Icon} n="undo" s=${14}/> Önceki sohbete dön</button>`}</div></div>`}${st.msgs.map((m,i)=>html`${msgEl(m,i)}${panels.filter(p=>p.after===i+1).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt} actions=${p.items[0].type==="image"?[["image","Önizlemeye yerleştir",()=>{const id=Math.random().toString(36).slice(2);setSt(s=>({...s,media:[{url:p.items[0].url,thumb:p.items[0].url,name:p.prompt||"Görsel",src:p.app,id},...(s.media||[])].slice(0,8)}));setPlaceSel("media:"+id);setCode(false);toast("Önizlemede görselin gideceği öğeye dokun")}]]:[]}/>`)}`)}${panels.filter(p=>p.after>st.msgs.length||p.after===0).map(p=>html`<${AppPanel} key=${p.id} id=${p.id} app=${p.app} title=${p.prompt} items=${p.items} note=${p.prompt}/>`)}${(()=>{if(busy||!st.html||!qa||qa.len!==st.html.length)return null;const probs=[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)];
   const fix=()=>build(fixPrompt(probs),null,"Tasarım ajanı: "+probs.length+" sorunu düzelt");
   if(autoFix&&probs.length&&qaCritical()&&!autoTurn())return html`<div class="dq-card auto" role="status"><div class="dq-h"><span class="ccspin"></span><b>Tasarım ajanı</b><span>${probs.length} sorunu kendiliğinden düzeltiyor…</span><button type="button" class="dq-stop" onClick=${()=>{setAutoFix(false);toast("Otomatik düzeltme kapatıldı; sorunları elle düzeltebilirsin")}}>Durdur</button></div></div>`;
   if(autoFix&&probs.length&&autoTurn())return html`<details class="dq-card left"><summary><${Icon} n="info" s=${13}/><b>Tasarım ajanı</b><span>düzeltti · ${probs.length} küçük uyarı kaldı</span></summary><ul>${probs.map((t,i)=>html`<li key=${i}>${t}</li>`)}</ul><button type="button" class="btn g s" onClick=${fix}><${Icon} n="sparkles" s=${13}/> Bir kez daha dene</button></details>`;
@@ -11484,15 +11514,17 @@ function NewSession({close,chats,myApps,auth,initial={},onStart,openGh,openAuth}
  const branchable=!!auth.user&&(kind==="depo"||kind==="ayni");
  const autoName=useMemo(()=>sessBranchName(kind==="depo"?env?.title||env?.name||env?.full_name?.split("/")[1]:chats?.project.title),[kind,env?.id,env?.full_name]);
  const branch=branchable&&useBranch?(bname.trim()||autoName):null;
- const baseName=kind==="ayni"?(chats?.project.branch||(chats?.project.source==="github"?"":"main")):env?.type==="github"?env.default_branch:"main";
+ const curBr=chats?.project.branch||null,mainBr=chats?.project.base||"main",onWork=kind==="ayni"&&!!curBr&&curBr!==mainBr;
+ const [fromWork,setFromWork]=useState(false);
+ const baseName=kind==="ayni"?(onWork?(fromWork?curBr:mainBr):(curBr||(chats?.project.source==="github"?"":"main"))):env?.type==="github"?env.default_branch:"main";
  const envLabel=kind==="ayni"?(chats?.project.title||"Açık proje"):kind==="bos"?"Boş sayfa · yeni proje":env?(env.type==="github"?env.full_name:env.title):"Depo seç";
- const go=()=>{if(!ready)return;onStart({kind,mode,text:text.trim(),branch,env:kind==="depo"?env:null})};
+ const go=()=>{if(!ready)return;onStart({kind,mode,text:text.trim(),branch,env:kind==="depo"?env:null,from:kind==="ayni"&&onWork?baseName:null})};
  const key=e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey||!e.shiftKey)&&e.target.tagName==="TEXTAREA"&&!e.nativeEvent?.isComposing){e.preventDefault();go()}};
  const card=(k,ic,t,d,dis)=>html`<button type="button" role="radio" aria-checked=${kind===k} class=${"ns-card"+(kind===k?" on":"")} disabled=${dis} data-k=${k} onClick=${()=>{setKind(k);if(k==="depo")setTimeout(()=>qRef.current?.focus(),40)}}><span class="ns-ic"><${EcosystemIcon} name=${ic} s=${20}/></span><span><b>${t}</b><small>${d}</small></span></button>`;
- return html`<div class="drawer ns-bg" onClick=${close}><section class="ns glass" role="dialog" aria-modal="true" aria-labelledby="ns-h" onClick=${e=>e.stopPropagation()} onKeyDown=${e=>{if(e.key==="Escape")close()}}>
-  <header class="ns-head"><span class="ns-badge"><${EcosystemIcon} name="newchat" s=${20}/></span><div><h2 id="ns-h">Yeni oturum</h2><p>Çalışma alanını seç: her oturum kendi dalında çalışır, sol menüde izlenir.</p></div><button type="button" class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></header>
+ return html`<div class="drawer ns-bg" onClick=${close}><section class="ns glass" role="dialog" aria-modal="true" aria-labelledby="ns-h" onClick=${e=>e.stopPropagation()} onKeyDown=${e=>{if(e.key==="Escape"){e.preventDefault();close()}}}>
+  <header class="ns-head"><span class="ns-badge"><${EcosystemIcon} name="newchat" s=${20}/></span><div><h2 id="ns-h">Yeni çalışma</h2><p>Nerede çalışacağını seç: her çalışma kendi dalında ilerler, Geçmiş'te izlenir ve sekmeyi kapatsan da sunucuda kaydedilir.</p></div><button type="button" class="ib" aria-label="Kapat" onClick=${close}><${Icon} n="x" s=${16}/></button></header>
   <div class="ns-cards" role="radiogroup" aria-label="Başlangıç">
-   ${card("ayni","chats","Bu projede yeni oturum",canSame?(chats.project.title||"Açık proje")+(chats.project.branch?" · "+chats.project.branch:""):"Önce Stüdyo'da bir proje aç",!canSame)}
+   ${card("ayni","chats","Bu projede yeni çalışma",canSame?(chats.project.title||"Açık proje")+(chats.project.branch?" · "+chats.project.branch:""):"Önce Stüdyo'da bir proje aç",!canSame)}
    ${card("bos","idea","Boş sayfa","Tertemiz yeni proje; ilk üretimde Gitmapp deposu oluşur")}
    ${card("depo","environment","Bir depodan","Gitmapp projen ya da GitHub deposu")}
   </div>
@@ -11509,11 +11541,14 @@ function NewSession({close,chats,myApps,auth,initial={},onStart,openGh,openAuth}
     :repos.length?repos.map(r=>{const on=env?.type==="github"&&env.full_name===r.full_name;const mine=own(r);return html`<button type="button" role="option" aria-selected=${on} key=${r.full_name} disabled=${!mine} title=${mine?"":"Yalnızca kendi hesabındaki depolarda dal açılabilir"} class=${"ns-row"+(on?" on":"")} onClick=${()=>setEnv({type:"github",full_name:r.full_name,name:r.name,default_branch:r.default_branch,url:r.url})}><span class="ns-repo"><${EcosystemIcon} name="repo" s=${16}/></span><span><b>${r.full_name}</b><small>${r.private?"Özel":"Herkese açık"} · ${r.default_branch}${r.pushed_at?" · "+nsAgo(r.pushed_at)+" önce":""}${r.description?" · "+r.description:""}</small></span>${on&&html`<${Icon} n="check" s=${15}/>`}</button>`}):html`<p class="ns-empty">${ql?"Aramana uyan depo yok.":"Yazma yetkin olan depo bulunamadı."}</p>`}
    </div>
   </div>`}
+  ${onWork&&branchable&&useBranch&&html`<div class="ns-from" role="radiogroup" aria-label="Başlangıç sürümü"><b>Nereden başlasın?</b>
+   <button type="button" role="radio" aria-checked=${!fromWork} class=${"ns-from-o"+(!fromWork?" on":"")} onClick=${()=>setFromWork(false)}><span><b>Ana sürümden (${mainBr})</b><small>Önerilen · açık çalışmadaki değişiklikler bu çalışmada olmaz; ikisi ayrı ilerler</small></span></button>
+   <button type="button" role="radio" aria-checked=${fromWork} class=${"ns-from-o"+(fromWork?" on":"")} onClick=${()=>setFromWork(true)}><span><b>Açık çalışmanın üzerinden (${curBr})</b><small>Bu çalışma, açık çalışmanın değişikliklerine dayanır; önce o birleşmeli</small></span></button></div>`}
   ${branchable&&html`<div class="ns-branch"><label class="ns-br-tg"><input type="checkbox" checked=${useBranch} onChange=${e=>setUseBranch(e.target.checked)}/><${EcosystemIcon} name="branch" s=${15}/><span>Yeni dalda çalış</span></label>${useBranch&&html`<input class="in" value=${bname} placeholder=${autoName} onInput=${e=>setBname(e.target.value.replace(/\s/g,"-").slice(0,120))} aria-label="Dal adı"/><small>${baseName?"← "+baseName:""}</small>`}</div>`}
   <div class="ns-modes" role="radiogroup" aria-label="Çalışma modu">${NS_MODES.map(([k,l,d,ic])=>html`<button type="button" role="radio" aria-checked=${mode===k} key=${k} data-m=${k} class=${"ns-mode"+(mode===k?" on":"")} onClick=${()=>setMode(k)}>${ic==="plan"?html`<${EcosystemIcon} name="plan" s=${16}/>`:html`<${Icon} n=${ic} s=${16}/>`}<span><b>${l}</b><small>${d}</small></span></button>`)}</div>
   <div class="ns-compose">
    <textarea ref=${taRef} class="in ns-ta" rows="3" value=${text} onInput=${e=>setText(e.target.value.slice(0,4000))} onKeyDown=${key} placeholder=${mode==="planli"?"Ne planlayalım? Örn. randevu ve ödeme akışı olan kuaför uygulaması":"İlk mesaj (isteğe bağlı) · Enter ile başlat"} aria-label="İlk mesaj"></textarea>
-   <div class="ns-foot"><span class="ns-envpill" title="Bu oturumun çalışacağı alan"><${EcosystemIcon} name=${kind==="ayni"?"chats":kind==="bos"?"idea":env?.type==="github"?"repo":"environment"} s=${15}/><span>${envLabel}${branch?" · "+branch:""}</span></span><span class="ns-modepill">${NS_MODES.find(m=>m[0]===mode)[1]}</span><span style=${{flex:1}}></span><button type="button" class="btn g s" onClick=${close}>Vazgeç</button><button type="button" class="btn s ns-go" disabled=${!ready} onClick=${go}>${text.trim()?"Gönder":"Oturumu başlat"} <kbd>↵</kbd></button></div>
+   <div class="ns-foot"><span class="ns-envpill" title="Bu oturumun çalışacağı alan"><${EcosystemIcon} name=${kind==="ayni"?"chats":kind==="bos"?"idea":env?.type==="github"?"repo":"environment"} s=${15}/><span>${envLabel}${branch?" · "+branch:""}</span></span><span class="ns-modepill">${NS_MODES.find(m=>m[0]===mode)[1]}</span><span style=${{flex:1}}></span><button type="button" class="btn g s" onClick=${close}>Vazgeç</button><button type="button" class="btn s ns-go" disabled=${!ready} onClick=${go}>${text.trim()?"Gönder":"Çalışmayı başlat"} <kbd>↵</kbd></button></div>
   </div>
  </section></div>`;
 }
@@ -11622,7 +11657,7 @@ function App(){
  useEffect(()=>{if(!auth.user||!apiOn)return;let alive=true;const tick=async()=>{const cur=window.__gmChats?.scope;
    for(const r of sessList(sessAcct).filter(x=>x.status==="running"&&x.key!==cur)){
     if(!r.job){sessPatch(sessAcct,r.key,{status:"error",unread:true,note:"Yarıda kaldı"});continue}
-    try{const j=await api("GET","/api/ai/jobs/"+r.job);if(!alive)return;if(j.status!=="running")sessPatch(sessAcct,r.key,{status:j.status==="done"?"done":"error",unread:true,note:j.status==="done"?"":j.error||"Tamamlanamadı"})}
+    try{const j=await api("GET","/api/ai/jobs/"+r.job);if(!alive)return;if(j.status!=="running")sessPatch(sessAcct,r.key,{status:j.status==="done"?"done":"error",unread:true,note:j.status==="done"?"":j.error||"Tamamlanamadı",...(j.commit?{save:j.commit.status,reviewBranch:j.commit.review_branch||null,head:j.commit.sha||null}:{})})}
     catch(e){if(e.status===404)sessPatch(sessAcct,r.key,{status:"idle"})}}};
   tick();const t=setInterval(tick,4000);return()=>{alive=false;clearInterval(t)}},[auth.user?.id,apiOn]);
  useEffect(()=>{const c=()=>setChats(window.__gmChats?{...window.__gmChats}:null);const n=e=>setNs(e.detail||{});const a=e=>e.detail&&e.detail.html&&setAddPage(e.detail);
@@ -11644,7 +11679,7 @@ function App(){
     await cpStudio({t:"sohbetYeni",keep:true,mod:c.mode})}
    else{
     if(c.kind==="depo"&&c.env?.type==="gitmapp"){const j=await api("GET","/api/apps/"+c.env.id);openInStudio(j.app);await wait(800)}
-    if(c.kind!=="bos"&&c.branch)await cpStudio({t:"oturumDal",ad:c.branch,mod:c.mode});
+    if(c.kind!=="bos"&&c.branch)await cpStudio({t:"oturumDal",ad:c.branch,mod:c.mode,base:c.from||null});
     else await cpStudio({t:"sohbetYeni",fresh:c.kind==="bos",mod:c.mode});
    }
    if(c.text){await wait(400);await cpStudio({t:"yap",metin:c.text})}
@@ -11783,7 +11818,7 @@ function App(){
     return html`<div key=${r.key} class=${"nav rec sess hrow"+(on?" on":"")+(st?" st-"+st:"")} data-status=${st||"idle"}>
      <button type="button" class="rec-open" aria-current=${on?"true":undefined} title=${name+" · "+sessWhere(r)} onClick=${()=>{setHMenu(null);openSession(r)}}>
       <span class="h-ic" aria-hidden="true"><${Icon} n=${r.kind==="chat"?"msgSpark":r.kind==="kreator"?"video":"codeXml"} s=${15}/></span>
-      <span class="sess-t"><b>${name}</b><small><${Icon} n=${sessWhereIc(r)} s=${11}/>${[sessWhere(r),r.git?.name&&r.git.name!=="main"?r.git.name:"",st==="run"?"sürüyor":st==="err"?(r.note||"hata"):st==="done"?"bitti":"",nsAgo(r.at)].filter(Boolean).join(" · ")}</small></span>
+      <span class="sess-t"><b>${name}</b><small><${Icon} n=${sessWhereIc(r)} s=${11}/>${[sessWhere(r),r.git?.name&&r.git.name!=="main"?r.git.name:"",st==="run"?"sürüyor":r.save==="review"?"inceleme gerekiyor":r.save==="failed"?"kaydedilemedi":st==="err"?(r.note||"hata"):st==="done"?(r.save==="saved"?"bitti · kaydedildi":"bitti"):r.save==="saved"?"kaydedildi":"",nsAgo(r.at)].filter(Boolean).join(" · ")}</small></span>
       <span class=${"h-st "+st} aria-label=${st==="run"?"Sürüyor":st==="done"?"Bitti, görülmedi":st==="err"?"Hata":""}>${st==="run"?html`<i class="sess-spin"></i>`:st==="done"?html`<i class="sess-dot"></i>`:st==="err"?html`<${Icon} n="alert" s=${13}/>`:""}</span></button>
      <button type="button" class="rec-pin h-more" aria-haspopup="menu" aria-expanded=${hMenu===r.key} aria-label=${name+" seçenekleri"} onClick=${e=>{e.stopPropagation();setHMenu(hMenu===r.key?null:r.key)}}><${Icon} n="more" s=${14}/></button>
      ${hMenu===r.key&&html`<div class="h-menu" role="menu">

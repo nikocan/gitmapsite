@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { merge3 } from "./merge3.mjs";
 
 export const MAX_PROJECT_HTML = 1_500_000;
 const changed = "Dal başka bir işlemle güncellendi. Dalı yenileyip değişiklikleri karşılaştırın.";
@@ -20,7 +21,7 @@ export function linkedRepo(app, user, need) {
   return match[1] + "/" + match[2];
 }
 
-export function registerVersions({ db, route, ownApp, need, ghApi, slugify, confirmRemoteCommit }) {
+export function registerVersions({ db, route, ownApp, need, ghApi, slugify, confirmRemoteCommit, userById }) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS project_git_remotes (
       app_id TEXT PRIMARY KEY REFERENCES apps(id) ON DELETE CASCADE, url TEXT NOT NULL);
@@ -267,7 +268,7 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
       need(fh && ih, 404, "Dal bulunamadı.");
       const intoSet = ancestors(app.id, ih), fromSet = ancestors(app.id, fh);
       const ahead = [...fromSet].filter(x => !intoSet.has(x)).length, behind = [...intoSet].filter(x => !fromSet.has(x)).length;
-      return { source:"gitmapp", from, into, ahead, behind, merged: intoSet.has(fh), head: fh };
+      return { source:"gitmapp", from, into, ahead, behind, merged: intoSet.has(fh), head: fh, intoHead: ih };
     }
     const remote = binding(app, ctx);
     need(remote && remote.repo === ctx.url.searchParams.get("repo"), 409, "Bağlı depo değişti. Paneli yenileyin.");
@@ -280,6 +281,39 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     return { source:"github", from, into, ahead: cmp.ahead_by || 0, behind: cmp.behind_by || 0, merged: !!pr?.merged_at,
       pr: pr ? { number: pr.number, state: pr.merged_at ? "merged" : pr.state, url: pr.html_url, title: pr.title, draft: !!pr.draft, base: pr.base?.ref || into } : null };
   });
+  // v5.86 — ortak atadan üç yönlü birleşim; hedef, kaynağın atasıysa ileri sarma
+  const commitHtml = (id, sha) => sql("SELECT html FROM project_commits WHERE app_id=? AND sha=?").get(id, sha)?.html ?? "";
+  function mergeBase(id, a, b) {
+    const set = ancestors(id, a); const parent = sql("SELECT parent FROM project_commits WHERE app_id=? AND sha=?");
+    let cur = b, n = 0; while (cur && !set.has(cur) && n++ < 400) cur = parent.get(id, cur)?.parent; return set.has(cur) ? cur : null;
+  }
+  function mergedHtml(id, fh, ih) {
+    const lca = mergeBase(id, fh, ih);
+    if (lca === ih) return commitHtml(id, fh);
+    const r = merge3(lca ? commitHtml(id, lca) : "", commitHtml(id, ih), commitHtml(id, fh));
+    need(!r.conflicts.length, 409, "Çakışma: iki çalışma aynı satırları farklı biçimde değiştirmiş (" + r.conflicts.length + " yer). Önce birlikte deneyip birini güncelle.");
+    return r.html;
+  }
+  // Birleşimin önizlemesi: hiçbir dalı değiştirmeden birleşik dosyayı döndürür
+  route("GET", root + "/merge-preview", async ctx => {
+    const app = project(ctx);
+    need(source(ctx) === "gitmapp", 400, "GitHub dallarının birleşik önizlemesi henüz yok.");
+    localInit(app);
+    const names = String(ctx.url.searchParams.get("branches") || "").split(",").filter(Boolean).map(n => checkBranch(n, need));
+    const into = checkBranch(ctx.url.searchParams.get("into") || "main", need);
+    need(names.length >= 1 && names.length <= 5, 400, "1–5 dal seçin.");
+    let head = localHead(app.id, into); need(head, 404, "Dal bulunamadı.");
+    let html = commitHtml(app.id, head); const heads = { [into]: head };
+    for (const n of names) {
+      const fh = localHead(app.id, n); need(fh, 404, "Dal bulunamadı: " + n); heads[n] = fh;
+      if (ancestors(app.id, head).has(fh)) continue;
+      const lca = mergeBase(app.id, fh, head);
+      const r = merge3(lca ? commitHtml(app.id, lca) : "", html, commitHtml(app.id, fh));
+      if (r.conflicts.length) return { ok: false, conflict: n, conflicts: r.conflicts.slice(0, 5), heads };
+      html = r.html;
+    }
+    return { ok: true, html, heads };
+  });
   route("POST", root + "/merge", async ctx => {
     const app = project(ctx), { body } = ctx;
     need(source(ctx) === "gitmapp", 400, "GitHub dalları çekme isteğiyle birleştirilir.");
@@ -290,8 +324,10 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
       const fh = localHead(app.id, from), ih = localHead(app.id, into);
       need(fh && ih, 404, "Dal bulunamadı.");
       need(!body.head || body.head === fh, 409, changed);
+      // v5.86 — inceleme sonrası hedef dal ilerlediyse eski önizleme/test geçersizdir
+      need(!body.intoHead || body.intoHead === ih, 409, "“" + into + "” dalı sen incelerken ilerledi. Birleşimi yeniden önizle ve kontrol et.");
       need(!ancestors(app.id, ih).has(fh), 409, "Bu dal zaten birleştirilmiş.");
-      const { html } = sql("SELECT html FROM project_commits WHERE app_id=? AND sha=?").get(app.id, fh);
+      const html = mergedHtml(app.id, fh, ih);
       const next = insertCommit(app.id, ih, "Birleştir: " + from + " → " + into, html);
       sql("UPDATE project_branches SET head=? WHERE app_id=? AND name=?").run(next, app.id, into);
       // Birleştirilen dalın başı da birleştirme commit'ini gösterir: dal "birleştirildi" olarak görünür, üzerinde devam edilebilir
@@ -300,6 +336,129 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
       return { head: next, into, from };
     });
   });
+  // ---------- v5.86 — Sunucu tarafı iş kaydı: sekme kapalı olsa da üretilen sonuç doğru dala yazılır ----------
+  db.exec(`CREATE TABLE IF NOT EXISTS job_commits(job_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, app_id TEXT NOT NULL, source TEXT NOT NULL, repo TEXT,
+    branch TEXT NOT NULL, base_head TEXT NOT NULL, message TEXT NOT NULL, html TEXT, status TEXT NOT NULL, sha TEXT, review_branch TEXT, error TEXT,
+    tries INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL, updated INTEGER NOT NULL)`);
+  const JC_COLS = "job_id,app_id,source,repo,branch,base_head,message,status,sha,review_branch,error,tries,created,updated";
+  const jobRow = id => sql("SELECT " + JC_COLS + " FROM job_commits WHERE job_id=?").get(id) || null;
+  const jcSet = (id, f) => { const k = Object.keys(f); sql("UPDATE job_commits SET " + k.map(x => x + "=?").join(",") + ",updated=? WHERE job_id=?").run(...k.map(x => f[x]), Date.now(), id); };
+  const MARK = id => "Gitmapp-Job: " + id;
+  const reviewName = (row) => row.branch.slice(0, 80) + "-inceleme-" + row.job_id.slice(0, 6);
+  // Sunucu tarafı kontrol: yarıda kesilmiş ya da bozuk sonuç dala yazılmaz
+  const shapeOk = h => typeof h === "string" && h.trim().length >= 200 && /<\/(html|body)>\s*$/i.test(h.trim()) && (h.match(/<script\b/gi) || []).length === (h.match(/<\/script>/gi) || []).length && (h.match(/<style\b/gi) || []).length === (h.match(/<\/style>/gi) || []).length;
+
+  function jobSpec(user, spec) {
+    if (!spec || typeof spec !== "object" || !user) return null;
+    const app = ownApp(user, String(spec.appId || ""));
+    need(app.owner_id === user.id, 403, "Sürüm kontrolü proje sahibine aittir.");
+    const src = spec.source === "github" ? "github" : "gitmapp";
+    const branch = checkBranch(spec.branch, need);
+    need(typeof spec.head === "string" && /^[0-9a-f]{7,64}$/i.test(spec.head), 400, "Başlangıç sürümü geçersiz.");
+    if (src === "github") { const remote = binding(app, { user }); need(remote && remote.repo === spec.repo, 409, "Bağlı depo değişti. Sürüm panelini yenileyin."); }
+    const message = String(spec.message || "Stüdyo değişikliği").replace(/\s+/g, " ").trim().slice(0, 120) || "Stüdyo değişikliği";
+    return { app_id: app.id, source: src, repo: src === "github" ? spec.repo : null, branch, base_head: spec.head, message };
+  }
+  function localSave(row, html) {
+    return transaction(() => {
+      const cur = jobRow(row.job_id); if (["saved", "review", "nochange"].includes(cur?.status)) return cur;
+      const head = localHead(row.app_id, row.branch);
+      if (!head) { jcSet(row.job_id, { status: "failed", error: "Dal bulunamadı.", html: null }); return jobRow(row.job_id); }
+      if (commitHtml(row.app_id, row.base_head) === html) { jcSet(row.job_id, { status: "nochange", sha: head, html: null, error: null }); return jobRow(row.job_id); }
+      const sha = insertCommit(row.app_id, row.base_head, row.message, html);
+      if (head === row.base_head) {
+        sql("UPDATE project_branches SET head=? WHERE app_id=? AND name=?").run(sha, row.app_id, row.branch);
+        jcSet(row.job_id, { status: "saved", sha, html: null, error: null });
+      } else {
+        // Dal bu iş sürerken ilerledi: diğer değişiklikleri ezme, sonucu ayrı inceleme dalında sakla
+        const name = reviewName(row);
+        sql("INSERT OR REPLACE INTO project_branches VALUES(?,?,?)").run(row.app_id, name, sha);
+        jcSet(row.job_id, { status: "review", sha, review_branch: name, html: null, error: "“" + row.branch + "” dalı bu iş sürerken ilerledi." });
+      }
+      return jobRow(row.job_id);
+    });
+  }
+  async function remoteSave(row, html, user, app) {
+    const remote = binding(app, { user }); need(remote && remote.repo === row.repo, 409, "Bağlı depo değişti.");
+    const base = "/repos/" + remote.repo, mark = MARK(row.job_id);
+    const head = await remoteHead(user, base, row.branch);
+    // Önceki deneme (ör. zaman aşımı) aslında uygulanmış mı? Dalın son commit'lerinde iş işaretini ara
+    if (head !== row.base_head) {
+      const recent = await ghApi(user.github_token, "GET", base + "/commits?per_page=15&sha=" + encode(row.branch));
+      const hit = recent.ok && Array.isArray(recent.data) ? recent.data.find(c => String(c.commit?.message || "").includes(mark)) : null;
+      const top = hit ? null : await github(user, "GET", base + "/git/commits/" + head);
+      if (hit || String(top?.message || "").includes(mark)) return { status: "saved", sha: hit ? hit.sha : head };
+    }
+    confirmRemoteCommit?.(app, html);
+    const parent = await github(user, "GET", base + "/git/commits/" + row.base_head);
+    const tree = await github(user, "POST", base + "/git/trees", { base_tree: parent.tree.sha, tree: [{ path: "index.html", mode: "100644", type: "blob", content: html }] });
+    if (tree.sha === parent.tree.sha) return { status: "nochange", sha: row.base_head };
+    const commit = await github(user, "POST", base + "/git/commits", { message: row.message + "\n\n" + mark, tree: tree.sha, parents: [row.base_head] });
+    if (head === row.base_head) {
+      try { await github(user, "PATCH", base + "/git/refs/heads/" + row.branch.split("/").map(encode).join("/"), { sha: commit.sha, force: false }); return { status: "saved", sha: commit.sha }; }
+      catch (e) { if ((e.code ?? e.status) !== 409) throw e; }
+    }
+    const name = reviewName(row);
+    const made = await ghApi(user.github_token, "POST", base + "/git/refs", { ref: "refs/heads/" + name, sha: commit.sha });
+    if (!made.ok && made.status !== 422) need(false, 502, "İnceleme dalı oluşturulamadı.");
+    return { status: "review", sha: commit.sha, review_branch: name, error: "“" + row.branch + "” dalı bu iş sürerken ilerledi." };
+  }
+  const saving = new Map();
+  function saveJob(id) {
+    if (saving.has(id)) return saving.get(id);
+    const p = (async () => {
+      const full = sql("SELECT * FROM job_commits WHERE job_id=?").get(id);
+      if (!full || !full.html || !["saving", "failed"].includes(full.status)) return jobRow(id);
+      jcSet(id, { status: "saving", tries: full.tries + 1 });
+      if (!shapeOk(full.html)) { jcSet(id, { status: "rejected", error: "Sonuç yarıda kesilmiş ya da bozuk geldi; dala yazılmadı." }); return jobRow(id); }
+      try {
+        if (full.source === "gitmapp") return localSave(full, full.html);
+        const user = userById?.(full.user_id); const app = user && sql("SELECT * FROM apps WHERE id=?").get(full.app_id);
+        need(user && app, 404, "Proje bulunamadı.");
+        const r = await remoteSave(full, full.html, user, app);
+        jcSet(id, { status: r.status, sha: r.sha || null, review_branch: r.review_branch || null, error: r.error || null, html: null });
+      } catch (e) {
+        const known = typeof (e.code ?? e.status) === "number";
+        jcSet(id, { status: "failed", error: known ? e.message : "GitHub yanıt vermedi. Yeniden denemede önce ilk isteğin uygulanıp uygulanmadığı kontrol edilir." });
+      }
+      return jobRow(id);
+    })().finally(() => saving.delete(id));
+    saving.set(id, p); return p;
+  }
+  // aiJob kancaları: iş başlarken kayıt satırı açılır, bitince sonuç dala yazılır
+  function jobHooks(user, rawSpec) {
+    const spec = jobSpec(user, rawSpec); if (!spec) return null;
+    return {
+      start(j) { sql("INSERT OR IGNORE INTO job_commits(job_id,user_id,app_id,source,repo,branch,base_head,message,status,created,updated) VALUES(?,?,?,?,?,?,?,?,?,?,?)").run(j.id, user.id, spec.app_id, spec.source, spec.repo, spec.branch, spec.base_head, spec.message, "running", Date.now(), Date.now()); },
+      async done(j, result) {
+        const cur = jobRow(j.id); if (!cur) return null;
+        if (!["running", "dropped"].includes(cur.status)) return cur.status === "failed" ? saveJob(j.id) : cur; // aynı iş ikinci kez işlenirse tek kayıt
+        if (!result?.html) { jcSet(j.id, { status: "nochange", error: null }); return jobRow(j.id); }
+        jcSet(j.id, { status: "saving", html: result.html });
+        return saveJob(j.id);
+      },
+      fail(j) { const r = jobRow(j.id); if (r && r.status === "running") jcSet(j.id, { status: "dropped", error: "İş tamamlanamadı; dala bir şey yazılmadı." }); }
+    };
+  }
+  // Sunucu yeniden başladıysa: sonucu üretilmiş ama kaydı bitmemiş işler sürdürülür; yarıda kalan üretimler düşürülür
+  sql("UPDATE job_commits SET status='dropped', error='Sunucu yeniden başladı; iş tamamlanamadı.', updated=? WHERE status='running'").run(Date.now());
+  setTimeout(() => { for (const r of sql("SELECT job_id FROM job_commits WHERE status='saving'").all()) saveJob(r.job_id).catch(() => {}); }, 1500).unref?.();
+
+  route("GET", root + "/jobs", ctx => {
+    const app = project(ctx); const br = ctx.url.searchParams.get("branch");
+    const rows = br ? sql("SELECT " + JC_COLS + " FROM job_commits WHERE app_id=? AND branch=? ORDER BY created DESC LIMIT 50").all(app.id, br)
+      : sql("SELECT " + JC_COLS + " FROM job_commits WHERE app_id=? ORDER BY created DESC LIMIT 100").all(app.id);
+    return { jobs: rows };
+  });
+  route("GET", root + "/jobs/:job", ctx => {
+    const app = project(ctx); const r = jobRow(String(ctx.params.job)); need(r && r.app_id === app.id, 404, "Kayıt bulunamadı."); return r;
+  });
+  route("POST", root + "/jobs/:job/retry", async ctx => {
+    const app = project(ctx); const r = jobRow(String(ctx.params.job)); need(r && r.app_id === app.id, 404, "Kayıt bulunamadı.");
+    need(r.status === "failed", 409, r.status === "saving" ? "Kayıt sürüyor." : "Bu iş zaten sonuçlandı.");
+    return saveJob(r.job_id);
+  });
+
   route("POST", root + "/pulls", async ctx => {
     const app = project(ctx), { body } = ctx;
     const head = checkBranch(body.head, need), baseRef = checkBranch(body.base || "main", need);
@@ -317,4 +476,5 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     const r = await github(ctx.user, "PUT", path + "/pulls/" + n + "/merge", { merge_method: "merge" });
     return { merged: !!r.merged, sha: r.sha || null };
   });
+  return { jobHooks, saveJob, jobRow };
 }

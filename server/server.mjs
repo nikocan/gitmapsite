@@ -413,7 +413,8 @@ async function continueHtml(rt, messages, out, onDelta, signal, onPhase, gone = 
 // v5.20 — Bulut işleri: üretim tarayıcı bağlantısından bağımsız sürer; sayfa değişse ya da yenilense de biter, sonuç saklanır
 db.exec(`CREATE TABLE IF NOT EXISTS ai_jobs(id TEXT PRIMARY KEY,user_id TEXT,kind TEXT,status TEXT,result TEXT,error TEXT,created INTEGER,finished INTEGER)`);
 const JOBS = new Map();
-function jobPublic(j) { return { id: j.id, kind: j.kind, status: j.status, secs: Math.round(((j.finished || Date.now()) - j.created) / 1000), len: j.text ? j.text.length : 0, error: j.error || null, label: j.label || "" }; }
+function jobPublic(j) { return { id: j.id, kind: j.kind, status: j.status, secs: Math.round(((j.finished || Date.now()) - j.created) / 1000), len: j.text ? j.text.length : 0, error: j.error || null, label: j.label || "", commit: (() => { const c = j.result?.commit || (VC_READY ? VC.jobRow(j.id) : null); return c ? { status: c.status, sha: c.sha || null, branch: c.branch || null, review_branch: c.review_branch || null, error: c.error || null } : null; })() }; }
+let VC_READY = false;
 function jobSubscribe(res, cors, j) {
   res.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no", Connection: "keep-alive", ...cors });
   const w = (o) => { if (!res.destroyed && !res.writableEnded) res.write("data: " + JSON.stringify(o) + "\n\n"); };
@@ -427,15 +428,18 @@ function jobSubscribe(res, cors, j) {
   res.once("close", off); j.ends.add(() => { off(); if (!res.writableEnded) res.end(); });
 }
 async function aiJob({ res, cors, user, body }, rt, messages, finish, kind, label) {
+  // v5.86 — iş bir proje dalına bağlıysa sonuç sunucuda o dala kaydedilir (sekme kapalı olsa da)
+  let hooks = null; try { hooks = body?.commit ? VC.jobHooks(user, body.commit) : null; } catch {}
   const ctl = new AbortController();
   // v5.80 — istemci iş kimliğini önceden verebilir: oturum bağlantı kurulmadan değişse de iş izlenebilir
   const asked = typeof body?.jobId === "string" && /^[A-Za-z0-9]{16,40}$/.test(body.jobId) && !JOBS.has(body.jobId) && !q("SELECT 1 FROM ai_jobs WHERE id=?").get(body.jobId) ? body.jobId : null;
   const j = { id: asked || rid(), uid: user.id, kind, model: rt.model, label: String(label || "").slice(0, 120), status: "running", text: "", phases: [], created: Date.now(), subs: new Set(), ends: new Set(), ctl };
   const emit = (o) => { for (const w of j.subs) w(o); };
   JOBS.set(j.id, j);
+  try { hooks?.start(j); } catch {}
   let start;
   try { start = await streamChatWith(rt, messages, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal); }
-  catch (e) { j.status = "error"; j.code = e.code || 500; j.error = e instanceof HttpErr ? e.message : "Yapay zekâ bağlantısı kurulamadı."; j.finished = Date.now(); setTimeout(() => JOBS.delete(j.id), 15 * 60e3).unref?.(); throw e; }
+  catch (e) { try { hooks?.fail(j); } catch {} j.status = "error"; j.code = e.code || 500; j.error = e instanceof HttpErr ? e.message : "Yapay zekâ bağlantısı kurulamadı."; j.finished = Date.now(); setTimeout(() => JOBS.delete(j.id), 15 * 60e3).unref?.(); throw e; }
   j.phases.push("connected");
   q("INSERT INTO ai_jobs(id,user_id,kind,status,created) VALUES(?,?,?,?,?)").run(j.id, user.id, kind, "running", j.created);
   (async () => {
@@ -443,11 +447,14 @@ async function aiJob({ res, cors, user, body }, rt, messages, finish, kind, labe
       const out = await start();
       await continueHtml(rt, messages, out, (d) => { j.text += d; emit({ t: "delta", d }); }, ctl.signal, () => { j.phases.push("continuing"); emit({ t: "phase", phase: "continuing" }); });
       j.phases.push("processing"); emit({ t: "phase", phase: "processing" });
-      j.result = await finish(out); j.status = "done"; emit({ t: "done", ...j.result });
+      j.result = await finish(out);
+      if (hooks) { j.phases.push("saving"); emit({ t: "phase", phase: "saving" }); try { j.result.commit = await hooks.done(j, j.result); } catch (e) { j.result.commit = { status: "failed", error: String(e.message || "Kaydedilemedi").slice(0, 200) }; } }
+      j.status = "done"; emit({ t: "done", ...j.result });
     } catch (e) {
       j.status = ctl.signal.aborted ? "canceled" : "error"; j.code = e.code || 500;
       j.error = ctl.signal.aborted ? "İşi durdurdun · kredi harcanmadı" : e instanceof HttpErr ? e.message : e.name === "TimeoutError" ? "Yapay zekâ yanıtı gecikti, tekrar deneyin." : "Akış yarıda kesildi, tekrar deneyin.";
       if (!(e instanceof HttpErr) && !ctl.signal.aborted) console.error(new Date().toISOString(), "job", e);
+      try { hooks?.fail(j); } catch {}
       emit({ t: "error", error: j.error, status: j.code });
     } finally {
       j.finished = Date.now();
@@ -900,7 +907,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,apiUsd,totalUsd:apiUsd+(fx?integTry/fx:0),fx,fxManual:!!q("SELECT 1 FROM server_settings WHERE k='usd_try_manual'").get(),settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.85.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.86.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -2014,7 +2021,8 @@ route("POST", "/api/apps/:id/publish", ({ user, body, params }) => {
   return { app: appRow(q("SELECT * FROM apps WHERE id=?").get(a.id)) };
 });
 route("POST", "/api/apps/:id/unpublish", ({ user, params }) => { need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id); q("UPDATE apps SET status='draft', listed=0 WHERE id=?").run(a.id); return { ok: true }; });
-registerVersions({ db, route, ownApp, need, ghApi, slugify, confirmRemoteCommit: (app, html) => radarRelease.requireApproval({ ...app, html }) });
+const VC = registerVersions({ db, route, ownApp, need, ghApi, slugify, userById: (id) => q("SELECT * FROM users WHERE id=?").get(id), confirmRemoteCommit: (app, html) => radarRelease.requireApproval({ ...app, html }) });
+VC_READY = true;
 route("POST", "/api/apps/:id/github", async ({ user, params }) => {
   need(user, 401, "Giriş yapın"); const a = ownApp(user, params.id);
   radarRelease.requireApproval(a);
