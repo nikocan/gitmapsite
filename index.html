@@ -2766,8 +2766,13 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.70.0";
+const VERSION="5.71.0";
 const CHANGELOG=[
+ {v:"5.71.0",date:"2026-11-28",items:[
+  "💸 Yapay zekâ maliyeti düşürüldü: plan çıkarma, yapılacaklar listesi, Asistan ve Rehber artık hızlı (ucuz) modelle çalışıyor; uygulamayı yazan asıl üretim senin seçtiğin modelde kalıyor. Bu yardımcı adımlar senden de daha az kredi düşüyor",
+  "🧠 İstem önbelleği genişledi: Claude modellerinde mevcut sayfanın içeriği de önbelleğe alınıyor; yarım kalan yanıtın devamı ve art arda yapılan isteklerde aynı sayfanın tekrar okunması çok daha ucuz",
+  "🛠️ “Hataları otomatik düzelt” artık yalnızca kritik sorunlarda (JavaScript hatası, boş ekran) kendiliğinden tur atıyor. Kontrast ve taşma gibi küçük uyarılar öneri olarak kalıyor; istersen “Ajan düzeltsin” ile düzeltiyorsun. Boşuna kredi harcanmıyor",
+  "⚙️ Yönetim › Yapay zekâ sağlayıcıları: yeni “Yardımcı model” ayarı. Boş bırakılırsa listedeki hızlı model kullanılır; off yazılırsa eski davranışa (kullanıcının seçtiği model) döner"]},
  {v:"5.70.0",date:"2026-11-28",items:[
   "🧭 Yeni: Rehber. Sağ alttaki pusula düğmesi turları başlatır. Anlatımlı turda imleç menüye basıp sayfaları kendisi gezer, her ekranda ilgili düğmeyi ışıkla işaretler ve ne işe yaradığını yazıyla ve istersen sesli (tarayıcının Türkçe sesi) anlatır. Otomatik oynar; ileri/geri, duraklat, sesi kapat ve Esc ile çık",
   "🎬 Dört tur: Gitmapp'i tanı (11 adım, tüm ekranlar) · İlk uygulamanı yap (fikir → beceri → şablon → Stüdyo → önizleme → yayın) · Yayına al (GitHub, alan adı, hosting) · Şablon ve beceri eşleştirme. İlk girişte “Gitmapp'te yeni misin?” daveti çıkar",
@@ -4375,7 +4380,7 @@ function AdminAI({toast}){
    ${AI_PROVS.slice(1).filter(pv=>!(pv.id==="hostinger"&&/router\.hostinger\.com/.test(st.base)&&!f(pv.env).set)).map(pv=>{const x=f(pv.env);return html`<div class="ai-prov" key=${pv.id}><div class="ai-ph"><b>${pv.n}</b>${x.set?html`<span class="pill-ok">anahtar var · ••••${x.last4}</span>`:html`<span class="pill-no">anahtar yok</span>`}<a href=${pv.keyUrl} target="_blank" rel="noopener">Anahtar al</a>${(st.byok||[]).find(b=>b.provider===pv.id)&&!x.set?html`<button class="btn s" disabled=${busy==="imp:"+pv.id} onClick=${()=>importKey(pv.id)}>Hesabımdaki anahtarı kullan (••••${(st.byok||[]).find(b=>b.provider===pv.id).last4})</button>`:""}<span style=${{flex:1}}></span>${x.set&&html`<button class="btn g s" disabled=${busy.startsWith("t:")} onClick=${()=>test(pv.id)}>Test et</button>`}</div><small>${pv.d}</small>${field(pv.env,"API anahtarı","",{secret:true})}${result(pv.id)}</div>`})}
    ${field("AI_FALLBACKS","Deneme sırası","hostinger,openrouter,anthropic,openai,gemini,deepseek")}</div>
   <div class="box ai-card"><div class="ai-h"><div><h2>Asistan</h2><p>Asistan ücretsiz; maliyeti düşük, hızlı bir model önerilir. Görsel ekli mesajlarda görsel okuyan model kullanılır.</p></div></div>
-   ${field("COPILOT_MODEL","Asistan modeli","boş: listeden dengeli bir model")}${field("VISION_MODEL","Görsel okuyan model","boş: otomatik")}</div>
+   ${field("HELPER_MODEL","Yardımcı model (plan, yapılacaklar, asistan)","boş: listedeki hızlı model · off: kullanıcının modeli")}${field("COPILOT_MODEL","Asistan modeli","boş: yardımcı model")}${field("VISION_MODEL","Görsel okuyan model","boş: otomatik")}</div>
  </section>`;
 }
 function AdminCosts({toast}){
@@ -7006,7 +7011,9 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
  const autoTurn=()=>/^(Otomatik düzeltme|Tasarım ajanı)/.test(lastUserAsk());
  const qaProbs=()=>qa&&qa.source===st.html?[...qa.errors.map(t=>"JavaScript hatası: "+t),...qa.issues.map(i=>i.t)]:[];
  const fixPrompt=probs=>"TASARIM AJANI DENETİMİ — önizlemede şu sorunlar bulundu, hepsini düzelt:\n- "+probs.join("\n- ")+"\n\nKurallar: mevcut içerik, özellikler ve tasarım sistemi (renkler, yazı tipi, köşeler) aynen kalsın; JavaScript hatası varsa nedenini bulup düzelt; boş ekran varsa ilk açılışta ana ekranın örnek verilerle dolu görünmesini sağla; yatay taşmayı gider; metin kontrastı en az 4.5:1 olsun (rozet ve etiketlerde de); başka hiçbir şeyi değiştirme.";
- useEffect(()=>{const probs=qaProbs();const key=st.html.length+":"+st.msgs.length;if(!autoFix||busy||todo?.running||!st.html||!probs.length||autoTurn()||autoFixed.current===key)return;
+ // v5.71 maliyet: otomatik tur yalnızca kritik sorunda (JavaScript hatası ya da boş ekran) başlar; kontrast/taşma gibi uyarılar öneri olarak kalır
+ const qaCritical=()=>!!(qa&&qa.source===st.html&&(qa.errors.length||qa.issues.some(i=>i.k==="bos")));
+ useEffect(()=>{const probs=qaProbs();const key=st.html.length+":"+st.msgs.length;if(!autoFix||busy||todo?.running||!st.html||!probs.length||!qaCritical()||autoTurn()||autoFixed.current===key)return;
   const t=setTimeout(()=>{if(autoFixed.current===key)return;autoFixed.current=key;build(fixPrompt(probs),null,"Otomatik düzeltme: tasarım ajanı "+probs.length+" sorunu düzeltiyor")},1400);return()=>clearTimeout(t)},[qa,autoFix,busy,scope,st.html,todo?.running]);
  // ---------- Radar: projeyi sürekli tarar, bulguları önem sırasıyla gösterir ve tek tıkla doğru yere yönlendirir ----------
  /* ---------- v5.44 Pilot: sağ üstte yüzen mini GitHub (dallar, durum, ısı, öncelik) ---------- */

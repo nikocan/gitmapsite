@@ -96,7 +96,8 @@ Platform çağrıları varsayılan olarak `AI_BASE` / `AI_KEY` (Hostinger AI Rou
 | `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY` | Doğrudan sağlayıcı anahtarları |
 | `AI_FALLBACKS` | Deneme sırası (varsayılan `hostinger,openrouter,anthropic,openai,gemini,deepseek`; ana sağlayıcı kendi yedeği olmaz) |
 | `HOSTINGER_AI_KEY` | Hostinger AI Router yedeği; tanımlı değilse sunucu dosyasındaki Hostinger `AI_KEY` kullanılır |
-| `PROMPT_CACHE` | `0` yapılırsa Claude istem önbelleği kapanır (varsayılan açık) |
+| `PROMPT_CACHE` | `0` yapılırsa Claude istem önbelleği kapanır (varsayılan açık). Sistem istemi ve 12.000 karakterden büyük "Mevcut dosya" mesajı önbelleğe alınır |
+| `HELPER_MODEL` | Plan, yapılacaklar, Asistan ve Rehber gibi yardımcı çağrıların modeli. Boşsa platform listesindeki ilk hızlı model (ör. `gpt-5.4-mini`); `off` yazılırsa kullanıcının seçtiği model kullanılır. Asıl sayfa üretimi her zaman seçilen modelle yapılır |
 | `COPILOT_MODEL`, `VISION_MODEL` | Asistan ve görsel okuma için sabit model |
 
 `/api/health` yanıtındaki `aiFallbacks` alanı etkin yedekleri listeler. Yedek testleri: `node --test server/failover.test.mjs`.

@@ -228,11 +228,12 @@ const KEY_ENC = crypto.createHash("sha256").update(CFG.secret + ":byok").digest(
 const encKey = (plain) => { const iv = crypto.randomBytes(12); const c = crypto.createCipheriv("aes-256-gcm", KEY_ENC, iv); const e = Buffer.concat([c.update(plain, "utf8"), c.final()]); return [iv, c.getAuthTag(), e].map((b) => b.toString("base64")).join("."); };
 const decKey = (s) => { const [iv, tag, e] = s.split(".").map((x) => Buffer.from(x, "base64")); const d = crypto.createDecipheriv("aes-256-gcm", KEY_ENC, iv); d.setAuthTag(tag); return Buffer.concat([d.update(e), d.final()]).toString("utf8"); };
 // İsteği hangi sağlayıcı/modelle yapacağımızı çöz, ücreti belirle
-async function resolveRoute(user, body, req, kind) {
+async function resolveRoute(user, body, req, kind, opts = {}) {
   const provider = PROVIDERS[body.provider] ? body.provider : "gitmapp";
   if (provider === "gitmapp") {
     need(CFG.aiKey, 503, "Yapay zekâ henüz yapılandırılmadı (AI_KEY eksik)");
     const ids = await listModels("gitmapp", CFG.aiKey);
+    if (opts.helper) { const h = await helperModel(); if (h && ids.includes(h)) body = { ...body, model: h }; }
     // Eski ya da kapanmış model adı (ör. tarayıcıda kalmış "claude-sonnet-4.5") işi durdurmaz: en yakın açık modele, yoksa varsayılana geçilir
     let model = body.model && ids.includes(body.model) ? body.model : null, swapped = null;
     if (body.model && !model) { model = await mapModel("gitmapp", CFG.aiKey, body.model).catch(() => null) || await defaultModel(); swapped = { from: String(body.model).slice(0, 80), to: model }; }
@@ -272,7 +273,9 @@ const providerHeaders = (p, key) => ({ Authorization: "Bearer " + key, "Content-
 function withPromptCache(p, base, body) {
   const viaOr = p === "openrouter" || /openrouter\.ai/.test(base || ""); const claude = /claude|anthropic/i.test(body.model || "");
   if (!(claude && (viaOr || p === "anthropic")) || E.PROMPT_CACHE === "0") return body;
-  const msgs = body.messages.map((m, i) => i === 0 && m.role === "system" && typeof m.content === "string" && m.content.length > 3000 ? { ...m, content: [{ type: "text", text: m.content, cache_control: { type: "ephemeral" } }] } : m);
+  // Sistem istemi ve büyük "Mevcut dosya" mesajı önbelleğe alınır: devam turları, inceleme ve art arda isteklerde tekrar okunan kısım ~%90 ucuzlar
+  let big = -1; body.messages.forEach((m, i) => { if (i > 0 && m.role === "user" && typeof m.content === "string" && m.content.length > 12000 && /^Mevcut dosya:/.test(m.content)) big = i; });
+  const msgs = body.messages.map((m, i) => (i === 0 && m.role === "system" && typeof m.content === "string" && m.content.length > 3000) || i === big ? { ...m, content: [{ type: "text", text: m.content, cache_control: { type: "ephemeral" } }] } : m);
   return { ...body, messages: msgs };
 }
 // Bakiye yetmediğinde OpenRouter "You requested up to X tokens, but can only afford N" der: N'nin biraz altıyla tekrar denenir
@@ -668,8 +671,17 @@ async function visionModel() {
   const vis = ids.filter((i) => /claude|sonnet|opus|haiku|gpt-4o|gpt-4\.1|gpt-5|gemini|pixtral|vision|-vl\b|vl-|llama-4|qwen.*vl|grok-.*vision/i.test(i));
   return vis.find((i) => tierOf(i) === "dengeli") || vis.find((i) => tierOf(i) !== "guclu") || vis[0] || await copilotModel();
 }
+// v5.71 — Maliyet: plan, yapılacaklar, asistan ve rehber gibi yardımcı çağrılar ucuz (hızlı) modelle çalışır.
+// HELPER_MODEL boşsa platform listesindeki ilk hızlı model; "off" yazılırsa kullanıcının seçtiği model kullanılır.
+async function helperModel() {
+  const want = String(E.HELPER_MODEL || "").trim(); if (/^(off|kapali|kapalı|0)$/i.test(want)) return null;
+  if (want) return primaryModel(want);
+  let ids = []; try { ids = await listModels("gitmapp", CFG.aiKey); } catch { return null; }
+  return ids.find((i) => tierOf(i) === "hizli") || null;
+}
 async function copilotModel() {
   if (E.COPILOT_MODEL) return primaryModel(E.COPILOT_MODEL);
+  const help = await helperModel(); if (help) return help;
   const ids = await listModels("gitmapp", CFG.aiKey); const def = await defaultModel();
   return ids.find((i) => tierOf(i) === "dengeli" && !/mini|nano|haiku|flash-lite/i.test(i)) || def;
 }
@@ -823,7 +835,7 @@ route("GET","/api/admin/costs",({url})=>{
   return {rows,credits,integrations,total,settings,rates:q("SELECT * FROM cost_rates ORDER BY model").all()};
 });
 
-route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.70.0" }));
+route("GET", "/api/health", () => ({ ok: true, tts: !!ttsKey(), aiFallbacks: fallbackChain(), adminLogin:adminLoginConfigured(), ai: !!CFG.aiKey, canva: !!(CFG.canva.id && CFG.canva.secret), github: !!(CFG.gh.id && CFG.gh.secret), google: !!(CFG.google.id && CFG.google.secret), domain: !!CFG.hostingerToken, build: "5.71.0" }));
 
 // Kimlik
 route("POST", "/api/auth/register", ({ body }) => {
@@ -999,7 +1011,7 @@ route("POST", "/api/ai/design", async ({ body, user, req }) => {
 });
 route("POST", "/api/ai/plan", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind);
-  const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
+  const rt = await resolveRoute(user, body, req, "plan", { helper: !imageParts(body).parts.length }); const img = imageParts(body);
   const signal = responseSignal(res);
   const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + businessSkillInstructions(body.businessSkillIds) + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen deneyimli bir ürün tasarımcısı ve yazılım mimarısın. Kullanıcının fikri için tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} yapılacak. Türkçe, kısa ve net bir YAPIM PLANI yaz (en fazla 18 madde): 1) Amaç ve hedef kullanıcı (1 cümle) 2) Ekranlar/bölümler 3) Özellikler 4) Veriler (localStorage'da ne tutulacak) 5) Tasarım (renk, yazı, his). Kod yazma, sadece planı madde işaretleriyle yaz. Kullanıcının istemediği WhatsApp düğmesi, iletişim formu, sosyal medya bağlantısı gibi öğeleri plana koyma${kind === "game" ? "; bu bir oyun, plan yalnızca oynanışı, kontrolleri, seviyeleri ve görselliği kapsasın" : ""}.` + (designRule(body.design, kind) ? "\nTasarım bölümünde şu tasarım dilini kullan:" + designRule(body.design, kind) : "") }, { role: "user", content: withImages(projectBrief(body) + prompt, img) }], 1500, signal);
   if (signal.aborted || res.destroyed) return null;
@@ -1019,7 +1031,7 @@ route("POST", "/api/ai/review", async (ctx) => {
 // Ajan modu: işi Claude Code gibi yapılacaklar listesine böler
 route("POST", "/api/ai/todos", async ({ body, user, req, res }) => {
   const prompt = str(body.prompt, 4000, "İstek", true); const kind = kindOf(body.kind); const cur = !!body.has_html;
-  const rt = await resolveRoute(user, body, req, "plan"); const img = imageParts(body);
+  const rt = await resolveRoute(user, body, req, "plan", { helper: !imageParts(body).parts.length }); const img = imageParts(body);
   const signal = responseSignal(res);
   const { text, usage } = await chatWith(rt, [{ role: "system", content: userRule(user, true, kind).trim() + businessSkillInstructions(body.businessSkillIds) + "\n\n" + (img.parts.length ? "Kullanıcı görsel ekledi:" + img.text + "\n" : "") + `Sen bir yazılım ajanısın. Kullanıcının isteğini tek dosyalık bir HTML ${kind === "game" ? "oyunu" : kind === "site" ? "web sitesi" : "uygulaması"} için ${cur ? "mevcut dosya üzerinde yapılacak" : "sıfırdan yapılacak"} 2-5 adımlık bir YAPILACAKLAR LİSTESİNE böl. İlk adım ${cur ? "en önemli değişiklik" : "ana ekranları, veri modelini ve temel özellikleri eksiksiz kuran, tek başına kullanılabilir kapsamlı bir ilk sürüm (boş iskelet DEĞİL)"} olsun; sonraki her adım öncekine tek bir anlamlı özellik eklesin. Kullanıcının istemediği WhatsApp, iletişim formu, sosyal medya gibi adımlar ekleme${kind === "game" ? "; bu bir oyun, adımlar yalnızca oynanışla ilgili olsun" : ""}. SADECE JSON döndür: [{"baslik":"kısa Türkçe başlık (en fazla 8 kelime)","detay":"modelin uygulayacağı net talimat (1-2 cümle)"}]` }, { role: "user", content: withImages(projectBrief(body) + prompt, img) }], 1200, signal);
   if (signal.aborted || res.destroyed) return null;
@@ -2111,7 +2123,7 @@ function setAi(name, value) { return setAi0(name, value); }
 // ---------- Yönetim › Yapay zekâ sağlayıcıları: anahtarları SSH'sız, yeniden başlatmadan yönet ----------
 // Panelden girilen değer veritabanında şifreli saklanır ve sunucu dosyasındaki (ortam) değerin önüne geçer.
 db.exec("CREATE TABLE IF NOT EXISTS ai_secrets(name TEXT PRIMARY KEY, enc TEXT NOT NULL, last4 TEXT, updated TEXT DEFAULT (datetime('now')))");
-const AI_FIELDS = { AI_BASE: 0, AI_KEY: 1, AI_MODEL: 0, AI_MODELS: 0, COPILOT_MODEL: 0, VISION_MODEL: 0, AI_FALLBACKS: 0, HOSTINGER_AI_KEY: 1, HOSTINGER_AI_MODELS: 0, OPENROUTER_API_KEY: 1, ANTHROPIC_API_KEY: 1, OPENAI_API_KEY: 1, GEMINI_API_KEY: 1, DEEPSEEK_API_KEY: 1 }; // 1 = gizli
+const AI_FIELDS = { AI_BASE: 0, AI_KEY: 1, AI_MODEL: 0, AI_MODELS: 0, COPILOT_MODEL: 0, HELPER_MODEL: 0, VISION_MODEL: 0, AI_FALLBACKS: 0, HOSTINGER_AI_KEY: 1, HOSTINGER_AI_MODELS: 0, OPENROUTER_API_KEY: 1, ANTHROPIC_API_KEY: 1, OPENAI_API_KEY: 1, GEMINI_API_KEY: 1, DEEPSEEK_API_KEY: 1 }; // 1 = gizli
 let AI_NOTE = "";
 const AI_ENV0 = Object.fromEntries(Object.keys(AI_FIELDS).map((k) => [k, E[k] || ""]));
 function applyAiOverrides() {
@@ -2156,7 +2168,7 @@ route("PUT", "/api/admin/ai", ({ body, user }) => {
   if (AI_FIELDS[name]) need(value.length >= 16 && !/\s|["']/.test(value), 400, "Anahtar biçimi geçersiz: boşluk ya da tırnak olmamalı");
   if (name === "AI_BASE") need(/^https:\/\/[^\s"'<>]+$/.test(value), 400, "Adres https:// ile başlamalı");
   if (name === "AI_FALLBACKS") need(value.split(",").every((p) => FALLBACK_ENV[p.trim()]), 400, "Sıra yalnızca şu adları içerebilir: " + Object.keys(FALLBACK_ENV).join(", "));
-  if (["AI_MODEL", "AI_MODELS", "COPILOT_MODEL", "VISION_MODEL", "HOSTINGER_AI_MODELS"].includes(name)) need(/^[\w.\/:@,\- ]+$/.test(value), 400, "Model adlarında yalnızca harf, rakam ve . / - : , kullanılabilir");
+  if (["AI_MODEL", "AI_MODELS", "COPILOT_MODEL", "HELPER_MODEL", "VISION_MODEL", "HOSTINGER_AI_MODELS"].includes(name)) need(/^[\w.\/:@,\- ]+$/.test(value), 400, "Model adlarında yalnızca harf, rakam ve . / - : , kullanılabilir");
   q("INSERT INTO ai_secrets(name,enc,last4) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET enc=excluded.enc,last4=excluded.last4,updated=datetime('now')").run(name, encKey(value), AI_FIELDS[name] ? value.slice(-4) : null);
   applyAiOverrides(); return { ...aiAdminState(), byok: adminByok(user) };
 });
