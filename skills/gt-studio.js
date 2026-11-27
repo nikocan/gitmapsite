@@ -18,7 +18,7 @@ function gtTestHtml(source){
   document.body.append(frame);
  });
 }
-function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT}){
+function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT,openEngineering}){
  const [open,setOpen]=useState(false),[enabled,setEnabled]=useState(false);
  const [ctx,setCtx]=useState(null),[rev,setRev]=useState(0),[question,setQuestion]=useState(""),[reply,setReply]=useState("");
  const [status,setStatus]=useState(""),[job,setJob]=useState(false),[tests,setTests]=useState([]),[voice,setVoice]=useState(false);
@@ -88,7 +88,7 @@ function GitmappGT({request,onAlerts,appId,aiBody,source,errors,busy,buildGT}){
   const generated=await buildGT(brief.slice(0,3950));if(valid())await test(generated,valid)
  })}
  function close(){speech.current?.abort();if(window.speechSynthesis)window.speechSynthesis.cancel();setOpen(false)}
- return open&&ReactDOM.createPortal(html`<dialog class="gt-dialog" ref=${dialog} onCancel=${close}><div class="gt-head"><h2>GitmappGT</h2><button type="button" onClick=${close}>Kapat</button></div>
+ return open&&ReactDOM.createPortal(html`<dialog class="gt-dialog" ref=${dialog} onCancel=${close}><div class="gt-head"><h2>GitmappGT</h2><button type="button" onClick=${()=>{close();openEngineering()}}>Oracle ve SAP atölyesi</button><button type="button" onClick=${close}>Kapat</button></div>
  <p>${appId?"Proje bağlamı · sürüm "+rev:"Taslak bağlamı · bu oturum"} · ${ctx?ctx.platform+" · "+ctx.tables.length+" tablo":"Şema bekleniyor"}</p>
  <details open=${!ctx}><summary>Sistem bağlamı</summary><p>Tablo ve sütun adları, ilişkiler ve toplu olay sayaçları içeren JSON yükleyin. Örnek dosya sigorta senaryosunu gösterir.</p><button onClick=${sample}>Örnek JSON indir</button> <label>Şema ve sinyalleri yükle<input type="file" accept=".json" onChange=${e=>{load(e.target.files[0]);e.target.value=""}}/></label>
  ${ctx&&html`<p>${ctx.modules.join(" · ")}</p><ul>${ctx.tables.map(t=>html`<li key=${t.name}>${t.name} · ${t.columns.join(", ")}</li>`)}</ul>`}</details>

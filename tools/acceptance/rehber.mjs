@@ -39,14 +39,15 @@ try {
   ok(await page.locator(".nr-spot").isVisible(), "şablon kartı ışıkla işaretlendi"); await page.screenshot({ path: join(SHOTS, "3-tur-sablonlar.png") });
   await page.keyboard.press("Escape"); await page.waitForTimeout(300); ok(!(await page.locator(".nr-bub").count()), "Esc ile tur kapandı");
   // Şablon kartında önerilen beceri
-  const hint = page.locator(".tpc", { hasText: "Lezzet" }).first(); const anyHint = page.locator(".tsh").first(); await anyHint.waitFor({ timeout: 8000 });
+  const hint = page.locator(".tpc", { hasText: "Lezzet" }).first(); await hint.click(); const anyHint = page.locator(".tsh").first(); await anyHint.waitFor({ timeout: 8000 });
   const hintText = await anyHint.innerText(); ok(/Önerilen beceri/.test(hintText), "şablon kartında önerilen beceri: " + hintText.replace(/\n/g, " "));
   await anyHint.locator(".tsh-b").first().click(); await page.waitForTimeout(200); ok((await page.evaluate(() => JSON.parse(localStorage.getItem("gms_skills") || "[]"))).length === 1, "önerilen beceri tek tıkla yüklendi");
   await anyHint.scrollIntoViewIfNeeded(); await page.screenshot({ path: join(SHOTS, "4-sablon-beceri.png") });
   // Beceri kartında uygun şablon ve yol haritası
   await page.goto(webBase + "/#beceriler?sektor=yeme-icme"); await page.reload(); await page.locator(".skl-card").first().waitFor({ timeout: 15000 });
-  const card = page.locator(".skl-card", { hasText: "POS · adisyon" }); ok(/Uygun şablon/.test(await card.innerText()), "beceri kartında uygun şablon");
+  await page.locator(".skl-card", { hasText: "POS · adisyon" }).click(); const card = page.locator(".skill-detail"); ok(/Uygun şablon/.test(await card.innerText()), "beceri kartında uygun şablon");
   await card.getByRole("button", { name: "Nasıl kullanılır" }).click(); ok((await card.locator(".howto li").count()) === 6, "yol haritası 6 adım"); await card.scrollIntoViewIfNeeded(); await page.screenshot({ path: join(SHOTS, "5-yol-haritasi.png") });
+  await card.getByRole("button", {name:"Kapat"}).click();
   // Anlatıcı modu
   await page.locator(".nr-fab").click(); await page.locator(".nr-menu").waitFor(); await page.screenshot({ path: join(SHOTS, "6-rehber-menu.png") });
   await page.locator(".nr-sw", { hasText: "Anlatıcı modu" }).locator("input").check(); await page.locator(".nr-fab").click();

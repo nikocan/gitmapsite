@@ -125,7 +125,8 @@ with sync_playwright() as p:
             g.goto(BASE_URL + "/#sablonlar", wait_until="domcontentloaded")
             assert g.locator(".tp-grid iframe").count() == 0
             card = g.locator(".tp-grid .tpc").filter(has_text=name)
-            card.get_by_text("Telefon" if w == 390 else "Masaüstü", exact=True).click()
+            card.click()
+            g.get_by_role("button", name="Telefon önizlemesi" if w == 390 else "Masaüstü önizlemesi").click()
             demo = g.locator(".tpl-dialog")
             expect(demo.frame_locator("iframe").locator("h1")).to_be_visible()
             complete_task(demo.frame_locator("iframe"), id)
