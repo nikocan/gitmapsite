@@ -1,0 +1,222 @@
+<!doctype html>
+<html data-gm-template-theme="card-grid-botanical" data-gm-template-style="card-grid" lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teklif Masası · Kart düzeni · Botanik</title><meta name="description" content="Müşteri fırsatını kaydedin, teklif ve kazanıldı aşamalarına ilerletin.">
+<!-- Gitmapp hazır şablonu · Copyright (c) 2026 Gitmapp · MIT
+2025 tasarım referansı: https://github.com/TanushreeSarkar/CRM-sales-dashboard
+MIT License
+
+Copyright (c) 2025 Tanushree Sarkar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<style>
+:root{--pr:#63412f;--bg:#f6f5f0;--tx:#20251f;--panel:white;font-family:system-ui,sans-serif;color:var(--tx);background:var(--bg)}
+*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1120px;margin:auto;padding:20px clamp(16px,4vw,48px)}
+header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #bdbeb6;font-weight:700}
+a{color:var(--pr);padding:10px 0}h1{font-size:clamp(38px,6vw,78px);line-height:1.02;letter-spacing:-.045em;margin:16px 0}h2{font-size:22px;margin:0 0 20px}
+.hero{padding:30px 0}.hero p{max-width:64ch;line-height:1.6}.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px}
+article,form,.history{background:var(--panel);padding:clamp(16px,3vw,32px);border:1px solid #c3c6bc;border-radius:14px;min-width:0}
+label{display:grid;gap:5px;font-weight:600;font-size:14px;margin:0 0 14px}
+input,select,textarea,button{font:inherit;min-height:44px;width:100%;min-width:0;border:1px solid #767a70;border-radius:6px;padding:9px;background:white;color:#20251f}
+textarea{resize:vertical}button{font-weight:650;background:var(--pr);color:white;border:0;cursor:pointer}
+:focus-visible{outline:3px solid #145ac5;outline-offset:3px}
+.history{margin-top:24px}.history ul{padding-left:22px}.history li{padding:8px 0;white-space:pre-line;overflow-wrap:anywhere}.history img{display:block;max-height:100px;max-width:100%;margin-top:6px}footer{font-size:13px}
+@media(max-width:680px){.grid{grid-template-columns:minmax(0,1fr)}header,main,footer{padding:15px}.hero{padding:16px 0}.grid{gap:16px}}
+.pipeline p{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ae988c;padding:12px 0}.pipeline b{font-size:28px}.history button{display:block;width:auto;margin:6px 0}
+/* Şablonun düzenlenebilir tema ve yerleşim kuralları */
+:root{--bg:#efedec;--tx:#182321;--line:color-mix(in srgb,var(--pr) 16%,white);font-family:"Inter",system-ui,sans-serif}
+header{max-width:none;padding-block:14px;padding-inline:max(20px,calc((100vw - 1120px)/2 + 32px));background:#fff;border-color:var(--line);gap:12px}
+header strong{display:flex;align-items:center;gap:10px;letter-spacing:-.025em}
+header strong::before{content:"";width:20px;height:20px;flex:none;border-radius:7px;background:var(--pr);box-shadow:inset 0 0 0 5px #fff5}
+header a{padding:8px 13px;background:#f3f5f4;border-radius:20px;text-decoration:none;text-align:center;font-size:13px}
+main{padding-top:24px}.hero{position:relative;overflow:hidden;isolation:isolate;display:flex;justify-content:center;flex-direction:column;padding:clamp(22px,4.4vw,62px);margin:0 0 24px;border-radius:26px;background:var(--pr);color:#fff}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-radial-gradient(ellipse at 100% 0%,transparent 0 26px,#fff2 27px 28px,transparent 29px 49px);mask-image:linear-gradient(90deg,transparent 45%,black)}
+.hero h1{font-size:clamp(34px,5.1vw,67px);margin:0;letter-spacing:-.06em;line-height:1.05;text-wrap:balance}
+.hero p{color:inherit;font-size:clamp(14px,1.4vw,17px);margin:12px 0 0;max-width:51ch;line-height:1.48}
+article,form,.history{border-color:var(--line);border-radius:20px;box-shadow:0 10px 32px -26px var(--pr)}
+article h2,form h2,.history h2{letter-spacing:-.035em}
+input,select,textarea{border-radius:10px;border-color:color-mix(in srgb,var(--pr) 39%,white)}
+button{border-radius:10px}button:hover{filter:brightness(.9)}
+article>ul{padding-left:20px}footer{color:var(--pr)}
+@media(max-width:680px){header{padding:11px 15px}header strong{font-size:15px}main{padding-top:14px}.hero{margin-bottom:16px;border-radius:20px}.hero h1{font-size:clamp(30px,9vw,44px)}.hero p{margin-top:9px}article,form,.history{border-radius:16px}}
+</style><style data-gm-tpl-theme>
+:root[data-gm-template-style]{
+ --pr:var(--gm-pr);--ac:var(--gm-ac);--bg:var(--gm-bg);--sf:var(--gm-sf);--sf2:color-mix(in srgb,var(--gm-bg) 65%,var(--gm-ln));
+ --tx:var(--gm-tx);--tx2:color-mix(in srgb,var(--gm-tx) 83%,var(--gm-bg));--tx3:var(--tx2);--ln:var(--gm-ln);
+ --panel:var(--sf);--paper:var(--bg);--ink:var(--tx);--line:var(--ln);
+ --r:var(--gm-radius,12px);--sh:var(--gm-shadow,0 8px 22px -19px var(--tx));
+ --gm-display:system-ui,sans-serif;--gm-weight:750;--gm-tracking:-.042em;--gm-space:clamp(22px,4.2vw,58px);
+ color:var(--tx);background:var(--bg)
+}
+:root[data-gm-template-style][data-theme="dark"]{
+ --bg:#101820;--sf:#1c2730;--sf2:#263441;--tx:#f1f5f7;--ln:#435460;
+ --pr:color-mix(in srgb,var(--gm-pr) 70%,#111);--ac:color-mix(in srgb,var(--gm-ac) 40%,#fff)
+}
+[data-gm-template-style] :is(h1,h2,.big){font-family:var(--gm-display);font-weight:var(--gm-weight);letter-spacing:var(--gm-tracking);overflow-wrap:anywhere}
+[data-gm-template-style] :is(.hero h1,.hero h2){text-wrap:balance}
+[data-gm-template-style] :is(.card,.surface,.history,main>div.grid>article,main>div.grid>form,.workflow>form,.work>form,.offer,.kc,.kcard,.lcard){
+ background:var(--sf);color:var(--tx);border:var(--gm-border,1px) solid var(--ln);border-radius:var(--r);box-shadow:var(--sh)
+}
+[data-gm-template-style] :is(.work,.workflow,main>.grid,.pg>.grid,.lgrid,.bento){gap:var(--gm-gap,18px)}
+[data-gm-template-style] :is(.tb,.sb,.nav-in,body>header){background:var(--sf);color:var(--tx);border-color:var(--ln)}
+[data-gm-template-style] body>header>a{background:var(--sf2);color:var(--tx)}
+[data-gm-template-style] body>header{gap:12px}
+[data-gm-template-style] :is(.lead,.offer small,small.muted,footer):not(.hero *){color:var(--tx2)}
+[data-gm-template-style] :is(input,textarea,select):not([type=checkbox],[type=radio],[type=range]){
+ background:var(--sf);color:var(--tx);border-color:var(--ln);accent-color:var(--pr)
+}
+[data-gm-template-style] :is(button[type=submit],.btn:not(.g,.d,.w)){background:var(--gm-pr);color:white;border-radius:var(--gm-button,8px)}
+[data-gm-template-style] :focus-visible{outline:3px solid var(--gm-focus,var(--gm-ac));outline-offset:3px}
+[data-gm-template-style] .hero:has(.hero-copy){border-radius:var(--r);overflow:hidden}
+[data-gm-template-style] .hero-copy{padding:var(--gm-space);background:var(--gm-pr);color:#fff}
+[data-gm-template-style] .hero-copy p{color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) {
+ color:white;background:var(--gm-pr);border-radius:var(--r);padding:var(--gm-space);isolation:isolate;
+ position:relative;overflow:hidden;margin-bottom:var(--gm-gap,18px)
+}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p,.lead,a){color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g))::after{opacity:var(--gm-art-opacity,.75)}
+[data-gm-template-style] .hero-g{gap:var(--gm-space)}
+[data-gm-template-style] .hero-g h1 em{background:none;color:var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .hero-g h1 em{color:var(--ac)}
+[data-gm-template-style] .offer[aria-pressed="true"]{background:var(--sf2);border-color:var(--gm-pr);box-shadow:inset 4px 0 var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .nv.on{color:var(--ac)}
+[data-gm-template-style][data-theme="dark"] .doc{--ln:#c4cfd5;color-scheme:light}
+[data-gm-template-style] .hero-art{background-position:var(--gm-photo,center);filter:var(--gm-filter,none)}
+
+[data-gm-template-style="editorial"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:2px;--gm-gap:24px;--gm-shadow:none;--gm-button:2px}
+[data-gm-template-style="editorial"] :is(.tb,.nav-in,body>header){border-block-end:2px solid var(--gm-pr)}
+[data-gm-template-style="editorial"] :is(h1.big,.hero h1){max-width:17ch}
+[data-gm-template-style="editorial"] .hero-art{--gm-photo:center 44%;--gm-filter:saturate(.78)}
+
+[data-gm-template-style="gallery"]{--gm-radius:18px;--gm-gap:24px;--gm-space:clamp(25px,5vw,76px);--gm-shadow:0 16px 32px -26px var(--tx)}
+[data-gm-template-style="gallery"] .hero:has(.hero-copy){display:flex;flex-direction:column;min-height:0}
+[data-gm-template-style="gallery"] .hero-art{order:-1;min-height:clamp(210px,36vw,450px);--gm-photo:center 59%}
+[data-gm-template-style="gallery"] .hero-copy{align-self:stretch}
+[data-gm-template-style="gallery"] :is(.hero-g .lim,.kpi){border-bottom:5px solid var(--gm-ac)}
+[data-gm-template-style="gallery"] .hero:not(:has(.hero-copy,.hero-g)){min-height:clamp(240px,31vw,390px);display:grid;align-content:center}
+
+[data-gm-template-style="card-grid"]{--gm-radius:20px;--gm-gap:12px;--gm-button:12px;--gm-shadow:0 9px 19px -17px var(--tx)}
+[data-gm-template-style="card-grid"] :is(.card,.offer,.surface,.history){border-block-start:4px solid var(--gm-ac)}
+[data-gm-template-style="card-grid"] :is(.tb,.nav-in,.hero-copy){border-radius:var(--r)}
+@media(min-width:761px){
+ [data-gm-template-style="card-grid"] .hero:has(.hero-copy){grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:12px;background:transparent}
+ [data-gm-template-style="card-grid"] .hero-art{border-radius:var(--r)}
+ [data-gm-template-style="card-grid"] .work{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+[data-gm-template-style="compact"]{--gm-radius:7px;--gm-gap:8px;--gm-space:clamp(16px,2.7vw,35px);--gm-tracking:-.03em;--gm-shadow:none}
+[data-gm-template-style="compact"] :is(.card,.offer,.surface,.history){padding:clamp(10px,1.6vw,18px)}
+[data-gm-template-style="compact"] .hero:has(.hero-copy){min-height:300px}
+[data-gm-template-style="compact"] .hero-art{min-height:clamp(150px,29vw,225px)}
+[data-gm-template-style="compact"] .hero:not(:has(.hero-copy,.hero-g)){min-height:0}
+[data-gm-template-style="compact"] :is(.hero h1,h1.big){font-size:clamp(29px,5vw,52px)}
+@media(min-width:980px){[data-gm-template-style="compact"] .sb{width:211px}}
+
+[data-gm-template-style="blueprint"]{--gm-radius:4px;--gm-shadow:none;--gm-button:4px;--gm-gap:16px}
+[data-gm-template-style="blueprint"] .hero-copy,[data-gm-template-style="blueprint"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:repeating-linear-gradient(0deg,transparent 0 23px,#fff2 24px 25px),repeating-linear-gradient(90deg,transparent 0 23px,#fff2 24px 25px)
+}
+[data-gm-template-style="blueprint"] :is(.card,.surface,.history,.offer){border-inline-start:4px solid var(--gm-ac)}
+[data-gm-template-style="blueprint"] .hero-art{--gm-filter:contrast(1.14) saturate(.7)}
+
+[data-gm-template-style="studio"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:26px;--gm-gap:22px;--gm-button:99px}
+[data-gm-template-style="studio"] .hero-art{--gm-photo:center 35%;--gm-filter:saturate(.89)}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)){text-align:center}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p){margin-inline:auto}
+[data-gm-template-style="studio"] :is(.tb,.nav-in,.kpi){border-block-start:3px solid var(--gm-ac)}
+@media(min-width:761px){
+ [data-gm-template-style="studio"] .hero:has(.hero-copy){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ [data-gm-template-style="studio"] .hero-art{grid-column:1;grid-row:1}
+ [data-gm-template-style="studio"] .hero-copy{grid-column:2;grid-row:1}
+}
+
+[data-gm-template-style="poster"]{--gm-display:"Arial Black",system-ui,sans-serif;--gm-weight:900;--gm-radius:0px;--gm-gap:20px;--gm-border:2px;--gm-button:0px;--gm-shadow:none}
+[data-gm-template-style="poster"] :is(.hero h1,h1.big){line-height:.96;font-size:clamp(37px,6.3vw,84px);max-width:15ch}
+[data-gm-template-style="poster"] :is(.hero-copy,.tb,body>header,.nav-in){border-inline-start:7px solid var(--gm-ac)}
+[data-gm-template-style="poster"] .hero-art{--gm-filter:contrast(1.13) saturate(1.12)}
+
+[data-gm-template-style="soft"]{--gm-display:system-ui,sans-serif;--gm-weight:650;--gm-radius:30px;--gm-gap:22px;--gm-button:99px;--gm-shadow:0 16px 40px -31px var(--tx)}
+[data-gm-template-style="soft"] .hero-copy,[data-gm-template-style="soft"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--gm-pr) 55%,var(--gm-ac)),transparent 67%)
+}
+[data-gm-template-style="soft"] :is(.nav-in,.kpi,.offer){border-radius:var(--r)}
+[data-gm-template-style="soft"] .hero-art{--gm-filter:saturate(.83) brightness(1.04)}
+
+[data-gm-template-style="mono"]{--gm-display:ui-monospace,monospace;--gm-weight:700;--gm-radius:3px;--gm-tracking:-.06em;--gm-gap:16px;--gm-shadow:none}
+[data-gm-template-style="mono"] :is(.eyb,.sector,.card h3,.offer small,footer){font-family:var(--gm-display)}
+[data-gm-template-style="mono"] :is(.kpi,.offer,.history){border-style:dashed}
+[data-gm-template-style="mono"] .hero-art{--gm-filter:grayscale(.82) contrast(1.08)}
+[data-gm-template-style="mono"] .hero:not(:has(.hero-copy,.hero-g))::after{filter:grayscale(.6)}
+
+[data-gm-template-style="contrast"]{--gm-radius:5px;--gm-gap:20px;--gm-border:2px;--gm-weight:850;--gm-shadow:4px 4px 0 var(--gm-ln);--gm-focus:#0d57ca}
+[data-gm-template-style="contrast"] :is(.tb,.nav-in,body>header,.sb){border-color:var(--tx);box-shadow:none}
+[data-gm-template-style="contrast"] :is(.card,.surface,.history,.offer){border-color:var(--tx)}
+[data-gm-template-style="contrast"] .hero-art{--gm-filter:contrast(1.16) saturate(.95)}
+[data-gm-template-style="contrast"] :is(.hero-copy,.hero:not(:has(.hero-copy,.hero-g))){background-color:var(--gm-pr);--gm-art-opacity:.57}
+@media(max-width:480px){
+ [data-gm-template-style]{--gm-gap:12px}
+ [data-gm-template-style] .hero-copy{padding:22px}
+ [data-gm-template-style] .hero-g{gap:18px}
+ [data-gm-template-style="poster"] :is(.hero h1,h1.big){font-size:clamp(31px,9.5vw,48px)}
+}
+@media print{
+ [data-gm-template-style]{--sh:none}
+ [data-gm-template-style] :is(.hero,.hero-copy){background:#fff!important;color:#111!important}
+ [data-gm-template-style] .hero :is(h1,h2,p){color:#111!important}
+}
+:root{--gm-pr:#285343;--gm-ac:#37705a;--gm-bg:#eaf2eb;--gm-sf:#f8fcf8;--gm-tx:#182e25;--gm-ln:#bdcfc3}</style></head>
+<body><header><strong>Teklif Masası</strong><a href="#task">Fırsat ekle</a></header><main>
+<div class="hero"><h1>Satış panosu</h1><p>Müşteri fırsatını kaydedin, teklif ve kazanıldı aşamalarına ilerletin.</p></div><div class="grid"><article><h2>Fırsat aşamaları</h2><div class="pipeline"><p>Yeni <b data-stage="0">0</b></p><p>Teklif <b data-stage="1">0</b></p><p>Kazanıldı <b data-stage="2">0</b></p></div></article>
+<form id="task"><h2>Fırsat ekle</h2><label>Müşteri<input name="client" type="text" required ></label><label>Teklif konusu<input name="subject" type="text" required ></label><label>Tahmini tutar (₺)<input name="value" type="number" required min="1"></label><button type="submit">Fırsat ekle</button></form></div>
+<section class="history"><h2>Müşteri fırsatları</h2><p id="empty">Henüz kayıt yok.</p><ul id="records"></ul><p role="status" id="status"></p></section>
+</main><footer>Bu cihazdaki örnek çalışma alanı</footer>
+<script>
+const form=document.querySelector("form"),list=document.querySelector("#records"),statusLine=document.querySelector("#status");
+const key="gitmapp-firsat";let rows=[];
+try{rows=JSON.parse(localStorage.getItem(key)||"[]")}catch{}
+/* gitmapp-task-records */
+function render(){
+ list.replaceChildren();document.querySelector("#empty").hidden=rows.length>0;
+ for(const row of rows){
+  const item=document.createElement("li");item.textContent=row.text;
+  if(row.photo){const image=new Image();image.src=row.photo;image.alt="İş emri fotoğrafı";item.append(image)}
+  list.append(item);
+ }
+ pipeline();
+}
+
+function pipeline(){
+ document.querySelectorAll("[data-stage]").forEach(el=>el.textContent=rows.filter(r=>(r.stage||0)===Number(el.dataset.stage)).length);
+ [...list.children].forEach((li,i)=>{const row=rows[i],stage=row.stage||0;if(stage<2){const button=document.createElement("button");button.textContent=stage===0?"Teklife taşı":"Kazanıldı olarak işaretle";button.onclick=()=>{row.stage=stage+1;try{localStorage.setItem(key,JSON.stringify(rows))}catch{}form.dispatchEvent(new Event("gitmapp-save"));render()};li.append(button)}})
+}
+
+form.addEventListener("submit",async event=>{
+ event.preventDefault();const data=new FormData(form);
+ const entries=[...form.querySelectorAll("[name]")].filter(el=>el.type!=="file").map(el=>el.closest("label").firstChild.textContent.trim()+" · "+String(data.get(el.name)).trim());
+ const row={text:entries.join("\n")};const file=data.get("photo");
+ if(file?.size){
+  if(file.size>350000||!["image/png","image/jpeg","image/webp"].includes(file.type)){statusLine.textContent="350 KB altında PNG, JPEG veya WebP seçin.";return}
+  try{row.photo=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})}catch{statusLine.textContent="Fotoğraf okunamadı.";return}
+ }
+ rows.unshift(row);render();form.reset();
+ try{localStorage.setItem(key,JSON.stringify(rows));form.dispatchEvent(new Event("gitmapp-save"));statusLine.textContent="Kaydedildi."}
+ catch{statusLine.textContent="Bu önizlemede kayıt oluşturuldu. Cihaz depolaması kullanılamıyor."}
+});render();
+</script></body></html>

@@ -1,0 +1,170 @@
+<!doctype html><html data-gm-template-theme="compact-graphite" data-gm-template-style="compact" lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Akış Operasyon · Kompakt · Grafit</title>
+<!-- Gitmapp hazır şablonu · Operasyon UI kiti -->
+<style>
+:root{--pr:#394b8a;--ac:#6f7cc1;--bg:#edf1f9;--sf:#fff;--sf2:#e3e8f7;--tx:#181f36;--tx2:#465470;--ln:#ced7e8;--r:13px;background:var(--bg);color:var(--tx);font:15px/1.48 system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;display:grid;grid-template-columns:210px minmax(0,1fr);min-height:100vh}header{padding:25px 15px;background:var(--sf);border-right:1px solid var(--ln)}header strong{display:block;padding:0 7px 15px;font-size:22px;letter-spacing:-.05em}nav{display:grid;gap:7px}button,input,select{font:inherit;color:inherit}button{cursor:pointer;min-height:41px;padding:7px 11px;border:1px solid var(--ln);background:var(--sf);border-radius:7px;text-align:left}button[aria-current=true],.primary{background:var(--pr);border-color:var(--pr);color:white}:focus-visible{outline:2px solid var(--pr);outline-offset:3px}
+main{max-width:1200px;width:100%;padding:clamp(14px,4vw,42px);margin-inline:auto}h1{font-size:clamp(28px,5vw,48px);line-height:1.04;letter-spacing:-.05em;margin:0}h2,h3,p{margin:0}p,.muted{color:var(--tx2)}.box,.metric,.row-card{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:15px}.heading{display:flex;justify-content:space-between;align-items:end;gap:9px;flex-wrap:wrap;margin-bottom:15px}.heading p{margin-top:6px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:13px}.metric>b{display:block;font-size:28px}.list{display:grid;gap:7px}.row-card{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center}.row-card strong{display:block;overflow-wrap:anywhere}.state{display:inline-block;border-radius:25px;background:var(--sf2);padding:4px 8px;font-size:12px}.controls{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.controls label:first-child{flex:1}.controls label,.box form{display:grid;gap:6px}.controls select,.controls input,.box input,.box select{width:100%;min-height:42px;border:1px solid var(--ln);border-radius:7px;background:var(--sf);padding:7px}.box h2{margin-bottom:8px}.box button{margin-top:7px}[role=status]{min-height:1.5em}
+@media(max-width:630px){body{display:block}header{padding:10px 13px;border-right:0;border-bottom:1px solid var(--ln)}header strong{padding:0 0 7px}nav{display:flex;flex-wrap:wrap}nav button{font-size:13px}.row-card{grid-template-columns:minmax(0,1fr) auto;gap:6px}.row-card button{grid-column:1/-1}.metric{padding:8px}.metric>b{font-size:23px}.metric span{font-size:12px}}
+</style><style data-gm-tpl-theme>
+:root[data-gm-template-style]{
+ --pr:var(--gm-pr);--ac:var(--gm-ac);--bg:var(--gm-bg);--sf:var(--gm-sf);--sf2:color-mix(in srgb,var(--gm-bg) 65%,var(--gm-ln));
+ --tx:var(--gm-tx);--tx2:color-mix(in srgb,var(--gm-tx) 83%,var(--gm-bg));--tx3:var(--tx2);--ln:var(--gm-ln);
+ --panel:var(--sf);--paper:var(--bg);--ink:var(--tx);--line:var(--ln);
+ --r:var(--gm-radius,12px);--sh:var(--gm-shadow,0 8px 22px -19px var(--tx));
+ --gm-display:system-ui,sans-serif;--gm-weight:750;--gm-tracking:-.042em;--gm-space:clamp(22px,4.2vw,58px);
+ color:var(--tx);background:var(--bg)
+}
+:root[data-gm-template-style][data-theme="dark"]{
+ --bg:#101820;--sf:#1c2730;--sf2:#263441;--tx:#f1f5f7;--ln:#435460;
+ --pr:color-mix(in srgb,var(--gm-pr) 70%,#111);--ac:color-mix(in srgb,var(--gm-ac) 40%,#fff)
+}
+[data-gm-template-style] :is(h1,h2,.big){font-family:var(--gm-display);font-weight:var(--gm-weight);letter-spacing:var(--gm-tracking);overflow-wrap:anywhere}
+[data-gm-template-style] :is(.hero h1,.hero h2){text-wrap:balance}
+[data-gm-template-style] :is(.card,.surface,.history,main>div.grid>article,main>div.grid>form,.workflow>form,.work>form,.offer,.kc,.kcard,.lcard){
+ background:var(--sf);color:var(--tx);border:var(--gm-border,1px) solid var(--ln);border-radius:var(--r);box-shadow:var(--sh)
+}
+[data-gm-template-style] :is(.work,.workflow,main>.grid,.pg>.grid,.lgrid,.bento){gap:var(--gm-gap,18px)}
+[data-gm-template-style] :is(.tb,.sb,.nav-in,body>header){background:var(--sf);color:var(--tx);border-color:var(--ln)}
+[data-gm-template-style] body>header>a{background:var(--sf2);color:var(--tx)}
+[data-gm-template-style] body>header{gap:12px}
+[data-gm-template-style] :is(.lead,.offer small,small.muted,footer):not(.hero *){color:var(--tx2)}
+[data-gm-template-style] :is(input,textarea,select):not([type=checkbox],[type=radio],[type=range]){
+ background:var(--sf);color:var(--tx);border-color:var(--ln);accent-color:var(--pr)
+}
+[data-gm-template-style] :is(button[type=submit],.btn:not(.g,.d,.w)){background:var(--gm-pr);color:white;border-radius:var(--gm-button,8px)}
+[data-gm-template-style] :focus-visible{outline:3px solid var(--gm-focus,var(--gm-ac));outline-offset:3px}
+[data-gm-template-style] .hero:has(.hero-copy){border-radius:var(--r);overflow:hidden}
+[data-gm-template-style] .hero-copy{padding:var(--gm-space);background:var(--gm-pr);color:#fff}
+[data-gm-template-style] .hero-copy p{color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) {
+ color:white;background:var(--gm-pr);border-radius:var(--r);padding:var(--gm-space);isolation:isolate;
+ position:relative;overflow:hidden;margin-bottom:var(--gm-gap,18px)
+}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p,.lead,a){color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g))::after{opacity:var(--gm-art-opacity,.75)}
+[data-gm-template-style] .hero-g{gap:var(--gm-space)}
+[data-gm-template-style] .hero-g h1 em{background:none;color:var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .hero-g h1 em{color:var(--ac)}
+[data-gm-template-style] .offer[aria-pressed="true"]{background:var(--sf2);border-color:var(--gm-pr);box-shadow:inset 4px 0 var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .nv.on{color:var(--ac)}
+[data-gm-template-style][data-theme="dark"] .doc{--ln:#c4cfd5;color-scheme:light}
+[data-gm-template-style] .hero-art{background-position:var(--gm-photo,center);filter:var(--gm-filter,none)}
+
+[data-gm-template-style="editorial"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:2px;--gm-gap:24px;--gm-shadow:none;--gm-button:2px}
+[data-gm-template-style="editorial"] :is(.tb,.nav-in,body>header){border-block-end:2px solid var(--gm-pr)}
+[data-gm-template-style="editorial"] :is(h1.big,.hero h1){max-width:17ch}
+[data-gm-template-style="editorial"] .hero-art{--gm-photo:center 44%;--gm-filter:saturate(.78)}
+
+[data-gm-template-style="gallery"]{--gm-radius:18px;--gm-gap:24px;--gm-space:clamp(25px,5vw,76px);--gm-shadow:0 16px 32px -26px var(--tx)}
+[data-gm-template-style="gallery"] .hero:has(.hero-copy){display:flex;flex-direction:column;min-height:0}
+[data-gm-template-style="gallery"] .hero-art{order:-1;min-height:clamp(210px,36vw,450px);--gm-photo:center 59%}
+[data-gm-template-style="gallery"] .hero-copy{align-self:stretch}
+[data-gm-template-style="gallery"] :is(.hero-g .lim,.kpi){border-bottom:5px solid var(--gm-ac)}
+[data-gm-template-style="gallery"] .hero:not(:has(.hero-copy,.hero-g)){min-height:clamp(240px,31vw,390px);display:grid;align-content:center}
+
+[data-gm-template-style="card-grid"]{--gm-radius:20px;--gm-gap:12px;--gm-button:12px;--gm-shadow:0 9px 19px -17px var(--tx)}
+[data-gm-template-style="card-grid"] :is(.card,.offer,.surface,.history){border-block-start:4px solid var(--gm-ac)}
+[data-gm-template-style="card-grid"] :is(.tb,.nav-in,.hero-copy){border-radius:var(--r)}
+@media(min-width:761px){
+ [data-gm-template-style="card-grid"] .hero:has(.hero-copy){grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:12px;background:transparent}
+ [data-gm-template-style="card-grid"] .hero-art{border-radius:var(--r)}
+ [data-gm-template-style="card-grid"] .work{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+[data-gm-template-style="compact"]{--gm-radius:7px;--gm-gap:8px;--gm-space:clamp(16px,2.7vw,35px);--gm-tracking:-.03em;--gm-shadow:none}
+[data-gm-template-style="compact"] :is(.card,.offer,.surface,.history){padding:clamp(10px,1.6vw,18px)}
+[data-gm-template-style="compact"] .hero:has(.hero-copy){min-height:300px}
+[data-gm-template-style="compact"] .hero-art{min-height:clamp(150px,29vw,225px)}
+[data-gm-template-style="compact"] .hero:not(:has(.hero-copy,.hero-g)){min-height:0}
+[data-gm-template-style="compact"] :is(.hero h1,h1.big){font-size:clamp(29px,5vw,52px)}
+@media(min-width:980px){[data-gm-template-style="compact"] .sb{width:211px}}
+
+[data-gm-template-style="blueprint"]{--gm-radius:4px;--gm-shadow:none;--gm-button:4px;--gm-gap:16px}
+[data-gm-template-style="blueprint"] .hero-copy,[data-gm-template-style="blueprint"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:repeating-linear-gradient(0deg,transparent 0 23px,#fff2 24px 25px),repeating-linear-gradient(90deg,transparent 0 23px,#fff2 24px 25px)
+}
+[data-gm-template-style="blueprint"] :is(.card,.surface,.history,.offer){border-inline-start:4px solid var(--gm-ac)}
+[data-gm-template-style="blueprint"] .hero-art{--gm-filter:contrast(1.14) saturate(.7)}
+
+[data-gm-template-style="studio"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:26px;--gm-gap:22px;--gm-button:99px}
+[data-gm-template-style="studio"] .hero-art{--gm-photo:center 35%;--gm-filter:saturate(.89)}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)){text-align:center}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p){margin-inline:auto}
+[data-gm-template-style="studio"] :is(.tb,.nav-in,.kpi){border-block-start:3px solid var(--gm-ac)}
+@media(min-width:761px){
+ [data-gm-template-style="studio"] .hero:has(.hero-copy){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ [data-gm-template-style="studio"] .hero-art{grid-column:1;grid-row:1}
+ [data-gm-template-style="studio"] .hero-copy{grid-column:2;grid-row:1}
+}
+
+[data-gm-template-style="poster"]{--gm-display:"Arial Black",system-ui,sans-serif;--gm-weight:900;--gm-radius:0px;--gm-gap:20px;--gm-border:2px;--gm-button:0px;--gm-shadow:none}
+[data-gm-template-style="poster"] :is(.hero h1,h1.big){line-height:.96;font-size:clamp(37px,6.3vw,84px);max-width:15ch}
+[data-gm-template-style="poster"] :is(.hero-copy,.tb,body>header,.nav-in){border-inline-start:7px solid var(--gm-ac)}
+[data-gm-template-style="poster"] .hero-art{--gm-filter:contrast(1.13) saturate(1.12)}
+
+[data-gm-template-style="soft"]{--gm-display:system-ui,sans-serif;--gm-weight:650;--gm-radius:30px;--gm-gap:22px;--gm-button:99px;--gm-shadow:0 16px 40px -31px var(--tx)}
+[data-gm-template-style="soft"] .hero-copy,[data-gm-template-style="soft"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--gm-pr) 55%,var(--gm-ac)),transparent 67%)
+}
+[data-gm-template-style="soft"] :is(.nav-in,.kpi,.offer){border-radius:var(--r)}
+[data-gm-template-style="soft"] .hero-art{--gm-filter:saturate(.83) brightness(1.04)}
+
+[data-gm-template-style="mono"]{--gm-display:ui-monospace,monospace;--gm-weight:700;--gm-radius:3px;--gm-tracking:-.06em;--gm-gap:16px;--gm-shadow:none}
+[data-gm-template-style="mono"] :is(.eyb,.sector,.card h3,.offer small,footer){font-family:var(--gm-display)}
+[data-gm-template-style="mono"] :is(.kpi,.offer,.history){border-style:dashed}
+[data-gm-template-style="mono"] .hero-art{--gm-filter:grayscale(.82) contrast(1.08)}
+[data-gm-template-style="mono"] .hero:not(:has(.hero-copy,.hero-g))::after{filter:grayscale(.6)}
+
+[data-gm-template-style="contrast"]{--gm-radius:5px;--gm-gap:20px;--gm-border:2px;--gm-weight:850;--gm-shadow:4px 4px 0 var(--gm-ln);--gm-focus:#0d57ca}
+[data-gm-template-style="contrast"] :is(.tb,.nav-in,body>header,.sb){border-color:var(--tx);box-shadow:none}
+[data-gm-template-style="contrast"] :is(.card,.surface,.history,.offer){border-color:var(--tx)}
+[data-gm-template-style="contrast"] .hero-art{--gm-filter:contrast(1.16) saturate(.95)}
+[data-gm-template-style="contrast"] :is(.hero-copy,.hero:not(:has(.hero-copy,.hero-g))){background-color:var(--gm-pr);--gm-art-opacity:.57}
+@media(max-width:480px){
+ [data-gm-template-style]{--gm-gap:12px}
+ [data-gm-template-style] .hero-copy{padding:22px}
+ [data-gm-template-style] .hero-g{gap:18px}
+ [data-gm-template-style="poster"] :is(.hero h1,h1.big){font-size:clamp(31px,9.5vw,48px)}
+}
+@media print{
+ [data-gm-template-style]{--sh:none}
+ [data-gm-template-style] :is(.hero,.hero-copy){background:#fff!important;color:#111!important}
+ [data-gm-template-style] .hero :is(h1,h2,p){color:#111!important}
+}
+:root{--gm-pr:#394854;--gm-ac:#526c7b;--gm-bg:#edf0f2;--gm-sf:#fafcfd;--gm-tx:#1e2a34;--gm-ln:#c4cfd5}</style></head><body>
+<header><strong>Akış Operasyon</strong><nav aria-label="Operasyon paneli"><button data-view="home">Özet</button><button data-view="list">İş listesi</button><button data-view="new">Yeni iş</button></nav></header>
+<main><section id="surface"></section><p role="status" id="status"></p></main>
+<script>
+const key="gitmapp-akisoperasyon";
+const states=["Bekliyor","Sürüyor","Tamamlandı"];
+let records=[{id:1,title:"Depo stok sayımı",owner:"Operasyon",state:1},{id:2,title:"Mayıs satış raporu",owner:"Finans",state:0},{id:3,title:"Kargo anlaşması",owner:"Satış",state:2}];
+try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(Array.isArray(saved))records=saved.filter(r=>Number.isSafeInteger(r.id)&&typeof r.title==="string"&&typeof r.owner==="string"&&states[r.state])}catch{}
+const root=document.querySelector("#surface"),message=document.querySelector("#status");
+const escape=value=>String(value).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[x]);
+let screen="home",active=null,query="",filter="";
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(records))}catch{}};
+const headings=(title,desc)=>`<div class="heading"><div><h1>${title}</h1><p>${desc}</p></div></div>`;
+const rows=items=>items.length?items.map(r=>`<article class="row-card"><div><strong>${escape(r.title)}</strong><small class="muted">${escape(r.owner)}</small></div><span class="state">${states[r.state]}</span><button data-open="${r.id}">İşi aç</button></article>`).join(""):"<p>Bu filtreyle eşleşen iş yok.</p>";
+const filtered=()=>records.filter(r=>(filter===""||String(r.state)===filter)&&(r.title+" "+r.owner).toLocaleLowerCase("tr").includes(query.toLocaleLowerCase("tr")));
+function render(){
+ document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",String(b.dataset.view===screen)));
+ if(screen==="home"){
+  root.innerHTML=headings("Operasyon özeti","İşlerin durumuna göre güncel görünümü.")+`<section class="metrics">${states.map((state,i)=>`<div class="metric"><span>${state}</span><b>${records.filter(r=>r.state===i).length}</b></div>`).join("")}</section><h2>Son işler</h2><div class="list">${rows(records.slice(0,4))}</div>`;
+ }else if(screen==="list"){
+  root.innerHTML=headings("İş listesi","Ekibin kayıtlarını ara ve durumuna göre süz.")+`<div class="controls"><label>Ara<input id="query" type="search"></label><label>Durum<select id="filter"><option value="">Tümü</option>${states.map((state,i)=>`<option value="${i}">${state}</option>`).join("")}</select></label></div><div id="list" class="list">${rows(filtered())}</div>`;
+  root.querySelector("#query").value=query;root.querySelector("#filter").value=filter;
+ }else{
+  const r=active===null?null:records.find(item=>item.id===active);
+  root.innerHTML=headings(r?"İş detayı":"Yeni iş",r?"Sorumlu ve durum bilgilerini güncelle.":"Takip etmek istediğin işi ekle.")+`<section class="box"><form><label>İş başlığı<input name="title" required maxlength="90" value="${escape(r?.title||"")}"></label><label>Sorumlu ekip<input name="owner" required maxlength="80" value="${escape(r?.owner||"")}"></label><label>Durum<select name="state">${states.map((state,i)=>`<option value="${i}" ${i===(r?.state||0)?"selected":""}>${state}</option>`).join("")}</select></label><button class="primary">${r?"Güncelle":"İşi kaydet"}</button></form></section>`;
+ }
+}
+function go(next){screen=next;render();const h=root.querySelector("h1");h.tabIndex=-1;h.focus()}
+root.addEventListener("input",e=>{if(e.target.id==="query")query=e.target.value;else if(e.target.id==="filter")filter=e.target.value;else return;root.querySelector("#list").innerHTML=rows(filtered())});
+document.addEventListener("click",e=>{const d=e.target.closest("button")?.dataset;if(d?.view){active=null;go(d.view)}if(d?.open!==undefined){active=Number(d.open);go("detail")}});
+root.addEventListener("submit",e=>{
+ e.preventDefault();const f=new FormData(e.target),title=f.get("title").trim(),owner=f.get("owner").trim(),state=Number(f.get("state"));
+ if(!title||!owner){message.textContent="Başlık ve sorumlu ekip girin.";return}
+ if(active!==null)records=records.map(r=>r.id===active?{...r,title,owner,state}:r);
+ else records=[{id:Date.now(),title,owner,state},...records].slice(0,100);
+ save();active=null;filter="";query="";go("list");message.textContent="İş kaydedildi.";
+});render();
+</script></body></html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html data-gm-template-theme="contrast-botanical" data-gm-template-style="contrast" lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Gitmapp hazır şablonu"><meta name="gitmapp-scenario" content="oracle-diagnostics"><title>Oracle Teşhis Atölyesi · Yüksek kontrast · Botanik</title><style>
+*{box-sizing:border-box}body{margin:0;background:var(--bg,#f5f2ee);color:var(--tx,#302938);font:16px/1.55 system-ui,sans-serif}main{max-width:860px;margin:auto;padding:clamp(14px,4vw,44px)}header,section,details{padding:clamp(16px,3vw,28px);border-radius:14px;margin-bottom:14px}header{background:var(--cover,#392b3f);color:white}h1{margin:0;font-size:clamp(25px,4vw,38px)}h2{font-size:19px;margin:0 0 10px}section,details{background:var(--sf,white);border:1px solid #d8d1d8}fieldset{padding:0;border:0;display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}fieldset[hidden]{display:none}label{display:grid;gap:4px;flex:1;min-width:125px}select,input{width:100%;padding:10px;color:inherit;font:inherit;border:1px solid #968995;border-radius:6px}button{padding:10px 16px;border:0;background:#513749;color:white;border-radius:7px;font:inherit}summary{cursor:pointer;font-weight:650}dt{font-weight:650}dd{margin:0 0 12px}a{color:#66364a}
+</style><style data-gm-tpl-theme>
+:root[data-gm-template-style]{
+ --pr:var(--gm-pr);--ac:var(--gm-ac);--bg:var(--gm-bg);--sf:var(--gm-sf);--sf2:color-mix(in srgb,var(--gm-bg) 65%,var(--gm-ln));
+ --tx:var(--gm-tx);--tx2:color-mix(in srgb,var(--gm-tx) 83%,var(--gm-bg));--tx3:var(--tx2);--ln:var(--gm-ln);
+ --panel:var(--sf);--paper:var(--bg);--ink:var(--tx);--line:var(--ln);
+ --r:var(--gm-radius,12px);--sh:var(--gm-shadow,0 8px 22px -19px var(--tx));
+ --gm-display:system-ui,sans-serif;--gm-weight:750;--gm-tracking:-.042em;--gm-space:clamp(22px,4.2vw,58px);
+ color:var(--tx);background:var(--bg)
+}
+:root[data-gm-template-style][data-theme="dark"]{
+ --bg:#101820;--sf:#1c2730;--sf2:#263441;--tx:#f1f5f7;--ln:#435460;
+ --pr:color-mix(in srgb,var(--gm-pr) 70%,#111);--ac:color-mix(in srgb,var(--gm-ac) 40%,#fff)
+}
+[data-gm-template-style] :is(h1,h2,.big){font-family:var(--gm-display);font-weight:var(--gm-weight);letter-spacing:var(--gm-tracking);overflow-wrap:anywhere}
+[data-gm-template-style] :is(.hero h1,.hero h2){text-wrap:balance}
+[data-gm-template-style] :is(.card,.surface,.history,main>div.grid>article,main>div.grid>form,.workflow>form,.work>form,.offer,.kc,.kcard,.lcard){
+ background:var(--sf);color:var(--tx);border:var(--gm-border,1px) solid var(--ln);border-radius:var(--r);box-shadow:var(--sh)
+}
+[data-gm-template-style] :is(.work,.workflow,main>.grid,.pg>.grid,.lgrid,.bento){gap:var(--gm-gap,18px)}
+[data-gm-template-style] :is(.tb,.sb,.nav-in,body>header){background:var(--sf);color:var(--tx);border-color:var(--ln)}
+[data-gm-template-style] body>header>a{background:var(--sf2);color:var(--tx)}
+[data-gm-template-style] body>header{gap:12px}
+[data-gm-template-style] :is(.lead,.offer small,small.muted,footer):not(.hero *){color:var(--tx2)}
+[data-gm-template-style] :is(input,textarea,select):not([type=checkbox],[type=radio],[type=range]){
+ background:var(--sf);color:var(--tx);border-color:var(--ln);accent-color:var(--pr)
+}
+[data-gm-template-style] :is(button[type=submit],.btn:not(.g,.d,.w)){background:var(--gm-pr);color:white;border-radius:var(--gm-button,8px)}
+[data-gm-template-style] :focus-visible{outline:3px solid var(--gm-focus,var(--gm-ac));outline-offset:3px}
+[data-gm-template-style] .hero:has(.hero-copy){border-radius:var(--r);overflow:hidden}
+[data-gm-template-style] .hero-copy{padding:var(--gm-space);background:var(--gm-pr);color:#fff}
+[data-gm-template-style] .hero-copy p{color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) {
+ color:white;background:var(--gm-pr);border-radius:var(--r);padding:var(--gm-space);isolation:isolate;
+ position:relative;overflow:hidden;margin-bottom:var(--gm-gap,18px)
+}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p,.lead,a){color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g))::after{opacity:var(--gm-art-opacity,.75)}
+[data-gm-template-style] .hero-g{gap:var(--gm-space)}
+[data-gm-template-style] .hero-g h1 em{background:none;color:var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .hero-g h1 em{color:var(--ac)}
+[data-gm-template-style] .offer[aria-pressed="true"]{background:var(--sf2);border-color:var(--gm-pr);box-shadow:inset 4px 0 var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .nv.on{color:var(--ac)}
+[data-gm-template-style][data-theme="dark"] .doc{--ln:#c4cfd5;color-scheme:light}
+[data-gm-template-style] .hero-art{background-position:var(--gm-photo,center);filter:var(--gm-filter,none)}
+
+[data-gm-template-style="editorial"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:2px;--gm-gap:24px;--gm-shadow:none;--gm-button:2px}
+[data-gm-template-style="editorial"] :is(.tb,.nav-in,body>header){border-block-end:2px solid var(--gm-pr)}
+[data-gm-template-style="editorial"] :is(h1.big,.hero h1){max-width:17ch}
+[data-gm-template-style="editorial"] .hero-art{--gm-photo:center 44%;--gm-filter:saturate(.78)}
+
+[data-gm-template-style="gallery"]{--gm-radius:18px;--gm-gap:24px;--gm-space:clamp(25px,5vw,76px);--gm-shadow:0 16px 32px -26px var(--tx)}
+[data-gm-template-style="gallery"] .hero:has(.hero-copy){display:flex;flex-direction:column;min-height:0}
+[data-gm-template-style="gallery"] .hero-art{order:-1;min-height:clamp(210px,36vw,450px);--gm-photo:center 59%}
+[data-gm-template-style="gallery"] .hero-copy{align-self:stretch}
+[data-gm-template-style="gallery"] :is(.hero-g .lim,.kpi){border-bottom:5px solid var(--gm-ac)}
+[data-gm-template-style="gallery"] .hero:not(:has(.hero-copy,.hero-g)){min-height:clamp(240px,31vw,390px);display:grid;align-content:center}
+
+[data-gm-template-style="card-grid"]{--gm-radius:20px;--gm-gap:12px;--gm-button:12px;--gm-shadow:0 9px 19px -17px var(--tx)}
+[data-gm-template-style="card-grid"] :is(.card,.offer,.surface,.history){border-block-start:4px solid var(--gm-ac)}
+[data-gm-template-style="card-grid"] :is(.tb,.nav-in,.hero-copy){border-radius:var(--r)}
+@media(min-width:761px){
+ [data-gm-template-style="card-grid"] .hero:has(.hero-copy){grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:12px;background:transparent}
+ [data-gm-template-style="card-grid"] .hero-art{border-radius:var(--r)}
+ [data-gm-template-style="card-grid"] .work{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+[data-gm-template-style="compact"]{--gm-radius:7px;--gm-gap:8px;--gm-space:clamp(16px,2.7vw,35px);--gm-tracking:-.03em;--gm-shadow:none}
+[data-gm-template-style="compact"] :is(.card,.offer,.surface,.history){padding:clamp(10px,1.6vw,18px)}
+[data-gm-template-style="compact"] .hero:has(.hero-copy){min-height:300px}
+[data-gm-template-style="compact"] .hero-art{min-height:clamp(150px,29vw,225px)}
+[data-gm-template-style="compact"] .hero:not(:has(.hero-copy,.hero-g)){min-height:0}
+[data-gm-template-style="compact"] :is(.hero h1,h1.big){font-size:clamp(29px,5vw,52px)}
+@media(min-width:980px){[data-gm-template-style="compact"] .sb{width:211px}}
+
+[data-gm-template-style="blueprint"]{--gm-radius:4px;--gm-shadow:none;--gm-button:4px;--gm-gap:16px}
+[data-gm-template-style="blueprint"] .hero-copy,[data-gm-template-style="blueprint"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:repeating-linear-gradient(0deg,transparent 0 23px,#fff2 24px 25px),repeating-linear-gradient(90deg,transparent 0 23px,#fff2 24px 25px)
+}
+[data-gm-template-style="blueprint"] :is(.card,.surface,.history,.offer){border-inline-start:4px solid var(--gm-ac)}
+[data-gm-template-style="blueprint"] .hero-art{--gm-filter:contrast(1.14) saturate(.7)}
+
+[data-gm-template-style="studio"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:26px;--gm-gap:22px;--gm-button:99px}
+[data-gm-template-style="studio"] .hero-art{--gm-photo:center 35%;--gm-filter:saturate(.89)}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)){text-align:center}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p){margin-inline:auto}
+[data-gm-template-style="studio"] :is(.tb,.nav-in,.kpi){border-block-start:3px solid var(--gm-ac)}
+@media(min-width:761px){
+ [data-gm-template-style="studio"] .hero:has(.hero-copy){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ [data-gm-template-style="studio"] .hero-art{grid-column:1;grid-row:1}
+ [data-gm-template-style="studio"] .hero-copy{grid-column:2;grid-row:1}
+}
+
+[data-gm-template-style="poster"]{--gm-display:"Arial Black",system-ui,sans-serif;--gm-weight:900;--gm-radius:0px;--gm-gap:20px;--gm-border:2px;--gm-button:0px;--gm-shadow:none}
+[data-gm-template-style="poster"] :is(.hero h1,h1.big){line-height:.96;font-size:clamp(37px,6.3vw,84px);max-width:15ch}
+[data-gm-template-style="poster"] :is(.hero-copy,.tb,body>header,.nav-in){border-inline-start:7px solid var(--gm-ac)}
+[data-gm-template-style="poster"] .hero-art{--gm-filter:contrast(1.13) saturate(1.12)}
+
+[data-gm-template-style="soft"]{--gm-display:system-ui,sans-serif;--gm-weight:650;--gm-radius:30px;--gm-gap:22px;--gm-button:99px;--gm-shadow:0 16px 40px -31px var(--tx)}
+[data-gm-template-style="soft"] .hero-copy,[data-gm-template-style="soft"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--gm-pr) 55%,var(--gm-ac)),transparent 67%)
+}
+[data-gm-template-style="soft"] :is(.nav-in,.kpi,.offer){border-radius:var(--r)}
+[data-gm-template-style="soft"] .hero-art{--gm-filter:saturate(.83) brightness(1.04)}
+
+[data-gm-template-style="mono"]{--gm-display:ui-monospace,monospace;--gm-weight:700;--gm-radius:3px;--gm-tracking:-.06em;--gm-gap:16px;--gm-shadow:none}
+[data-gm-template-style="mono"] :is(.eyb,.sector,.card h3,.offer small,footer){font-family:var(--gm-display)}
+[data-gm-template-style="mono"] :is(.kpi,.offer,.history){border-style:dashed}
+[data-gm-template-style="mono"] .hero-art{--gm-filter:grayscale(.82) contrast(1.08)}
+[data-gm-template-style="mono"] .hero:not(:has(.hero-copy,.hero-g))::after{filter:grayscale(.6)}
+
+[data-gm-template-style="contrast"]{--gm-radius:5px;--gm-gap:20px;--gm-border:2px;--gm-weight:850;--gm-shadow:4px 4px 0 var(--gm-ln);--gm-focus:#0d57ca}
+[data-gm-template-style="contrast"] :is(.tb,.nav-in,body>header,.sb){border-color:var(--tx);box-shadow:none}
+[data-gm-template-style="contrast"] :is(.card,.surface,.history,.offer){border-color:var(--tx)}
+[data-gm-template-style="contrast"] .hero-art{--gm-filter:contrast(1.16) saturate(.95)}
+[data-gm-template-style="contrast"] :is(.hero-copy,.hero:not(:has(.hero-copy,.hero-g))){background-color:var(--gm-pr);--gm-art-opacity:.57}
+@media(max-width:480px){
+ [data-gm-template-style]{--gm-gap:12px}
+ [data-gm-template-style] .hero-copy{padding:22px}
+ [data-gm-template-style] .hero-g{gap:18px}
+ [data-gm-template-style="poster"] :is(.hero h1,h1.big){font-size:clamp(31px,9.5vw,48px)}
+}
+@media print{
+ [data-gm-template-style]{--sh:none}
+ [data-gm-template-style] :is(.hero,.hero-copy){background:#fff!important;color:#111!important}
+ [data-gm-template-style] .hero :is(h1,h2,p){color:#111!important}
+}
+:root{--gm-pr:#285343;--gm-ac:#37705a;--gm-bg:#eaf2eb;--gm-sf:#f8fcf8;--gm-tx:#182e25;--gm-ln:#bdcfc3}</style></head><body><main><header><h1>Oracle Teşhis Atölyesi</h1><span>Örnek olaylar · Oturumluk çalışma</span></header>
+<section><form id="caseForm"><label>İncelenen olay<select id="kind"><option value="ap">EBS · Fatura eşleştirme</option><option value="job">EBS · İş kuyruğu</option><option value="group">EPM · Grup içi mutabakat</option></select></label>
+<fieldset id="ap"><legend>Sıfır tolerans · Aynı sipariş satırı ve birim</legend><label>Eşleştirme<select id="match"><option value="3">Üç yönlü</option><option value="2">İki yönlü</option></select></label><label>Sipariş adedi<input id="ordered" type="number" required min="0" max="9999999" value="100"></label><label>Teslim adedi<input id="received" type="number" required min="0" max="9999999" value="85"></label><label>Fatura adedi<input id="billed" type="number" required min="0" max="9999999" value="100"></label></fieldset>
+<fieldset id="job" hidden disabled><legend>İsteğin son gözlenen fazı ve durumu</legend><label>Faz / durum<select id="phase"><option>Pending / Normal</option><option>Inactive / No Manager</option><option>Pending / Scheduled</option></select></label></fieldset>
+<fieldset id="group" hidden disabled><legend>Aynı dönem ve para birimi · Tutarlar TL</legend><label>Alacak<input id="debit" type="number" min="0" max="999999999" step=".01" value="500" required></label><label>Karşı taraf borcu<input id="credit" type="number" min="0" max="999999999" step=".01" value="480" required></label></fieldset>
+<button>Kanıtı değerlendir</button></form></section>
+<section aria-live="polite"><h2>Teşhis kaydı</h2><dl><dt>Bulgu</dt><dd id="finding"></dd><dt>Sonraki kontrol</dt><dd id="next"></dd><dt>Kapanış ölçütü</dt><dd id="closeCase"></dd></dl></section>
+<details><summary>Bir EBS işleminin izini sür</summary><p>EBS 12.2’de kullanıcı isteği istemciden uygulama katmanına gider. İş verisi veritabanında tutulur. Yoğun raporlar ve toplu işlemler uygulama katmanındaki arka plan süreçlerinde çalışabilir. <a href="https://docs.oracle.com/cd/E26401_01/doc.122/e22949/T120505T120508.htm">Oracle EBS mimarisi</a></p><ol><li>Kullanıcı, şirket, dönem, belge satırı ve olay saatini tanımla.</li><li>Belge kaydedilmişse ilgili doğrulama isteğinin kimliğini, fazını ve sonucunu incele.</li><li>Muhasebe olayını kaynağıyla eşleştir; dönem, kayıt durumu ve hedef defteri karşılaştır.</li><li>Rapor başka bir sisteme yükleniyorsa son başarılı yükleme zamanını ve aynı kesitteki toplamı doğrula.</li></ol><p>Bu genel inceleme yolu için kurumun kullandığı ürün, sürüm ve bağlantılar ayrıca doğrulanır.</p></details>
+<details><summary>Türkiye’den belgelenmiş mimari örnekler</summary><p>Ford Otosan’ın bütçe projesinde Hyperion Planning ve Financial Reporting sürümleri yükseltildi. Kontrol noktaları veri, metadata ve kullanıcı girişiydi. <a href="https://www.gtech.com.tr/en/story/ford-otosan-budget-planning-and-financial-reporting-version-upgrade-project/">Proje kaydı</a></p><p>Akbank’ın kredi skorlama uygulaması Couchbase’den mevcut Exadata platformuna taşındı. Oracle Database API for MongoDB uygulama bağlantısının korunmasına yardımcı oldu. <a href="https://www.oracle.com/customers/akbank/">Oracle müşteri vakası</a></p><p>Enerjisa’nın 2012 tarihli kurumsal karne vakasında Oracle Scorecard and Strategy Management kullanımı ve o tarihte süren Hyperion Financial Management konsolidasyon projesi anlatılıyor. <a href="https://www.redington.com.tr/uploads/2021/05/51.pdf">Dönemin proje söyleşisi</a></p><p>KoçSistem’in 2022 duyurusu, Exadata Cloud@Customer için müşteri veri merkezinde kurulum ve yönetilen hizmet seçeneklerini açıklıyor. <a href="https://www.aa.com.tr/tr/isdunyasi/sirketler/kocsistem-ve-oracle-dan-guvenli-bulut-icin-turkiye-de-oracle-exadata-cloud-customer-is-birligi/674266">Hizmet duyurusu</a></p></details>
+</main><script>
+const el=id=>document.getElementById(id);
+function diagnose(){
+ const kind=el("kind").value;
+ if(kind==="ap"){
+  const ordered=el("ordered").valueAsNumber, received=el("received").valueAsNumber, billed=el("billed").valueAsNumber;
+  const orderGap=Math.max(0,billed-ordered), receiptGap=el("match").value==="3"?Math.max(0,billed-received):0;
+  return [[orderGap?"Sipariş aşımı "+orderGap+" adet.":"",receiptGap?"Teslim farkı "+receiptGap+" adet.":""].filter(Boolean).join(" ")||"Bu miktarlarda eşleştirme farkı görünmüyor.","Fatura satırı, ölçü birimi, tolerans ve fiilî blokaj kodunu karşılaştır.","Yetkili düzeltme sonrası fatura doğrulamasında ilgili blokajın kalktığını teyit et."];
+ }
+ if(kind==="group"){
+  const gap=Math.round(el("debit").valueAsNumber*100)-Math.round(el("credit").valueAsNumber*100);
+  return [gap?"Alacak eksi borç farkı "+(gap/100).toLocaleString("tr-TR")+" TL.":"İki tutar eşleşiyor.","Kaynak belgelerin karşı tarafını, kurunu, dönemini ve hesap eşlemesini kontrol et.","Aynı kesitte kaynak toplamları ve konsolidasyon raporunu yeniden uzlaştır."];
+ }
+ const checks={
+  "Pending / Normal":["İstek sırada, tek gözlem gecikmenin nedenini belirlemez.","Uygun yöneticinin kapasitesini ve önceki zaman diliminin bekleme sürelerini karşılaştır."],
+  "Inactive / No Manager":["İsteği çalıştırmaya uygun yönetici bulunamadı.","Programın yönetici uzmanlık kurallarını, vardiyasını ve durumunu kontrol et."],
+  "Pending / Scheduled":["İstek zamanlanmış.","Planlanan başlangıç saatini ve raporlama saat dilimini karşılaştır."]
+ };
+ return [...checks[el("phase").value],"Aynı istek kimliğinin sonraki fazını ve tamamlanma sonucunu doğrula."];
+}
+function render(){const result=diagnose();["finding","next","closeCase"].forEach((id,i)=>el(id).textContent=result[i])}
+el("kind").onchange=()=>{for(const field of document.querySelectorAll("fieldset"))field.disabled=field.hidden=field.id!==el("kind").value;render()};
+el("caseForm").oninput=()=>{el("finding").textContent="Girdi değişti. Yeniden değerlendirin.";el("next").textContent="—";el("closeCase").textContent="—"};
+el("caseForm").onsubmit=e=>{e.preventDefault();render()};render();
+</script></body></html>

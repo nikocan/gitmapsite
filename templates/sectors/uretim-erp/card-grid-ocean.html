@@ -1,0 +1,200 @@
+<!doctype html>
+<html data-gm-template-theme="card-grid-ocean" data-gm-template-style="card-grid" lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="gitmapp-scenario" content="gitsap-production"><meta name="generator" content="Gitmapp hazır şablonu"><title>GitSap Üretim Mutabakatı · Kart düzeni · Okyanus</title><style>
+*{box-sizing:border-box}body{margin:0;background:var(--bg,#f4f6f5);color:var(--tx,#152f2a);font:16px/1.5 system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:clamp(16px,4vw,44px)}header{padding:22px 26px;background:var(--cover,#163d35);color:white;border-radius:16px}h1{font-size:clamp(24px,4vw,34px);margin:4px 0}header p{margin:0;color:#d7e9e3}h2{font-size:19px;margin:0 0 10px}section{background:var(--sf,white);padding:20px;border:1px solid #d5dfdc;border-radius:14px;margin-top:14px}dl,form{display:flex;gap:16px;flex-wrap:wrap;align-items:end}dl{margin:0}dl div,label{flex:1;min-width:130px}dt{font-size:14px;color:#445e56}dd{font-size:21px;font-weight:650;margin:3px 0}label{display:grid;gap:4px;font-size:14px}select,input,button{font:inherit;padding:9px 10px;border:1px solid #9cafaa;border-radius:7px;max-width:100%}button{background:var(--pr,#1b5d50);color:white;cursor:pointer}ul{padding-left:20px}li{margin:8px 0}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}td,th{padding:9px;border-bottom:1px solid #ddd}#message{color:#234f44;font-weight:600}small{color:#48615a}@media(max-width:520px){form{display:grid}button{width:100%}section{padding:15px}}
+</style><style data-gm-tpl-theme>
+:root[data-gm-template-style]{
+ --pr:var(--gm-pr);--ac:var(--gm-ac);--bg:var(--gm-bg);--sf:var(--gm-sf);--sf2:color-mix(in srgb,var(--gm-bg) 65%,var(--gm-ln));
+ --tx:var(--gm-tx);--tx2:color-mix(in srgb,var(--gm-tx) 83%,var(--gm-bg));--tx3:var(--tx2);--ln:var(--gm-ln);
+ --panel:var(--sf);--paper:var(--bg);--ink:var(--tx);--line:var(--ln);
+ --r:var(--gm-radius,12px);--sh:var(--gm-shadow,0 8px 22px -19px var(--tx));
+ --gm-display:system-ui,sans-serif;--gm-weight:750;--gm-tracking:-.042em;--gm-space:clamp(22px,4.2vw,58px);
+ color:var(--tx);background:var(--bg)
+}
+:root[data-gm-template-style][data-theme="dark"]{
+ --bg:#101820;--sf:#1c2730;--sf2:#263441;--tx:#f1f5f7;--ln:#435460;
+ --pr:color-mix(in srgb,var(--gm-pr) 70%,#111);--ac:color-mix(in srgb,var(--gm-ac) 40%,#fff)
+}
+[data-gm-template-style] :is(h1,h2,.big){font-family:var(--gm-display);font-weight:var(--gm-weight);letter-spacing:var(--gm-tracking);overflow-wrap:anywhere}
+[data-gm-template-style] :is(.hero h1,.hero h2){text-wrap:balance}
+[data-gm-template-style] :is(.card,.surface,.history,main>div.grid>article,main>div.grid>form,.workflow>form,.work>form,.offer,.kc,.kcard,.lcard){
+ background:var(--sf);color:var(--tx);border:var(--gm-border,1px) solid var(--ln);border-radius:var(--r);box-shadow:var(--sh)
+}
+[data-gm-template-style] :is(.work,.workflow,main>.grid,.pg>.grid,.lgrid,.bento){gap:var(--gm-gap,18px)}
+[data-gm-template-style] :is(.tb,.sb,.nav-in,body>header){background:var(--sf);color:var(--tx);border-color:var(--ln)}
+[data-gm-template-style] body>header>a{background:var(--sf2);color:var(--tx)}
+[data-gm-template-style] body>header{gap:12px}
+[data-gm-template-style] :is(.lead,.offer small,small.muted,footer):not(.hero *){color:var(--tx2)}
+[data-gm-template-style] :is(input,textarea,select):not([type=checkbox],[type=radio],[type=range]){
+ background:var(--sf);color:var(--tx);border-color:var(--ln);accent-color:var(--pr)
+}
+[data-gm-template-style] :is(button[type=submit],.btn:not(.g,.d,.w)){background:var(--gm-pr);color:white;border-radius:var(--gm-button,8px)}
+[data-gm-template-style] :focus-visible{outline:3px solid var(--gm-focus,var(--gm-ac));outline-offset:3px}
+[data-gm-template-style] .hero:has(.hero-copy){border-radius:var(--r);overflow:hidden}
+[data-gm-template-style] .hero-copy{padding:var(--gm-space);background:var(--gm-pr);color:#fff}
+[data-gm-template-style] .hero-copy p{color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) {
+ color:white;background:var(--gm-pr);border-radius:var(--r);padding:var(--gm-space);isolation:isolate;
+ position:relative;overflow:hidden;margin-bottom:var(--gm-gap,18px)
+}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p,.lead,a){color:white}
+[data-gm-template-style] .hero:not(:has(.hero-copy,.hero-g))::after{opacity:var(--gm-art-opacity,.75)}
+[data-gm-template-style] .hero-g{gap:var(--gm-space)}
+[data-gm-template-style] .hero-g h1 em{background:none;color:var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .hero-g h1 em{color:var(--ac)}
+[data-gm-template-style] .offer[aria-pressed="true"]{background:var(--sf2);border-color:var(--gm-pr);box-shadow:inset 4px 0 var(--gm-pr)}
+[data-gm-template-style][data-theme="dark"] .nv.on{color:var(--ac)}
+[data-gm-template-style][data-theme="dark"] .doc{--ln:#c4cfd5;color-scheme:light}
+[data-gm-template-style] .hero-art{background-position:var(--gm-photo,center);filter:var(--gm-filter,none)}
+
+[data-gm-template-style="editorial"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:2px;--gm-gap:24px;--gm-shadow:none;--gm-button:2px}
+[data-gm-template-style="editorial"] :is(.tb,.nav-in,body>header){border-block-end:2px solid var(--gm-pr)}
+[data-gm-template-style="editorial"] :is(h1.big,.hero h1){max-width:17ch}
+[data-gm-template-style="editorial"] .hero-art{--gm-photo:center 44%;--gm-filter:saturate(.78)}
+
+[data-gm-template-style="gallery"]{--gm-radius:18px;--gm-gap:24px;--gm-space:clamp(25px,5vw,76px);--gm-shadow:0 16px 32px -26px var(--tx)}
+[data-gm-template-style="gallery"] .hero:has(.hero-copy){display:flex;flex-direction:column;min-height:0}
+[data-gm-template-style="gallery"] .hero-art{order:-1;min-height:clamp(210px,36vw,450px);--gm-photo:center 59%}
+[data-gm-template-style="gallery"] .hero-copy{align-self:stretch}
+[data-gm-template-style="gallery"] :is(.hero-g .lim,.kpi){border-bottom:5px solid var(--gm-ac)}
+[data-gm-template-style="gallery"] .hero:not(:has(.hero-copy,.hero-g)){min-height:clamp(240px,31vw,390px);display:grid;align-content:center}
+
+[data-gm-template-style="card-grid"]{--gm-radius:20px;--gm-gap:12px;--gm-button:12px;--gm-shadow:0 9px 19px -17px var(--tx)}
+[data-gm-template-style="card-grid"] :is(.card,.offer,.surface,.history){border-block-start:4px solid var(--gm-ac)}
+[data-gm-template-style="card-grid"] :is(.tb,.nav-in,.hero-copy){border-radius:var(--r)}
+@media(min-width:761px){
+ [data-gm-template-style="card-grid"] .hero:has(.hero-copy){grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:12px;background:transparent}
+ [data-gm-template-style="card-grid"] .hero-art{border-radius:var(--r)}
+ [data-gm-template-style="card-grid"] .work{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+[data-gm-template-style="compact"]{--gm-radius:7px;--gm-gap:8px;--gm-space:clamp(16px,2.7vw,35px);--gm-tracking:-.03em;--gm-shadow:none}
+[data-gm-template-style="compact"] :is(.card,.offer,.surface,.history){padding:clamp(10px,1.6vw,18px)}
+[data-gm-template-style="compact"] .hero:has(.hero-copy){min-height:300px}
+[data-gm-template-style="compact"] .hero-art{min-height:clamp(150px,29vw,225px)}
+[data-gm-template-style="compact"] .hero:not(:has(.hero-copy,.hero-g)){min-height:0}
+[data-gm-template-style="compact"] :is(.hero h1,h1.big){font-size:clamp(29px,5vw,52px)}
+@media(min-width:980px){[data-gm-template-style="compact"] .sb{width:211px}}
+
+[data-gm-template-style="blueprint"]{--gm-radius:4px;--gm-shadow:none;--gm-button:4px;--gm-gap:16px}
+[data-gm-template-style="blueprint"] .hero-copy,[data-gm-template-style="blueprint"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:repeating-linear-gradient(0deg,transparent 0 23px,#fff2 24px 25px),repeating-linear-gradient(90deg,transparent 0 23px,#fff2 24px 25px)
+}
+[data-gm-template-style="blueprint"] :is(.card,.surface,.history,.offer){border-inline-start:4px solid var(--gm-ac)}
+[data-gm-template-style="blueprint"] .hero-art{--gm-filter:contrast(1.14) saturate(.7)}
+
+[data-gm-template-style="studio"]{--gm-display:Georgia,serif;--gm-weight:500;--gm-radius:26px;--gm-gap:22px;--gm-button:99px}
+[data-gm-template-style="studio"] .hero-art{--gm-photo:center 35%;--gm-filter:saturate(.89)}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)){text-align:center}
+[data-gm-template-style="studio"] .hero:not(:has(.hero-copy,.hero-g)) :is(h1,p){margin-inline:auto}
+[data-gm-template-style="studio"] :is(.tb,.nav-in,.kpi){border-block-start:3px solid var(--gm-ac)}
+@media(min-width:761px){
+ [data-gm-template-style="studio"] .hero:has(.hero-copy){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ [data-gm-template-style="studio"] .hero-art{grid-column:1;grid-row:1}
+ [data-gm-template-style="studio"] .hero-copy{grid-column:2;grid-row:1}
+}
+
+[data-gm-template-style="poster"]{--gm-display:"Arial Black",system-ui,sans-serif;--gm-weight:900;--gm-radius:0px;--gm-gap:20px;--gm-border:2px;--gm-button:0px;--gm-shadow:none}
+[data-gm-template-style="poster"] :is(.hero h1,h1.big){line-height:.96;font-size:clamp(37px,6.3vw,84px);max-width:15ch}
+[data-gm-template-style="poster"] :is(.hero-copy,.tb,body>header,.nav-in){border-inline-start:7px solid var(--gm-ac)}
+[data-gm-template-style="poster"] .hero-art{--gm-filter:contrast(1.13) saturate(1.12)}
+
+[data-gm-template-style="soft"]{--gm-display:system-ui,sans-serif;--gm-weight:650;--gm-radius:30px;--gm-gap:22px;--gm-button:99px;--gm-shadow:0 16px 40px -31px var(--tx)}
+[data-gm-template-style="soft"] .hero-copy,[data-gm-template-style="soft"] .hero:not(:has(.hero-copy,.hero-g)){
+ background-image:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--gm-pr) 55%,var(--gm-ac)),transparent 67%)
+}
+[data-gm-template-style="soft"] :is(.nav-in,.kpi,.offer){border-radius:var(--r)}
+[data-gm-template-style="soft"] .hero-art{--gm-filter:saturate(.83) brightness(1.04)}
+
+[data-gm-template-style="mono"]{--gm-display:ui-monospace,monospace;--gm-weight:700;--gm-radius:3px;--gm-tracking:-.06em;--gm-gap:16px;--gm-shadow:none}
+[data-gm-template-style="mono"] :is(.eyb,.sector,.card h3,.offer small,footer){font-family:var(--gm-display)}
+[data-gm-template-style="mono"] :is(.kpi,.offer,.history){border-style:dashed}
+[data-gm-template-style="mono"] .hero-art{--gm-filter:grayscale(.82) contrast(1.08)}
+[data-gm-template-style="mono"] .hero:not(:has(.hero-copy,.hero-g))::after{filter:grayscale(.6)}
+
+[data-gm-template-style="contrast"]{--gm-radius:5px;--gm-gap:20px;--gm-border:2px;--gm-weight:850;--gm-shadow:4px 4px 0 var(--gm-ln);--gm-focus:#0d57ca}
+[data-gm-template-style="contrast"] :is(.tb,.nav-in,body>header,.sb){border-color:var(--tx);box-shadow:none}
+[data-gm-template-style="contrast"] :is(.card,.surface,.history,.offer){border-color:var(--tx)}
+[data-gm-template-style="contrast"] .hero-art{--gm-filter:contrast(1.16) saturate(.95)}
+[data-gm-template-style="contrast"] :is(.hero-copy,.hero:not(:has(.hero-copy,.hero-g))){background-color:var(--gm-pr);--gm-art-opacity:.57}
+@media(max-width:480px){
+ [data-gm-template-style]{--gm-gap:12px}
+ [data-gm-template-style] .hero-copy{padding:22px}
+ [data-gm-template-style] .hero-g{gap:18px}
+ [data-gm-template-style="poster"] :is(.hero h1,h1.big){font-size:clamp(31px,9.5vw,48px)}
+}
+@media print{
+ [data-gm-template-style]{--sh:none}
+ [data-gm-template-style] :is(.hero,.hero-copy){background:#fff!important;color:#111!important}
+ [data-gm-template-style] .hero :is(h1,h2,p){color:#111!important}
+}
+:root{--gm-pr:#254e80;--gm-ac:#3a66a0;--gm-bg:#ebf1f9;--gm-sf:#f8fbff;--gm-tx:#19293e;--gm-ln:#bfcdde}</style></head><body><main>
+<header><span>GitSap · Üretim</span><h1>Satın almadan mamule</h1><p>SA-001 · 100 kg dökme krem · 200 TL/kg</p></header>
+<section><h2>Stok ve açık sipariş</h2><dl><div><dt>Açık sipariş</dt><dd id="open"></dd></div><div><dt>Hammadde</dt><dd id="raw"></dd></div><div><dt>50 g mamul</dt><dd id="goods"></dd></div><div><dt>Faturasız kabul</dt><dd id="unbilled"></dd></div></dl></section>
+<section><h2>Belge işle</h2><form id="entry">
+<label>İşlem<select id="action"><option value="receive">Mal kabul</option><option value="produce">Kavanoza dolum</option><option value="invoice">Tedarikçi faturası</option></select></label>
+<label>Kaynak belge<select id="source"></select></label><label>Belge numarası<input id="ref" maxlength="32" required placeholder="Örn. MK-001"></label>
+<label>Miktar (kg)<input id="qty" type="number" min="1" max="100" step="1" value="60" required></label><button>Belgeyi işle</button></form>
+<p id="message" role="status"></p><small>Oturumluk örnek. Dolum firesizdir. Maliyet yalnız hammaddeyi içerir. Tutarlar vergisizdir.</small></section>
+<section><h2>Belge zinciri</h2><ul id="trail"></ul></section>
+<section><h2>Muhasebe fişleri</h2><div class="scroll"><table><thead><tr><th>Belge</th><th>Borç hesabı</th><th>Alacak hesabı</th><th>Tutar</th></tr></thead><tbody id="ledger"></tbody></table></div><p id="balance"></p><output id="reconciliation"></output></section>
+</main><script>
+const rows=[];
+const price=200;
+const money=n=>n.toLocaleString("tr-TR")+" TL";
+const accounts={receive:["Hammadde","Faturasız mal kabul"],produce:["Mamul","Hammadde"],invoice:["Faturasız mal kabul","Satıcılar"]};
+const labels={receive:"Mal kabul",produce:"Dolum",invoice:"Tedarikçi faturası"};
+const el=id=>document.getElementById(id);
+function sum(type,source){return rows.filter(r=>r.type===type&&(!source||r.source===source)).reduce((total,r)=>total+r.kg,0)}
+function available(type,source){
+ if(type==="receive")return 100-sum("receive");
+ const receipt=rows.find(r=>r.type==="receive"&&r.ref===source);
+ return receipt?receipt.kg-sum(type,source):0;
+}
+function sources(){
+ const type=el("action").value, previous=el("source").value;
+ const refs=type==="receive"?["SA-001"]:rows.filter(r=>r.type==="receive"&&available(type,r.ref)>0).map(r=>r.ref);
+ el("source").replaceChildren(...refs.map(ref=>new Option(ref,ref)));
+ if(refs.includes(previous))el("source").value=previous;
+}
+function show(){
+ const received=sum("receive"), produced=sum("produce"), invoiced=sum("invoice");
+ el("open").textContent=(100-received)+" kg";el("raw").textContent=(received-produced)+" kg";
+ el("goods").textContent=produced*20+" adet";el("unbilled").textContent=money((received-invoiced)*price);
+ el("trail").replaceChildren();el("ledger").replaceChildren();
+ const line=document.createElement("li");line.textContent="SA-001 · Satın alma siparişi · 100 kg";el("trail").append(line);
+ const balances={Hammadde:0,Mamul:0,"Faturasız mal kabul":0,Satıcılar:0};
+ let debit=0,credit=0;
+ for(const row of rows){
+  const item=document.createElement("li");
+  item.textContent=row.source+" → "+row.ref+" · "+labels[row.type]+" · "+row.kg+" kg"+(row.type==="produce"?" → "+row.kg*20+" adet":"");
+  el("trail").append(item);
+  const tr=el("ledger").insertRow();
+  for(const value of [row.ref,...accounts[row.type],money(row.kg*price)])tr.insertCell().textContent=value;
+  const [dr,cr]=accounts[row.type];
+  balances[dr]+=row.kg*price;balances[cr]-=row.kg*price;
+  debit+=row.kg*price;credit+=row.kg*price;
+ }
+ el("balance").textContent="Toplam borç "+money(debit)+" · Toplam alacak "+money(credit)+" · Stok değeri "+money(received*price)+" · Satıcı bakiyesi "+money(invoiced*price);
+ const differences=[
+  balances.Hammadde-(received-produced)*price,
+  balances.Mamul-produced*price,
+  -balances["Faturasız mal kabul"]-(received-invoiced)*price,
+  -balances.Satıcılar-invoiced*price
+ ];
+ el("reconciliation").textContent=differences.every(value=>value===0)?"Stok ve açık belgeler fişlerle uzlaşıyor.":"Mutabakat farkı var.";
+ sources();
+}
+el("action").addEventListener("change",sources);
+el("entry").addEventListener("submit",e=>{
+ e.preventDefault();
+ const type=el("action").value, source=el("source").value, ref=el("ref").value.trim().toLocaleUpperCase("tr"), kg=Number(el("qty").value);
+ let message="";
+ if(!ref||ref==="SA-001"||rows.some(r=>r.ref===ref))message="Yeni ve benzersiz bir belge numarası girin.";
+ else if(!source)message="Bu işlem için açık kaynak belge yok.";
+ else if(!Number.isInteger(kg)||kg<1||kg>available(type,source))message="Miktar kaynak belgenin açık miktarını aşıyor veya geçersiz.";
+ else {rows.push({type,source,ref,kg});show();message=ref+" işlendi.";el("ref").value=""}
+ el("message").textContent=message;
+});
+show();
+</script></body></html>
