@@ -102,7 +102,7 @@ try {
   const r2 = await send("POST", G + "/jobs/" + by(bK).job_id + "/retry");
   ok(r2.status === 409 && (await html(bK)).head === hK.head, "aynı işi yeniden işleme reddedildi, tek commit (" + r2.j.error + ")");
   // 4) Ertesi gün: yeni sekme, Geçmiş'te durumlar
-  p = await ctx.newPage(); watch(p); await p.goto(webBase + "/#ana"); await p.waitForTimeout(5500);
+  p = await ctx.newPage(); watch(p); await p.goto(webBase + "/#studio"); await p.waitForTimeout(5500);
   const hist = await p.locator(".hist .sess-t small").allInnerTexts().catch(() => []);
   ok(hist.filter(t => /kaydedildi/.test(t)).length >= 3, "Geçmiş: çalışmalar “kaydedildi” olarak görünüyor → " + JSON.stringify(hist.slice(0, 4)));
   await p.screenshot({ path: join(SHOTS, "3-ertesi-gun-gecmis.png") });
@@ -114,19 +114,38 @@ try {
   ok(tA === "undefined TL", "ödeme tek başına: müşteri “" + tA + "” görüyor (bağımlılık)");
   ok(both.ok && tB === "250 TL", "kapora + ödeme birlikte önizlemede: “" + tB + "”");
   ok((await get(G + "/branch?name=main")).head === mainBefore && (await html(bK)).head === hK.head, "birlikte önizleme hiçbir dalı değiştirmedi");
+  // İlişki önerisi (sunucu)
+  const rel = await get(G + "/relations?into=main");
+  ok(rel.relations.length === 1 && rel.relations[0].provider === bK && rel.relations[0].user === bO, "ilişki önerisi: " + (rel.relations[0]?.reason || "yok"));
+  ok(!rel.relations.some(r => r.provider === bL || r.user === bL) && !rel.conflicts.length, "logo bağımsız, olası çakışma yok");
+  // 5) Arayüz: Ödeme çalışmasını Geçmiş'ten aç → bağımlılık işareti → Birlikte dene
+  await p.locator(".hist .hrow", { hasText: "Ödeme ekranında" }).first().locator(".rec-open").click();
+  await p.locator(".br-dep").first().waitFor({ timeout: 15000 });
+  ok(/Randevuya 250 TL kap.*bağlı/.test(await p.locator(".br-bar").innerText()), "ödeme çalışmasının dal çubuğunda: “" + (await p.locator(".br-dep").first().innerText()).trim() + "”");
+  await p.screenshot({ path: join(SHOTS, "4a-bagimlilik.png") });
+  await p.locator(".br-btn", { hasText: "Birlikte dene" }).click(); await p.locator(".tt").waitFor();
+  const frameTxt = async () => { await p.locator(".tt-pv iframe").waitFor({ timeout: 10000 }); await p.waitForTimeout(400); return p.frameLocator(".tt-pv iframe").locator("#tutar").innerText(); };
+  ok(await p.locator(".tt-w.on").count() === 2 && /KAPORA değerini kullanıyor/.test(await p.locator(".tt-why").first().innerText()), "Birlikte dene: kapora önerildi ve seçili geldi, gerekçesiyle");
+  const together = await frameTxt(); ok(together === "250 TL", "Birlikte önizlemede müşteri “" + together + "” görüyor");
+  await p.screenshot({ path: join(SHOTS, "4b-birlikte-dene.png") });
+  await p.locator(".tt-seg button", { hasText: "Tek başına" }).click(); await p.waitForTimeout(300);
+  const aloneUi = await frameTxt(); ok(aloneUi === "undefined TL", "Tek başına önizlemede “" + aloneUi + "” (neden beklediği görünüyor)");
+  await p.locator(".tt-seg button", { hasText: "Birlikte" }).click(); await p.waitForTimeout(300); await frameTxt();
   // 6) İncelemeden sonra hedef ilerlerse eski inceleme ile birleşemez
-  const cmpK = await get(G + "/compare?from=" + encodeURIComponent(bK) + "&into=main");
-  const mL = await send("POST", G + "/merge?source=gitmapp", { from: bL, into: "main" }); ok(mL.status === 200, "logo ayrı ilerledi: ana sürüme birleşti");
-  const stale = await send("POST", G + "/merge?source=gitmapp", { from: bK, into: "main", head: cmpK.head, intoHead: cmpK.intoHead });
-  ok(stale.status === 409, "logo birleştikten sonra eski incelemeyle kapora birleştirilemedi: " + stale.j.error);
-  const cK = await get(G + "/compare?from=" + encodeURIComponent(bK) + "&into=main");
-  ok((await send("POST", G + "/merge?source=gitmapp", { from: bK, into: "main", head: cK.head, intoHead: cK.intoHead })).status === 200, "yeniden incelenip kapora birleşti");
-  const cO = await get(G + "/compare?from=" + encodeURIComponent(bO) + "&into=main");
-  ok((await send("POST", G + "/merge?source=gitmapp", { from: bO, into: "main", head: cO.head, intoHead: cO.intoHead })).status === 200, "ödeme birleşti");
+  const cmpL = await get(G + "/compare?from=" + encodeURIComponent(bL) + "&into=main");
+  const mainPre = (await get(G + "/branch?name=main")).head;
+  await p.locator(".tt-go").click(); await p.locator(".tt").waitFor({ state: "detached", timeout: 10000 });
+  const mainHtml = (await html("main")).html;
+  ok(await show(mainHtml) === "250 TL" && (await get(G + "/branch?name=main")).head !== mainPre, "pencereden onaylanan sürüm birleşti: ana sürümde müşteri 250 TL görüyor");
+  ok(/birleştirildi/.test(await p.locator(".ws-msgs").innerText()), "akışta birleştirme notu");
+  const stale = await send("POST", G + "/merge?source=gitmapp", { from: bL, into: "main", head: cmpL.head, intoHead: cmpL.intoHead });
+  ok(stale.status === 409, "ana sürüm ilerledikten sonra logo eski incelemeyle birleştirilemedi: " + stale.j.error);
+  const cL = await get(G + "/compare?from=" + encodeURIComponent(bL) + "&into=main");
+  ok((await send("POST", G + "/merge?source=gitmapp", { from: bL, into: "main", head: cL.head, intoHead: cL.intoHead })).status === 200, "yeniden incelenip logo ayrı birleşti");
   const draft = (await get("apps/" + app.id)).app.html;
   ok(await show(draft) === "250 TL" && /data:,yeni/.test(draft), "proje taslağında müşteri 250 TL görüyor ve yeni logo duruyor (birleşim hiçbir değişikliği silmedi)");
   // 3) Üretim sürerken dala dışarıdan değişiklik → iş inceleme dalına alınır, iki değişiklik korunur
-  await p.goto(webBase + "/#studio"); await p.waitForTimeout(2500);
+  await p.waitForTimeout(500);
   const bX = await start("Başlığı güncelle", true);
   const hx = await html(bX); const ext = await send("POST", G + "/commits?source=gitmapp", { name: bX, head: hx.head, message: "Dışarıdan", html: hx.html.replace("<p>Saat seçin ve randevu alın.</p>", "<p>Saat seçin ve randevu alın. Lara şubesi.</p>") });
   let jx; for (let i = 0; i < 60; i++) { jx = ((await get(G + "/jobs?branch=" + encodeURIComponent(bX))).jobs || [])[0]; if (jx && !["running", "saving"].includes(jx.status)) break; await wait(300); }

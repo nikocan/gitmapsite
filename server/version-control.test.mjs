@@ -187,6 +187,7 @@ test("GitHub session branch: PR status, open and merge through the bound reposit
       case "GET " + base + "/compare/main...gitmapp%2Fs1": return ok({ ahead_by:3, behind_by:1 });
       case "GET " + base + "/pulls?state=all&per_page=5&head=owner%3Agitmapp%2Fs1":
         return ok(opened ? [{ number:7, state:"open", html_url:"https://github.com/owner/export/pull/7", title:opened.title, head:{ ref:"gitmapp/s1" }, base:{ ref:"main" } }] : []);
+      case "GET " + base + "/pulls?state=open&per_page=5&head=owner%3Agitmapp%2Fs1": return ok([]);
       case "POST " + base + "/pulls": opened = body; return ok({ number:7, html_url:"https://github.com/owner/export/pull/7", state:"open" });
       case "PUT " + base + "/pulls/7/merge": mergedN = 7; assert.deepEqual(body, { merge_method:"merge" }); return ok({ merged:true, sha:"m".repeat(40) });
       default: assert.fail("unexpected route: " + method + " " + path);
