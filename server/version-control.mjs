@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { merge3 } from "./merge3.mjs";
+import { merge3, matchLines } from "./merge3.mjs";
 
 export const MAX_PROJECT_HTML = 1_500_000;
 const changed = "Dal başka bir işlemle güncellendi. Dalı yenileyip değişiklikleri karşılaştırın.";
@@ -314,6 +314,68 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     }
     return { ok: true, html, heads };
   });
+  // v5.87 — Açık çalışmalar arasındaki ilişkiler: bir çalışmanın eklediği değer/öğe/işlevi başka biri kullanıyorsa öneri; aynı satırları değiştirenler olası çakışma
+  const SYM_KIND = { v: "değerini", id: "öğesini", fn: "işlevini", ls: "kaydını" };
+  function provided(text) {
+    const out = new Map(), add = (k, n) => { if (n && n.length >= 3 && !out.has(n)) out.set(n, k); };
+    for (const m of text.matchAll(/window\.([A-Za-z_$][\w$]*)\s*=(?!=)/g)) add("v", m[1]);
+    for (const m of text.matchAll(/\bid=["']?([A-Za-z][\w-]*)/g)) add("id", m[1]);
+    for (const m of text.matchAll(/\b(?:function|class)\s+([A-Za-z_$][\w$]*)/g)) add("fn", m[1]);
+    for (const m of text.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=/g)) add("v", m[1]);
+    for (const m of text.matchAll(/localStorage\.setItem\(\s*["'`]([^"'`]+)/g)) add("ls", m[1]);
+    return out;
+  }
+  const hasWord = (text, w) => new RegExp("(^|[^\\w$-])" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w$-])").test(text);
+  const usesId = (text, id) => { const e = id.replace(/[-]/g, "\\-"); return new RegExp("getElementById\\(\\s*[\"'`]" + e + "[\"'`]|[\"'`(\\s,]#" + e + "(?![\\w-])|\\bfor=[\"']?" + e + "\\b").test(text); };
+  function addedText(id, fromHead, intoHead) {
+    const lca = mergeBase(id, fromHead, intoHead);
+    const a = String(lca ? commitHtml(id, lca) : "").split("\n"), b = commitHtml(id, fromHead).split("\n");
+    const kept = new Set(matchLines(a, b).map(p => p[1]));
+    return b.filter((_, i) => !kept.has(i)).join("\n");
+  }
+  route("GET", root + "/relations", async ctx => {
+    const app = project(ctx);
+    if (source(ctx) !== "gitmapp") return { works: [], relations: [], conflicts: [], unsupported: true };
+    localInit(app);
+    const into = checkBranch(ctx.url.searchParams.get("into") || "main", need);
+    const ih = localHead(app.id, into); need(ih, 404, "Dal bulunamadı.");
+    const intoSet = ancestors(app.id, ih), baseText = commitHtml(app.id, ih);
+    const hidden = new Set(String(ctx.url.searchParams.get("hide") || "").split(",").filter(Boolean));
+    const works = sql(`SELECT b.name, b.head, c.created FROM project_branches b JOIN project_commits c ON c.app_id=b.app_id AND c.sha=b.head WHERE b.app_id=? AND b.name<>? ORDER BY c.created DESC LIMIT 12`).all(app.id, into)
+      .filter(w => !intoSet.has(w.head))
+      .map(w => {
+        const first = sql("SELECT message, status FROM job_commits WHERE app_id=? AND (branch=? OR review_branch=?) ORDER BY created ASC LIMIT 1").get(app.id, w.name, w.name);
+        const last = sql("SELECT status FROM job_commits WHERE app_id=? AND (branch=? OR review_branch=?) ORDER BY created DESC LIMIT 1").get(app.id, w.name, w.name);
+        const msg = sql("SELECT message FROM project_commits WHERE app_id=? AND sha=?").get(app.id, w.head)?.message || w.name;
+        const added = addedText(app.id, w.head, ih);
+        return { branch: w.name, head: w.head, title: (first?.message || msg).slice(0, 90), status: last?.status || null, review: /-inceleme-[0-9a-f]{6}$/.test(w.name), added };
+      });
+    const relations = [], conflicts = [];
+    for (const a of works) {
+      const prov = provided(a.added);
+      for (const b of works) {
+        if (a === b) continue;
+        for (const [sym, k] of prov) {
+          if (hasWord(baseText, sym) || provided(b.added).has(sym)) continue;
+          if (k === "id" ? !usesId(b.added, sym) : !hasWord(b.added, sym)) continue;
+          const key = a.branch + ">" + b.branch;
+          if (hidden.has(key)) continue;
+          relations.push({ key, provider: a.branch, user: b.branch, symbol: sym, kind: k, reason: "“" + b.title + "”, “" + a.title + "” çalışmasının eklediği " + sym + " " + SYM_KIND[k] + " kullanıyor." });
+          break;
+        }
+      }
+    }
+    for (let i = 0; i < works.length; i++) for (let j = i + 1; j < works.length; j++) {
+      const a = works[i], b = works[j];
+      const la = mergeBase(app.id, a.head, ih), first = la === ih ? commitHtml(app.id, a.head) : merge3(la ? commitHtml(app.id, la) : "", baseText, commitHtml(app.id, a.head));
+      const ah = typeof first === "string" ? first : first.html;
+      const lb = mergeBase(app.id, b.head, ih);
+      const r = merge3(lb ? commitHtml(app.id, lb) : "", ah, commitHtml(app.id, b.head));
+      if (r.conflicts.length) conflicts.push({ a: a.branch, b: b.branch, count: r.conflicts.length, reason: "“" + a.title + "” ve “" + b.title + "” aynı yeri farklı biçimde değiştiriyor." });
+    }
+    return { into, intoHead: ih, works: works.map(({ added, ...w }) => w), relations, conflicts };
+  });
+
   route("POST", root + "/merge", async ctx => {
     const app = project(ctx), { body } = ctx;
     need(source(ctx) === "gitmapp", 400, "GitHub dalları çekme isteğiyle birleştirilir.");
@@ -465,6 +527,14 @@ export function registerVersions({ db, route, ownApp, need, ghApi, slugify, conf
     const title = String(body.title || "").trim().slice(0, 200) || head;
     const text = String(body.body || "").slice(0, 8000);
     const path = target(app, ctx);
+    // v5.87 — tekrar tıklama ya da ağ hatası yinelenen PR açmasın: aynı dal için açık PR varsa onu güncelle
+    const owner = path.split("/")[2];
+    const open = await github(ctx.user, "GET", path + "/pulls?state=open&per_page=5&head=" + encode(owner + ":" + head));
+    const found = (Array.isArray(open) ? open : []).find(p => p.head?.ref === head && (p.base?.ref || baseRef) === baseRef);
+    if (found) {
+      const upd = await github(ctx.user, "PATCH", path + "/pulls/" + found.number, { title, body: text });
+      return { number: found.number, url: upd.html_url || found.html_url, state: upd.state || found.state, updated: true };
+    }
     const pr = await github(ctx.user, "POST", path + "/pulls", { title, head, base: baseRef, body: text });
     return { number: pr.number, url: pr.html_url, state: pr.state };
   });

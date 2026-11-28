@@ -3158,6 +3158,18 @@ html.rm .ambient i{animation:none}
 .ns-from{display:grid;gap:6px;margin:4px 0 10px}.ns-from>b{font-size:12px;color:var(--mut,#a1a1aa);font-weight:600}
 .ns-from-o{display:flex;text-align:left;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:inherit;font:inherit;cursor:pointer}
 .ns-from-o b{display:block;font-size:13.5px}.ns-from-o small{display:block;font-size:12px;opacity:.7;margin-top:2px}.ns-from-o.on{border-color:#e4ff3d;background:rgba(228,255,61,.07)}
+/* v5.87 — Birlikte dene, bağımlılık işaretleri */
+.br-dep{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;padding:2px 8px;border-radius:99px;background:rgba(228,255,61,.1);color:#e4ff3d;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}.br-dep.warn{background:rgba(251,146,60,.12);color:#fdba74}
+.br-btn.hi{background:#e4ff3d;color:#111}.br-btn.g{background:transparent;border:1px solid rgba(255,255,255,.18)}
+.tt-h{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:18px}.tt-sub{margin:0 0 14px;opacity:.75;font-size:13px;padding-right:30px}
+.tt-grid{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:16px;min-height:62vh}
+.tt-side{display:flex;flex-direction:column;gap:8px;min-width:0}.tt-l{font-size:12px;opacity:.65;font-weight:600}
+.tt-w{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.1);cursor:pointer}.tt-w.on{border-color:rgba(228,255,61,.55);background:rgba(228,255,61,.05)}
+.tt-w input{margin-top:3px;accent-color:#e4ff3d}.tt-w b{display:block;font-size:13px}.tt-w small{display:block;font-size:11.5px;opacity:.6;word-break:break-all}
+.tt-why{display:block;font-style:normal;font-size:12px;margin-top:6px;color:#e4ff3d;line-height:1.4}.tt-why.warn{color:#fdba74}.tt-why .lnk{font-size:11.5px;margin-left:4px}
+.tt-seg{margin-top:4px}.tt-order{font-size:12px;opacity:.75;margin:0}.tt-err{font-size:12.5px;color:#fca5a5;margin:0}.tt-go{margin-top:auto}.tt-note{font-size:11.5px;opacity:.6}
+.tt-pv{border-radius:14px;overflow:hidden;background:#fff;min-height:420px}.tt-pv iframe{width:100%;height:100%;min-height:62vh;border:0;display:block}.tt-load{display:flex;align-items:center;justify-content:center;gap:8px;height:100%;color:#444;font-size:13px}
+@media(max-width:760px){.tt-grid{grid-template-columns:1fr}.tt-pv iframe{min-height:56vh}}
 </style>
 <link rel="stylesheet" href="catalog/gallery.css?v=5772">
 <link rel="stylesheet" href="catalog/sector-design.css?v=5761">
@@ -3185,8 +3197,15 @@ const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const html=htm.bind(React.createElement);
 
 /* ================= SÜRÜM / GÜNCELLEMELER ================= */
-const VERSION="5.86.0";
+const VERSION="5.87.0";
 const CHANGELOG=[
+ {v:"5.87.0",date:"2026-11-28",items:[
+  "🔗 Bağlantılı çalışmalar bulunuyor: bir çalışma, başka bir çalışmanın eklediği değeri, öğeyi ya da işlevi kullanıyorsa Gitmapp bunu gerekçesiyle gösteriyor (ör. “Ödeme ekranı, Kapora çalışmasının eklediği KAPORA değerini kullanıyor”). Aynı yeri farklı değiştiren iki çalışma da “olası çakışma” olarak işaretleniyor",
+  "⏳ Dal çubuğunda bekleme işareti: çalışman başka bir işe bağlıysa “… çalışmasına bağlı” yazıyor; tek başına birleştirmeye kalkarsan önce birlikte denemen öneriliyor",
+  "🧪 Yeni “Birlikte dene” penceresi: açık çalışmalarından istediklerini seçip dallara ve ana sürüme dokunmadan geçici bir birleşik önizlemede çalıştırırsın. “Tek başına / Birlikte” geçişiyle farkı görürsün (ör. ödeme ekranı tek başına “undefined TL”, kaporayla birlikte “250 TL”)",
+  "✋ Öneriler senin kontrolünde: yanlış bir ilişkiyi “Öneriyi kaldır” ile silebilir, gözden kaçan bir çalışmayı elle ekleyebilirsin. İlişki tahmini hiçbir zaman kendiliğinden birleştirme yapmaz",
+  "✅ “Bu sürümü main'e birleştir”: yalnızca önizlediğin sürüm, doğru sırayla (değeri sağlayan önce) birleşir. Bu arada bir dal ilerlediyse birleştirme durur ve yeniden kontrol ister",
+  "🔁 GitHub: aynı dal için açık bir PR varsa yenisi açılmıyor, mevcut PR güncelleniyor; tekrar tıklama ya da ağ hatası yinelenen PR üretmiyor. PR açıklamasında amaç, kapsadığı çalışma, commit'ler ve gerçekten çalıştırılan kontroller yazıyor"]},
  {v:"5.86.0",date:"2026-11-28",items:[
   "☁️ Sekmeyi kapatsan da çalışman kaydediliyor: bir projede istek verdiğinde iş sunucuda o çalışmanın dalına ve başlangıç sürümüne bağlanıyor; bitince sonucu sunucu kendisi dala kaydediyor. Çalışmayı yeniden açman artık yalnızca sonucu görmek için gerekiyor",
   "🔁 Aynı iş iki sekmeden açılsa ya da yeniden işlense de tek kayıt oluşuyor; eski oturum açıldığında ikinci commit atılmıyor. GitHub yanıt vermezse yeniden denemeden önce ilk isteğin uygulanıp uygulanmadığına bakılıyor; sunucu yeniden başlarsa bekleyen kayıt kaldığı yerden sürüyor",
@@ -7437,6 +7456,40 @@ function promptScope(text,html,appTitle,kind){
  if(secScore<1){const g=SC_GLOBAL.find(([re])=>re.test(low));section=g?g[1]:null;if(g&&pages.length>1&&!pageScore)page="Tüm sayfalar"}
  return {page:page||(pages.length>1&&!section?"Tüm sayfalar":home),section,title,how};
 }
+// v5.87 — Birlikte dene: seçilen çalışmaları dallara dokunmadan geçici birleşik önizlemede çalıştırır; onaylanan sürümü birleştirir
+function TryTogether({appId,into,cur,rel,toast,close,onHide,onMerged}){
+ const works=rel?.works||[],rels=rel?.relations||[],clash=rel?.conflicts||[];
+ const linked=new Set(rels.filter(r=>r.user===cur||r.provider===cur).flatMap(r=>[r.provider,r.user]));
+ const [sel,setSel]=useState(()=>new Set([cur,...linked]));const [mode,setMode]=useState("birlikte");
+ const [pv,setPv]=useState(null),[err,setErr]=useState(""),[busy,setBusy]=useState(false);
+ // sıra: değer sağlayan çalışma önce
+ const ordered=()=>{const names=works.map(w=>w.branch).filter(n=>sel.has(n)),out=[];const visit=(n,seen=new Set())=>{if(out.includes(n)||seen.has(n))return;seen.add(n);rels.filter(r=>r.user===n&&sel.has(r.provider)).forEach(r=>visit(r.provider,seen));out.push(n)};names.forEach(n=>visit(n));return out};
+ const list=mode==="tek"?[cur]:ordered();
+ useEffect(()=>{let ok=true;setPv(null);setErr("");api("GET","/api/apps/"+appId+"/git/merge-preview?source=gitmapp&into="+encodeURIComponent(into)+"&branches="+list.map(encodeURIComponent).join(",")).then(j=>{if(ok)setPv(j)}).catch(e=>{if(ok)setErr(e.message||"Önizleme hazırlanamadı")});return()=>{ok=false}},[list.join(","),into]);
+ const t=n=>works.find(w=>w.branch===n)?.title||n;
+ async function mergeAll(){if(!pv?.ok||busy||mode!=="birlikte")return;setBusy(true);try{let ih=pv.heads[into],head=ih;const P="/api/apps/"+appId+"/git";
+   for(const n of list){const r=await api("POST",P+"/merge?source=gitmapp",{from:n,into,head:pv.heads[n],intoHead:head});head=r.head}
+   onMerged(list,head)}catch(e){setErr((e.message||"Birleştirilemedi")+" Önizleme yenilendi; tekrar kontrol et.");setPv(null);setMode(m=>m);api("GET","/api/apps/"+appId+"/git/merge-preview?source=gitmapp&into="+encodeURIComponent(into)+"&branches="+list.map(encodeURIComponent).join(",")).then(setPv).catch(()=>{})}finally{setBusy(false)}}
+ return html`<${Modal} close=${close} w=${980}><div class="tt">
+  <h3 class="tt-h"><${Icon} n="layers" s=${18}/> Birlikte dene</h3>
+  <p class="tt-sub">Seçtiğin çalışmalar geçici bir önizlemede birleştirilir. Ana sürüm, çalışma dalları ve yayındaki sürüm bu aşamada değişmez.</p>
+  <div class="tt-grid">
+   <div class="tt-side">
+    <div class="tt-l">Açık çalışmalar</div>
+    ${works.filter(w=>!w.review).map(w=>{const r=rels.find(x=>(x.user===cur&&x.provider===w.branch)||(x.provider===cur&&x.user===w.branch));const c=clash.find(x=>(x.a===cur&&x.b===w.branch)||(x.b===cur&&x.a===w.branch));
+     return html`<label key=${w.branch} class=${"tt-w"+(sel.has(w.branch)?" on":"")}><input type="checkbox" checked=${sel.has(w.branch)} disabled=${w.branch===cur} onChange=${e=>setSel(s=>{const n=new Set(s);e.target.checked?n.add(w.branch):n.delete(w.branch);return n})}/>
+      <span><b>${w.title}${w.branch===cur?" · bu çalışma":""}</b><small>${w.branch}${w.status==="review"?" · inceleme gerekiyor":""}</small>
+      ${r&&html`<em class="tt-why"><${Icon} n="link" s=${11}/> ${r.reason} <button type="button" class="lnk" onClick=${e=>{e.preventDefault();onHide(r.key);setSel(s=>{const n=new Set(s);n.delete(w.branch);return n})}}>Öneriyi kaldır</button></em>`}
+      ${c&&html`<em class="tt-why warn"><${Icon} n="alert" s=${11}/> ${c.reason}</em>`}</span></label>`})}
+    <div class="ccpop-seg tt-seg" role="tablist" aria-label="Önizleme"><button type="button" role="tab" aria-selected=${mode==="tek"} class=${mode==="tek"?"on":""} onClick=${()=>setMode("tek")}>Tek başına</button><button type="button" role="tab" aria-selected=${mode==="birlikte"} class=${mode==="birlikte"?"on":""} onClick=${()=>setMode("birlikte")}>Birlikte (${list.length||sel.size})</button></div>
+    ${mode==="birlikte"&&html`<p class="tt-order">Sıra: ${list.map(t).map(x=>"“"+scShort(x,28)+"”").join(" → ")} → ${into}</p>`}
+    ${err&&html`<p class="tt-err" role="alert">${err}</p>`}
+    ${pv&&!pv.ok&&html`<p class="tt-err" role="alert">“${t(pv.conflict)}” diğerleriyle aynı satırları değiştiriyor (${pv.conflicts.length} yer). Birini güncelleyip yeniden dene.</p>`}
+    <button type="button" class="btn p tt-go" disabled=${mode!=="birlikte"||!pv?.ok||busy||list.length<2} onClick=${mergeAll}>${busy?"Birleştiriliyor…":"Bu sürümü "+into+"'e birleştir"}</button>
+    <small class="tt-note">Yalnızca önizlediğin sürüm birleşir; bu arada bir dal ilerlerse birleştirme durur ve yeniden kontrol istenir.</small>
+   </div>
+   <div class="tt-pv">${pv?.ok?html`<iframe title="Birleşik önizleme" sandbox="allow-scripts allow-forms" srcdoc=${pv.html}></iframe>`:!err&&!(pv&&!pv.ok)?html`<div class="tt-load"><span class="ccspin"></span> Önizleme hazırlanıyor…</div>`:null}</div>
+  </div></div><//>`}
 function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,incoming,clearIncoming,health,healthError,retry,models,go,seed,clearSeed,resumeVersions,clearResumeVersions}){
  const [designOpen,setDesignOpen]=useState(false);
  const proposedTitle=useRef("");
@@ -8356,17 +8409,27 @@ function Studio({onTpl,compact,setSidebarClosed,auth,openAuth,toast,openPublish,
    else if(brInfo?.pr){const r=await api("POST",P+"/pulls/"+brInfo.pr.number+"/merge?source=github",{repo:gc.repo});brNote(r.merged?"✓ PR #"+brInfo.pr.number+" "+brBase+" dalına birleştirildi · "+String(r.sha||"").slice(0,7):"PR birleştirilemedi.");sessPatch(account,scope,{merged:!!r.merged})}
    setBrVer(v=>v+1)}catch(e){toast(e.message||"Birleştirilemedi")}finally{setBrBusy("")}}
  async function brOpenPr(){if(!gc||brBusy)return;setBrBusy("pr");try{const asks=st.msgs.filter(m=>m.role==="user"&&m.content).map(m=>"- "+String(m.content).replace(/\s+/g," ").slice(0,140)).slice(-15).join("\n");
-   const r=await api("POST","/api/apps/"+st.appId+"/git/pulls?source=github",{repo:gc.repo,head:gc.name,base:brBase,title:(st.title||"Gitmapp")+" · "+(st.msgs.find(m=>m.role==="user")?.content||gc.name).slice(0,80),body:"Gitmapp Stüdyo oturumu\n\nİstekler:\n"+asks});
-   brNote("↗ Çekme isteği açıldı: PR #"+r.number+" · "+gc.name+" → "+brBase+" · "+r.url);sessPatch(account,scope,{pr:r.number});setBrVer(v=>v+1)}catch(e){toast(e.message||"PR açılamadı")}finally{setBrBusy("")}}
+   const r=await api("POST","/api/apps/"+st.appId+"/git/pulls?source=github",{repo:gc.repo,head:gc.name,base:brBase,title:(st.title||"Gitmapp")+" · "+(st.msgs.find(m=>m.role==="user")?.content||gc.name).slice(0,80),body:(()=>{const first=st.msgs.find(m=>m.role==="user"&&m.content);const okQa=qa&&qa.len===(st.html||"").length;const probs=okQa?qa.errors.length+qa.issues.length:null;const commits=st.msgs.filter(m=>m.log?.commit?.sha).map(m=>"- "+m.log.commit.sha.slice(0,7)+" "+(m.log.commit.msg||""));
+     return "## Amaç\n"+String(first?.content||gc.name).replace(/\s+/g," ").slice(0,300)+"\n\n## Kapsadığı çalışma\nDal: `"+gc.name+"` → `"+brBase+"`\n\nİstekler:\n"+asks+(commits.length?"\n\nCommit'ler:\n"+commits.slice(-15).join("\n"):"")+"\n\n## Çalıştırılan kontroller\n"+(probs===null?"- Bu sürüm için Stüdyo önizleme denetimi çalışmadı.":"- Gitmapp tasarım ajanı önizleme denetimi: "+(probs?probs+" sorun bulundu ("+[...qa.errors.map(t=>"JS: "+t),...qa.issues.map(i=>i.t)].slice(0,5).join("; ")+")":"sorun yok"))})()});
+   brNote(r.updated?"↻ Açık PR #"+r.number+" güncellendi (yeni PR açılmadı) · "+r.url:"↗ Çekme isteği açıldı: PR #"+r.number+" · "+gc.name+" → "+brBase+" · "+r.url);sessPatch(account,scope,{pr:r.number});setBrVer(v=>v+1)}catch(e){toast(e.message||"PR açılamadı")}finally{setBrBusy("")}}
+ // v5.87 — açık çalışmalar arası ilişkiler (bağımlılık, olası çakışma) ve “Birlikte dene”
+ const [rel,setRel]=useState(null),[together,setTogether]=useState(false);
+ useEffect(()=>{setRel(null);if(!gc||gc.source!=="gitmapp"||!st.appId||!auth.user||!API_ON||!brBase||gc.name===brBase)return;let ok=true;
+  api("GET","/api/apps/"+st.appId+"/git/relations?source=gitmapp&into="+encodeURIComponent(brBase)+"&hide="+encodeURIComponent((LS.get("relHide:"+st.appId,[])||[]).join(","))).then(j=>{if(ok)setRel(j)}).catch(()=>{});return()=>{ok=false}},[scope,brVer,st.appId,gc?.head]);
+ const relTitle=n=>rel?.works.find(w=>w.branch===n)?.title||n;
+ const waitsFor=rel?(rel.relations||[]).filter(r=>r.user===gc?.name):[],clashes=rel?(rel.conflicts||[]).filter(c=>c.a===gc?.name||c.b===gc?.name):[];
  const branchBar=()=>{if(!gc||!st.appId)return null;const b=brInfo;const pr=b?.pr;const recMerged=!!sessList(account).find(x=>x.key===scope)?.merged;
   return html`<div class="br-bar" role="status" aria-label="Oturum dalı"><${EcosystemIcon} name="branch" s=${14}/><b title=${gc.name}>${gc.name}</b>${brBase&&gc.name!==brBase&&html`<span class="br-to">→ ${brBase}</span>`}
    ${b&&html`<span class="br-n" title="Bu dalda olup hedefte olmayan commit sayısı">${b.ahead} commit önde${b.behind?" · "+b.behind+" geride":""}</span>`}
+   ${waitsFor.map(r=>html`<span class="br-dep" key=${r.key} title=${r.reason}><${Icon} n="clock" s=${12}/> “${scShort(relTitle(r.provider),26)}” çalışmasına bağlı</span>`)}
+   ${clashes.slice(0,1).map(c=>html`<span class="br-dep warn" key=${c.a+c.b} title=${c.reason}><${Icon} n="alert" s=${12}/> “${scShort(relTitle(c.a===gc.name?c.b:c.a),22)}” ile olası çakışma</span>`)}
    <span style=${{flex:1}}></span>
+   ${gc.source==="gitmapp"&&rel&&rel.works.length>1&&html`<button type="button" class=${"br-btn"+(waitsFor.length?" hi":" g")} onClick=${()=>setTogether(true)} title="Bu çalışmayı diğer açık çalışmalarla birlikte geçici olarak önizle">Birlikte dene</button>`}
    ${!b?null:pr?.state==="merged"||(!pr&&recMerged&&b.ahead===0)?html`<span class="br-st ok"><${Icon} n="check" s=${12} w=${2.6}/> Birleştirildi</span>`
     :gc.source==="github"?(pr?html`<a class="br-st" href=${pr.url} target="_blank" rel="noopener noreferrer">PR #${pr.number} ${pr.state==="open"?"açık":"kapalı"}</a>${pr.state==="open"&&html`<button type="button" class="br-btn" disabled=${!!brBusy||busy} onClick=${brMerge}>${brBusy==="merge"?"…":"Birleştir"}</button>`}`
       :b.ahead>0&&html`<button type="button" class="br-btn" disabled=${!!brBusy||busy} onClick=${brOpenPr}>${brBusy==="pr"?"…":"PR aç"}</button>`)
-    :b.ahead>0&&html`<button type="button" class="br-btn" disabled=${!!brBusy||busy} onClick=${brMerge}>${brBusy==="merge"?"…":brBase+"'e birleştir"}</button>`}
-  </div>`};
+    :b.ahead>0&&html`<button type="button" class="br-btn" disabled=${!!brBusy||busy} onClick=${()=>{if(waitsFor.length){toast("Bu çalışma “"+relTitle(waitsFor[0].provider)+"” çalışmasına bağlı · önce birlikte dene");setTogether(true);return}brMerge()}}>${brBusy==="merge"?"…":brBase+"'e birleştir"}</button>`}
+  </div>${together&&html`<${TryTogether} appId=${st.appId} into=${brBase} cur=${gc.name} rel=${rel} toast=${toast} close=${()=>setTogether(false)} onHide=${k=>{LS.set("relHide:"+st.appId,[...new Set([...(LS.get("relHide:"+st.appId,[])||[]),k])]);setBrVer(v=>v+1)}} onMerged=${(names,head)=>{setTogether(false);if(names.includes(gc.name))sessPatch(account,scope,{merged:true});brNote("✓ Birlikte doğrulanan çalışmalar "+brBase+" sürümüne birleştirildi: "+names.map(n=>"“"+relTitle(n)+"”").join(", ")+" · commit "+String(head).slice(0,7)+(brBase==="main"?". Proje taslağı güncellendi; Yayınla ile canlıya alabilirsin.":""));setBrVer(v=>v+1)}}/>`}`};
  const sidebarButton=html`<button class="ib studio-side-toggle" type="button" aria-controls="workspace-navigation" aria-expanded=${!compact} aria-label=${compact?"Sol menüyü aç":"Sol menüyü kapat"} title=${(compact?"Sol menüyü aç":"Sol menüyü kapat")+" (⌘/Ctrl+B)"} onClick=${()=>setSidebarClosed(!compact)}><${Icon} n="panelR" s=${17}/></button>`;
  const [gtRequest,setGtRequest]=useState(0),[gtAlerts,setGtAlerts]=useState(0);
  const gtPanel=html`<${GitmappGT} openEngineering=${()=>go("muhendis")} key=${scope} request=${gtRequest} onAlerts=${setGtAlerts} appId=${st.appId} aiBody=${aiBody} source=${st.html?resolve(st.html):""} errors=${qa&&qa.source===st.html?qa.errors:[]} busy=${busy} buildGT=${brief=>build(brief,null,"GT geliştirmesi")}/>`;

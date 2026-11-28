@@ -143,3 +143,44 @@ test("merge3 bağımsız değişiklikleri birleştirir", () => {
   assert.equal(r.html, "a\nB\nc\nD"); assert.equal(r.conflicts.length, 0);
   assert.equal(merge3(b, "a\nX\nc\nd", "a\nY\nc\nd").conflicts.length, 1);
 });
+
+test("ilişkiler: ödeme, kaporanın eklediği değeri okuyor; logo bağımsız; aynı satırı değiştirenler olası çakışma", async (t) => {
+  const { run, job } = fixture(t);
+  await run("GET", ""); const m = await head(run, "main");
+  for (const b of ["kapora", "odeme", "logo", "baslik1", "baslik2"]) await run("POST", "/branches", { name: b, base: "main", head: m });
+  await job("jobR1kapora00000", "kapora", m, BASE.replace("<p>Randevu al</p>", "<p>Randevu al</p>\n<p>Kapora: <b id=kapora>250 TL</b></p>\n<script>window.KAPORA=250</script>"), "Randevuya 250 TL kapora ekle");
+  await job("jobR2odeme000000", "odeme", m, BASE.replace("<p>Ödeme</p>", "<p>Ödenecek kapora: <span id=tutar></span></p>\n<script>tutar.textContent=window.KAPORA+' TL'</script>"), "Ödeme ekranında kapora tutarını göster");
+  await job("jobR3logo0000000", "logo", m, BASE.replace("eski.png", "yeni.png"), "Logoyu güncelle");
+  await job("jobR4b1000000000", "baslik1", m, BASE.replace("<h1>Salon</h1>", "<h1>Salon A</h1>"), "Başlık A");
+  await job("jobR5b2000000000", "baslik2", m, BASE.replace("<h1>Salon</h1>", "<h1>Salon B</h1>"), "Başlık B");
+  const r = await run("GET", "/relations?into=main");
+  assert.equal(r.works.length, 5);
+  assert.equal(r.works.find(w => w.branch === "kapora").title, "Randevuya 250 TL kapora ekle");
+  assert.deepEqual(r.relations.map(x => x.provider + ">" + x.user), ["kapora>odeme"]);
+  assert.match(r.relations[0].reason, /Ödeme ekranında kapora tutarını göster.*Randevuya 250 TL kapora ekle.*KAPORA değerini kullanıyor/);
+  assert.deepEqual(r.conflicts.map(c => [c.a, c.b].sort().join("+")), ["baslik1+baslik2"]);
+  // kullanıcı öneriyi kaldırabilir
+  const hidden = await run("GET", "/relations?into=main&hide=kapora>odeme");
+  assert.equal(hidden.relations.length, 0);
+  // birleşen çalışma listeden düşer
+  await run("POST", "/merge", { from: "logo", into: "main" });
+  assert.ok(!(await run("GET", "/relations?into=main")).works.some(w => w.branch === "logo"));
+});
+
+test("PR: aynı dal için açık PR varsa yenisi açılmaz, güncellenir", async (t) => {
+  const pulls = []; let posts = 0, patches = 0;
+  const ok = (data) => ({ ok: true, status: 200, data });
+  const gh = async (tok, method, p, body) => {
+    const R = "/repos/owner/salon";
+    if (method === "GET" && p.startsWith(R + "/pulls?")) { const h = new URL("http://x" + p).searchParams.get("head").split(":")[1]; return ok(pulls.filter(x => x.head.ref === h && x.state === "open")); }
+    if (method === "POST" && p === R + "/pulls") { posts++; const pr = { number: pulls.length + 1, state: "open", html_url: "u/" + (pulls.length + 1), head: { ref: body.head }, base: { ref: body.base }, title: body.title, body: body.body }; pulls.push(pr); return ok(pr); }
+    if (method === "PATCH" && p.startsWith(R + "/pulls/")) { patches++; const pr = pulls[Number(p.split("/").pop()) - 1]; Object.assign(pr, body); return ok(pr); }
+    return assert.fail(method + " " + p);
+  };
+  const { db, run } = fixture(t, gh);
+  db.exec("UPDATE apps SET github_repo='https://github.com/owner/salon'");
+  const a = await run("POST", "/pulls?source=github", { repo: "owner/salon", head: "kapora", base: "main", title: "Kapora", body: "ilk" });
+  const b = await run("POST", "/pulls?source=github", { repo: "owner/salon", head: "kapora", base: "main", title: "Kapora + ödeme", body: "ikinci" });
+  assert.equal(a.number, b.number); assert.equal(b.updated, true); assert.equal(posts, 1); assert.equal(patches, 1);
+  assert.equal(pulls[0].body, "ikinci");
+});
